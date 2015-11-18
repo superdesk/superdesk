@@ -1,0 +1,33 @@
+<div class="article-versions" ng-controller="VersioningWidgetCtrl">
+    <ul class="versions-list card-list">
+        <li class="item draft" ng-class="{selected: selected === item._autosave}" ng-if="item._autosave" ng-click="openAutosave()">
+            <div class="header">
+                <time title="{{ item._autosave._updated | date:'medium' }}">{{ item._autosave._updated | reldate }}</time>
+            </div>
+            <h6 ng-class="{'no-title': !item._autosave.headline}">{{ :: item._autosave.headline || ('Untitled' | translate) }}</h6>
+            <div class="footer">
+                <em translate>autosave</em>
+            </div>
+        </li>
+
+        <li class="item" ng-class="{selected: selected === version}" ng-repeat="version in versions" ng-click="openVersion(version)">
+            <div class="header">
+                <time title="{{ :: version.versioncreated | date:'medium' }}">{{ version.versioncreated|reldate }}</time>
+                <span class="user">{{ :: 'by' | translate }} {{ version.creator }}</span>
+            </div>
+            <h6 ng-class="{'no-title': !version.headline }">{{ :: version.headline || ('Untitled' | translate) }}</h6>
+            <div class="desk-details">
+                <span ng-show='version.desk'>{{ :: 'desk:' | translate }} {{version.desk}}</span>
+                <span class="pull-right" ng-show='version.stage'>{{ :: 'stage:' | translate }} {{version.stage}}</span>
+            </div>
+            <div class="footer">
+                <em>{{ :: 'version' | translate }}: {{ version._current_version }}</em>
+                <div class="state-label state-{{ :: version.state}}">{{ :: version.state }}</div>
+                <button class="btn btn-light btn-mini pull-right"
+                    ng-show="canRevert && !$first"
+                    ng-click="revert(version)"
+                    translate>revert</button>
+            </div>
+        </li>
+    </ul>
+</div>

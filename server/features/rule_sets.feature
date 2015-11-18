@@ -1,4 +1,3 @@
-@wip
 Feature: Rule Sets Resource
 
     @auth

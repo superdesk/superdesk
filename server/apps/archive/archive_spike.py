@@ -10,25 +10,32 @@
 
 
 import logging
-import superdesk
 
 from flask import current_app as app
 
-
-from superdesk import get_resource_service
+import superdesk
+from superdesk import get_resource_service, config
+from superdesk.errors import SuperdeskApiError, InvalidStateTransitionError
+from superdesk.metadata.item import ITEM_STATE
 from superdesk.notification import push_notification
 from superdesk.services import BaseService
 from superdesk.utc import get_expiry_date
-from .common import get_user, item_url, is_assigned_to_a_desk
-
+from superdesk.metadata.utils import item_url
+from .common import get_user, is_assigned_to_a_desk, get_expiry
+from superdesk.workflow import is_workflow_state_transition_valid
 from apps.archive.archive import ArchiveResource, SOURCE as ARCHIVE
-from apps.tasks import get_expiry
-
+from apps.packages import PackageService, TakesPackageService
+from apps.archive.archive_rewrite import ArchiveRewriteService
+from apps.archive.common import item_operations, ITEM_OPERATION, \
+    is_item_in_package, set_sign_off
 
 logger = logging.getLogger(__name__)
 
 EXPIRY = 'expiry'
 REVERT_STATE = 'revert_state'
+ITEM_SPIKE = 'spike'
+ITEM_UNSPIKE = 'unspike'
+item_operations.extend([ITEM_SPIKE, ITEM_UNSPIKE])
 
 
 class ArchiveSpikeResource(ArchiveResource):
@@ -61,7 +68,48 @@ class ArchiveUnspikeResource(ArchiveResource):
 
 class ArchiveSpikeService(BaseService):
 
+    def on_update(self, updates, original):
+        updates[ITEM_OPERATION] = ITEM_SPIKE
+        self._validate_item(original)
+        self._validate_take(original)
+        self._update_rewrite(original)
+        set_sign_off(updates, original=original)
+
+    def _validate_item(self, original):
+        """
+        Raises an exception if the item is linked in a non-take package, the idea being that you don't whant to
+        inadvertently remove the item from the packages, this force that to be done as a conscious action.
+        :param original:
+        :raise: An exception or nothing
+        """
+        if is_item_in_package(original):
+            raise SuperdeskApiError.badRequestError(
+                message="The item \"{}\" is in a package".format(original.get('slugline', '')) +
+                        " it needs to be removed before the item can be spiked")
+
+    def _validate_take(self, original):
+        takes_service = TakesPackageService()
+        if not takes_service.is_last_takes_package_item(original):
+            raise SuperdeskApiError.badRequestError(message="Only last take of the package can be spiked.")
+
+    def _update_rewrite(self, original):
+        """ Removes the reference from the rewritten story in published collection """
+        rewrite_service = ArchiveRewriteService()
+        if original.get('rewrite_of') and original.get('event_id'):
+            rewrite_service._clear_rewritten_flag(original.get('event_id'), original[config.ID_FIELD])
+
+    def _removed_refs_from_package(self, item):
+        """
+        Remove reference from the package of the spiked item
+        :param item:
+        """
+        PackageService().remove_spiked_refs_from_package(item)
+
     def update(self, id, updates, original):
+        original_state = original[ITEM_STATE]
+        if not is_workflow_state_transition_valid('spike', original_state):
+            raise InvalidStateTransitionError()
+
         user = get_user(required=True)
 
         item = get_resource_service(ARCHIVE).find_one(req=None, _id=id)
@@ -73,12 +121,21 @@ class ArchiveSpikeService(BaseService):
             expiry_minutes = desk.get('spike_expiry', expiry_minutes)
 
         updates[EXPIRY] = get_expiry_date(expiry_minutes)
-        updates[REVERT_STATE] = item.get(app.config['CONTENT_STATE'], None)
+        updates[REVERT_STATE] = item.get(ITEM_STATE, None)
+
+        if original.get('rewrite_of'):
+            updates['rewrite_of'] = None
+
+        if original.get('broadcast'):
+            updates['broadcast'] = None
 
         item = self.backend.update(self.datasource, id, updates, original)
-        push_notification('item:spike', item=str(item.get('_id')), user=str(user))
-
+        push_notification('item:spike', item=str(item.get(config.ID_FIELD)), user=str(user))
+        self._removed_refs_from_package(id)
         return item
+
+    def on_updated(self, updates, original):
+        get_resource_service('archive_broadcast').spike_item(original)
 
 
 class ArchiveUnspikeService(BaseService):
@@ -88,7 +145,8 @@ class ArchiveUnspikeService(BaseService):
 
         :param doc: document to unspike
         """
-        updates = {REVERT_STATE: None, EXPIRY: None, 'state': doc.get(REVERT_STATE)}
+        updates = {REVERT_STATE: None, EXPIRY: None, 'state': doc.get(REVERT_STATE),
+                   ITEM_OPERATION: ITEM_UNSPIKE}
 
         desk_id = doc.get('task', {}).get('desk')
         if desk_id:
@@ -102,7 +160,14 @@ class ArchiveUnspikeService(BaseService):
         updates['expiry'] = get_expiry(desk_id=desk_id)
         return updates
 
+    def on_update(self, updates, original):
+        updates[ITEM_OPERATION] = ITEM_UNSPIKE
+        set_sign_off(updates, original=original)
+
     def update(self, id, updates, original):
+        original_state = original[ITEM_STATE]
+        if not is_workflow_state_transition_valid('unspike', original_state):
+            raise InvalidStateTransitionError()
         user = get_user(required=True)
 
         item = get_resource_service(ARCHIVE).find_one(req=None, _id=id)
@@ -119,7 +184,7 @@ superdesk.workflow_state('spiked')
 
 superdesk.workflow_action(
     name='spike',
-    exclude_states=['spiked', 'published', 'killed'],
+    exclude_states=['spiked', 'published', 'scheduled', 'corrected', 'killed'],
     privileges=['spike']
 )
 

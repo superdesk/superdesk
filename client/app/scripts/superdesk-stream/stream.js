@@ -1,7 +1,7 @@
 (function() {
-	'use strict';
+    'use strict';
 
-	var app = angular.module('superdesk.stream', [
+    var app = angular.module('superdesk.stream', [
         'superdesk.activity',
         'superdesk.asset'
     ]);
@@ -52,14 +52,14 @@
     }])
 
     .directive('sdActivityStream', ['asset', function(asset) {
-       return {
-          scope: {
-            activities: '=',
-            max_results: '=maxResults',
-            loadMore: '&'
-          },
-          templateUrl: asset.templateUrl('superdesk-stream/views/activity-stream.html')
-       };
+        return {
+            scope: {
+                activities: '=',
+                max_results: '=maxResults',
+                loadMore: '&'
+            },
+            templateUrl: asset.templateUrl('superdesk-stream/views/activity-stream.html')
+        };
     }])
 
     .directive('sdActivityMessage', [function() {
@@ -69,7 +69,7 @@
             },
             template:'{{display_message}}',
             link: function(scope, element, attrs) {
-               if (scope.activity.name !== 'notify') {
+                if (scope.activity.name !== 'notify') {
                     scope.display_message = scope.activity.message;
                     for (var tag in scope.activity.data) {
                         if (scope.activity.data.hasOwnProperty(tag)) {
@@ -78,7 +78,7 @@
                                 scope.display_message.replace(tagRegex, scope.activity.data[tag]);
                         }
                     }
-               }
+                }
             }
         };
     }])
@@ -88,8 +88,7 @@
             label: gettext('Workspace'),
             controller: 'StreamController',
             templateUrl: asset.templateUrl('superdesk-stream/views/workspace-stream.html'),
-            topTemplateUrl: asset.templateUrl('superdesk-dashboard/views/workspace-topnav.html'),
-            beta: true
+            topTemplateUrl: asset.templateUrl('superdesk-dashboard/views/workspace-topnav.html')
         });
     }]);
 })();

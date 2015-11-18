@@ -20,7 +20,7 @@ define([
                         return $q.when({username: USERNAME});
                     }
                 };
-           });
+            });
             $provide.service('auth', AuthService);
             $provide.service('session', SessionService);
             $provide.service('authAdapter', AuthAdapterMock);
@@ -75,11 +75,17 @@ define([
 
     /**
      * Mock auth adapter which will authenticate admin:admin and fail otherwise
+     *
+     * @param {object} $q
      */
     function AuthAdapterMock($q) {
 
         /**
          * Mock auth - authenticate with admin:admin
+         *
+         * @param {string} username
+         * @param {string} password
+         * @returns {Promise}
          */
         this.authenticate = function(username, password) {
             var defer = $q.defer();

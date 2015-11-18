@@ -41,6 +41,25 @@ Will start frontend on localhost:9000:
 vagrant up --provider=docker
 ```
 
+## Running Tests & Code Style Checks
+To check the code for syntax and styling issues run the following:
+
+```
+$ grunt hint
+```
+
+To run the unit tests:
+```
+$ grunt test
+```
+
+To run end-to-end tests:
+```
+$ scripts/test_e2e.sh
+```
+NOTE: the end-to-end tests might take quite some time to run.
+
+
 ## Info for contributors
 
 ### Commit messages

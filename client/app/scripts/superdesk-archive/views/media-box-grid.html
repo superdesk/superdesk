@@ -3,49 +3,52 @@
 <div ng-click="clickAction(item)">
     <div class="error-box" ng-show="item.archiveError">
         <p class="message" translate>There was an error archiving this item</p>
-        <div class="buttons">
-
-        </div>
+        <div class="buttons"></div>
     </div>
 
-    <div class="media" ng-show="item.type == 'text' || item.type == 'composite' || item.type == 'preformatted' || item.type == 'picture'">
+    <div class="media multi" ng-show="item.type == 'text' || item.type == 'composite' || item.type == 'preformatted' || item.type == 'picture'" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
         <div sd-item-rendition data-item="item" data-rendition="thumbnail"></div>
         <span class="text">
-            <small title="{{ item.headline }}">{{item.headline | truncateString: 90}}</small>
+            <small title="{{ item.headline }}">{{item.headline | limitTo: 90}}</small>
             <span sd-item-container data-item="item" class="container"></span>
         </span>
-    </div>  
+
+        <div class="selectbox" ng-if="item._type !== 'legal_archive'" ng-show="hover || item.selected">
+            <span sd-check ng-model="item.selected" ng-change="toggleSelected(item)"></span>
+        </div>
+    </div>
 
     <div class="media" ng-show="item.type == 'audio' || item.type == 'video'">
         <i class="filetype-icon-large-{{ item.type}}"></i>
     </div>
 
     <div class="media-info">
-        <h5 ng-show="item.slugline">{{ item.slugline }}</h5>
-        <h5 ng-show="!item.slugline">{{ item.type | translate }}</h5>
+        <h5>
+            <span ng-show="item.slugline">{{ item.slugline }}</span>
+            <span ng-show="!item.slugline">{{ item.type | translate }}</span>
+        </h5>
 
         <dl>
             <dt class="source"><span translate>source:</span></dt>
-            <dd class="provider" sd-meta-ingest data-provider="item.ingest_provider"></dd>
+            <dd class="provider" sd-meta-ingest data-item="item"></dd>
             <dt translate>updated</dt>
             <dd><time datetime="{{ item.versioncreated }}" title="{{ item.versioncreated|date:'medium' }}">{{ item.versioncreated|reldate }}</time></dd>
             <dt ng-show="item.is_spiked" translate>expires</dt>
             <dd ng-if="item.is_spiked"><time title="{{ item.expiry | date:'medium' }}">{{ item.expiry | reldate }}</time></dd>
         </dl>
+
+        <div ng-if="item.marked_for_not_publication" class="state-label not-for-publication" translate>Not for publication</div>       
+
         <div ng-if="item.archived" class="fetched-desk"><div sd-fetched-desks data-item="item"></div></div>
+        
+        <div class="highlights-box" ng-if="item.highlights" sd-highlights-title data-item="item"></div>
     </div>
 
     <span class="type-icon"><i class="filetype-icon-{{item.type}}"></i></span>
-    <span class="urgency-label"><i class="urgency-icon-{{item.urgency}}"></i></span>
-
-    <div class="state-label state-{{item.state}}">{{item.state}}</div>
-</div>
-
-<div class="action">
-    <ul ng-if="extras.activity" class="item-functions"
-        sd-activity-list
-        data-item="item"
-        data-type="{{ spike ? 'spike' : (type || item._type)}}"
-        data-action="{{extras.activity.action}}">
-    </ul>
+    <span class="priority-label priority-label--{{item.priority}}">{{item.priority}}</span>
+    <span class="urgency-label urgency-label--{{item.urgency}}">{{ item.urgency }}</span>
+    <span class="broadcast-status" tooltip="{{item.broadcast.status}}" ng-if="item.broadcast.status">!</span>
+    <div class="state-label state-{{item.state}}" ng-class="{state_embargo: item.embargo}">{{item.state}}</div>
+    
+    <div class="item-right toolbox" sd-item-actions-menu data-item="item" data-active="focused"></div>
 </div>

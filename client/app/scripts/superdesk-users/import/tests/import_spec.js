@@ -17,12 +17,12 @@ describe('user import', function() {
         var success = jasmine.createSpy('success'),
             error = jasmine.createSpy('error');
 
-        spyOn(api, 'save').and.returnValue($q.reject({status: 404, data:{_message:'test'}}));
+        spyOn(api, 'save').and.returnValue($q.reject({status: 404, data: {_message: 'test'}}));
 
         userImport.importUser({}).then(success, error);
         $rootScope.$digest();
 
         expect(success).not.toHaveBeenCalled();
-        expect(error).toHaveBeenCalledWith({profile_to_import: 1, message:'test'});
+        expect(error).toHaveBeenCalledWith({profile_to_import: 1, message: 'test'});
     }));
 });

@@ -1,3 +1,5 @@
 alpha
 beta
 gamma
+alpha
+Aplha

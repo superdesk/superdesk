@@ -11,59 +11,38 @@
 from superdesk.resource import Resource
 
 
-base_dictionary_schema = {
-    'name': {
-        'type': 'string',
-        'unique': True,
-        'required': True
-    },
-    'language_id': {
-        'type': 'string',
-        'required': True
-    },
-    'language_name': {
-        'type': 'string',
-        'required': True
-    }
-}
+DICTIONARY_FILE = 'file'
 
 
 class DictionariesResource(Resource):
     '''
     Dictionaries schema
     '''
-    schema = base_dictionary_schema
-    schema.update({'content': {'type': 'list'}})
-    datasource = {
-        'source': 'dictionaries',
-        'projection': {
-            'name': 1,
-            'language_id': 1,
-            'language_name': 1,
-            '_created': 1,
-            '_updated': 1,
-            '_etag': 1
-        }
+    schema = {
+        'name': {
+            'type': 'string',
+            'required': True
+        },
+        'language_id': {
+            'type': 'string',
+            'required': True
+        },
+        'content': {
+            'type': 'dict',
+        },
+        'content_list': {
+            'type': 'string',
+        },
+        DICTIONARY_FILE: {
+            'type': 'file',
+        },
+        'user': Resource.rel('users', nullable=True),
+        'is_active': {
+            'type': 'string',
+            'default': 'true',
+        },
     }
-    item_methods = ['GET', 'PATCH', 'DELETE']
+    item_methods = ['GET', 'PATCH', 'PUT', 'DELETE']
     resource_methods = ['GET', 'POST', 'DELETE']
     privileges = {'POST': 'dictionaries', 'PATCH': 'dictionaries', 'DELETE': 'dictionaries'}
-
-
-class DictionaryUploadResource(Resource):
-    schema = base_dictionary_schema
-    schema.update({'dictionary_file': {'type': 'file', 'required': True}})
-    datasource = {
-        'source': 'dictionaries',
-        'projection': {
-            'name': 1,
-            'language_id': 1,
-            'language_name': 1,
-            '_created': 1,
-            '_updated': 1,
-            '_etag': 1
-        }
-    }
-    item_methods = ['PATCH', 'GET', 'DELETE']
-    resource_methods = ['POST']
-    privileges = {'POST': 'dictionaries', 'PATCH': 'dictionaries'}
+    etag_ignore_fields = ['content', 'content_list']

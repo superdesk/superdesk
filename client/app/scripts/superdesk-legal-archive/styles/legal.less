@@ -1,0 +1,84 @@
+// search.less
+// Styling for search page, and search functionalities
+// ----------------------------------------------------------------------------------------
+@import 'mixins.less';
+@import 'variables.less';
+
+.search-page-container {
+	.search-page-header {
+		display: flex;
+		position: relative;
+		> div {
+			flex: 0 0 auto;
+		}
+    }
+}
+
+.item-searchbar {
+	border-left: 1px solid #dfdfdf;
+	position: relative;
+
+	&.focused {
+		border-right: 1px solid #dfdfdf;
+		background: @white;
+	}
+	.search-icon {
+		.user-select(none);
+		width: 28px;
+		height: 28px;
+		display: inline-block;
+		background: url(../../images/search-icon.png) no-repeat 5px 5px;
+		.opacity(85);
+		&:hover {
+			cursor: pointer;
+			.opacity(100);
+		}
+	}
+
+	.button {
+		position: absolute;
+		width: @nav-height;
+		height: @nav-height;
+		background-position: center;
+		top: 0;
+		border: 0;
+		margin: 0;
+	}
+
+	input {
+		height: @nav-height;
+		line-height: 100%;
+		font-size: 14px;
+		border: 0 !important;
+		padding: 0 @nav-height;
+
+		background: none;
+		&:focus, &:active {
+			.box-shadow(none) !important;
+		}
+		&::-webkit-input-placeholder {
+			line-height: 22px;
+		}
+	}
+
+	.trigger {
+		right: 0;
+		background: none;
+	}
+
+	.search-cancel {
+		position: absolute;
+		top: 20px; right: 65px;
+		background: #d0d0d0;
+		.border-radius(50%);
+		border: 0;
+		padding: 0px 5px 2px 4px;
+  		zoom: 0.8;
+		i {
+			margin: -1px 1px 0 -2px;
+		}
+		&:hover {
+			background: #ababab;
+		}
+	}
+}

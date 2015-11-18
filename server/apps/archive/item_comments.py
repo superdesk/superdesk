@@ -11,7 +11,7 @@
 import superdesk
 from superdesk.resource import Resource
 from superdesk.services import BaseService
-from superdesk.comments import CommentsService, CommentsResource, comments_schema
+from apps.comments import CommentsService, CommentsResource, comments_schema
 from superdesk.errors import SuperdeskApiError
 
 

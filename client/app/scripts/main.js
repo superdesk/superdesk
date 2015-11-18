@@ -23,19 +23,26 @@ define('angular', [], function() {
 define('main', [
     'gettext',
     'angular',
-    'superdesk/superdesk'
-], function(gettext, angular, superdesk) {
+    'superdesk/superdesk',
+    'lodash'
+], function(gettext, angular, superdesk, _) {
     'use strict';
 
     return function bootstrap(config, apps) {
 
         apps.unshift(superdesk.name);
         superdesk.constant('config', config);
+        superdesk.constant('lodash', _);
+
+        // setup default route for superdesk - set it here to avoid it being used in unit tests
+        superdesk.config(['$routeProvider', function($routeProvider) {
+            $routeProvider.when('/', {redirectTo: '/workspace'});
+        }]);
 
         // load apps & bootstrap
         var body = angular.element('body');
         body.ready(function() {
-            angular.bootstrap(body, apps);
+            angular.bootstrap(body, apps, {strictDi: true});
             window.superdeskIsReady = true;
         });
     };

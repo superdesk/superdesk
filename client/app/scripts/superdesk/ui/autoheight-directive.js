@@ -3,17 +3,17 @@ define([
 ], function(angular) {
     'use strict';
 
-        /**
-         * Gives auto height while typing on textarea elements
-         *
-         * Usage:
-         * <div sd-auto-height></div>
-         *
-         * Source:
-         * https://github.com/monospaced/angular-elastic/blob/master/elastic.js
-         *
-         */
-        return ['$window', function($window) {
+    /**
+     * Gives auto height while typing on textarea elements
+     *
+     * Usage:
+     * <div sd-auto-height></div>
+     *
+     * Source:
+     * https://github.com/monospaced/angular-elastic/blob/master/elastic.js
+     *
+     */
+    return ['$window', function($window) {
             return {
                 require: 'ngModel',
                 restrict: 'A, C',
@@ -25,14 +25,14 @@ define([
 
                     // ensure the element is a textarea, and browser is capable
                     if (ta.nodeName !== 'TEXTAREA' || !$window.getComputedStyle) {
-                      return;
+                        return;
                     }
 
                     // set these properties before measuring dimensions
                     $ta.css({
-                      'overflow': 'hidden',
-                      'overflow-y': 'hidden',
-                      'word-wrap': 'break-word'
+                        'overflow': 'hidden',
+                        'overflow-y': 'hidden',
+                        'word-wrap': 'break-word'
                     });
 
                     // force text reflow
@@ -64,17 +64,17 @@ define([
 
                     // exit if elastic already applied (or is the mirror element)
                     if ($ta.attr('elastic')) {
-                      return;
+                        return;
                     }
 
                     // append mirror to the DOM
                     if (mirror.parentNode !== document.body) {
-                      angular.element(document.body).append(mirror);
+                        angular.element(document.body).append(mirror);
                     }
 
                     // set resize and apply elastic
                     $ta.css({
-                      'resize': 'none'
+                        'resize': 'none'
                     });
                     $ta.attr('elastic', true);
 
@@ -82,95 +82,95 @@ define([
                      * methods
                      */
                     function initMirror() {
-                      mirrored = ta;
-                      taStyle = $window.getComputedStyle(ta);
-                      borderBox = taStyle.getPropertyValue('box-sizing') === 'border-box' ||
+                        mirrored = ta;
+                        taStyle = $window.getComputedStyle(ta);
+                        borderBox = taStyle.getPropertyValue('box-sizing') === 'border-box' ||
                                   taStyle.getPropertyValue('-moz-box-sizing') === 'border-box' ||
                                   taStyle.getPropertyValue('-webkit-box-sizing') === 'border-box';
-                      boxOuter = !borderBox ? {width: 0, height: 0} : {
-                        width:  parseInt(taStyle.getPropertyValue('border-right-width'), 10) +
-                                parseInt(taStyle.getPropertyValue('padding-right'), 10) +
-                                parseInt(taStyle.getPropertyValue('padding-left'), 10) +
-                                parseInt(taStyle.getPropertyValue('border-left-width'), 10),
-                        height: parseInt(taStyle.getPropertyValue('border-top-width'), 10) +
-                                parseInt(taStyle.getPropertyValue('padding-top'), 10) +
-                                parseInt(taStyle.getPropertyValue('padding-bottom'), 10) +
-                                parseInt(taStyle.getPropertyValue('border-bottom-width'), 10)
-                      };
-                      minHeightValue = parseInt(taStyle.getPropertyValue('min-height'), 10);
-                      heightValue = parseInt(taStyle.getPropertyValue('height'), 10);
-                      minHeight = Math.max(minHeightValue, heightValue) - boxOuter.height;
-                      maxHeight = parseInt(taStyle.getPropertyValue('max-height'), 10);
+                        boxOuter = !borderBox ? {width: 0, height: 0} : {
+                            width:  parseInt(taStyle.getPropertyValue('border-right-width'), 10) +
+                                    parseInt(taStyle.getPropertyValue('padding-right'), 10) +
+                                    parseInt(taStyle.getPropertyValue('padding-left'), 10) +
+                                    parseInt(taStyle.getPropertyValue('border-left-width'), 10),
+                            height: parseInt(taStyle.getPropertyValue('border-top-width'), 10) +
+                                    parseInt(taStyle.getPropertyValue('padding-top'), 10) +
+                                    parseInt(taStyle.getPropertyValue('padding-bottom'), 10) +
+                                    parseInt(taStyle.getPropertyValue('border-bottom-width'), 10)
+                        };
+                        minHeightValue = parseInt(taStyle.getPropertyValue('min-height'), 10);
+                        heightValue = parseInt(taStyle.getPropertyValue('height'), 10);
+                        minHeight = Math.max(minHeightValue, heightValue) - boxOuter.height;
+                        maxHeight = parseInt(taStyle.getPropertyValue('max-height'), 10);
                     }
 
                     function setMirrorStyle() {
-                      taStyle = $window.getComputedStyle(ta);
-                      mirrorStyle = mirrorStyle_basic;
-                      angular.forEach(copyStyle, function(val) {
-                        mirrorStyle += val + ':' + taStyle[val] + ';';
-                      });
+                        taStyle = $window.getComputedStyle(ta);
+                        mirrorStyle = mirrorStyle_basic;
+                        angular.forEach(copyStyle, function(val) {
+                            mirrorStyle += val + ':' + taStyle[val] + ';';
+                        });
 
-                      mirror.setAttribute('style', mirrorStyle);
+                        mirror.setAttribute('style', mirrorStyle);
                     }
 
                     function adjust() {
 
-                      var taHeight,
-                          taComputedStyleWidth,
-                          mirrorHeight,
-                          width,
-                          overflow;
+                        var taHeight,
+                            taComputedStyleWidth,
+                            mirrorHeight,
+                            width,
+                            overflow;
 
-                      if (mirrored !== ta) {
-                        initMirror();
-                      }
-
-                      setMirrorStyle();
-
-                      // active flag prevents actions in function from calling adjust again
-                      if (!active) {
-                        active = true;
-
-                        mirror.value = ta.value; // optional whitespace to improve animation
-                        mirror.style.overflowY = ta.style.overflowY;
-
-                        taHeight = ta.style.height === '' ? 'auto' : parseInt(ta.style.height, 10);
-
-                        taComputedStyleWidth = $window.getComputedStyle(ta).getPropertyValue('width');
-
-                        // ensure getComputedStyle has returned a readable 'used value' pixel width
-                        if (taComputedStyleWidth.substr(taComputedStyleWidth.length - 2, 2) === 'px') {
-                          // update mirror width in case the textarea width has changed
-                          width = parseInt(taComputedStyleWidth, 10) - boxOuter.width;
-                          mirror.style.width = width + 'px';
+                        if (mirrored !== ta) {
+                            initMirror();
                         }
 
-                        mirrorHeight = mirror.scrollHeight;
+                        setMirrorStyle();
 
-                        if (mirrorHeight > maxHeight) {
-                          mirrorHeight = maxHeight;
-                          overflow = 'scroll';
-                        } else if (mirrorHeight < minHeight) {
-                          mirrorHeight = minHeight;
+                        // active flag prevents actions in function from calling adjust again
+                        if (!active) {
+                            active = true;
+
+                            mirror.value = ta.value; // optional whitespace to improve animation
+                            mirror.style.overflowY = ta.style.overflowY;
+
+                            taHeight = ta.style.height === '' ? 'auto' : parseInt(ta.style.height, 10);
+
+                            taComputedStyleWidth = $window.getComputedStyle(ta).getPropertyValue('width');
+
+                            // ensure getComputedStyle has returned a readable 'used value' pixel width
+                            if (taComputedStyleWidth.substr(taComputedStyleWidth.length - 2, 2) === 'px') {
+                                // update mirror width in case the textarea width has changed
+                                width = parseInt(taComputedStyleWidth, 10) - boxOuter.width;
+                                mirror.style.width = width + 'px';
+                            }
+
+                            mirrorHeight = mirror.scrollHeight;
+
+                            if (mirrorHeight > maxHeight) {
+                                mirrorHeight = maxHeight;
+                                overflow = 'scroll';
+                            } else if (mirrorHeight < minHeight) {
+                                mirrorHeight = minHeight;
+                            }
+                            mirrorHeight += boxOuter.height;
+
+                            ta.style.overflowY = overflow || 'hidden';
+
+                            if (taHeight !== mirrorHeight) {
+                                ta.style.height = mirrorHeight + 'px';
+                            }
+
+                            // small delay to prevent an infinite loop
+                            _.delay(function() {
+                                active = false;
+                            }, 1);
                         }
-                        mirrorHeight += boxOuter.height;
-
-                        ta.style.overflowY = overflow || 'hidden';
-
-                        if (taHeight !== mirrorHeight) {
-                          ta.style.height = mirrorHeight + 'px';
-                        }
-
-                        // small delay to prevent an infinite loop
-                        _.delay(function() {
-                          active = false;
-                        }, 1);
-                      }
                     }
 
                     function forceAdjust() {
-                      active = false;
-                      adjust();
+                        active = false;
+                        adjust();
                     }
 
                     /*
@@ -179,20 +179,20 @@ define([
 
                     // listen
                     if ('onpropertychange' in ta && 'oninput' in ta) {
-                      // IE9
-                      ta.oninput = ta.onkeyup = adjust;
+                        // IE9
+                        ta.oninput = ta.onkeyup = adjust;
                     } else {
-                      ta.oninput = adjust;
+                        ta.oninput = adjust;
                     }
 
                     $win.bind('resize', forceAdjust);
 
                     scope.$watch(function() {
-                      return ngModel.$modelValue;
+                        return ngModel.$modelValue;
                     }, function(newval, oldval) {
-                      if (newval !== oldval) {
-                        forceAdjust();
-                      }
+                        if (newval !== oldval) {
+                            forceAdjust();
+                        }
                     });
 
                     _.defer(adjust);
@@ -202,8 +202,8 @@ define([
                      */
 
                     scope.$on('$destroy', function() {
-                      $mirror.remove();
-                      $win.unbind('resize', forceAdjust);
+                        $mirror.remove();
+                        $win.unbind('resize', forceAdjust);
                     });
                 }
             };

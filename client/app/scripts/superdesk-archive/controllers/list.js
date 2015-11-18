@@ -5,20 +5,19 @@ define([
     'use strict';
 
     ArchiveListController.$inject = [
-        '$scope', '$injector', '$location', '$timeout',
-        'superdesk', 'session', 'api', 'desks', 'ContentCtrl', 'StagesCtrl'
+        '$scope', '$injector', '$location', '$q', '$timeout', 'superdesk',
+        'session', 'api', 'desks', 'content', 'StagesCtrl', 'notify', 'multi'
     ];
-    function ArchiveListController($scope, $injector, $location, $timeout, superdesk, session, api, desks, ContentCtrl, StagesCtrl) {
+    function ArchiveListController($scope, $injector, $location, $q, $timeout, superdesk, session, api, desks, content,
+        StagesCtrl, notify, multi) {
 
         var resource,
-            timeout,
             self = this;
 
         $injector.invoke(BaseListController, this, {$scope: $scope});
-
         $scope.currentModule = 'archive';
         $scope.stages = new StagesCtrl($scope);
-        $scope.content = new ContentCtrl($scope);
+        $scope.content = content;
         $scope.type = 'archive';
         $scope.repo = {
             ingest: false,
@@ -26,8 +25,24 @@ define([
         };
         $scope.loading = false;
         $scope.spike = !!$location.search().spike;
+        $scope.published = !!$location.search().published;
+
+        $scope.togglePublished = function togglePublished() {
+            if ($scope.spike) {
+                $scope.toggleSpike();
+            }
+
+            $scope.published = !$scope.published;
+            $location.search('published', $scope.published ? '1' : null);
+            $location.search('_id', null);
+            $scope.stages.select(null);
+        };
 
         $scope.toggleSpike = function toggleSpike() {
+            if ($scope.published) {
+                $scope.togglePublished();
+            }
+
             $scope.spike = !$scope.spike;
             $location.search('spike', $scope.spike ? 1 : null);
             $location.search('_id', null);
@@ -38,11 +53,13 @@ define([
             if ($scope.spike) {
                 $scope.toggleSpike();
             }
-            $scope.stages.select(stage);
-        };
 
-        $scope.openUpload = function openUpload() {
-            superdesk.intent('upload', 'media');
+            if ($scope.published) {
+                $scope.togglePublished();
+            }
+
+            $scope.stages.select(stage);
+            multi.reset();
         };
 
         this.fetchItems = function fetchItems(criteria) {
@@ -58,14 +75,27 @@ define([
             });
         };
 
-        function refreshItems() {
-            $timeout.cancel(timeout);
-            timeout = $timeout(_refresh, 100, false);
-        }
+        this.fetchItem = function fetchItem(id) {
+            if (resource == null) {
+                return $q.reject(id);
+            }
+
+            return resource.getById(id);
+        };
+
+        var refreshPromise,
+            refreshItems = function() {
+                $timeout.cancel(refreshPromise);
+                refreshPromise = $timeout(_refresh, 100, false);
+            };
 
         function _refresh() {
-            if (desks.activeDeskId) {
-                resource = api('archive');
+            if (desks.active.desk) {
+                if ($scope.published) {
+                    resource = api('published');
+                } else {
+                    resource = api('archive');
+                }
             } else {
                 resource = api('user_content', session.identity);
             }
@@ -82,29 +112,31 @@ define([
         }
 
         $scope.$on('task:stage', function(_e, data) {
-        	if ($scope.stages.selected && (
+            if ($scope.stages.selected && (
                 $scope.stages.selected._id === data.new_stage ||
                 $scope.stages.selected._id === data.old_stage)) {
-        		refreshItems();
-        	}
+                refreshItems();
+            }
         });
 
         $scope.$on('media_archive', refreshItems);
         $scope.$on('item:fetch', refreshItems);
         $scope.$on('item:copy', refreshItems);
+        $scope.$on('item:take', refreshItems);
         $scope.$on('item:duplicate', refreshItems);
-        $scope.$on('item:created', refreshItems);
-        $scope.$on('item:updated', refreshItems);
-        $scope.$on('item:replaced', refreshItems);
+        $scope.$on('content:update', refreshItems);
         $scope.$on('item:deleted', refreshItems);
-        $scope.$on('item:spike', refreshItems);
+        $scope.$on('item:highlight', refreshItems);
+        $scope.$on('item:spike', reset);
         $scope.$on('item:unspike', reset);
+        $scope.$on('item:published:no_post_publish_actions', refreshItems);
 
         desks.fetchCurrentUserDesks().then(function() {
             // only watch desk/stage after we get current user desk
             $scope.$watch(function() {
                 return desks.active;
             }, function(active) {
+                $scope.selected = active;
                 if ($location.search().page) {
                     $location.search('page', null);
                     return; // will reload via $routeUpdate
@@ -115,9 +147,9 @@ define([
         });
 
         // reload on route change if there is still the same _id
-        var oldQuery = _.omit($location.search(), '_id');
+        var oldQuery = _.omit($location.search(), '_id', 'fetch');
         $scope.$on('$routeUpdate', function(e, route) {
-            var query = _.omit($location.search(), '_id');
+            var query = _.omit($location.search(), '_id', 'fetch');
             if (!angular.equals(oldQuery, query)) {
                 refreshItems();
             }

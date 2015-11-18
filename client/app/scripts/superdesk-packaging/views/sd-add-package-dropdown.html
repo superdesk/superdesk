@@ -1,0 +1,7 @@
+<ul>
+    <li ng-repeat="group in groupList track by $index">
+        <button option="{{::group}}" ng-click="select(group);">
+                 <i class="icon-plus"></i>{{::group}}
+            </button>
+    </li>
+</ul>

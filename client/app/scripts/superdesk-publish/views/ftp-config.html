@@ -1,0 +1,20 @@
+<div class="field">
+    <label for="ftp_host" translate>Host</label>
+    <input type="text" id="ftp_host" placeholder="{{ :: 'FTP Server URL'|translate }}" ng-model="destination.config.host" required ng-change="$parent.setConfig(destination)">
+</div>
+<div class="field">
+    <label for="ftp_username" translate>Username</label>
+    <input type="text" id="ftp_username" placeholder="{{ :: 'Username'|translate }}" ng-model="destination.config.username" ng-change="$parent.setConfig(destination)">
+</div>
+<div class="field">
+    <label for="ftp_password" translate>Password</label>
+    <input type="text" id="ftp_password" placeholder="{{ :: 'Password'|translate }}" ng-model="destination.config.password" ng-change="$parent.setConfig(destination)">
+</div>
+<div class="field">
+    <label for="ftp_path" translate>Path</label>
+    <input type="text" id="ftp_path" placeholder="{{ :: 'FTP Server Path'|translate }}" ng-model="destination.config.path" ng-change="$parent.setConfig(destination)">
+</div>
+<div class="field">
+    <label for="ftp_dest_path" translate>Local Path</label>
+    <input type="text" id="ftp_dest_path" placeholder="{{ :: 'Local Path'|translate }}" ng-model="destination.config.dest_path" required ng-change="$parent.setConfig(destination)">
+</div>

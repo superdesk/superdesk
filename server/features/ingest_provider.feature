@@ -17,6 +17,7 @@ Feature: Ingest Provider
           "name": "reuters 4",
           "source": "reuters",
           "is_closed": false,
+          "content_expiry": 0,
           "config": {"username": "foo", "password": "bar"}
         }]
 	    """
@@ -35,13 +36,16 @@ Feature: Ingest Provider
               "on_error": true,
               "on_close": true,
               "on_open": true
+          },
+          "last_opened": {
+              "opened_by": "#CONTEXT_USER_ID#"
           }
         }]}
 	    """
         When we get "/activity/"
         Then we get existing resource
         """
-        {"_items": [{"data": {"name": "reuters 4"}, "message": "created Ingest Channel {{name}}"}]}
+        {"_items": [{"data": {"name": "reuters 4"}, "message": "Created Ingest Channel {{name}}"}]}
         """
         Then we get notifications
         """
@@ -53,9 +57,30 @@ Feature: Ingest Provider
         Then we get emails
         """
         [
-          {"body": "created Ingest Channel reuters 4"}
+          {"body": "Created Ingest Channel reuters 4"}
         ]
 
+        """
+
+    @auth
+    Scenario: Update ingest_provider aliases
+        Given "ingest_providers"
+	    """
+        [{
+            "config": {"field_aliases": [{"content": "body_text"}]},
+            "is_closed": false,
+            "name": "reuters 4",
+            "source": "reuters",
+            "type": "reuters"
+        }]
+	    """
+        When we patch "/ingest_providers/#ingest_providers._id#"
+        """
+        {"config": {"field_aliases": [{"summary": "summary_alias"}, {"title": "headline"}]}}
+        """
+        Then expect json in "config/field_aliases"
+        """
+        [{"summary": "summary_alias"}, {"title": "headline"}]
         """
 
     @auth
@@ -73,11 +98,11 @@ Feature: Ingest Provider
 	    """
         When we patch "/ingest_providers/#ingest_providers._id#"
         """
-        {"name":"the test of the test ingest_provider modified"}
+        {"name":"the test of the test ingest_provider modified", "content_expiry": 0}
         """
         Then we get updated response
         """
-        {"name":"the test of the test ingest_provider modified"}
+        {"name":"the test of the test ingest_provider modified", "content_expiry": 2880}
         """
         When we get "/activity/"
         Then we get existing resource
@@ -97,6 +122,29 @@ Feature: Ingest Provider
         ]
 
         """
+
+    @auth
+    @notification
+    Scenario: Update critical errors for ingest_provider
+        Given "ingest_providers"
+	    """
+        [{
+        "type": "reuters",
+        "name": "reuters 4",
+        "source": "reuters",
+        "is_closed": false,
+        "config": {"username": "foo", "password": "bar"}
+        }]
+	    """
+        When we patch "/ingest_providers/#ingest_providers._id#"
+        """
+        {"critical_errors":{"6000":true, "6001":true}}
+        """
+        Then we get updated response
+        """
+        {"critical_errors":{"6000":true, "6001":true}}
+        """
+
 
     @auth
     @notification
@@ -181,7 +229,7 @@ Feature: Ingest Provider
         """
          {"_items": [{"data": {"name": "the test of the test ingest_provider modified"}, "message": "updated Ingest Channel {{name}}"}]}
         """
-        Then we get no email
+        Then we get 0 emails
         When we patch "/ingest_providers/#ingest_providers._id#"
         """
         {"is_closed": true}
@@ -195,7 +243,7 @@ Feature: Ingest Provider
         """
          {"_items": [{"data": {"name": "the test of the test ingest_provider modified", "status": "closed"}, "message": "{{status}} Ingest Channel {{name}}"}]}
         """
-        Then we get no email
+        Then we get 0 emails
         When we patch "/ingest_providers/#ingest_providers._id#"
         """
         {"is_closed": false}
@@ -209,4 +257,44 @@ Feature: Ingest Provider
         """
          {"_items": [{"data": {"name": "the test of the test ingest_provider modified", "status": "opened"}, "message": "{{status}} Ingest Channel {{name}}"}]}
         """
-        Then we get no email
+        Then we get 0 emails
+
+    @auth
+    @notification
+    Scenario: Delete an Ingest Provider which hasn't received items
+        Given empty "ingest_providers"
+        When we post to "ingest_providers"
+	    """
+        [{
+          "type": "reuters", "name": "reuters 4", "source": "reuters", "is_closed": false
+        }]
+	    """
+        And we get "/ingest_providers"
+        Then we get list with 1 items
+        When we delete "/ingest_providers/#ingest_providers._id#"
+        Then we get deleted response
+        When we get "/activity/"
+        Then we get existing resource
+        """
+        {"_items": [{"data": {"name": "reuters 4"}, "message": "Deleted Ingest Channel {{name}}"}]}
+        """
+        And we get notifications
+        """
+        [
+          {"event": "activity", "extra": {"_dest": {"#CONTEXT_USER_ID#": 0}}},
+          {"event": "ingest_provider:delete", "extra": {"provider_id": "#ingest_providers._id#"}}
+        ]
+        """
+
+    @auth @notification
+    Scenario: Disabled/Inactive Administrators don't receive emails when an Ingest Provider is created
+        Given empty "ingest_providers"
+        When we post to "/users"
+        """
+        {"username": "foo", "email": "foo@bar.com", "sign_off": "fb", "user_type": "administrator", "is_active": false, "is_enabled": false}
+        """
+        And we post to "ingest_providers"
+	    """
+        [{"type": "reuters", "name": "reuters 4", "source": "reuters", "is_closed": false, "content_expiry": 0, "config": {"username": "foo", "password": "bar"}}]
+	    """
+        Then we get 1 emails

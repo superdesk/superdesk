@@ -1,0 +1,15 @@
+<div ng-controller="AggregateCtrl as agg" ng-init="agg.setWidget(widget)">
+    <div ng-if="!agg.loading" ng-init="agg.edit()" class="wrapped"
+         sd-aggregate-settings
+         data-desks="agg.desks" 
+         data-desk-stages="agg.deskStages"
+         data-searches="agg.searches"
+         data-desk-lookup="agg.deskLookup" 
+         data-stage-lookup="agg.stageLookup"
+         data-search-lookup="agg.searchLookup"
+         data-groups="agg.groups"
+         data-edit-groups="agg.editGroups"
+         data-onclose="$close()"
+         data-widget="widget">
+    </div>
+</div>

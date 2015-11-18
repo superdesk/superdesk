@@ -1,12 +1,42 @@
-<div class="term-editor data visible">
-	<div sd-typeahead items="terms" term="selectedTerm" search="searchTerms(term)" select="selectTerm(item)" data-disabled="disabled">
-		<ul>
-			<li typeahead-item="t" ng-repeat="t in terms">{{ t.name }}</li>
-		</ul>
-	</div>
+<div class="term-editor data visible" ng-show="!header">
+    <div sd-typeahead items="terms" term="selectedTerm" search="searchTerms(term)" select="selectTerm(item)" data-disabled="disabled">
+        <ul>
+            <li typeahead-item="t" ng-repeat="t in terms ">{{ :: t.name }}</li>
+        </ul>
+    </div>
 </div>
-<div class="terms" ng-if="item[field].length">
-	<ul>
-		<li ng-repeat="t in item[field]" ng-click="removeTerm(t)">{{ t.name }}</li>
-	</ul>
+
+<div class="dropdown dropright dropdown-bigger dropdown-terms" dropdown sd-dropdown-position>
+    <button class="dropdown-toggle" dropdown-toggle ng-disabled="disabled" ng-if="header && !disabled">
+        <i class="icon-white icon-plus-large"></i>
+    </button>
+    <ul class="dropdown-menu nested-menu pull-right">
+        <li ng-show="!activeTerm && header">
+            <ul sd-typeahead items="terms" term="selectedTerm" search="searchTerms(term)" select="selectTerm(item)" always-visible="header" data-disabled="disabled">
+                <li typeahead-item="t" ng-repeat="t in terms" ng-if="!activeTree.length || activeList"><button>{{ :: t.name }}</button></li>
+            </ul>
+        </li>
+        <li class="levelup" ng-if="activeTerm">
+            <i class="backlink" ng-click="openParent(activeTerm, $event)"></i>
+            <button ng-click="selectTerm(activeTerm)">
+                <b class="category">{{ activeTerm.name }}</b>
+                <b class="category-hover">{{ :: "Choose entire category" | translate }}</b>
+            </button>
+        </li>
+        <li class="main-list" ng-if="activeTree.length && !activeList && header" ng-class="{active: activeTerm}">
+            <ul sd-shadow>
+                <li ng-repeat="term in activeTree track by term.qcode">
+                    <button ng-if="tree[term.qcode]" class="nested-toggle" ng-click="openTree(term, $event)">{{ :: term.name }} <i class="icon-chevron-right-thin submenu-icon"></i></button>
+                    <button ng-if="!tree[term.qcode]" ng-click="selectTerm(term)">{{ :: term.name }}</button>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</div>
+
+<div class="terms-list" ng-if="item[field].length">
+    <ul>
+        <li ng-if="!disabled" class="pull-left" ng-repeat="t in item[field]" ng-click="removeTerm(t)">{{ :: t.name}}<i class="icon-close-small"></i></li>
+        <li ng-if="disabled" class="pull-left disabled" ng-repeat="t in item[field]">{{ :: t.name}}</li>
+    </ul>
 </div>

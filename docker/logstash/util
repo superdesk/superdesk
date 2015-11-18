@@ -1,0 +1,3 @@
+EVERYTHING [\s\S]*
+TRACEBACK [\s]*Traceback[\s\S]*
+COMPONENT %{USERNAME}

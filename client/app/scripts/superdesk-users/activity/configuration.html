@@ -1,10 +1,10 @@
 <div ng-controller="ActivityConfigController" class="widget-config">
     <form class="form-horizontal">
         <fieldset>
-        
-            <div class="control-group">
-                <label class="control-label">{{'Number of items'|translate}}</label>
-                <div class="controls">
+
+            <div class="field">
+                <label translate>Number of items</label>
+                <div class="control">
                     <select ng-model="configuration.maxItems" class="input-mini">
                         <option value="5">5</option>
                         <option value="10">10</option>
@@ -15,7 +15,7 @@
             </div>
 
         </fieldset>
-        
+
     </form>
 
 </div>

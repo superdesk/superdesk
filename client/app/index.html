@@ -4,19 +4,15 @@
     <meta charset="utf-8">
     <title>Superdesk</title>
     <meta name="description" content="">
-    <meta name="viewport" content="width=device-width">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-    <!-- build:css styles/css/bootstrap.css -->
     <link rel="stylesheet" href="styles/css/bootstrap.css">
-    <!-- endbuild -->
-
-    <!-- build:css styles/css/app.css -->
     <link rel="stylesheet" href="styles/css/app.css">
-    <!-- endbuild -->
 
-    <!-- build:css styles/css/jquery.jcrop.css -->
+    <!-- build:css styles/css/vendor.css -->
     <link rel="stylesheet" href="scripts/bower_components/jcrop/css/jquery.Jcrop.css">
+    <link rel="stylesheet" href="scripts/bower_components/jquery-ui/themes/base/slider.css">
     <!-- endbuild -->
 
   </head>
@@ -27,11 +23,14 @@
     <!-- build:js scripts/vendor.js -->
     <script src="scripts/bower_components/jquery/dist/jquery.js"></script>
     <script src="scripts/bower_components/jquery-ui/jquery-ui.js"></script>
+    <script src="scripts/bower_components/bootstrap/dist/js/bootstrap.js"></script>
+
     <script src="scripts/bower_components/angular/angular.js"></script>
     <script src="scripts/bower_components/gridster/dist/jquery.gridster.with-extras.js"></script>
     <script src="scripts/bower_components/medium-editor/dist/js/medium-editor.js"></script>
     <script src="scripts/bower_components/ment.io/dist/mentio.js"></script>
-    
+    <script src="scripts/bower_components/rangy/rangy-core.js"></script>
+    <script src="scripts/bower_components/rangy/rangy-selectionsaverestore.js"></script>
     <script src="scripts/bower_components/requirejs/require.js"></script>
     <!-- endbuild -->
 
@@ -39,6 +38,10 @@
     <script src="scripts/superdesk/editor/editor.js"></script>
     <script src="scripts/superdesk/features/features.js"></script>
     <script src="scripts/superdesk/services/asset.js"></script>
+    <script src="scripts/superdesk/services/image-factory.js"></script>
+    <script src="scripts/superdesk/list/list.js"></script>
+    <script src="scripts/superdesk/keyboard/keyboard.js"></script>
+
     <script src="scripts/superdesk/privileges/privileges.js"></script>
     <script src="scripts/superdesk/notification/notification.js"></script>
     <script src="scripts/superdesk/itemList/itemList.js"></script>
@@ -54,14 +57,23 @@
     <script src="scripts/superdesk-users/activity/activity.js"></script>
     <script src="scripts/superdesk-users/import/import.js"></script>
     <script src="scripts/superdesk-groups/groups.js"></script>
+
+    <script src="scripts/superdesk-publish/publish.js"></script>
+    <script src="scripts/superdesk-templates/templates.js"></script>
     <!-- endbuild -->
 
+    <script src="scripts/superdesk-templates.js"></script>
+
     <!-- build:js scripts/superdesk.js -->
+    <script src="scripts/superdesk-desks/aggregate.js"></script>
+    <script src="scripts/superdesk-desks/aggregate-widget/aggregate.js"></script>
     <script src="scripts/superdesk-desks/desks.js"></script>
     <script src="scripts/superdesk-authoring/authoring.js"></script>
     <script src="scripts/superdesk-authoring/widgets/widgets.js"></script>
     <script src="scripts/superdesk-authoring/comments/comments.js"></script>
-    <script src="scripts/superdesk-authoring/versioning/versions.js"></script>
+    <script src="scripts/superdesk-authoring/versioning/versioning.js"></script>
+    <script src="scripts/superdesk-authoring/versioning/versions/versions.js"></script>
+    <script src="scripts/superdesk-authoring/versioning/history/history.js"></script>
     <script src="scripts/superdesk-authoring/metadata/metadata.js"></script>
     <script src="scripts/superdesk-authoring/workqueue/workqueue.js"></script>
     <script src="scripts/superdesk-authoring/packages/packages.js"></script>
@@ -70,9 +82,18 @@
     <script src="scripts/superdesk-authoring/macros/macros.js"></script>
 
     <script src="scripts/superdesk-search/search.js"></script>
+    <script src="scripts/superdesk-legal-archive/legal_archive.js"></script>
     <script src="scripts/superdesk-stream/stream.js"></script>
     <script src="scripts/superdesk-packaging/packaging.js"></script>
-    <script src="scripts/superdesk-packaging/highlight.js"></script>
+    <script src="scripts/superdesk-highlights/highlights.js"></script>
+    <script src="scripts/superdesk-content-filters/content-filters.js"></script>
+    <script src="scripts/superdesk-dictionaries/dictionaries.js"></script>
+    <script src="scripts/superdesk-vocabularies/vocabularies.js"></script>
+    <script src="scripts/superdesk-archive/directives.js"></script>
+    <script src="scripts/superdesk/editor/spellcheck/spellcheck.js"></script>
+
+    <script src="scripts/superdesk-monitoring/monitoring.js"></script>
+    <script src="scripts/superdesk-workspace/workspace.js"></script>
     <!-- endbuild -->
 
     <!-- build:js scripts/config.js -->
@@ -89,30 +110,38 @@
             'superdesk.settings',
             'superdesk.dashboard',
             'superdesk.users',
-            'superdesk.planning',
             'superdesk.archive',
+            'superdesk.archive.directives',
             'superdesk.ingest',
-            //'superdesk.scratchpad',
             'superdesk.desks',
             'superdesk.groups',
             'superdesk.authoring',
             'superdesk.authoring.multiedit',
             'superdesk.packaging',
             'superdesk.editor',
+            'superdesk.editor.spellcheck',
             'superdesk.notification',
-            'superdesk.highlight',
+            'superdesk.highlights',
+            'superdesk.content_filters',
+            'superdesk.dictionaries',
+            'superdesk.vocabularies',
 
             'superdesk.users.import',
             'superdesk.users.profile',
             'superdesk.users.activity',
-            'superdesk.stream'
+            'superdesk.stream',
+            'superdesk.publish',
+            'superdesk.templates',
+            'superdesk.monitoring',
+
+            'superdesk.loading',
+            'templates'
         ];
 
         require([
             'main',
             'superdesk-settings/module',
             'superdesk-dashboard/module',
-            'superdesk-planning/module',
             'superdesk-archive/module',
             'superdesk-ingest/module'
             //'superdesk-scratchpad/module',

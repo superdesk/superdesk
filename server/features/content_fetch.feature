@@ -2,7 +2,7 @@ Feature: Fetch Items from Ingest
 
     @auth
     @provider
-    Scenario: Fetch an item
+    Scenario: Fetch an item and validate metadata set by API
       Given empty "archive"
       And "desks"
       """
@@ -10,7 +10,7 @@ Feature: Fetch Items from Ingest
       """
       And ingest from "reuters"
       """
-      [{"guid": "tag_reuters.com_2014_newsml_LOVEA6M0L7U2E"}]
+      [{"guid": "tag_reuters.com_2014_newsml_LOVEA6M0L7U2E", "byline": "Chuck Norris", "dateline": {"source": "Reuters"}}]
       """
       When we post to "/ingest/tag_reuters.com_2014_newsml_LOVEA6M0L7U2E/fetch"
       """
@@ -20,12 +20,21 @@ Feature: Fetch Items from Ingest
       When we get "/archive?q=#desks._id#"
       Then we get list with 1 items
       """
-      {"_items": [{"family_id": "tag_reuters.com_2014_newsml_LOVEA6M0L7U2E", "ingest_id": "tag_reuters.com_2014_newsml_LOVEA6M0L7U2E"}]}
+      {"_items": [
+      	{
+      		"family_id": "tag_reuters.com_2014_newsml_LOVEA6M0L7U2E", 
+      		"ingest_id": "tag_reuters.com_2014_newsml_LOVEA6M0L7U2E",
+      		"operation": "fetch",
+      		"sign_off": "abc",
+      		"byline": "Chuck Norris",
+      		"dateline": {"source": "Reuters"}
+      	}
+      ]}
       """
 
     @auth
     @provider
-    Scenario: Fetch an item of type Media
+    Scenario: Fetch an item of type Media and validate metadata set by API
       Given empty "archive"
       And "desks"
       """
@@ -42,7 +51,7 @@ Feature: Fetch Items from Ingest
       When we get "/archive/#_id#"
       Then we get existing resource
       """
-      {
+      {   "sign_off": "abc",
           "renditions": {
               "baseImage": {"height": 845, "mimetype": "image/jpeg", "width": 1400},
               "original": {"height": 2113, "mimetype": "image/jpeg", "width": 3500},
@@ -55,7 +64,7 @@ Feature: Fetch Items from Ingest
     @auth
     @provider
     @test
-    Scenario: Fetch a package
+    Scenario: Fetch a package and validate metadata set by API
       Given empty "ingest"
       And "desks"
       """
@@ -74,13 +83,14 @@ Feature: Fetch Items from Ingest
       {
           "_items": [
               {
-                  "_version": 1,
+                  "_current_version": 1,
                   "linked_in_packages": [{}],
                   "state": "fetched",
-                  "type": "picture"
+                  "type": "picture",
+                  "sign_off": "abc"
               },
               {
-                  "_version": 1,
+                  "_current_version": 1,
                   "groups": [
                       {
                           "refs": [
@@ -93,31 +103,36 @@ Feature: Fetch Items from Ingest
                       {"refs": [{"itemClass": "icls:text"}]}
                   ],
                   "state": "fetched",
-                  "type": "composite"
+                  "type": "composite",
+                  "sign_off": "abc"
               },
               {
-                  "_version": 1,
+                  "_current_version": 1,
                   "linked_in_packages": [{}],
                   "state": "fetched",
-                  "type": "picture"
+                  "type": "picture",
+                  "sign_off": "abc"
               },
               {
-                  "_version": 1,
+                  "_current_version": 1,
                   "linked_in_packages": [{}],
                   "state": "fetched",
-                  "type": "text"
+                  "type": "text",
+                  "sign_off": "abc"
               },
               {
-                  "_version": 1,
+                  "_current_version": 1,
                   "linked_in_packages": [{}],
                   "state": "fetched",
-                  "type": "picture"
+                  "type": "picture",
+                  "sign_off": "abc"
               },
               {
-                  "_version": 1,
+                  "_current_version": 1,
                   "linked_in_packages": [{}],
                   "state": "fetched",
-                  "type": "text"
+                  "type": "text",
+                  "sign_off": "abc"
               }
           ]
       }
@@ -228,7 +243,7 @@ Feature: Fetch Items from Ingest
       """
       [{"guid": "tag_reuters.com_2014_newsml_LOVEA6M0L7U2E"}]
       """
-      When we login as user "foo" with password "bar"
+      When we login as user "foo" with password "bar" and user type "user"
       """
       {"user_type": "user", "email": "foo.bar@foobar.org"}
       """

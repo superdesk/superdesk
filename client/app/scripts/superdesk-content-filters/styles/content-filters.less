@@ -1,0 +1,163 @@
+// content-filters.less
+// Styling for the superdesk content filters module
+// ----------------------------------------------------------------------------------------
+
+@import 'mixins.less';
+@import 'variables.less';
+
+.pull-right-20 {
+    float: right;
+    margin-right: 65px;
+}
+.pull-left-20 {
+    float: left;
+    margin-left: 65px;
+}
+.panel-search {
+    float: left;
+    width: 30%;
+}
+.panel-search-result {
+    float: right;
+    width: 70%;
+    .column-width {
+        width:50%;
+    }
+}
+.panel-subscriber {
+    float: right;
+    width: 70%;   
+}
+div {
+    -webkit-column-rule: 4px outset #ff00ff; /* Chrome, Safari, Opera */
+    -moz-column-rule: 4px outset #ff00ff; /* Firefox */
+    column-rule: 4px outset #ff00ff;
+}
+
+
+.filter-result-modal {
+    position: absolute;
+    .content {
+        .active {
+            background-color: #eff7fa !important;
+            border-right: 2px solid rgba(94,169,200,0.75) !important;
+            &:hover {
+                .item-functions {
+                    background-color: #eff7fa;
+                    .item-field {
+                        &:hover {
+                            background-color: #d6e8ef;
+                        }
+                        &.disabled {
+                            &:hover {
+                                background-color: #d6e8ef;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    .filter-result-body {
+        flex: 1 1 auto !important;
+    }
+}
+
+.content-filter-modal {
+    position: absolute;
+    .content {
+        .field {
+            margin-bottom: 10px;
+            textarea {
+                height: 22px;
+            }
+        }
+    }
+
+    .modal-body {
+        .filter-tags {
+            margin-bottom: 10px;
+            overflow: hidden;
+            padding: 12px;
+            .shadow-box;
+            .row {
+                width: 100%;
+                float: left;
+                padding-left: 5px;
+                li {
+                    float: left;
+                }
+                .row-50 {
+                    width: 50%;
+                    float: left;
+                    select {
+                        width: 70%;
+                    }
+                }
+                .meta-row {
+                    min-height: 200px;
+                }
+            }
+            
+        }
+        .test-row {
+            width: 100%;
+            float: left;
+            input {
+                width: 70%;
+            }
+        }
+    }
+    .preview {
+        float: left;
+        wifth: 100%;
+    }
+}
+
+.destination-box {
+    margin: 0 0 12px 0;
+    padding: 12px 12px 0;
+    .shadow-box;
+}
+
+.subscriber-modal {
+    position: absolute;
+    .content {
+        .field {
+            margin-bottom: 10px;
+            textarea {
+                height: 22px;
+            }
+        }
+    }
+
+    .add {
+        margin-top: -3px;
+        position: absolute;
+        padding: 0;
+        margin-left: 20px;
+        height: 22px;
+        width: 22px;
+        .border-radius(50%);
+        line-height: 20px;
+        i {
+            margin-left: 2px;
+        }
+    }
+
+    .btn {
+        margin: 0 5px 5px 0;
+    }
+
+    .btn-default {
+        margin-top: 5px;
+    }
+
+    .pills-list {
+        margin-top: 10px;
+        max-width: 100%;
+        li {
+            margin: 0 5px 5px 0;
+        }
+    }
+}

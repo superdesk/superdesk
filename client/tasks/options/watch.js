@@ -6,20 +6,30 @@ module.exports = {
         tasks: ['style'],
         files: [
             '<%= appDir %>/styles/{,*/}*.less',
-            '<%= appDir %>/scripts/superdesk/**/*.less',
-            '<%= appDir %>/scripts/superdesk-*/**/*.less'
+            '<%= appDir %>/scripts/superdesk*/**/*.less'
         ]
     },
     code: {
         options: {livereload: true},
-        tasks: ['hint'],
-        files: ['<%= appDir %>/scripts/**/*.js']
+        tasks: [],
+        files: [
+            '<%= appDir %>/scripts/*.js',
+            '<%= appDir %>/scripts/superdesk*/**/*.js'
+        ]
+    },
+    ngtemplates: {
+        options: {livereload: true},
+        tasks: [],
+        files: [
+            '<%= appDir %>/scripts/superdesk*/views/*.html'
+        ]
     },
     assets: {
         options: {livereload: true},
+        tasks: [],
         files: [
             '<%= appDir %>/styles/**/*.css',
-            '<%= appDir %>/scripts/**/*.html',
+            '<%= appDir %>/scripts/superdesk*/**/*.html',
             '<%= appDir %>/docs/**/*.html'
         ]
     },

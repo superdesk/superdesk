@@ -12,10 +12,12 @@ import logging
 
 from flask import abort, current_app as app
 from eve.utils import config
+from apps.archive.common import copy_metadata_from_user_preferences
+from settings import DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES
 from superdesk.media.media_operations import process_file_from_stream, decode_metadata
 from superdesk.media.renditions import generate_renditions, delete_file_on_error
+from superdesk.metadata.item import ITEM_STATE, CONTENT_STATE, ITEM_TYPE, CONTENT_TYPE
 from superdesk.upload import url_for_media
-from superdesk.utc import utcnow
 from .common import update_dates_for, generate_guid, GUID_TAG, set_original_creator, \
     generate_unique_id_and_name, set_item_expiry
 from superdesk.activity import add_activity
@@ -26,7 +28,7 @@ logger = logging.getLogger(__name__)
 
 class ArchiveMediaService():
 
-    type_av = {'image': 'picture', 'audio': 'audio', 'video': 'video'}
+    type_av = {'image': CONTENT_TYPE.PICTURE, 'audio': CONTENT_TYPE.AUDIO, 'video': CONTENT_TYPE.VIDEO}
 
     def on_create(self, docs):
         """ Create corresponding item on file upload """
@@ -39,16 +41,10 @@ class ArchiveMediaService():
             inserted = [doc['media']]
             file_type = content_type.split('/')[0]
 
-            try:
-                update_dates_for(doc)
-                generate_unique_id_and_name(doc)
-                doc['guid'] = generate_guid(type=GUID_TAG)
-                doc.setdefault('_id', doc['guid'])
+            self._set_metadata(doc)
 
-                doc['type'] = self.type_av.get(file_type)
-                doc[config.VERSION] = 1
-                doc['versioncreated'] = utcnow()
-                set_item_expiry({}, doc)
+            try:
+                doc[ITEM_TYPE] = self.type_av.get(file_type)
 
                 rendition_spec = config.RENDITIONS['picture']
                 renditions = generate_renditions(file, doc['media'], inserted, file_type,
@@ -57,21 +53,37 @@ class ArchiveMediaService():
                 doc['mimetype'] = content_type
                 doc['filemeta'] = metadata
 
-                if not doc.get('_import', None):
-                    set_original_creator(doc)
-
-                doc.setdefault(config.CONTENT_STATE, 'draft')
-
                 add_activity('upload', 'uploaded media {{ name }}',
                              'archive', item=doc,
                              name=doc.get('headline', doc.get('mimetype')),
                              renditions=doc.get('renditions'))
-
             except Exception as io:
                 logger.exception(io)
                 for file_id in inserted:
                     delete_file_on_error(doc, file_id)
                 abort(500)
+
+    def _set_metadata(self, doc):
+        """
+        Adds metadata to doc.
+        """
+
+        update_dates_for(doc)
+        generate_unique_id_and_name(doc)
+        doc['guid'] = generate_guid(type=GUID_TAG)
+        doc.setdefault(config.ID_FIELD, doc['guid'])
+        doc[config.VERSION] = 1
+        set_item_expiry({}, doc)
+
+        if not doc.get('_import', None):
+            set_original_creator(doc)
+
+        doc.setdefault(ITEM_STATE, CONTENT_STATE.DRAFT)
+
+        if not doc.get('ingest_provider'):
+            doc['source'] = DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES
+
+        copy_metadata_from_user_preferences(doc)
 
     def get_file_from_document(self, doc):
         file = doc.get('media_fetched')

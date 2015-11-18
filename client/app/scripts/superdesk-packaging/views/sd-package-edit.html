@@ -1,11 +1,11 @@
 <header class="package-header">
     <div class="inputs">
         <div class="field" ng-class="{'limit-error': item.slugline.length > limits.slugline}">
-            <label translate>Keyword</label>
+            <label translate>Slugline</label>
             <span sd-character-count data-item="item.slugline" data-limit="limits.slugline"></span>
             <input type="text"
                 class="keyword"
-                id="keyword"
+                id="slugline"
                 ng-model="item.slugline"
                 ng-change="autosave(item)"
                 ng-if="_editable"
@@ -27,8 +27,13 @@
         </div>
     </div>
 </header>
-
 <div class="field composite-preview">
     <div sd-package-items-edit ng-model="item.groups" ng-if="_editable"></div>
     <div sd-package data-item="item" class="composite-preview" ng-if="!_editable"></div>
+</div>
+
+<div class="field body" ng-if="item.package_type==='takes' && _isInPublishedStates">
+    <label translate>Body</label>
+    <span sd-word-count data-item="item.body_html" data-html="true"></span>
+    <div class="text-editor" sd-html-preview="item.body_html"></div>
 </div>

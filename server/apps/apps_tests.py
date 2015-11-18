@@ -8,11 +8,11 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-from superdesk.tests import TestCase
+from test_factory import SuperdeskTestCase
 from apps.preferences import PreferencesService
 
 
-class Preference_Tests(TestCase):
+class Preference_Tests(SuperdeskTestCase):
     def setUp(self):
         self._default_user_settings = {
             "archive:view": {

@@ -1,4 +1,4 @@
-// DROPDOWN MENUS
+    // DROPDOWN MENUS
 // --------------
 
 // Use the .menu class on any <li> element within the topbar or ul.tabs and you'll get some superfancy dropdowns
@@ -19,11 +19,41 @@
 	// The caret makes the toggle a bit too tall in IE7
 	*margin-bottom: -3px;
 	background: transparent;
+        i { vertical-align: sub; }
+        &.animate-icon {
+            .opacity(50);
+            .transition(.5s);
+        }
+        &.animate-icon:hover {
+            .opacity(100);
+        }
 }
+// Triggers dropdown on a hover
+.dropdown.dropdown-hover:hover {
+    .dropdown-menu { display: block; }
+}
+
 .dropdown-toggle:active,
 .open .dropdown-toggle {
 	outline: 0;
 }
+
+.dropdown .dropdown-toggle i.submenu-icon, .dropdown .nested-toggle i.submenu-icon {
+    position: absolute;
+    top: 50%;
+    right: 2px;
+    margin-top: -8px;
+    opacity: 0.4;
+}
+
+.more-actions .dropdown-toggle > i {
+   opacity: 0.3;
+}
+.more-actions .dropdown-toggle:hover > i,
+.more-actions.open .dropdown-toggle > i {
+   opacity: 1;
+}
+
 
 // Dropdown arrow/caret
 // --------------------
@@ -61,15 +91,16 @@
 	z-index: @zindexDropdown;
 	float: left;
 	display: none; // none by default, but block on "open" of the menu
-	min-width: 160px;
-	padding: 10px;
+	min-width: 180px;
+	padding: 10px 0;
 	margin: 13px 0 0 0; // override default ul
 	list-style: none;
 	background-color: @dropdownBackground;
-	border: @dropdownBorder;
-	.box-shadow(0 3px 5px rgba(0,0,0,.2));
-	.border-radius(3px);
+	border: none;
+	box-shadow: 0 2px 10px rgba(0,0,0,.4),0 3px 1px -2px rgba(0,0,0,.1);
+	.border-radius(2px);
 	text-align: left;
+	box-sizing: border-box;
 
 	// Aligns the dropdown menu to right
 	&.pull-right {
@@ -81,7 +112,7 @@
 	.divider {
 		.nav-divider();
 	}
-
+        
 	// Links within the dropdown menu
 	button {
 		width: 100%;
@@ -100,15 +131,29 @@
 		> a, > button, > span {
 			color: @dropdownLinkColor;
 			background: none;
-			padding: 5px 7px;
+			padding: 6px 16px;
+			margin-bottom: 2px;
 			> i[class^="icon-"], i[class*=" icon-"] {
-				margin-right: 10px;
-				margin-top: -2px;
+				margin-right: 8px;
+				margin-top: -3px;
+				min-width: 19px;
+			}
+			i.icon-round {
+				min-width: 16px;
+			}
+			&.disabled, &[disabled] {
+				.opacity(50);
 			}
 		}
 		> a, > button {
-			&:hover {
+			&:hover, &:focus {
 				background: @dropdownLinkBackgroundHover;
+				text-decoration: none;
+				cursor: pointer;
+			}
+			&.disabled:hover, &[disabled]:hover {
+				background: none;
+				cursor: default;
 			}
 		}
 	}
@@ -135,7 +180,15 @@
 	.menu-label {
 		text-transform: uppercase;
 		font-size: 11px;
-		color: @gray;
+		color: @grayLight;
+		font-weight: 500;
+		padding-left: 16px;
+	}
+	.menu-header {
+		font-weight: 300;
+		font-size: 15px;
+		color: @grayLight;
+		padding-left: 16px;
 	}
 }
 
@@ -177,7 +230,7 @@
 	.dropdown-menu {
 		top: auto;
 		bottom: 100%;
-		margin-bottom: 1px;
+		margin-bottom: 0;
 		&:before {
 			top: auto;
 			bottom:-16px;
@@ -186,13 +239,56 @@
 	}
 }
 
+.dropleft {
+    display: inline-block;
+    vertical-align: middle;
+    .dropdown-menu {
+        top: -23px;
+        left: auto;
+        right: calc(~'100% + 15px');
+        &:before {
+            width: 15px;
+            height: 22px;
+            display: block;
+            z-index: 100;
+            position: absolute;
+            right: -15px;
+            left: auto;
+            top: 10px;
+            background: url(../../images/dropdown-arrow-side.png) no-repeat;
+            .rotate(180deg);
+            content: " ";
+        }
+    }
+}
+
+.dropright {
+    display: inline-block;
+    vertical-align: middle;
+    .dropdown-menu {
+        top: -23px;
+        left: calc(~'100% + 15px');
+        &:before {
+            width: 15px;
+            height: 22px;
+            display: block;
+            z-index: 100;
+            position: absolute;
+            left: -15px;
+            top: 10px;
+            background: url(../../images/dropdown-arrow-side.png) no-repeat;
+            content: " ";
+        }
+    }
+}
+
 
 ////////////// Diferent styles for dropdowns
 
 //navigation big dropdown
 .dropdown.dropdown-big, .navbtn.dropdown {
 	.dropdown-toggle {
-		padding: 0 15px 0 25px;
+		padding: 0 15px;
 		display: block;
 		color:@sd-text;
 		height: @subnav-height;
@@ -213,6 +309,7 @@
 			background: #fff;
 			color:@sd-text;
 			box-shadow:-3px 0px 1px -2px #999,3px 0px 1px -2px #999;
+			z-index: 3;
 			&.sd-create-btn {
 				.circle {
 					width: 32px;
@@ -231,7 +328,7 @@
 	.dropdown-menu {
 		.border-radius(0px);
 		border:0;
-		z-index: 1;
+		z-index: 2;
 		margin-top: -1px;
 		min-width: 200px;
 		box-shadow: 0px 1px 2px 1px #aaa;
@@ -253,6 +350,9 @@
 					background: none;
 				}
 			}
+                        > .menu-label {
+                            min-width: 205px;
+                        }
 			button {
 				width: auto;
 				&.full {
@@ -272,7 +372,7 @@
 				}
 			}
 			&:active {
-				button {
+				> button {
 					background: @sd-blue;
 					color: #fff;
 				}
@@ -296,4 +396,165 @@
 	padding: 0;
 }
 
+// Activity dropdowns
+// -------------------------------------------------
+.activity-dropdown, .more-activity-dropdown {
+    .dropdown-menu {
+        .border-radius(0px);
+        border:0;
+        z-index: 1;
+        margin-top: -1px;
+        &:before {
+            display: none;
+        }
+    }
+}
+.more-activity-dropdown {
+    .dropdown-menu {
+        min-width: 0;
+        padding: 5px;
+        li {
+            display: inline-block;
+            vertical-align: middle;
+            a {
+                padding: 0;
+                i {
+                    margin-right: 0;
+                }
+                span {
+                    display: none;
+                }
+            }
+        }
+    }
+}
 
+// CLassic dropdown with no arrow
+// -------------------------------------------------
+.dropdown.dropdown-noarrow {
+    .dropdown-menu { 
+        margin: 0;
+        max-height: 250px;
+        overflow: auto;
+    }
+    .dropdown-menu:before {
+        display: none;
+    }
+    .dropdown {
+        .dropdown-toggle {
+            display: block;
+            padding: 3px 15px;
+            clear: both;
+            font-weight: normal;
+            line-height: 18px;
+            white-space: nowrap;
+        }
+    }
+    &.open li > .dropdown .dropdown-toggle {
+        display: block;
+        padding: 5px 7px;
+        margin: 0;
+        clear: both;
+        font-weight: normal;
+        line-height: 18px;
+        white-space: nowrap;
+    }
+}
+
+// Classic dropdown with bigger width
+// -------------------------------------------------
+.dropdown.dropdown-bigger {
+    .dropdown-menu {
+        min-width: 230px;
+    }
+}
+
+// Dropdown integrated in input field
+// -------------------------------------------------
+.dropdown.input-addon {
+    position: absolute;
+    right: 12px;
+    margin-top: -1px;
+    > .dropdown-toggle {
+        height: 22px;
+        line-height: 0;
+        padding: 2px 6px;
+        box-shadow: none;
+        margin-bottom: 2px;
+        background-color: transparent;
+        .box-shadow(none) !important;
+        > span.caret {
+            padding: 0px;
+            margin-left: 0;
+        }
+    }
+    &.open > .dropdown-toggle {
+        background-color: transparent;
+    }
+}
+
+// Nested dropdowns
+// -------------------------------------------------
+.dropdown {
+    &.open {
+        li > .dropdown {
+            float: none;
+            .dropdown-toggle {
+                margin: 0;
+                min-width: 170px;
+                padding: 6px 10px 6px 16px;
+                line-height: 19px;
+                border-radius: 3px;
+                height: auto;
+                font-size: 13px;
+                text-align: left;
+                .box-shadow(none);
+                i {
+                    margin-right: 10px;
+                }
+                &:hover {
+                    background: @sd-hover;
+                    cursor: default;
+                }
+            }
+            .dropdown-menu {
+                display: none;
+            }
+            &:hover {
+                > .dropdown-menu {
+                    display: block;
+                    left: 100%;
+                    right: auto;
+                    top: 0;
+                    min-width: 160px;
+                    &.right-submenu {
+                        left: auto;
+                        right: 100%;
+                        top: auto;
+                        bottom: -10px;
+                    }
+                    button {
+                        min-width: 160px !important;
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Dark dropdowns
+// -------------------------------------------------
+
+.dropdown.dropdown--dark {
+    .dropdown-toggle {
+        text-align: left;
+        background: #4f4f4f;
+        padding: 10px 15px;
+        border-radius: 2px;
+        color: #fff;
+        .caret {
+            float: right;
+            margin-top: 8px;
+        }
+    }
+}

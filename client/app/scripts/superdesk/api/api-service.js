@@ -105,7 +105,10 @@ define([
                 return urls.resource(this.resource)
                     .then(angular.bind(this, function(url) {
                         if (this.parent) {
-                            url = resolve(url, this.parent);
+                            var new_url = resolve(url, this.parent);
+                            if (new_url !== url) {
+                                return new_url;
+                            }
                         }
 
                         if (_id) {
@@ -197,22 +200,22 @@ define([
             /**
              * @alias api(resource).getById(id)
              */
-            api.find = function apiFind(resource, id, params) {
-                return api(resource).getById(id, params);
+            api.find = function apiFind(resource, id, params, cache) {
+                return api(resource).getById(id, params, cache);
             };
 
             /**
              * @alias api(resource).save(dest, diff)
              */
-            api.save = function apiSave(resource, dest, diff, parent) {
-                return api(resource, parent).save(dest, diff);
+            api.save = function apiSave(resource, dest, diff, parent, params) {
+                return api(resource, parent).save(dest, diff, params);
             };
 
             /**
              * Remove a given item.
              */
             api.remove = function apiRemove(item, params, resource) {
-                var url = resource ? getResourceUrl(resource, item) : urls.item(item._links.self.href);
+                var url = resource ? getResourceUrl(resource, item, item._id) : urls.item(item._links.self.href);
                 return http({
                     method: 'DELETE',
                     url: url,
@@ -232,7 +235,7 @@ define([
             api.update = function apiUpdate(resource, item, updates) {
                 return http({
                     method: 'PATCH',
-                    url: getResourceUrl(resource, null, item._id),
+                    url: getResourceUrl(resource, item, item._id),
                     data: updates,
                     headers: getHeaders(item)
                 });

@@ -1,5 +1,4 @@
 {
-  "es3": true,
   "node": true,
   "browser": true,
   "bitwise": true,
@@ -19,6 +18,7 @@
   "trailing": true,
   "globals": {
     "$": false,
+    "$$": false,
     "_": false,
     "angular": false,
     "define": false,
@@ -30,6 +30,7 @@
     "afterEach": false,
     "inject": false,
     "expect": false,
+    "fail": false,
     "describe": false,
     "xdescribe": false,
     "requirejs": false,
@@ -39,7 +40,8 @@
     "protractor": false,
     "jasmine": false,
     "spyOn": false,
-    "JSON": false
+    "JSON": false,
+    "d3": false
   },
   "forin": true,
   "noempty": true,

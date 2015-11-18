@@ -27,7 +27,7 @@ define(['lodash'], function(_) {
                     instance.update();
                 }, function(response) {
                     notify.error(gettext('User preference could not be saved...'));
-            });
+                });
         };
         this.loadItemList = function() {
             var instance = this;

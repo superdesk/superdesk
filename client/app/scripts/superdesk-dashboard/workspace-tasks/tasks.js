@@ -30,6 +30,8 @@ function TasksService(desks, $rootScope, api, datetimeHelper) {
         var filters = [];
         var self = this;
 
+        filters.push({not: {term: {package_type: 'takes'}}});
+
         if (desks.getCurrentDeskId()) {
             //desk filter
             filters.push({term: {'task.desk': desks.getCurrentDeskId()}});
@@ -53,12 +55,14 @@ function TasksService(desks, $rootScope, api, datetimeHelper) {
         return and_filter;
     };
 
-    this.fetch = function(status) {
-        var filter = this.buildFilter(status);
+    this.fetch = function(status, filter) {
+        if (!filter) {
+            filter = this.buildFilter(status);
+        }
 
         return api('tasks').query({
             source: {
-                size: 25,
+                size: 200,
                 sort: [{_updated: 'desc'}],
                 filter: filter
             }
@@ -66,10 +70,11 @@ function TasksService(desks, $rootScope, api, datetimeHelper) {
     };
 }
 
-TasksController.$inject = ['$scope', 'api', 'notify', 'desks', 'tasks'];
-function TasksController($scope, api, notify, desks, tasks) {
+TasksController.$inject = ['$scope', '$timeout', 'api', 'notify', 'desks', 'tasks', '$filter', 'moment', 'archiveService'];
+function TasksController($scope, $timeout, api, notify, desks, tasks, $filter, moment, archiveService) {
 
-    var KANBAN_VIEW = 'kanban';
+    var KANBAN_VIEW = 'kanban',
+        timeout;
 
     $scope.selected = {};
     $scope.newTask = null;
@@ -80,17 +85,98 @@ function TasksController($scope, api, notify, desks, tasks) {
 
     $scope.$watch(function() {
         return desks.getCurrentDeskId();
-    }, function() {
-        fetchTasks();
+    }, function(desk) {
+        if (desk) {
+            fetchTasks();
+            fetchStages();
+            fetchPublished();
+            fetchScheduled();
+        }
     });
 
-    var fetchTasks = _.debounce(fetch, 300);
-
-    function fetch() {
-        var status = $scope.view === KANBAN_VIEW ? null : $scope.activeStatus;
-        tasks.fetch(status).then(function(list) {
-            $scope.tasks = list;
+    /**
+     * Fetch stages of current desk
+     */
+    function fetchStages() {
+        desks.fetchDeskStages(desks.getCurrentDeskId()).then(function(stages) {
+            $scope.stages = stages;
         });
+    }
+
+    /**
+     * Fetch items for current desk which are not published or spiked
+     */
+    function fetchTasks() {
+        $timeout.cancel(timeout);
+        timeout = $timeout(function() {
+            var filter = {bool: {
+                must: {
+                    term: {'task.desk': desks.getCurrentDeskId()}
+                },
+                must_not: {
+                    terms: {state: ['published', 'spiked']}
+                }
+            }};
+
+            var source = {source: {
+                size: 200,
+                sort: [{_updated: 'desc'}],
+                filter: filter
+            }};
+
+            api.query('tasks', source).then(function(result) {
+                $scope.stageItems = _.groupBy(result._items, function(item) {
+                    return item.task.stage;
+                });
+            });
+        }, 300, false);
+    }
+
+    /**
+     * Fetch content published from a desk
+     */
+    function fetchPublished() {
+        var filter = {bool: {
+            must: {
+                term: {'task.desk': desks.getCurrentDeskId()}
+            },
+            must_not: {
+                term: {package_type: 'takes'}
+            }
+        }};
+
+        api.query('published', {source: {filter: filter}})
+            .then(function(results) {
+                $scope.published = results;
+            });
+    }
+
+    /**
+     * Fetch templates scheduled for today on current desk
+     */
+    function fetchScheduled() {
+        var startTime = moment().hours(0).minutes(0).seconds(0);
+        var endTime = moment().hours(23).minutes(59).seconds(59);
+
+        var filter = {
+            'template_desk': desks.getCurrentDeskId(),
+            'next_run': {$gte: toServerTime(startTime), $lte: toServerTime(endTime)}
+        };
+
+        api.query('content_templates', {where: filter, sort: 'next_run'}).then(function(results) {
+            $scope.scheduled = results;
+        });
+
+        /**
+         * Get UTC datetime matching server format for given moment date object
+         *
+         * @param {Moment} d
+         * @return {string}
+         */
+        function toServerTime(d) {
+            d.milliseconds(0); // set it to zero so it will match in replace
+            return d.toISOString().replace('.000Z', '+0000');
+        }
     }
 
     $scope.preview = function(item) {
@@ -98,13 +184,12 @@ function TasksController($scope, api, notify, desks, tasks) {
     };
 
     $scope.create = function() {
-        $scope.newTask = {
-            task: {
-                desk: desks.getCurrentDeskId(),
-                due_date: moment().utc().format(),
-                due_time: moment().utc().format('HH:mm:ss')
-            }
-        };
+        $scope.newTask = {};
+        archiveService.addTaskToArticle($scope.newTask, desks.getCurrentDesk());
+
+        var task_date = new Date();
+        $scope.newTask.task.due_date = $filter('formatDateTimeString')(task_date);
+        $scope.newTask.task.due_time = $filter('formatDateTimeString')(task_date, 'HH:mm:ss');
     };
 
     $scope.save = function() {
@@ -112,7 +197,6 @@ function TasksController($scope, api, notify, desks, tasks) {
         .then(function(result) {
             notify.success(gettext('Item saved.'));
             $scope.close();
-            fetchTasks();
         });
     };
 
@@ -135,10 +219,18 @@ function TasksController($scope, api, notify, desks, tasks) {
             fetchTasks();
         }
     };
+
+    $scope.$on('task:new', fetchTasks);
+    $scope.$on('task:stage', function(event, data) {
+        var deskId = desks.getCurrentDeskId();
+        if (deskId === data.old_desk || deskId === data.new_desk) {
+            fetchTasks();
+        }
+    });
 }
 
-TaskPreviewDirective.$inject = ['tasks', 'desks', 'notify'];
-function TaskPreviewDirective(tasks, desks, notify) {
+TaskPreviewDirective.$inject = ['tasks', 'desks', 'notify', '$filter'];
+function TaskPreviewDirective(tasks, desks, notify, $filter) {
     var promise = desks.initialize();
     return {
         templateUrl: 'scripts/superdesk-dashboard/workspace-tasks/views/task-preview.html',
@@ -180,8 +272,10 @@ function TaskPreviewDirective(tasks, desks, notify) {
                 scope.editmode = false;
                 scope.task = _.create(scope.item);
                 scope.task_details = _.extend({}, scope.item.task);
-                scope.task_details.due_date = moment(scope.item.task.due_date).utc().format();
-                scope.task_details.due_time = moment(scope.item.task.due_date).utc().format('HH:mm:ss');
+                scope.task_details.due_date = scope.task_details.due_date ?
+                    $filter('formatDateTimeString')(scope.task_details.due_date) : null;
+                scope.task_details.due_time = scope.task_details.due_time ?
+                    $filter('formatDateTimeString')(scope.task_details.due_time, 'HH:mm:ss') : null;
                 _orig = scope.item;
             };
         }
@@ -194,13 +288,15 @@ function TaskKanbanBoardDirective() {
         templateUrl: 'scripts/superdesk-dashboard/workspace-tasks/views/kanban-board.html',
         scope: {
             items: '=',
-            status: '@',
-            title: '@',
+            label: '@',
+            cssClass: '@',
             selected: '='
         },
         link: function(scope) {
             scope.preview = function(item) {
-                scope.selected.preview = item;
+                if (scope.selected) {
+                    scope.selected.preview = item;
+                }
             };
         }
     };
@@ -254,9 +350,9 @@ function StagesCtrlFactory(api, desks) {
             };
 
             $scope.$watch(function() {
-                return desks.activeDeskId;
+                return desks.getCurrentDeskId();
             }, function() {
-                self.reload(desks.activeDeskId);
+                self.reload(desks.getCurrentDeskId());
             });
         });
     };
@@ -268,7 +364,7 @@ function DeskStagesDirective() {
     };
 }
 
- angular.module('superdesk.workspace.tasks', [])
+angular.module('superdesk.workspace.tasks', [])
 
 .factory('StagesCtrl', StagesCtrlFactory)
 
@@ -276,7 +372,7 @@ function DeskStagesDirective() {
 .directive('sdAssigneeView', AssigneeViewDirective)
 .directive('sdDeskStages', DeskStagesDirective)
 .directive('sdTaskKanbanBoard', TaskKanbanBoardDirective)
-
+.controller('TasksController', TasksController)
 .service('tasks', TasksService)
 
 .config(['superdeskProvider', function(superdesk) {
@@ -286,7 +382,7 @@ function DeskStagesDirective() {
         controller: TasksController,
         templateUrl: 'scripts/superdesk-dashboard/workspace-tasks/views/workspace-tasks.html',
         topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
-        beta: true,
+        sideTemplateUrl: 'scripts/superdesk-workspace/views/workspace-sidenav.html',
         filters: [{action: 'view', type: 'task'}]
     });
 
@@ -294,8 +390,15 @@ function DeskStagesDirective() {
         label: gettext('Pick task'),
         icon: 'pick',
         controller: ['data', 'superdesk',
+            /**
+             * Open given item using sidebar authoring
+             *
+             * @param {Object} data
+             * @param {Object} superdesk service
+             * @return {Promise}
+             */
             function pickTask(data, superdesk) {
-                return superdesk.intent('author', 'article', data.item);
+                return superdesk.intent('edit', 'item', data.item);
             }
         ],
         filters: [{action: superdesk.ACTION_EDIT, type: 'task'}]

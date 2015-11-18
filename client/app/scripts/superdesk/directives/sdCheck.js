@@ -108,7 +108,7 @@ define(['angular'], function(angular) {
                     '</span>'
                 ].join(''),
                 link: function($scope, element, attrs, ngModel) {
-                       ngModel.$render = function() {
+                    ngModel.$render = function() {
                         render(element, ngModel.$viewValue);
                     };
 

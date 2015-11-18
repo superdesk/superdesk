@@ -53,7 +53,8 @@ define([
             expect(api).toBeDefined();
         }));
 
-        it('can register apis', inject(function(api) {expect(api.http).toBeDefined();
+        it('can register apis', inject(function(api) {
+            expect(api.http).toBeDefined();
         }));
 
         it('can override backend methods', inject(function(api, $rootScope) {
@@ -170,9 +171,13 @@ define([
         }));
 
         it('can update', inject(function(api, $httpBackend) {
-
-            var userData = {_links: {self: {href: USER_PATH}}, _id: 2, username: 'test', Avatar: {href: 'test'}},
-                user;
+            var user;
+            var userData = {
+                _links: {self: {href: USER_PATH}},
+                _id: 2,
+                username: 'test',
+                Avatar: {href: 'test'}
+            };
 
             $httpBackend.expectPATCH(USER_URL, {username: 'test', Avatar: {href: 'test'}}).respond(200);
 
@@ -423,7 +428,9 @@ define([
         it('can fetch an item by id', inject(function(api, $httpBackend) {
             var data = {_id: 1}, user;
             $httpBackend.expectGET(USER_URL).respond(200, data);
-            api('users').getById(1).then(function(_user) {user = _user;});
+            api('users').getById(1).then(function(_user) {
+                user = _user;
+            });
             $httpBackend.flush();
             expect(user._id).toBe(1);
         }));

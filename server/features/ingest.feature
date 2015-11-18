@@ -123,21 +123,184 @@ Feature: Fetch From Ingest
         Then we get existing resource
 		"""
 		{
+                    "_items": [
+                        {
+                            "type": "text",
+                            "subject": [
+                                {
+                                    "name": "Formula One",
+                                    "qcode": "15039001"
+                                },
+                                {
+                                    "name": "sport",
+                                    "qcode": "15000000"
+                                },
+                                {
+                                    "name": "motor racing",
+                                    "qcode": "15039000"
+                                }
+                            ]
+                        }
+                    ]
+                }
+  		"""
+
+    @auth
+    @provider
+    Scenario: Deleting an Ingest Provider after receiving items should be prohibited
+    	Given empty "ingest"
+    	When we fetch from "AAP" ingest "aap.xml"
+        And we get "/ingest/#AAP.AAP.115314987.5417374#"
+        Then we get "ingest_provider"
+        When we delete "/ingest_providers/#ingest_provider#"
+        Then we get error 403
+        """
+        {"_message": "Deleting an Ingest Source after receiving items is prohibited."}
+        """
+
+    @auth
+    Scenario: Ingested item must have unique id and unique name
+        Given "ingest"
+            """
+            [{
+                "guid": "tag_example.com_0000_newsml_BRE9A605",
+                "urgency": "1",
+                "source": "example.com",
+                "versioncreated": "2013-11-11T11:11:11+00:00"
+            }]
+            """
+        Then we get "unique_id" in "/ingest/tag_example.com_0000_newsml_BRE9A605"
+        And we get "unique_name" in "/ingest/tag_example.com_0000_newsml_BRE9A605"
+
+    @auth
+    @provider
+    Scenario: Check if Ingest from AAP populates all subjects with qcode
+    	Given empty "ingest"
+        When we fetch from "AAP" ingest "aap.xml"
+        And we get "/ingest"
+        Then we get existing resource
+		"""
+		{
 		"_items": [
 		  {
 		    "type": "text",
 		    "subject" : [
               {
-                  "name" : "Formula One",
-                  "qcode" : "15039001"
+                  "name" : "Justice",
+                  "qcode" : "02000000"
               },
+              {
+                  "name" : "Police",
+                  "qcode" : "02003000"
+              }
+              ]
+		  }
+		  ]
+		}
+  		"""
+
+    @auth
+    @provider
+    Scenario: Check if Ingest of IPTC sample NITF populates all subjects with qcode
+    	Given empty "ingest"
+        When we fetch from "AAP" ingest "nitf-fishing.xml"
+        And we get "/ingest"
+        Then we get existing resource
+		"""
+		{
+		"_items": [
+		  {
+		    "type": "text",
+		    "subject" : [
+              {
+                  "name" : "Weather",
+                  "qcode" : "17000000"
+              },
+              {
+                  "name" : "Statistics",
+                  "qcode" : "17004000"
+              },
+              {
+                  "name" : "Fishing Industry",
+                  "qcode" : "04001002"
+              }
+              ]
+		  }
+		  ]
+		}
+  		"""
+
+    @auth
+    @provider
+    Scenario: Check if Ingest of IPTC sample NITF populates anpa category based on mapping
+        Given empty "ingest"
+        Given the "vocabularies"
+        """
+          [{
+              "_id": "iptc_category_map",
+              "items": [
+                {"name" : "Finance", "category" : "f", "subject" : "04000000", "is_active" : true},
+                {"name" : "Weather", "category" : "b", "subject" : "17000000", "is_active" : true}
+              ]
+           },
+           {
+              "_id": "categories",
+              "items": [
+                {"is_active": true, "name": "Australian Weather", "qcode": "b", "subject": "17000000"},
+                {"is_active": true, "name": "Finance", "qcode": "f", "subject": "04000000"}
+              ]
+           }
+          ]
+        """
+        When we fetch from "AAP" ingest "nitf-fishing.xml"
+        And we get "/ingest"
+        Then we get existing resource
+		"""
+		{
+		"_items": [
+		  {
+		    "type": "text",
+		    "anpa_category" : [
+              {
+                  "name" : "Australian Weather",
+                  "qcode" : "b"
+              },
+              {
+                  "name" : "Finance",
+                  "qcode" : "f"
+              }
+              ]
+		  }
+		  ]
+		}
+  		"""
+
+    @auth
+    @provider
+    Scenario: Check given an item with an anpa category the iptc subject is derived
+    	Given empty "ingest"
+        Given the "vocabularies"
+        """
+          [
+           {
+              "_id": "categories",
+              "items": [
+                {"is_active": true, "name": "Overseas Sport", "qcode": "s", "subject": "15000000"}
+              ]
+           }
+          ]
+        """
+        When we fetch from "DPA" ingest "IPTC7901_odd_charset.txt"
+        And we get "/ingest"
+        Then we get existing resource
+		"""
+		{
+		"_items": [
+		  {
+		    "subject" : [
               {
                   "name" : "sport",
                   "qcode" : "15000000"
-              },
-              {
-                  "name" : "motor racing",
-                  "qcode" : "15039000"
               }
               ]
 		  }

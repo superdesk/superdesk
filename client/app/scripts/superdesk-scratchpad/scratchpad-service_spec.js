@@ -15,7 +15,7 @@ define([
             });
         });
 
-        var $q, storage, service, testItem, testItem2, preferencesService;
+        var storage, service, testItem, testItem2, preferencesService;
 
         beforeEach(module(function($provide) {
             $provide.service('api', function($q) {
@@ -32,8 +32,7 @@ define([
             });
         }));
 
-        beforeEach(inject(function($injector, notify, beta) {
-            $q = $injector.get('$q');
+        beforeEach(inject(function($injector, $q, notify, beta) {
             storage = $injector.get('storage');
             preferencesService = $injector.get('preferencesService');
             spyOn(beta, 'isBeta').and.returnValue($q.when(true));

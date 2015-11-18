@@ -4,7 +4,8 @@ define([
     './upload-service',
     './image-preview-directive',
     './video-capture-directive',
-    './crop-directive'
+    './crop-directive',
+    './image-crop-directive'
 ], function(angular, require) {
     'use strict';
 
@@ -49,10 +50,30 @@ define([
         };
     }
 
-    return angular.module('superdesk.upload', [])
+    function FileValidatorDirective() {
+
+        function isAcceptedFileType(file, accept) {
+            return file.type.indexOf(accept.replace('*', '')) === 0;
+        }
+
+        return {
+            require: 'ngModel',
+            link: function(scope, elem, attrs, ngModel) {
+                ngModel.$validators.fileType = function(modelValue, viewValue) {
+                    var value = modelValue || viewValue;
+                    return !value || !attrs.accept || isAcceptedFileType(value, attrs.accept);
+                };
+            }
+        };
+    }
+
+    return angular.module('superdesk.upload', ['angularFileUpload', 'superdesk.imageFactory'])
         .service('upload', require('./upload-service'))
         .directive('sdImagePreview', require('./image-preview-directive'))
         .directive('sdVideoCapture', require('./video-capture-directive'))
         .directive('sdCrop', require('./crop-directive'))
-        .directive('sdSources', SourcesDirective);
+        .directive('sdImageCrop', require('./image-crop-directive'))
+        .directive('sdSources', SourcesDirective)
+        .directive('sdFileTypeValidator', FileValidatorDirective)
+        ;
 });

@@ -7,35 +7,56 @@
 # For the full copyright and license information, please see the
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
+from bson import ObjectId
 
-
-from datetime import datetime
-from uuid import uuid4
-
-from eve.utils import config
 import flask
+from eve.utils import config
+from datetime import datetime
 from flask import current_app as app
 from eve.versioning import insert_versioning_documents
+from pytz import timezone
 
+import superdesk
+from superdesk.users.services import get_sign_off
 from superdesk.celery_app import update_key
 from superdesk.utc import utcnow, get_expiry_date
-from settings import SERVER_DOMAIN
+from settings import ORGANIZATION_NAME_ABBREVIATION
 from superdesk import get_resource_service
+from superdesk.metadata.item import metadata_schema, ITEM_STATE, CONTENT_STATE, \
+    LINKED_IN_PACKAGES, BYLINE, SIGN_OFF, EMBARGO, ITEM_TYPE, CONTENT_TYPE
 from superdesk.workflow import set_default_state, is_workflow_state_transition_valid
-import superdesk
-from apps.archive.archive import SOURCE as ARCHIVE
+from superdesk.metadata.item import GUID_NEWSML, GUID_FIELD, GUID_TAG, not_analyzed
+from superdesk.metadata.packages import PACKAGE_TYPE, TAKES_PACKAGE, SEQUENCE
+from superdesk.metadata.utils import generate_guid
 from superdesk.errors import SuperdeskApiError, IdentifierGenerationError
+from apps.auth import get_user
 
 
-GUID_TAG = 'tag'
-GUID_FIELD = 'guid'
-GUID_NEWSML = 'newsml'
-FAMILY_ID = 'family_id'
-INGEST_ID = 'ingest_id'
+ARCHIVE = 'archive'
+CUSTOM_HATEOAS = {'self': {'title': 'Archive', 'href': '/archive/{_id}'}}
+ITEM_OPERATION = 'operation'
+ITEM_CREATE = 'create'
+ITEM_UPDATE = 'update'
+ITEM_RESTORE = 'restore'
+ITEM_DUPLICATE = 'duplicate'
+ITEM_DESCHEDULE = 'deschedule'
+item_operations = [ITEM_CREATE, ITEM_UPDATE, ITEM_RESTORE, ITEM_DUPLICATE, ITEM_DESCHEDULE]
+# part the task dict
+LAST_AUTHORING_DESK = 'last_authoring_desk'
+LAST_PRODUCTION_DESK = 'last_production_desk'
+BROADCAST_GENRE = 'Broadcast Script'
+RE_OPENS = 'reopens'
 
 
-def on_create_item(docs):
+def update_version(updates, original):
+    """Increment version number if possible."""
+    if config.VERSION in updates and original.get('version', 0) == 0:
+        updates.setdefault('version', updates[config.VERSION])
+
+
+def on_create_item(docs, repo_type=ARCHIVE):
     """Make sure item has basic fields populated."""
+
     for doc in docs:
         update_dates_for(doc)
         set_original_creator(doc)
@@ -44,52 +65,66 @@ def on_create_item(docs):
             doc[GUID_FIELD] = generate_guid(type=GUID_NEWSML)
 
         if 'unique_id' not in doc:
-            generate_unique_id_and_name(doc)
+            generate_unique_id_and_name(doc, repo_type)
 
         if 'family_id' not in doc:
             doc['family_id'] = doc[GUID_FIELD]
 
-        set_default_state(doc, 'draft')
-        doc.setdefault('_id', doc[GUID_FIELD])
+        if 'event_id' not in doc:
+            doc['event_id'] = generate_guid(type=GUID_TAG)
+
+        set_default_state(doc, CONTENT_STATE.DRAFT)
+        doc.setdefault(config.ID_FIELD, doc[GUID_FIELD])
+
+        copy_metadata_from_user_preferences(doc, repo_type)
+
+        if not doc.get(ITEM_OPERATION):
+            doc[ITEM_OPERATION] = ITEM_CREATE
+
+
+def format_dateline_to_locmmmddsrc(located, current_timestamp, source=ORGANIZATION_NAME_ABBREVIATION):
+    """
+    Formats dateline to "Location, Month Date Source -"
+
+    :return: formatted dateline string
+    """
+
+    dateline_location = "{city_code}"
+    dateline_location_format_fields = located.get('dateline', 'city')
+    dateline_location_format_fields = dateline_location_format_fields.split(',')
+    if 'country' in dateline_location_format_fields and 'state' in dateline_location_format_fields:
+        dateline_location = "{city_code}, {state_code}, {country_code}"
+    elif 'state' in dateline_location_format_fields:
+        dateline_location = "{city_code}, {state_code}"
+    elif 'country' in dateline_location_format_fields:
+        dateline_location = "{city_code}, {country_code}"
+    dateline_location = dateline_location.format(**located)
+
+    if located['tz'] != 'UTC':
+        current_timestamp = datetime.fromtimestamp(current_timestamp.timestamp(), tz=timezone(located['tz']))
+    if current_timestamp.month == 9:
+        formatted_date = 'Sept {}'.format(current_timestamp.strftime('%d'))
+    elif 3 <= current_timestamp.month <= 7:
+        formatted_date = current_timestamp.strftime('%B %d')
+    else:
+        formatted_date = current_timestamp.strftime('%b %d')
+
+    return "{location} {mmmdd} {source} -".format(location=dateline_location.upper(), mmmdd=formatted_date,
+                                                  source=source)
 
 
 def on_duplicate_item(doc):
     """Make sure duplicated item has basic fields populated."""
+
     doc[GUID_FIELD] = generate_guid(type=GUID_NEWSML)
-
-    if 'unique_id' not in doc:
-        generate_unique_id_and_name(doc)
-
+    generate_unique_id_and_name(doc)
     doc.setdefault('_id', doc[GUID_FIELD])
+    set_sign_off(doc)
 
 
 def update_dates_for(doc):
     for item in ['firstcreated', 'versioncreated']:
         doc.setdefault(item, utcnow())
-
-
-def generate_guid(**hints):
-    '''Generate a GUID based on given hints'''
-    newsml_guid_format = 'urn:newsml:%(domain)s:%(timestamp)s:%(identifier)s'
-    tag_guid_format = 'tag:%(domain)s:%(year)d:%(identifier)s'
-
-    if not hints.get('id'):
-        hints['id'] = str(uuid4())
-
-    t = datetime.today()
-
-    if hints['type'].lower() == GUID_TAG:
-        return tag_guid_format % {'domain': SERVER_DOMAIN, 'year': t.year, 'identifier': hints['id']}
-    elif hints['type'].lower() == GUID_NEWSML:
-        return newsml_guid_format % {'domain': SERVER_DOMAIN, 'timestamp': t.isoformat(), 'identifier': hints['id']}
-    return None
-
-
-def get_user(required=False):
-    user = flask.g.get('user', {})
-    if '_id' not in user and required:
-        raise SuperdeskApiError.notFoundError('Invalid user.')
-    return user
 
 
 def get_auth():
@@ -99,41 +134,45 @@ def get_auth():
 
 def set_original_creator(doc):
     usr = get_user()
-    user = str(usr.get('_id', ''))
+    user = str(usr.get('_id', doc.get('original_creator', '')))
     doc['original_creator'] = user
 
-    # sent_user = doc.get('user', None)
-    # if sent_user and user and sent_user != user:
-    #     raise superdesk.SuperdeskError()
-    # doc['user'] = user
+
+def set_sign_off(updates, original=None, repo_type=ARCHIVE, user=None):
+    """
+    Set sign_off on updates object. Rules:
+        1. updates['sign_off'] = original['sign_off'] + sign_off of the user performing operation.
+        2. If the last modified user and the user performing operation are same then sign_off shouldn't change
+    """
+
+    if repo_type != ARCHIVE:
+        return
+
+    user = user if user else get_user()
+    if not user:
+        return
+
+    sign_off = get_sign_off(user)
+    current_sign_off = '' if original is None else original.get(SIGN_OFF, '')
+
+    if current_sign_off.endswith(sign_off):
+        return
+
+    updated_sign_off = '{}/{}'.format(current_sign_off, sign_off)
+    updates[SIGN_OFF] = updated_sign_off[1:] if updated_sign_off.startswith('/') else updated_sign_off
 
 
-item_url = 'regex("[\w,.:_-]+")'
-
-extra_response_fields = [GUID_FIELD, 'headline', 'firstcreated', 'versioncreated', 'archived']
-
-aggregations = {
-    'type': {'terms': {'field': 'type'}},
-    'desk': {'terms': {'field': 'task.desk'}},
-    'stage': {'terms': {'field': 'task.stage'}},
-    'category': {'terms': {'field': 'anpa-category.name'}},
-    'source': {'terms': {'field': 'source'}},
-    'state': {'terms': {'field': 'state'}},
-    'urgency': {'terms': {'field': 'urgency'}},
-    'day': {'date_range': {'field': 'firstcreated', 'format': 'dd-MM-yyy HH:mm:ss', 'ranges': [{'from': 'now-24H'}]}},
-    'week': {'date_range': {'field': 'firstcreated', 'format': 'dd-MM-yyy HH:mm:ss', 'ranges': [{'from': 'now-1w'}]}},
-    'month': {'date_range': {'field': 'firstcreated', 'format': 'dd-MM-yyy HH:mm:ss', 'ranges': [{'from': 'now-1M'}]}},
-}
-
-
-def generate_unique_id_and_name(item):
+def generate_unique_id_and_name(item, repo_type=ARCHIVE):
     """
     Generates and appends unique_id and unique_name to item.
     :throws IdentifierGenerationError: if unable to generate unique_id
     """
 
     try:
-        unique_id = update_key("INGEST_SEQ", flag=True)
+        key_name = 'TEST_{}_SEQ'.format(repo_type.upper()) if superdesk.app.config.get('SUPERDESK_TESTING', False) \
+            else '{}_SEQ'.format(repo_type.upper())
+
+        unique_id = update_key(key_name, flag=True)
 
         if unique_id:
             item['unique_id'] = unique_id
@@ -144,7 +183,7 @@ def generate_unique_id_and_name(item):
         raise IdentifierGenerationError() from e
 
 
-def insert_into_versions(guid=None, doc=None):
+def insert_into_versions(id_=None, doc=None):
     """
     There are some scenarios where the requests are not handled by eve. In those scenarios superdesk should be able to
     manually manage versions. Below are some scenarios:
@@ -156,8 +195,8 @@ def insert_into_versions(guid=None, doc=None):
         in the package is not handled by eve.
     """
 
-    if guid:
-        doc_in_archive_collection = get_resource_service(ARCHIVE).find_one(req=None, _id=guid)
+    if id_:
+        doc_in_archive_collection = get_resource_service(ARCHIVE).find_one(req=None, _id=id_)
     else:
         doc_in_archive_collection = doc
 
@@ -178,6 +217,44 @@ def remove_unwanted(doc):
     for attr in ['_type', 'desk', 'archived']:
         if attr in doc:
             del doc[attr]
+
+
+def remove_media_files(doc):
+        """
+        Removes the media files of the given doc if they are not references by any other
+        story across all repos. Returns true if the medis files are removed.
+        """
+        print('Removing Media Files...')
+
+        if doc.get(ITEM_TYPE) in [CONTENT_TYPE.PICTURE, CONTENT_TYPE.VIDEO, CONTENT_TYPE.AUDIO]:
+            base_image_id = doc.get('renditions', {}).get('baseImage', {}).get('media')
+
+            if base_image_id:
+                try:
+                    archive_docs = superdesk.get_resource_service('archive'). \
+                        get_from_mongo(None, {'renditions.baseImage.media': base_image_id})
+                    ingest_docs = superdesk.get_resource_service('ingest'). \
+                        get_from_mongo(None, {'renditions.baseImage.media': base_image_id})
+                    legal_archive_docs = superdesk.get_resource_service('legal_archive'). \
+                        get_from_mongo(None, {'renditions.baseImage.media': base_image_id})
+                    archive_version_docs = superdesk.get_resource_service('archive_versions'). \
+                        get_from_mongo(None, {'renditions.baseImage.media': base_image_id})
+                    legal_archive_version_docs = superdesk.get_resource_service('legal_archive_versions'). \
+                        get_from_mongo(None, {'renditions.baseImage.media': base_image_id})
+
+                    if archive_docs.count() == 0 and ingest_docs.count() == 0 and legal_archive_docs.count() == 0 and \
+                            archive_version_docs.count() == 0 and legal_archive_version_docs.count() == 0:
+                        # there's no reference so do remove the file
+                        for name, rendition in doc.get('renditions').items():
+                            if 'media' in rendition:
+                                print('Deleting media:{}'.format(rendition.get('media')))
+                                app.media.delete(rendition.get('media'))
+                        # files are removed
+                        return True
+                except Exception as ex:
+                    print('Removing Media Exception:{}'.format(ex))
+                    return False
+        return False
 
 
 def is_assigned_to_a_desk(doc):
@@ -253,22 +330,207 @@ def update_state(original, updates):
     is changed to 'in-progress'.
     """
 
-    original_state = original.get(config.CONTENT_STATE)
-    if original_state != 'ingested' and original_state != 'in_progress':
+    original_state = original.get(ITEM_STATE)
+    if original_state not in {CONTENT_STATE.INGESTED, CONTENT_STATE.PROGRESS, CONTENT_STATE.SCHEDULED}:
+        if original.get(PACKAGE_TYPE) == TAKES_PACKAGE:
+            # skip any state transition validation for takes packages
+            # also don't change the stage of the package
+            return
         if not is_workflow_state_transition_valid('save', original_state):
             raise superdesk.InvalidStateTransitionError()
         elif is_assigned_to_a_desk(original):
-            updates[config.CONTENT_STATE] = 'in_progress'
+            updates[ITEM_STATE] = CONTENT_STATE.PROGRESS
         elif not is_assigned_to_a_desk(original):
-            updates[config.CONTENT_STATE] = 'draft'
+            updates[ITEM_STATE] = CONTENT_STATE.DRAFT
 
 
-def is_update_allowed(archive_doc):
+def handle_existing_data(doc, pub_status_value='usable', doc_type='archive'):
     """
-    Checks if the archive_doc is valid to be updated. If invalid then the method raises ForbiddenError.
-    For instance, a published item shouldn't be allowed to update.
+    Handles existing data. For now the below are handled:
+        1. Sets the value of pubstatus property in metadata of doc in either ingest or archive repo
+        2. Sets the value of marked_for_not_publication
     """
 
-    state = archive_doc.get(config.CONTENT_STATE)
-    if state in ['published']:
-        raise SuperdeskApiError.forbiddenError("Item isn't in a valid state to be updated.")
+    if doc:
+        if 'pubstatus' in doc:
+            doc['pubstatus'] = doc.get('pubstatus', pub_status_value).lower()
+
+        if doc_type == 'archive' and 'marked_for_not_publication' not in doc:
+            doc['marked_for_not_publication'] = False
+
+
+def validate_schedule(schedule, package_sequence=1):
+    """
+    Validates the publish schedule.
+    :param datetime schedule: schedule datetime
+    :param int package_sequence: takes package sequence.
+    :raises: SuperdeskApiError.badRequestError if following cases
+        - Not a valid datetime
+        - Less than current utc time
+        - if more than 1 takes exist in the package.
+    """
+    if schedule:
+        if not isinstance(schedule, datetime):
+            raise SuperdeskApiError.badRequestError("Schedule date is not recognized")
+        if schedule < utcnow():
+            raise SuperdeskApiError.badRequestError("Schedule cannot be earlier than now")
+        if package_sequence > 1:
+            raise SuperdeskApiError.badRequestError("Takes cannot be scheduled.")
+
+
+def item_schema(extra=None):
+    """Create schema for item.
+
+    :param extra: extra fields to be added to schema
+    """
+    schema = {
+        'old_version': {
+            'type': 'number',
+        },
+        'last_version': {
+            'type': 'number',
+        },
+        'task': {'type': 'dict'},
+        'publish_schedule': {
+            'type': 'datetime',
+            'nullable': True
+        },
+        'marked_for_not_publication': {
+            'type': 'boolean',
+            'default': False
+        },
+        ITEM_OPERATION: {
+            'type': 'string',
+            'allowed': item_operations,
+            'index': 'not_analyzed'
+        },
+        'targeted_for': {
+            'type': 'list',
+            'nullable': True,
+            'schema': {
+                'type': 'dict',
+                'schema': {
+                    'name': {'type': 'string'},
+                    'allow': {'type': 'boolean'}
+                }
+            }
+        },
+        'event_id': {
+            'type': 'string',
+            'mapping': not_analyzed
+        },
+        'rewrite_of': {
+            'type': 'string',
+            'mapping': not_analyzed,
+            'nullable': True
+        },
+        SEQUENCE: {
+            'type': 'integer'
+        },
+        EMBARGO: {
+            'type': 'datetime',
+            'nullable': True
+        },
+        'broadcast': {
+            'type': 'dict',
+            'nullable': True,
+            'schema': {
+                'status': {'type': 'string'},
+                'master_id': {'type': 'string', 'mapping': not_analyzed},
+                'takes_package_id': {'type': 'string', 'mapping': not_analyzed},
+                'rewrite_id': {'type': 'string', 'mapping': not_analyzed}
+            }
+        },
+        'body_footer': {  # Public Service Announcements
+            'type': 'string',
+            'nullable': True,
+            'mapping': not_analyzed
+        }
+    }
+    schema.update(metadata_schema)
+    if extra:
+        schema.update(extra)
+    return schema
+
+
+def is_item_in_package(item):
+    """
+    Checks if the passed item is a member of a non-takes package
+    :param item:
+    :return: True if the item belongs to a non-takes package
+    """
+    return item.get(LINKED_IN_PACKAGES, None) \
+        and sum(1 for x in item.get(LINKED_IN_PACKAGES, []) if x.get(PACKAGE_TYPE, '') == '')
+
+
+def convert_task_attributes_to_objectId(doc):
+    """
+    set the task attributes desk, stage, user as object id
+    :param doc:
+
+    """
+    task = doc.get('task', {})
+
+    if not task:
+        return
+
+    if ObjectId.is_valid(task.get('desk')) and not isinstance(task.get('desk'), ObjectId):
+        task['desk'] = ObjectId(task.get('desk'))
+    if ObjectId.is_valid(task.get('stage')) and not isinstance(task.get('stage'), ObjectId):
+        task['stage'] = ObjectId(task.get('stage'))
+    if ObjectId.is_valid(task.get('user')) and not isinstance(task.get('user'), ObjectId):
+        task['user'] = ObjectId(task.get('user'))
+    if ObjectId.is_valid(task.get(LAST_PRODUCTION_DESK)) and \
+            not isinstance(task.get(LAST_PRODUCTION_DESK), ObjectId):
+        task[LAST_PRODUCTION_DESK] = ObjectId(task.get(LAST_PRODUCTION_DESK))
+    if ObjectId.is_valid(task.get(LAST_AUTHORING_DESK, None)) and \
+            not isinstance(task.get(LAST_AUTHORING_DESK), ObjectId):
+        task[LAST_AUTHORING_DESK] = ObjectId(task.get(LAST_AUTHORING_DESK))
+
+
+def copy_metadata_from_user_preferences(doc, repo_type=ARCHIVE):
+    """
+    Copies following properties: byline, signoff, dateline.located, place from user preferences to doc if the repo_type
+    is Archive.
+
+    About Dateline: Dateline has 3 parts: Located, Date (Format: Month Day) and Source. Dateline can either be simple:
+    Sydney, July 30 AAP - or can be complex: Surat,Gujarat,IN, July 30 AAP -. Date in the dateline is timezone
+    sensitive to the Located.  Located is set on the article based on user preferences if available. If located is not
+    available in user preferences then dateline in full will not be set.
+    """
+
+    if repo_type == ARCHIVE:
+        user = get_user()
+
+        if 'dateline' not in doc:
+            current_date_time = dateline_ts = utcnow()
+            doc['dateline'] = {'date': current_date_time, 'source': ORGANIZATION_NAME_ABBREVIATION, 'located': None,
+                               'text': None}
+
+            if user and user.get('user_preferences', {}).get('dateline:located'):
+                located = user.get('user_preferences', {}).get('dateline:located', {}).get('located')
+                if located:
+                    doc['dateline']['located'] = located
+                    doc['dateline']['text'] = format_dateline_to_locmmmddsrc(located, dateline_ts)
+
+        if BYLINE not in doc and user and user.get(BYLINE):
+                doc[BYLINE] = user[BYLINE]
+
+        if 'place' not in doc and user:
+            place_in_preference = user.get('user_preferences', {}).get('article:default:place')
+
+            if place_in_preference:
+                doc['place'] = place_in_preference.get('place')
+
+        set_sign_off(doc, repo_type=repo_type, user=user)
+
+
+def is_genre(item, genre_value):
+    """
+    Item to check specific genre exists or not
+    :param dict item: item on which the check is performed.
+    :param str genre_value: genre_value as string
+    :return: If exists then true else false
+    """
+    return item.get('genre') and any(genre.get('value', '').lower() == genre_value.lower()
+                                     for genre in item.get('genre', []))

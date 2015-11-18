@@ -62,7 +62,7 @@ Feature: Authentication
         Then we can check if token is valid
         And we update token to be expired
         Then token is invalid
- 
+
 	Scenario: Reset password existing user
         Given "users"
         """
@@ -159,18 +159,59 @@ Feature: Authentication
 
         And we get "Access-Control-Allow-Origin" header
 
-    Scenario: user logs in and out
-        Given "users"
+    @auth
+    Scenario: user logs in and no etag change
+        When we post to "/users"
+        """
+        {"username": "foo", "password": "barbar", "email": "foo@bar.com", "sign_off": "fubar", "is_active": true}
+        """
+        Then we get response code 201
+        And we get new resource
             """
-            [{"username": "foo", "password": "bar", "email": "foo@bar.org", "is_active": true}]
+            {"username": "foo", "email": "foo@bar.com"}
+            """
+
+        When we post to "auth"
+            """
+            {"username": "foo", "password": "barbar"}
+            """
+        Then we get response code 201
+
+        When we get "/users"
+        Then we get list with 2 items
+            """
+            {"_items": [{"username": "foo", "_etag": "#USERS._etag#"}, {"username": "test_user"}]}
+            """
+
+     @auth
+     Scenario: user logs out and no etag change
+        When we post to "/users"
+        """
+        {"username": "foo", "password": "barbar", "email": "foo@bar.com", "is_active": true, "sign_off": "foobar"}
+        """
+        Then we get response code 201
+        And we get new resource
+            """
+            {"username": "foo", "email": "foo@bar.com"}
             """
 
         When we post to auth
             """
-            {"username": "foo", "password": "bar"}
+            {"username": "foo", "password": "barbar"}
             """
         When we delete latest
         Then we get response code 204
+
+        When we post to auth
+            """
+            {"username": "test_user", "password": "test_password"}
+            """
+
+        When we get "/users"
+        Then we get list with 2 items
+            """
+            {"_items": [{"username": "foo", "_etag": "#USERS._etag#"}, {"username": "test_user"}]}
+            """
 
     Scenario: user logs in locks content and logs out logs in again and the content is no longer locked
         Given "users"
@@ -183,7 +224,7 @@ Feature: Authentication
         """
         Given "archive"
         """
-        [{"_id": "item-1", "guid": "item-1", "headline": "test"}]
+        [{"_id": "item-1", "guid": "item-1", "headline": "test", "_current_version": 1}]
         """
         When we post to "/archive/item-1/lock"
         """
@@ -200,5 +241,3 @@ Feature: Authentication
         """
         When we get "/archive"
         Then item "item-1" is unlocked
-
-

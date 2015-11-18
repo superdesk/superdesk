@@ -5,8 +5,12 @@
 @import 'variables.less';
 
 .search-page-container {
+        .archive-content {
+            height: 100%;
+        }
 	.search-page-header {
 		display: flex;
+		position: relative;
 		> div {
 			flex: 0 0 auto;
 		}
@@ -14,6 +18,26 @@
 			flex: 1 0 auto;
 		}
 	}
+}
+
+.multi-action-bar {
+	.border-box();
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	z-index: 3;
+	line-height: 48px;
+	background-color: #fff;
+	padding: 0 16px;
+	.navbtn {
+		border: none;
+	}
+                
+    #multi-select-count {
+        margin-left: 15px;
+    }
 }
 
 .item-searchbar {
@@ -70,14 +94,14 @@
 
 	.search-cancel {
 		position: absolute;
-		top: 20px; right: 65px;
+		top: 15px; right: 65px;
 		background: #d0d0d0;
 		.border-radius(50%);
 		border: 0;
 		padding: 0px 5px 2px 4px;
   		zoom: 0.8;
 		i {
-			margin: -1px 1px 0 -2px;
+			margin: 0 0 0 -1px;
 		}
 		&:hover {
 			background: #ababab;

@@ -8,46 +8,42 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
+from apps.archive.archive import ArchiveResource, ArchiveVersionsResource
+
+from superdesk.publish.publish_queue import PublishQueueResource
 from superdesk.resource import Resource
-from apps.archive.common import item_url
-from superdesk.services import BaseService
-from apps.common.models.utils import get_model
-from apps.legal_archive.models.legal_archive import LegalArchiveModel
-from apps.content import metadata_schema
 
 
-class LegalArchiveResource(Resource):
-    endpoint_name = 'legal_archive'
-    schema = metadata_schema
-    item_url = item_url
+LEGAL_ARCHIVE_NAME = 'legal_archive'
+LEGAL_ARCHIVE_VERSIONS_NAME = 'legal_archive_versions'
+LEGAL_PUBLISH_QUEUE_NAME = 'legal_publish_queue'
+
+
+class LegalResource(Resource):
     resource_methods = ['GET']
     item_methods = ['GET']
+    privileges = {'GET': LEGAL_ARCHIVE_NAME}
+    mongo_prefix = 'LEGAL_ARCHIVE'
+
+
+class LegalArchiveResource(LegalResource, ArchiveResource):
+    endpoint_name = LEGAL_ARCHIVE_NAME
     resource_title = endpoint_name
 
-
-class LegalArchiveService(BaseService):
-    def find_one(self, req, **lookup):
-        if '_id' in lookup:
-            lookup['guid'] = lookup['_id']
-            del lookup['_id']
-        req.sort = '-_version'
-        for arg in req.args.items():
-            if arg[0] == 'version':
-                lookup['_version'] = arg[1]
-        res = self.backend.find(self.datasource, req, lookup)
-        return res[0]
-
-    def get(self, req, lookup):
-        return get_model(LegalArchiveModel).find(lookup)
+    datasource = {'source': LEGAL_ARCHIVE_NAME}
 
 
-class ErrorsResource(Resource):
-    endpoint_name = 'errors'
-    schema = {
-        'resource': {'type': 'string'},
-        'docs': {'type': 'list'},
-        'result': {'type': 'string'}
-    }
-    resource_methods = []
-    item_methods = []
+class LegalArchiveVersionsResource(LegalResource, ArchiveVersionsResource):
+    endpoint_name = LEGAL_ARCHIVE_VERSIONS_NAME
     resource_title = endpoint_name
+
+    datasource = {'source': LEGAL_ARCHIVE_VERSIONS_NAME,
+                  'projection': {'old_version': 0, 'last_version': 0}
+                  }
+
+
+class LegalPublishQueueResource(LegalResource, PublishQueueResource):
+    endpoint_name = LEGAL_PUBLISH_QUEUE_NAME
+    resource_title = endpoint_name
+
+    datasource = {'source': LEGAL_PUBLISH_QUEUE_NAME}

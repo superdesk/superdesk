@@ -44,7 +44,7 @@ Feature: Tasks
 	    """
         {"_items": [{"slugline": "testtask changed"}]}
 	    """
-    
+
     @auth
     Scenario: Update multiple task description
         Given "tasks"
@@ -67,7 +67,7 @@ Feature: Tasks
         Given empty "tasks"
         When we post to "users"
         """
-        {"username": "foo", "email": "foo@bar.com"}
+        {"username": "foo", "email": "foo@bar.com", "sign_off": "abc"}
         """
         When we post to "desks"
         """
@@ -89,7 +89,7 @@ Feature: Tasks
         Given empty "tasks"
         When we post to "users"
         """
-        {"username": "foo", "email": "foo@bar.com"}
+        {"username": "foo", "email": "foo@bar.com", "sign_off": "abc"}
         """
         When we post to "planning"
         """
@@ -120,7 +120,7 @@ Feature: Tasks
         """
         When we post to "users"
         """
-        {"username": "foo", "email": "foo@bar.com"}
+        {"username": "foo", "email": "foo@bar.com", "sign_off": "abc"}
         """
         When we post to "tasks"
 	    """
@@ -145,7 +145,7 @@ Feature: Tasks
         Given empty "tasks"
         When we post to "users"
         """
-        {"username": "foo", "email": "foo@bar.com"}
+        {"username": "foo", "email": "foo@bar.com", "sign_off": "abc"}
         """
         When we post to "tasks"
 	    """
@@ -153,3 +153,17 @@ Feature: Tasks
 	    """
         And we delete latest
         Then we get deleted response
+
+    @auth
+    Scenario: Filter out tasks for spiked items
+        Given "desks"
+        """
+        [{"name": "Sports Desk", "spike_expiry": 60}]
+        """
+        And "archive"
+        """
+        [{"_id": "task-1", "guid": "task-1", "slugline": "first task", "type": "text", "task": {"desk": "#desks._id#"}}]
+        """
+        When we spike "task-1"
+        And we get "/tasks"
+        Then we get list with 0 items

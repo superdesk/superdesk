@@ -2,12 +2,11 @@
 module.exports = function(grunt) {
     'use strict';
 
-    var _ = require('lodash'),
-        path = require('path');
+    var path = require('path');
 
     function getModules() {
         var pattern = grunt.template.process('<%= appDir %>/scripts/superdesk-*/module.js');
-        return _.map(grunt.file.expand(pattern), function(modulePath) {
+        return grunt.file.expand(pattern).map(function(modulePath) {
             return path.basename(path.dirname(modulePath)) + '/module';
         });
     }

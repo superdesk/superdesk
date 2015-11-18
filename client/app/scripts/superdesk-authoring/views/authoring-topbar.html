@@ -1,46 +1,150 @@
-<div class="subnav" ng-class="{'auth-sendto': views.send}">
-    <div class="page-title-wrapper clearfix pull-left">
-        <button class="stage stage-label pull-left" ng-show="stage">{{stage.name}}</button>
-        <div class="state-label state-{{item.state}}">{{item.state}}</div>
-        <span class="lock-info pull-left" ng-show="item._locked"><i class="icon-lock-red"></i></span>
-        <h3 class="page-nav-title" ng-show="item.headline">{{ item.headline }}</h3>
-        <h3 class="page-nav-title" ng-show="!item.headline" translate>Untitled</h3>
-        <span class="lock-text pull-left" ng-show="item._locked && isLockedByMe()" translate>This article is locked by you in another session.</span>
-        <span class="lock-text pull-left" ng-show="item._locked && !isLockedByMe()" translate>This article is locked by <b>{{ item.lock_user | username }}</b></span>
+<div id="subnav" class="subnav" ng-class="{'auth-sendto': views.send}">
+
+    <div class="dropdown dropright lock-avatar pull-left" ng-if="item._locked" dropdown>
+        <figure class="avatar small avatar-with-info" dropdown-toggle>
+            <div class="logged-info"></div>
+            <div class="user-image">
+                <img sd-user-avatar data-src="item.lock_user.picture_url" data-initials="item.lock_user | username">
+            </div>
+        </figure>
+
+        <div class="dropdown-menu">
+            <div class="menu-label" translate>Locked by</div>
+            <figure class="avatar large">
+                <div class="user-image">
+                    <img sd-user-avatar data-src="item.lock_user.picture_url" data-initials="item.lock_user | username">
+                </div>
+            </figure>
+            <div class="lock-text">{{ item.lock_user | username }}</div>   
+            <button class="btn btn-medium pull-left" 
+                    ng-if="item._locked && !item.sendTo && can_unlock() && itemActions.save" 
+                    ng-click="unlock()" 
+                    ng-disabled="unlockClicked" translate>
+                Unlock
+            </button>
+        </div>
+    </div>
+
+    <div class="authoring-topbar clearfix pull-left" ng-class="{'has-highlights': item.highlights}">
+        <button class="stage" ng-show="stage" ng-if="item._type !== 'legal_archive'" ng-click="openStage()"><b>{{deskName}}</b> / {{ stage.name }}</button>
+        <span class="stage" ng-show="stage" ng-if="item._type === 'legal_archive'"><b>{{deskName}}</b> / {{ stage }}</span>
+        <div ng-if="item.more_coming === true" class="state-label state-in_progress" translate>More coming</div>
+        <span ng-if="item.highlights" sd-highlights-title data-item="item" data-orientation="'bottom'"></span>
     </div>
 
     <div class="button-stack right-stack">
-        <button class="btn btn-medium pull-left" ng-if="!sending && item._locked && can_unlock() && item.state !== 'published'" ng-click="unlock()" translate>Unlock</button>
-        <button class="btn btn-medium pull-left" ng-show="!sending && !_editable && !item._locked && item.state !== 'published'" ng-click="lock()" translate>Lock</button>
-        <button class="btn btn-medium pull-left" ng-click="close()" translate>Close</button>
+
+        <button id="Edit" class="btn btn-medium pull-left" ng-if="item._type !== 'legal_archive'"
+            ng-show="action === 'view' && !item._locked && itemActions.edit"
+            ng-click="edit()"
+            translate>Edit</button>
+
+        <button class="btn btn-medium pull-left"
+            ng-show="action === 'view' && !item._locked && itemActions.deschedule"
+            ng-click="deschedule()"
+            translate>Deschedule</button>
+
+        <button class="btn btn-medium btn-info pull-left" ng-if="item._type !== 'legal_archive'"
+            ng-show="action === 'view' && !item._locked && itemActions.correct"
+            ng-click="openAction('correct')"
+            translate>Edit and Correct</button>
+
+        <button class="btn btn-medium btn-info pull-left" ng-if="item._type !== 'legal_archive'"
+            ng-show="action === 'view' && !item._locked && itemActions.kill"
+            ng-click="openAction('kill')"
+            translate>Edit and Kill</button>
+
+        <button class="btn btn-medium pull-left" id="closeAuthoringBtn" ng-click="close()" translate>CLOSE</button>
 
         <button class="btn btn-medium btn-info pull-left" type="submit"
-            ng-click="save(item)"
+            ng-click="saveTopbar(item)"
             ng-show="_editable"
-            ng-disabled="!save_enabled()"
-            translate>Save</button>
+            ng-if = "itemActions.save && action === 'edit'"
+            ng-disabled="!save_enabled() || saveDisabled"
+            translate>SAVE</button>
 
-        <button class="btn btn-medium btn-info pull-left" type="submit"
-            ng-click="publish()"
-            ng-if = "privileges.publish == 1 && item.task.desk"
-            ng-disabled="item.state ==='published'"
-            ng-show="_editable"
-            translate>Publish</button>
+        <button id="export" class="btn btn-medium btn-info pull-left"
+			 ng-click="exportHighlight(item)"
+			 ng-disabled="!_editable"
+			 ng-if="highlight"
+			 translate>Export</button>
 
-        <div class="navbtn dropdown strict pull-left" dropdown>
-            <button class="dropdown-toggle sd-create-btn" dropdown-toggle></button>
-            <ul class="dropdown-menu pull-right" sd-content-create></ul>
-        </div>
+        <button class="navbtn navbtn-hover strict"
+                ng-if="!item._locked"
+                title="{{ :: 'Minimize' | translate }}"
+                ng-click="minimize()">
+            <i class="big-icon-minimize"></i>
+        </button>
 
-        <div ng-if="item.type === 'text'" class="navbtn dropdown strict multiedit-dropdown pull-left" dropdown>
+        <div ng-if="item._type !== 'legal_archive' && itemActions.multi_edit && !item._locked"
+             class="navbtn dropdown strict multiedit-dropdown pull-left strict"
+             title="{{ :: 'Multiedit' | translate }}" dropdown>
             <button class="dropdown-toggle" dropdown-toggle>
                 <i class="big-icon-multiedit"></i>
             </button>
             <div class="dropdown-menu pull-right" sd-multiedit-dropdown></div>
         </div>
 
-        <button id="send-to-btn" ng-show="privileges.move == 1 && _editable && isActionAllowed(item, 'move')"
-            class="navbtn navbtn-hover" ng-click="views.send = !views.send">
+        <div id="authoring-extra-dropdown"
+             ng-if="item._type !== 'legal_archive'"
+             class="navbtn dropdown pull-left strict"
+             title="{{ :: 'More actions' | translate }}" dropdown>
+            <button class="dropdown-toggle" dropdown-toggle>
+                <i class="icon-dots-vertical"></i>
+            </button>
+            <div class="dropdown-menu pull-right">
+                <ul ng-controller="TemplateMenu as templateMenu">
+                    <li><span class="menu-label" translate>Templates</span></li>
+                    <li>
+                        <button type="button"
+                            ng-click="templateMenu.create(item)"
+                            translate>Save as template</button>
+                    </li>
+                </ul>
+
+                <ul ng-if="item.task.desk && itemActions.mark_item"
+                     title="{{ :: 'Mark item' | translate }}">
+                    <li class="divider"></li>
+                    <li><span class="menu-label" translate>Highlights</span></li>
+                    <li>
+                        <div class="dropdown highlights-toggle" dropdown>
+                            <button class="dropdown-toggle" dropdown-toggle>
+                                {{ :: 'Mark item' | translate }}
+                                <i class="icon-chevron-right-thin submenu-icon"></i>
+                            </button>
+                            <ul class="dropdown-menu right-submenu" sd-mark-highlights-dropdown></ul>
+                        </div>
+                    </li>
+                </ul>
+
+                <ul ng-if="_editable" ng-controller="SpellcheckMenu as spellcheckMenu">
+                    <li class="divider"></li>
+                    <li><span class="menu-label" translate>Spell Checker</span></li>
+                    <li>
+                        <span>
+                            <span class="pull-right"
+                                sd-switch
+                                ng-model="spellcheckMenu.isAuto"
+                                ng-change="spellcheckMenu.pushSettings()"></span>
+                            <span translate>Run automatically</span>
+                        </span>
+                    </li>
+                    <li>
+                        <button type="button"
+                            ng-click="spellcheckMenu.spellcheck()"
+                            ng-disabled="spellcheckMenu.isAuto"
+                            translate>
+                                <span class="shortcut pull-right">Ctrl+Shift+D</span>
+                                Check spelling
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <button id="send-to-btn" ng-show="_editable"
+            class="navbtn navbtn-hover" title="{{ :: 'Send to / Publish' | translate }}"
+            ng-click="views.send = !views.send">
             <i class="svg-icon-sendto"></i>
         </button>
     </div>

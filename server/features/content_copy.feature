@@ -1,7 +1,7 @@
 Feature: Copy Content in Personal Workspace
 
     @auth
-    Scenario: Copy content in personal workspace
+    Scenario: Copy content in personal workspace and validate metadata set by API
       Given "archive"
       """
       [{"type":"text", "headline": "test1", "guid": "123", "original_creator": "abc", "state": "draft"}]
@@ -16,15 +16,20 @@ Feature: Copy Content in Personal Workspace
       """
       Then we get updated response
       """
-      {"headline": "test3"}
+      {"headline": "test3", "sign_off": "abc"}
       """
       When we post to "/archive/123/copy"
       """
       {}
       """
-      Then we get "_id"
-      When we get "/archive/#_id#?version=all"
-      Then we get list with 3 items
+      When we get "/archive/#copy._id#"
+      Then we get existing resource
+      """
+      {"state": "draft", "sign_off": "abc"}
+      """
+      And we get version 4
+      When we get "/archive/#copy._id#?version=all"
+      Then we get list with 4 items
       When we get "/archive/"
       Then we get list with 2 items
 

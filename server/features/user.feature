@@ -6,11 +6,11 @@ Feature: User Resource
         Given empty "users"
         When we create a new user
         """
-        {"username": "foo", "password": "barbar", "email": "foo@bar.com"}
+        {"username": "foo", "password": "barbar", "email": "foo@bar.com", "sign_off": "fb"}
         """
         Then we get new resource
         """
-        {"username": "foo", "display_name": "foo", "email": "foo@bar.com", "is_active": false, "needs_activation": true}
+        {"username": "foo", "display_name": "foo", "email": "foo@bar.com", "is_active": true, "needs_activation": true}
         """
         And we get no "password"
         And we get activation email
@@ -20,7 +20,7 @@ Feature: User Resource
         Given empty "users"
         When we post to "/users"
         """
-        {"username": "foo", "password": "barbar", "email": "invalid email"}
+        {"username": "foo", "password": "barbar", "email": "invalid email", "sign_off": "asd"}
         """
         Then we get error 400
         """
@@ -63,8 +63,12 @@ Feature: User Resource
         """
         When we get "/users"
         Then we get list with +2 items
+        And we get users
+        """
+        ["bar", "foo"]
+        """
 
-    @auth
+    @auth @test
     Scenario: Fetch single user
         Given "users"
         """
@@ -73,7 +77,10 @@ Feature: User Resource
         When we get "/users/foo"
         Then we get existing resource
         """
-        {"username": "foo", "first_name": "Foo", "last_name": "Bar", "display_name": "Foo Bar", "_created": "", "_updated": "", "_id": ""}
+        {
+        	"username": "foo", "first_name": "Foo", "last_name": "Bar", "display_name": "Foo Bar",
+        	"_created": "__any_value__", "_updated": "__any_value__", "_id": "__any_value__"
+        }
         """
         And we get no "password"
 
@@ -127,7 +134,43 @@ Feature: User Resource
         Then the field "display_name" value is "first Testing"
 
     @auth
-    Scenario: Change user status
+    @notification
+    Scenario: Update user type
+        Given "users"
+        """
+        [{"username": "foo", "email": "foo@bar.org", "first_name": "first", "last_name": "last", "is_active": true, "user_type": "administrator"}]
+        """
+        When we patch "/users/foo"
+        """
+        {"user_type": "user"}
+        """
+        Then we get updated response
+        Then we get notifications
+        """
+        [{"event": "user_type_changed", "extra": {"updated": 1, "user_id": "#users._id#"}}]
+        """
+
+    @auth
+    @notification
+    Scenario: Update user privilege
+        Given "users"
+        """
+        [{"username": "foo", "email": "foo@bar.org", "first_name": "first", "last_name": "last", "is_active": true,
+        "privileges": {"kill" : 1, "archive" : 1}}]
+        """
+        When we patch "/users/foo"
+        """
+        {"privileges": {"kill" : 0}}
+        """
+        Then we get updated response
+        Then we get notifications
+        """
+        [{"event": "user_privileges_revoked", "extra": {"updated": 1, "user_id": "#users._id#"}}]
+        """
+
+    @auth
+    @notification
+    Scenario: Change user status - inactivated
         Given "users"
         """
         [{"username": "foo", "email": "foo@bar.co", "is_active": true}]
@@ -137,9 +180,35 @@ Feature: User Resource
         {"is_active": false}
         """
         Then we get updated response
+        Then we get notifications
+        """
+        [{"event": "user_inactivated", "extra": {"updated": 1, "user_id": "#users._id#"}}]
+        """
         When we change user status to "enabled and active" using "/users/foo"
         """
         {"is_active": true}
+        """
+        Then we get updated response
+
+    @auth
+    @notification
+    Scenario: Change user status - disabled
+        Given "users"
+        """
+        [{"username": "foo", "email": "foo@bar.co", "is_enabled": true}]
+        """
+        When we patch "/users/foo"
+        """
+        {"is_enabled": false}
+        """
+        Then we get updated response
+        Then we get notifications
+        """
+        [{"event": "user_disabled", "extra": {"updated": 1, "user_id": "#users._id#"}}]
+        """
+        When we change user status to "enabled and active" using "/users/foo"
+        """
+        {"is_enabled": true}
         """
         Then we get updated response
 
@@ -163,7 +232,7 @@ Feature: User Resource
         """
         When we post to "/users"
         """
-        {"username": "foo", "password": "barbar", "email": "foo@bar.com"}
+        {"username": "foo", "password": "barbar", "email": "foo@bar.com", "sign_off": "foobar"}
         """
         Then we get new resource
         """
@@ -178,7 +247,7 @@ Feature: User Resource
         """
         When we post to "/users"
         """
-        {"username": "foo", "password": "barbar", "email": "foo@bar.com"}
+        {"username": "foo", "password": "barbar", "email": "foo@bar.com", "sign_off": "foobar"}
         """
         Then we get new resource
         """
@@ -187,7 +256,7 @@ Feature: User Resource
 
     @auth
     Scenario: A logged-in user can't delete themselves from the system
-        Given we login as user "foo" with password "bar"
+        Given we login as user "foo" with password "bar" and user type "user"
         When we delete "/users/#user._id#"
         Then we get error 403
 
@@ -197,7 +266,7 @@ Feature: User Resource
         """
         [{"name": "A", "is_default": true}, {"name": "B"}]
         """
-        And we login as user "foo" with password "bar"
+        And we login as user "foo" with password "bar" and user type "user"
         """
         {"user_type": "user", "email": "foo.bar@foobar.org"}
         """
@@ -222,7 +291,7 @@ Feature: User Resource
         Given empty "stages"
         When we post to "users"
         """
-        {"username": "foo", "email": "foo@bar.com", "is_active": true}
+        {"username": "foo", "email": "foo@bar.com", "is_active": true, "sign_off": "foobar"}
         """
         Given "desks"
         """
@@ -234,24 +303,12 @@ Feature: User Resource
         """
         And we post to "/stages"
         """
-        {
-        "name": "invisible1",
-        "task_status": "todo",
-        "desk": "#desks._id#",
-        "is_visible" : false
-        }
+        {"name": "invisible1", "task_status": "todo", "desk": "#desks._id#", "is_visible" : false}
         """
-
         When we post to "/stages"
         """
-        {
-        "name": "invisible2",
-        "task_status": "todo",
-        "desk": "#desks._id#",
-        "is_visible" : false
-        }
+        {"name": "invisible2", "task_status": "todo", "desk": "#desks._id#", "is_visible" : false}
         """
-
         Then we get 2 invisible stages for user
         """
         {"user": "#users._id#"}
@@ -274,4 +331,66 @@ Feature: User Resource
         Then we get existing resource
         """
         {"username": "foo", "desk": "#desks._id#"}
+        """
+
+    @ldapauth @auth
+    Scenario: Fetch user from LDAP
+        Given "users"
+        """
+        [{"username": "foo", "password": "barbar", "email": "foo@bar.com", "sign_off": "fb"}]
+        """
+        When we get "/users/#users._id#"
+        Then we get existing resource
+        """
+        {
+            "username": "foo", "display_name": "foo",
+            "email": "foo@bar.com", "is_active": true,
+            "needs_activation": false,
+            "_readonly": {"first_name": true, "last_name": true, "phone": true, "email": true }
+        }
+        """
+
+    @auth
+    Scenario: Sign Off property is set to first 3 characters of username while creating a User
+        Given "users"
+        """
+        [{"username": "foobar", "password": "barbar", "email": "foo@bar.com"}]
+        """
+        When we get "/users/#users._id#"
+        Then we get existing resource
+        """
+        {"username": "foobar", "sign_off": "FOO"}
+        """
+
+    @dbauth @auth
+    Scenario: Sign Off property is set to first letter of First Name and Last Name while creating a User
+        Given "users"
+        """
+        [{"first_name": "Foo", "last_name": "Bar", "username": "foobar", "password": "barbar", "email": "foo@bar.com"}]
+        """
+        When we get "/users/#users._id#"
+        Then we get existing resource
+        """
+        {"username": "foobar", "sign_off": "FB"}
+        """
+
+   @dbauth @auth
+    Scenario: Update to Sign Off succeeds when the default value is modified
+        Given "users"
+        """
+        [{"username": "foobar", "password": "barbar", "email": "foo@bar.com"}]
+        """
+        When we get "/users/#users._id#"
+        Then we get existing resource
+        """
+        {"username": "foobar", "sign_off": "FOO"}
+        """
+        When we patch "/users/#users._id#"
+        """
+        {"first_name": "foo", "last_name": "bar", "sign_off": "FBAR"}
+        """
+        When we get "/users/#users._id#"
+        Then we get existing resource
+        """
+        {"username": "foobar", "sign_off": "FBAR"}
         """

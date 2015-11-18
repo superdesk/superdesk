@@ -1,0 +1,36 @@
+<div sd-settings-view>
+
+	<div class="split-content" sd-dictionary-config>
+
+		<div class="header">
+			<h2 translate>Dictionary management</h2>
+			<button id="createPersonalDictionary" class="btn btn-info pull-right" ng-click="createPersonalDictionary()">
+                <i class="icon-plus-sign icon-white"></i> {{ :: 'Add New Personal Dictionary' | translate }}
+            </button>
+			<button id="createDictionary" class="btn btn-info pull-right" ng-click="createDictionary()">
+		        <i class="icon-plus-sign icon-white"></i> {{ :: 'Add New Dictionary' | translate }}
+		    </button>
+		</div>
+
+	    <div class="content dictionary-settings">
+	    	<div sd-shadow>
+	    		<ul class="pills-list">
+					<li ng-repeat="dictionary in dictionaries._items track by dictionary._id" ng-class="{inactive: dictionary.is_active === 'false'}">
+					    <div ng-if="!dictionary.user">
+					       <h6>{{ dictionary.name }}</h6>&nbsp;<em><strong>({{ :: dictionary.language_id }})</strong></em>
+					    </div>
+						<div ng-if="dictionary.user">
+                           <h6 id="{{dictionary.language_id}}">{{ :: 'Personal' | translate }}</h6>&nbsp;<em><strong>({{ :: dictionary.language_id }})</strong></em>
+                        </div>
+						<div class="actions">
+							<button ng-click="openDictionary(dictionary)" title="{{:: 'Edit dictionary' | translate }}"><i class="icon-pencil"></i></button>
+							<button ng-click="remove(dictionary)" title="{{:: 'Remove dictionary' | translate }}"><i class="icon-trash"></i></button>
+						</div>
+	                </li>
+				</ul>
+			</div>
+	    </div>
+
+		<div sd-dictionary-config-modal ng-if="dictionary"></div>
+	</div>
+</div>

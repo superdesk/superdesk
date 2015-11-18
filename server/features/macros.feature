@@ -1,4 +1,3 @@
-@wip
 Feature: Macros
 
     @auth
@@ -41,7 +40,26 @@ Feature: Macros
             """
         Then we get new resource
             """
-            {"item": {"body_html": "$12"}}
+            {"item": {"body_html": "AUD 14"}}
+            """
+
+    @auth
+    Scenario: Trigger macro and commit
+        Given "archive"
+            """
+            [{"_id": "item1", "guid": "item1", "type": "text"}]
+            """
+
+        When we post to "/macros"
+            """
+            {"macro": "usd_to_aud", "item": {"_id": "item1", "body_html": "$10"}, "commit": true}
+            """
+        Then we get new resource
+
+        When we get "/archive/item1"
+        Then we get existing resource
+            """
+            {"body_html": "AUD 14"}
             """
 
     @auth

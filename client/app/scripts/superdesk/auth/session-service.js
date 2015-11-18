@@ -4,14 +4,20 @@ define(['lodash'], function(_) {
     /**
      * Session Service stores current user data
      */
-    SessionService.$inject = ['$q', '$rootScope', 'storage'];
-    function SessionService($q, $rootScope, storage) {
+    SessionService.$inject = ['$q', '$rootScope', 'storage', 'SESSION_EVENTS'];
+    function SessionService($q, $rootScope, storage, SESSION_EVENTS) {
 
-        var TOKEN_KEY = 'sess:token',
-            TOKEN_HREF = 'sess:href',
-            IDENTITY_KEY = 'sess:user',
-            SESSION_ID = 'sess:id',
-            defer;
+        var TOKEN_KEY = 'sess:token';
+        var TOKEN_HREF = 'sess:href';
+        var IDENTITY_KEY = 'sess:user';
+        var SESSION_ID = 'sess:id';
+        var IDENTITY_BLACKLIST = [
+            'session_preferences',
+            'user_preferences',
+            'allowed_actions',
+            'workspace'
+        ];
+        var defer;
 
         this.token = null;
         this.identity = null;
@@ -38,9 +44,11 @@ define(['lodash'], function(_) {
          * @returns {object} identity
          */
         this.updateIdentity = function(updates) {
-            this.identity = this.identity || {};
-            _.extend(this.identity, updates);
+            var identity = this.identity || {};
+            _.extend(identity, updates);
+            this.identity = _.omit(identity, IDENTITY_BLACKLIST);
             storage.setItem(IDENTITY_KEY, this.identity);
+            return this.identity;
         };
 
         /**
@@ -55,10 +63,9 @@ define(['lodash'], function(_) {
             setToken(session.token);
             setSessionId(session._id);
             setSessionHref(session._links && session._links.self.href);
-
             this.identity = null;
-            this.updateIdentity(identity);
-            resolveIdentity(identity);
+            resolveIdentity(this.updateIdentity(identity));
+            $rootScope.$broadcast(SESSION_EVENTS.LOGIN);
         };
 
         function resolveIdentity(identity) {
@@ -76,6 +83,7 @@ define(['lodash'], function(_) {
             this.sessionId = null;
             setToken(null);
             setSessionId(null);
+            $rootScope.$broadcast(SESSION_EVENTS.LOGOUT);
         };
 
         /**
@@ -98,14 +106,25 @@ define(['lodash'], function(_) {
             return localStorage.getItem(TOKEN_HREF);
         };
 
-        $rootScope.$watch(getToken, _.bind(function(token) {
+        /**
+         * Setup test user with given id.
+         *
+         * @param {string} _id
+         */
+        this.testUser = function(_id) {
+            this.token = 1;
+            this.identity = {_id: _id};
+            this.sessionId = 's' + _id;
+        };
+
+        $rootScope.$watch(getToken, angular.bind(this, function(token) {
             this.token = token;
             this.identity = storage.getItem(IDENTITY_KEY);
             this.sessionId = localStorage.getItem(SESSION_ID);
-            if (this.identity) {
+            if (this.identity && this.token) {
                 resolveIdentity(this.identity);
             }
-        }, this));
+        }));
 
         /**
          * Save token into local storage

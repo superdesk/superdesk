@@ -5,8 +5,11 @@
 *.swp
 *.swo
 *.pid
+*#
+.#*
+*TAGS
 .ropeproject
-data/
+/data
 static/*
 upload/*
 .coverage
@@ -27,3 +30,4 @@ include/
 /server/.pydevproject
 /server/.settings/org.eclipse.core.resources.prefs
 /results/
+/superdesk-content-api/

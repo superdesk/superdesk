@@ -6,11 +6,11 @@
 
     <div class="profile-pic">
         <figure class="avatar">
-            <img sd-user-avatar data-src="user.picture_url" alt="{{ user.FullName }}">
+            <img sd-user-avatar data-src="user.picture_url" data-initials="user.display_name" alt="{{ user.FullName }}">
+            <a href="" class="change-photo" ng-click="editPicture()" translate>Change Photo</a>
         </figure>
         <span class="disabled-label" ng-if="user._id && !user.is_enabled" translate>disabled</span>
         <span class="disabled-label" ng-if="user._id && user.is_enabled && !_active" translate>inactive</span>
-        <a href="" class="change-photo" ng-click="editPicture()" translate>Change Photo</a>
     </div>
 
     <div class="profile-info editmode">
@@ -25,10 +25,6 @@
               <span sd-switch ng-model="$parent._active" ng-click="toggleStatus(_active)"></span>
             </div>
         </div>
-        <div class="error-holder">
-          <p class="alert alert-error" ng-show="error" translate>Please fix the issues below.</p>
-        </div>
-        
         <div class="details-info form-flat" ng-class="{shifted : error}">
             <div class="title">{{ 'General' | translate }} <span class="required-info" translate>* mandatory fields</span></div>
             <fieldset class="label-light">
@@ -39,13 +35,13 @@
 
                 <div sd-info-item>
                   <label for="first-name" translate>first name</label>
-                  <input type="text" name="first_name" id="first-name" ng-model="user.first_name" required ng-readonly="user._readonly">
+                  <input type="text" name="first_name" id="first-name" ng-model="user.first_name" required ng-readonly="user._readonly && user._readonly.first_name">
                   <i ng-show="userForm.first_name.$error.required" class="required-asteriks">*</i>
                 </div>
 
                 <div sd-info-item>
                   <label for="last-name" translate>last name</label>
-                  <input type="text" name="last_name" id="last-name" ng-model="user.last_name" required ng-readonly="user._readonly">
+                  <input type="text" name="last_name" id="last-name" ng-model="user.last_name" required ng-readonly="user._readonly && user._readonly.last_name">
                   <i ng-show="userForm.last_name.$error.required" class="required-asteriks">*</i>
                 </div>
 
@@ -68,6 +64,22 @@
                   </div>
                 </div>
 
+                <div sd-info-item>
+                  <label for="sign_off" translate>sign off</label>
+                  <input type="text" name="sign_off" id="sign_off" ng-model="user.sign_off" ng-pattern="signOffPattern" required>
+
+                  <i ng-show="userForm.sign_off.$error.required" class="required-asteriks">*</i>
+                  <div ng-show="userForm.sign_off.$error.pattern || error.sign_off.format" sd-valid-info>
+                    <i class="icon-info-sign-warning"></i>
+                    <span translate>Invalid format. Only Alphanumerics are allowed.</span>
+                  </div>
+                </div>
+
+                <div sd-info-item>
+                  <label for="byline" translate>byline</label>
+                  <input type="text" name="byline" id="byline" ng-model="user.byline">
+                </div>
+
                 <div sd-info-item class="password" ng-if="features.reset_user_password && user._id && !profile && user.is_enabled && _active" id="password-reset-trigger">
                   <label translate>password</label>
                   <i class="change-btn sd-blue" ng-click="show.reset_password = !show.reset_password" ng-show="!show.reset_password">reset password</i>
@@ -83,7 +95,7 @@
                   <input type="email" name="email" id="email"
                     ng-model="user.email"
                     sd-user-unique data-unique-field="email" data-exclude="user"
-                    ng-readonly="user._readonly"
+                    ng-readonly="user._readonly && user._readonly.email"
                     required>
                     <i ng-show="userForm.email.$error.required" class="required-asteriks">*</i>
                   <div ng-show="userForm.email.$error.email || error.email.format" sd-valid-info>
@@ -103,14 +115,14 @@
                   <select ng-focus="focused()" ng-model="user.role" name="user_role" id="user_role" ng-options="role._id as role.name for role in roles"></select>
                 </div>
 
-                <div sd-info-item class="user_role" ng-show="userDesks && userDesks.length > 0">
+                <div sd-info-item class="user_role" ng-if="userDesks && userDesks.length > 0">
                   <label for="user_default_desk" translate>Default Desk</label>
                   <select ng-model="user.desk" name="user_default_desk" id="user_default_desk" ng-options="desk._id as desk.name for desk in userDesks"></select>
                 </div>
 
                 <div sd-info-item>
                   <label for="phone" translate>phone number</label>
-                  <input type="text" name="phone" id="phone" ng-model="user.phone" ng-pattern="phonePattern" ng-readonly="user._readonly">
+                  <input type="text" name="phone" id="phone" ng-model="user.phone" ng-pattern="phonePattern" ng-readonly="user._readonly && user._readonly.phone">
                   <div ng-show="userForm.phone.$error.pattern || error.phone.format" sd-valid-info>
                     <i class="icon-info-sign-warning"></i>
                     <span translate>please provide number in international format</span>
@@ -119,7 +131,7 @@
 
                 <div sd-info-item ng-show="user._id">
                   <label for="created" translate>member since</label>
-                  <span class="info-value" sd-reldate ng-model="user._created"></span>
+                  <span id="created" class="info-value" sd-reldate ng-model="user._created"></span>
                 </div>
 
                 <div sd-info-item ng-show="">
@@ -154,7 +166,7 @@
     </div>
     <form name="changePasswordForm">
       <div class="content">
-          
+
         <div class="field">
           <label translate>current</label>
           <input name="old" type="password" ng-model="oldPwd" required>
@@ -173,7 +185,7 @@
             sd-password-confirm ng-model="_confirm" data-password="newPwd">
           <p sd-valid-error ng-show="changePasswordForm.confirm.$error.confirm">confirm doesn't match new password yet.</p>
         </div>
-          
+
       </div>
       <div class="foooter">
           <button class="btn btn-small" ng-click="show.change_password = false" translate>Cancel</button>

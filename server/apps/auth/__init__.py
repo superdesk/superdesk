@@ -8,15 +8,17 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
+import flask
+import logging
+import superdesk
+
 from apps.auth.auth import SuperdeskTokenAuth
 from .auth import AuthUsersResource, AuthResource  # noqa
 from .sessions import SessionsResource
-import superdesk
 from superdesk.services import BaseService
-from .db.reset_password import reset_schema  # noqa
 from superdesk.celery_app import celery
-import logging
 from .session_purge import RemoveExpiredSessions
+from superdesk.errors import SuperdeskApiError
 
 logger = logging.getLogger(__name__)
 
@@ -39,3 +41,17 @@ def session_purge():
         RemoveExpiredSessions().run()
     except Exception as ex:
         logger.error(ex)
+
+
+def get_user(required=False):
+    """Get user authenticated for current request.
+
+    :param boolean required: if True and there is no user it will raise an error
+    """
+    user = flask.g.get('user', {})
+    if '_id' not in user and required:
+        raise SuperdeskApiError.notFoundError('Invalid user.')
+    return user
+
+
+superdesk.command('session:gc', RemoveExpiredSessions())

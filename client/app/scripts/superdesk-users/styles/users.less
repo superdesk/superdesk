@@ -5,7 +5,7 @@
 @import 'variables.less';
 
 .users {	//page styles
-	.users-subnav {    
+	.users-subnav {
 		.multiple-action {
 			margin-left: 30px;
 			float: left;
@@ -27,21 +27,20 @@
 }
 
 .admin-label {
-	background: @sd-blue;
-	color: @white;
-	font-size: 10px;
-	.text-semibold();
-	height: 13px;
-	line-height: 13px;
-	padding: 0 2px;
-	.border-radius(2px);
+	background-color: #fff;
+	height: 12px;
+	width: 12px;
+	.border-radius(50%);
 	position: absolute;
-	top: 7px;
-	left: 23px;
+	top: 3px;
+	left: 3px;
+	box-shadow: 0 0 0 1px #fff;
+	&.icon-settings{
+	}
 }
 
 .users-table {	//main list styles
-	
+
 	border-top: 2px solid #d7d7d7;
 	.table-header {
 		background: #fff;
@@ -73,14 +72,14 @@
 			border-bottom: 1px solid #ebebeb;
 			position: relative;
 			.avatar {
-					margin: 5px;
+					margin: 5px 5px 5px 8px;
 			}
-			> div {
+			> div:not(.tooltip) {
 				float: left;
 				height: 30px;
 				padding: 5px;
 				line-height: 30px;
-				//column width 
+				//column width
 				&.chckbx {
 					width: 25px;
 					text-align: center;
@@ -135,7 +134,7 @@
 				}
 			}
 		}
-	}	
+	}
 	.table-header {
 		> li > div, .name, .email, .created {
 			color: #000 !important;
@@ -223,7 +222,7 @@
 	right: 0;
 	padding: 20px;
 	.box-sizing(border-box);
-	
+
 	::-webkit-scrollbar {
 		border-left: 9px solid #fff;
 		border-right: 1px solid #fff;
@@ -267,7 +266,7 @@
 			font-weight: normal;
 			line-height: 16px;
 		}
-		
+
 		.active {
 			position: absolute;
 			top: 20px;
@@ -305,9 +304,9 @@
 	}
 	.validation-info {
 		font-size: 11px;
-		color: #888; 
+		color: #888;
 		.badge {
-			
+
 		}
 	}
 	// .stats-box {
@@ -365,15 +364,15 @@
 	// 					color:#fff;
 	// 					font-size: 32px;
 	// 					font-weight: normal;
-	// 					display: table-cell; 
-	// 					vertical-align: middle; 
+	// 					display: table-cell;
+	// 					vertical-align: middle;
 	// 					padding-right: 15px;
 	// 				}
 	// 				.stat-text {
 	// 					font-size: 12px;
 	// 					color: #cdcdcd;
-	// 					display: table-cell; 
-	// 					vertical-align: middle; 
+	// 					display: table-cell;
+	// 					vertical-align: middle;
 	// 					line-height: 15px;
 	// 					padding-right: 10px;
 	// 				}
@@ -413,14 +412,20 @@
 		width: 82px;
 		height: 82px;
 		float: left;
-		margin-right: 20px;
+		margin-right: 14px;
 		position: relative;
-		.avatar {
-				width: 100%;
-				height: 100%;
-				.border-radius(3px);
-				background-image: url('../../images/avatar_200.png');
-		}
+        .avatar {
+            width: 100%;
+            height: 100%;
+            .border-radius(50%);
+            position: relative;
+            background-image: url('../../images/avatar_200.png');
+            &.initials {
+                font-size: 32px;
+                line-height: 82px;
+                font-weight: 300;
+            }
+        }
 		.change-photo {
 			display: none;
 			background-color: rgba(55,152,180,0.6);
@@ -433,6 +438,7 @@
 			bottom: 0;
 			left: 0;
 			right: 0;
+			height:30px;
 		}
 		&:hover {
 			.change-photo {
@@ -446,7 +452,7 @@
 			border: 1px solid #fff;
 		}
 	}
-	
+
 	.alert {
 		.border-radius(0px);
 	}
@@ -543,43 +549,43 @@ Profile page styles
 				text-transform: none;
 			}
 		}
-		
+
 		.group-date {
 			margin-top: 20px;
 			margin-bottom: 16px;
 			color: #888;
 			font-size: 11px;
 			.text-semibold();
-			height: 1px; 
+			height: 1px;
 		border-top: 1px solid #ddd;
 		position: relative;
 		.day {
-				position: relative; 
-		top: -.9em; 
-		display: inline-block; 
+				position: relative;
+		top: -.9em;
+		display: inline-block;
 		background-color: @background-main;
 			}
 			.date {
 				padding-left: 4px;
 				padding-right: 4px;
 				text-transform: lowercase;
-				position: relative; 
-		top: -.9em; 
+				position: relative;
+		top: -.9em;
 		display: inline-block;
 		background-color: @background-main;
 			}
 		}
-		
+
 		.activity-entry {
 			border-bottom: 1px solid #ddd;
 			background: #fff;
 			margin-top: 4px;
 			clear: left;
-			
+
 			.activity-figure {
 				float: left;
 			}
-			
+
 			.activity-date {
 				color: #888;
 				font-size: 11px;
@@ -587,7 +593,7 @@ Profile page styles
 			}
 		}
 	}
-	
+
 	::-webkit-scrollbar {
 		border-left: 9px solid @background-main;
 		border-right: 1px solid @background-main;
@@ -637,18 +643,27 @@ Profile page styles
 		}
 	}
 
-	.profile-pic {
-		width: 160px;
-		height: 160px;
-		figure {
-			width: 160px;
-			height: 160px;
-			img {
-				width: 160px;
-				max-width: 160px;
-			}
-		}
-	}
+    .profile-pic {
+        width: 160px;
+        height: 160px;
+        .avatar {
+            width: 160px;
+            height: 160px;
+            overflow: hidden;
+            img {
+                width: 160px;
+                max-width: 160px;
+            }
+            &.initials {
+                font-size: 62px;
+                line-height: 160px;
+                font-weight: 300;
+            }
+        }
+        .change-photo {
+        	line-height: 28px;
+        }
+    }
 
 	.header-info {
 		height: 160px;
@@ -744,4 +759,50 @@ Profile page styles
 			text-decoration: none;
 		}
 	}
+}
+
+
+// Preferences
+
+.preferences  {
+  	div .locators {
+      float: right;
+      input {
+        text-transform: uppercase;
+      }
+	}
+
+    div .dropdown {
+      float: right;
+      width: 200px;
+      .line-input {
+        text-align: left;
+      }
+    }
+
+    input[type="checkbox"] {
+        margin-right: 0.5em;
+    }
+
+    .dateline_preview {
+      label {
+        color: #333333;
+        display: inline-block;
+      }
+
+      span {
+        float: right;
+      }
+    }
+
+    p, .actions {
+        cursor: default;
+    }
+
+    .actions {
+        a {
+            cursor: pointer;
+            color: #5ea9c8;
+        }
+    }
 }

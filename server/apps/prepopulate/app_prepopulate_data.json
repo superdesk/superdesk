@@ -32,13 +32,22 @@
             "password": "admin",
             "user_type": "administrator",
             "username": "admin",
-            "role": "-id Editor role-"
+            "role": "-id Editor role-",
+            "user_preferences": {
+                "feature:preview" : {
+                    "label" : "Enable Feature Preview",
+                    "category" : "feature",
+                    "default" : false,
+                    "type" : "bool",
+                    "enabled" : true
+                }
+            }
         },
         "id_name": "-id user admin-",
         "resource": "users"
     },
     
-        {
+    {
         "data": {
             "email": "a4@a.com",
             "first_name": "first name4",
@@ -53,7 +62,7 @@
         "resource": "users"
     },
     
-        {
+    {
         "data": {
             "email": "a3@a.com",
             "first_name": "first name3",
@@ -68,7 +77,7 @@
         "resource": "users"
     },
     
-        {
+    {
         "data": {
             "email": "a2@a.com",
             "first_name": "first name2",
@@ -83,7 +92,7 @@
         "resource": "users"
     },
     
-        {
+    {
         "data": {
             "email": "a1@a.com",
             "first_name": "first name1",
@@ -99,62 +108,62 @@
     },
 
     {
-        "data": {"members": [{"user": "-id user admin-"}, {"user": "-id user admin1-"}, {"user": "-id user admin2-"}, {"user": "-id user admin3-"}], "name": "Sports Desk"},
+        "data": {"members": [{"user": "-id user admin-"}, {"user": "-id user admin1-"}, {"user": "-id user admin2-"}, {"user": "-id user admin3-"}], "name": "Sports Desk", "desk_type": "authoring"},
         "resource": "desks",
         "username": "admin",
-        "id_name": "-id desk Sport Desks-"
+        "id_name": "-id desk Sports Desks-"
     },
 
     {
-        "data": {"members": [{"user": "-id user admin-"}, {"user": "-id user admin4-"}, {"user": "-id user admin1-"}], "name": "Politic Desk"},
+        "data": {"members": [{"user": "-id user admin-"}, {"user": "-id user admin4-"}, {"user": "-id user admin1-"}], "name": "Politic Desk", "desk_type": "production"},
         "resource": "desks",
         "username": "admin",
         "id_name": "-id desk Politic Desks-"
     },
-    
+
     {
         "data":   {
 		    "default_incoming" : false,
-		    "desk" : "-id desk Sport Desks-",
+		    "desk" : "-id desk Sports Desks-",
 		    "is_visible" : true,
 		    "task_status" : "todo",
 		    "content_expiry" : 43200,
 		    "name" : "one",
-		    "desk_order" : 2
-		},
-        "resource": "stages",
-        "username": "admin",
-        "id_name": "-id stage one Sport Desks-"
-    },
-    
-    {
-        "data":   {
-		    "default_incoming" : false,
-		    "desk" : "-id desk Sport Desks-",
-		    "is_visible" : true,
-		    "task_status" : "in_progress",
-		    "content_expiry" : 43200,
-		    "name" : "two",
 		    "desk_order" : 3
 		},
         "resource": "stages",
         "username": "admin",
-        "id_name": "-id stage two Sport Desks-"
+        "id_name": "-id stage one Sports Desks-"
     },
     
     {
         "data":   {
 		    "default_incoming" : false,
-		    "desk" : "-id desk Sport Desks-",
+		    "desk" : "-id desk Sports Desks-",
 		    "is_visible" : true,
-		    "task_status" : "done",
+		    "task_status" : "in_progress",
 		    "content_expiry" : 43200,
-		    "name" : "three",
+		    "name" : "two",
 		    "desk_order" : 4
 		},
         "resource": "stages",
         "username": "admin",
-        "id_name": "-id stage three Sport Desks-"
+        "id_name": "-id stage two Sports Desks-"
+    },
+    
+    {
+        "data":   {
+		    "default_incoming" : false,
+		    "desk" : "-id desk Sports Desks-",
+		    "is_visible" : true,
+		    "task_status" : "done",
+		    "content_expiry" : 43200,
+		    "name" : "three",
+		    "desk_order" : 5
+		},
+        "resource": "stages",
+        "username": "admin",
+        "id_name": "-id stage three Sports Desks-"
     },
     
     {
@@ -165,7 +174,7 @@
 		    "task_status" : "todo",
 		    "content_expiry" : 43200,
 		    "name" : "one",
-		    "desk_order" : 2
+		    "desk_order" : 3
 		},
         "resource": "stages",
         "username": "admin",
@@ -180,7 +189,7 @@
 		    "task_status" : "in_progress",
 		    "content_expiry" : 43200,
 		    "name" : "two",
-		    "desk_order" : 3
+		    "desk_order" : 4
 		},
         "resource": "stages",
         "username": "admin",
@@ -195,11 +204,279 @@
 		    "task_status" : "done",
 		    "content_expiry" : 43200,
 		    "name" : "three",
-		    "desk_order" : 4
+		    "desk_order" : 5
 		},
         "resource": "stages",
         "username": "admin",
         "id_name": "-id stage three Politic Desks-"
+    },
+    
+    {
+    	"data": {
+		    "_id" : "publish",
+	        "act": "publish",
+        	"type": "text",
+		    "schema" : {
+		        "headline" : {
+		            "type" : "string",
+		            "required" : true,
+		            "minlength" : 1,
+		            "maxlength" : 55
+		        },
+		        "type" : {
+		            "type" : "string",
+		            "required" : "true",
+		            "allowed" : [ 
+		                "text"
+		            ]
+		        },
+		        "pubstatus" : {
+		            "type": "string",
+		            "required" : true,
+		            "allowed": ["usable"]
+		        },
+		        "subject" : {
+		            "type" : "list",
+		            "required" : true,
+		            "minlength" : 1
+		        },
+		        "urgency" : {
+		            "type" : "integer",
+		            "required": true,
+		            "allowed": [1, 2, 3, 4, 5]
+		        }
+		    }
+		},
+		"resource": "validators",
+		"id_name": "-id validator publish-"
+	},
+
+    {
+    	"data": {
+		    "_id" : "correct_text",
+	        "act": "correct",
+        	"type": "text",
+		    "schema" : {
+		        "headline" : {
+		            "type" : "string",
+		            "required" : true,
+		            "minlength" : 1,
+		            "maxlength" : 55
+		        },
+		        "type" : {
+		            "type" : "string",
+		            "required" : "true",
+		            "allowed" : [
+		                "text"
+		            ]
+		        },
+		        "pubstatus" : {
+		            "type": "string",
+		            "required" : true,
+		            "allowed": ["usable"]
+		        },
+		        "subject" : {
+		            "type" : "list",
+		            "required" : true,
+		            "minlength" : 1
+		        },
+		        "urgency" : {
+		            "type" : "integer",
+		            "required": true,
+		            "allowed": [1, 2, 3, 4, 5]
+		        }
+		    }
+		},
+		"resource": "validators",
+		"id_name": "-id validator correct-"
+	},
+
+    {
+        "data": {
+            "_id": "subscriber_types",
+            "display_name": "Subscriber Types",
+            "type": "unmanageable",
+            "items": [
+                {"is_active": true, "name": "Digital/Internet", "value": "digital",
+                    "formats": [{"name": "NINJS", "value": "ninjs"}, {"name": "AAP NewsML 1.2", "value": "newsml12"}, {"name": "NewsML G2", "value": "newsmlg2"},
+                                {"name": "AAP Bulletin Builder", "value": "AAP BULLETIN BUILDER"}]},
+                {"is_active": true, "name": "Wire/Paper", "value": "wire",
+                    "formats": [{"name": "AAP ANPA", "value": "AAP ANPA"}, {"name": "NITF", "value": "nitf"}, {"name": "AAP IPNEWS", "value": "AAP IPNEWS"},
+                                {"name": "AAP SMS", "value": "AAP SMS"}]},
+                {"is_active": true, "name": "Broadcast", "value": "broadcast",
+                    "formats": [{"name": "AAP ANPA", "value": "AAP ANPA"}, {"name": "NITF", "value": "nitf"}, {"name": "AAP IPNEWS", "value": "AAP IPNEWS"},
+                                {"name": "AAP SMS", "value": "AAP SMS"}]}
+            ]
+        },
+		"resource": "vocabularies",
+		"id_name": "-id vocabularies subscriber_types-"
+    },
+
+    {
+        "data": {
+            "_id": "desk_types",
+            "items": [
+                {"is_active": true, "name": "authoring", "value": "authoring"},
+                {"is_active": true, "name": "production", "value": "production"}
+            ]
+        },
+		"resource": "vocabularies",
+		"id_name": "-id vocabularies desk_types-"
+    },
+
+    {
+        "data": {
+            "_id": "crop_sizes",
+            "items": [
+                {"is_active": true, "name": "4-3", "width": 800, "height": 600},
+                {"is_active": true, "name": "16-9", "width": 1280, "height": 720}
+            ]
+        },
+		"resource": "vocabularies",
+		"id_name": "-id vocabularies crop_sizes-"
+    },
+
+    {
+        "data": {
+            "_id": "genre",
+            "items": [
+                {"is_active": true, "name": "Article (news)", "value": "Article"},
+                {"is_active": true, "name": "Sidebar", "value": "Sidebar"},
+                {"is_active": true, "name": "Factbox", "value": "Factbox"},
+                {"is_active": true, "name": "Feature", "value": "Feature"},
+                {"is_active": true, "name": "Newsfeature", "value": "Newsfeature"},
+                {"is_active": true, "name": "Backgrounder", "value": "Backgrounder"},
+                {"is_active": true, "name": "Opinion", "value": "Opinion"},
+                {"is_active": true, "name": "View (incl parly sketch)", "value": "View"},
+                {"is_active": true, "name": "Modular", "value": "Modular"},
+                {"is_active": true, "name": "Broadcast Script", "value": "Broadcast Script"}
+            ]
+        },
+		"resource": "vocabularies",
+		"id_name": "-id vocabularies genre-"
+    },
+
+    {
+        "data": {
+            "_id": "categories",
+            "display_name": "Categories",
+            "type": "manageable",
+            "items": [
+                {"is_active": true, "name": "Australian General News", "qcode": "a"},
+                {"is_active": true, "name": "Australian Weather", "qcode": "b", "subject": "17000000"},
+                {"is_active": true, "name": "General Features", "qcode": "c"},
+                {"is_active": false, "name": "Reserved (obsolete/unused)", "qcode": "d"},
+                {"is_active": true, "name": "Entertainment", "qcode": "e", "subject": "01000000"},
+                {"is_active": true, "name": "Finance", "qcode": "f", "subject": "04000000"},
+                {"is_active": false, "name": "SportSet", "qcode": "g"},
+                {"is_active": true, "name": "FormGuide", "qcode": "h"},
+                {"is_active": true, "name": "International News", "qcode": "i"},
+                {"is_active": false, "name": "Reserved (obsolete/unused)", "qcode": "k"},
+                {"is_active": true, "name": "Press Release Service", "qcode": "j"},
+                {"is_active": true, "name": "Lotteries", "qcode": "l"},
+                {"is_active": true, "name": "Line Check Messages", "qcode": "m"},
+                {"is_active": false, "name": "Reserved", "qcode": "n"},
+                {"is_active": true, "name": "State Parliaments", "qcode": "o", "subject": "11000000"},
+                {"is_active": true, "name": "Federal Parliament", "qcode": "p", "subject": "11000000"},
+                {"is_active": true, "name": "Stockset", "qcode": "q", "subject": "04000000"},
+                {"is_active": true, "name": "Racing (Turf)", "qcode": "r", "subject": "15000000"},
+                {"is_active": true, "name": "Overseas Sport", "qcode": "s", "subject": "15000000"},
+                {"is_active": true, "name": "Domestic Sport", "qcode": "t", "subject": "15000000"},
+                {"is_active": false, "name": "Reserved (Obsolete/unused)", "qcode": "u"},
+                {"is_active": true, "name": "Advisories", "qcode": "v"},
+                {"is_active": false, "name": "Reserved (Obsolete/unused)", "qcode": "w"},
+                {"is_active": true, "name": "Special Events (olympics/ Aus elections)", "qcode": "x"},
+                {"is_active": false, "name": "Special Events (obsolete/unused)", "qcode": "y"},
+                {"is_active": false, "name": "Supplementary Traffic", "qcode": "z"}
+            ]
+        },
+        "resource": "vocabularies",
+        "id_name": "-id vocabularies categories-"
+    },
+
+    {
+        "data": {
+            "_id": "default_categories",
+            "display_name": "Default Categories",
+            "type": "manageable",
+            "items" : [
+                {"qcode" : "a", "is_active" : true},
+                {"qcode" : "e", "is_active" : true},
+                {"qcode" : "f", "is_active" : true},
+                {"qcode" : "i", "is_active" : true},
+                {"qcode" : "s", "is_active" : true},
+                {"qcode" : "t", "is_active" : true},
+                {"qcode" : "v", "is_active" : true}
+            ]
+        },
+        "resource": "vocabularies",
+        "id_name": "-id vocabularies default_categories-"
+    },
+
+    {
+        "data": {
+            "_id": "footers",
+            "display_name": "Public Service Announcements",
+            "type": "manageable",
+            "items": [
+                {"is_active": true, "name": "Suicide", "value": "Readers seeking support and information about suicide prevention can contact Lifeline on 13 11 14.<br>Suicide Call Back Service 1300 659 467<br>MensLine Australia 1300 78 99 78<br>Multicultural Mental Health Australia www.mmha.org.au<br>Local Aboriginal Medical Service available from www.vibe.com.au"},
+                {"is_active": true, "name": "Children", "value": "Kids Helpline 1800 55 1800 (for young people aged 5 to 25)"},
+                {"is_active": true, "name": "Domestic Violence", "value": "National domestic violence helpline: 1800 737 732  or 1800RESPECT. In an emergency call triple-zero."}
+            ]
+        },
+        "resource": "vocabularies",
+        "id_name": "-id vocabularies footers-"
+    },
+
+    {
+    	"data": {
+    		"name" : "Public API",
+    		"subscriber_type": "digital",
+            "email": "public_api@test.com",
+    		"is_active" : true,
+            "sequence_num_settings":{"min" : 1, "max" : 10},
+    		"destinations" : [{
+    			"delivery_type" : "http_push",
+    			"format": "ninjs",
+    			"name" : "HTTP Push",
+    			"config": { "resource_url": "http://localhost:5050/publish", "assets_url": "http://localhost:5050/assets" }
+    		}]
+    	},
+    	"resource": "subscribers",
+    	"username": "admin",
+    	"id_name": "-id subscriber Public API-"
+    },
+	
+	{
+        "data": {"template_name": "custom_highlight", "template_type": "highlights", 
+                 "body_html": "<b>custom highlight template</b>\n{% for item in items %} <h2>{{ item.headline }}</h2> {{ item.body_html }} <p></p> {% endfor %}"
+                }, 
+        "resource": "content_templates",
+        "id_name": "-id content template-"
+    },
+
+    {
+    	"data": {"name": "Highlight one", "desks": ["-id desk Sports Desks-"], "groups": ["main"], "template": "-id content template-"}, 
+    	"resource": "highlights",
+    	"id_name": "-id highlight one-"
+    },
+    
+    {	
+    	"data": {"name": "Highlight two", "desks": ["-id desk Sports Desks-", "-id desk Politic Desks-"], "groups": ["one", "two"]}, 
+    	"resource": "highlights",
+    	"id_name": "-id highlight two-"
+    },
+    
+    {	
+    	"data": {"name": "Highlight three", "desks": ["-id desk Politic Desks-"], "groups": ["main"]}, 
+    	"resource": "highlights",
+    	"id_name": "-id highlight three-"
+    },
+    
+    {	
+    	"data": {"name": "Highlight four", "desks": ["-id desk Politic Desks-"], "groups": ["main"]}, 
+    	"resource": "highlights",
+    	"id_name": "-id highlight four-"
     },
     
     {
@@ -209,7 +486,10 @@
             "headline": "item1",
             "type": "text",
             "guid": "item1",
-            "versioncreated": "2015-01-03T10:10:10+0000",
+            "versioncreated": "2015-01-07T10:10:10+0000",
+            "_current_version" : 1,
+            "unique_name": "item1",
+            "unique_id": 1,
             "original_creator": "-id user admin-"
         }
     },
@@ -221,7 +501,8 @@
             "headline": "item2",
             "type": "text",
             "guid": "item2",
-            "versioncreated": "2015-01-02T10:10:10+0000",
+            "versioncreated": "2015-01-06T10:10:10+0000",
+            "_current_version" : 1,
             "original_creator": "-id user admin-"
         }
     },
@@ -234,18 +515,20 @@
             "slugline": "item3 slugline",
             "type": "text",
             "guid": "item3",
+            "priority": 3,
             "versioncreated": "2015-01-01T10:10:10+0000",
+            "_current_version" : 1,
             "original_creator": "-id user admin-",
             "task" : {
-		        "desk" : "-id desk Sport Desks-",
+		        "desk" : "-id desk Sports Desks-",
 		        "user" : "-id user admin-",
 		        "status": "todo",
-		        "stage": "-id stage one Sport Desks-"
+		        "stage": "-id stage one Sports Desks-"
 		    }
         }
     },
 
-	    {
+    {
         "resource": "archive",
         "username": "admin",
         "data": {
@@ -254,26 +537,37 @@
             "type": "text",
             "guid": "item4",
             "versioncreated": "2015-01-01T10:10:10+0000",
+            "_current_version" : 1,
             "original_creator": "-id user admin-",
             "task" : {
-		        "desk" : "-id desk Sport Desks-",
+		        "desk" : "-id desk Sports Desks-",
 		        "user" : "-id user admin1-",
 		        "status": "done",
-		        "stage": "-id stage three Sport Desks-"
+		        "stage": "-id stage three Sports Desks-"
 		    }
         }
     },
 
-        {
+    {
         "resource": "archive",
         "username": "admin",
         "data": {
             "headline": "item5",
-            "slugline": "item5 slugline",
+            "slugline": "item5 slugline one/two ",
+            "body_html" : "<p>item5 text</p>",
             "type": "text",
             "guid": "item5",
-            "versioncreated": "2015-01-01T10:10:10+0000",
+            "genre": [{"is_active":true, "name":"Sidebar", "value":"Sidebar"}],
+            "version": "1",
+            "versioncreated": "2015-01-05T10:10:10+0000",
+            "_current_version" : 0,
             "original_creator": "-id user admin-",
+            "byline": "Billy The Fish",
+            "state": "in_progress",
+            "pubstatus": "usable",
+            "urgency": 1,
+            "operation": "create",
+            "subject": [{"name": "university", "parent": "05000000", "qcode": "05007000"}],
             "task" : {
 		        "desk" : "-id desk Politic Desks-",
 		        "user" : "-id user admin1-",
@@ -283,16 +577,105 @@
         }
     },
 
-        {
+    {
+        "resource": "archive",
+        "username": "admin",
+        "data": {
+            "headline": "item9",
+            "slugline": "item9 slugline",
+            "body_html" : "<p>item9 text</p>",
+            "type": "text",
+            "guid": "item9",
+            "version": "1",
+            "versioncreated": "2015-01-04T10:10:10+0000",
+            "_current_version" : 0,
+            "original_creator": "-id user admin-",
+            "state": "in_progress",
+            "pubstatus": "usable",
+            "urgency": 1,
+            "operation": "create",
+            "subject": [{"name": "university", "parent": "05000000", "qcode": "05007000"}],
+            "task" : {
+		        "desk" : "-id desk Politic Desks-",
+		        "user" : "-id user admin1-",
+		        "status": "todo",
+		        "stage": "-id stage one Politic Desks-"
+		    }
+        }
+    },
+
+    {
+        "resource": "archive",
+        "username": "admin",
+        "data": {
+            "headline": "item7",
+            "slugline": "item7 slugline",
+            "body_html" : "<p>item7 text</p>",
+            "type": "text",
+            "guid": "item7",
+            "version": "1",
+            "versioncreated": "2015-01-03T10:10:10+0000",
+            "_current_version" : 0,
+            "original_creator": "-id user admin-",
+            "state": "in_progress",
+            "pubstatus": "usable",
+            "urgency": 1,
+            "operation": "create",
+            "subject": [{"name": "university", "parent": "05000000", "qcode": "05007000"}],
+            "task" : {
+		        "desk" : "-id desk Politic Desks-",
+		        "user" : "-id user admin1-",
+		        "status": "todo",
+		        "stage": "-id stage one Politic Desks-"
+		    }
+        }
+    },
+
+    {
+        "resource": "archive",
+        "username": "admin",
+        "data": {
+            "headline": "item8",
+            "slugline": "item8 slugline",
+            "body_html" : "<p>item8 text</p>",
+            "type": "text",
+            "guid": "item8",
+            "version": "1",
+            "versioncreated": "2015-01-02T10:10:10+0000",
+            "_current_version" : 0,
+            "original_creator": "-id user admin-",
+            "state": "in_progress",
+            "pubstatus": "usable",
+            "urgency": 1,
+            "operation": "create",
+            "subject": [{"name": "university", "parent": "05000000", "qcode": "05007000"}],
+            "task" : {
+		        "desk" : "-id desk Politic Desks-",
+		        "user" : "-id user admin1-",
+		        "status": "todo",
+		        "stage": "-id stage one Politic Desks-"
+		    }
+        }
+    },
+
+    {
         "resource": "archive",
         "username": "admin",
         "data": {
             "headline": "item6",
             "slugline": "item6 slugline",
+            "body_html" : "<p>item6 text</p>",
             "type": "text",
             "guid": "item6",
+            "version": "1",
             "versioncreated": "2015-01-01T10:10:10+0000",
+            "_current_version" : 0,
             "original_creator": "-id user admin-",
+            "state": "in_progress",
+            "pubstatus": "usable",
+            "urgency": 1,
+            "operation": "fetch",
+            "subject": [{"name": "university", "parent": "05000000", "qcode": "05007000"}],
             "task" : {
 		        "desk" : "-id desk Politic Desks-",
 		        "user" : "-id user admin2-",
@@ -318,9 +701,187 @@
     		"type": "composite",
     		"guid": "package1",
             "versioncreated": "NOW()",
+            "_current_version" : 1,
             "original_creator": "-id user admin-",
+            "unique_id": 2,
+            "unique_name": "package1",
 	    	"groups": [{"id": "root", "refs": [{"idRef": "main"}]}, {"id": "main", "refs": []}]
     	}
+    },
+    {
+        "resource": "archive",
+        "username": "admin",
+        "data": {
+            "guid": "package2",
+            "unique_id": 2,
+            "unique_name": "package2",
+		    "firstcreated": "NOW()",
+            "original_creator": "-id user admin-",
+            "versioncreated": "NOW()",
+		    "version_creator": "-id user admin-",
+            "_current_version" : 1,
+		    "urgency": 2,
+		    "priority": 1,
+		    "version": 1,
+		    "state": "in_progress",
+            "type": "composite",
+		    "slugline": "PACKAGE2 SLUGLINE",
+            "headline": "package2",
+		    "operation": "create",
+		    "pubstatus": "usable",
+		    "subject": [{"name": "archaeology", "parent": "01000000", "qcode": "01001000"}],
+		    "language": "en",
+            "task" : {
+                "desk" : "-id desk Politic Desks-",
+                "user" : "-id user admin2-",
+                "status": "in_progress",
+                "stage": "-id stage two Politic Desks-"
+            },
+		    "groups": [{
+		            "id": "root",
+		            "refs": [{"idRef": "main"}, {"idRef": "story"}]
+		        },
+		        {
+		            "id": "main",
+		            "refs": [
+		                {
+		                    "guid": "item5",
+		                    "headline": "item5",
+		                    "location": "archive",
+		                    "residRef": "item5",
+		                    "slugline": "item5 slugline",
+		                    "type": "text"
+		                }
+		            ]
+		        },
+		        {
+		            "id": "story",
+		            "refs": [
+		                {
+		                    "guid": "item9",
+		                    "headline": "item9",
+		                    "location": "archive",
+		                    "residRef": "item9",
+		                    "slugline": "item9 slugline",
+		                    "type": "text"
+		                }
+		            ]
+		        }
+		    ]
+        }
+    },
+    {
+        "resource": "archive",
+        "username": "admin",
+        "data": {
+            "headline": "package3",
+            "type": "composite",
+            "guid": "package3",
+            "versioncreated": "NOW()",
+            "_current_version" : 1,
+            "original_creator": "-id user admin-",
+            "unique_id": 2,
+            "unique_name": "package3",
+            "groups": [{"id": "root", "refs": [{"idRef": "main"}]}, {"id": "main", "refs": []}],
+             "task" : {
+                "desk" : "-id desk Politic Desks-",
+                "user" : "-id user admin2-",
+                "status": "in_progress",
+                "stage": "-id stage two Politic Desks-"
+            }
+        }
+    },
+    {
+        "resource": "legal_archive",
+        "username": "admin",
+        "data": {
+            "headline": "item1 in legal archive",
+            "slugline": "item1 slugline",
+            "type": "text",
+            "state": "published",
+            "operation": "publish",
+            "guid": "item1-in-legal-archive",
+            "versioncreated": "2015-01-01T10:10:100000",
+            "_current_version" : 2,
+            "original_creator": "admin",
+            "task" : {
+		        "desk" : "Sports Desk",
+		        "user" : "administrator",
+		        "status": "done",
+		        "stage": "one"
+		    }
+        }
+    },
+    {
+        "resource": "legal_archive",
+        "username": "admin",
+        "data": {
+            "headline": "item2 in legal archive",
+            "slugline": "item2 slugline",
+            "type": "text",
+            "state": "killed",
+            "operation": "kill",
+            "guid": "item2-in-legal-archive",
+            "versioncreated": "2015-01-01T10:10:100000",
+            "_current_version" : 3,
+            "original_creator": "admin",
+            "task" : {
+		        "desk" : "Sports Desk",
+		        "user" : "administrator",
+		        "status": "done",
+		        "stage": "one"
+		    }
+        }
+    },
+    {
+        "resource": "legal_archive",
+        "username": "admin",
+        "data": {
+            "headline": "item3 in legal archive",
+            "slugline": "item3 slugline",
+            "type": "text",
+            "state": "published",
+            "operation": "publish",
+            "guid": "item3-in-legal-archive",
+            "versioncreated": "2015-01-01T10:10:100000",
+            "_current_version" : 2,
+            "original_creator": "admin",
+            "task" : {
+		        "desk" : "Sports Desk",
+		        "user" : "administrator",
+		        "status": "todo",
+		        "stage": "one"
+		    }
+        }
+    },
+    {
+        "resource": "legal_archive",
+        "username": "admin",
+        "data": {
+            "headline": "package1 in legal archive",
+            "slugline": "package1 slugline",
+            "type": "composite",
+            "state": "published",
+            "operation": "publish",
+            "guid": "package1-in-legal-archive",
+            "versioncreated": "2015-01-01T10:10:100000",
+            "_current_version" : 2,
+            "original_creator": "admin",
+            "groups": [{"refs" : [{"idRef" : "main"}], "id" : "root", "role" : "grpRole:NEP"},
+                       {"refs" : [{"renditions" : {}, "type" : "text", "slugline" : "item1 slugline", "headline" : "item1 in legal archive",
+                                   "guid" : "item1-in-legal-archive", "residRef" : "item1-in-legal-archive",
+                                   "itemClass" : "icls:text", "_current_version" : 2, "location" : "legal_archive"},
+	   		                      {"renditions" : {}, "type" : "text", "slugline" : "item3 slugline", "headline" : "item3 in legal archive",
+                                   "guid" : "item3-in-legal-archive", "residRef" : "item3-in-legal-archive",
+                                   "itemClass" : "icls:text",  "_current_version" : 2, "location" : "archive"
+                                  }], "id" : "main", "role" : "grpRole:main"}],
+            "task" : {
+		        "desk" : "Sports Desk",
+		        "user" : "administrator",
+		        "status": "todo",
+		        "stage": "one"
+		    }
+        }
     },
     {
         "resource":"ingest_providers",
@@ -348,5 +909,140 @@
           "source": "afp",
           "is_closed": true
         }
+    },
+    {
+        "resource":"dictionaries",
+        "data": {
+			"name": "Test 1",
+			"language_id": "en",
+			"content": {"alpha": 1, "beta": 1, "gama": 1}
+        }
+    },
+    {
+        "resource": "saved_searches",
+        "username": "admin",
+        "data": {
+            "filter": {
+                "query": {
+                    "repo" : "archive",
+                    "q": "headline:(item*)"
+                }
+            },
+            "name": "saved search item",
+            "user": "-id user admin-"
+        }
+    },
+    {
+        "resource": "saved_searches",
+        "username": "admin",
+        "data": {
+            "filter": {
+                "query": {
+                    "repo" : "archive",
+                    "q": "headline:(item3)"
+                }
+            },
+            "name": "saved search item3",
+            "user": "-id user admin-"
+        }
+    },
+    {
+        "resource": "saved_searches",
+        "username": "admin",
+        "data": {
+            "filter": {
+                "query": {
+                    "repo": "ingest",
+                    "q": "headline:(ingest1)"
+                }
+            },
+            "name": "saved search ingest1",
+            "user": "-id user admin-"
+        }
+    },
+    {
+        "resource": "saved_searches",
+        "username": "admin",
+        "data": {
+            "filter": {
+                "query": {
+                    "q": "headline:(i*)"
+                }
+            },
+            "name": "saved search items and ingest",
+            "user": "-id user admin-"
+        }
+    },
+    {
+        "resource": "saved_searches",
+        "username": "admin",
+        "data": {
+            "filter": {
+                "query": {
+                    "q": "headline:(i*)"
+                }
+            },
+            "name": "saved search admin1",
+            "user": "-id user admin1-"
+        }
+    },
+    {
+        "resource": "saved_searches",
+        "username": "admin",
+        "data": {
+            "filter": {
+                "query": {
+                    "repo" : "archive",
+                    "q": "headline:(item*)"
+                }
+            },
+            "name": "global saved search item",
+            "user": "-id user admin-",
+            "is_global": true
+        }
+    },
+    {
+        "resource": "saved_searches",
+        "username": "admin",
+        "data": {
+            "filter": {
+                "query": {
+                    "repo": "ingest",
+                    "q": "headline:(ingest1)"
+                }
+            },
+            "name": "global saved search ingest1",
+            "user": "-id user admin-",
+            "is_global": true
+        }
+    },
+    {
+        "resource": "saved_searches",
+        "username": "admin",
+        "data": {
+            "filter": {
+                "query": {
+                    "q": "headline:(i*)"
+                }
+            },
+            "name": "global saved search ingest1 and item",
+            "user": "-id user admin-",
+            "is_global": true
+        }
+    },
+    {
+        "resource": "saved_searches",
+        "username": "admin",
+        "data": {
+            "filter": {
+                "query": {
+                    "q": "headline:(i*)"
+                }
+            },
+            "name": "global saved search other user",
+            "user": "-id user admin1-",
+            "is_global": true
+        }
     }
+
 ]

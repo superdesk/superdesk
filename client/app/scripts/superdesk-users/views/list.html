@@ -13,6 +13,11 @@
         <div class="list-pane">
             <header>
                 <div sd-searchbar></div>
+                <div class="separator-handler"></div>
+                <div class="online-users">
+                    <p><span sd-check ng-model="online_users" name="online_users" id="online_users"></span></p>
+                    <label translate>show only online users</label>
+                </div>
                 <div sd-pagination data-items="users"></div>
             </header>
             <div class="content">
@@ -55,7 +60,7 @@
             </div>
         </div>
 
-        <div class="preview-pane">
+        <div class="preview-pane" ng-if="selected.user">
             <header>
                 <a id="open-user-profile" href="" ng-click="intent('detail', 'user', selected.user)" ng-show="selected.user._id" class="btn btn-light pull-left" translate>View full profile</a>
                 <button ng-click="selected.user = null" class="close-preview"><i class="icon-close-small"></i></button>

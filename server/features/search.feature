@@ -38,48 +38,13 @@ Feature: Search Feature
         [{"name": "Sports Desk", "spike_expiry": 60}]
         """
         Given "archive"
-            """
-            [{"guid": "1", "task": {"desk": "#desks._id#"}}]
-            """
-        When we post to "/archive"
-            """
-            [{"guid": "2", "task": {"desk": "#desks._id#"}}]
-            """
-        When we post to "/archive"
-            """
-            [{"guid": "3", "task": {"desk": "#desks._id#"}}]
-            """
-
-        When we post to "/archive"
-            """
-            [{"guid": "4", "task": {"desk": "#desks._id#"}}]
-            """
-
-        When we post to "/archive"
-            """
-            [{"guid": "5", "task": {"desk": "#desks._id#"}}]
-            """
-
-        When we post to "/archive"
-            """
-            [{"guid": "6", "task": {"desk": "#desks._id#"}}]
-            """
-
-        When we post to "/archive"
-            """
-            [{"guid": "7", "task": {"desk": "#desks._id#"}}]
-            """
-
-        When we post to "/archive"
-            """
-            [{"guid": "8", "task": {"desk": "#desks._id#"}}]
-            """
-
-        When we post to "/archive"
-            """
-            [{"guid": "9", "task": {"desk": "#desks._id#"}}]
-            """
-
+        """
+        [{"guid": "1", "task": {"desk": "#desks._id#"}}, {"guid": "2", "task": {"desk": "#desks._id#"}},
+         {"guid": "3", "task": {"desk": "#desks._id#"}}, {"guid": "4", "task": {"desk": "#desks._id#"}},
+         {"guid": "5", "task": {"desk": "#desks._id#"}}, {"guid": "6", "task": {"desk": "#desks._id#"}},
+         {"guid": "7", "task": {"desk": "#desks._id#"}}, {"guid": "8", "task": {"desk": "#desks._id#"}},
+         {"guid": "9", "task": {"desk": "#desks._id#"}}]
+        """
         Then we set elastic limit
         When we get "/search"
         Then we get list with 5 items
@@ -89,7 +54,7 @@ Feature: Search Feature
         Given empty "desks"
         When we post to "users"
             """
-            {"username": "foo", "email": "foo@bar.com", "is_active": true}
+            {"username": "foo", "email": "foo@bar.com", "is_active": true, "sign_off": "abc"}
             """
         When we post to "/desks"
             """
@@ -125,7 +90,7 @@ Feature: Search Feature
         Given empty "desks"
         When we post to "users"
             """
-            {"username": "foo", "email": "foo@bar.com", "is_active": true}
+            {"username": "foo", "email": "foo@bar.com", "is_active": true, "sign_off": "abc"}
             """
         When we post to "/desks"
             """
@@ -154,3 +119,14 @@ Feature: Search Feature
         Then we get list with 1 items
         When we get "/archive/#archive._id#"
         Then we get response code 200
+
+    @auth
+    Scenario: Search by slugline
+        Given "ingest"
+            """
+            [{"guid": "1", "slugline": "ABUSE PHOTO"}]
+            """
+        When we get "/search?source={"query":{"filtered":{"filter": null,"query":{"query_string":{"query":"slugline:(abuse)","lenient":false,"default_operator":"AND"}}}}}"
+        Then we get list with 1 items
+        When we get "/search?source={"query":{"filtered":{"filter": null,"query":{"query_string":{"query":"slugline:(absent)","lenient":false,"default_operator":"AND"}}}}}"
+        Then we get list with 0 items

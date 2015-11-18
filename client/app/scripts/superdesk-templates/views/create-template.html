@@ -1,0 +1,44 @@
+<div class="modal-header">
+    <button type="button" class="close" ng-click="$dismiss()">
+        <span class="icon-close-small"></span></button>
+    <h3 class="modal-title" translate>Save as template</h3>
+</div>
+<div class="modal-body">
+    <form name="templateForm">
+        <fieldset>
+            <div class="field">
+                <label for="template-name" translate>Name</label>
+                <div class="control">
+                    <input type="text" id="template-name" required ng-model="template.name">
+                    <div class="error" ng-show="template._issues.template_name"
+                        translate>Sorry, but template name must be unique.</div>
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="template-type" translate>Type</label>
+                <div class="control">
+                    <select ng-model="template.type" required ng-options="type._id as type.label for type in template.types"></select>
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="template-desk" translate>Desk</label>
+                <div class="control">
+                    <select ng-model="template.desk" ng-options="desk._id as desk.name for desk in template.desks">
+                        <option value="" translate>None</option>
+                    </select>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default"
+        ng-click="$dismiss()"
+        translate>Cancel</button>
+    <button type="button" class="btn btn-primary"
+        ng-disabled="templateForm.$invalid"
+        ng-click="template.save().then($close)"
+        translate>Save</button>
+</div>

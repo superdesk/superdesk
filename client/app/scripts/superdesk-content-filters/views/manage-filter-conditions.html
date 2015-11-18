@@ -1,0 +1,70 @@
+<div ng-controller="FilterConditionsCtrl">
+	<div class="split-content" >
+    <div class="header">
+        <h2 translate>Filter Conditions</h2>
+        <button class="btn btn-info pull-right" ng-click="edit()">
+            <i class="icon-plus-sign icon-white"></i> <span translate>Add New Filter Condition</span>
+        </button>
+    </div>
+
+    <div class="content">
+        <ul class="pills-list provider-list">
+            <li ng-repeat="filterCondition in filterConditions track by filterCondition._id" class="clearfix">
+                <div class="header">
+                	<div>
+	                    <h6>{{ filterCondition.name }}</h6>
+	                    <span class="pull-right-20">({{filterCondition.field + ' ' + filterCondition.operator + ' ' + filterCondition.value}})</span>
+                	</div>
+
+                    <div class="actions">
+                        <button ng-click="edit(filterCondition)" title="{{:: 'Edit Filter Condition' | translate }}"><i class="icon-pencil"></i></button>
+                        <button ng-click="remove(filterCondition)" title="{{:: 'Remove Filter Condition' | translate }}"><i class="icon-trash"></i></button>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div sd-modal data-model="filterCondition" class="filter-condition-modal modal-large">
+    <div class="modal-header"> <a href="" class="close" ng-click="cancel()"><i class="icon-close-small"></i></a>
+        <h3 translate ng-show="filterCondition._id" translate>Edit Filter Condition "{{ origFilterCondition.name }}"</h3>
+        <h3 translate ng-hide="filterCondition._id" translate>Add New Filter Condition</h3>
+    </div>
+    <div class="modal-body">
+        <form name="editForm" ng-submit="save()">
+            <fieldset>
+                <div class="field">
+                    <label for="filterCondition-name" translate>Name</label>
+                    <input type="text" id="filterCondition-name" required ng-model="filterCondition.name">
+                </div>
+
+                <div class="field">
+                    <label translate>Field</label>
+                    <select class="input" required ng-model="filterCondition.field" >
+                        <option value="{{parameter.field}}" ng-selected="parameter.field === filterCondition.field" ng-repeat="parameter in filterConditionParameters">{{:: parameter.field}}</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label translate>Operator</label>
+                    <select class="input" required ng-model="filterCondition.operator" >
+                        <option value="{{operator}}" ng-selected="operator === filterCondition.operator" ng-repeat="operator in operatorLookup[filterCondition.field]">{{operator}}</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label translate>Values</label>
+                    <input ng-if="!isListValue()" required ng-model="filterCondition.value">
+                    <div ng-if="isListValue()">
+                        <div sd-meta-terms data-item="filterCondition" data-field="values" data-unique="qcode" data-list="valueLookup[filterCondition.field]"></div>
+                    </div>		
+                </div>
+            </fieldset>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="cancel()" translate>Cancel</button>
+        <button class="btn btn-primary" ng-click="save()" ng-disabled="!editForm.$valid" translate>Save</button>
+    </div>
+</div>
+</div>
+

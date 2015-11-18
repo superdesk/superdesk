@@ -2,8 +2,8 @@
 
 'use strict';
 
-MacrosService.$inject = ['api', 'autosave'];
-function MacrosService(api, autosave) {
+MacrosService.$inject = ['api', 'autosave', 'notify'];
+function MacrosService(api, autosave, notify) {
     this.get = function() {
         return api.query('macros')
             .then(angular.bind(this, function(macros) {
@@ -12,7 +12,7 @@ function MacrosService(api, autosave) {
             }));
     };
 
-     this.getByDesk = function(desk) {
+    this.getByDesk = function(desk) {
         return api.query('macros', {'desk': desk})
             .then(angular.bind(this, function(macros) {
                 this.macros = macros._items;
@@ -34,25 +34,37 @@ function MacrosService(api, autosave) {
 
     this.call = triggerMacro;
 
-    function triggerMacro(macro, item) {
-        api.save('macros', {
+    function triggerMacro(macro, item, commit) {
+        return api.save('macros', {
             macro: macro.name,
-            item: _.omit(item) // get all the properties as shallow copy
+            item: _.omit(item), // get all the properties as shallow copy
+            commit: !!commit
         }).then(function(res) {
             angular.extend(item, res.item);
-            autosave.save(item);
+            if (!commit) {
+                autosave.save(item);
+            }
             return item;
+        }, function(err) {
+            if (angular.isDefined(err.data._message)) {
+                notify.error(gettext('Error: ' + err.data._message));
+            }
         });
     }
 }
 
-MacrosController.$inject = ['$scope', 'macros'];
-function MacrosController($scope, macros) {
-
+MacrosController.$inject = ['$scope', 'macros', 'desks'];
+function MacrosController($scope, macros, desks) {
     macros.get().then(function() {
-        $scope.macros = macros.macros;
+        var currentDeskId = desks.getCurrentDeskId();
+        if (currentDeskId !== null) {
+            macros.getByDesk(desks.getCurrentDesk().name).then(function(_macros) {
+                $scope.macros = _macros;
+            });
+        } else {
+            $scope.macros = macros.macros;
+        }
     });
-
     $scope.call = function(macro) {
         return macros.call(macro, $scope.item);
     };
@@ -69,8 +81,10 @@ angular.module('superdesk.authoring.macros', [])
                 icon: 'macros',
                 label: gettext('Macros'),
                 template: 'scripts/superdesk-authoring/macros/views/macros-widget.html',
+                order: 6,
+                needEditable: true,
                 side: 'right',
-                display: {authoring: true, packages: true}
+                display: {authoring: true, packages: true, legalArchive: false}
             });
     }]);
 })();

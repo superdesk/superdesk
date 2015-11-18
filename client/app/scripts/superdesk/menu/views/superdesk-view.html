@@ -1,9 +1,18 @@
 <div sd-menu-wrapper></div>
 <div sd-notifications></div>
 
-<div id="main-container" ng-class="flags" ng-view></div>
+<!-- todo(vladimir): provide some loading indicator -->
+<div class="loading" ng-if="loading"></div>
 
-<!--<div sd-scratchpad></div>-->
+<div id="main-container" ng-class="superdesk.flags" ng-if="superdesk.flags.workspace === true">
+    <div id="workspace-container" ng-view></div>
+    <div id="authoring-container" ng-if="superdesk.flags.workspace" sd-authoring-container></div>
+    <div id="superdesk-workqueue" ng-if="superdesk.flags.workspace" sd-workqueue></div>
+    <div sd-item-preview-container></div>
+</div>
+
+<div id="main-container" ng-class="superdesk.flags" ng-if="superdesk.flags.workspace === false" ng-view></div>
+
 <div sd-activity-modal></div>
 <div sd-login-modal></div>
 <div sd-notify></div>

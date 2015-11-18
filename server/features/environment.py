@@ -10,22 +10,28 @@
 
 import os
 from superdesk import tests
-from superdesk.io.tests import setup_providers, teardown_providers
+from apps.io.tests import setup_providers, teardown_providers
 from settings import LDAP_SERVER
 from features.steps.steps import get_macro_path
 from flask import json
+from app import get_app
+from superdesk.vocabularies.command import VocabulariesPopulateCommand
+from test_factory import setup_auth_user
 
 
 readonly_fields = ['display_name', 'password', 'phone', 'first_name', 'last_name']
 
 
 def before_all(context):
-    tests.setup(context)
+    tests.setup(context=context, app_factory=get_app)
     os.environ['BEHAVE_TESTING'] = '1'
 
 
 def before_feature(context, feature):
     if 'dbauth' in feature.tags and LDAP_SERVER:
+        feature.mark_skipped()
+
+    if 'ldapauth' in feature.tags and not LDAP_SERVER:
         feature.mark_skipped()
 
 
@@ -34,7 +40,7 @@ def before_scenario(context, scenario):
     if scenario.status != 'skipped' and 'notesting' in scenario.tags:
         config['SUPERDESK_TESTING'] = False
 
-    tests.setup(context, config)
+    tests.setup(context=context, config=config, app_factory=get_app)
     context.headers = [
         ('Content-Type', 'application/json'),
         ('Origin', 'localhost')
@@ -43,11 +49,20 @@ def before_scenario(context, scenario):
     if 'dbauth' in scenario.tags and LDAP_SERVER:
         scenario.mark_skipped()
 
+    if 'ldapauth' in scenario.tags and not LDAP_SERVER:
+        scenario.mark_skipped()
+
     if scenario.status != 'skipped' and 'auth' in scenario.tags:
-        tests.setup_auth_user(context)
+        setup_auth_user(context)
 
     if scenario.status != 'skipped' and 'provider' in scenario.tags:
         setup_providers(context)
+
+    if scenario.status != 'skipped' and 'vocabulary' in scenario.tags:
+        with context.app.app_context():
+            cmd = VocabulariesPopulateCommand()
+            filename = os.path.join(os.path.abspath(os.path.dirname("features/steps/fixtures/")), "vocabularies.json")
+            cmd.run(filename)
 
     if scenario.status != 'skipped' and 'notification' in scenario.tags:
         tests.setup_notification(context)
@@ -63,6 +78,7 @@ def after_scenario(context, scenario):
     if 'clean' in scenario.tags:
         try:
             os.remove(get_macro_path('behave_macro.py'))
+            os.remove(get_macro_path('validate_headline_macro.py'))
         except:
             pass
 

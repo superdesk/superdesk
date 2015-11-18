@@ -22,6 +22,50 @@ Feature: Content Locking
         Then we get OK response
 
     @auth
+    Scenario: Unlocking version 0 draft item deletes the item
+        Given "archive"
+        """
+        [{"_id": "item-1", "guid": "item-1", "headline": "test", "_current_version": 0, "state": "draft"}]
+        """
+        When we post to "/archive/item-1/lock"
+        """
+        {}
+        """
+        Then we get new resource
+        """
+        {"_id": "item-1", "guid": "item-1", "headline": "test"}
+        """
+
+        When we post to "/archive/item-1/unlock"
+        """
+        {}
+        """
+        And we get "/archive/item-1"
+        Then we get error 404
+
+    @auth
+    Scenario: Unlocking version 1+ item unlockes the item
+        Given "archive"
+        """
+        [{"_id": "item-1", "guid": "item-1", "headline": "test", "_current_version": 1}]
+        """
+        When we post to "/archive/item-1/lock"
+        """
+        {}
+        """
+        Then we get new resource
+        """
+        {"_id": "item-1", "guid": "item-1", "headline": "test"}
+        """
+
+        When we post to "/archive/item-1/unlock"
+        """
+        {}
+        """
+        And we get "/archive/item-1"
+        Then we get response code 200
+
+    @auth
     Scenario: Fail edit on locked item
         Given "archive"
         """
@@ -61,7 +105,7 @@ Feature: Content Locking
         Then we get error 403
 
 
-    @auth @wip
+    @auth
     Scenario: Force unlock other user content on a desk with desk membership.
         Given "desks"
         """
@@ -69,7 +113,7 @@ Feature: Content Locking
         """
         Given "archive"
         """
-        [{"_id": "item-1", "guid": "item-1", "headline": "test",
+        [{"_id": "item-1", "guid": "item-1", "headline": "test", "_current_version": 2,
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
         """
         When we post to "/archive/item-1/lock"
@@ -125,7 +169,7 @@ Feature: Content Locking
         Then we get error 403
 
 
-    @auth
+    @auth @test
     Scenario: Fail lock if item is locked in another session
         Given "archive"
         """
@@ -152,7 +196,7 @@ Feature: Content Locking
     Scenario: Force unlock if item is locked in another session
         Given "archive"
         """
-        [{"_id": "item-1", "guid": "item-1", "headline": "test"}]
+        [{"_id": "item-1", "guid": "item-1", "headline": "test", "_current_version": 2}]
         """
         When we post to "/archive/item-1/lock"
         """

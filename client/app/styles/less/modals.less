@@ -9,6 +9,12 @@
 	.tooltip       {  z-index: @zindexTooltip  + @zindexModal; }
 }
 
+@modal-base-width : 460px;
+@modal-large-width : 660px;
+@modal-big-width : 820px;
+
+@modal-border-radius: 4px;
+
 @modal-header-height : @nav-height;
 @modal-footer-height : 58px;
 @modal-subnav-height : @nav-height;
@@ -31,34 +37,97 @@
 	.opacity(30);
 }
 
-// Base modal
-.modal {
-	position: fixed;
-	top: 50%;
-	left: 50%;
-	overflow: auto;
-	width: 560px;
-	margin: -250px 0 0 -280px;
-	background-color: @white;
-	.border-radius(3px);
-	.box-shadow(0 0px 6px 1px rgba(0,0,0,0.45));
-	.background-clip(padding-box);
-	&.fade {
-		.transition(e('opacity .3s linear, top .3s ease-out'));
-		top: -25%;
-	}
-	&.fade.in { 
-		top: 50%; 
-		z-index: @zindexModal;
+body:not(:-moz-handler-blocked) .modal{
+	&.moz-scroll-fix{
+		.modal-dialog{
+			/* height: 100%; */
+		}
 	}
 }
+
+// Base modal
+.modal {
+    position: fixed;
+    left: 40px; right: 40px; top: 40px; bottom:40px;
+    align-items: flex-start;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: @zindexModal;
+    display: none;
+    &.in {
+        display: flex !important;
+    }
+    &.fade{
+        transition: none;
+        -webkit-transition: none;
+    }
+    &.wrapped, .wrapped {
+        .modal-content {
+            flex-direction: row;
+            align-items: initial;
+            flex: 0 1 auto;
+            width: 480px;
+        }
+        .modal-wrapper {
+            display: flex;
+            flex: 1 0 auto;
+            flex-direction: column;
+            width: 100%;
+            max-height: calc(~'100vh - 95px');
+        }
+    }
+    .modal-dialog {
+        width: @modal-base-width + 20px;
+        display: flex;
+        max-height: 100%;
+        flex: 0 1 auto;
+        justify-content: center;
+        margin: 0 auto;
+    }
+    .modal-content {
+        display: flex;
+        align-items: flex-start;
+        flex-direction: column;
+        flex: 0 0 @modal-base-width + 20px;
+        margin: 10px;
+        .box-shadow(0 0 8px 2px rgba(0, 0, 0, 0.3));
+        .modal-header, .modal-footer {
+            flex: 0 0 auto;
+            width: 100%;
+            .border-box();
+        }
+        .modal-body {
+            flex: 0 1 auto;
+            width: 100%;
+            .border-box();
+            overflow-y: auto;
+        }
+    }
+    .modal-strech {
+        width: 100%;
+    }
+    &.child-shadow {
+        .modal-content {
+            .box-shadow(0 0 0 0 rgb(0, 0, 0));
+            > * {
+                .box-shadow(0 0 8px 2px rgba(0, 0, 0, 0.3));
+            }
+        }
+    }
+}
 .modal-header {
+	background-color: @white;
 	padding: 9px 15px;
 	border-bottom: 1px solid #e4e4e4;
 	.box-sizing(border-box);
 	height: @modal-header-height !important;
+	.border-radius(@modal-border-radius @modal-border-radius 0 0);
 	// Close icon
-	.close { margin-top: 2px; }
+	.close {
+		margin-top: 2px;
+		border: 0;
+		background: 0;
+	}
 	h3 {
 		font-size: 18px;
 		font-weight: 100;
@@ -67,33 +136,26 @@
 
 // Body (where all modal content resises)
 .modal-body {
+	background: @sd-background;
 	overflow-y: auto;
-	max-height: 400px;
+	//max-height: 400px;
 	padding: 20px;
 	position: relative;
-
-	&.modal-body-min {
-		min-height: 400px;
-		position: relative;
+	&.modal-body-white {
+		background: @white;
 	}
-
-	.popup-subnav {
+	.nav-tabs {
 		position: absolute;
 		left: 0; right: 0; top: 0;
 		border-bottom: 1px solid #e4e4e4;
 		height: @modal-subnav-height;
 		line-height: @modal-subnav-height - 20;
-		padding: 10px 20px;
+		padding: 0px 20px;
 		.box-sizing(border-box);
-		background: #f8f8f8;
-		.nav-pills li {
-			a, button {
-				padding: 6px 10px !important;
-			}
-		}
-		.nav-tabs {
-			margin-top: -10px;
-		}
+		background: @sd-background;
+	}
+	.tab-content {
+		margin-top: @modal-subnav-height;
 	}
 
 	.modal-screen {
@@ -103,10 +165,6 @@
 		overflow-x: hidden;
 		padding: 20px;
 	}
-	.popup-subnav + .modal-screen {
-		top: @modal-subnav-height;
-	}
-
 }
 // Remove bottom margin if need be
 .modal-form {
@@ -115,11 +173,12 @@
 
 // Footer (for actions)
 .modal-footer {
+	background-color: @white;
 	padding: 14px 15px 15px;
 	margin-bottom: 0;
 	text-align: right; // right align buttons
 	border-top: 1px solid #e4e4e4;
-	.border-radius(0 0 6px 6px);
+	.border-radius(0 0 @modal-border-radius @modal-border-radius);
 	.clearfix(); // clear it in case folks use .pull-* classes on buttons
 
 	// Properly space out buttons
@@ -132,6 +191,94 @@
 		margin-left: -1px;
 	}
 }
+
+
+.modal {
+	&.modal-strech {
+		.modal-dialog {
+			height: 100%;
+		}
+		.modal-body {
+			.tab-content {
+				position: absolute;
+				left: 0; right: 0; bottom: 0;
+				top: @modal-subnav-height;
+				margin: 0;
+				padding: 20px;
+				overflow: auto;
+				display: block;
+				width: auto;
+			}
+		}
+	}
+	&.modal-static {
+		.modal-dialog {
+			height: auto;
+			.modal-body {
+				height: 400px;
+				max-height: 400px;
+				.tab-content {
+					position: absolute;
+					left: 0; right: 0; bottom: 0;
+					top: @modal-subnav-height;
+					margin: 0;
+					padding: 20px;
+					overflow: auto;
+					display: block;
+					width: auto;
+				}
+			}
+		}
+	}
+	&.modal-body-grey {
+		.modal-body {
+			background: @sd-background;
+		}
+	}
+	&.modal-large {
+		.modal-dialog {
+			width: @modal-large-width + 20px;
+		}
+		.modal-content {
+			flex: 0 0 @modal-large-width + 20px;
+		}
+	}
+	&.modal-big {
+		.modal-dialog {
+			width: @modal-big-width + 20px;
+		}
+		.modal-content {
+			flex: 0 0 @modal-big-width + 20px;
+		}
+	}
+	&.modal-responsive {
+		.modal-dialog {
+			width: 100%;
+			height: 100%;
+			.modal-content {
+				flex: 0 1 100%;
+				-moz-box-flex: 0 0 100%;
+				.modal-body {
+					max-height: none;
+					flex: 1 1 auto;
+				}
+			}
+		}
+	}
+	&.with-subnav {
+		.modal-dialog {
+			height: 100%;
+			.modal-body {
+			}
+		}
+	}
+	&.add-vocabulary-popup {
+		.modal-content {
+			flex: 0 0 100%;
+		}
+	}
+}
+
 
 .mini-modal {
 	padding: 20px;
@@ -165,46 +312,6 @@
 	}
 	.footer {
 		text-align: right;
-	}
-}
-
-/*************************************
-	RESPONSIVE POPUP
- *************************************/
-/*  
-		> used for upload image popup
-*/
-
-.responsive-popup {
-	position: fixed;
-	width: auto;
-	height: auto;
-	margin: 7% 12%;
-	left: 0 !important;
-	top: 0 !important;
-	right: 0 !important;
-	bottom: 0 !important;
-	.modal-header {
-		position: absolute;
-		top: 0;
-		left:0;
-		right:0;
-	}
-	.modal-body {
-		.box-sizing(border-box);
-		position: absolute;
-		top: @modal-header-height;
-		left:0;
-		bottom:@modal-footer-height;
-		right: 0;
-		max-height: none !important;
-		min-height: auto !important;
-	}
-	.modal-footer {
-		position: absolute;
-		bottom: 0;
-		left:0;
-		right:0;
 	}
 }
 

@@ -18,7 +18,6 @@ Feature: News Items Archive Comments
         """
 
     @auth
-    @wip
     Scenario: Create comments for item
         Given "archive"
         """
@@ -67,7 +66,7 @@ Feature: News Items Archive Comments
         Given empty "item_comments"
         When we post to "users"
         """
-        {"username": "foo", "email": "foo@bar.com", "is_active": true}
+        {"username": "foo", "email": "foo@bar.com", "is_active": true, "sign_off": "abc"}
         """
         When we post to "/item_comments"
         """
@@ -108,8 +107,8 @@ Feature: News Items Archive Comments
         """
         {"_issues": {"item": "value 'xyz' must exist in resource 'archive', field '_id'."}, "_status": "ERR", "_error": {"code": 400, "message": "Insertion failure: 1 document(s) contain(s) error(s)"}}
         """
-        
-        
+
+
     @auth
     @notification
     Scenario: Create comment for item with user one mentions
@@ -118,10 +117,10 @@ Feature: News Items Archive Comments
         [{"_id": "xyz", "guid": "testid", "headline": "test"}]
         """
         Given empty "item_comments"
-        
+
         When we post to "/users"
         """
-        {"username": "joe", "display_name": "Joe Black", "email": "joe@black.com", "is_active": true}
+        {"username": "joe", "display_name": "Joe Black", "email": "joe@black.com", "is_active": true, "sign_off": "abc"}
         """
         Then we get new resource
         """
@@ -135,10 +134,10 @@ Feature: News Items Archive Comments
         Then we get list with 1 items
         """
         {"_items": [{"text": "test comment @no_user with one user mention @joe", "item": "xyz", "mentioned_users": {"joe": "#users._id#"}}]}
-        """ 
+        """
         When we get "/users/test_user"
         Then we get "_id"
         And we get notifications
         """
-        [{"event": "item:comment", "extra": {"item": "xyz"}, "_created": ""}, {"event": "activity"}]
+        [{"event": "item:comment", "extra": {"item": "xyz"}, "_created": "__any_value__"}, {"event": "activity"}]
         """

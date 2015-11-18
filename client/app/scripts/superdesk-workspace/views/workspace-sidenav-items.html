@@ -1,0 +1,41 @@
+<li ng-class="{active: currentRoute.href === '/workspace'}">
+    <a href="#/workspace" class="big-icon-dashboard" ng-click="hideMonitoring(currentRoute.href === '/workspace', $event)"
+       title="{{ :: 'Dashboard' | translate }}"></a>
+</li>
+<li ng-class="{active: currentRoute.href === '/workspace/monitoring'}">
+    <a href="#/workspace/monitoring" class="big-icon-view" ng-click="hideMonitoring(currentRoute.href === '/workspace/monitoring', $event)"
+       title="{{ :: 'Monitoring' | translate }}"></a>
+</li>
+<li ng-class="{active: currentRoute.href === '/workspace/highlights'}">
+    <div class="dropdown dropright dropdown-hover highlights-dropdown"
+         dropdown sd-package-highlights-dropdown>
+    </div>
+</li>
+<li ng-class="{active: currentRoute.href === '/workspace/tasks'}" ng-if="privileges.tasks">
+    <a href="#/workspace/tasks" class="big-icon-tasks" ng-click="hideMonitoring(currentRoute.href === '/workspace/tasks', $event)"
+       title="{{ :: 'Tasks' | translate }}"></a>
+</li>
+<li ng-class="{active: currentRoute.href === '/workspace/spike-monitoring'}">
+    <a href="#/workspace/spike-monitoring" class="big-icon-spiked" ng-click="hideMonitoring(currentRoute.href === '/workspace/spike-monitoring', $event)"
+       title="{{ :: 'Spike' | translate }}"></a>
+</li>
+
+<hr>
+<li ng-class="{active: currentRoute.href === '/workspace/personal'}">
+    <a href="#/workspace/personal" class="big-icon-personal" ng-click="hideMonitoring(currentRoute.href === '/workspace/personal', $event)"
+       title="{{ :: 'Personal' | translate }}"></a>
+</li>
+<li ng-class="{active: currentRoute.href === '/search'}">
+    <a href="#/search" class="big-icon-global-search" ng-click="hideMonitoring(currentRoute.href === '/search', $event)"
+       title="{{ :: 'Search' | translate }}"></a>
+</li>
+
+<hr><!-- this is something like deprecated.. don't add, only remove -->
+<li ng-class="{active: currentRoute.href === '/workspace/ingest'}" ng-if="privileges.ingest">
+    <a href="#/workspace/ingest" class="big-icon-ingest"
+       title="{{ :: 'Ingest' | translate }}"></a>
+</li>
+<li ng-class="{active: currentRoute.href === '/workspace/content'}" ng-if="privileges.archive">
+    <a href="#/workspace/content" class="big-icon-archive"
+       title="{{ :: 'Content' | translate }}"></a>
+</li>

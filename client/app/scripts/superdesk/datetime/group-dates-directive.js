@@ -24,20 +24,20 @@ define(['moment'], function(moment) {
                 ngModel.$render = function() {
                     var date = moment.utc(ngModel.$viewValue[attrs.sdGroupDates]);
                     if (scope.$first || lastDate.format(COMPARE_FORMAT) !== date.format(COMPARE_FORMAT)) {
-                    	var fdate;
-                    	var fday;
-                    	if (moment().format(COMPARE_FORMAT) === date.format(COMPARE_FORMAT)){
-                        	fday = date.format(DISPLAY_TODAY_FORMAT);
+                        var fdate;
+                        var fday;
+                        if (moment().format(COMPARE_FORMAT) === date.format(COMPARE_FORMAT)){
+                            fday = date.format(DISPLAY_TODAY_FORMAT);
                         } else {
-                        	fday = date.format(DISPLAY_DAY_FORMAT);
+                            fday = date.format(DISPLAY_DAY_FORMAT);
                         }
 
                         if (moment().format('YYYY') === date.format('YYYY')){
-                        	fdate = date.format(DISPLAY_CDATE_FORMAT);
+                            fdate = date.format(DISPLAY_CDATE_FORMAT);
                         } else {
-                        	fdate = date.format(DISPLAY_DATE_FORMAT);
+                            fdate = date.format(DISPLAY_DATE_FORMAT);
                         }
-                    	element.prepend('<div class="date"><span>' + fday + fdate + '</span></div>');
+                        element.prepend('<div class="date"><span>' + fday + fdate + '</span></div>');
                         element.addClass('with-date');
                         lastDate = date;
                     }

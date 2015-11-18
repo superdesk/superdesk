@@ -39,7 +39,7 @@
 	margin-right: -15px;
 }
 
-.nav-list > li > a, .nav-list > li > button, {
+.nav-list > li > a, .nav-list > li > button {
 	padding: 3px 15px;
 }
 .nav-list > .active > a,
@@ -336,7 +336,7 @@
 // SUBNAV
 // ------------
 .subnav {
-		position: fixed;
+		position: absolute;
 		top: @nav-height;
 		left: 0;
 		right: 0;
@@ -371,6 +371,13 @@
 		z-index: 2;
 		.box-shadow(none);
 }
+.monitoring{
+	.subnav {
+		.page-nav-title {
+			padding-left: 20px;
+		}
+	}
+}
 
 .button-stack {
 		height:@subnav-height !important;
@@ -383,14 +390,22 @@
 		}
 		&.right-stack {
 				float: right;
-				margin: -10px -20px 0 20px;
+				margin: -10px -20px 0 5px;
 				.navbtn {
-						border-left: 1px solid #e0e0e0 !important;
+						border-left: 1px solid rgba(0,0,0,0.1) !important;
 						border-right: 0 !important;
+                                                .dropdown-toggle {
+                                                    width: 100%;
+                                                }
 				}
 				> .btn {
-						margin-right: 20px;
+						margin-right: 12px;
 						margin-left: 0;
 				}
 		}
+}
+
+.shortcut {
+	text-style: italic;
+	opacity: 0.5;
 }

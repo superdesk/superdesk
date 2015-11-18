@@ -9,7 +9,24 @@ module.exports = function(grunt) {
             port: 9000,
             livereload: '<%= livereloadPort %>'
         },
-        test: {options: {base: base}},
+        test: {
+            options: {
+                base: base,
+                middleware: function(connect, options, middlewares) {
+                    middlewares.unshift(mockTemplates);
+                    return middlewares;
+
+                    // avoid 404 in dev server for templates
+                    function mockTemplates(req, res, next) {
+                        if (req.url === '/scripts/superdesk-templates.js') {
+                            return res.end('');
+                        } else {
+                            return next();
+                        }
+                    }
+                }
+            }
+        },
         travis: {
             options: {
                 base: base,

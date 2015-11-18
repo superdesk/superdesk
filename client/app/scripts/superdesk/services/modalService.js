@@ -8,7 +8,6 @@ define(['angular'], function(angular) {
                 okText = okText || gettext('OK');
                 cancelText = cancelText != null ? cancelText : gettext('Cancel');
                 additionalCancelText = additionalCancelText != null ? additionalCancelText : null;
-
                 var delay = $q.defer();
 
                 $modal.open({
@@ -48,7 +47,7 @@ define(['angular'], function(angular) {
 
             return {
                 template: [
-                    '<div class="modal fade hide">',
+                    '<div class="modal">',
                     '<div class="modal-dialog" ng-if="model"><div class="modal-content" ng-transclude></div></div>',
                     '</div>'].join(''),
                 transclude: true,
@@ -73,6 +72,11 @@ define(['angular'], function(angular) {
                                 content.modal('hide');
                             }
                         }
+                    });
+
+                    $(document).on('hidden.bs.modal', '.modal', function () {
+                        scope.model = false;
+                        scope.$evalAsync();
                     });
 
                     function initialized() {

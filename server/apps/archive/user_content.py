@@ -10,7 +10,8 @@
 
 from superdesk.resource import Resource, build_custom_hateoas
 from superdesk.services import BaseService
-from .common import aggregations
+from .common import CUSTOM_HATEOAS
+from superdesk.metadata.utils import aggregations
 from .archive import ArchiveResource
 import superdesk
 
@@ -23,7 +24,12 @@ class UserContentResource(Resource):
     datasource = {
         'source': 'archive',
         'aggregations': aggregations,
-        'elastic_filter': {'not': {'exists': {'field': 'task.desk'}}}  # eve-elastic specific filter
+        'elastic_filter': {
+            'and': [
+                {'not': {'exists': {'field': 'task.desk'}}},
+                {'not': {'term': {'version': 0}}},
+            ]
+        }
     }
     resource_methods = ['GET', 'POST']
     item_methods = ['GET', 'PATCH', 'DELETE']
@@ -31,12 +37,11 @@ class UserContentResource(Resource):
 
 
 class UserContentService(BaseService):
-    custom_hateoas = {'self': {'title': 'Archive', 'href': '/archive/{_id}'}}
 
     def get(self, req, lookup):
         docs = super().get(req, lookup)
         for doc in docs:
-            build_custom_hateoas(self.custom_hateoas, doc)
+            build_custom_hateoas(CUSTOM_HATEOAS, doc)
         return docs
 
 

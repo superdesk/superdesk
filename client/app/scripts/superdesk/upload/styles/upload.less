@@ -22,11 +22,7 @@ user avatar uploader
 ======================================
 */
 .upload-avatar {
-	width: 740px;
-	margin-left: -370px;
-	margin-top: -280px;
 	.modal-body {
-		height: 400px;
 		position: relative;
 	}
 	.sidebar {
@@ -34,7 +30,7 @@ user avatar uploader
 			li {
 				border-bottom: 1px solid #eee;
 				padding: 7px 10px 7px 20px;
-				height: 36px;	
+				height: 36px;
 				line-height: 22px;
 				font-size: 13px;
 				.box-sizing(border-box);
@@ -156,7 +152,7 @@ user avatar uploader
 		.preview {
 			.crop-area {
 				position: absolute;
-				top: 50px; 
+				top: 50px;
 				left: 20px; right: 20px; bottom: 20px;
 				.original {
 					position: absolute;
@@ -176,6 +172,48 @@ user avatar uploader
 						overflow: hidden;
 						margin: 0 15px 30px 35px;
 					}
+					.preview-large-4-3-small {
+						width:300px;
+						height: 225px;
+						overflow: hidden;
+						margin: 0 15px 30px 35px;
+						float:right;
+					}
+					.preview-large-4-3-medium {
+						width:400px;
+						height: 300px;
+						overflow: hidden;
+						margin: 0 15px 30px 35px;
+						float:right;
+					}
+					.preview-large-4-3-large {
+						width:800px;
+						height: 600px;
+						overflow: hidden;
+						margin: 0 15px 30px 35px;
+						float:right;
+					}
+					.preview-large-16-9-small {
+						width:300px;
+						height: 169px;
+						overflow: hidden;
+						margin: 0 15px 30px 35px;
+						float:right;
+					}
+					.preview-large-16-9-medium {
+						width:400px;
+						height: 225px;
+						overflow: hidden;
+						margin: 0 15px 30px 35px;
+						float:right;
+					}
+					.preview-large-16-9-large {
+						width:1280px;
+						height: 720px;
+						overflow: hidden;
+						margin: 0 15px 30px 35px;
+						float:right;
+					}
 					.preview-round {
 						width:60px;
 						height: 60px;
@@ -184,14 +222,19 @@ user avatar uploader
 						.border-radius(30px);
 					}
 				}
+				&.image {
+					top: 70px;
+				}
+			}
+			.cords-label {
+				color: #999;
 			}
 		}
-		
-		.upload-progress {
-			.generic-upload-progress();
-		}
-		
 	}
+}
+
+.upload-progress {
+	.generic-upload-progress();
 }
 
 
@@ -204,10 +247,11 @@ media uploader
 .upload-media {
 
 	.modal-body {
-		background: @background-main;
-		overflow: hidden;
+		display: flex;
+		flex-direction:column;
+		overflow: hidden !important;
+		padding: 0;
 	}
-
 	.drag-area { //start screen on modal show
 		position: absolute;
 		top:5px;
@@ -215,6 +259,7 @@ media uploader
 		bottom: 5px;
 		right: 5px;
 		border: 3px dashed @background-main;
+		overflow-y: auto;
 		.user-select(none);
 		&.dragover {
 			border-color: #e7e7e7;
@@ -249,14 +294,18 @@ media uploader
 				height: auto;
 				line-height: 140%;
 			}
-			
 		}
 
 		&.compact {
 			z-index: 5;
-			top: auto;
 			height: 90px;
 			border-color: #e7e7e7;
+			position: relative;
+			top: auto; bottom: auto; left: auto; right: auto;
+			order: 2;
+			flex: 0 0 auto;
+			margin: 5px;
+			.box-sizing(border-box);
 			&.dragover {
 				border-color: #c7c7c7;
 			}
@@ -265,13 +314,13 @@ media uploader
 				font-size: 16px;
 				right: 50%;
 				left: auto;
-				top: 35px;
+				top: 32px;
 				margin:0;
 				padding-top: 0;
 				height: auto;
 			}
 			.upload-manual {
-				top: 32px;
+				top: 26px;
 				margin: 0;
 				width: auto;
 				.or-label {
@@ -287,21 +336,20 @@ media uploader
 						margin-left : -3px;
 						top: -15px;
 					}
-
 				}
 			}
 		}
 	}
-	
+
 	.upload-error {
 		height: 40px;
-		position: absolute;
-		left: 0; right: 0; top: 0;
+		position: relative;
 		.box-sizing(border-box);
 		background: #f7e8e8;
 		border-bottom: 1px solid #eed7d7;
 		text-align: center;
 		line-height: 40px;
+		margin-bottom: 10px;
 		span {
 			.text-light();
 			font-size: 14px;
@@ -317,12 +365,11 @@ media uploader
 	}
 
 	.upload-edit {	//detail upload screen and basic edit
-		
-		position: absolute;
-		left: 0; right: 0; bottom: 0; top: 0px;
 		z-index: 1;
-		padding: 20px 20px 91px 20px;
-		overflow: auto;
+		padding: 20px;
+		flex: 1 1 auto;
+    	overflow-y: auto;
+    	position: relative;
 		&.error {
 			top: 40px;
 		}
@@ -332,6 +379,7 @@ media uploader
 				float: left;
 				margin: 0 10px 10px 0;
 				width: 260px;
+				min-height: 350px;
 				.thumb {
 					.border-radius(3px 3px 0 0);
 					overflow: hidden;
@@ -389,12 +437,12 @@ media uploader
 					border-bottom: 1px solid #c8c8c8;
 					.border-radius(0 0 3px 3px);
 					background: #fff;
-					
+
 					.upload-progress {
 						.generic-upload-progress();
 						top:-1px;
 					}
-					
+
 					input[type="text"] {
 						border: 0 !important;
 						height: 34px !important;
@@ -427,10 +475,9 @@ media uploader
 							}
 						}
 					}
-					
+
 
 					.other-info {
-						position: absolute; left: 0; right: 0;
 						z-index: 5;
 						border-bottom: 1px solid #c8c8c8;
 						background: #fff;
@@ -438,7 +485,7 @@ media uploader
 							border-top: 1px solid #ebebeb;
 							&.shadow {
 								background: #f4f4f4;
-								border-top-width: 2px; 
+								border-top-width: 2px;
 							}
 							.text {
 								color: #999;
@@ -451,7 +498,6 @@ media uploader
 		}
 
 		&.compact {
-			bottom: 105px;
 		}
 	}
 
@@ -461,7 +507,7 @@ media uploader
 		z-index: 10;
 		border-bottom: 1px solid #ddd;
 		&.open {
-			bottom: 105px;
+			position: relative;
 		}
 		.optional-drag {
 			width: 120px;
@@ -476,7 +522,5 @@ media uploader
 				margin-top: -2px;
 			}
 		}
-		
 	}
-
 }

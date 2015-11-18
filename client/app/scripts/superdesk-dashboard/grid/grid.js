@@ -15,24 +15,26 @@ define([
          * Usage:
          * <div sd-grid
          *  class="gridster"
-         *  ng-class="{'editmode': editmode}"
+         *  ng-class="{editmode: widgetBoxStatus}"
          *  data-status="widgetBoxStatus"
          *  data-widgets="widgets"></div>
          *
          * Params:
          * @scope {Boolean} status - on/off switch for widget
-         * @scope {Object} widgets
+         * @scope {List} widgets
+         * @scope {Object} dashboard
          */
         .directive('sdGrid', function() {
             return {
                 scope: {
                     status: '=',
-                    widgets: '='
+                    widgets: '=',
+                    save: '&'
                 },
-                replace: true,
                 templateUrl: require.toUrl('./views/grid.html'),
                 controller: ['$scope', function($scope) {
                     this.addWidget = function(widget, element) {
+                        widget.active = true;
                         widget.el = $scope.gridster.add_widget(
                             element,
                             widget.sizex,
@@ -44,7 +46,8 @@ define([
 
                     this.removeWidget = function(widget, element) {
                         $scope.gridster.remove_widget(element);
-                        $scope.widgets.splice(_.indexOf($scope.widgets, widget), 1);
+                        widget.active = false;
+                        $scope.syncWidgets();
                     };
 
                     this.resizeWidget = function(element, sizex, sizey) {
@@ -55,13 +58,15 @@ define([
                 link: function(scope, element, attrs) {
                     scope.syncWidgets = function() {
                         angular.forEach(scope.widgets, function(widget) {
-                            var sizes = scope.gridster.serialize(widget.el);
-                            angular.extend(widget, {
-                                row: sizes[0].row,
-                                col: sizes[0].col,
-                                sizex: sizes[0].size_x,
-                                sizey: sizes[0].size_y
-                            });
+                            if (widget.active) {
+                                var sizes = scope.gridster.serialize(widget.el);
+                                angular.extend(widget, {
+                                    row: sizes[0].row,
+                                    col: sizes[0].col,
+                                    sizex: sizes[0].size_x,
+                                    sizey: sizes[0].size_y
+                                });
+                            }
                         });
                     };
 
@@ -70,6 +75,7 @@ define([
                         widget_margins: [20, 20],
                         widget_base_dimensions: [320, 250],
                         min_rows: 3,
+                        min_cols: 3,
                         draggable: {
                             stop: function(e, ui, $widget) {
                                 scope.syncWidgets();

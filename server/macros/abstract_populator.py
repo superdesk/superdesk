@@ -9,7 +9,7 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import re
-from superdesk import macros
+from bs4 import BeautifulSoup
 
 
 def populate(item, **kwargs):
@@ -27,15 +27,12 @@ def populate(item, **kwargs):
 
         # chop the first sentence to size for abstract (64)
         if sentences and len(sentences) > 0:
-            item['abstract'] = sentences[0][:64]
+            item['abstract'] = BeautifulSoup(sentences[0][:64]).text
 
     return item
 
-
-macros.register(
-    name='populate_abstract',
-    label='Populate Abstract',
-    shortcut='a',
-    callback=populate,
-    desks=['POLITICS']
-)
+name = 'populate_abstract'
+label = 'Populate Abstract'
+shortcut = 'a'
+callback = populate
+desks = ['POLITICS']

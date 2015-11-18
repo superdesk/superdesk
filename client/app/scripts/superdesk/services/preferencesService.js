@@ -1,149 +1,217 @@
-define(['angular', 'lodash'], function(angular, _) {
+define(['angular'], function(angular) {
     'use strict';
 
-    return angular.module('superdesk.preferences', ['superdesk.notify', 'superdesk.services.storage', 'superdesk.session'])
+    return angular.module('superdesk.preferences', ['superdesk.notify', 'superdesk.session'])
 
-        .service('preferencesService', ['$injector', '$rootScope', '$q', 'storage', 'session', 'notify', 'gettext',
-            function PreferencesService($injector, $rootScope, $q, storage, session, notify, gettext) {
+        .service('preferencesService', ['$injector', '$rootScope', '$q', 'session', 'notify', 'gettext',
+            function PreferencesService($injector, $rootScope, $q, session, notify, gettext) {
+                var USER_PREFERENCES = 'user_preferences',
+                    SESSION_PREFERENCES = 'session_preferences',
+                    ACTIVE_PRIVILEGES = 'active_privileges',
+                    ACTIONS = 'allowed_actions',
+                    userPreferences = {
+                        'feature:preview': 1,
+                        'archive:view': 1,
+                        'email:notification': 1,
+                        'workqueue:items': 1,
+                        'dashboard:ingest': 1,
+                        'agg:view': 1,
+                        'workspace:active': 1,
+                        'categories:preferred': 1
+                    },
+                    preferences,
+                    preferencesPromise;
 
-            var USER_PREFERENCES = 'user_preferences',
-                SESSION_PREFERENCES = 'session_preferences',
-                ACTIVE_PRIVILEGES = 'active_privileges',
-                PREFERENCES = 'preferences',
-                ACTIONS = 'allowed_actions',
-                userPreferences = {
-                    'feature:preview': 1,
-                    'archive:view': 1,
-                    'email:notification': 1,
-                    'workqueue:items': 1,
-                    'dashboard:ingest': 1
-                },
-                original_preferences = null,
-                defaultPreferences = {};
+                $rootScope.$watch(function() {
+                    return session.token;
+                }, resetPreferences);
 
-            defaultPreferences[USER_PREFERENCES] = {};
-            defaultPreferences[SESSION_PREFERENCES] = {};
-            defaultPreferences[ACTIVE_PRIVILEGES] = {};
-            defaultPreferences[ACTIONS] = {};
+                /**
+                 * Get privileges for current user.
+                 *
+                 * @returns {Promise}
+                 */
+                this.getPrivileges = function getPrivileges() {
+                    return this.get().then(function() {
+                        return preferences[ACTIVE_PRIVILEGES] || {};
+                    });
+                };
 
-            function saveLocally(preferences, type) {
-                if (type && original_preferences) {
-                    angular.extend(original_preferences[type], preferences[type]);
-                } else {
-                    original_preferences = preferences;
-                }
+                /**
+                 * Get available content actions for current user.
+                 *
+                 * @returns {Promise}
+                 */
+                this.getActions = function getActions() {
+                    return this.get().then(function() {
+                        return preferences[ACTIONS] || [];
+                    });
+                };
 
-                original_preferences._etag = preferences._etag;
-                storage.setItem(PREFERENCES, original_preferences);
-            }
+                /**
+                 * Fetch preferences from server and store local copy.
+                 * On next call it will remove local copy and fetch again.
+                 */
+                function getPreferences(cached) {
+                    var api = $injector.get('api');
+                    preferences = null;
+                    preferencesPromise = session.getIdentity()
+                        .then(fetchPreferences)
+                        .then(null, function(response) {
+                            if (response && response.status === 404) {
+                                return fetchPreferences();
+                            } else {
+                                return $q.reject(response);
+                            }
+                        }).then(setPreferences);
 
-            function loadLocally() {
-                if (!original_preferences) {
-                    original_preferences = storage.getItem(PREFERENCES);
-                }
-
-                return original_preferences;
-            }
-
-            this.remove = function() {
-                storage.removeItem(PREFERENCES);
-                original_preferences = null;
-            };
-
-            this.getPrivileges = function getPrivileges() {
-                return this.get().then(function() {
-                    var preferences = loadLocally();
-                    return preferences[ACTIVE_PRIVILEGES] || {};
-                });
-            };
-
-            this.getActions = function getActions() {
-                 return this.get().then(function() {
-                    var preferences = loadLocally();
-                    return preferences[ACTIONS] || [];
-                });
-            };
-
-            function getPreferences(sessionId, key) {
-                var api = $injector.get('api');
-
-                if (!sessionId) {
-                    return $q.reject();
-                }
-
-                return api.find('preferences', sessionId).then(function(preferences) {
-                    _.defaults(preferences, defaultPreferences);
-                    saveLocally(preferences);
-                    return processPreferences(preferences, key);
-                });
-            }
-
-            function processPreferences(preferences, key){
-                if (!key) {
-                    return preferences[USER_PREFERENCES];
-                } else if (userPreferences[key]) {
-                    return preferences[USER_PREFERENCES][key];
-                } else {
-                    return preferences[SESSION_PREFERENCES][key];
-                }
-            }
-
-            this.get = function(key, sessionId) {
-
-                var original_prefs = loadLocally();
-                sessionId = sessionId || session.sessionId || $rootScope.sessionId;
-
-                if (!original_prefs) {
-
-                    if (sessionId) {
-                        return getPreferences(sessionId, key);
-                    } else {
-                        return session.getIdentity().then(function() {
-                            return getPreferences(session.sessionId, key);
-                        });
+                    /**
+                     * Fetch preferences for current session
+                     *
+                     * @return {Promise}
+                     */
+                    function fetchPreferences() {
+                        return api.find('preferences', session.sessionId, null, cached);
                     }
 
-                } else {
-
-                    return $q.when(processPreferences(original_prefs, key));
+                    /**
+                     * Set preferences to memory for further usage
+                     */
+                    function setPreferences(_preferences) {
+                        preferences = _preferences;
+                        initPreferences(preferences);
+                        return preferences;
+                    }
                 }
 
-                return $q.reject();
-            };
-
-            this.update = function(updates, key) {
-                if (!key){
-                    return updatePreferences(USER_PREFERENCES, updates);
-                } else if (userPreferences[key]) {
-                    return updatePreferences(USER_PREFERENCES, updates, key);
-                } else {
-                    return updatePreferences(SESSION_PREFERENCES, updates, key);
-                }
-            };
-
-            function updatePreferences(type, updates, key) {
-                var api = $injector.get('api');
-                var original_prefs = _.cloneDeep(loadLocally());
-                var user_updates = {};
-                user_updates[type] = updates;
-
-                if (type) {
-                    // make changes available right away
-                    angular.extend(original_preferences[type], updates);
+                /**
+                 * Get preference value from user or session preferences based on key.
+                 *
+                 * @param {string} key
+                 * @returns {Object}
+                 */
+                function getValue(key){
+                    if (!key) {
+                        return preferences[USER_PREFERENCES];
+                    } else if (userPreferences[key]) {
+                        return preferences[USER_PREFERENCES][key];
+                    } else {
+                        return preferences[SESSION_PREFERENCES][key];
+                    }
                 }
 
-                return api.save('preferences', original_prefs, user_updates)
-                .then(function(result) {
-                    saveLocally(result, type, key);
-                    return result;
-                }, function(response) {
-                    console.error(response);
-                    notify.error(gettext('User preference could not be saved...'));
-                });
-            }
+                /**
+                 * Get preference value, in case preferences are not loaded yet it will fetch it.
+                 * Parameter force is used to  bypass the cache
+                 * @param {string} key
+                 * @param {boolean} force
+                 * @returns {Promise}
+                 */
+                this.get = function(key, force) {
+                    if (!preferencesPromise || force) {
+                        getPreferences(!force);
+                    }
 
-            $rootScope.$watch(function() {
-                return session.sessionId;
-            }, getPreferences);
-    }]);
+                    return preferencesPromise.then(returnValue);
+
+                    function returnValue() {
+                        return getValue(key);
+                    }
+                };
+
+                /**
+                 * Update preferences
+                 *
+                 * It's done in 2 steps - schedule and commit. Schedule caches the changes
+                 * and calls commit async. Following calls to update in same $digest will
+                 * only cache changes. In next $digest those changes are pushed to api.
+                 * This way we can update multiple preferences without getting etag conflicts.
+                 *
+                 * @param {object} updates
+                 * @param {string} key
+                 */
+                this.update = function(updates, key) {
+                    if (!key){
+                        return scheduleUpdate(USER_PREFERENCES, updates);
+                    } else if (userPreferences[key]) {
+                        return scheduleUpdate(USER_PREFERENCES, updates, key);
+                    } else {
+                        return scheduleUpdate(SESSION_PREFERENCES, updates, key);
+                    }
+                };
+
+                var updates,
+                    deferUpdate;
+
+                /**
+                 * Schedule an update.
+                 *
+                 * Cache the changes and schedule a commit if it's first update in currect $digest.
+                 *
+                 * @param {string} type
+                 * @param {object} _updates
+                 */
+                function scheduleUpdate(type, _updates) {
+                    angular.extend(preferences[type], _updates);
+
+                    // schedule commit
+                    if (!updates) {
+                        updates = {};
+                        deferUpdate = $q.defer();
+                        $rootScope.$applyAsync(commitUpdates);
+                    }
+
+                    // adding updates to current schedule
+                    updates[type] = updates[type] || {};
+                    angular.extend(updates[type], _updates);
+
+                    return deferUpdate.promise;
+                }
+
+                /**
+                 * Commit updates.
+                 */
+                function commitUpdates() {
+                    var api = $injector.get('api'),
+                    serverUpdates = updates;
+                    updates = null;
+                    return api.save('preferences', preferences, serverUpdates)
+                        .then(function(result) {
+                            preferences._etag = result._etag;
+                            deferUpdate.resolve(result);
+                            return result;
+                        }, function(response) {
+                            console.error(response);
+                            notify.error(gettext('User preference could not be saved...'));
+                            deferUpdate.reject(response);
+                        }).finally(function() {
+                            deferUpdate = null;
+                        });
+                }
+
+                /**
+                 * Make preferences reload after session expiry - token is set from something to null.
+                 */
+                function resetPreferences(newId, oldId) {
+                    if (oldId && !newId) {
+                        preferencesPromise = null;
+                    }
+                }
+
+                /**
+                 * Make sure all segments are presented in preferences.
+                 */
+                function initPreferences(preferences) {
+                    angular.forEach([
+                        USER_PREFERENCES,
+                        SESSION_PREFERENCES,
+                        ACTIVE_PRIVILEGES,
+                        ACTIONS
+                    ], function(key) {
+                        if (preferences[key] == null) {
+                            preferences[key] = {};
+                        }
+                    });
+                }
+            }]);
 });

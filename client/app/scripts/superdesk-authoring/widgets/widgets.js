@@ -16,23 +16,56 @@ function AuthoringWidgetsProvider() {
     };
 }
 
-WidgetsManagerCtrl.$inject = ['$scope', '$routeParams', 'authoringWidgets'];
-function WidgetsManagerCtrl($scope, $routeParams, authoringWidgets) {
-    $scope.active = {
-        left: null,
-        right: null
+WidgetsManagerCtrl.$inject = ['$scope', '$routeParams', 'authoringWidgets', 'archiveService', 'keyboardManager'];
+function WidgetsManagerCtrl($scope, $routeParams, authoringWidgets, archiveService, keyboardManager) {
+    $scope.active = null;
+
+    $scope.$watch('item', function(item) {
+        if (!item) {
+            $scope.widgets = null;
+            return;
+        }
+
+        var display;
+
+        if (archiveService.isLegal(item)) {
+            display = 'legalArchive';
+        } else {
+            display = item.type === 'composite' ? 'packages' : 'authoring';
+        }
+
+        $scope.widgets = authoringWidgets.filter(function(widget) {
+            return !!widget.display[display];
+        });
+
+        /*
+         * Navigate throw right tab widgets with keyboard combination
+         * Combination: Ctrl + {{widget number}}
+         */
+        angular.forEach(_.sortBy($scope.widgets, 'order'), function (widget, index) {
+            keyboardManager.bind('ctrl+' + (index + 1), function () {
+                $scope.activate(widget);
+            }, {inputDisabled: false});
+        });
+    });
+
+    $scope.isLocked = function(widget) {
+        return (widget.needUnlock && $scope.item._locked) ||
+        (widget.needEditable && !$scope.item._editable);
     };
 
-    $scope.widgets = authoringWidgets;
-
     $scope.activate = function(widget) {
-        if (!widget.needUnlock || !$scope.item._locked) {
-            $scope.active[widget.side] = $scope.active[widget.side] === widget ? null : widget;
+        if (!$scope.isLocked(widget)) {
+            $scope.active = $scope.active === widget ? null : widget;
         }
     };
 
+    this.activate = function(widget) {
+        $scope.activate(widget);
+    };
+
     $scope.closeWidget = function(widget) {
-        $scope.active[widget.side] = null;
+        $scope.active = null;
     };
 
     // activate widget based on query string
@@ -43,14 +76,11 @@ function WidgetsManagerCtrl($scope, $routeParams, authoringWidgets) {
     });
 
     $scope.$watch('item._locked', function() {
-        var widget;
-        _.each(['left', 'right'], function(side) {
-            if ($scope.active[side]) {
-                widget = $scope.active[side];
-                $scope.closeWidget(widget);
-                $scope.activate(widget);
-            }
-        });
+        if ($scope.active) {
+            var widget = $scope.active;
+            $scope.closeWidget(widget);
+            $scope.activate(widget);
+        }
     });
 }
 

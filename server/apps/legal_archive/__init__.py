@@ -7,34 +7,28 @@
 # For the full copyright and license information, please see the
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
-from apps.legal_archive.components.legal_archive import LegalArchive
-from apps.common.components.utils import register_component
-from apps.legal_archive.components.legal_archive_proxy import LegalArchiveProxy
-from apps.common.models.utils import register_model
-from apps.legal_archive.models.legal_archive import LegalArchiveModel
-from apps.legal_archive.datalayer import LegalArchiveDataLayer
-from apps.legal_archive.resource import LegalArchiveService,\
-    LegalArchiveResource, ErrorsResource
-from apps.legal_archive.components.error import Error
-from apps.legal_archive.models.errors import ErrorsModel
-from superdesk.services import BaseService
-from apps.common.models.io.eve_proxy import EveProxy
+
+import logging
+
+from superdesk import get_backend, privilege
+from .resource import LegalArchiveResource, LegalArchiveVersionsResource, LegalPublishQueueResource, \
+    LEGAL_ARCHIVE_NAME, LEGAL_ARCHIVE_VERSIONS_NAME, LEGAL_PUBLISH_QUEUE_NAME
+from .service import LegalArchiveService, LegalArchiveVersionsService, LegalPublishQueueService
+
+logger = logging.getLogger(__name__)
 
 
 def init_app(app):
-    datalayer = LegalArchiveDataLayer(app)
-
-    register_model(LegalArchiveModel(EveProxy(datalayer)))
-    register_component(LegalArchive(app))
-    register_component(LegalArchiveProxy(app))
-
-    endpoint_name = 'legal_archive'
-    service = LegalArchiveService(endpoint_name, backend=datalayer)
+    endpoint_name = LEGAL_ARCHIVE_NAME
+    service = LegalArchiveService(endpoint_name, backend=get_backend())
     LegalArchiveResource(endpoint_name, app=app, service=service)
 
-    register_model(ErrorsModel(EveProxy(datalayer)))
-    register_component(Error(app))
+    endpoint_name = LEGAL_ARCHIVE_VERSIONS_NAME
+    service = LegalArchiveVersionsService(endpoint_name, backend=get_backend())
+    LegalArchiveVersionsResource(endpoint_name, app=app, service=service)
 
-    endpoint_name = 'errors'
-    service = BaseService(endpoint_name, backend=datalayer)
-    ErrorsResource(endpoint_name, app=app, service=service)
+    endpoint_name = LEGAL_PUBLISH_QUEUE_NAME
+    service = LegalPublishQueueService(endpoint_name, backend=get_backend())
+    LegalPublishQueueResource(endpoint_name, app=app, service=service)
+
+    privilege(name=LEGAL_ARCHIVE_NAME, label='Legal Archive', description='Read from legal archive')

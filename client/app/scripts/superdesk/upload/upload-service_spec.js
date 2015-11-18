@@ -6,7 +6,7 @@ define(['./upload-service'], function(UploadService) {
         beforeEach(module(function($provide) {
             $provide.service('upload', UploadService);
             $provide.service('$upload', ['$q', function($q) {
-                 // angular-file-upload api
+                // angular-file-upload api
                 this.upload = function() {
                     return $q.when();
                 };

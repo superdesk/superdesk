@@ -5,7 +5,7 @@ Feature: Sessions
         When we get "/sessions"
         Then we get list with 1 items
             """
-            {"_items": [{"user": {"username": "test_user", "_id": ""}}]}
+            {"_items": [{"user": {"username": "test_user", "_id": "__any_value__"}}]}
             """
 
     @auth

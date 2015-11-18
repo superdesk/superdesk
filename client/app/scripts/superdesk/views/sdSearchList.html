@@ -1,0 +1,55 @@
+<div class="search-list">
+    <button ng-disabled="!editable" type="button" class="search-list-button" ng-click="open = !open">
+        <span ng-show="selectedItems.length === 0" translate>Select</span>
+        <span ng-show="selectedItems.length === 1">{{selectedItems[0][labelKey]}}</span>
+        <span ng-show="selectedItems.length > 1">{{selectedItems.length}} {{:: 'selected'|translate}}</span>
+        <span class="caret"></span>
+    </button>
+    <div ng-show="open" class="search-list-content">
+        <div>
+            <div class="selected-list">
+                <button type="button" ng-click="open = !open" class="close-list">x</button>
+                <div ng-show="maxSelectedItems !== 1">
+                    <label>
+                        <span translate>Selected items</span>
+                        ({{selectedItems.length}} {{::'of'|translate}} 
+                        <span ng-show="maxSelectedItems">{{maxSelectedItems}}</span>
+                        <span ng-hide="maxSelectedItems" translate>many</span>)
+                    </label>
+                </div>
+                <div ng-show="maxSelectedItems === 1">
+                    <label translate>Selected item</label> 
+                </div>
+                <ul ng-show="selectedItems.length">
+                    <li ng-repeat="item in selectedItems">
+                        <button type="button" ng-click="unselectItem(item)" class="select-button">{{item[labelKey]}}</button>
+                        <div class="selected-helper">
+                            <div ng-if="selectedItemsHelperTemplate" onload="data = selectedItemsHelperData" ng-include="selectedItemsHelperTemplate">
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+                <button type="button" ng-hide="selectedItems.length" class="select-button" translate>None</button>
+            </div>
+            <div class="unselected-list">
+                <div class="page-info">
+                    <label translate>Items</label>
+                    <span class="pagination">
+                        <button type="button" ng-disabled="page === 1" ng-click="page = page - 1">
+                            &lt;</button>
+                        <label translate>{{page}}/{{maxPage}}</label>
+                        <button type="button" ng-disabled="page === maxPage" ng-click="page = page + 1">&gt;</i></button>
+                    </span>
+                     <input type="text" placeholder="{{ :: 'Search' | translate }}"
+                        ng-model="keyword"
+                        ng-model-options="{debounce: 500}">
+                </div>                     
+                <ul>
+                    <li ng-repeat="item in items">
+                        <button type="button" ng-click="selectItem(item)" ng-disabled="isSelected(item) || isDisabled(item) || selectedItems.length >= maxSelectedItems" class="select-button">{{item[labelKey]}}</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

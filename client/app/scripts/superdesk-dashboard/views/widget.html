@@ -1,6 +1,6 @@
-<div class="sd-widget {{ widget._id }} gs_w">
+<div class="sd-widget {{ widget._id }} gs_w" ng-class="{'remove-header': widget.removeHeader}">
 	<div class="widget-line"></div>
-	<div class="widget-header">
+	<div class="widget-header" ng-if="!widget.removeHeader">
 		<span ng-show="widget.icon" class="widget-icon"><i class="icon-{{ widget.icon }}"></i></span>
 		<div class="widget-title" translate>{{ widget.configuration.label || widget.label }}</div>
 	</div>

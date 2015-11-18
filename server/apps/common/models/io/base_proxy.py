@@ -14,10 +14,10 @@ from eve import ID_FIELD
 
 
 class BaseProxy(DataLayer):
-    '''
+    """
     Data layer implementation used to connect the models to the data layer.
     Transforms the model data layer API into Eve data layer calls.
-    '''
+    """
     def __init__(self, data_layer):
         self.data_layer = data_layer
 
@@ -30,11 +30,11 @@ class BaseProxy(DataLayer):
         req.projection = projection
         return self.data_layer.find_one(resource, req, **filter)
 
-    def find(self, resource, filter, projection, **options):
+    def find(self, resource, lookup, projection, **options):
         req = ParsedRequest()
         req.args = {}
         req.projection = projection
-        return self.data_layer.find(resource, req, filter)
+        return self.data_layer.get(resource, req, lookup)
 
     def create(self, resource, docs):
         return self.data_layer.create(resource, docs)
@@ -49,11 +49,10 @@ class BaseProxy(DataLayer):
         return self.data_layer.delete(resource, filter)
 
     def _update(self, resource, filter, doc, method='update'):
-        _id = doc.get(ID_FIELD, None)
-        if ID_FIELD in doc:
-            del doc[ID_FIELD]
+        _id = doc.pop(ID_FIELD, None)
         original = self.find_one(resource, filter, None)
-        res = getattr(self.data_layer, method)(resource, filter[ID_FIELD], doc, original)
-        if _id is not None:
-            doc[ID_FIELD] = _id
+        filter[ID_FIELD] = original[ID_FIELD]  # make sure it's correct type
+        updates = doc.copy()
+        res = getattr(self.data_layer, method)(resource, filter[ID_FIELD], updates, original)
+        doc.setdefault(ID_FIELD, _id)
         return res

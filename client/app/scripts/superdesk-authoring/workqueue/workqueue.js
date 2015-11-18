@@ -7,7 +7,7 @@
  * AUTHORS and LICENSE files distributed with this source code, or
  * at https://www.sourcefabric.org/superdesk/license
  */
- (function() {
+(function() {
 
 'use strict';
 
@@ -44,31 +44,32 @@ function WorkqueueService(session, api) {
     };
 }
 
-ArticleDashboardCtrl.$inject = ['$scope', 'ContentCtrl'];
-function ArticleDashboardCtrl($scope, ContentCtrl) {
-    $scope.content = new ContentCtrl();
-}
+WorkqueueCtrl.$inject = ['$scope', '$route', 'workqueue', 'authoringWorkspace', 'multiEdit', 'superdesk', 'lock', '$location'];
+function WorkqueueCtrl($scope, $route, workqueue, authoringWorkspace, multiEdit, superdesk, lock, $location) {
 
-WorkqueueCtrl.$inject = ['$scope', '$route', 'workqueue', 'multiEdit', 'superdesk', 'lock'];
-function WorkqueueCtrl($scope, $route, workqueue, multiEdit, superdesk, lock) {
-
+    $scope.active = null;
     $scope.workqueue = workqueue;
     $scope.multiEdit = multiEdit;
 
-    $scope.isMultiedit = $route.current._id === 'multiedit';
+    $scope.$on('item:lock', updateWorkqueue);
+    $scope.$on('item:unlock', updateWorkqueue);
+    $scope.$on('$locationChangeSuccess', updateWorkqueue);
+    $scope.$on('media_archive', function(e, data) {
+        workqueue.updateItem(data.item);
+    });
 
     updateWorkqueue();
 
-    var activeRoutes = {
-        authoring: 1,
-        packaging: 1
-    };
-
+    /**
+     * Update list of opened items and set one active if its id is in current route path.
+     */
     function updateWorkqueue() {
         workqueue.fetch().then(function() {
+            var route = $route.current || {_id: null, params: {}};
+            $scope.isMultiedit = route._id === 'multiedit';
             $scope.active = null;
-            if (activeRoutes[$route.current._id]) {
-                $scope.active = _.find(workqueue.items, {_id: $route.current.params._id});
+            if (route.params.item) {
+                $scope.active = _.find(workqueue.items, {_id: route.params.item});
             }
         });
     }
@@ -77,59 +78,88 @@ function WorkqueueCtrl($scope, $route, workqueue, multiEdit, superdesk, lock) {
         superdesk.intent('author', 'dashboard');
     };
 
+    /**
+     * Closes item. If item is opened, close authoring workspace.
+     * Updates multiedit items, if item is part of multiedit.
+     * When closing last item that was in multiedit(no more items in multiedit), redirects to monitoring.
+     */
     $scope.closeItem = function(item) {
-        if ($scope.active && $scope.active._id === item._id) {
-            $scope.close(item);
-        } else {
-            lock.unlock(item).then(updateWorkqueue);
+        lock.unlock(item);
+        if (authoringWorkspace.item && item._id === authoringWorkspace.item._id){
+            authoringWorkspace.close(true);
+        }
+
+        multiEdit.items = _.without(multiEdit.items, _.find(multiEdit.items, {article: item._id}));
+        if (multiEdit.items.length === 0){
+            $scope.redirectOnCloseMulti();
         }
     };
 
-    $scope.$on('item:lock', updateWorkqueue);
-    $scope.$on('item:unlock', updateWorkqueue);
-    $scope.$on('media_archive', function(e, data) {
-        workqueue.updateItem(data.item);
-    });
-
     $scope.openMulti = function() {
+        $scope.isMultiedit = true;
+        updateWorkqueue();
         multiEdit.open();
     };
 
+    /**
+     * Close multiedit.
+     */
     $scope.closeMulti = function() {
         multiEdit.exit();
+        $scope.redirectOnCloseMulti();
+    };
+
+    /**
+     * If multi edit screen is opened, redirect to monitoring.
+     */
+    $scope.redirectOnCloseMulti = function() {
+        if (this.isMultiedit){
+            this.isMultiedit = false;
+            $location.url('/workspace/monitoring');
+        }
     };
 }
 
-function WorkqueueListDirective() {
+WorkqueueListDirective.$inject = ['$rootScope', 'authoringWorkspace', '$location'];
+function WorkqueueListDirective($rootScope, authoringWorkspace, $location) {
     return {
         templateUrl: 'scripts/superdesk-authoring/views/opened-articles.html',
-        controller: WorkqueueCtrl
+        controller: 'Workqueue',
+        scope: {},
+        link: function(scope) {
+            scope.edit = function(item, event) {
+                if (!event.ctrlKey) {
+                    scope.active = item;
+                    authoringWorkspace.edit(item);
+                    scope.redirectOnCloseMulti();
+
+                    event.preventDefault();
+                }
+            };
+
+            scope.link = function(item) {
+                if (item) {
+                    return $rootScope.link('authoring', item);
+                }
+            };
+        }
     };
 }
 
 function ArticleDashboardDirective() {
     return {
         templateUrl: 'scripts/superdesk-authoring/views/dashboard-articles.html',
-        controller: WorkqueueCtrl
+        controller: 'Workqueue'
     };
 }
 
-angular.module('superdesk.authoring.workqueue', ['superdesk.activity', 'superdesk.notification'])
+angular.module('superdesk.authoring.workqueue', [
+    'superdesk.activity',
+    'superdesk.notification',
+    'superdesk.authoring.multiedit'
+])
     .service('workqueue', WorkqueueService)
+    .controller('Workqueue', WorkqueueCtrl)
     .directive('sdWorkqueue', WorkqueueListDirective)
-    .directive('sdDashboardArticles', ArticleDashboardDirective)
-
-    .config(['superdeskProvider', function(superdesk) {
-        superdesk
-            .activity('/authoring/', {
-                label: gettext('Authoring'),
-                description: gettext('Create articles'),
-                templateUrl: 'scripts/superdesk-authoring/views/dashboard.html',
-                topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
-                beta: true,
-                controller: ArticleDashboardCtrl,
-                category: superdesk.MENU_MAIN,
-                filters: [{action: 'author', type: 'dashboard'}]
-            });
-    }]);
+    .directive('sdDashboardArticles', ArticleDashboardDirective);
 })();

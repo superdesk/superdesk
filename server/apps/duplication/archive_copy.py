@@ -11,12 +11,16 @@
 from flask import request
 
 from superdesk import get_resource_service
-from superdesk.errors import SuperdeskApiError
+from superdesk.errors import SuperdeskApiError, InvalidStateTransitionError
+from superdesk.metadata.item import ITEM_STATE, CONTENT_STATE
 from superdesk.notification import push_notification
 from superdesk.resource import Resource
 from superdesk.services import BaseService
-from apps.archive.common import item_url
+from superdesk.metadata.utils import item_url
 from apps.archive.archive import SOURCE as ARCHIVE
+from superdesk.workflow import is_workflow_state_transition_valid
+
+import superdesk
 
 
 class CopyResource(Resource):
@@ -52,6 +56,9 @@ class CopyService(BaseService):
             if current_desk_of_item:
                 raise SuperdeskApiError.preconditionFailedError(message='Copy is not allowed on items in a desk.')
 
+            if not is_workflow_state_transition_valid('copy', archived_doc[ITEM_STATE]):
+                raise InvalidStateTransitionError()
+
             new_guid = archive_service.duplicate_content(archived_doc)
             guid_of_copied_items.append(new_guid)
 
@@ -59,3 +66,10 @@ class CopyService(BaseService):
             push_notification('item:copy', copied=1)
 
         return guid_of_copied_items
+
+
+superdesk.workflow_action(
+    name='copy',
+    include_states=[CONTENT_STATE.DRAFT],
+    privileges=['archive']
+)

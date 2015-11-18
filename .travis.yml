@@ -3,11 +3,10 @@ language: python
 sudo: false
 
 env:
-    - TARGET=client
-    - TARGET=server
+    - TARGET=unit
     - TARGET=server_ldap
     - TARGET=e2e_chrome
-    - TARGET=e2e_firefox
+#    - TARGET=e2e_firefox
 
 python:
     - "3.4"
@@ -21,64 +20,64 @@ services:
     - elasticsearch
     - redis-server
 
+cache:
+  directories:
+    - $HOME/.cache/pip
+    - $HOME/.npm
+    - $HOME/.cache/bower
+
 before_install:
-    - if [ "${TARGET}" = "client" ] || [ "${TARGET}" != "${TARGET/e2e/}" ]; then
+    - if [ "${TARGET}" = "unit" ] || [ "${TARGET}" != "${TARGET/e2e/}" ]; then
         npm install -g grunt-cli bower ;
       fi
     - if [ "${TARGET}" != "${TARGET/e2e/}" ]; then
-        chromium-browser --version ;
-        export CHROME_BIN=chromium-browser &&
+        pip install requests &&
         export DISPLAY=:99.0 &&
-        /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1920x1080x16 ;
+        /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1920x1080x24 ;
+        ./scripts/get-chrome-url | wget -N --no-verbose -i - && unzip chrome-linux.zip &&
+        export CHROME_BIN=`pwd`/chrome-linux/chrome &&
+        $CHROME_BIN --version ;
       fi
 
 install:
-    - if [ "${TARGET}" = "server" ] || [ "${TARGET}" = "server_ldap" ] || [ "${TARGET}" != "${TARGET/e2e/}" ]; then
+    - if [ "${TARGET}" = "unit" ] || [ "${TARGET}" != "${TARGET/server/}" ] || [ "${TARGET}" != "${TARGET/e2e/}" ]; then
         cd server &&
         pip install -r requirements.txt &&
         cd .. ;
       fi
-    - if [ "${TARGET}" = "client" ] || [ "${TARGET}" != "${TARGET/e2e/}" ]; then
+    - if [ "${TARGET}" = "unit" ] || [ "${TARGET}" != "${TARGET/e2e/}" ]; then
         cd client && npm install && cd .. ;
       fi
-    - if [ "${TARGET}" = "client" ] || [ "${TARGET}" != "${TARGET/e2e/}" ]; then
+    - if [ "${TARGET}" = "unit" ] || [ "${TARGET}" != "${TARGET/e2e/}" ]; then
         cd client && bower install && cd .. ;
       fi
-    - if [ "${TARGET}" = "e2e_chrome" ]; then
-        (cd client && npm install "actionless/protractor#1.6.1-old" && cd .. );
+    - if [ "${TARGET}" = "unit" ]; then
+        cd server && pip install coveralls==1.0a2 && cd .. ;
       fi
 
 before_script:
     - if [ "${TARGET}" != "${TARGET/e2e/}" ]; then
         cd server ;
-        (env SUPERDESK_URL='http://127.0.0.1:5000/api' SUPERDESK_CLIENT_URL='http://127.0.0.1:9000' SUPERDESK_TESTING='True' honcho start &) ;
+        (nohup env SUPERDESK_URL='http://127.0.0.1:5000/api' SUPERDESK_CLIENT_URL='http://127.0.0.1:9000' SUPERDESK_TESTING='True' honcho start & );
         cd ../client ;
         grunt build --server='http://127.0.0.1:5000/api' --ws='ws://127.0.0.1:5100' ;
         cd dist ;
         while [ ! -f index.html ]; do sleep .5; done ;
-        (python3 -m http.server 9000 &) ;
+        (nohup python3 -m http.server 9000 & );
         cd ../.. ;
       fi
 
 script:
-    - if [ "${TARGET}" = "server" ]; then
-        cd server && nosetests && cd .. ;
-      fi
-    - if [ "${TARGET}" = "server" ]; then
-        cd server &&
-        behave --format progress2 --logging-level ERROR &&
-        cd .. ;
+    - if [ "${TARGET}" = "unit" ]; then
+        cd client && npm test && cd .. ;
+        cd server && flake8 && cd .. ;
+        cd server && behave ./features/ --format progress2 --logging-level ERROR && cd .. ;
+        cd server && nosetests --with-coverage --cover-package=superdesk,apps && cd .. ;
       fi
     - if [ "${TARGET}" = "server_ldap" ]; then
         cd server &&
-        LDAP_SERVER="ldap://sourcefabric.org" LDAP_BASE_FILTER="OU=Superdesk Users,dc=sourcefabric,dc=org" behave --format progress2 --logging-level ERROR &&
+        LDAP_SERVER="ldap://sourcefabric.org" LDAP_BASE_FILTER="OU=Superdesk Users,dc=sourcefabric,dc=org" behave ./features/ --format progress2 --logging-level ERROR &&
         cd .. ;
-      fi
-    - if [ "${TARGET}" = "server" ]; then
-        cd server && flake8 && cd .. ;
-      fi
-    - if [ "${TARGET}" = "client" ]; then
-        cd client && npm test && cd .. ;
       fi
     - if [ "${TARGET}" != "${TARGET/e2e/}" ]; then
         cd server &&
@@ -94,11 +93,12 @@ script:
           --capabilities.browserName "${TARGET/e2e_/}"
         ;
       fi
-      
+
 after_script:
     - killall -9 python
 
 after_success:
-    - if [ "${TARGET}" = "client" ]; then
+    - if [ "${TARGET}" = "unit" ]; then
         cd client && grunt coveralls && cd .. ;
+        cd server && coveralls --merge="../client/coveralls.json" ;
       fi

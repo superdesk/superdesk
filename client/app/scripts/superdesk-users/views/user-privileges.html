@@ -1,6 +1,10 @@
 <form name="userPrivileges">
 	<div class="action-bar clearfix" ng-class="{show: userPrivileges.$dirty }">
-	    <button class="btn btn-info pull-right" ng-disabled="!userPrivileges.$dirty" ng-click="save(userPrivileges)" translate>Save</button>
+		<button class="btn btn-info pull-right" ng-disabled="!userPrivileges.$dirty" ng-click="save()" translate>Save</button>
+		<button
+			class="btn pull-right"
+			ng-click="cancel()"
+			ng-disabled="!userPrivileges.$dirty" translate>Cancel</button>
 	</div>
 	<div class="privileges-settings form-flat inner-content"> 
 		<div class="roles-list">
@@ -10,16 +14,20 @@
 				<div class="td role-field" translate>Role</div>
 				<div class="td blank"></div>
 			</div>
-			<div ng-repeat="p in privileges | orderBy:name" class="action-line">
-				<div class="td name">{{ p.label }}</div>
+
+			<div ng-repeat="p in privileges track by p.name"
+				class="action-line">
+				<div class="td name">{{:: p.label }}</div>
 				<div class="td role-field">
-					<input type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="user.privileges[p.name]"
-						ng-if="!role.privileges[p.name]">
-					<input type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="role.privileges[p.name]"
+					<input type="checkbox" ng-true-value="1" ng-false-value="0"
+						ng-model="user.privileges[p.name]"
+						ng-if="!role.privileges[p.name]" />
+					<input type="checkbox" ng-true-value="1" ng-false-value="0"
+						ng-model="role.privileges[p.name]"
 						ng-disabled="true"
-						ng-if="role.privileges[p.name]">
+						ng-if="role.privileges[p.name]" />
 				</div>
-				<div class="td"><span ng-if="role.privileges[p.name]" class="label">{{ role.name }}</span></div>
+				<div class="td"><span ng-if="role.privileges[p.name]" class="label">{{:: role.name }}</span></div>
 				<div class="td blank"></div>
 			</div>
 		</div>

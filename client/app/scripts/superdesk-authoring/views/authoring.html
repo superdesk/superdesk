@@ -1,26 +1,41 @@
-<div sd-authoring class="auth-screen">
+<div sd-authoring class="auth-screen" ng-if="origItem">
     <div sd-authoring-topbar></div>
-
-	<section class="main-section" ng-class="{'auth-sendto': views.send}">
-		<div sd-authoring-widgets data-item="item">
+    <section class="main-section" ng-class="{'auth-sendto': views.send, 'packaging-screen': item.type === 'composite'}">
+        <div sd-authoring-widgets data-item="item">
             <div class="page-content-container"
-                ng-click="views.send = false">
-                <article class="theme-container" ng-class="{preview: !_editable}">
-                    <button class="proofread-toggle btn btn-light" ng-click="proofread = !proofread">
-                        <span class="button-lable" translate>Mode: </span>
-                        <span ng-show="proofread" translate>Proofread</span>
-                        <span ng-show="!proofread" translate>Normal</span>
+                 ng-click="views.send = false">
+                <div class="theme-controls">
+                    <button class="proofread-toggle btn"
+                            ng-class="{active: proofread}"
+                            ng-click="proofread = !proofread"
+                            title="{{:: 'Toggle theme' | translate}}">
+                        <i class="icon-adjust"></i>
                     </button>
 
                     <span sd-theme-select ng-if="proofread" data-key="proofreadTheme"></span>
                     <span sd-theme-select ng-if="!proofread" data-key="theme"></span>
+                </div>
 
-                    <fieldset sd-article-edit></fieldset>
+                <header class="authoring-header" sd-header-info ng-class="{active: !toggleHeader}"></header>
+
+                <article class="theme-container " ng-class="{preview: !_editable}">                   
+                    <div ng-if="item.type !== 'composite'" class="fieldset" sd-article-edit></div>
+                    <div ng-if="item.type === 'composite'" sd-package-edit></div>
                 </article>
             </div>
-		    <div sd-workqueue data-active="item" data-update="articleSwitch()" data-close="close()"></div>
-		</div>
-	</section>
+        </div>
+    </section>
 
-    <div sd-authoring-sidebar></div>
+    <div sd-send-item
+        id="send-item-container"
+        ng-if="views.send"
+        data-item="item"
+        data-view="views.send"
+        data-before-send="beforeSend"
+        data-editable="_editable"
+        data-publish="publish"
+        data-action="action"
+        data-mode="authoring">
+    </div>
+
 </div>

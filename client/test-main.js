@@ -29,10 +29,17 @@ tests.push('superdesk/services/modalService');
 tests.push('superdesk/services/preferencesService');
 tests.push('superdesk/features/features');
 tests.push('superdesk/services/asset');
+tests.push('superdesk/services/image-factory');
 tests.push('superdesk/privileges/privileges');
 tests.push('superdesk/notification/notification');
 tests.push('superdesk/itemList/itemList');
 tests.push('superdesk/ui/ui');
+tests.push('superdesk/upload/upload');
+tests.push('superdesk/list/list');
+tests.push('superdesk/keyboard/keyboard');
+tests.push('superdesk/services/storage');
+tests.push('superdesk/beta/beta');
+tests.push('superdesk/filters');
 
 // apps
 tests.push('superdesk-authoring/authoring');
@@ -40,16 +47,26 @@ tests.push('superdesk-authoring/widgets/widgets');
 tests.push('superdesk-authoring/comments/comments');
 tests.push('superdesk-authoring/workqueue/workqueue');
 tests.push('superdesk-authoring/metadata/metadata');
-tests.push('superdesk-authoring/versioning/versions');
+tests.push('superdesk-authoring/versioning/versioning');
+tests.push('superdesk-authoring/versioning/versions/versions');
+tests.push('superdesk-authoring/versioning/history/history');
 tests.push('superdesk-authoring/packages/packages');
 tests.push('superdesk-authoring/editor/find-replace');
 tests.push('superdesk-authoring/multiedit/multiedit');
 tests.push('superdesk-authoring/macros/macros');
+
+tests.push('superdesk-content-filters/content-filters');
+
 tests.push('superdesk-workspace/content/content');
 tests.push('superdesk-packaging/packaging');
 tests.push('superdesk-desks/desks');
+tests.push('superdesk-desks/aggregate');
+tests.push('superdesk-desks/aggregate-widget/aggregate');
 tests.push('superdesk-groups/groups');
 tests.push('superdesk-search/search');
+tests.push('superdesk-legal-archive/legal_archive');
+
+tests.push('superdesk-ingest/module');
 
 tests.push('superdesk-users/users');
 tests.push('superdesk-users/profile');
@@ -60,17 +77,28 @@ tests.push('superdesk-dashboard/module');
 tests.push('superdesk-dashboard/workspace-tasks/tasks');
 
 tests.push('superdesk-archive/module');
+tests.push('superdesk-archive/directives');
+
+tests.push('superdesk-dictionaries/dictionaries');
+tests.push('superdesk-vocabularies/vocabularies');
+tests.push('superdesk-publish/publish');
+tests.push('superdesk/editor/spellcheck/spellcheck');
+tests.push('superdesk-templates/templates');
+tests.push('superdesk-highlights/highlights');
+tests.push('superdesk-monitoring/monitoring');
+tests.push('superdesk-workspace/workspace');
 
 // libs
 tests.push('bower_components/ment.io/dist/mentio');
-tests.push('angular-gettext');
 tests.push('angular-ui');
+tests.push('angular-resource');
 tests.push('angular-route');
+tests.push('angular-file-upload');
 tests.push('moment');
 
 requirejs.config({
     baseUrl: '/base/app/scripts',
-    deps: ['angular-mocks', 'gettext', 'angular'],
+    deps: ['angular-mocks', 'angular-gettext', 'gettext', 'angular'],
 
     callback: function() {
         'use strict';
@@ -88,7 +116,8 @@ requirejs.config({
         'angular-gettext': 'bower_components/angular-gettext/dist/angular-gettext',
         'angular-route': 'bower_components/angular-route/angular-route',
         'angular-mocks': 'bower_components/angular-mocks/angular-mocks',
-        'angular-ui': 'bower_components/angular-bootstrap/ui-bootstrap',
+        'angular-ui': 'bower_components/angular-bootstrap/ui-bootstrap-tpls',
+        'angular-file-upload': 'bower_components/ng-file-upload/angular-file-upload',
         'moment-timezone': 'bower_components/moment-timezone/moment-timezone'
     },
 
@@ -106,6 +135,7 @@ requirejs.config({
         'angular-gettext': ['angular'],
         'angular-route': ['angular'],
         'angular-mocks': ['angular'],
-        'angular-ui': ['angular']
+        'angular-ui': ['angular'],
+        'angular-file-upload': ['angular']
     }
 });

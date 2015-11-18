@@ -11,15 +11,19 @@
 import os
 import json
 import flask
+from apps.archive.common import ITEM_OPERATION
 import superdesk
 
 from superdesk import get_resource_service
+from superdesk.metadata.item import ITEM_STATE, CONTENT_STATE
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 from superdesk.tests import drop_elastic, drop_mongo
 from superdesk.utc import utcnow
 from eve.utils import date_to_str
 from flask import current_app as app
+from eve.versioning import insert_versioning_documents
+from bson.objectid import ObjectId
 
 
 def apply_placeholders(placeholders, text):
@@ -54,22 +58,66 @@ def prepopulate_data(file_name, default_user=get_default_user()):
     with open(file, 'rt', encoding='utf8') as app_prepopulation:
         json_data = json.load(app_prepopulation)
         for item in json_data:
-            service = get_resource_service(item.get('resource', None))
+            resource = item.get('resource', None)
+            service = get_resource_service(resource)
             username = item.get('username', None) or default_username
             set_logged_user(username, users[username])
             id_name = item.get('id_name', None)
+            id_update = item.get('id_update', None)
             text = json.dumps(item.get('data', None))
             text = apply_placeholders(placeholders, text)
             data = json.loads(text)
-            if item.get('resource'):
-                app.data.mongo._mongotize(data, item.get('resource'))
-            if item.get('resource', None) == 'users':
+            if resource:
+                app.data.mongo._mongotize(data, resource)
+            if resource == 'users':
                 users.update({data['username']: data['password']})
-            ids = service.post([data])
-            if not ids:
-                raise Exception()
-            if id_name:
-                placeholders[id_name] = str(ids[0])
+            if id_update:
+                id_update = apply_placeholders(placeholders, id_update)
+                res = service.patch(ObjectId(id_update), data)
+                if not res:
+                    raise Exception()
+            else:
+                ids = service.post([data])
+                if not ids:
+                    raise Exception()
+                if id_name:
+                    placeholders[id_name] = str(ids[0])
+
+            if app.config['VERSION'] in data:
+                number_of_versions_to_insert = data[app.config['VERSION']]
+                doc_versions = []
+
+                if data[ITEM_STATE] not in [CONTENT_STATE.PUBLISHED, CONTENT_STATE.CORRECTED, CONTENT_STATE.KILLED]:
+                    while number_of_versions_to_insert != 0:
+                        doc_versions.append(data.copy())
+                        number_of_versions_to_insert -= 1
+                else:
+                    if data[ITEM_STATE] in [CONTENT_STATE.KILLED, CONTENT_STATE.CORRECTED]:
+                        latest_version = data.copy()
+                        doc_versions.append(latest_version)
+
+                        published_version = data.copy()
+                        published_version[ITEM_STATE] = CONTENT_STATE.PUBLISHED
+                        published_version[ITEM_OPERATION] = 'publish'
+                        published_version[app.config['VERSION']] = number_of_versions_to_insert - 1
+                        doc_versions.append(published_version)
+
+                        number_of_versions_to_insert -= 2
+                    elif data[ITEM_STATE] == CONTENT_STATE.PUBLISHED:
+                        published_version = data.copy()
+                        doc_versions.append(published_version)
+                        number_of_versions_to_insert -= 1
+
+                    while number_of_versions_to_insert != 0:
+                        doc = data.copy()
+                        doc[ITEM_STATE] = CONTENT_STATE.PROGRESS
+                        doc.pop(ITEM_OPERATION, '')
+                        doc[app.config['VERSION']] = number_of_versions_to_insert
+                        doc_versions.append(doc)
+
+                        number_of_versions_to_insert -= 1
+
+                insert_versioning_documents(resource, doc_versions if doc_versions else data)
 
 
 prepopulate_schema = {
@@ -90,6 +138,7 @@ class PrepopulateResource(Resource):
     """Prepopulate application data."""
     schema = prepopulate_schema
     resource_methods = ['POST']
+    public_methods = ['POST']
 
 
 class PrepopulateService(BaseService):
@@ -98,6 +147,11 @@ class PrepopulateService(BaseService):
             if doc.get('remove_first'):
                 drop_elastic(superdesk.app)
                 drop_mongo(superdesk.app)
+                # call the create index with settings
+                superdesk.app.data.elastic.create_index(
+                    superdesk.app.config['ELASTICSEARCH_INDEX'],
+                    superdesk.app.config['ELASTICSEARCH_SETTINGS']
+                )
             user = get_resource_service('users').find_one(username=get_default_user()['username'], req=None)
             if not user:
                 get_resource_service('users').post([get_default_user()])

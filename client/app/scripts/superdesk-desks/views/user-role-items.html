@@ -1,8 +1,36 @@
 <ul ng-if="!loading && items.length" class="inline-content-items content-tasks" >
-	<li ng-repeat="item in items track by item._id" class="item">
-		<figure class="avatar small" title="{{item.display_name}}"><img sd-user-avatar data-src="item.picture_url"></figure>
-		<div class="text">
+	<li ng-repeat="item in items track by item._id" class="item" ng-if="!online || isLoggedIn(item)">
+		<figure class="avatar avatar-with-info small" title="{{item.display_name}}" ng-class="{'user-logged': isLoggedIn(item)}">
+			<div class="logged-info"></div>
+			<div class="user-image">
+				<img sd-user-avatar data-src="item.picture_url" data-initials="item.display_name">
+			</div>
+		</figure>
+		<div class="text pull-left">
 			{{item.display_name}}
 		</div>
+		<div class="pull-right dropdown" dropdown ng-if="privilege">
+	        <button class="dropdown-toggle animate-icon" dropdown-toggle><i class="icon-dots-vertical"></i></button>
+	        <ul class="dropdown-menu">
+	            <li><button ng-click="openEditUser(item)"><i class="icon-pencil"></i> {{ :: 'Edit user' | translate }}</button></li>
+	        </ul>
+        </div>
 	</li>
 </ul>
+<div sd-modal data-model="user" class="highlights-config-popup responsive-popup hide child-shadow" >
+    <section class="main-section user-profile-page">
+        <div class="form-content">
+            <div class="user-details-pane" >
+                <header>
+                    <div class="modal-header">
+                        <a href="" class="close" ng-click="closeEditUser()"><i class="icon-close-small"></i></a>
+                        <h3 translate>Edit user</h3>
+                    </div>
+                </header>
+                <div class="content">
+                    <div sd-user-edit data-user="user" data-oncancel="closeEditUser()" data-onsave="closeEditUser()"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

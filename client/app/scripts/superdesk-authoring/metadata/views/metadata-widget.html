@@ -1,173 +1,128 @@
-<div class="metadata" ng-controller="MetadataWidgetCtrl">
-	<ul class="basic-list">
-		<li class="auto">
-			<label translate>GUID</label>
-			<div class="data">{{item.guid}}</div>
-		</li>
-		<li>
-			<label translate>Take key</label>
-			<div class="data">
-				<input type="text" ng-model="item.anpa_take_key" ng-change="autosave(item)" ng-disabled="!_editable">
-			</div>
-		</li>
-		<li>
-			<label translate>Unique name</label>
-			<div class="data">
-				<input type="text" ng-model="item.unique_name" ng-change="autosave(item)" ng-disabled="!_editable || !unique_name_editable">
-			</div>
-		</li>
-		<li>
-			<label translate>State</label>
-			<div class="data">
-				<div class="state-label state-{{item.state}}">{{item.state}}</div>
-			</div>
-		</li>
-		<li>
-			<label translate>Type</label>
-			<div class="data">{{item.type}}</div>
-		</li>
-		<li>
-			<label translate>By</label>
-			<div class="data">
-				<input type="text" ng-model="item.byline" ng-change="autosave(item)" ng-disabled="!_editable">
-			</div>
-		</li>
-		<li ng-if="item.original_source">
-			<label translate>Original source</label>
-			<div class="data">{{ item.original_source}}</div>
-		</li>
-		<li ng-if="item.ingest_provider">
-			<label translate>Ingest provider</label>
-			<div class="data" sd-meta-ingest data-provider="item.ingest_provider"></div>
-		</li>
-		<li ng-if="item.ingest_provider_sequence">
-			<label translate>Provider sequence</label>
-			<div class="data">{{item.ingest_provider_sequence}}</div>
-		</li>
-		<li ng-if="item.pubstatus">
-			<label translate>Pubstatus</label>
-			<div class="data">{{item.pubstatus}}</div>
-		</li>
-		<li ng-if="item.firstcreated">
-			<label translate>First created</label>
-			<div class="data" sd-reldate-complex ng-model="item.firstcreated"></div>
-		</li>
-		<li ng-if="item.versioncreated">
-			<label translate>Last updated</label>
-			<div class="data" sd-reldate-complex ng-model="item.versioncreated"></div>
-		</li>
-		<li ng-if="item.expiry">
-			<label translate>Expiry</label>
-			<div class="data" sd-reldate-complex ng-model="item.expiry"></div>
-		</li>
-		<li ng-if="item.provider">
-			<label translate>Provider</label>
-			<div class="data" sd-meta-ingest data-provider="item.ingest_provider">{{ item.provider }}</div>
-		</li>
-		<li>
-			<label translate>Urgency</label>
-			<div class="data visible small" ng-if="metadata.newsvalue">
-				<div sd-meta-dropdown data-list="metadata.newsvalue" data-item="item.urgency" data-disabled="!_editable" data-field="value" data-change="autosave(item)"></div>
-			</div>
-		</li>
-		<li>
-			<label translate>Priority</label>
-			<div class="data visible small" ng-if="metadata.priority">
-				<div sd-meta-dropdown data-list="metadata.priority" data-item="item.priority" data-disabled="!_editable" data-field="qcode" data-change="autosave(item)"></div>
-			</div>
-		</li>
-		<li class="terms-box">
-			<label translate>Subject</label>
-			<div sd-meta-terms data-item="item" data-field="subject" data-unique="qcode" data-list="metadata.subjectcodes" data-disabled="!_editable" data-change="autosave(item)"></div>
-		</li>
-		<li>
-			<label translate>ANPA category</label>
-			<div class="data visible" ng-if="metadata.categories">
-				<div sd-meta-dropdown data-list="metadata.categories" data-item="item['anpa-category']" data-disabled="!_editable" data-change="autosave(item)"></div>
-			</div>
-		</li>
-		<li class="terms-box">
-			<label translate>Genre</label>
-			<div sd-meta-terms data-item="item" data-field="genre" data-unique="value" data-list="metadata.genre" data-disabled="!_editable" data-change="autosave(item)" data-postprocessing="processGenre()"></div>
-		</li>
-		<li>
-			<label translate>Usageterms</label>
-			<div class="data">
-				<input type="text" ng-model="item.usageterms" ng-disabled="!_editable" ng-change="autosave(item)">
-			</div>
-		</li>
-		<li class="ednote">
-			<label translate>Editorial note</label>
-			<div class="data">
-				<textarea sd-auto-height ng-model="item.ednote" ng-disabled="!_editable" ng-change="autosave(item)"></textarea>
-			</div>
-		</li>
-		<li class="terms-box">
-			<label translate>Place</label>
-			<div sd-meta-terms data-item="item" data-field="place" data-unique="value" data-change="autosave(item)" data-list="metadata.locators" data-disabled="!_editable"></div>
-		</li>
-		<li class="terms-box">
-			<label translate>Keywords</label>
-			<div sd-meta-words-list data-item="item" data-field="keywords" data-change="autosave(item)" data-list="item.keywords" data-disabled="!_editable"></div>
-		</li>		
-		<li>
-			<label translate>Located</label>
-			<div class="data">
-				<input type="text" ng-model="item.located" ng-disabled="!_editable" ng-change="autosave(item)">
-			</div>
-		</li>
-		<li>
-			<label translate>Dateline</label>
-			<div class="data">
-				<input type="text" ng-model="item.dateline" ng-disabled="!_editable" ng-change="autosave(item)">
-			</div>
-		</li>
-		<li>
-			<label translate>Language</label>
-			<div class="data">
-				<input type="text" ng-model="item.language" ng-disabled="!_editable" ng-change="autosave(item)">
-			</div>
-		</li>
-		<li ng-if="item.copyrightholder">
-			<label translate>Copyright</label>
-			<div class="data">{{item.copyrightholder}}</div>
-		</li>
-		<li ng-if="item.creditline">
-			<label translate>Credit</label>
-			<div class="data">{{item.creditline}}</div>
-		</li>
-	</ul>
+<ul class="nav nav-tabs">
+    <li ng-class="{active: tab === 'metadata' || !tab}">
+        <button ng-click="tab = 'metadata'" translate>Metadata</button>
+    </li>
+    <li ng-class="{active: tab === 'task-detail'}">
+        <button ng-click="tab = 'task-detail'" translate>Task Details</button>
+    </li>
+</ul>
+<div class="content" ng-controller="MetadataWidgetCtrl">
+    <div ng-if="tab === 'metadata' || !tab">
+		<ul class="basic-list">
+			<li ng-if="_isInProductionStates">
+				<label ng-if="_editable" translate>Not For Publication</label>
+				<span ng-if="_editable">
+					<span ng-if="_editable" sd-switch ng-model="item.marked_for_not_publication"></span>
+				</span>
+				<label ng-if="!_editable" translate>
+					<span class="state-label not-for-publication" ng-show="item.marked_for_not_publication" translate>Not For Publication</span>
+					<span class="state-label for-publication" ng-show="!item.marked_for_not_publication" translate>For Publication</span>
+				</label>
+			</li>
+			<li>
+				<label translate>Usageterms</label>
+				<div class="data">
+					<input class="line-input" type="text" ng-model="item.usageterms" ng-disabled="!_editable" ng-change="autosave(item)">
+				</div>
+			</li>
+			<li class="terms-box">
+				<label translate>Keywords</label>
+				<div sd-meta-words-list data-item="item" data-field="keywords" data-change="autosave(item)" data-header="_editable" data-list="metadata.keywords" data-disabled="!_editable"></div>
+			</li>
+			<li>
+				<label translate>Language</label>
+				<div class="data">
+					<input class="line-input" type="text" ng-model="item.language" ng-disabled="!_editable" ng-change="autosave(item)">
+				</div>
+			</li>
 
-	<div sd-toggle-box data-title="Task details" data-open="true" ng-if="item.task">
-		<ul class="basic-list task-info">
-			<li ng-if="item.slugline" class="auto">
-				<label translate>Title</label>
-				<div class="data">{{item.slugline}}</div>
+			<li ng-if="item.pubstatus">
+				<label translate>Pubstatus</label>
+				<div class="data">{{item.pubstatus}}</div>
 			</li>
-			<li ng-if="item.description" class="auto">
-				<label translate>Description</label>
-				<div class="data">{{item.description}}</div>
+
+
+			<li ng-if="item.original_source">
+				<label translate>Original source</label>
+				<div class="data">{{ item.original_source}}</div>
 			</li>
-			<li ng-if="item.task.status">
-				<label translate>Status</label>
-				<div class="data">{{item.task.status}}</div>
+			<li ng-if="item.copyrightholder">
+				<label translate>Copyright</label>
+				<div class="data">{{item.copyrightholder}}</div>
 			</li>
-			<li ng-if="item.task.due_date" class="wider">
-				<label translate>Due date</label>
-				<div class="data" sd-reldate-complex ng-model="item.task.due_date"></div>
+			<li ng-if="item.creditline">
+				<label translate>Credit</label>
+				<div class="data">{{item.creditline}}</div>
 			</li>
-			<li ng-if="item.task.desk">
-				<label translate>Desk</label>
-				<div class="data">{{deskLookup[item.task.desk].name}}</div>
+			<li>
+				<label translate>State</label>
+				<div class="data">
+					<div class="state-label state-{{item.state}}" ng-class="{state_embargo: item.embargo}">{{item.state}}</div>
+				</div>
 			</li>
-            <li>
-                <label translate>Creator</label>
-                <div class="data">{{userLookup[item.original_creator].display_name}}</div>
-            </li>
-			<li ng-if="item.task.user">
-				<label translate>Assignee</label>
-				<div class="data">{{userLookup[item.task.user].display_name}}</div>
+			<li class="terms-box">
+				<label translate>Targeted For</label>
+				<div ng-if="metadata.targeted_for">
+					<span sd-check ng-model="item.negation" tooltip="Adds Negation" tooltip-placement="right" ng-disabled="!_editable"></span>
+					<select id="targeted_for_list" ng-model="item.targeted_for_value" ng-disabled="!_editable">
+						<option value=""></option>
+						<option value="{{g.name}}" ng-repeat="g in metadata.targeted_for track by g.name">{{:: g.name}}</option>
+					</select>
+					<button class="btn btn-small btn-primary" type="button" ng-click="addTargeted()" ng-disabled="disableAddingTargetedFor()" translate>Add</button>
+					<div class="terms" ng-if="item['targeted_for'].length">
+						<ul>
+							<li ng-repeat="t in item['targeted_for']" ng-click="removeTargeted(t)">{{ :: t['allow'] == false ? 'Not ' + t.name : t.name}}<i class="icon-close-small"></i></li>
+						</ul>
+					</div>
+				</div>
+			</li>
+			
+			<li ng-if="item.ingest_provider_sequence">
+				<label translate>Provider sequence</label>
+				<div class="data">{{item.ingest_provider_sequence}}</div>
+			</li>
+			<li ng-if="item.expiry">
+				<label translate>Expiry</label>
+				<div class="data" sd-reldate-complex ng-model="item.expiry"></div>
+			</li>
+			<li class="auto">
+				<label translate>GUID</label>
+				<div class="data" id="guid">{{item.guid}}</div>
+			</li>
+	        <li>
+				<label translate>Unique name</label>
+				<div class="data">
+					<input class="line-input" type="text" ng-model="item.unique_name" ng-change="autosave(item)" ng-disabled="!_editable || !unique_name_editable">
+				</div>
 			</li>
 		</ul>
-	</div>
+    </div>
+    <div ng-if="tab === 'task-detail'">
+			<ul class="basic-list task-info">
+				<li ng-if="item.slugline" class="auto">
+					<label translate>Title</label>
+					<div class="data">{{item.slugline}}</div>
+				</li>
+				<li ng-if="item.description" class="auto">
+					<label translate>Description</label>
+					<div>{{item.description}}</div>
+				</li>
+				<li ng-if="item.task.status">
+					<label translate>Status</label>
+					<div class="data">{{item.task.status}}</div>
+				</li>
+				<li ng-if="item.task.due_date" class="wider">
+					<label translate>Due date</label>
+					<div class="data" sd-reldate-complex ng-model="item.task.due_date"></div>
+				</li>
+				<li ng-if="item.task.desk">
+					<label translate>Desk</label>
+					<div class="data">{{deskLookup[item.task.desk].name || item.task.desk}}</div>
+				</li>
+				<li ng-if="item.task.user">
+					<label translate>Assignee</label>
+					<div class="data">{{userLookup[item.task.user].display_name || item.task.user}}</div>
+				</li>
+			</ul>
+    </div>
 </div>

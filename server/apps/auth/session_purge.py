@@ -8,6 +8,7 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
+import superdesk
 from superdesk import app
 from datetime import timedelta
 from superdesk.utc import utcnow
@@ -18,7 +19,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class RemoveExpiredSessions():
+class RemoveExpiredSessions(superdesk.Command):
 
     def run(self):
         self.remove_expired_sessions()

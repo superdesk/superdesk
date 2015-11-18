@@ -11,203 +11,556 @@
 
 'use strict';
 
-var TEXT_TYPE = 3;
-
-function EditorService() {
-
-    this.clear = function() {
-        this.elem = null;
-        this.editor = null;
-        this.readOnly = false;
-    };
-
-    function preventEditing(event) {
-        event.preventDefault();
-        return false;
-    }
-
-    this.disableEditorToolbar = function disableEditorToolbar() {
-        if (this.editor) {
-            this.editor.toolbar.classList.add('ng-hide');
-        }
-    };
-
-    this.enableEditorToolbar = function enableEditorToolbar() {
-        if (this.editor) {
-            this.editor.toolbar.classList.remove('ng-hide');
-        }
-    };
-
-    /**
-     * Start a command for an active editor
-     */
-    this.startCommand = function() {
-        this.readOnly = true;
-        this.command = new FindReplaceCommand(this.elem);
-        angular.element(this.elem).on('keydown', preventEditing);
-        this.disableEditorToolbar();
-    };
-
-    /**
-     * Stop active command
-     */
-    this.stopCommand = function() {
-        this.command.finish();
-        this.command = null;
-        this.readOnly = false;
-        angular.element(this.elem).off('keydown', preventEditing);
-        this.enableEditorToolbar();
-        this.triggerModelUpdate();
-    };
-
-    this.triggerModelUpdate = function() {
-        _.defer(function(elem) {
-            angular.element(elem).blur();
-        }, this.elem);
-    };
-
-    this.clear(); // init
+/**
+ * Generate click event on given target node
+ *
+ * @param {Node} target
+ */
+function click(target) {
+    target.dispatchEvent(new MouseEvent('click'));
 }
 
-function FindReplaceCommand(rootNode) {
-    var matches = 0, current, needle, replacements, html = angular.element(rootNode).html();
+/**
+ * Replace given dom elem with its contents
+ *
+ * It is like jQuery unwrap
+ *
+ * @param {Node} elem
+ */
+function replaceSpan(elem) {
+    var parent = elem.parentNode;
+    while (elem.hasChildNodes()) {
+        parent.insertBefore(elem.childNodes.item(0), elem);
+    }
 
-    /**
-     * Find a given string within editor
-     */
-    this.find = function(_needle) {
-        clearHighlights();
-        needle = _needle;
-        matches = 0;
-        current = 0;
-        replacements = {};
-        if (needle) {
-            find(rootNode);
+    parent.removeChild(elem);
+}
+
+/**
+ * Remove all elements with given className but keep its contents
+ *
+ * @param {Node} elem
+ * @param {string} className
+ * @return {Node}
+ */
+function removeClass(elem, className) {
+    var node = elem.cloneNode(true);
+    var spans = node.getElementsByClassName(className);
+    while (spans.length) {
+        replaceSpan(spans.item(0));
+    }
+
+    node.normalize();
+    return node;
+}
+
+/**
+ * Find text node + offset for given node and offset
+ *
+ * This will find text node within given node that contains character on given offset
+ *
+ * @param {Node} node
+ * @param {numeric} offset
+ * @return {Object} {node: {Node}, offset: {numeric}}
+ */
+function findTextNode(node, offset) {
+    var tree = document.createTreeWalker(node, NodeFilter.SHOW_TEXT);
+    var currentLength;
+    var currentOffset = 0;
+    var ZERO_WIDTH_SPACE = String.fromCharCode(65279);
+    while (tree.nextNode()) {
+        tree.currentNode.textContent = tree.currentNode.textContent.replace(ZERO_WIDTH_SPACE, '');
+        currentLength = tree.currentNode.textContent.length;
+        if (currentOffset + currentLength >= offset) {
+            return {node: tree.currentNode, offset: offset - currentOffset};
         }
 
-        return matches;
+        currentOffset += currentLength;
+    }
+}
+
+/**
+ * History stack
+ *
+ * It supports undo/redo operations
+ *
+ * @param {string} initialValue
+ */
+function HistoryStack(initialValue) {
+    var stack = [];
+    var index = -1;
+
+    /**
+     * Add a new value to stack and remove all furhter redo values
+     * so after manual change there is no way to redo.
+     *
+     * @param {string} value
+     */
+    this.add = function(value) {
+        index = index + 1;
+        stack[index] = value;
+        stack.splice(index + 1, stack.length);
     };
 
     /**
-     * Highlight next match
+     * Select previous value (undo)
      */
-    this.next = function() {
-        clearHighlights();
-        current = (current + 1) % matches;
-        matches = 0;
-        find(rootNode);
+    this.selectPrev = function() {
+        index = Math.max(-1, index - 1);
     };
 
     /**
-     * Highlight previous match
+     * Select next value (redo)
      */
-    this.prev = function() {
-        clearHighlights();
-        current = current === 0 ? matches - 1 : current - 1;
-        matches = 0;
-        find(rootNode);
+    this.selectNext = function() {
+        index = stack[index + 1] != null ? index + 1 : index;
     };
 
     /**
-     * Replace current match with given string
+     * Get current value
      */
-    this.replace = function(replaceWith) {
-        if (current != null) {
-            var oldMatches = matches;
+    this.get = function() {
+        var state = index > -1 ? stack[index] : initialValue;
+        return state;
+    };
+}
 
-            // do replacement
-            clearHighlights();
-            matches = 0;
-            replacements[current] = replaceWith || '';
-            find(rootNode, true);
-            html = angular.element(rootNode).html();
+EditorService.$inject = ['spellcheck', '$rootScope', '$timeout'];
+function EditorService(spellcheck, $rootScope, $timeout) {
+    this.settings = {spellcheck: true};
 
-            // highlight rest
-            matches = 0;
-            current = current % (oldMatches - 1);
-            replacements = {};
-            find(rootNode);
-            return matches;
+    this.KEY_CODES = Object.freeze({
+        Y: 'Y'.charCodeAt(0),
+        Z: 'Z'.charCodeAt(0)
+    });
+
+    this.ARROWS = Object.freeze({
+        33: 1, // page up
+        34: 1, // page down
+        35: 1, // end
+        36: 1, // home
+        37: 1, // left
+        38: 1, // up
+        39: 1, // right
+        40: 1  // down
+    });
+
+    this.META = Object.freeze({
+        16: 1, // shift
+        17: 1, // ctrl
+        18: 1, // alt
+        20: 1, // caps lock
+        91: 1, // left meta in webkit
+        93: 1, // right meta in webkit
+        224: 1 // meta in firefox
+    });
+
+    /**
+     * Test if given keyboard event should be ignored as it's not changing content.
+     *
+     * @param {Event} event
+     * @return {boolen}
+     */
+    this.shouldIgnore = function (event) {
+        // ignore arrows
+        if (self.ARROWS[event.keyCode]) {
+            return true;
+        }
+
+        // ignore meta keys (ctrl, shift or meta only)
+        if (self.META[event.keyCode]) {
+            return true;
+        }
+
+        // ignore shift + ctrl/meta + something
+        if (event.shiftKey && (event.ctrlKey || event.metaKey)) {
+            return true;
+        }
+
+        return false;
+    };
+
+    var ERROR_CLASS = 'sderror';
+    var HILITE_CLASS = 'sdhilite';
+    var ACTIVE_CLASS = 'sdactive';
+    var FINDREPLACE_CLASS = 'sdfindreplace';
+
+    var self = this;
+    var scopes = [];
+
+    /**
+     * Register given scope - it adds history stack to it and keeps reference
+     *
+     * @param {Scope} scope
+     */
+    this.registerScope = function(scope) {
+        scopes.push(scope);
+        scope.history = new HistoryStack(scope.model.$viewValue);
+        scope.$on('$destroy', function() {
+            var index = scopes.indexOf(scope);
+            scopes.splice(index, 1);
+        });
+    };
+
+    /**
+     * Remove highlighting from given scope and return its contents
+     *
+     * @param {Scope} scope
+     * @return {string}
+     */
+    this.cleanScope = function(scope) {
+        self.storeSelection(scope.node);
+        var html = clean(scope.node).innerHTML;
+        html = html.replace('\ufeff', ''); // remove rangy marker
+        scope.node.innerHTML = html;
+        self.resetSelection(scope.node);
+        return html;
+    };
+
+    /**
+     * Render highlights for given scope based on settings
+     *
+     * @param {Scope} scope
+     * @param {Scope} force force rendering manually - eg. via keyboard
+     */
+    this.renderScope = function(scope, force, preventStore) {
+        self.cleanScope(scope);
+        if (self.settings.findreplace) {
+            renderFindreplace(scope.node);
+        } else if (self.settings.spellcheck || force) {
+            renderSpellcheck(scope.node, preventStore);
         }
     };
 
     /**
-     * Replace all matches with given string
+     * Render highlights in all registered scopes
      */
-    this.replaceAll = function(replaceWith) {
-        for (var i = 0; i < matches; i++) {
-            replacements[i] = replaceWith || '';
-        }
-
-        clearHighlights();
-        matches = 0;
-        find(rootNode, true);
-        html = angular.element(rootNode).html();
+    this.render = function() {
+        scopes.forEach(self.renderScope);
     };
 
     /**
-     * Remove any left hightlights - called on exit
+     * Remove highlight markup from given node
+     *
+     * @param {Node} node
+     * @return {Node}
      */
-    this.finish = function() {
-        clearHighlights();
-    };
+    function clean(node) {
+        return removeClass(node, HILITE_CLASS);
+    }
 
-    function find(node, stopHighlight) {
-        if (node.nodeType === TEXT_TYPE) {
-            var color,
-                selection = document.getSelection(),
-                index = node.wholeText.indexOf(needle),
-                offset = 0;
-            while (index > -1) {
-                color = getColor(current != null ? current === matches : matches === 0);
-                offset = index + needle.length;
+    /**
+     * Highlight find&replace matches in given node
+     *
+     * @param {Node} node
+     */
+    function renderFindreplace(node) {
+        var tokens = getFindReplaceTokens(node);
+        hilite(node, tokens, FINDREPLACE_CLASS);
+    }
 
-                var range = document.createRange();
-                range.setStart(node, index);
-                range.setEnd(node, index + needle.length);
-                selection.removeAllRanges();
-                selection.addRange(range);
+    /**
+     * Find all matches for current find&replace needle in given node
+     *
+     * Each match is {word: {string}, offset: {number}} in given node,
+     * we can't return nodes here because those will change when we start
+     * highlighting and offsets wouldn't match
+     *
+     * @param {Node} node
+     * @return {Array} list of matches
+     */
+    function getFindReplaceTokens(node) {
+        var tokens = [];
+        var needle = self.settings.findreplace.needle || null;
 
-                if (replacements[matches] != null) {
-                    document.execCommand('insertText', false, replacements[matches]);
-                } else if (!stopHighlight) {
-                    var oldLength = node.wholeText.length;
-                    document.execCommand('hiliteColor', false, color);
-                    if (oldLength > node.wholeText.length) {
-                        offset = 0; // hilite split node text so do lookup from 0
-                    }
-                }
+        if (!needle) {
+            return tokens;
+        }
 
-                matches++; // do the count now so we can use it as 0-based index
-                index = node.wholeText.indexOf(needle, offset);
+        var tree = document.createTreeWalker(node, NodeFilter.SHOW_TEXT);
+        var currentOffset = 0;
+        var index, text;
+        while (tree.nextNode()) {
+            text = tree.currentNode.textContent;
+            while ((index = text.indexOf(needle)) > -1) {
+                tokens.push({
+                    word: text.substr(index, needle.length),
+                    index: currentOffset + index
+                });
+
+                text = text.substr(index + needle.length);
+                currentOffset += index + needle.length;
             }
 
-            selection.removeAllRanges();
-        } else {
-            angular.forEach(node.childNodes, function(node) {
-                find(node, stopHighlight);
-            });
+            currentOffset += text.length;
+        }
+
+        return tokens;
+    }
+
+    /**
+     * Highlight spellcheck errors in given node
+     *
+     * @param {Node} node
+     */
+    function renderSpellcheck(node, preventStore) {
+        spellcheck.errors(node).then(function(tokens) {
+            hilite(node, tokens, ERROR_CLASS, preventStore);
+        });
+    }
+
+    /**
+     * Hilite all tokens within node using span with given className
+     *
+     * This first stores caret position, updates markup, and then restores the caret.
+     *
+     * @param {Node} node
+     * @param {Array} tokens
+     * @param {string} className
+     * @param {Boolean} preventStore
+     */
+    function hilite(node, tokens, className, preventStore) {
+        if (!tokens.length) {
+            self.resetSelection(node);
+            return;
+        }
+
+        if (!preventStore) {
+            self.storeSelection(node);
+        }
+        var token = tokens.shift();
+        hiliteToken(node, token, className);
+        $timeout(function() {
+            hilite(node, tokens, className, true);
+        }, 0, false);
+    }
+
+    /**
+     * Highlight single `token` via putting it into a span with given class
+     *
+     * @param {Node} node
+     * @param {Object} token
+     * @param {string} className
+     */
+    function hiliteToken(node, token, className) {
+        var start = findTextNode(node, token.index);
+        var end = findTextNode(node, token.index + token.word.length);
+
+        // correction for linebreaks - first node on a new line is set to
+        // linebreak text node which is not even visible in dom, maybe dom bug?
+        if (start.node !== end.node) {
+            start.node = end.node;
+            start.offset = 0;
+        }
+
+        var replace = start.node.splitText(start.offset);
+        var span = document.createElement('span');
+        span.classList.add(className);
+        span.classList.add(HILITE_CLASS);
+        replace.splitText(end.offset - start.offset);
+        span.textContent = replace.textContent;
+        replace.parentNode.replaceChild(span, replace);
+    }
+
+    /**
+     * Set next highlighted node active.
+     *
+     * In case there is no node selected select first one.
+     */
+    this.selectNext = function() {
+        var nodes = document.body.getElementsByClassName(HILITE_CLASS);
+        for (var i = 0; i < nodes.length; i++) {
+            var node = nodes.item(i);
+            if (node.classList.contains(ACTIVE_CLASS)) {
+                node.classList.remove(ACTIVE_CLASS);
+                nodes.item((i + 1) % nodes.length).classList.add(ACTIVE_CLASS);
+                return;
+            }
+        }
+
+        if (nodes.length) {
+            nodes.item(0).classList.add(ACTIVE_CLASS);
+        }
+    };
+
+    /**
+     * Set previous highlighted node active.
+     */
+    this.selectPrev = function() {
+        var nodes = document.body.getElementsByClassName(HILITE_CLASS);
+        for (var i = 0; i < nodes.length; i++) {
+            var node = nodes.item(i);
+            if (node.classList.contains(ACTIVE_CLASS)) {
+                node.classList.remove(ACTIVE_CLASS);
+                nodes.item(i === 0 ? nodes.length - 1 : i - 1).classList.add(ACTIVE_CLASS);
+                return;
+            }
+        }
+    };
+
+    /**
+     * Replace active node with given text.
+     *
+     * @param {string} text
+     */
+    this.replace = function(text) {
+        scopes.forEach(function(scope) {
+            var nodes = scope.node.getElementsByClassName(ACTIVE_CLASS);
+            replaceNodes(nodes, text, scope);
+            self.commitScope(scope);
+        });
+    };
+
+    /**
+     * Replace all highlighted nodes with given text.
+     *
+     * @param {string} text
+     */
+    this.replaceAll = function(text) {
+        scopes.forEach(function(scope) {
+            var nodes = scope.node.getElementsByClassName(HILITE_CLASS);
+            replaceNodes(nodes, text);
+            self.commitScope(scope);
+        });
+    };
+
+    /**
+     * Replace all nodes with text
+     *
+     * @param {HTMLCollection} nodes
+     * @param {string} text
+     */
+    function replaceNodes(nodes, text) {
+        while (nodes.length) {
+            var node = nodes.item(0);
+            var textNode = document.createTextNode(text);
+            node.parentNode.replaceChild(textNode, node);
+            textNode.parentNode.normalize();
         }
     }
 
-    function getColor(isCurrent) {
-        return isCurrent ? '#edd400' : '#d3d7cf';
+    /**
+     * Store current anchor position within given node
+     */
+    this.storeSelection = function storeSelection() {
+        self.selection = window.rangy ? window.rangy.saveSelection() : null;
+    };
+
+    /**
+     * Reset stored anchor position in given node
+     */
+    this.resetSelection = function resetSelection(node) {
+        if (self.selection) {
+            window.rangy.restoreSelection(self.selection);
+            self.selection = null;
+        }
+
+        clearRangy(node);
+    };
+
+    /**
+     * Remove all rangy stored selections from given node
+     *
+     * @param {Node} node
+     * @return {Node}
+     */
+    function clearRangy(node) {
+        var spans = node.getElementsByClassName('rangySelectionBoundary');
+        while (spans.length) {
+            var span = spans.item(0);
+            span.parentNode.removeChild(span);
+            if (span.parentNode.normalize) {
+                span.parentNode.normalize();
+            }
+        }
+
+        return node;
     }
 
-    function clearHighlights() {
-        angular.element(rootNode).html(html);
+    /**
+     * Update settings
+     *
+     * @param {Object} settings
+     */
+    this.setSettings = function(settings) {
+        self.settings = angular.extend({}, self.settings, settings);
+    };
+
+    /**
+     * Test if given elem is a spellcheck error node
+     *
+     * @param {Node} elem
+     * @return {boolean}
+     */
+    this.isErrorNode = function(elem) {
+        return elem.classList.contains(ERROR_CLASS);
+    };
+
+    /**
+     * Commit changes in all scopes
+     */
+    this.commit = function() {
+        scopes.forEach(self.commitScope);
+    };
+
+    /**
+     * Commit changes in given scope to its model
+     *
+     * @param {Scope} scope
+     */
+    this.commitScope = function(scope) {
+        var nodeValue = clearRangy(clean(scope.node)).innerHTML;
+        if (nodeValue !== scope.model.$viewValue) {
+            scope.model.$setViewValue(nodeValue);
+            scope.history.add(scope.model.$viewValue);
+        }
+    };
+
+    /**
+     * Undo last operation
+     *
+     * @param {Scope} scope
+     */
+    this.undo = function(scope) {
+        scope.history.selectPrev();
+        useHistory(scope);
+    };
+
+    /**
+     * Redo previous operation
+     *
+     * @param {Scope} scope
+     */
+    this.redo = function(scope) {
+        scope.history.selectNext();
+        useHistory(scope);
+    };
+
+    /**
+     * Use value from history and set it as node/model value.
+     *
+     * @param {Scope} scope
+     */
+    function useHistory(scope) {
+        var val = scope.history.get();
+        if (val != null) {
+            scope.node.innerHTML = val;
+            scope.model.$setViewValue(val);
+        }
     }
 }
 
-angular.module('superdesk.editor', [])
+angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
 
     .service('editor', EditorService)
 
-    .directive('sdTextEditor', ['editor', function (editor) {
+    .directive('sdTextEditor', ['editor', 'spellcheck', '$timeout', function (editor, spellcheck, $timeout) {
 
         var config = {
             buttons: ['bold', 'italic', 'underline', 'quote', 'anchor'],
-            anchorInputPlaceholder: gettext('Paste or type a full link')
+            anchorInputPlaceholder: gettext('Paste or type a full link'),
+            disablePlaceholders: true,
+            spellcheck: false
         };
 
         /**
@@ -221,7 +574,7 @@ angular.module('superdesk.editor', [])
 
             var lines = 0;
             while (p) {
-                if (p.childNodes.length && p.childNodes[0].nodeType === TEXT_TYPE) {
+                if (p.childNodes.length && p.childNodes[0].nodeType === Node.TEXT_NODE) {
                     lines += getLineCount(p.childNodes[0].wholeText);
                 } else if (p.childNodes.length) {
                     lines += 1; // empty paragraph
@@ -238,7 +591,7 @@ angular.module('superdesk.editor', [])
         function getLineColumn() {
             var column, lines,
                 selection = window.getSelection();
-            if (selection.anchorNode.nodeType === TEXT_TYPE) {
+            if (selection.anchorNode.nodeType === Node.TEXT_NODE) {
                 var text = selection.anchorNode.wholeText.substring(0, selection.anchorOffset);
                 var node = selection.anchorNode;
                 column = text.length + 1;
@@ -266,33 +619,96 @@ angular.module('superdesk.editor', [])
         }
 
         return {
-            scope: {type: '='},
+            scope: {type: '=', config: '=', language: '='},
             require: 'ngModel',
             templateUrl: 'scripts/superdesk/editor/views/editor.html',
             link: function(scope, elem, attrs, ngModel) {
 
+                scope.model = ngModel;
+                editor.registerScope(scope);
+
+                var TYPING_CLASS = 'typing';
+
                 var editorElem;
+                var updateTimeout;
+                var renderTimeout;
 
-                function updateModel() {
-                    if (editor.readOnly) {
-                        return;
-                    }
+                ngModel.$viewChangeListeners.push(changeListener);
 
-                    scope.$apply(function editorModelUpdate() {
-                        ngModel.$setViewValue(editorElem.html());
-                    });
-                }
+                ngModel.$render = function () {
 
-                ngModel.$render = function renderEditor() {
+                    var editorConfig = angular.extend({}, config, scope.config || {});
+
+                    spellcheck.setLanguage(scope.language);
+
                     editorElem = elem.find(scope.type === 'preformatted' ?  '.editor-type-text' : '.editor-type-html');
                     editorElem.empty();
-                    editorElem.html(ngModel.$viewValue || '<p><br></p>');
+                    editorElem.html(ngModel.$viewValue || '');
 
-                    editor.elem = editorElem[0];
-                    editor.editor = new window.MediumEditor(editor.elem, config);
+                    scope.node = editorElem[0];
+                    scope.model = ngModel;
 
-                    editorElem.on('blur', updateModel);
-                    editorElem.on('input', updateModel);
+                    scope.medium = new window.MediumEditor(scope.node, editorConfig);
+
+                    scope.$on('spellcheck:run', render);
+                    scope.$on('key:ctrl:shift:d', render);
+
+                    function cancelTimeout(event) {
+                        $timeout.cancel(updateTimeout);
+                        scope.node.classList.add(TYPING_CLASS);
+                    }
+
+                    var ctrlOperations = {};
+                    ctrlOperations[editor.KEY_CODES.Z] = doUndo;
+                    ctrlOperations[editor.KEY_CODES.Y] = doRedo;
+
+                    editorElem.on('keydown', function(event) {
+                        if (editor.shouldIgnore(event)) {
+                            return;
+                        }
+
+                        cancelTimeout(event);
+                    });
+
+                    editorElem.on('keyup', function(event) {
+                        if (editor.shouldIgnore(event)) {
+                            return;
+                        }
+
+                        cancelTimeout(event);
+
+                        if (event.ctrlKey && ctrlOperations[event.keyCode]) {
+                            ctrlOperations[event.keyCode]();
+                            return;
+                        }
+
+                        updateTimeout = $timeout(updateModel, 800, false);
+                    });
+
+                    editorElem.on('contextmenu', function(event) {
+                        if (editor.isErrorNode(event.target)) {
+                            event.preventDefault();
+                            var menu = elem[0].getElementsByClassName('dropdown-menu')[0],
+                                toggle = elem[0].getElementsByClassName('dropdown-toggle')[0];
+                            if (elem.find('.dropdown.open').length) {
+                                click(toggle);
+                            }
+
+                            scope.suggestions = null;
+                            spellcheck.suggest(event.target.textContent).then(function(suggestions) {
+                                scope.suggestions = suggestions;
+                                scope.replaceTarget = event.target;
+                                $timeout(function() {
+                                    menu.style.left = (event.target.offsetLeft) + 'px';
+                                    menu.style.top = (event.target.offsetTop + event.target.offsetHeight) + 'px';
+                                    menu.style.position = 'absolute';
+                                    click(toggle);
+                                }, 0, false);
+                            });
+
+                            return false;
+                        }
+                    });
 
                     if (scope.type === 'preformatted') {
                         editorElem.on('keydown keyup click', function() {
@@ -304,11 +720,54 @@ angular.module('superdesk.editor', [])
 
                     scope.$on('$destroy', function() {
                         editorElem.off();
-                        editor.clear();
+                        spellcheck.setLanguage(null);
                     });
 
                     scope.cursor = {};
+                    render(null, null, true);
                 };
+
+                function render($event, event, preventStore) {
+                    editor.renderScope(scope, $event, preventStore);
+                    scope.node.classList.remove(TYPING_CLASS);
+                    if (event) {
+                        event.preventDefault();
+                    }
+                }
+
+                scope.replace = function(text) {
+                    scope.replaceTarget.parentNode.replaceChild(document.createTextNode(text), scope.replaceTarget);
+                    editor.commitScope(scope);
+                };
+
+                scope.addWordToDictionary = function() {
+                    var word = scope.replaceTarget.textContent;
+                    spellcheck.addWordToUserDictionary(word);
+                    editor.render();
+                };
+
+                function doUndo() {
+                    scope.$applyAsync(function() {
+                        editor.undo(scope);
+                        editor.renderScope(scope);
+                    });
+                }
+
+                function doRedo() {
+                    scope.$applyAsync(function() {
+                        editor.redo(scope);
+                        editor.renderScope(scope);
+                    });
+                }
+
+                function updateModel() {
+                    editor.commitScope(scope);
+                }
+
+                function changeListener() {
+                    $timeout.cancel(renderTimeout);
+                    renderTimeout = $timeout(render, 500, false);
+                }
             }
         };
     }]);

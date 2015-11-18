@@ -5,10 +5,11 @@
 @import 'variables.less';
 
 .sd-widget {
-	&.ingest, &.archive {
+	&.ingest, &.archive, &.related-item, &.aggregate {
 		.widget-header {
 			z-index: 1;
 			background: @white;
+			box-sizing: border-box;
 
 		}
 		.widget-content {
@@ -124,7 +125,7 @@
 			margin:0;
 			list-style-type: none;
 			padding: 0;
-			overflow: hidden;
+			/*overflow: hidden;*/
 			> li {
 				position: relative;
 				.item-block {
@@ -222,9 +223,10 @@
 							i { 
 								margin-top: -2px;
 								height: 18px;
-								padding-left: 25px;
-								background-position-x: -3px;
-								.opacity(80);
+								padding-left: 0;
+								margin-right: 4px;
+								background-position-x: 0px;
+								.opacity(50);
 							}
 
 						}
@@ -301,7 +303,7 @@
 	}
 }
 
-.widget-ingest, .widget-archive {
+.widget-ingest, .widget-archive, .widget-related-item {
 
 	.ingest-list-holder {
 		background: @sd-background;
@@ -338,7 +340,7 @@
 }
 
 .tabpane {
-	&.widget-ingest, &.widget-archive {
+	&.widget-ingest, &.widget-archive, &.widget-related-item {
 		.sd-widget {
 
 			.widget-mode {
@@ -347,7 +349,7 @@
 			}
 
 			.main-list {
-				top: 44px
+				top: 48px
 			}
 
 			.ingest-list-holder {

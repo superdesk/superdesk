@@ -1,8 +1,50 @@
 Feature: Auto Routing
 
-    @auth @provider
+    @auth @provider @vocabulary
     Scenario: Content is fetched based on subject metadata
         Given empty "desks"
+        Given "filter_conditions"
+        """
+        [{
+            "_id": "1111111111aaaa1111111111",
+            "name": "Finance Content",
+            "field": "subject",
+            "operator": "in",
+            "value": "04000000"
+        },
+        {
+            "_id": "2222222222bbbb2222222222",
+            "name": "Sports Content",
+            "field": "subject",
+            "operator": "in",
+            "value": "15000000"
+        }]
+        """
+        Given "content_filters"
+        """
+        [{
+            "_id": "0987654321dcba0987654321",
+            "name": "Finance Content",
+            "content_filter": [
+                {
+                    "expression": {
+                        "fc": ["1111111111aaaa1111111111"]
+                    }
+                }
+            ]
+        },
+        {
+            "_id": "1234567890abcd1234567890",
+            "name": "Sports Content",
+            "content_filter": [
+                {
+                    "expression": {
+                        "fc": ["2222222222bbbb2222222222"]
+                    }
+                }
+            ]
+        }]
+        """
         When we post to "/desks"
         """
           {
@@ -18,11 +60,13 @@ Feature: Auto Routing
             "rules": [
               {
                 "name": "Sports Rule",
-                "filter": {
-                  "subject": [{"qcode": "15000000"}]
-                },
+                "filter": "1234567890abcd1234567890",
                 "actions": {
-                  "fetch": [{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}],
+                  "fetch": [
+                    {
+                      "desk": "#desks._id#",
+                      "stage": "#desks.incoming_stage#"
+                    }],
                   "exit": false
                 }
               }
@@ -42,9 +86,7 @@ Feature: Auto Routing
         """
            {
               "name": "Finance Rule",
-              "filter": {
-                "subject": [{"qcode": "04000000"}]
-              },
+              "filter": "0987654321dcba0987654321",
               "actions": {
                 "fetch": [{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}],
                 "exit": false
@@ -89,9 +131,33 @@ Feature: Auto Routing
         }
         """
 
-    @auth @provider
+    @auth @provider @vocabulary
     Scenario: Package is routed automatically
         Given empty "desks"
+        Given "filter_conditions"
+        """
+        [{
+            "_id": "1111111111aaaa1111111111",
+            "name": "Syria in Slugline",
+            "field": "slugline",
+            "operator": "like",
+            "value": "syria"
+        }]
+        """
+        Given "content_filters"
+        """
+        [{
+            "_id": "1234567890abcd1234567890",
+            "name": "Syria Content",
+            "content_filter": [
+                {
+                    "expression": {
+                        "fc": ["1111111111aaaa1111111111"]
+                    }
+                }
+            ]
+        }]
+        """
         When we post to "/desks"
         """
           {
@@ -107,9 +173,7 @@ Feature: Auto Routing
             "rules": [
               {
                 "name": "Syria Rule",
-                "filter": {
-                  "slugline": "syria"
-                },
+                "filter": "1234567890abcd1234567890",
                 "actions": {
                   "fetch": [{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}],
                   "exit": false
@@ -132,9 +196,38 @@ Feature: Auto Routing
         }
         """
 
-    @auth @provider
-    Scenario: Content is fetched and published to different stages
+    @auth @provider @vocabulary
+    Scenario: Content is fetched and published to different stages 1
+        Given the "validators"
+        """
+          [{"_id": "publish_text", "act": "publish", "type": "text", "schema":{}}]
+        """
         Given empty "desks"
+        Given "filter_conditions"
+        """
+        [{
+            "_id": "2222222222bbbb2222222222",
+            "name": "Finance Subject",
+            "field": "subject",
+            "operator": "in",
+            "value": "04000000"
+        }]
+        """
+        Given "content_filters"
+        """
+        [{
+            "_id": "1234567890abcd1234567890",
+            "name": "Finance Content",
+            "content_filter": [
+                {
+                    "expression": {
+                        "fc": ["2222222222bbbb2222222222"]
+                    }
+                }
+            ]
+        }]
+        """
+
         When we post to "/desks"
         """
           {
@@ -150,9 +243,7 @@ Feature: Auto Routing
             "rules": [
               {
                 "name": "Finance Rule 1",
-                "filter": {
-                  "subject": [{"qcode": "04000000"}]
-                },
+                "filter": "1234567890abcd1234567890",
                 "actions": {
                   "fetch": [{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}],
                   "exit": false
@@ -162,7 +253,7 @@ Feature: Auto Routing
           }
         ]
         """
-        Then we get response code 201
+        Then we get OK response
         When we post to "/stages"
         """
         [
@@ -186,21 +277,7 @@ Feature: Auto Routing
           }
         ]
         """
-        When we patch routing scheme "/routing_schemes/#routing_schemes._id#"
-        """
-           {
-              "name": "Finance Rule 2",
-              "filter": {
-                "subject": [{"qcode": "04000000"}, {"qcode": "04019000"}]
-              },
-              "actions": {
-                "fetch": [{"desk": "#desks._id#", "stage": "#_id#"}],
-                "publish": [{"desk": "#desks._id#", "stage": "#stages._id#"}],
-                "exit": false
-              }
-           }
-        """
-        Then we get response code 200
+        Then we get OK response
         When we fetch from "AAP" ingest "aap-finance.xml" using routing_scheme
         """
         #routing_schemes._id#
@@ -238,9 +315,34 @@ Feature: Auto Routing
         }
         """
 
-    @auth @provider
-    Scenario: Content is fetched and published to different stages
+    @auth @provider @vocabulary
+    Scenario: Content is fetched and published to different stages 2
         Given empty "desks"
+        Given "filter_conditions"
+        """
+        [{
+            "_id": "2222222222bbbb2222222222",
+            "name": "Finance Subject",
+            "field": "subject",
+            "operator": "in",
+            "value": "04000000"
+        }]
+        """
+        Given "content_filters"
+        """
+        [{
+            "_id": "1234567890abcd1234567890",
+            "name": "Finance Content",
+            "content_filter": [
+                {
+                    "expression": {
+                        "fc": ["2222222222bbbb2222222222"]
+                    }
+                }
+            ]
+        }]
+        """
+
         When we post to "/desks"
         """
           {
@@ -256,9 +358,7 @@ Feature: Auto Routing
             "rules": [
               {
                 "name": "Finance Rule 1",
-                "filter": {
-                  "subject": [{"qcode": "04000000"}]
-                },
+                "filter": "1234567890abcd1234567890",
                 "actions": {
                   "fetch": [{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}],
                   "exit": false
@@ -284,9 +384,7 @@ Feature: Auto Routing
         """
            {
               "name": "Finance Rule 2",
-              "filter": {
-                "subject": [{"qcode": "04000000"}]
-              },
+              "filter": "1234567890abcd1234567890",
               "actions": {
                 "fetch": [{"desk": "#desks._id#", "stage": "#stages._id#"}],
                 "exit": false
@@ -314,9 +412,105 @@ Feature: Auto Routing
         }
         """
 
-    @auth @provider @clean
+
+    @auth @provider @vocabulary
+    Scenario: Content is fetched to desk in the ingested item
+        Given empty "desks"
+        Given "filter_conditions"
+        """
+        [{
+            "_id": "2222222222bbbb2222222222",
+            "name": "Finance Subject",
+            "field": "subject",
+            "operator": "in",
+            "value": "04000000"
+        }]
+        """
+        Given "content_filters"
+        """
+        [{
+            "_id": "1234567890abcd1234567890",
+            "name": "Finance Content",
+            "content_filter": [
+                {
+                    "expression": {
+                        "fc": ["2222222222bbbb2222222222"]
+                    }
+                }
+            ]
+        }]
+        """
+
+        When we post to "/desks"
+        """
+          {
+            "name": "Finance Desk", "members": [{"user": "#CONTEXT_USER_ID#"}]
+          }
+        """
+        Then we get response code 201
+        When we post to "/routing_schemes"
+        """
+        [
+          {
+            "name": "routing rule scheme 1",
+            "rules": [
+              {
+                "name": "Finance Rule 1",
+                "filter": "1234567890abcd1234567890",
+                "actions": {
+                  "fetch": [{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}],
+                  "preserve_desk": true,
+                  "exit": false
+                }
+              }
+            ]
+          }
+        ]
+        """
+        Then we get response code 201
+        When we ingest and fetch "AAP" "aap-finance.xml" to desk "#desks._id#" stage "#desks.incoming_stage#" using routing_scheme
+        """
+        #routing_schemes._id#
+        """
+        When we get "/archive?q=#desks._id#"
+        Then we get list with 1 items
+        """
+        {"_items": [
+          {
+              "headline": "ASIA:Samsung sells defence, petrochemical units"
+          }
+        ]}
+        """
+
+
+    @auth @provider @clean @vocabulary
     Scenario: Content is fetched and transformed different stages
         Given empty "desks"
+        Given "filter_conditions"
+        """
+        [{
+            "_id": "3333333333cccc3333333333",
+            "name": "Politics Subject",
+            "field": "subject",
+            "operator": "in",
+            "value": "04000000"
+        }]
+        """
+        Given "content_filters"
+        """
+        [{
+            "_id": "1234567890abcd1234567890",
+            "name": "Politics Content",
+            "content_filter": [
+                {
+                    "expression": {
+                        "fc": ["3333333333cccc3333333333"]
+                    }
+                }
+            ]
+        }]
+        """
+
         When we post to "/desks"
         """
           {
@@ -333,9 +527,7 @@ Feature: Auto Routing
             "rules": [
               {
                 "name": "Politics Rule 1",
-                "filter": {
-                  "subject": [{"qcode": "04000000"}]
-                },
+                "filter": "1234567890abcd1234567890",
                 "actions": {
                   "fetch": [{"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "macro": "update_fields"}],
                   "exit": false
@@ -361,9 +553,7 @@ Feature: Auto Routing
         """
            {
               "name": "Politics Rule 2",
-              "filter": {
-                "subject": [{"qcode": "04000000"}]
-              },
+              "filter": "1234567890abcd1234567890",
               "actions": {
                 "fetch": [{"desk": "#desks._id#", "stage": "#stages._id#", "macro": "update_fields"}],
                 "exit": false
@@ -390,3 +580,74 @@ Feature: Auto Routing
           "ingest": "#AAP.AFP.121974877.6504909#"
         }
         """
+
+    @auth @provider @vocabulary
+    Scenario: a versioned item with the same version ingested twice gets routed once
+        Given empty "desks"
+        Given "filter_conditions"
+        """
+        [{
+            "_id": "1111111111aaaa1111111111",
+            "name": "Syria in Slugline",
+            "field": "slugline",
+            "operator": "like",
+            "value": "syria"
+        }]
+        """
+        Given "content_filters"
+        """
+        [{
+            "_id": "1234567890abcd1234567890",
+            "name": "Syria Content",
+            "content_filter": [
+                {
+                    "expression": {
+                        "fc": ["1111111111aaaa1111111111"]
+                    }
+                }
+            ]
+        }]
+        """
+        When we post to "/desks"
+        """
+          {
+            "name": "World Desk", "members": [{"user": "#CONTEXT_USER_ID#"}]
+          }
+        """
+        Then we get response code 201
+        When we post to "/routing_schemes"
+        """
+        [
+          {
+            "name": "routing rule scheme 1",
+            "rules": [
+              {
+                "name": "Syria Rule",
+                "filter": "1234567890abcd1234567890",
+                "actions": {
+                  "fetch": [{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}],
+                  "exit": false
+                }
+              }
+            ]
+          }
+        ]
+        """
+        Then we get response code 201
+        When we fetch from "reuters" ingest "tag_reuters.com_2014_newsml_KBN0FL0NN" using routing_scheme
+        """
+        #routing_schemes._id#
+        """
+        When we fetch from "reuters" ingest "tag_reuters.com_2014_newsml_KBN0FL0NN" using routing_scheme
+        """
+        #routing_schemes._id#
+        """
+        Then the ingest item is routed based on routing scheme and rule "Syria Rule"
+        """
+        {
+          "routing_scheme": "#routing_schemes._id#",
+          "ingest": "#reuters.tag_reuters.com_2014_newsml_KBN0FL0NN#"
+        }
+        """
+        When we get "/archive"
+        Then we get list with 1 items

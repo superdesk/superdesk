@@ -20,5 +20,7 @@
         "requireParamTypes": true
     },
     "requireSpaceBeforeBinaryOperators": ["=", "+", "-", "*", "/", "==", "===", "!=", "!=="],
-    "requireSpaceAfterBinaryOperators": true
+    "requireSpaceAfterBinaryOperators": true,
+    "disallowMixedSpacesAndTabs": true,
+    "validateIndentation": 4
 }

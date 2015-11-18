@@ -15,15 +15,19 @@ module.exports = {
     },
     unit: {
         coverageReporter: {
-          type: 'html',
-          dir: 'report/'
+            type: 'html',
+            dir: 'report/'
         }
     },
     travis: {
         browsers: ['PhantomJS'],
+        reporters: ['dots', 'coverage'],
         coverageReporter: {
-            type: 'lcov',
-            dir: 'report/'
+            dir: '.',
+            includeAllSources: true,
+            reporters: [
+                {type: 'lcovonly', subdir: '.', file: 'lcov.info'}
+            ]
         }
     },
     bamboo: {

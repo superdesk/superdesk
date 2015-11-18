@@ -1,45 +1,49 @@
 'use strict';
 
-//var ScreenShotReporter = require('protractor-screenshot-reporter');
+function getChromeOptions() {
+    var chromeOptions = {
+        args: ['no-sandbox']
+    };
+
+    if (process.env.CHROME_BIN) {
+        chromeOptions.binary = process.env.CHROME_BIN;
+    }
+
+    return chromeOptions;
+}
 
 exports.config = {
-    allScriptsTimeout: 30000,
+    allScriptsTimeout: 20000,
     baseUrl: 'http://localhost:9090',
     params: {
         baseBackendUrl: 'http://localhost:5000/api/',
         username: 'admin',
         password: 'admin'
     },
-    specs: ['spec/setup.js', 'spec/**/*[Ss]pec.js'],
-    capabilities: {
-        browserName: 'chrome',
-        chromeOptions: {
-            args: ['--no-sandbox']
-        }
-    },
-    directConnect: true,
-    framework: 'jasmine',
+
+    specs: ['spec/**/*[Ss]pec.js'],
+
+    framework: 'jasmine2',
     jasmineNodeOpts: {
         showColors: true,
-        isVerbose: true,
-        includeStackTrace: true,
-        defaultTimeoutInterval: 120000
+        defaultTimeoutInterval: 200000
     },
-    /* global jasmine */
+
+    capabilities: {
+        browserName: 'chrome',
+        chromeOptions: getChromeOptions()
+    },
+
+    directConnect: true,
+
     onPrepare: function() {
-        /*
-        jasmine.getEnv().addReporter(new ScreenShotReporter({
-            baseDirectory: './screenshots',
-            pathBuilder:
-                function pathBuilder(spec, descriptions, results, capabilities) {
-                    return results.passed() + '_' + descriptions.reverse().join('-');
-                },
-            takeScreenShotsOnlyForFailedSpecs: true
-        }));
-        */
-        require('jasmine-reporters');
+        require('./spec/helpers/setup')({fixture_profile: 'app_prepopulate_data'});
+        var reporters = require('jasmine-reporters');
         jasmine.getEnv().addReporter(
-            new jasmine.JUnitXmlReporter('e2e-test-results', true, true)
+            new reporters.JUnitXmlReporter({
+                savePath: 'e2e-test-results',
+                consolidateAll: true
+            })
         );
     }
 };

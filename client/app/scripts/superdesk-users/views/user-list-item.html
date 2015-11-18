@@ -1,9 +1,12 @@
 <li ng-repeat="user in users" ng-click="select(user)" ng-class="{selected: user === selected, 'inactive' : !user.is_enabled || !user.is_active}">
-    <figure class="avatar">
-        <img sd-user-avatar data-src="user.picture_url">
+    <figure class="avatar avatar-with-info" ng-class="{'user-logged': isLoggedIn(user)}">
+        <div class="logged-info"></div>
+        <div class="user-image">
+            <img sd-user-avatar data-src="user.picture_url" data-initials="user.display_name">
+        </div>
     </figure>
 
-    <span class="admin-label" ng-if="user.user_type == 'administrator'" translate>admin</span>
+    <i class="admin-label icon-settings" ng-if="user.user_type == 'administrator'" tooltip="{{ :: 'admin'|translate}}" tooltip-placement="top"></i>
 
     <div class="row-wrapper" sd-col-width>
         <div class="name">
@@ -21,7 +24,7 @@
     <div class="action">
         <ul class="item-functions"
             sd-activity-list
-            data-item="{item: user, list: users, index: $index}"
+            data-item="user"
             data-type="user"
             data-action="edit"
             data-done="done">

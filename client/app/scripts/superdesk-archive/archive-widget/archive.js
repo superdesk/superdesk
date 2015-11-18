@@ -18,24 +18,15 @@ define([
                 max_sizey: 2,
                 sizex: 1,
                 sizey: 2,
-                thumbnail: require.toUrl('./thumbnail.png'),
+                thumbnail: require.toUrl('./thumbnail.svg'),
                 template: require.toUrl('./widget-archive.html'),
                 configurationTemplate: require.toUrl('./configuration.html'),
                 configuration: {maxItems: 10, savedSearch: null, updateInterval: 5},
                 description: 'Content widget'
             });
         }])
-        .config(['authoringWidgetsProvider', function(authoringWidgets) {
-            authoringWidgets.widget('archive', {
-                label: gettext('Content'),
-                icon: 'archive',
-                template: require.toUrl('./widget-archive.html'),
-                side: 'left',
-                display: {authoring: true, packages: false}
-            });
-        }])
-        .controller('ArchiveController', ['$scope', 'api', 'BaseWidgetController', '$location',
-        function ($scope, api, BaseWidgetController, $location) {
+        .controller('ArchiveController', ['$scope', 'api', 'BaseWidgetController', 'superdesk',
+        function ($scope, api, BaseWidgetController, superdesk) {
             $scope.type = 'archiveWidget';
             $scope.itemListOptions = {
                 endpoint: 'search',
@@ -58,10 +49,10 @@ define([
                 open: {
                     title: 'Open',
                     method: function(item) {
-                        $location.path('/authoring/' + item._id + '/view');
+                        superdesk.intent('edit', 'item', item);
                     },
                     'class': 'open',
-                    icon: 'icon-expand'
+                    icon: 'icon-pencil'
                 }
             };
 

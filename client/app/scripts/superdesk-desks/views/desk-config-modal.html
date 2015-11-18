@@ -1,166 +1,209 @@
-<div sd-modal-view data-model="modalActive" class="add-desk-popup responsive-popup hide" >
-    
-	<div class="modal-header"> 
-		<a href="" class="close" ng-click="cancel()"><i class="icon-close-small"></i></a>
-		<h3 ng-show="!desk.edit._id" translate>Add New Desk</h3>
-		<h3 ng-show="desk.edit._id" translate>Edit "{{desk.edit.name}}" Desk</h3>
-	</div>
-	
-	<div class="modal-body" sd-wizard data-name="desks" data-current-step="step.current" data-finish="cancel()">
-		
-		<div sd-wizard-step data-title="{{ 'General' | translate }}" data-code="general">
-			<div sd-deskedit-basic>
-				<form name="generalStep">
-					<div class="content">
-						<fieldset>
-							<span class="float-right" sd-character-count data-item="desk.edit.name" data-limit="limits.desk"></span>
-							<div class="field">
-								<label translate>Desk name</label>
-								<input type="text" class="fullwidth-input" ng-model="desk.edit.name" ng-keyup="handleEdit($event);" required> 
-							</div>
-							<div class="field">
-								<label translate>Desk description {{test}}</label>
-								<textarea class="fullwidth-input" ng-model="desk.edit.description"></textarea>
-							</div>
-							<div sd-content-expiry data-item="desk.edit" data-preview="false" data-expiryfield="spike_expiry"></div>
-						</fieldset>
-						<p ng-if="message">{{ message }}</p>
-						<span ng-show="_errorUniqueness" translate>Desk with name "{{ desk.edit.name }}" already exists.</span>
-						<p ng-show="_errorLimits" translate>Character limit exceeded, desk can not be created/updated.</p>
-						<span ng-show="_error" translate>There was a problem, desk not created/updated.</span>
-					</div>
-					<div class="modal-footer">
-					  	<button class="btn btn-primary" ng-click="save(desk.edit)" ng-disabled="!generalStep.$valid || _errorLimits" translate>Next</button>
-					</div>
-				</form>
-			</div>
-		</div>
+<div sd-modal data-model="modalActive" class="add-desk-popup modal-large modal-static">
 
-		<div sd-wizard-step data-title="{{ 'Stages' | translate }}" data-code="stages">
-			<div sd-deskedit-stages>
-				<div class="content stages">
-					<div class="col">
-						<a class="btn btn-info add" 
-							sd-focus-element data-target="#insert-stage"
-							ng-click="edit({}); selected = null"
-							ng-disabled="editStage">
-							<i class="icon-plus-small icon-white"></i>
-						</a>
-						<div class="header" translate>Work stages</div>
-						<div class="content">
-							<div class="stages-list clearfix" ng-class="{'edit-mode': editStage}">
-								<div ng-repeat="stage in stages">
-									<span ng-if="isActive(stage)" sd-character-count data-item="editStage.name" data-limit="limits.stage"></span>
-									<div class="stage" ng-click="select(stage)" 
-										ng-class="{active: selected === stage, editable: isActive(stage)}">
-										<span ng-if="!isActive(stage)">{{ stage.name }}
-											<label class="label globalread" ng-if="!(stage.is_visible || stage.is_visible == null)">GLOBAL READ OFF</label>
-										</span>
+    <div class="modal-header">
+        <a href="" class="close" ng-click="cancel()"><i class="icon-close-small"></i></a>
+        <h3 ng-show="!desk.edit._id" translate>Add New Desk</h3>
+        <h3 ng-show="desk.edit._id" translate>Edit "{{desk.edit.name}}" Desk</h3>
+    </div>
 
-										<span ng-if="isActive(stage)">
-											<input type="text" id="edit-stage" ng-model="editStage.name" ng-keyup="handleEdit($event);" />
-										</span>
-										
-										<div class="actions" ng-if="!editStage">
-											<button ng-click="edit(stage)" sd-focus-element data-target="#edit-stage">
-												<i class="icon-pencil" ></i>
-											</button>
-											<button ng-if="!stage.default_incoming" ng-click="remove(stage)">
-												<i class="icon-trash"></i>
-											</button>
-										</div>
-									</div>
-								</div>
-								<span ng-if="editStage && !editStage._id" sd-character-count data-item="editStage.name" data-limit="limits.stage"></span>
-								<div class="stage editable" ng-show="editStage && !editStage._id">
-									<span>
-										<input type="text" id="insert-stage" ng-model="editStage.name" ng-keyup="handleEdit($event);" />
-									</span>
-								</div>
-							</div>
-							<div ng-if="editStage">
-								<button class="btn" ng-click="cancel()" translate>Cancel</button> 
-					  			<button class="btn btn-primary" ng-click="save()" ng-disabled="!editStage.task_status || _errorLimits" translate>Save</button>
-					  		</div>
-							<p ng-if="message">{{ message }}</p>
-							<p ng-show="_errorUniqueness" translate>Stage with name "{{ editStage.name }}"" already exists.</p>
-							<p ng-show="_errorLimits" translate>Character limit exceeded, stage can not be created/updated.</p>
-							<span ng-show="_error" translate>There was a problem, stage not created/updated.</span>
-						</div>
-					</div>
-					<div class="col">
-						<div class="row">
-							<div class="header" translate>Statuses</div>
-							<div class="content status-list" >
-								<div ng-repeat="status in statuses">
-									<div class="status {{status._id}}" ng-click="setStatus(status)"								 
-										ng-class="{'active': status._id === editStage.task_status}"
-										ng-if="editStage">
-										{{ status.name }}
-									</div>
-									<div class="status active {{selected.task_status}}" 
-										ng-if="!editStage && selected.task_status && selected.task_status === status._id">
-										{{ status.name }}
-									</div>
-								</div>							
-							</div>
-						</div>
+    <div class="modal-body" sd-wizard data-name="desks" data-current-step="step.current" data-finish="cancel()">
 
-						<div class="row" ng-if="selected && !editStage">
-							<div class="header"  translate>Stage Details</div>
-							<label translate>Global Read: <label class="label globalread">
-								{{(selected.is_visible == null || selected.is_visible) ? 'ON' : 'OFF'}}
-							</label></label>
-							<label translate>Stage description: {{ selected.description}}</label>
-							<div sd-content-expiry data-item="selected" data-preview="true" data-expiryfield="content_expiry"></div>
-						</div>
+        <div sd-wizard-step data-title="{{ 'General' | translate }}" data-code="general">
+            <div sd-deskedit-basic>
+                <form name="generalStep">
+                    <div class="content">
+                        <fieldset>
+                            <span class="pull-right" sd-character-count data-item="desk.edit.name" data-limit="limits.desk"></span>
+                            <div class="field">
+                                <label translate>Desk name</label>
+                                <input type="text" class="fullwidth-input" ng-model="desk.edit.name" ng-keyup="handleEdit($event);" required>
+                            </div>
+                            <div class="field">
+                                <label translate>Desk description</label>
+                                <textarea class="fullwidth-input" ng-model="desk.edit.description"></textarea>
+                            </div>
+                            <div class="field">
+                                <label translate>Source for User Created Articles</label>
+                                <input type="text" class="fullwidth-input" ng-model="desk.edit.source" ng-keyup="handleEdit($event);" required>
+                            </div>
+                            <ul class="expiry">
+                                <li>
+                                    <div sd-content-expiry
+                                         data-item="desk.edit"
+                                         data-preview="false"
+                                         data-expiryfield="spike_expiry"
+                                         data-header="Spike Expiry"></div>
+                                </li>
+                                <li>
+                                    <div sd-content-expiry
+                                         data-item="desk.edit"
+                                         data-preview="false"
+                                         data-expiryfield="published_item_expiry"
+                                         data-header="Published Item Expiry"></div>
+                                </li>
+                            </ul>
+                            <div class="field desk-type">
+                                <label translate>Desk Type</label>
+                                <select id="deskType" ng-model="desk.edit.desk_type"
+                                        ng-options="deskType.value as deskType.name for deskType in deskTypes"
+                                        required>
+                                    <option value=""></option>
+                                </select>
+                            </div>
+                        </fieldset>
+                        <span class="alert-danger" ng-show="_errorLimits" translate>Character limit exceeded, desk can not be created/updated.</span>
+                        <span class="alert-danger" ng-show="_error">{{ _errorMessage }}</span>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="next-general" class="btn btn-primary" ng-click="save(desk.edit)" ng-disabled="!generalStep.$valid || _errorLimits" translate>Save & Continue</button>
+                        <button id="done-general" class="btn btn-primary" ng-click="save(desk.edit, true)" ng-disabled="!generalStep.$valid || _errorLimits" translate>Done</button>
+                    </div>
+                </form>
+            </div>
+        </div>
 
-						<div class="row" ng-if="editStage">
-							<div class="header"  translate>Stage Details</div>
-							<div class="field">
-								<label translate>Global Read</label>
-								<span sd-switch ng-model="editStage.is_visible"></span>
-							</div>
-							<div class="field">
-								<label translate>Stage description</label>
-								<textarea class="fullwidth-input" ng-model="editStage.description"></textarea>
-							</div>
-							<div sd-content-expiry data-item="editStage" data-preview="false" data-expiryfield="content_expiry"></div>
-						</div>
-					</div>
-				</div>
-				<div class="modal-footer"> 
-				  	<button class="btn pull-left" ng-click="previous()" translate>Previous</button> 
-				  	<button class="btn btn-primary" ng-click="next()" translate>Next</button>
-				</div>
-			</div>
-		</div>
+        <div sd-wizard-step data-title="{{ :: 'Stages' | translate }}" data-code="stages">
+            <div sd-deskedit-stages>
+                <div class="content stages">
+                    <div class="col">
+                        <a class="btn btn-info add"
+                            sd-focus-element data-target="#insert-stage"
+                            ng-click="edit({}); selected = null"
+                            ng-disabled="editStage">
+                            <i class="icon-plus-small icon-white"></i>
+                        </a>
+                        <div class="header" translate>Work stages</div>
+                        <div class="content">
+                            <div class="stages-list clearfix" ng-class="{'edit-mode': editStage}">
+                                <div ng-repeat="stage in stages track by stage._id">
+                                    <span ng-if="isActive(stage)" sd-character-count data-item="editStage.name" data-limit="limits.stage"></span>
+                                    <div class="stage" ng-click="select(stage)"
+                                        ng-class="{active: selected === stage, editable: isActive(stage)}">
+                                        <span ng-if="!isActive(stage)">{{ stage.name }}
+                                            <label class="label globalread" ng-if="!(stage.is_visible || stage.is_visible == null)" translate>GLOBAL READ OFF</label>
+                                        </span>
 
-		<div sd-wizard-step data-title="{{ 'People' | translate }}" data-code="people">
-			<div sd-deskedit-people>
-				<div class="content people-stage" >
-					<div class="header" sd-user-select-list data-exclude="deskMembers" data-onchoose="add(user)"></div>
-					<div class="content">
-						<p ng-if="message">{{ message }}</p>
-						<div class="member-list clearfix">
-							<ul>
-								<li ng-repeat="user in deskMembers" ng-class="{'inactive' : !user.is_enabled || !user.is_active}">
-									<i class="icon-close-small" ng-click="remove(user)"></i>
-									<figure class="avatar"><img sd-user-avatar data-src="user.picture_url"></figure>
-									<div class="name">{{user.display_name}}</div>
-								</li>
-							</ul>
-						</div>
-					</div>
-				</div>
-				<div class="modal-footer"> 
-				  	<button class="btn pull-left" ng-click="previous()" translate>Previous</button> 
-				  	<button class="btn btn-primary" ng-click="save()" translate>Done</button>
-				</div>
-			</div>
-		</div>
-        <div sd-wizard-step data-title="{{ 'Macros' | translate }}" data-code="general">
-            <div sd-desk-macros>
+                                        <span ng-if="isActive(stage)">
+                                            <input type="text" id="edit-stage" ng-model="editStage.name" ng-keyup="handleEdit($event);" required />
+                                        </span>
+
+                                        <div class="actions" ng-if="!editStage">
+                                            <button ng-click="edit(stage)" sd-focus-element data-target="#edit-stage">
+                                                <i class="icon-pencil" ></i>
+                                            </button>
+                                            <button ng-if="!stage.working_stage && !stage.default_incoming" ng-click="remove(stage)">
+                                                <i class="icon-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span ng-if="editStage && !editStage._id" sd-character-count data-item="editStage.name" data-limit="limits.stage"></span>
+                                <div class="stage editable" ng-show="editStage && !editStage._id">
+                                    <span>
+                                        <input type="text" id="insert-stage" ng-model="editStage.name" required ng-keyup="handleEdit($event);" />
+                                    </span>
+                                </div>
+                            </div>
+                            <div ng-if="editStage">
+                                <button class="btn" ng-click="cancel()" translate>Cancel</button>
+                                <button class="btn btn-primary" ng-click="save()" ng-disabled="!enableSave()" translate>Save</button>
+                            </div>
+                            <p ng-if="message">{{ message }}</p>
+                            <p ng-show="_errorUniqueness" translate>Stage with name "{{ editStage.name }}"" already exists.</p>
+                            <p ng-show="_errorLimits" translate>Character limit exceeded, stage can not be created/updated.</p>
+                            <span ng-show="_error" translate>There was a problem, stage not created/updated.</span>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="row" ng-if="selected && !editStage">
+                            <div class="header"  translate>Stage Details</div>
+                            <label class="label globalread" ng-if="selected.working_stage === null || selected.working_stage">
+                                {{:: 'Working Stage' }}
+                            </label>
+                            <label class="label globalread" ng-if="selected.default_incoming === null || selected.default_incoming">
+                                {{:: 'Incoming Stage' }}
+                            </label>
+                            <label translate>Global Read: <label class="label globalread">
+                                {{(selected.is_visible == null || selected.is_visible) ? 'ON' : 'OFF'}}
+                            </label></label>
+                            <label translate>Stage description: {{ selected.description}}</label>
+                            <label translate>Content expiry:</label>
+                            <div sd-content-expiry data-item="selected" data-preview="true" data-expiryfield="content_expiry"></div>
+                            <label translate>Incoming Rule: {{selected.incoming_macro}}</label>
+                            <label translate>Outgoing Rule: {{selected.outgoing_macro}}</label>
+                        </div>
+
+                        <div class="row" ng-if="editStage">
+                            <div class="header"  translate>Stage Details</div>
+                            <div class="field">
+                                <label translate>Global Read</label>
+                                <span sd-switch ng-model="editStage.is_visible"></span>
+                            </div>
+                            <div class="field">
+                                <label>{{:: 'Working Stage' | translate }}</label>
+                                <span sd-switch ng-model="editStage.working_stage"></span>
+                            </div>
+                            <div class="field">
+                                <label>{{:: 'Incoming Stage' | translate }}</label>
+                                <span sd-switch ng-model="editStage.default_incoming"></span>
+                            </div>
+                            <div class="field">
+                                <label translate>Stage description</label>
+                                <textarea class="fullwidth-input" ng-model="editStage.description"></textarea>
+                            </div>
+                            <div class="field">
+                                <label translate>Content expiry</label>
+                                <div sd-content-expiry data-item="editStage" data-preview="false" data-expiryfield="content_expiry"></div>
+                            </div>
+                            <div class="field">
+                                <label translate>Incoming Rule</label>
+                                <select ng-model="editStage.incoming_macro">
+                                    <option value=""></option>
+                                    <option ng-repeat="macro in macros" ng-selected="editStage.incoming_macro === macro.name" value="{{macro.name}}">{{macro.label}}</option>
+                                </select>
+                            </div>
+                            <div class="field">
+                                <label translate>Outgoing Rule</label>
+                                <select ng-model="editStage.outgoing_macro">
+                                    <option value=""></option>
+                                    <option ng-repeat="macro in macros" ng-selected="editStage.outgoing_macro === macro.name" value="{{macro.name}}">{{macro.label}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="next-stages" class="btn btn-primary" ng-disabled="message != null" ng-click="next()" translate>Continue</button>
+                    <button id="done-stages" class="btn btn-primary" ng-disabled="message != null" ng-click="next(true)" translate>Done</button>
+                </div>
+            </div>
+        </div>
+
+        <div sd-wizard-step data-title="{{ 'People' | translate }}" data-code="people">
+            <div sd-deskedit-people>
+                <div class="content people-stage" >
+                    <div class="header" sd-user-select-list data-exclude="deskMembers" data-onchoose="add(user)"></div>
+                    <div class="content">
+                        <p ng-if="message">{{ message }}</p>
+                        <div class="member-list clearfix">
+                            <ul>
+                                <li ng-repeat="user in deskMembers track by user._id | orderBy: 'display_name'" ng-class="{'inactive' : !user.is_enabled || !user.is_active}">
+                                    <i class="icon-close-small" ng-click="remove(user)"></i>
+                                    <figure class="avatar"><img sd-user-avatar data-src="user.picture_url" data-initials="user.display_name"></figure>
+                                    <div class="name">{{:: user.display_name}}</div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="next-people" class="btn btn-primary" ng-click="save()" ng-disabled="message != null" translate>Save & Continue</button>
+                    <button id="done-people" class="btn btn-primary" ng-click="save(true)" ng-disabled="message != null" translate>Done</button>
+                </div>
+            </div>
+        </div>
+        <div sd-wizard-step data-title="{{ 'Macros' | translate }}" data-code="macros">
+            <div sd-deskedit-macros>
                 <div sd-shadow>
                     <ul class="pills-list">
                         <li ng-repeat="macro in macros">
@@ -168,9 +211,12 @@
                         </li>
                     </ul>
                 </div>
+                <div class="modal-footer">
+                    <button id="save" class="btn btn-primary" ng-click="save()" translate>Done</button>
+                </div>
             </div>
         </div>
 
-	</div>
+    </div>
 
 </div>

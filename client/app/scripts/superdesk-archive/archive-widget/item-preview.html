@@ -9,7 +9,7 @@
 
         <p class="title" ng-if="item.headline">{{ item.headline }}</p>
 
-        <div class="state-label state-{{item.state}}">{{item.state}}</div>
+        <div class="state-label state-{{item.state}}" ng-class="{state_embargo: item.embargo}">{{item.state}}</div>
 
         <div class="core-content">
 
@@ -17,9 +17,14 @@
                 <span translate>expires</span> <time sd-datetime data-date="item.expiry"></time>
 			</p>
             
-            <!-- item rendition -->
-            <div class="picture-preview" sd-item-rendition data-item="item" data-rendition="viewImage"></div>
-            
+            <div ng-if="item.type == 'picture'" class="picture-preview">
+                <div>
+                    <span translate>Original</span>
+                    <div sd-item-rendition data-item="item" data-rendition="viewImage"></div>
+                </div>
+                <div sd-item-crops data-item="item"></div>
+            </div>
+
             <div ng-if="item.type == 'audio'">
                 <audio controls="controls" sd-sources data-renditions="item.renditions"></audio>
             </div>

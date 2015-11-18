@@ -9,12 +9,14 @@
 	
 	.widget-content {
 		background: @sd-background;
-		padding: 10px;
+		padding: 0;
 		padding-bottom: @authoring-opened-articles + @scratchpad-closed;
+		overflow: auto;
+		margin: 5px 0 20px;
 	}
 	
 	.basic-list {
-		margin-bottom: 30px;
+		margin-bottom: 20px;
 
 		&.top-border {
 			border-top: 1px dotted #ddd;
@@ -22,9 +24,8 @@
 		}
 		> li, .sublist > ul > li {
 			padding: 10px 0;
-			border-bottom: 1px dotted #ddd;
 			text-align: right;
-			height: 18px;
+			height: 28px;
 			line-height: 18px;
 			.lbl, label {
 				float: left;
@@ -47,13 +48,7 @@
 					margin-top: -5px;
 					margin-right: -5px;
 					text-align: right;
-					border-color: #f8f8f8 !important;
-					background: #f8f8f8;
 					font-size: 13px;
-					&:focus {
-						background: #fff;
-						border-color: #d0d0d0 !important;  
-					}
 				}
 				select {
 					margin: -4px -4px 0 0;
@@ -105,18 +100,9 @@
 							width: 40px;
 						}
 						.dropdown-menu	{
-							width: 50px;
+							width: 70px;
 							min-width: 0;
 						}
-					}
-				}
-			}
-
-			&:hover {
-				.data {
-					input, select, .dropdown-toggle {
-						background: #fff;
-						border-color: #d0d0d0 !important;  
 					}
 				}
 			}
@@ -139,6 +125,9 @@
 					width: auto;
 					height: auto;
 				}
+				.datepicker-input {
+					margin-bottom: 10px;
+				}
 			}
 		}
 	}
@@ -147,9 +136,15 @@
 		height: auto !important;
 		
 		.term-editor {
-			.item-list {
-				max-width: @tabpane-width - 40px;
-			}
+          input[type="text"] {
+            padding-right: 25px;
+            text-align: left;
+          }
+
+          .item-list {
+			max-width: @tabpane-width - 40px;
+          }
+
 		}
 
 		.terms {
@@ -159,6 +154,7 @@
 			padding-top: 10px;
 			.clearfix();
 			li {
+			  	position: relative;
 				background: #e8e8e8;
 				line-height: 26px;
 				height: 26px;
@@ -166,20 +162,45 @@
 				.border-radius(3px);
 				margin: 0 5px 5px 0;
 				float: left;
+              	.transition(all .5s);
 				i {
-					vertical-align: sub;
-					margin-left: 5px;
-					.opacity(40);
+					position: absolute;
+					display: none;
+					right: 5px;
+					top: 6px;
+					.opacity(0);
+                    .transition(all .5s);
 				}
 				&:hover {
 					cursor: pointer;
+                    padding-right: 20px;
 					background: #e0e0e0;
 					i {
-						.opacity(70);
+                    	.opacity(70);
+					}
+				}
+				&:hover {
+					> i {
+						display: inline-block;
 					}
 				}
 			}
 		}
+                
+		.dropdown-nested {
+			position: absolute;
+			right: 0px;
+			margin-top: 0px;
+		}
+
+	  	select {
+		  width: 120px;
+		}
+
+	  	.sd-checkbox {
+		  vertical-align: middle;
+		}
+                
 	}
 	
 	.state-label {

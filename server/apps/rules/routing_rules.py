@@ -9,16 +9,73 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import logging
-from datetime import datetime
-from apps.rules.routing_rule_validator import RoutingRuleValidator
+import superdesk
+
+import pytz
+from pytz import all_timezones_set
+
+from enum import Enum
+from datetime import datetime, timedelta
 from superdesk import get_resource_service
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 from superdesk.errors import SuperdeskApiError
-
+from eve.utils import config
+from superdesk.metadata.item import CONTENT_STATE
 
 logger = logging.getLogger(__name__)
-STATE_ROUTED = 'routed'
+
+
+class Weekdays(Enum):
+    """Weekdays names we use for scheduling."""
+
+    MON = 0
+    TUE = 1
+    WED = 2
+    THU = 3
+    FRI = 4
+    SAT = 5
+    SUN = 6
+
+    @classmethod
+    def is_valid_schedule(cls, list_of_days):
+        """Test if all days in list_of_days are valid day names.
+
+        :param list list_of_days eg. ['mon', 'tue', 'fri']
+        """
+        return all([day.upper() in cls.__members__ for day in list_of_days])
+
+    @classmethod
+    def is_scheduled_day(cls, today, list_of_days):
+        """Test if today's weekday is in schedule.
+
+        :param datetime today
+        :param list list_of_days
+        """
+        return today.weekday() in [cls[day.upper()].value for day in list_of_days]
+
+    @classmethod
+    def dayname(cls, day):
+        """Get name shortcut (MON, TUE, ...) for given day.
+
+        :param datetime day
+        """
+        return cls(day.weekday()).name
+
+
+def set_time(current_datetime, timestr, second=0):
+    """Set time of given datetime according to timestr.
+
+    Time format for timestr is `%H%M`, eg. 1014.
+
+    :param datetime current_datetime
+    :param string timestr
+    :param int second
+    """
+    if timestr is None:
+        timestr = '0000'
+    time = datetime.strptime(timestr, '%H%M')
+    return current_datetime.replace(hour=time.hour, minute=time.minute, second=second)
 
 
 class RoutingRuleSchemeResource(Resource):
@@ -31,7 +88,8 @@ class RoutingRuleSchemeResource(Resource):
             'type': 'string',
             'iunique': True,
             'required': True,
-            'minlength': 1
+            'nullable': False,
+            'empty': False
         },
         'rules': {
             'type': 'list',
@@ -41,9 +99,7 @@ class RoutingRuleSchemeResource(Resource):
                     'name': {
                         'type': 'string'
                     },
-                    'filter': {
-                        'type': 'dict'
-                    },
+                    'filter': Resource.rel('content_filters', nullable=True),
                     'actions': {
                         'type': 'dict',
                         'schema': {
@@ -71,11 +127,15 @@ class RoutingRuleSchemeResource(Resource):
                             },
                             'exit': {
                                 'type': 'boolean'
+                            },
+                            'preserve_desk': {
+                                'type': 'boolean'
                             }
                         }
                     },
                     'schedule': {
                         'type': 'dict',
+                        'nullable': True,
                         'schema': {
                             'day_of_week': {
                                 'type': 'list'
@@ -85,16 +145,17 @@ class RoutingRuleSchemeResource(Resource):
                             },
                             'hour_of_day_to': {
                                 'type': 'string'
+                            },
+                            'time_zone': {
+                                'type': 'string',
+                                'nullable': False,
+                                'default': 'UTC'
                             }
                         }
                     }
                 }
             }
         }
-    }
-
-    datasource = {
-        'default_sort': [('name', 1)]
     }
 
     privileges = {'POST': 'routing_rules', 'DELETE': 'routing_rules', 'PATCH': 'routing_rules'}
@@ -104,7 +165,6 @@ class RoutingRuleSchemeService(BaseService):
     """
     Service class for 'routing_schemes' endpoint.
     """
-    day_of_week = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN']
 
     def on_create(self, docs):
         """
@@ -114,10 +174,10 @@ class RoutingRuleSchemeService(BaseService):
 
         Will throw BadRequestError if any of the pre-conditions fail.
         """
-
         for routing_scheme in docs:
-            self.__validate_routing_scheme(routing_scheme)
-            self.__check_if_rule_name_is_unique(routing_scheme)
+            self._adjust_for_empty_schedules(routing_scheme)
+            self._validate_routing_scheme(routing_scheme)
+            self._check_if_rule_name_is_unique(routing_scheme)
 
     def on_update(self, updates, original):
         """
@@ -127,9 +187,9 @@ class RoutingRuleSchemeService(BaseService):
 
         Will throw BadRequestError if any of the pre-conditions fail.
         """
-
-        self.__validate_routing_scheme(updates)
-        self.__check_if_rule_name_is_unique(updates)
+        self._adjust_for_empty_schedules(updates)
+        self._validate_routing_scheme(updates)
+        self._check_if_rule_name_is_unique(updates)
 
     def on_delete(self, doc):
         """
@@ -139,7 +199,7 @@ class RoutingRuleSchemeService(BaseService):
         Will throw BadRequestError if any of the pre-conditions fail.
         """
 
-        if self.backend.find_one('ingest_providers', req=None, routing_scheme=doc['_id']):
+        if self.backend.find_one('ingest_providers', req=None, routing_scheme=doc[config.ID_FIELD]):
             raise SuperdeskApiError.forbiddenError('Routing scheme is applied to channel(s). It cannot be deleted.')
 
     def apply_routing_scheme(self, ingest_item, provider, routing_scheme):
@@ -154,18 +214,55 @@ class RoutingRuleSchemeService(BaseService):
             logger.warning("Routing Scheme % for provider % has no rules configured." %
                            (provider.get('name'), routing_scheme.get('name')))
 
-        for rule in self.__get_scheduled_routing_rules(rules):
-            if RoutingRuleValidator().is_valid_rule(ingest_item, rule.get('filter', {})):
-                self.__fetch(ingest_item, rule.get('actions', {}).get('fetch', []))
+        filters_service = superdesk.get_resource_service('content_filters')
+
+        now = datetime.utcnow()
+
+        for rule in self._get_scheduled_routing_rules(rules, now):
+            content_filter = rule.get('filter', {})
+
+            if filters_service.does_match(content_filter, ingest_item):
+                if rule.get('actions', {}).get('preserve_desk', False) and ingest_item.get('task', {}).get('desk'):
+                    desk = get_resource_service('desks').find_one(req=None, _id=ingest_item['task']['desk'])
+                    self.__fetch(ingest_item, [{'desk': desk[config.ID_FIELD], 'stage': desk['incoming_stage']}])
+                    fetch_actions = [f for f in rule.get('actions', {}).get('fetch', [])
+                                     if f.get('desk') != ingest_item['task']['desk']]
+                else:
+                    fetch_actions = rule.get('actions', {}).get('fetch', [])
+
+                self.__fetch(ingest_item, fetch_actions)
                 self.__publish(ingest_item, rule.get('actions', {}).get('publish', []))
                 if rule.get('actions', {}).get('exit', False):
                     break
             else:
                 logger.info("Routing rule %s of Routing Scheme %s for Provider %s did not match for item %s" %
                             (rule.get('name'), routing_scheme.get('name'),
-                             provider.get('name'), ingest_item.get('_id')))
+                             provider.get('name'), ingest_item[config.ID_FIELD]))
 
-    def __validate_routing_scheme(self, routing_scheme):
+    def _adjust_for_empty_schedules(self, routing_scheme):
+        """For all routing scheme's rules, set their non-empty schedules to
+        None if they are effectively not defined.
+
+        A schedule is recognized as "not defined" if it only contains time zone
+        information without anything else. This can happen if an empty schedule
+        is submitted by the client, because `Eve` then converts it to the
+        following:
+
+            {'time_zone': 'UTC'}
+
+        This is because the time_zone field has a default value set in the
+        schema, and Eve wants to apply it even when the containing object (i.e.
+        the schedule) is None and there is nothing that would contain the time
+        zone information.
+
+        :param dict routing_scheme: the routing scheme to check
+        """
+        for rule in routing_scheme.get('rules', []):
+            schedule = rule.get('schedule')
+            if schedule and (set(schedule.keys()) == {'time_zone'}):
+                rule['schedule'] = None
+
+    def _validate_routing_scheme(self, routing_scheme):
         """
         Validates routing scheme for the below:
             1. A routing scheme must have at least one rule.
@@ -196,16 +293,24 @@ class RoutingRuleSchemeService(BaseService):
                     'publish') is None and actions.get('exit') is None):
                 raise SuperdeskApiError.badRequestError(message="A routing rule must have actions")
             else:
-                self.__validate_schedule(schedule)
+                self._validate_schedule(schedule)
 
-    def __validate_schedule(self, schedule):
-        if schedule is not None and (len(schedule) == 0 or (schedule.get('day_of_week') is None
-                                                            or len(schedule.get('day_of_week', [])) == 0)):
-                raise SuperdeskApiError.badRequestError(message="Schedule when defined can't be empty.")
+    def _validate_schedule(self, schedule):
+        """Check if the given routing schedule configuration is valid and raise
+        an error if this is not the case.
+
+        :param dict schedule: the routing schedule configuration to validate
+
+        :raises SuperdeskApiError: if validation of `schedule` fails
+        """
+        if schedule is not None \
+                and (len(schedule) == 0
+                     or (schedule.get('day_of_week') is None
+                         or len(schedule.get('day_of_week', [])) == 0)):
+            raise SuperdeskApiError.badRequestError(message="Schedule when defined can't be empty.")
 
         if schedule:
-            day_of_week = [str(week_day).upper() for week_day in schedule.get('day_of_week', [])]
-            if not (len(set(day_of_week) & set(self.day_of_week)) == len(day_of_week)):
+            if not Weekdays.is_valid_schedule(schedule.get('day_of_week', [])):
                 raise SuperdeskApiError.badRequestError(message="Invalid values for day of week.")
 
             if schedule.get('hour_of_day_from') or schedule.get('hour_of_day_to'):
@@ -214,15 +319,27 @@ class RoutingRuleSchemeService(BaseService):
                 except:
                     raise SuperdeskApiError.badRequestError(message="Invalid value for from time.")
 
-                try:
-                    to_time = datetime.strptime(schedule.get('hour_of_day_to'), '%H%M')
-                except:
-                    raise SuperdeskApiError.badRequestError(message="Invalid value for to time.")
+                to_time = schedule.get('hour_of_day_to', '')
+                if to_time:
+                    try:
+                        to_time = datetime.strptime(to_time, '%H%M')
+                    except:
+                        raise SuperdeskApiError.badRequestError(
+                            message="Invalid value for hour_of_day_to "
+                                    "(expected %H%M).")
 
-                if from_time > to_time:
-                    raise SuperdeskApiError.badRequestError(message="From time should be less than To Time.")
+                    if from_time > to_time:
+                        raise SuperdeskApiError.badRequestError(
+                            message="From time should be less than To Time."
+                        )
 
-    def __check_if_rule_name_is_unique(self, routing_scheme):
+            time_zone = schedule.get('time_zone')
+
+            if time_zone and (time_zone not in all_timezones_set):
+                msg = 'Unknown time zone {}'.format(time_zone)
+                raise SuperdeskApiError.badRequestError(message=msg)
+
+    def _check_if_rule_name_is_unique(self, routing_scheme):
         """
         Checks if name of a routing rule is unique or not.
         """
@@ -234,24 +351,52 @@ class RoutingRuleSchemeService(BaseService):
             if len(rules_with_same_name) > 1:
                 raise SuperdeskApiError.badRequestError("Rule Names must be unique within a scheme")
 
-    def __get_scheduled_routing_rules(self, rules, current_datetime=datetime.now()):
+    def _get_scheduled_routing_rules(self, rules, current_dt_utc):
         """
         Iterates rules list and returns the list of rules that are scheduled.
+
+        :param list rules: routing rules to check
+        :param datetime current_dt_utc: the value to take as the current
+            time in UTC
+
+        :return: the rules scheduled to be appplied at `current_dt_utc`
+        :rtype: list
         """
+        # make it a timezone-aware object
+        current_dt_utc = current_dt_utc.replace(tzinfo=pytz.utc)
+        delta_minute = timedelta(minutes=1)
+
         scheduled_rules = []
         for rule in rules:
             is_scheduled = True
             schedule = rule.get('schedule', {})
             if schedule:
-                from_time = current_datetime.replace(hour=int(schedule.get('hour_of_day_from', '0000')[:2]),
-                                                     minute=int(schedule.get('hour_of_day_from', '0000')[-2:]),
-                                                     second=0)
-                to_time = current_datetime.replace(hour=int(schedule.get('hour_of_day_to', '2359')[:2]),
-                                                   minute=int(schedule.get('hour_of_day_to', '2359')[-2:]),
-                                                   second=59)
-                if not ((self.day_of_week[current_datetime.weekday()] in schedule.get('day_of_week', []))
-                        and (from_time < current_datetime < to_time)):
-                    is_scheduled = False
+                # adjust current time to the schedule's timezone
+                tz_name = schedule.get('time_zone')
+                schedule_tz = pytz.timezone(tz_name) if tz_name else pytz.utc
+                now_tz_schedule = current_dt_utc.astimezone(tz=schedule_tz)
+
+                # Create start and end time-of-day limits. If start time is not
+                # defined, the beginning of the day is assumed. If end time
+                # is not defined, the end of the day is assumed (excluding the
+                # midnight, since at that point a new day has already begun).
+                hour_of_day_from = schedule.get('hour_of_day_from')
+                if not hour_of_day_from:
+                    hour_of_day_from = '0000'  # might be both '' or None
+                from_time = set_time(now_tz_schedule, hour_of_day_from)
+
+                hour_of_day_to = schedule.get('hour_of_day_to')
+                if hour_of_day_to:
+                    to_time = set_time(now_tz_schedule, hour_of_day_to)
+                else:
+                    to_time = set_time(now_tz_schedule, '2359') + delta_minute
+
+                # check if the current day of week and time of day both match
+                day_of_week_matches = Weekdays.is_scheduled_day(
+                    now_tz_schedule, schedule.get('day_of_week', []))
+                time_of_day_matches = (from_time <= now_tz_schedule < to_time)
+
+                is_scheduled = (day_of_week_matches and time_of_day_matches)
 
             if is_scheduled:
                 scheduled_rules.append(rule)
@@ -267,11 +412,13 @@ class RoutingRuleSchemeService(BaseService):
         archive_items = []
         for destination in destinations:
             try:
-                item_id = get_resource_service('fetch').fetch([{'_id': ingest_item['_id'],
-                                                                'desk': str(destination.get('desk')),
-                                                                'stage': str(destination.get('stage')),
-                                                                'state': STATE_ROUTED,
-                                                                'macro': destination.get('macro', None)}])[0]
+                item_id = get_resource_service('fetch') \
+                    .fetch([{config.ID_FIELD: ingest_item[config.ID_FIELD],
+                             'desk': str(destination.get('desk')),
+                             'stage': str(destination.get('stage')),
+                             'state': CONTENT_STATE.ROUTED,
+                             'macro': destination.get('macro', None)}])[0]
+
                 archive_items.append(item_id)
             except:
                 logger.exception("Failed to fetch item %s to desk %s" % (ingest_item['guid'], destination))

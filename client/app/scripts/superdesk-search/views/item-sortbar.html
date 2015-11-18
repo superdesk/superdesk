@@ -1,9 +1,9 @@
-<div class="sortbar pull-left">
+<div class="sortbar pull-left" ng-show="canSort()">
 	<span class="lab pull-left" translate>Sort:</span>
 	<div class="dropdown pull-left" dropdown>
-	    <button class="dropdown-toggle" dropdown-toggle>{{ active.label }} <b class="caret"></b>
+	    <button id="order_button" class="dropdown-toggle" dropdown-toggle>{{ active.label }} <b class="caret"></b>
 	    </button>
-	    <ul class="dropdown-menu">
+	    <ul class="dropdown-menu" id="order_selector">
 	        <li ng-repeat="option in sortOptions" ng-class="{active: option === selected}">
 	            <a href="" ng-click="sort(option.field)">{{ option.label }}</a>
 	        </li>

@@ -1,0 +1,6 @@
+<div class="ui-slider-thumb">{{defaultValue}}</div>
+<span class="ui-slider-label left" translate>low</span>
+<span class="ui-slider-label right" translate>high</span>
+<div class="ui-slider-indicator">
+    <span style="width:{{100 / (list.length - 1)}}%" ng-repeat="item in list" ng-show="!$first"></span>
+</div>

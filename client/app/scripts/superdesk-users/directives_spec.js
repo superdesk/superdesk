@@ -5,12 +5,13 @@ define([
 
     var template = [
         '<form name="userForm">',
-        '<input type="text" name="username" sd-user-unique data-unique-field="username" data-exclude="user" ng-model="user.username">',
+        '<input type="text" name="username" ng-model="user.username"',
+            'sd-user-unique data-unique-field="username" data-exclude="user">',
         '<input type="password" name="password" ng-model="user.password">',
         '<input type="password" name="passwordConfirm" ng-model="_confirm"',
         ' sd-password-confirm ng-model="passwordConfirm" data-password="user.password">',
         '</form>'
-    ].join('');
+    ].join(' ');
 
     describe('sdUserUnique Directive', function() {
         var scope;
@@ -119,34 +120,34 @@ define([
             });
         }));
 
-        it('checks username for valid characters', inject(function(users) {
-            expect(users.usernamePattern.test('!')).toBe(false);
-            expect(users.usernamePattern.test('@')).toBe(false);
-            expect(users.usernamePattern.test('#')).toBe(false);
-            expect(users.usernamePattern.test(' ')).toBe(false);
+        it('checks username for valid characters', inject(function(usersService) {
+            expect(usersService.usernamePattern.test('!')).toBe(false);
+            expect(usersService.usernamePattern.test('@')).toBe(false);
+            expect(usersService.usernamePattern.test('#')).toBe(false);
+            expect(usersService.usernamePattern.test(' ')).toBe(false);
 
-            expect(users.usernamePattern.test('.')).toBe(true);
-            expect(users.usernamePattern.test('_')).toBe(true);
-            expect(users.usernamePattern.test('-')).toBe(true);
-            expect(users.usernamePattern.test('\'')).toBe(true);
+            expect(usersService.usernamePattern.test('.')).toBe(true);
+            expect(usersService.usernamePattern.test('_')).toBe(true);
+            expect(usersService.usernamePattern.test('-')).toBe(true);
+            expect(usersService.usernamePattern.test('\'')).toBe(true);
 
-            expect(users.usernamePattern.test('b')).toBe(true);
-            expect(users.usernamePattern.test('B')).toBe(true);
-            expect(users.usernamePattern.test('1')).toBe(true);
+            expect(usersService.usernamePattern.test('b')).toBe(true);
+            expect(usersService.usernamePattern.test('B')).toBe(true);
+            expect(usersService.usernamePattern.test('1')).toBe(true);
         }));
 
-        it('checks phone number for valid characters', inject(function(users) {
-            expect(users.phonePattern.test('z')).toBe(false);
-            expect(users.phonePattern.test('zxcvbnmas')).toBe(false);
+        it('checks phone number for valid characters', inject(function(usersService) {
+            expect(usersService.phonePattern.test('z')).toBe(false);
+            expect(usersService.phonePattern.test('zxcvbnmas')).toBe(false);
 
-            expect(users.phonePattern.test('12345678')).toBe(false);
-            expect(users.phonePattern.test('123456789')).toBe(true);
-            expect(users.phonePattern.test('+1234567890')).toBe(true);
-            expect(users.phonePattern.test('+123456789000')).toBe(true);
+            expect(usersService.phonePattern.test('12345678')).toBe(false);
+            expect(usersService.phonePattern.test('123456789')).toBe(true);
+            expect(usersService.phonePattern.test('+1234567890')).toBe(true);
+            expect(usersService.phonePattern.test('+123456789000')).toBe(true);
 
-            expect(users.phonePattern.test('+')).toBe(false);
-            expect(users.phonePattern.test('$')).toBe(false);
-            expect(users.phonePattern.test('$$$$$$$$$')).toBe(false);
+            expect(usersService.phonePattern.test('+')).toBe(false);
+            expect(usersService.phonePattern.test('$')).toBe(false);
+            expect(usersService.phonePattern.test('$$$$$$$$$')).toBe(false);
         }));
 
     });

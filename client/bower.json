@@ -5,21 +5,21 @@
     "jquery": "2.1.3",
     "lodash": "3.0.1",
     "bootstrap": "3.1.0",
-    "momentjs": "2.9.0",
-    "moment-timezone": "0.3.0",
-    "angular": "1.3.9",
-    "angular-resource": "1.3.9",
-    "angular-route": "1.3.9",
-    "angular-mocks": "1.3.9",
+    "momentjs": "2.10.6",
+    "moment-timezone": "0.4.0",
+    "angular": "1.4.1",
+    "angular-resource": "1.4.1",
+    "angular-route": "1.4.1",
+    "angular-mocks": "1.4.1",
     "angular-gettext": "2.0.1",
-    "angular-bootstrap": "0.12.0",
-    "gridster": "0.2.1",
+    "angular-bootstrap": "0.13.0",
+    "gridster": "0.5.6",
     "d3": "3.5.3",
     "jcrop": "0.9.12",
     "ng-file-upload": "1.6.12",
     "raven-js": "1.1.11",
     "jquery-ui": "1.11.2",
-    "medium-editor": "2.1.3",
+    "medium-editor": "4.9.0",
     "ment.io": "0.9.22"
   },
   "ignore": [
@@ -29,7 +29,7 @@
     "setup.py",
     "client/docs"
   ],
-  "resolutions": {
-    "angular": "1.3.9"
+  "devDependencies": {
+    "rangy": "~1.3.0"
   }
 }

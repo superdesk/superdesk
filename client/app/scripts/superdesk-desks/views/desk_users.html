@@ -12,14 +12,16 @@
 <div class="desk-content">
 
 	<div class="stage tasks" ng-repeat="role in roles" ng-show="total">
-		<div class="stage-header clearfix" >
-			<div class="stage-name pull-left {{role._id}}">{{role.name}}</div>
+		<div class="stage-header clearfix">
+			<div class="stage-name pull-left {{ :: role._id}}">{{ :: role.name}}</div>
 			<span class="label pull-right">{{total}}</span>
 		</div>
 		<div class="stage-content" sd-user-role-items
 			data-role="role._id"
 			data-desk="desk._id"
 			data-total="total"
+			data-online="online_users"
+			data-privilege="privileges.users"
 		></div>
     </div>
 

@@ -6,9 +6,10 @@ module.exports = {
             cwd: '<%= appDir %>',
             dest: '<%= distDir %>',
             src: [
+                'fonts/*',
                 'images/**/*',
                 'styles/css/*.css',
-                'scripts/**/*.{html,css,jpg,jpeg,png,gif,json}',
+                'scripts/**/*.{html,css,jpg,jpeg,png,gif,svg,json}',
                 'scripts/bower_components/requirejs/require.js'
             ]
         }]
@@ -20,7 +21,16 @@ module.exports = {
             cwd: '<%= appDir %>/docs',
             dest: '<%= distDir %>',
             src: [
-                'views/**/*.{html,css,jpg,jpeg,png,gif,json}'
+                'views/**/*.{html,css,jpg,jpeg,png,gif,svg,json}'
+            ]
+        },
+        {
+            expand: true,
+            dot: true,
+            cwd: '<%= appDir %>',
+            dest: '<%= distDir %>',
+            src: [
+                'docs/images/**/*.{jpg,jpeg,png,gif,svg}'
             ]
         }]
     },
@@ -48,6 +58,7 @@ module.exports = {
                 'styles/css/app.css',
                 'scripts/vendor.js',
                 'scripts/superdesk-core.js',
+                'scripts/superdesk-templates.js',
                 'scripts/superdesk.js',
                 'scripts/vendor-docs.js',
                 'scripts/superdesk-docs-core.js',

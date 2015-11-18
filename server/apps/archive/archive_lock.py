@@ -10,19 +10,17 @@
 
 from flask import request
 from superdesk.resource import Resource, build_custom_hateoas
-from .common import get_user, get_auth, item_url
+from superdesk.metadata.utils import item_url
+from .common import get_user, get_auth, CUSTOM_HATEOAS
 from superdesk.services import BaseService
 from apps.common.components.utils import get_component
 from apps.item_lock.components.item_lock import ItemLock
 
 
-custom_hateoas = {'self': {'title': 'Archive', 'href': '/archive/{_id}'}}
-
-
 def _update_returned_document(doc, item):
     doc.clear()
     doc.update(item)
-    build_custom_hateoas(custom_hateoas, doc)
+    build_custom_hateoas(CUSTOM_HATEOAS, doc)
     return [doc['_id']]
 
 
@@ -62,4 +60,9 @@ class ArchiveUnlockService(BaseService):
         auth = get_auth()
         item_id = request.view_args['item_id']
         item = get_component(ItemLock).unlock({'_id': item_id}, user['_id'], auth['_id'], None)
+
+        if item is None:
+            # version 1 item must have been deleted by now
+            return [0]
+
         return _update_returned_document(docs[0], item)

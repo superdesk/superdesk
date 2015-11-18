@@ -1,12 +1,12 @@
 <div class="split-content">
-    
+
     <div class="header">
         <h2 translate>Ingest Rule sets</h2>
         <button class="btn btn-info pull-right" ng-click="edit({})">
             <i class="icon-plus-sign icon-white"></i> <span translate>Add New Ruleset</span>
         </button>
     </div>
-    
+
     <div class="content">
         <ul class="pills-list ruleset-list">
             <li ng-repeat="ruleset in rulesets">
@@ -23,7 +23,7 @@
     </div>
 </div>
 
-<div sd-modal-view data-model="editRuleset" class="ruleset-modal">
+<div sd-modal data-model="editRuleset" class="ruleset-modal modal-strech">
     <div class="modal-header"> <a href="" class="close" ng-click="cancel()"><i class="icon-close-small"></i></a>
         <h3 translate ng-show="editRuleset._id" translate>Edit Rule set</h3>
         <h3 translate ng-hide="editRuleset._id" translate>Add New Rule Set</h3>
@@ -40,12 +40,14 @@
                     <ul sd-sortrules class="rule-list">
                         <li ng-repeat="rule in editRuleset.rules">
                             <div class="order">#{{$index}}</div>
-                            <fieldset class="span-2">
-                                <div class="field">
-                                    <input type="text" placeholder="old" ng-model="rule.old" required>
-                                </div>
-                                <div class="field">
-                                    <input type="text" placeholder="new" ng-model="rule.new">
+                            <fieldset>
+                                <div class="multiple">
+                                    <div class="field">
+                                        <input type="text" placeholder="old" ng-model="rule.old" required>
+                                    </div>
+                                    <div class="field">
+                                        <input type="text" placeholder="new" ng-model="rule.new">
+                                    </div>
                                 </div>
                             </fieldset>
                             <div class="actions">
@@ -56,7 +58,7 @@
                     <p ng-if="!editRuleset.rules" translate>No rules defined in a set.</p>
                 </div>
             </div>
-            
+
         </form>
     </div>
 

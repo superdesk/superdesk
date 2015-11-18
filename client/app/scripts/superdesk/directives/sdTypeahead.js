@@ -17,6 +17,7 @@ define(['angular'], function(angular) {
          * Params:
          * @scope {Object} items - choice list
          * @scope {Object} term - search term
+         * @scope {Boolen} alwaysVisible - list of posible choices always stay visible
          * @scope {Function} search - callback for filtering choice action
          * @scope {Function} select - callback for select item aciton
          *
@@ -32,11 +33,13 @@ define(['angular'], function(angular) {
                     select: '&',
                     items: '=',
                     term: '=',
-                    disabled: '='
+                    alwaysVisible: '=',
+                    disabled: '=',
+                    blur: '&'
                 },
                 controller: ['$scope', function($scope) {
                     $scope.items = [];
-                    $scope.hide = false;
+                    $scope.hide = true;
 
                     this.activate = function(item) {
                         $scope.active = item;
@@ -61,9 +64,11 @@ define(['angular'], function(angular) {
                     };
 
                     this.select = function(item) {
-                        $scope.hide = true;
-                        $scope.focused = true;
-                        $scope.select({item: item});
+                        if (!$scope.hide) {
+                            $scope.hide = true;
+                            $scope.focused = false;
+                            $scope.select({item: item});
+                        }
                     };
 
                     $scope.isVisible = function() {
@@ -86,7 +91,12 @@ define(['angular'], function(angular) {
                     });
 
                     $input.bind('blur', function() {
-                        scope.$apply(function() { scope.focused = false; });
+                        scope.$apply(function() {
+                            scope.focused = false;
+                            if (typeof scope.blur === 'function' && !scope.hide) {
+                                scope.blur({item: scope.active});
+                            }
+                        });
                     });
 
                     $list.bind('mouseover', function() {
@@ -134,10 +144,12 @@ define(['angular'], function(angular) {
                     });
 
                     scope.$watch('isVisible()', function(visible) {
-                        if (visible) {
+                        if (visible || scope.alwaysVisible) {
                             $list.show();
+                            scope.hide = false;
                         } else {
                             $list.hide();
+                            scope.active = null;
                         }
                     });
                 }

@@ -4,7 +4,7 @@ Feature: User Activity
     Scenario: User activity
          When we post to "/users"
             """
-            {"username": "foo", "password": "barbar", "email": "foo@bar.com", "is_active": true}
+            {"username": "foo", "password": "barbar", "email": "foo@bar.com", "is_active": true, "sign_off": "abc"}
             """
 
          Then we get response code 201
@@ -13,10 +13,10 @@ Feature: User Activity
          	"""
          	{"_items": [{"data": {"user": "foo"}, "message": "created user {{user}}"}]}
          	"""
-         	
+
          When we delete "/users/foo"
          Then we get response code 204
-         
+
          When we get "/activity/"
          Then we get existing resource
          	"""
@@ -27,7 +27,7 @@ Feature: User Activity
     Scenario: Image archive activity
         Given empty "archive"
         When we upload a file "bike.jpg" to "archive"
-     	
+
      	When we get "/activity/"
         Then we get existing resource
          	"""
@@ -73,7 +73,7 @@ Feature: User Activity
         Given empty "comments"
         When we post to "/users"
         """
-        {"username": "joe", "display_name": "Joe Black", "email": "joe@black.com", "is_active": true}
+        {"username": "joe", "display_name": "Joe Black", "email": "joe@black.com", "is_active": true, "sign_off": "abc"}
         """
         When we mention user in comment for "/comments"
         """
@@ -132,7 +132,7 @@ Feature: User Activity
         {"_items": [
         		{"item": "some-global-unique-id",
         		 "message": "added new {{ type }} item with empty header/title",
-        		 "data": {"type": "text", "subject": ""}},
+        		 "data": {"type": "text", "subject": "__any_value__"}},
         		{"item": "some-global-unique-id",
         		 "message": "created new version {{ version }} for item {{ type }} about \"{{ subject }}\"",
         		 "data": {"version": 2, "type": "text", "subject": "test"}}]}

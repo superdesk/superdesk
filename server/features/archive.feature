@@ -12,12 +12,20 @@ Feature: News Items Archive
         """
         [{"guid": "tag:example.com,0000:newsml_BRE9A605"}]
         """
-
         When we get "/archive/tag:example.com,0000:newsml_BRE9A605"
         Then we get existing resource
         """
         {"guid": "tag:example.com,0000:newsml_BRE9A605", "state": "draft"}
         """
+
+    @auth
+    Scenario: Don't get published archive item by guid
+        Given "archive"
+        """
+        [{"guid": "tag:example.com,0000:newsml_BRE9A605", "state": "published"}]
+        """
+        When we get "/archive"
+        Then we get list with 0 items
 
     @auth
     Scenario: Update item
@@ -37,12 +45,11 @@ Feature: News Items Archive
         """
 
         Then we get updated response
-            """
-            {"word_count": 2}
-            """
+        """
+        {"word_count": 2, "operation": "update"}
+        """
         And we get version 3
         And we get etag matching "/archive/xyz"
-
         When we get "/archive/xyz?version=all"
         Then we get list with 3 items
 
@@ -78,19 +85,23 @@ Feature: News Items Archive
         {"headline": "TEST 2", "urgency": 2}
         """
 		And we restore version 1
-        Then we get version 3
-        Then we get global content expiry
+        Then we get updated response
+        """
+        {"operation": "restore"}
+        """
+        And we get version 3
+        And we get global content expiry
         And the field "headline" value is "test"
 
 
-    @wip
     @auth
-    Scenario: Upload image into archive
+    @vocabulary
+    Scenario: Upload image into archive and validate metadata set by API
         Given empty "archive"
         When we upload a file "bike.jpg" to "archive"
         Then we get new resource
         """
-        {"guid": "", "firstcreated": "", "versioncreated": "", "state": "draft"}
+        {"guid": "__any_value__", "firstcreated": "__any_value__", "versioncreated": "__any_value__", "state": "draft"}
         """
         And we get "bike.jpg" metadata
         And we get "picture" renditions
@@ -102,16 +113,16 @@ Feature: News Items Archive
         Then we get list with 1 items
         """
         {"_items": [{"headline": "flower", "byline": "foo", "description": "flower desc",
-                     "pubstatus": "Usable", "language": "en", "state": "draft"}]}
+                     "pubstatus": "usable", "language": "en", "state": "draft", "sign_off": "abc"}]}
         """
 
     @auth
-    Scenario: Upload audio file into archive
+    Scenario: Upload audio file into archive and validate metadata set by API
         Given empty "archive"
         When we upload a file "green.ogg" to "archive"
         Then we get new resource
         """
-        {"guid": "", "state": "draft"}
+        {"guid": "__any_value__", "state": "draft"}
         """
         And we get "green.ogg" metadata
         Then original rendition is updated with link to file having mimetype "audio/ogg"
@@ -122,16 +133,16 @@ Feature: News Items Archive
         When we get "/archive"
         Then we get list with 1 items
         """
-        {"_items": [{"headline": "green", "byline": "foo", "description": "green music", "state": "draft"}]}
+        {"_items": [{"headline": "green", "byline": "foo", "description": "green music", "state": "draft", "sign_off": "abc"}]}
         """
 
     @auth
-    Scenario: Upload video file into archive
+    Scenario: Upload video file into archive and validate metadata set by API
         Given empty "archive"
         When we upload a file "this_week_nasa.mp4" to "archive"
         Then we get new resource
         """
-        {"guid": "", "state": "draft"}
+        {"guid": "__any_value__", "state": "draft"}
         """
         And we get "this_week_nasa.mp4" metadata
         Then original rendition is updated with link to file having mimetype "video/mp4"
@@ -142,7 +153,7 @@ Feature: News Items Archive
         When we get "/archive"
         Then we get list with 1 items
         """
-        {"_items": [{"headline": "week @ nasa", "byline": "foo", "description": "nasa video", "state": "draft"}]}
+        {"_items": [{"headline": "week @ nasa", "byline": "foo", "description": "nasa video", "state": "draft", "sign_off": "abc"}]}
         """
 
     @auth
@@ -183,7 +194,7 @@ Feature: News Items Archive
         Then we get response code 405
 
     @auth
-    Scenario: Create new text item
+    Scenario: Create new text item and validate metadata set by API
         Given empty "archive"
         When we post to "/archive"
         """
@@ -191,31 +202,11 @@ Feature: News Items Archive
         """
         Then we get new resource
         """
-        {"_id": "", "guid": "", "type": "text", "original_creator": "", "word_count": 1}
+        {
+        	"_id": "__any_value__", "guid": "__any_value__", "type": "text",
+        	"original_creator": "__any_value__", "word_count": 1, "operation": "create", "sign_off": "abc"
+        }
         """
-
-	@auth
-	Scenario: Update text items
-	    Given the "archive"
-	    """
-        [{"type":"text", "headline": "test1", "_id": "xyz", "original_creator": "abc"}]
-        """
-        When we switch user
-        When we patch given
-        """
-        {"headline": "test2"}
-        """
-        And we patch latest
-        """
-        {"headline": "test3"}
-        """
-        Then we get updated response
-        """
-        {"headline": "test3", "version_creator": "#user._id#"}
-        """
-       	And we get version 3
-       	When we get "/archive/xyz?version=all"
-        Then we get list with 3 items
 
 	@auth
 	Scenario: Update text item with Metadata
@@ -225,28 +216,16 @@ Feature: News Items Archive
         """
         When we patch given
         """
-        {"word_count" : "6", "keywords" : ["Test"], "urgency" : "4", "byline" : "By Line", "language": "en",
-         "dateline" : "Sydney, Aus (Nov 12, 2014) AAP - ", "genre" : [{"name": "Test"}],
-         "anpa-category" :
-            {
-                "qcode" : "A",
-                "name" : "Australian News"
-            },
-         "subject" : [
-            {
-                "qcode" : "11007000",
-                "name" : "human rights"
-            },
-            {
-                "qcode" : "11014000",
-                "name" : "treaty and international organisation-DEPRECATED"
-            }
-         ]}
+        {"word_count" : "6", "keywords" : ["Test"], "urgency" : "4", "byline" : "By Line", "language": "en", "genre" : [{"name": "Test"}],
+         "anpa_category" : [{"qcode" : "A", "name" : "Australian News"}],
+         "subject" : [{"qcode" : "11007000", "name" : "human rights"},
+                      {"qcode" : "11014000", "name" : "treaty and international organisation-DEPRECATED"}
+                     ]
+        }
         """
         Then we get updated response
         """
-        { "headline": "test1", "pubstatus" : "Usable", "byline" : "By Line",
-          "dateline" : "Sydney, Aus (Nov 12, 2014) AAP - ", "genre": [{"name": "Test"}]}
+        { "headline": "test1", "pubstatus" : "usable", "byline" : "By Line", "genre": [{"name": "Test"}]}
         """
         And we get version 2
 
@@ -309,18 +288,8 @@ Feature: News Items Archive
         """
         Then we get response code 200
 
-    @wip
     @auth
-    Scenario: Hide private content
-        Given "archive"
-            """
-            [{"guid": "1"}]
-            """
-        When we get "/archive"
-        Then we get list with 0 items
-
-    @wip
-    @auth
+    @vocabulary
     Scenario: State of an Uploaded Image, submitted to a desk when updated should change to in-progress
         Given empty "archive"
         And "desks"
@@ -330,7 +299,7 @@ Feature: News Items Archive
         When we upload a file "bike.jpg" to "archive"
         Then we get new resource
         """
-        {"guid": "", "firstcreated": "", "versioncreated": "", "state": "draft"}
+        {"guid": "__any_value__", "firstcreated": "__any_value__", "versioncreated": "__any_value__", "state": "draft"}
         """
         When we patch latest
         """
@@ -340,7 +309,7 @@ Feature: News Items Archive
         Then we get list with 1 items
         """
         {"_items": [{"headline": "flower", "byline": "foo", "description": "flower desc",
-                     "pubstatus": "Usable", "language": "en", "state": "draft"}]}
+                     "pubstatus": "usable", "language": "en", "state": "draft"}]}
         """
         When we patch "/archive/#archive._id#"
         """
@@ -371,5 +340,130 @@ Feature: News Items Archive
       And we delete "/desks/#desks._id#"
       Then we get error 412
       """
-      {"_message": "Cannot delete desk as it has article(s)."}
+      {"_message": "Cannot delete desk as it has article(s) or referenced by versions of the article(s)."}
       """
+
+    @auth
+    Scenario: Cannot delete desk when it is still referenced in archive version
+      Given empty "desks"
+      And empty "archive"
+      When we post to "/desks" with "SPORTS_DESK_ID" and success
+      """
+      {"name": "Sports", "desk_type": "authoring"}
+      """
+      And we post to "/archive"
+      """
+      [{"guid": "123", "type": "text", "body_html": "<p>content</p>", "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
+      """
+      Then we get OK response
+      When we post to "/desks"
+      """
+      {"name": "National", "desk_type": "authoring"}
+      """
+      And we post to "/archive/123/move"
+      """
+      [{"task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
+      """
+      Then we get OK response
+      When we delete "/desks/#SPORTS_DESK_ID#"
+      Then we get error 412
+      """
+      {"_message": "Cannot delete desk as it has article(s) or referenced by versions of the article(s)."}
+      """
+
+    @auth
+    Scenario: Sign-off is updated when multiple users modify the article
+        When we post to "/archive"
+        """
+        [{"type": "text", "body_html": "<p>content</p>"}]
+        """
+        Then we get new resource
+        """
+        {"type": "text", "sign_off":"abc"}
+        """
+        When we switch user
+        And we patch latest
+        """
+        {"headline": "test4"}
+        """
+        Then we get updated response
+        """
+        {"headline": "test4", "sign_off": "abc/foo"}
+        """
+        When we patch latest
+        """
+        {"headline": "test3"}
+        """
+        Then we get updated response
+        """
+        {"headline": "test3", "sign_off": "abc/foo"}
+        """
+
+    @auth
+    Scenario: Assign a default values to user created content Items
+        When we post to "/archive"
+        """
+        [{"type": "text", "body_html": "<p>content</p>"}]
+        """
+        Then we get new resource
+        """
+        {"type": "text", "source":"AAP", "priority":6, "urgency":3}
+        """
+
+    @auth
+    Scenario: Default Metadata is copied from user preferences for new articles
+      Given empty "archive"
+      And we have sessions "/sessions"
+      When we get "/preferences/#SESSION_ID#"
+      And we patch latest
+      """
+      {"user_preferences": {
+          "dateline:located": {
+              "located" : {
+                  "dateline" : "city", "city" : "Sydney", "city_code" : "Sydney", "country" : "Australia",
+                  "country_code" : "AU", "state" : "New South Wales", "state_code" : "NSW", "tz" : "Australia/Sydney"
+              }
+          },
+          "article:default:place": {"place" : [{"qcode" : "ACT", "name" : "ACT"}]}
+          }
+      }
+      """
+      And we patch "/users/#CONTEXT_USER_ID#"
+      """
+      {"byline": "by Context User"}
+      """
+      And we post to "/archive"
+      """
+      [{"guid": "123", "headline": "Article with Dateline populated from preferences"}]
+      """
+      And we get "/archive/123"
+      Then we get existing resource
+      """
+      {"byline": "by Context User", "dateline": {"located": {"city": "Sydney"}}, "place" : [{"qcode" : "ACT", "name" : "ACT"}]}
+      """
+
+    @auth
+    Scenario: Sign-off is updated when other user restores version
+        When we post to "/archive"
+        """
+        [{"type": "text", "headline": "test1", "body_html": "<p>content</p>"}]
+        """
+        Then we get new resource
+        """
+        {"type": "text", "sign_off":"abc"}
+        """
+        When we patch latest
+        """
+        {"headline": "test4"}
+        """
+        Then we get updated response
+        """
+        {"headline": "test4", "sign_off": "abc"}
+        """
+        When we switch user
+		And we restore version 1
+        And we get "/archive/#archive._id#"
+        Then we get existing resource
+        """
+        {"headline": "test1", "sign_off": "abc/foo"}
+        """

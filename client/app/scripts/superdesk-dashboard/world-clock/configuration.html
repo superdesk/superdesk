@@ -5,9 +5,9 @@
 
             <tabset>
                 <tab heading="Your clock">
-                    <div class="control-group">
-                        <label class="control-label">{{'Clock type'|translate}}</label>
-                        <div class="controls">
+                    <div class="field">
+                        <label >{{'Clock type'|translate}}</label>
+                        <div class="control">
                             <div class="btn-group">
                                 <button type="button" class="btn btn-default" ng-class="{active: !configuration.digital}" ng-click="configuration.digital=false">Analog</button>
                                 <button type="button" class="btn btn-default" ng-class="{active: configuration.digital}" ng-click="configuration.digital=true">Digital</button>
@@ -16,9 +16,9 @@
                     </div>
 
 
-                    <div class="control-group">
-                        <label class="control-label">{{'Your clock'|translate}}</label>
-                        <div class="controls">
+                    <div class="field">
+                        <label>{{'Your clock'|translate}}</label>
+                        <div class="control">
                             <ul class="list-group">
                                 <li class="list-group-item" ng-repeat="zone in configuration.zones">
                                     <a href="">{{ zone.replace('_', ' ') }}</a>
@@ -30,9 +30,9 @@
                     </div>
                 </tab>
                 <tab heading="Available clocks">
-                    <div class="control-group">
-                        <label class="control-label">{{'Available clock'|translate}}</label>
-                        <div class="controls">
+                    <div class="field">
+                        <label>{{'Available clock'|translate}}</label>
+                        <div class="control">
                             <div class="input-append" style="margin-bottom:10px;">
                                 <input type="text" class="input-large" ng-model="search" placeholder="{{ 'Search for clock'|translate }}">
                                 <button class="btn btn-default" ng-disabled="!search" ng-click="search=''" translate>Clear</button>
@@ -47,16 +47,16 @@
                     </div>
                 </tab>
             </tabset>
-            
-            
-            
+
+
+
 
         </fieldset>
-        
+
     </form>
 
-    
 
 
-    
+
+
 </div>

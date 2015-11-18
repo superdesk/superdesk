@@ -6,7 +6,8 @@ define(['./beta'], function(BetaService) {
         beforeEach(module('superdesk.notify'));
         beforeEach(module(BetaService.name));
 
-        it('can filter out sd-beta from html when beta is off', inject(function(betaService, $rootScope, $http, $httpBackend) {
+        it('can filter out sd-beta from html when beta is off',
+        inject(function(betaService, $rootScope, $http, $httpBackend) {
             $rootScope.beta = false;
             betaService.isBeta().then(function(_beta) {
                 expect(_beta).toBe(false);
@@ -28,7 +29,8 @@ define(['./beta'], function(BetaService) {
             expect(data).not.toContain('beta');
         }));
 
-        it('keeps it there when beta is on', inject(function(betaService, preferencesService, $rootScope, $http, $httpBackend, $q) {
+        it('keeps it there when beta is on',
+        inject(function(betaService, preferencesService, $rootScope, $http, $httpBackend, $q) {
             $rootScope.beta = true;
 
             spyOn(preferencesService, 'get').and.returnValue($q.when({enabled: true}));

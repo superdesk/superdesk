@@ -2,6 +2,7 @@
     <div class="search-container">
         <div class="search-box">
             <input type="text" placeholder="{{ 'Search'|translate }}" ng-model="query">
+            <div ng-show="highlight" align="right" left sd-search-highlights data-highlight="highlight"></div>
         </div>
 
         <div class="filter-list">
@@ -26,6 +27,7 @@
                         <span ng-if="!itemInPackage(pitem)" ng-click="addToSelected(pitem)" class="select" sd-check ng-model="pitem.multi"></span>
                     </div>
 
+                    <div class="state-label state-{{pitem.state}}">{{pitem.state}}</div>
                     <p><span class="keyword" ng-if="pitem.slugline">{{ pitem.slugline }}</span>{{pitem.headline || pitem.type}}</p>
                     <ul class="item-functions" ng-if="!itemInPackage(pitem) && !pitem.multi">  
                     <li class="dropdown group-select" dropdown>

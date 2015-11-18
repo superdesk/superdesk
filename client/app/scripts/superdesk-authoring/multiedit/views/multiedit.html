@@ -1,4 +1,7 @@
-<div class="subnav"></div>
+<div class="subnav">
+    <h3 class="page-nav-title" translate>Multiedit</h3>
+    <button class="close-multiedit" ng-click="closeMulti()"><i class="icon-close-small"></i></button>
+</div>
 
 <div class="multiedit-screen main-section">
     <div class="boards-list">
@@ -18,12 +21,10 @@
     		<div sd-multiedit-article data-article="board.article" data-focus="$first" class="board-article" ng-if="board.article"></div>
     	</div>
     </div>
-    <div class="boards-create" sd-multiedit-float-menu>
+    <div class="boards-create" ng-if="boards.length > 0" sd-multiedit-float-menu>
     	<i class="icon-plus"></i>
         <div class="navbtn dropdown multiedit-float">
             <ul class="dropdown-menu multiedit-menu" id="multiedit-float" sd-multiedit-inner-dropdown data-board="{{boards.length}}"></ul>
         </div>
     </div>
 </div>
-
-<div sd-workqueue></div>

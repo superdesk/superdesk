@@ -1,0 +1,95 @@
+.search-list {
+    position: relative;
+    width: 100%;
+    border: 1px solid #d0d0d0;
+    
+    .search-list-button {
+        width: 98%;
+        padding: 4px;
+        background-color: @white;
+        border: 0;
+        border-radius: 2px !important;
+        text-align: left;
+        .caret {
+            position: absolute;
+            top: 12px;
+            right: 10px;
+        }
+    }
+
+    .search-list-content {
+        position: absolute;
+        z-index: @zindexDropdown;
+        top: 100%;
+        width: 100%;
+        margin: 0px;
+        padding: 4px;
+        background-color: @white;
+        .box-shadow(0 3px 5px rgba(0,0,0,.2));
+        box-sizing: border-box;
+        border: 1px solid #dcdcdc;
+
+        .close-list {
+            position: absolute;
+            right: 5px;
+            top: 5px;
+            border: 0;
+            background: none;
+            border-radius: 2px;
+            line-height: 15px;
+            height: 15px;
+        }
+
+        .selected-list {
+            margin-right: 2px;
+            border-bottom: 1px solid #d0d0d0;
+            width:98%;
+            box-sizing: border-box;
+            .selected-helper {
+                margin-left: 40px;
+            }
+        }
+
+        .unselected-list {
+            input {
+                margin-left: 20px;
+                width: 200px;
+                left: 0;
+                right: 0;
+                top: 0;
+                height: 28px;
+                border: 1px solid #dcdcdc !important;
+                box-sizing: border-box;
+            }
+            .pagination {
+                button {
+                    border: 0;
+                    color: @black;
+                    left: 0;
+                    right: 0;
+                    top: 0;
+                    border-radius: 2px;
+                    line-height: 15px;
+                    height: 15px;
+                }
+            }
+            .page-info {
+                margin-right: 2px;
+                border-bottom: 1px solid #d0d0d0;
+                box-sizing: border-box;
+                width:98%;
+            }
+        }
+        .select-button {
+            padding: 4px;
+            margin-left: 10px;
+            background-color: @white;
+            border: 0;
+            text-align: left;
+            width:97%;
+            &:hover {
+                background-color: #f0f0f0;
+            }
+        }
+    }
+}

@@ -1,6 +1,10 @@
 describe('multiedit', function() {
     'use strict';
 
+    beforeEach(function() {
+        localStorage.clear();
+    });
+
     beforeEach(module('superdesk.authoring.multiedit'));
 
     it('can open an item', inject(function(multiEdit) {

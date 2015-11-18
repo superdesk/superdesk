@@ -1,0 +1,30 @@
+<div class="modal-header">
+    <h3 class="pull-left">{{ activity.label|translate }}</h3>
+    <button type="button" class="close" ng-click="close()"><i class="icon-close-small"></i></button>
+</div>
+
+<div class="modal-body">
+    <section class="main">
+        <div id="dynBoxId2" class="preview">
+          <div class="original">
+            <div class="crop-area image">
+                <ul> 
+                    <li ng-repeat="cropsize in data.cropsizes track by cropsize.name">
+                    <label class="field-label" translate>ASPECT RATIO: {{cropsize.name.replace('-', '/')}}</label>
+                    <label class="cords-label">{{preview[cropsize.name].cords}}</label>
+                    <div sd-image-crop data-show-Min-Size-Error="true"
+                        data-src="data.renditions.original.href" data-cords="preview[cropsize.name].cords" data-box-width="800" 
+                        data-box-height="600" data-aspect-ratio="cropsize.aspectRatio" 
+                        data-minimum-size="[cropsize.width, cropsize.height]" data-crop-select="data.renditions[cropsize.name]">
+                    </div>
+                    <br />
+                    </li>
+                </ul>
+            </div>
+          </div>
+        </div>
+    </section>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-medium btn-info" ng-click="done()" ng-disabled="!preview || !preview.progress || !data.isDirty" translate>Save</button>
+</div>

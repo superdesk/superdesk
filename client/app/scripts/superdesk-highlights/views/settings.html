@@ -1,0 +1,30 @@
+<div sd-settings-view>
+
+	<div class="split-content" sd-highlights-config>
+
+		<div class="header">
+			<h2 translate>Highlights configurations</h2>
+			<button class="btn btn-info pull-right" ng-click="edit({})">
+		        <i class="icon-plus-sign icon-white"></i> {{ 'Create configuration' | translate }}
+		    </button>
+		</div>
+
+	    <div class="content desk-settings">
+	    	<div sd-shadow>
+	    		<ul class="pills-list">
+					<li ng-repeat="config in configurations._items">
+
+						<h6 class="pull-left">{{ config.name }}</h6>
+
+						<div class="actions">
+							<button ng-click="edit(config)" title="{{:: 'Edit configuration' | translate }}"><i class="icon-pencil"></i></button>
+							<button ng-click="remove(config)" title="{{:: 'Remove configuration' | translate }}"><i class="icon-trash"></i></button>
+						</div>
+	                </li>
+				</ul>
+			</div>
+	    </div>
+
+    	<div sd-highlights-config-modal ></div>
+	</div>
+</div>

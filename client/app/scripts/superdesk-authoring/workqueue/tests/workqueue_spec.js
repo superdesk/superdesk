@@ -2,14 +2,27 @@
 'use strict';
 
 describe('workqueue', function() {
+    var USER_ID = 'u1';
 
+    angular.module('mock.route', ['ngRoute'])
+        .config(function($routeProvider) {
+            $routeProvider.when('/mock', {
+                template: ''
+            });
+        });
+
+    beforeEach(module('mock.route'));
     beforeEach(module('superdesk.authoring.workqueue'));
+    beforeEach(module('templates'));
+
+    beforeEach(inject(function(session, $q) {
+        spyOn(session, 'getIdentity').and.returnValue($q.when({_id: USER_ID}));
+    }));
 
     it('loads locked items of current user', inject(function(workqueue, api, session, $q, $rootScope) {
-        var items, USER_ID = 'u1';
+        var items;
 
         spyOn(api, 'query').and.returnValue($q.when({_items: [{}]}));
-        spyOn(session, 'getIdentity').and.returnValue($q.when({_id: USER_ID}));
 
         workqueue.fetch().then(function() {
             items = workqueue.items;
@@ -33,5 +46,18 @@ describe('workqueue', function() {
 
         expect(api.find).toHaveBeenCalledWith('archive', '1');
         expect(workqueue.items[0]._etag).toBe('xy');
+    }));
+
+    it('can get active item from url', inject(
+    function(api, $location, $controller, $q, $rootScope) {
+        spyOn(api, 'query').and.returnValue($q.when({_items: [{_id: 'foo'}]}));
+        $location.path('/mock');
+        $location.search('item', 'foo');
+        $rootScope.$digest();
+
+        var scope = $rootScope.$new();
+        $controller('Workqueue', {$scope: scope});
+        $rootScope.$digest();
+        expect(scope.active._id).toBe('foo');
     }));
 });

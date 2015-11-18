@@ -2,11 +2,11 @@
 	<div class="quick-actions pull-left">
 		<button ng-click="openDashboard()" title="{{ :: 'All opened items' | translate }}"><i class="icon-th-large icon-white"></i></button>
 	</div>
-    <ul ng-show="workqueue.items.length" class="list" ng-class="{'full-width': !multiEdit.items.length}">
+    <ul ng-if="workqueue.items.length" class="list" ng-class="{'full-width': !multiEdit.items.length}">
         <li ng-repeat="article in workqueue.items track by article._id " ng-class="{active: article === active}" style="width:{{ 100 / workqueue.items.length }}%">
-            <a class="title" ng-href="{{ article.type === 'composite' ? $root.link('edit.package', article) : $root.link('edit.text', article) }}">
+            <a class="title" ng-click="edit(article, $event)" ng-href="{{ :: link(article) }}">
                 <span ng-show="article.headline">{{ article.headline }}</span>
-                <span ng-show="!article.headline">{{ :: 'Untitled' | translate }}</span>
+                <span ng-show="!article.headline" translate>Untitled</span>
             </a>
 
             <button class="close" ng-click="closeItem(article)"><i class="icon-close-small icon-white"></i></button>

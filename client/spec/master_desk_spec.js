@@ -1,116 +1,120 @@
 
 'use strict';
-var openUrl = require('./helpers/utils').open;
-
-function MasterDesks() {
-    this.switchToTab = function(name) {
-        element(by.id(name)).click();
-    };
-
-    this.getDesk = function(desk) {
-    	return element.all(by.repeater('desk in desks._items')).get(desk);
-    };
-
-    this.getStage = function(desk, stage) {
-    	return this.getDesk(desk).all(by.repeater('stage in deskStages[desk._id]')).get(stage);
-    };
-
-    this.getItem = function(desk, stage, item) {
-    	return this.getStage(desk, stage).all(by.repeater('item in items')).get(item);
-    };
-
-    this.getStatus = function(desk, status) {
-    	return this.getDesk(desk).all(by.repeater('status in statuses')).get(status);
-    };
-
-    this.getTask = function(desk, status, task) {
-    	return this.getStatus(desk, status).all(by.repeater('item in items')).get(task);
-    };
-
-    this.getRole = function(desk, role) {
-    	return this.getDesk(desk).all(by.repeater('role in roles')).get(role);
-    };
-
-    this.getUser = function(desk, role, user) {
-    	return this.getRole(desk, role).all(by.repeater('item in items')).get(user);
-    };
-
-    this.goToDesk = function(desk) {
-    	this.getDesk(desk).element(by.className('icon-external')).click();
-    };
-
-    this.editDesk = function(desk) {
-    	this.getDesk(desk).element(by.className('icon-dots')).click();
-    	this.getDesk(desk).element(by.className('icon-pencil')).click();
-    };
-}
-
-var masterDesks = new MasterDesks();
+var openUrl = require('./helpers/utils').open,
+    masterDesks = require('./helpers/master_desks'),
+    authoring = require('./helpers/authoring');
 
 describe('Master Desk', function() {
-	beforeEach(function(done) {openUrl('/#/desks/').then(done);});
+    beforeEach(function(done) {
+        openUrl('/#/desks/').then(done);
+    });
+
+    function itemHeadline(x, y, z) {
+        return masterDesks.getItem(x, y, z).element(by.css('.headline')).getText();
+    }
 
     it('show content view', function() {
-    	masterDesks.switchToTab('content');
-    	expect(masterDesks.getItem(0, 1, 0).element(by.tagName('span')).getText()).toContain('ITEM3 SLUGLINE');
-    	expect(masterDesks.getItem(0, 3, 0).element(by.tagName('span')).getText()).toContain('ITEM4 SLUGLINE');
-    	expect(masterDesks.getItem(1, 1, 0).element(by.tagName('span')).getText()).toContain('ITEM5 SLUGLINE');
-    	expect(masterDesks.getItem(1, 2, 0).element(by.tagName('span')).getText()).toContain('ITEM6 SLUGLINE');
+        masterDesks.switchToTab('content');
+        expect(itemHeadline(1, 2, 0)).toBe('item3');
+        expect(itemHeadline(1, 4, 0)).toBe('item4');
+        expect(itemHeadline(0, 2, 0)).toBe('item5');
+        expect(itemHeadline(0, 3, 2)).toBe('item6');
+    });
+
+    it('show content view - preview item', function() {
+        masterDesks.switchToTab('content');
+        masterDesks.previewItem(0, 2, 0);
+        expect(masterDesks.previewTitle.getText()).toBe('item5');
+    });
+
+    it('show content view - edit item', function() {
+        masterDesks.switchToTab('content');
+        masterDesks.editItem(0, 2, 0);
+        authoring.writeText('some text');
+        authoring.save();
+        authoring.sendToButton.click();
+        expect(authoring.publish_button.isDisplayed()).toBe(true);
     });
 
     it('content view - show desk', function() {
-    	masterDesks.switchToTab('content');
-    	masterDesks.goToDesk(0);
-    	expect(browser.getCurrentUrl()).toContain('#/workspace');
+        masterDesks.switchToTab('content');
+        masterDesks.goToDesk(0);
+        expect(browser.getCurrentUrl()).toContain('#/workspace');
     });
 
     it('content view - edit desk', function() {
-    	masterDesks.switchToTab('content');
-    	masterDesks.editDesk(0);
-    	browser.sleep(200);
-    	expect(element(by.className('modal-content')).isDisplayed()).toBe(true);
+        masterDesks.switchToTab('content');
+        masterDesks.editDesk(0);
+        browser.sleep(200);
+        expect(element(by.className('modal-content')).isDisplayed()).toBe(true);
     });
 
     it('show tasks view', function() {
-    	masterDesks.switchToTab('tasks');
-    	expect(masterDesks.getTask(0, 0, 0).element(by.tagName('div')).getText()).toContain('item3 slugline');
-    	expect(masterDesks.getTask(0, 2, 0).element(by.tagName('div')).getText()).toContain('item4 slugline');
-    	expect(masterDesks.getTask(1, 0, 0).element(by.tagName('div')).getText()).toContain('item5 slugline');
-    	expect(masterDesks.getTask(1, 1, 0).element(by.tagName('div')).getText()).toContain('item6 slugline');
+        masterDesks.switchToTab('tasks');
+        expect(masterDesks.getTask(1, 0, 0).element(by.tagName('div')).getText()).toContain('item3 slugline');
+        expect(masterDesks.getTask(1, 2, 0).element(by.tagName('div')).getText()).toContain('item4 slugline');
+        expect(masterDesks.getTask(0, 0, 0).element(by.tagName('div')).getText()).toContain('item5 slugline');
+        expect(masterDesks.getTask(0, 1, 2).element(by.tagName('div')).getText()).toContain('item6 slugline');
     });
 
     it('tasks view - show desk', function() {
-    	masterDesks.switchToTab('tasks');
-    	masterDesks.goToDesk(0);
-    	expect(browser.getCurrentUrl()).toContain('#/workspace');
+        masterDesks.switchToTab('tasks');
+        masterDesks.goToDesk(0);
+        expect(browser.getCurrentUrl()).toContain('#/workspace');
     });
 
     it('tasks view - edit desk', function() {
-    	masterDesks.switchToTab('tasks');
-    	masterDesks.editDesk(0);
-    	browser.sleep(200);
-    	expect(element(by.className('modal-content')).isDisplayed()).toBe(true);
+        masterDesks.switchToTab('tasks');
+        masterDesks.editDesk(0);
+        browser.sleep(200);
+        expect(element(by.className('modal-content')).isDisplayed()).toBe(true);
     });
 
-    it('show user role view', function() {
-    	masterDesks.switchToTab('users');
-    	expect(masterDesks.getUser(0, 0, 0).element(by.tagName('div')).getText()).toContain('first name last name');
-    	expect(masterDesks.getUser(0, 1, 0).element(by.tagName('div')).getText()).toContain('first name2 last name2');
-    	expect(masterDesks.getUser(0, 1, 1).element(by.tagName('div')).getText()).toContain('first name3 last name3');
-    	expect(masterDesks.getUser(0, 2, 0).element(by.tagName('div')).getText()).toContain('first name1 last name1');
-    	expect(masterDesks.getUser(1, 2, 0).element(by.tagName('div')).getText()).toContain('first name1 last name1');
+    it('show user role view all users', function() {
+        masterDesks.switchToTab('users');
+        expect(masterDesks.getUser(1, 1, 0).element(by.className('text')).getText())
+            .toContain('first name last name');
+        expect(masterDesks.getUser(1, 2, 0).element(by.className('text')).getText())
+            .toContain('first name1 last name1');
+        expect(masterDesks.getUser(1, 3, 0).element(by.className('text')).getText())
+            .toContain('first name2 last name2');
+        expect(masterDesks.getUser(1, 3, 1).element(by.className('text')).getText())
+            .toContain('first name3 last name3');
+        expect(masterDesks.getUser(0, 2, 0).element(by.className('text')).getText())
+            .toContain('first name1 last name1');
+    });
+
+    it('show user role view online users', function() {
+        masterDesks.switchToTab('users');
+        masterDesks.toggleOnlineUsers();
+        expect(masterDesks.getUser(0, 1, 0).element(by.className('text')).getText())
+            .toContain('first name last name');
+        expect(masterDesks.getUser(1, 1, 0).element(by.className('text')).getText())
+            .toContain('first name last name');
+        expect(masterDesks.getUsersCount(0, 0)).toBe(0);
+        expect(masterDesks.getUsersCount(0, 1)).toBe(1);
+        expect(masterDesks.getUsersCount(0, 2)).toBe(0);
+        expect(masterDesks.getUsersCount(1, 0)).toBe(0);
+        expect(masterDesks.getUsersCount(1, 1)).toBe(1);
     });
 
     it('user role view - show desk', function() {
-    	masterDesks.switchToTab('users');
-    	masterDesks.goToDesk(0);
-    	expect(browser.getCurrentUrl()).toContain('#/workspace');
+        masterDesks.switchToTab('users');
+        masterDesks.goToDesk(0);
+        expect(browser.getCurrentUrl()).toContain('#/workspace');
     });
 
     it('user role view - edit desk', function() {
-    	masterDesks.switchToTab('users');
-    	masterDesks.editDesk(0);
-    	browser.sleep(200);
-    	expect(element(by.className('modal-content')).isDisplayed()).toBe(true);
+        masterDesks.switchToTab('users');
+        masterDesks.editDesk(0);
+        browser.sleep(200);
+        expect(element(by.className('modal-content')).isDisplayed()).toBe(true);
+    });
+
+    it('user role view - edit user', function() {
+        masterDesks.switchToTab('users');
+        masterDesks.editUser(0, 1, 0);
+        browser.sleep(200);
+        expect(element(by.className('modal-content')).isDisplayed()).toBe(true);
     });
 });

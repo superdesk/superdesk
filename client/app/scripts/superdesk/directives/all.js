@@ -1,25 +1,24 @@
 define([
     'require',
-    './sdModal',
     './sdAutofocus',
     './sdDebounceThrottle',
     './sdSort',
     './sdCheck',
     './sdWithParams',
-    './sdModal',
     './sdConfirm',
     './sdSelect',
     './sdPermissions',
     './sdUserAvatar',
     './sdDragDrop',
-    './sdTypeahead'
+    './sdTypeahead',
+    './sdSlider',
+    './sdSearchList'
 ], function(require) {
     'use strict';
 
     return [
         require('./sdAutofocus').name,
         require('./sdDebounceThrottle').name,
-        require('./sdModal').name,
         require('./sdSort').name,
         require('./sdWithParams').name,
         require('./sdCheck').name,
@@ -28,6 +27,8 @@ define([
         require('./sdPermissions').name,
         require('./sdUserAvatar').name,
         require('./sdDragDrop').name,
-        require('./sdTypeahead').name
+        require('./sdTypeahead').name,
+        require('./sdSlider').name,
+        require('./sdSearchList').name
     ];
 });

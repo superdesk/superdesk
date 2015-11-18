@@ -8,11 +8,44 @@ define([
 ], function(require, angular, _, d3, moment) {
     'use strict';
 
-    angular.module('superdesk.dashboard.world-clock', ['superdesk.dashboard'])
-        .factory('tzdata', ['$resource', function($resource) {
-            var filename = require.toUrl('./timezones-all.json');
-            return $resource(filename);
+    angular.module('superdesk.dashboard.world-clock', [
+        'superdesk.dashboard', 'ngResource'
+    ])
+        /**
+         * @memberof superdesk.dashboard.world-clock
+         * @ngdoc service
+         * @name tzdata
+         * @description
+         *   A service that automatically fetches the time zone data from the
+         *   server upon instantiaton and stores it internally for future use,
+         *   avoiding the need to fetch it again every time when needed.
+         */
+        .factory('tzdata', ['$resource', function ($resource) {
+            var filename = require.toUrl('./timezones-all.json'),
+                tzResource = $resource(filename);
+
+            /**
+             * Returns a sorted list of all time zone names. If time zone data
+             * has not yet been fetched from the server, an empty list is
+             * returned.
+             * To determine whether or not the data has been fetched yet, the
+             * $promise property should be examined.
+             *
+             * @method getTzNames
+             * @return {Array} a list of time zone names
+             */
+            tzResource.prototype.getTzNames = function () {
+                return _.union(
+                    _.keys(this.zones),
+                    _.keys(this.links)
+                ).sort();
+            };
+
+            // return an array that will contain the fetched data when
+            // it arrives from the server
+            return tzResource.get();
         }])
+
         .directive('sdWorldclock', [function() {
             return {
                 templateUrl: require.toUrl('./worldClock.html'),
@@ -21,13 +54,21 @@ define([
                 controller: 'WorldClockController'
             };
         }])
-        .controller('WorldClockConfigController', ['$scope', '$resource', 'notify', 'tzdata',
-        function ($scope, $resource, notify, tzdata) {
-            tzdata.get(function(data) {
-                $scope.availableZones = _.union(
-                    _.keys(data.zones),
-                    _.keys(data.links)
-                );
+
+        /**
+         * @memberof superdesk.dashboard.world-clock
+         * @ngdoc controller
+         * @name WorldClockConfigController
+         * @description
+         *   Controller for the world clock widget configuration modal.
+         */
+        .controller('WorldClockConfigController', ['$scope', 'notify', 'tzdata',
+        function ($scope, notify, tzdata) {
+
+            $scope.availableZones = [];
+
+            tzdata.$promise.then(function () {
+                $scope.availableZones = tzdata.getTzNames();
             });
 
             $scope.notify = function(action, zone) {
@@ -46,6 +87,16 @@ define([
 
             $scope.configuration.zones = $scope.configuration.zones || [];
         }])
+
+        /**
+         * @memberof superdesk.dashboard.world-clock
+         * @ngdoc controller
+         * @name WorldClockController
+         * @description
+         *   Controller for the sdWorldclock directive - the one that creates
+         *   a dashboard widget for displaying the current time in different
+         *   time zones around the world.
+         */
         .controller('WorldClockController', ['$scope', '$interval', 'tzdata',
         function ($scope, $interval, tzdata) {
 
@@ -56,8 +107,14 @@ define([
                 $scope.$digest();
             }
 
-            tzdata.get(function(data) {
-                moment.tz.add(data);
+            // XXX: a hack-ish workaround to expose the object loaded via
+            // RequireJS to the testing code which does not use the latter
+            this._moment = moment;
+
+            tzdata.$promise.then(function () {
+                moment.tz.add(
+                    _.pick(tzdata, ['zones', 'links'])
+                );
             });
 
             interval = $interval(updateUTC, INTERVAL_DELAY, 0, false);
@@ -182,7 +239,7 @@ define([
                 max_sizey: 1,
                 sizex: 1,
                 sizey: 1,
-                thumbnail: require.toUrl('./thumbnail.png'),
+                thumbnail: require.toUrl('./thumbnail.svg'),
                 template: require.toUrl('./widget-worldclock.html'),
                 configurationTemplate: require.toUrl('./configuration.html'),
                 configuration: {zones: ['Europe/London', 'Asia/Tokyo', 'Europe/Moscow']},

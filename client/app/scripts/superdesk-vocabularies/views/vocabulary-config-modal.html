@@ -1,0 +1,39 @@
+<form name="editForm">
+    <div sd-modal data-model="vocabulary" class="add-vocabulary-popup">
+        <div class="modal-header">
+            <a href="" class="close" ng-click="cancel()"><i class="icon-close-small"></i></a>
+
+            <h3 translate>Edit Vocabulary: {{ :: vocabulary.display_name }}</h3>
+        </div>
+
+        <div class="modal-body">
+            <ng-form name="vocabularyForm" class="vocabularyForm">
+
+                <fieldset>
+                    <div ng-repeat="(key, value) in model" ng-if="key !== 'is_active'" class="field vocabularyField">
+                        <label translate>{{ :: key }}</label>
+                    </div>
+
+                    <div ng-repeat="item in vocabulary.items track by $index">
+                        <div ng-repeat="(key, value) in model" ng-if="key !== 'is_active'" class="field vocabularyField">
+                            <input type="text" ng-model="item[key]" ng-disabled="!item.is_active">
+                        </div>
+                        <span class="pull-right vocabularyStatus" sd-switch ng-model="item.is_active" tooltip="{{ :: 'Enable / Disable' | translate }}" tooltip-placement="left"></span>
+                    </div>
+
+                    <li class="divider"></li>
+                    <button id="add-new-btn" class="btn pull-right" ng-click="addItem()" translate>Add</button>
+                </fieldset>
+
+            </ng-form>
+        </div>
+
+        <div class="modal-footer">
+            <button id="save-edit-btn" type="submit" class="btn btn-info pull-right" ng-click="save()"
+                    ng-disabled="editForm.$invalid" translate>Save
+            </button>
+            <button id="cancel-edit-btn" type="button" class="btn pull-right" ng-click="cancel()" translate>Cancel
+            </button>
+        </div>
+    </div>
+</form>

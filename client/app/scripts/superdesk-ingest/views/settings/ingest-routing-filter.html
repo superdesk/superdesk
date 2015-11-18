@@ -1,113 +1,43 @@
-<div class="content rules push-down">
-    <div class="row clearfix">
-        <div class="small-col pull-left">
-            <div class="field">
-                <label translate>Headline</label>
-                <input type="text" class="fullwidth-input" ng-model="rule.filter.headline">
-            </div>
-        </div>
-        <div class="small-col pull-left">
-            <div class="field">
-                <label translate>Keyword</label>
-                <input type="text" class="fullwidth-input" ng-model="rule.filter.slugline">
-            </div>
-        </div>
-        <div class="small-col pull-left">
-            <div class="field">
-                <label translate>Body</label>
-                <input type="text" class="fullwidth-input" ng-model="rule.filter.body">
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="field">
-            <label>
-                <span translate>Subjects</span>
-                <a class="btn btn-info add" ng-click="showNewSubject = true;">
-                    <i class="icon-plus-small icon-white"></i>
-                </a>
-            </label>
-            <ul class="pills-list ruleset-list clearfix">
-                <li class="pill-small pull-left" ng-repeat="subject in rule.filter.subject">
-                    <div class="name right-pad">{{subject.name}}</div>
-                    <div class="actions">
-                        <button ng-click="removeSubject(subject)" title="{{:: 'Remove subject' | translate }}"><i class="icon-trash"></i></button>
-                    </div>
+<div class="filter-tab">
+
+    <div class="field">
+        <label>
+            <span translate>Content Filter</span>
+            <a class="btn btn-info add"
+               ng-click="showNewFilter = true;"
+               ng-show="!selectedFilter">
+                <i class="icon-plus-small icon-white"></i>
+            </a>
+        </label>
+
+        <ul class="pills-list clearfix" ng-if="selectedFilter">
+            <li class="pull-left">
+                <div class="name right-pad">{{selectedFilter.name}}</div>
+                <div class="actions">
+                    <button
+                        ng-click="clearSelectedFilter()"
+                        title="{{:: 'Remove filter' | translate }}"
+                        ><i class="icon-trash"></i></button>
+                </div>
+            </li>
+        </ul>
+
+        <div sd-typeahead
+             ng-show="showNewFilter"
+             items="matchingFilters" term="filterSearchTerm"
+             search="searchFilters(term)"
+             select="selectFilter(item);showNewFilter = false">
+            <ul>
+                <li typeahead-item="filter"
+                ng-repeat="filter in matchingFilters track by filter._id">
+                    {{::filter.name}}
                 </li>
             </ul>
-            <div ng-show="showNewSubject" sd-typeahead items="subjects" term="subjectTerm" search="searchSubjects(term)" select="selectSubject(item);showNewSubject = false">
-                <ul>
-                    <li typeahead-item="s" ng-repeat="s in filteredSubjects">
-                        <span ng-show="s.path">{{s.path}} </span>{{s.name}}
-                    </li>
-                </ul>
-            </div>
-            <button ng-show="showNewSubject" class="btn" ng-click="showNewSubject = false" translate>Cancel</button>
         </div>
+
+        <button
+            ng-show="showNewFilter" class="btn"
+            ng-click="showNewFilter = false" translate>Cancel</button>
     </div>
-    <div class="row">
-        <div class="field">
-            <label>
-                <span translate>Categories</span>
-                <a class="btn btn-info add" ng-click="showNewCategory = true;">
-                    <i class="icon-plus-small icon-white"></i>
-                </a>
-            </label>
-            <ul class="pills-list ruleset-list clearfix">
-                <li class="pill-small pull-left" ng-repeat="category in rule.filter.category">
-                    <div class="name right-pad">{{category.name}}</div>
-                    <div class="actions">
-                        <button ng-click="removeCategory(category)" title="{{:: 'Remove category' | translate }}"><i class="icon-trash"></i></button>
-                    </div>
-                </li>
-            </ul>
-            <div ng-show="showNewCategory" sd-typeahead items="categories" term="categoryTerm" search="searchCategories(term)" select="selectCategory(item);showNewCategory = false">
-                <ul>
-                    <li typeahead-item="c" ng-repeat="c in filteredCategories">
-                        <span ng-show="c.path">{{c.path}} </span>{{c.name}}
-                    </li>
-                </ul>
-            </div>
-            <button ng-show="showNewCategory" class="btn" ng-click="showNewCategory = false" translate>Cancel</button>
-        </div>
-    </div>
-    <div class="row">
-        <div class="field">
-            <label>
-                <span translate>Genres</span>
-                <a class="btn btn-info add" ng-click="showNewGenre = true;">
-                    <i class="icon-plus-small icon-white"></i>
-                </a>
-            </label>
-            <ul class="pills-list ruleset-list clearfix">
-                <li class="pill-small pull-left" ng-repeat="genre in rule.filter.genre">
-                    <div class="name right-pad">{{genre}}</div>
-                    <div class="actions">
-                        <button ng-click="removeGenre(genre)" title="{{:: 'Remove genre' | translate }}"><i class="icon-trash"></i></button>
-                    </div>
-                </li>
-            </ul>
-            <div ng-show="showNewGenre" sd-typeahead items="genres" term="genreTerm" search="searchGenres(term)" select="selectGenre(item);showNewGenre = false">
-                <ul>
-                    <li typeahead-item="g" ng-repeat="g in filteredGenres">
-                        {{g.name}}
-                    </li>
-                </ul>
-            </div>
-            <button ng-show="showNewGenre" class="btn" ng-click="showNewGenre = false" translate>Cancel</button>
-        </div>
-    </div>
-    <div class="row">
-        <div class="field">
-            <label translate>Item types</label>
-            <div class="filter-box type-filter-box">
-                <button class="btn btn-light pull-left" 
-                    ng-repeat="type in typeList" 
-                    ng-click="toggleType(rule, type)"
-                    ng-class="{active: isTypeChecked(rule, type)}">
-                        <i class="filetype-icon-{{type}}" title="{{typeLookup[type]|translate}}"></i>
-                </button>
-            </div>
-        </div>
-    </div>
+
 </div>

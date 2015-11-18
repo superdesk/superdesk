@@ -1,3 +1,6 @@
+@import 'mixins.less';
+@import 'variables.less';
+
 .com { color: #93a1a1; }
 .lit { color: #195f91; }
 .pun, .opn, .clo { color: #93a1a1; }
@@ -21,7 +24,7 @@
 /* Specify class=linenums on a pre to get line numbering */
 ol.linenums {
   margin: 0 0 0 33px; /* IE indents via margin-left */
-} 
+}
 ol.linenums li {
     padding-left: 12px;
     color: #bebec5;
@@ -29,7 +32,7 @@ ol.linenums li {
     text-shadow: 0 1px 0 #fff;
 }
 ol.linenums li .pln:first-child {
-    width: 0;
+    // width: 0;
     display: inline-block;
 }
 ol.linenums li:last-child {
@@ -47,7 +50,7 @@ ol.linenums li:last-child {
 }
 
 #documentation .badge {
-    padding: 0px 4px;
+    padding: 3px 7px;
     border-radius: 2px;
     background: #4285f4;
     color: #fff;
@@ -140,21 +143,6 @@ ol.linenums li:last-child {
         margin: 20px auto;
      }
 
-#documentation .classic-page h1 {
-    font-size: 24px;
-    border-bottom: 1px solid #e5e5e5;
-    padding: 10px 0;
-    margin: 0 0 20px 0;
-}
-#documentation .classic-page h2 {
-    font-size: 18px;
-}
-#documentation .classic-page p {
-    font-size: 14px;
-    line-height: 26px;
-    padding: 0 15px;
-    margin: 0 0 15px 0;
-}
 
 #documentation .docs-content-left h1 {
     padding: 5px 15px;
@@ -170,6 +158,7 @@ ol.linenums li:last-child {
     color : #666;
     font-size: 13px;
     display: block;
+    cursor: pointer;
 }
 #documentation .docs-topic-list li a:hover {
     background: #fcf8e9;
@@ -193,15 +182,22 @@ ol.linenums li:last-child {
     margin: 5px 0;
 }
 
-#documentation .docs-main-list > li {
-    margin-bottom: 30px; 
-}
-    #documentation .docs-main-list .link-holder {
-        margin-bottom: 20px; 
+#documentation .docs-main-list {
+    > li {
+        margin-bottom: 30px;
+        p {
+            font-size: 14px;
+            code {
+                font-size: 13px;
+            }
+        }
+    }
+    .link-holder {
+        margin-bottom: 20px;
         display: block;
         height: 1px;
     }
-    #documentation .docs-main-list .docs-title {
+    .docs-title {
         font-weight: 700;
         padding-bottom: 10px;
         margin-bottom: 20px;
@@ -210,22 +206,22 @@ ol.linenums li:last-child {
         line-height: 30px;
         color:#444;
     }
-        #documentation .docs-main-list .docs-subtitle {
-            font-weight: 600;
-            padding-bottom: 8px;
-            margin-bottom: 13px;
-            border-bottom: 1px solid #d0d0d0;
-            font-size: 18px;
-            line-height: 25px;
-            color:#333;
-        }
+    .docs-subtitle {
+        font-weight: 600;
+        padding-bottom: 8px;
+        margin-bottom: 15px;
+        margin-top: 30px;
+        border-bottom: 1px solid #d0d0d0;
+        font-size: 18px;
+        line-height: 25px;
+        color:#333;
+    }
+}
 
-           
 
 #documentation .docs-preview {
-    margin-bottom: 25px;
-}
-    #documentation .docs-preview .preview-area{
+    margin: 15px 0;
+    .preview-area{
         border: 1px solid #ccc;
         border-bottom: 0;
         border-radius: 5px 5px 0 0;
@@ -234,13 +230,66 @@ ol.linenums li:last-child {
         background: #fff;
         padding: 10px;
     }
-
-    #documentation .docs-preview pre {
+     pre {
         margin-top: 0;
-        border-radius:  0 0 5px 5px;
-        -moz-border-radius: 0 0 5px 5px ;
-        -webkit-border-radius: 0 0 5px 5px ;
+        border-radius:  5px 5px 5px 5px;
+        -moz-border-radius: 5px 5px 5px 5px ;
+        -webkit-border-radius: 5px 5px 5px 5px ;
         border: 1px solid #d0d0d0;
         padding: 10px 0;
         background: #f8f8f8;
     }
+    .preview-area + pre {
+        border-radius:  0 0 5px 5px;
+        -moz-border-radius: 0 0 5px 5px ;
+        -webkit-border-radius: 0 0 5px 5px ;
+    }
+}
+
+.description-list {
+    display: flex;
+    flex-wrap: wrap;
+    li {
+        width: 300px;
+        max-width: 25%;
+        flex: 0 0 auto;
+        padding: 0 15px 15px 0;
+        .border-box();
+        img {
+            margin-bottom: 10px;
+            .border-radius(3px);
+            max-width: 100%;
+        }
+        p {
+            padding: 0 2px 7px 2px;
+            line-height: 22px;
+        }
+    }
+}
+
+.simple-list {
+    li {
+        line-height: 22px;
+    }
+}
+
+.docs-navbar {
+    padding: 10px 20px !important;
+    height: 28px;
+}
+.avatar-docs {
+    .avatar-types {
+        .preview-area {
+            > div {
+                margin-bottom: 12px;
+                .clearfix();
+                > figure {
+                    margin-right: 10px;
+                }
+                > span {
+                    vertical-align: sub;
+                }
+            }
+        }
+    }
+}

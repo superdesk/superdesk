@@ -7,9 +7,9 @@
 # For the full copyright and license information, please see the
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
+from superdesk.metadata.item import ITEM_STATE, CONTENT_STATE
 
-
-from superdesk.tests import TestCase
+from test_factory import SuperdeskTestCase
 from eve.utils import ParsedRequest
 from . import init_app
 
@@ -24,13 +24,19 @@ def ingest_listener(docs):
         doc['_ingest_listener'] = 1
 
 
-class SearchServiceTestCase(TestCase):
+class SearchServiceTestCase(SuperdeskTestCase):
 
     def setUp(self):
         super().setUp()
         with self.app.app_context():
             self.app.data.insert('ingest', [{}])
-            self.app.data.insert('archive', [{'task': {'desk': 1}}])
+            self.app.data.insert('archive', [{'_id': '456', 'task': {'desk': 1}, ITEM_STATE: CONTENT_STATE.PROGRESS}])
+            self.app.data.insert('archive', [{'_id': '123', 'task': {'desk': 1}, ITEM_STATE: CONTENT_STATE.PUBLISHED}])
+            self.app.data.insert('published', [{'item_id': '123', 'task': {'desk': 1},
+                                                ITEM_STATE: CONTENT_STATE.PUBLISHED,
+                                                'allow_post_publish_actions': True}])
+            self.app.data.insert('published', [{'item_id': '123', 'task': {'desk': 1}, ITEM_STATE: CONTENT_STATE.KILLED,
+                                                'allow_post_publish_actions': True}])
             init_app(self.app)
             self.app.on_fetched_resource += resource_listener
             self.app.on_fetched_resource_ingest += ingest_listener
@@ -38,7 +44,7 @@ class SearchServiceTestCase(TestCase):
     def test_query_post_processing(self):
         with self.app.app_context():
             docs = self.app.data.find('search', None, None)
-            self.assertEquals(2, docs.count())
+            self.assertEquals(4, docs.count())
 
             ingest_docs = [doc for doc in docs if doc['_type'] == 'ingest']
             self.assertEquals('ingest', ingest_docs[0]['_resource_listener'])
@@ -59,4 +65,16 @@ class SearchServiceTestCase(TestCase):
         with self.app.app_context():
             self.app.data.insert('archive', [{'task': {'desk': None}}, {'task': {}}])
             cursor = self.app.data.find('search', None, None)
-            self.assertEquals(2, cursor.count())
+            self.assertEquals(4, cursor.count())
+
+    def test_it_includes_published_content(self):
+        with self.app.app_context():
+            cursor = self.app.data.find('search', None, None)
+            self.assertEquals(4, cursor.count())
+
+    def test_it_excludes_published_content(self):
+        with self.app.app_context():
+            req = ParsedRequest()
+            req.args = {'repo': 'archive'}
+            docs = self.app.data.find('search', req, None)
+            self.assertEquals(1, docs.count())

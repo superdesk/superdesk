@@ -1,11 +1,12 @@
-define([
-    'lodash',
-    'angular',
-    'require'
-], function(_, angular, require) {
+(function() {
     'use strict';
 
-    return angular.module('superdesk.archive.directives', ['superdesk.authoring'])
+    return angular.module('superdesk.archive.directives', [
+        'superdesk.filters',
+        'superdesk.authoring',
+        'superdesk.ingest',
+        'superdesk.workflow'
+    ])
         .directive('sdItemLock', ['api', 'lock', 'privileges', function(api, lock, privileges) {
             return {
                 templateUrl: 'scripts/superdesk-archive/views/item-lock.html',
@@ -64,7 +65,7 @@ define([
         }])
         .directive('sdInlineMeta', function() {
             return {
-                templateUrl: require.toUrl('./views/inline-meta.html'),
+                templateUrl: 'scripts/superdesk-archive/views/inline-meta.html',
                 scope: {
                     'placeholder': '@',
                     'showmeta': '=',
@@ -73,9 +74,16 @@ define([
                 }
             };
         })
-        .directive('sdMediaPreview', [function() {
+        .directive('sdMediaPreview', ['api', '$rootScope', function(api, $rootScope) {
             return {
-                templateUrl: 'scripts/superdesk-archive/views/preview.html'
+                templateUrl: 'scripts/superdesk-archive/views/preview.html',
+                link: function(scope) {
+                    scope.previewRewriteStory = function () {
+                        return api.find('archive', scope.item.rewrite_id).then(function(item) {
+                            $rootScope.$broadcast('broadcast:preview', {'item': item});
+                        });
+                    };
+                }
             };
         }])
         .directive('sdMediaPreviewWidget', [function() {
@@ -86,6 +94,26 @@ define([
                 templateUrl: 'scripts/superdesk-archive/archive-widget/item-preview.html'
             };
         }])
+        .directive('sdItemPreviewContainer', function() {
+            return {
+                template: '<div ng-if="item" sd-media-view data-item="item" data-close="close()"></div>',
+                scope: {},
+                link: function(scope) {
+                    scope.item = null;
+
+                    scope.$on('intent:preview:item', function(event, intent) {
+                        scope.item = intent.data;
+                    });
+
+                    /**
+                     * Close lightbox
+                     */
+                    scope.close = function() {
+                        scope.item = null;
+                    };
+                }
+            };
+        })
         .directive('sdMediaView', ['keyboardManager', 'packages', function(keyboardManager, packages) {
             return {
                 templateUrl: 'scripts/superdesk-archive/views/media-view.html',
@@ -178,7 +206,7 @@ define([
                 }
             };
         }])
-        .directive('sdMediaMetadata', ['userList', function(userList) {
+        .directive('sdMediaMetadata', ['userList', 'archiveService', function(userList, archiveService) {
             return {
                 scope: {
                     item: '='
@@ -189,40 +217,59 @@ define([
                     scope.$watch('item', reloadData);
 
                     function reloadData() {
-                        scope.original_creator = null;
-                        scope.version_creator = null;
+                        scope.originalCreator = scope.item.original_creator;
+                        scope.versionCreator = scope.item.version_creator;
 
-                        if (scope.item.original_creator) {
-                            userList.getUser(scope.item.original_creator).then(function(user) {
-                                scope.original_creator = user.display_name;
-                            });
-                        }
-                        if (scope.item.version_creator) {
-                            userList.getUser(scope.item.version_creator).then(function(user) {
-                                scope.version_creator = user.display_name;
-                            });
+                        if (!archiveService.isLegal(scope.item)) {
+                            if (scope.item.original_creator) {
+                                userList.getUser(scope.item.original_creator)
+                                    .then(function(user) {
+                                        scope.originalCreator = user.display_name;
+                                    });
+                            }
+                            if (scope.item.version_creator) {
+                                userList.getUser(scope.item.version_creator)
+                                    .then(function(user) {
+                                        scope.versionCreator = user.display_name;
+                                    });
+                            }
                         }
                     }
                 }
             };
         }])
-        .directive('sdMediaRelated', ['familyService', function(familyService) {
+        .directive('sdMediaRelated', ['familyService', 'superdesk', function(familyService, superdesk) {
             return {
                 scope: {
                     item: '='
                 },
                 templateUrl: 'scripts/superdesk-archive/views/related-view.html',
                 link: function(scope, elem) {
-                    scope.$watch('item', function() {
+                    scope.$on('item:duplicate', fetchRelatedItems);
+
+                    scope.$watch('item', function(newVal, oldVal) {
+                        if (newVal !== oldVal) {
+                            fetchRelatedItems();
+                        }
+                    });
+                    scope.open = function(item) {
+                        superdesk.intent('view', 'item', item).then(null, function() {
+                            superdesk.intent('edit', 'item', item);
+                        });
+                    };
+
+                    function fetchRelatedItems() {
                         familyService.fetchItems(scope.item.family_id || scope.item._id, scope.item)
                         .then(function(items) {
                             scope.relatedItems = items;
                         });
-                    });
+                    }
+
+                    fetchRelatedItems();
                 }
             };
         }])
-        .directive('sdFetchedDesks', ['familyService', function(familyService) {
+        .directive('sdFetchedDesks', ['desks', 'familyService', '$location', function(desks, familyService, $location) {
             return {
                 scope: {
                     item: '='
@@ -237,22 +284,31 @@ define([
                                 });
                         }
                     });
+
+                    scope.selectFetched = function (desk) {
+                        desks.setCurrentDeskId(desk.desk._id);
+                        $location.path('/workspace/content').search('_id=' + desk.itemId);
+                    };
                 }
             };
         }])
         .directive('sdMetaIngest', ['ingestSources', function(ingestSources) {
-            var promise = ingestSources.initialize();
             return {
                 scope: {
-                    provider: '='
+                    item: '='
                 },
                 template: '{{name}}',
                 link: function(scope) {
-                    scope.$watch('provider', function() {
+                    scope.$watch('item', function() {
                         scope.name = '';
-                        promise.then(function() {
-                            if (scope.provider && scope.provider in ingestSources.providersLookup) {
-                                scope.name = ingestSources.providersLookup[scope.provider].name;
+
+                        if (!scope.item.ingest_provider && 'source' in scope.item) {
+                            scope.name = scope.item.source;
+                        }
+
+                        ingestSources.initialize().then(function() {
+                            if (scope.item.ingest_provider && scope.item.ingest_provider in ingestSources.providersLookup) {
+                                scope.name = ingestSources.providersLookup[scope.item.ingest_provider].name;
                             }
                         });
                     });
@@ -262,7 +318,7 @@ define([
         .directive('sdSingleItem', [ function() {
 
             return {
-                templateUrl: require.toUrl('./views/single-item-preview.html'),
+                templateUrl: 'scripts/superdesk-archive/views/single-item-preview.html',
                 scope: {
                     item: '=',
                     contents: '=',
@@ -270,10 +326,10 @@ define([
                 }
             };
         }])
-        .directive('sdMediaBox', ['lock', function(lock) {
+        .directive('sdMediaBox', ['$location', 'lock', 'multi', 'archiveService', function($location, lock, multi, archiveService) {
             return {
                 restrict: 'A',
-                templateUrl: require.toUrl('./views/media-box.html'),
+                templateUrl: 'scripts/superdesk-archive/views/media-box.html',
                 link: function(scope, element, attrs) {
                     scope.lock = {isLocked: false};
 
@@ -281,10 +337,10 @@ define([
                         switch (view) {
                         case 'mlist':
                         case 'compact':
-                            scope.itemTemplate = require.toUrl('./views/media-box-list.html');
+                            scope.itemTemplate = 'scripts/superdesk-archive/views/media-box-list.html';
                             break;
                         default:
-                            scope.itemTemplate = require.toUrl('./views/media-box-grid.html');
+                            scope.itemTemplate = 'scripts/superdesk-archive/views/media-box-grid.html';
                         }
                     });
 
@@ -323,18 +379,58 @@ define([
                         }
                     });
 
+                    scope.$on('item:highlight', function(_e, data) {
+                        if (scope.item && scope.item._id === data.item_id) {
+                            if (!scope.item.highlights) {
+                                scope.item.highlights = [data.highlight_id];
+                            } else if (scope.item.highlights.indexOf(data.highlight_id) === -1){
+                                scope.item.highlights = [data.highlight_id].concat(scope.item.highlights);
+                            } else if (!scope.item.multiSelect){
+                                scope.item.highlights = _.without(scope.item.highlights, data.highlight_id);
+                            }
+                        }
+                    });
+
                     scope.clickAction =  function clickAction(item) {
                         if (typeof scope.preview === 'function') {
+                            $location.search('fetch', null);
                             return scope.preview(item);
                         }
                         return false;
                     };
+
+                    scope.toggleSelected = function(item) {
+                        multi.toggle(item);
+                    };
+
+                    /**
+                     * Get actions type based on item state. Used with activity filter.
+                     *
+                     * @param {Object} item
+                     * @returns {string}
+                     */
+                    scope.getType = function(item) {
+                        return archiveService.getType(item);
+                    };
+                }
+            };
+        }])
+        .directive('sdItemCrops', ['metadata', function(metadata) {
+            return {
+                templateUrl: 'scripts/superdesk-archive/views/item-crops.html',
+                scope: {
+                    item: '='
+                },
+                link: function(scope, elem) {
+                    metadata.initialize().then(function() {
+                        scope.crop_sizes = metadata.values.crop_sizes;
+                    });
                 }
             };
         }])
         .directive('sdItemRendition', function() {
             return {
-                templateUrl: require.toUrl('./views/item-rendition.html'),
+                templateUrl: 'scripts/superdesk-archive/views/item-rendition.html',
                 scope: {
                     item: '=',
                     rendition: '@',
@@ -425,7 +521,7 @@ define([
         .directive('sdProviderMenu', ['$location', function($location) {
             return {
                 scope: {items: '='},
-                templateUrl: require.toUrl('./views/provider-menu.html'),
+                templateUrl: 'scripts/superdesk-archive/views/provider-menu.html',
                 link: function(scope, element, attrs) {
 
                     scope.setProvider = function(provider) {
@@ -459,16 +555,114 @@ define([
             };
         })
 
+        /*
+         * This directive is only temporarly,
+         * it will be deleted with content and ingest
+         */
+        .directive('sdContentResults', ['$location', 'preferencesService', 'packages', 'tags', 'asset',
+            function ($location, preferencesService, packages, tags, asset) {
+                var update = {
+                    'archive:view': {
+                        'allowed': [
+                            'mgrid',
+                            'compact'
+                        ],
+                        'category': 'archive',
+                        'view': 'mgrid',
+                        'default': 'mgrid',
+                        'label': 'Users archive view format',
+                        'type': 'string'
+                    }
+                };
+
+                return {
+                    require: '^sdSearchContainer',
+                    templateUrl: asset.templateUrl('superdesk-search/views/search-results.html'),
+                    link: function (scope, elem, attr, controller) {
+
+                        var GRID_VIEW = 'mgrid',
+                            LIST_VIEW = 'compact';
+
+                        var multiSelectable = (attr.multiSelectable === undefined) ? false : true;
+
+                        scope.flags = controller.flags;
+                        scope.selected = scope.selected || {};
+
+                        scope.preview = function preview(item) {
+                            if (multiSelectable) {
+                                if (_.findIndex(scope.selectedList, {_id: item._id}) === -1) {
+                                    scope.selectedList.push(item);
+                                } else {
+                                    _.remove(scope.selectedList, {_id: item._id});
+                                }
+                            }
+                            scope.selected.preview = item;
+                            $location.search('_id', item ? item._id : null);
+                        };
+
+                        scope.openLightbox = function openLightbox() {
+                            scope.selected.view = scope.selected.preview;
+                        };
+
+                        scope.closeLightbox = function closeLightbox() {
+                            scope.selected.view = null;
+                        };
+
+                        scope.openSingleItem = function (packageItem) {
+                            packages.fetchItem(packageItem).then(function (item) {
+                                scope.selected.view = item;
+                            });
+                        };
+
+                        scope.setview = setView;
+
+                        var savedView;
+                        preferencesService.get('archive:view').then(function (result) {
+                            savedView = result.view;
+                            scope.view = (!!savedView && savedView !== 'undefined') ? savedView : 'mgrid';
+                        });
+
+                        scope.$on('key:v', toggleView);
+
+                        function setView(view) {
+                            scope.view = view || 'mgrid';
+                            update['archive:view'].view = view || 'mgrid';
+                            preferencesService.update(update, 'archive:view');
+                        }
+
+                        function toggleView() {
+                            var nextView = scope.view === LIST_VIEW ? GRID_VIEW : LIST_VIEW;
+                            return setView(nextView);
+                        }
+
+                        /**
+                         * Generates Identifier to be used by track by expression.
+                         */
+                        scope.generateTrackIdentifier = function(item) {
+                            return (item.state === 'ingested') ? item._id : item._id + ':' + (item._current_version || item.item_version);
+                        };
+                    }
+                };
+            }])
+
         .service('familyService', ['api', 'desks', function(api, desks) {
             this.fetchItems = function(familyId, excludeItem) {
+                var repo = 'archive';
+
+                if (excludeItem && excludeItem._type === 'published') {
+                    repo = 'published';
+                }
+
                 var filter = [
                     {not: {term: {state: 'spiked'}}},
                     {term: {family_id: familyId}}
                 ];
-                if (excludeItem) {
+
+                if (excludeItem && excludeItem._type !== 'published') {
                     filter.push({not: {term: {_id: excludeItem._id}}});
                 }
-                return api('archive').query({
+
+                return api(repo).query({
                     source: {
                         query: {filtered: {filter: {
                             and: filter
@@ -480,14 +674,14 @@ define([
                 });
             };
             this.fetchDesks = function(item, excludeSelf) {
-                return this.fetchItems(item.family_id || item._id, excludeSelf ? item : undefined)
+                return this.fetchItems(item.state === 'ingested' ? item._id : item.family_id, excludeSelf ? item : undefined)
                 .then(function(items) {
                     var deskList = [];
                     var deskIdList = [];
                     _.each(items._items, function(i) {
                         if (i.task && i.task.desk && desks.deskLookup[i.task.desk]) {
                             if (deskIdList.indexOf(i.task.desk) < 0) {
-                                deskList.push({'desk': desks.deskLookup[i.task.desk], 'count': 1});
+                                deskList.push({'desk': desks.deskLookup[i.task.desk], 'count': 1, 'itemId': i._id});
                                 deskIdList.push(i.task.desk);
                             } else {
                                 deskList[deskIdList.indexOf(i.task.desk)].count += 1;
@@ -498,4 +692,4 @@ define([
                 });
             };
         }]);
-});
+})();

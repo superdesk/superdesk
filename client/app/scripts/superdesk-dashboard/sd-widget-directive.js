@@ -1,8 +1,18 @@
 define([
-    'require',
-    './configuration-controller'
+    'require'
 ], function(require) {
     'use strict';
+
+    ConfigController.$inject = ['$scope'];
+    function ConfigController($scope) {
+        $scope.configuration = _.clone($scope.widget.configuration);
+
+        $scope.saveConfig = function() {
+            $scope.widget.configuration = $scope.configuration;
+            $scope.save();
+            $scope.$close();
+        };
+    }
 
     /**
      * sdWidget give appropriate template to data assgined to it
@@ -13,18 +23,18 @@ define([
      * Params:
      * @scope {Object} widget
      */
-    return ['$modal', function($modal) {
+    return ['$modal', 'asset', function($modal, asset) {
         return {
-            templateUrl: require.toUrl('./views/widget.html'),
+            templateUrl: asset.templateUrl('superdesk-dashboard/views/widget.html'),
             restrict: 'A',
             replace: true,
             transclude: true,
-            scope: {widget: '='},
+            scope: {widget: '=', save: '&'},
             link: function(scope, element, attrs) {
-                scope.openConfiguration = function() {
+                scope.openConfiguration = function () {
                     $modal.open({
                         templateUrl: require.toUrl('./views/configuration.html'),
-                        controller: require('./configuration-controller'),
+                        controller: ConfigController,
                         scope: scope
                     });
                 };
