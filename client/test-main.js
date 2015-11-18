@@ -98,6 +98,7 @@ tests.push('angular-resource');
 tests.push('angular-route');
 tests.push('angular-file-upload');
 tests.push('moment');
+tests.push('lodash');
 
 requirejs.config({
     baseUrl: '/base/app/scripts',
