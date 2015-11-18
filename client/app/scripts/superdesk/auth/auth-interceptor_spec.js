@@ -19,7 +19,7 @@ define([
         inject(function($injector, $q, $rootScope, session, request) {
 
             var interceptor = $injector.invoke(AuthInterceptor),
-                config = {method: 'GET', url: 'test', headers: {}},
+                config = {method: 'GET', url: 'http://localhost:5000/test', headers: {}},
                 response = {status: 401, config: config};
 
             spyOn(session, 'expire');
@@ -37,7 +37,7 @@ define([
         inject(function($injector, $q, $rootScope, session, request) {
 
             var interceptor = $injector.invoke(AuthInterceptor),
-                config = {method: 'POST', url: 'auth', headers: {}},
+                config = {method: 'POST', url: 'http://localhost:5000/auth', headers: {}},
                 response = {status: 401, config: config, data: {_issues: {credentials: 1}}};
 
             spyOn(session, 'expire');
