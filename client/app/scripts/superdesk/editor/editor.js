@@ -816,7 +816,6 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
             require: ['sdAddEmbed', '^sdTextEditor'],
             templateUrl: 'scripts/superdesk/editor/views/add-embed.html',
             controllerAs: 'vm',
-            bindToController: true,
             controller: SdAddEmbedController,
             link: function(scope, element, attrs, controllers) {
                 angular.extend(controllers[0], {
@@ -857,7 +856,6 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
             require: ['sdTextEditor', 'ngModel'],
             templateUrl: 'scripts/superdesk/editor/views/editor.html',
             controllerAs: 'vm',
-            bindToController: true,
             controller: SdTextEditorController,
             link: function(scope, element, attr, controllers) {
                 var controller = controllers[0];
@@ -878,7 +876,6 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
             require: ['sdTextEditorBlockEmbed', 'ngModel'],
             templateUrl: 'scripts/superdesk/editor/views/block-embed.html',
             controllerAs: 'vm',
-            bindToController: true,
             controller: SdTextEditorBlockEmbedController,
             link: function(scope, elem, attrs, controllers) {
                 angular.extend(controllers[0], {
