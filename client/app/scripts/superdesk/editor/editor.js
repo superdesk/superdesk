@@ -816,6 +816,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
             require: ['sdAddEmbed', '^sdTextEditor'],
             templateUrl: 'scripts/superdesk/editor/views/add-embed.html',
             controllerAs: 'vm',
+            bindToController: true,
             controller: SdAddEmbedController,
             link: function(scope, element, attrs, controllers) {
                 angular.extend(controllers[0], {
@@ -856,6 +857,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
             require: ['sdTextEditor', 'ngModel'],
             templateUrl: 'scripts/superdesk/editor/views/editor.html',
             controllerAs: 'vm',
+            bindToController: true,
             controller: SdTextEditorController,
             link: function(scope, element, attr, controllers) {
                 var controller = controllers[0];
@@ -876,6 +878,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
             require: ['sdTextEditorBlockEmbed', 'ngModel'],
             templateUrl: 'scripts/superdesk/editor/views/block-embed.html',
             controllerAs: 'vm',
+            bindToController: true,
             controller: SdTextEditorBlockEmbedController,
             link: function(scope, elem, attrs, controllers) {
                 angular.extend(controllers[0], {
@@ -1139,10 +1142,14 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
 
                     // Actions to support multi blocks edition
                     if (scope.config.multiBlockEdition) {
+                        var KEY_CODES = Object.freeze({
+                            enter: 13,
+                            backspace: 8
+                        });
                         editorElem.on('keyup', function(e) {
                             $timeout(function () {
                                 // press enter, create a new block
-                                 if (e.keyCode === 13) {
+                                 if (e.keyCode === KEY_CODES.enter) {
                                     // last paragraph contains what is after the cursor
                                     var last_paragraph = extractBlockContentsFromCaret();
                                     var last_paragraph_div = document.createElement('div');
@@ -1153,7 +1160,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                                     });
                                 }
                                 // backspace
-                                else if (e.keyCode === 8) {
+                                else if (e.keyCode === KEY_CODES.backspace) {
                                     // remove the block if empty
                                     if ($(scope.node).text() === '') {
                                         scope.removeBlock();
