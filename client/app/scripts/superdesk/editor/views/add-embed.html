@@ -1,8 +1,8 @@
-<div class="add-embed__plus" ng-if='!vm.extended' ng-click="vm.toggle()" sd-text-editor-drop-zone>
+<div class="add-embed__plus" ng-if="!vm.extended" ng-click="vm.toggle()" sd-text-editor-drop-zone>
     <i class="icon-plus-small icon-round icon-white"></i>
     <div class="add-embed__drop-zone"></div>
 </div>
-<div class="add-embed__body" ng-if='vm.extended'>
+<div class="add-embed__body" ng-if="vm.extended">
     <form class="form-inline">
         <div class="form-group">
             <input type="text"
@@ -19,7 +19,7 @@
                 <i class="icon-white icon-ok"></i>
             </button>
         </div>
-        Preview:
+        {{:: 'Preview:' | translate }}
         <div class="preview"></div>
     </form>
 </div>
