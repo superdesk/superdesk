@@ -10,6 +10,7 @@
 
 
 import os
+import time
 from datetime import datetime, timedelta
 from superdesk.io.commands.update_ingest import LAST_ITEM_UPDATE
 import superdesk
@@ -384,6 +385,12 @@ def fetch_from_provider(context, provider_name, guid, routing_scheme=None, desk_
 
 @when('we post to "{url}"')
 def step_impl_when_post_url(context, url):
+    post_data(context, url)
+
+
+@when('we post to "{url}" with delay')
+def step_impl_when_post_url(context, url):
+    time.sleep(1)
     post_data(context, url)
 
 

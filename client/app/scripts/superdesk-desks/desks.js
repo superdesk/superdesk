@@ -45,7 +45,7 @@
 
         $scope.privileges = privileges.privileges;
 
-        $scope.views = ['content', 'tasks', 'users'];
+        $scope.views = ['content', 'tasks', 'users', 'sluglines'];
 
         $scope.view = $scope.views[0];
 
@@ -364,6 +364,26 @@
                 scope.closeEditUser = function() {
                     scope.user = null;
                 };
+            }
+        };
+    }
+
+    SluglinesItemListDirective.$inject = ['api'];
+    function SluglinesItemListDirective(api) {
+        return {
+            templateUrl: 'scripts/superdesk-desks/views/slugline-items.html',
+            scope: {
+                desk: '='
+            },
+            link: function(scope, elem) {
+                scope.items = [];
+                scope.loading = true;
+                api.get('desks/' + scope.desk + '/sluglines').then(function(items) {
+                    scope.items = items._items;
+                    scope.loading = false;
+                }, function() {
+                    scope.loading = false;
+                });
             }
         };
     }
@@ -767,6 +787,7 @@
         .directive('sdStageItems', StageItemListDirective)
         .directive('sdTaskStatusItems', TaskStatusItemsDirective)
         .directive('sdUserRoleItems', UserRoleItemListDirective)
+        .directive('sdSluglinesItems', SluglinesItemListDirective)
         .directive('sdDeskConfig', function() {
             return {
                 controller: DeskConfigController
