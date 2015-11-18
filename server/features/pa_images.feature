@@ -27,7 +27,7 @@ Feature: PA Images
         "guid": "2.24624700", "desk": "#desks._id#"
         }
         """
-        Then we get response code 201
+        Then we get response code 400
 
     @auth
     Scenario: Can search for last week

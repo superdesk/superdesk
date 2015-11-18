@@ -207,13 +207,16 @@ class PaImgDatalayer(DataLayer):
             del doc['fetch_endpoint']
 
         if doc[ITEM_TYPE] == CONTENT_TYPE.PICTURE:
-            if 'original' in doc.get('renditions', None):
+            if 'original' in doc.get('renditions', {}):
                 url = doc['renditions']['original']['href']
                 mime_type = 'image/jpeg'
             else:
                 raise FileNotFoundError
         else:
             raise NotImplementedError
+
+        if not url or not doc['renditions']['original'].get('downloadable', False):
+            raise SuperdeskApiError('original not downloadable', payload={'no_original': True})
 
         r = self._http.request_encode_url('GET', url, fields=fields, headers=self._headers)
         out = BytesIO(r.data)
