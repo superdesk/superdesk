@@ -6,7 +6,12 @@
     <span>{{ :: activity.label | translate }}</span>
 </a>
 <li class="divider" ng-if="activity._id === 'mark.item'"></li>
-<div ng-if=":: activity.dropdown" class="dropdown dropdown-noarrow" dropdown>
+<div ng-if=":: activity.dropdown" 
+     class="dropdown dropdown-noarrow" 
+     ng-class="{open: dropdownOpen}" 
+     ng-mouseenter="dropdownOpen=true" 
+     ng-mouseleave="dropdownOpen=false" 
+     dropdown>
     <a class="dropdown-toggle" title="{{ :: activity.label | translate }}" dropdown-toggle>
         <i class="icon-{{ :: activity.icon }}" ng-show=":: activity.icon"></i>
         <span>{{ :: activity.label | translate }} 
