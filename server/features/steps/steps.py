@@ -57,6 +57,18 @@ def test_json(context):
     return response_data
 
 
+def test_json_with_string_field_value(context, field):
+    try:
+        response_data = json.loads(context.response.get_data())
+    except Exception:
+        fail_and_print_body(context.response, 'response is not valid json')
+    context_data = json.loads(apply_placeholders(context, context.text))
+
+    assert_equal(json_match(context_data[field], json.loads(response_data[field])), True,
+                 msg=str(context_data) + '\n != \n' + str(response_data))
+    return response_data
+
+
 def test_key_is_present(key, context, response):
     """Test if given key is present in response.
 
@@ -828,6 +840,12 @@ def step_impl_then_get_nofield_in_path(context, path):
 def step_impl_then_get_existing(context):
     assert_200(context.response)
     test_json(context)
+
+
+@then('we get existing saved search')
+def step_impl_then_get_existing_saved_search(context):
+    assert_200(context.response)
+    test_json_with_string_field_value(context, 'filter')
 
 
 @then('we get OK response')

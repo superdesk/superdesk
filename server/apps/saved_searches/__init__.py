@@ -9,7 +9,6 @@
 # at https://www.sourcefabric.org/superdesk/license
 import logging
 import superdesk
-from superdesk.services import BaseService
 from .saved_searches import SavedSearchesService, SavedSearchesResource, AllSavedSearchesResource, \
     SavedSearchItemsResource, SavedSearchItemsService, AllSavedSearchesService
 

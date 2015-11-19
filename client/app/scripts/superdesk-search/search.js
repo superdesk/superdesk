@@ -541,6 +541,10 @@
                         scope.sTab = !scope.sTab;
                     };
 
+                    scope.resetEditingSearch = function() {
+                        scope.editingSearch = false;
+                    };
+
                     var initAggregations = function () {
                         scope.aggregations = {
                             'type': {},
@@ -1124,6 +1128,7 @@
                     };
 
                     scope.clear = function() {
+                        scope.resetEditingSearch();
                         scope.cancel();
                         $location.url('/search');
                     };
@@ -1137,9 +1142,11 @@
                             notify.success(gettext('Saved search is saved successfully'));
                             scope.cancel();
                             scope.changeTab();
+                            scope.edit = null;
                         }
 
                         function onFail(error) {
+                            scope.edit = null;
                             if (angular.isDefined(error.data._message)) {
                                 notify.error(error.data._message);
                             } else {
@@ -1147,7 +1154,7 @@
                             }
                         }
 
-                        var search = getFilters($location.search());
+                        var search = getFilters(_.clone($location.search()));
                         editSearch.filter = {query: search};
                         var originalSearch = {};
 
@@ -1597,13 +1604,6 @@
                     scope.isSearchEnabled = function() {
                         return scope.repo.search && (scope.repo.search !== 'local' ||
                             (scope.repo.ingest || scope.repo.archive || scope.repo.published || scope.repo.archived));
-                    };
-
-                    scope.focusOnSearch = function() {
-                        if (scope.advancedOpen) {
-                            scope.toggle();
-                        }
-                        input.focus();
                     };
 
                     function updateParam() {
