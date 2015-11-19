@@ -90,11 +90,15 @@ tests.push('superdesk-workspace/workspace');
 
 // libs
 tests.push('bower_components/ment.io/dist/mentio');
+tests.push('bower_components/angular-embed/dist/angular-embed');
+tests.push('bower_components/angular-embedly/angular-embedly');
+
 tests.push('angular-ui');
 tests.push('angular-resource');
 tests.push('angular-route');
 tests.push('angular-file-upload');
 tests.push('moment');
+tests.push('lodash');
 
 requirejs.config({
     baseUrl: '/base/app/scripts',

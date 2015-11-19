@@ -1,21 +1,18 @@
-<div class="dropdown" dropdown>
-    <pre class="text-editor editor-type-text"
-        ng-show="type=='preformatted'"
-        spellcheck="false"
-        ></pre>
-
-    <div class="text-editor editor-type-html"
-        ng-show="type=='text' || !type"
-        spellcheck="false"
-        ></div>
-
-    <code class="text-editor-info" ng-if="cursor.line && type == 'preformatted'"><small translate>Line: {{ cursor.line }}, Column: {{ cursor.column }}</small></code>
-
-    <button class="dropdown-toggle hide" dropdown-toggle></button>
-    <ul class="dropdown-menu">
-        <li ng-repeat="word in suggestions"><button ng-click="replace(word)">{{ :: word }}</button></li>
-        <li ng-show="suggestions.length === 0"><button translate>SORRY, NO SUGGESTIONS.</button></li>
-        <li class="divider"></li>
-        <li><button ng-click="addWordToDictionary()" translate>Add to dictionary</button></li>
-    </ul>
+<div ng-repeat="block in vm.blocks" class="block__container">
+    <div ng-if="config.multiBlockEdition" class="block__remove" ng-click="vm.removeBlock(block)">
+        <i class="icon-close-small"></i>
+    </div>
+    <div sd-text-editor-block-embed
+         ng-change="vm.commitChanges()"
+         ng-model="block.body"
+         ng-if="block.blockType === 'embed'">
+    </div>
+    <div sd-text-editor-block-text="block"
+         ng-if="block.blockType === 'text'"
+         type="type"
+         config="config"
+         language="language"
+         ng-change="vm.commitChanges()"
+         ng-model="block.body"></div>
+    <sd-add-embed ng-if="config.multiBlockEdition" class="block__add-embed"></sd-add-embed>
 </div>

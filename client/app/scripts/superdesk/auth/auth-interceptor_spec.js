@@ -1,20 +1,25 @@
 define([
     './auth-interceptor',
-    'superdesk/api/request-service'
-], function(AuthInterceptor, RequestService) {
+    'superdesk/api/request-service',
+    'lodash'
+], function(AuthInterceptor, RequestService, _) {
     'use strict';
 
     describe('auth interceptor', function() {
 
         beforeEach(module(function($provide) {
             $provide.service('request', RequestService);
+            $provide.constant('lodash', _);
+            $provide.constant('config', {
+                server: {url: 'http://localhost:5000'}
+            });
         }));
 
         it('should intercept 401 response, run auth and resend request',
         inject(function($injector, $q, $rootScope, session, request) {
 
             var interceptor = $injector.invoke(AuthInterceptor),
-                config = {method: 'GET', url: 'test', headers: {}},
+                config = {method: 'GET', url: 'http://localhost:5000/test', headers: {}},
                 response = {status: 401, config: config};
 
             spyOn(session, 'expire');
@@ -32,7 +37,7 @@ define([
         inject(function($injector, $q, $rootScope, session, request) {
 
             var interceptor = $injector.invoke(AuthInterceptor),
-                config = {method: 'POST', url: 'auth', headers: {}},
+                config = {method: 'POST', url: 'http://localhost:5000/auth', headers: {}},
                 response = {status: 401, config: config, data: {_issues: {credentials: 1}}};
 
             spyOn(session, 'expire');
