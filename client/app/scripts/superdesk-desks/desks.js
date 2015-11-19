@@ -424,6 +424,10 @@
             );
         };
 
+        $scope.$on('desks:refresh:stages', function() {
+            desks.refreshStages();
+        });
+
         $scope.getDeskStages = function(desk) {
             return desks.deskStages[desk._id];
         };
@@ -851,8 +855,8 @@
                 }
             };
         }])
-        .directive('sdDeskeditBasic', ['gettext', 'desks', 'WizardHandler', 'metadata', '$filter', '$interpolate',
-            function(gettext, desks, WizardHandler, metadata, $filter, $interpolate) {
+        .directive('sdDeskeditBasic', ['gettext', 'desks', 'WizardHandler', 'metadata', '$filter', '$interpolate', '$rootScope',
+            function(gettext, desks, WizardHandler, metadata, $filter, $interpolate, $rootScope) {
             return {
 
                 link: function(scope, elem, attrs) {
@@ -889,6 +893,7 @@
                             if (_new) {
                                 scope.edit(scope.desk.edit);
                                 scope.desks._items.unshift(scope.desk.edit);
+                                $rootScope.$broadcast('desks:refresh:stages');
                             } else {
                                 var origDesk = _.find(scope.desks._items, {_id: scope.desk.edit._id});
                                 _.extend(origDesk, scope.desk.edit);
@@ -896,6 +901,7 @@
 
                             scope.desks._items = $filter('sortByName')(scope.desks._items);
                             desks.deskLookup[scope.desk.edit._id] = scope.desk.edit;
+
                             if (!done) {
                                 WizardHandler.wizard('desks').next();
                             } else {
