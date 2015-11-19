@@ -296,12 +296,20 @@ function Monitoring() {
      *  @param {index} index
      *  @return {promise}
      */
-    this.getSearch = function(index) {
-        return this.config.all(by.repeater('search in currentSavedSearches')).get(index);
+    this.getGlobalSearch = function(index) {
+        return this.config.all(by.repeater('search in globalSavedSearches')).get(index);
     };
 
-    this.getSearchText = function(search) {
-        return this.getSearch(search).element(by.css('.desk-title')).getText();
+    this.getPrivateSearch = function(index) {
+        return this.config.all(by.repeater('search in privateSavedSearches')).get(index);
+    };
+
+    this.getGlobalSearchText = function(search) {
+        return this.getGlobalSearch(search).element(by.css('.desk-title')).getText();
+    };
+
+    this.getPrivateSearchText = function(search) {
+        return this.getPrivateSearch(search).element(by.css('.desk-title')).getText();
     };
 
     this.toggleDesk = function(desk) {
@@ -320,12 +328,24 @@ function Monitoring() {
         element(by.css('[ng-click="setPersonalInfo()"]')).click();
     };
 
-    this.toggleSearch = function(search) {
-        this.getSearch(search).element(by.css('[ng-click="setSearchInfo(search._id)"]')).click();
+    this.switchGlobalSearchOn = function() {
+        element(by.model('showGlobalSavedSearches')).click();
+    };
+
+    this.toggleGlobalSearch = function(search) {
+        this.getGlobalSearch(search).element(by.css('[ng-click="setSearchInfo(search._id)"]')).click();
+    };
+
+    this.togglePrivateSearch = function(search) {
+        this.getPrivateSearch(search).element(by.css('[ng-click="setSearchInfo(search._id)"]')).click();
     };
 
     this.toggleAllSearches = function() {
         element(by.css('[ng-click="initSavedSearches(showAllSavedSearches)"]')).click();
+    };
+
+    this.toggleGlobalSearches = function() {
+        element(by.model('showGlobalSavedSearches')).click();
     };
 
     this.getOrderItem = function(item) {

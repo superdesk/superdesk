@@ -5,7 +5,7 @@ var openUrl = require('./helpers/utils').open,
     workspace = require('./helpers/pages').workspace,
     content = require('./helpers/pages').content;
 
-describe('Spike', function() {
+describe('spike', function() {
 
     beforeEach(function(done) {
         openUrl('/#/workspace/content').then(done);

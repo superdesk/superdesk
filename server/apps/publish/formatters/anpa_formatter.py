@@ -98,14 +98,15 @@ class AAPAnpaFormatter(Formatter):
                 if 'dateline' in article and 'text' in article['dateline']:
                     anpa.append(article.get('dateline').get('text').encode('ascii', 'ignore'))
 
+                body = self.append_body_footer(article)
                 if article.get(EMBARGO):
                     embargo = '{}{}'.format('Embargo Content. Timestamp: ', article.get(EMBARGO).isoformat())
-                    article['body_html'] = embargo + article['body_html']
+                    body = embargo + body
 
                 if article[ITEM_TYPE] == CONTENT_TYPE.PREFORMATTED:
-                    anpa.append(article.get('body_html', '').encode('ascii', 'replace'))
+                    anpa.append(body.encode('ascii', 'replace'))
                 else:
-                    anpa.append(BeautifulSoup(article.get('body_html', '')).text.encode('ascii', 'replace'))
+                    anpa.append(BeautifulSoup(body).text.encode('ascii', 'replace'))
 
                 anpa.append(b'\x0D\x0A')
                 if article.get('more_coming', False):

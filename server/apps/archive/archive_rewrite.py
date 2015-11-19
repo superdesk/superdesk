@@ -10,7 +10,7 @@
 
 import logging
 
-from flask import request, current_app as app
+from flask import request
 
 from superdesk import get_resource_service, Service
 from superdesk.metadata.item import ITEM_STATE, EMBARGO
@@ -49,10 +49,9 @@ class ArchiveRewriteService(Service):
         ids = archive_service.post([rewrite])
         build_custom_hateoas(CUSTOM_HATEOAS, rewrite)
         self._add_rewritten_flag(original, digital, rewrite)
-        if hasattr(app, 'on_broadcast_master_updated'):
-            app.on_broadcast_master_updated(ITEM_CREATE,
-                                            item=original,
-                                            rewrite_id=ids[0])
+        get_resource_service('archive_broadcast').on_broadcast_master_updated(ITEM_CREATE,
+                                                                              item=original,
+                                                                              rewrite_id=ids[0])
         return [rewrite]
 
     def _validate_rewrite(self, original):

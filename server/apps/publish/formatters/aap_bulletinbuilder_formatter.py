@@ -29,7 +29,7 @@ class AAPBulletinBuilderFormatter(Formatter):
         """
         try:
             pub_seq_num = superdesk.get_resource_service('subscribers').generate_sequence_number(subscriber)
-            body_html = article.get('body_html', '').strip('\r\n')
+            body_html = self.append_body_footer(article).strip('\r\n')
             soup = BeautifulSoup(body_html)
             for br in soup.find_all('br'):
                 # remove the <br> tag

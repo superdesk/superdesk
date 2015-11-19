@@ -96,14 +96,19 @@
          *
          * @param {string} lang
          */
-        function getActive(lang) {
+        function getActive(lang, baseLang) {
             return session.getIdentity().then(function(identity) {
+                var languageIds = [{language_id: lang}];
+                if (baseLang) {
+                    languageIds.push({language_id: baseLang});
+                }
+
                 return api.query('dictionaries', {
                     projection: {content: 0},
-                    where: {
-                        language_id: lang,
-                        is_active: {$in: ['true', null]},
-                        $or: [{user: identity._id}, {user: {$exists: false}}]
+                    where: {$and:
+                        [{$or: languageIds},
+                        {is_active: {$in: ['true', null]}},
+                        {$or: [{user: identity._id}, {user: {$exists: false}}]}]
                     }}).then(function(items) {
                         return $q.all(items._items.map(fetchItem));
                     });

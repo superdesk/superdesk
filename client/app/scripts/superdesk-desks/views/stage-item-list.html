@@ -7,7 +7,7 @@
 			ng-class="{locked: item.lock_user, shifted: allowed, active: item._id === selected._id}">
 			<div id="{{item._id}}">
 				<div class="type"><i class="filetype-icon-{{item.type}}"></i></div>
-				<div class="urgency"><i class="urgency-icon-{{item.urgency}}"></i></div>
+				<div class="urgency"><span class="urgency-label urgency-label--{{item.urgency}}">{{item.urgency}}</span></div>
 				<div class="text">
 					<time sd-datetime data-date="item.versioncreated" class="pull-right"></time>
 					<span class="keywords">{{item.slugline}}</span>

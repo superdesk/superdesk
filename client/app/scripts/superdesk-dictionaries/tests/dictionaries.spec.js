@@ -37,10 +37,34 @@ describe('dictionaries', function() {
         expect(items.length).toBe(1);
         expect(api.query).toHaveBeenCalledWith('dictionaries', {
             projection: {content: 0},
-            where: {
-                language_id: LANG,
-                $or: [{user: USER_ID}, {user: {$exists: false}}],
-                is_active: {$in: ['true', null]}
+            where: {$and:
+                [{$or: [{language_id: LANG}]},
+                {is_active: {$in: ['true', null]}},
+                {$or: [{user: USER_ID}, {user: {$exists: false}}]}]
+            }
+        });
+        expect(api.find).toHaveBeenCalledWith('dictionaries', 1);
+    }));
+
+    it('can get dictionaries for given language and the base language',
+        inject(function(api, dictionaries, $q, $rootScope) {
+        spyOn(api, 'query').and.returnValue($q.when({_items: [{_id: 1}]}));
+        spyOn(api, 'find').and.returnValue($q.when({}));
+
+        var items;
+        dictionaries.getActive('en-US', 'en').then(function(_items) {
+            items = _items;
+        });
+
+        $rootScope.$digest();
+
+        expect(items.length).toBe(1);
+        expect(api.query).toHaveBeenCalledWith('dictionaries', {
+            projection: {content: 0},
+            where: {$and:
+                [{$or: [{language_id: 'en-US'}, {language_id: 'en'}]},
+                {is_active: {$in: ['true', null]}},
+                {$or: [{user: USER_ID}, {user: {$exists: false}}]}]
             }
         });
         expect(api.find).toHaveBeenCalledWith('dictionaries', 1);

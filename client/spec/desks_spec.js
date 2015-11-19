@@ -10,7 +10,7 @@
 'use strict';
 var desks = require('./helpers/desks');
 
-describe('desk maintenance', function() {
+describe('desks', function() {
 
     beforeEach(function() {
         desks.openDesksSettings();

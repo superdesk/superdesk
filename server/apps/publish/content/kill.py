@@ -34,6 +34,7 @@ class KillPublishService(BasePublishService):
         super().on_update(updates, original)
         updates[ITEM_OPERATION] = ITEM_KILL
         self.takes_package_service.process_killed_takes_package(original)
+        get_resource_service('archive_broadcast').spike_item(original)
 
     def update(self, id, updates, original):
         """
@@ -43,6 +44,7 @@ class KillPublishService(BasePublishService):
         self._broadcast_kill_email(original)
         super().update(id, updates, original)
         self._publish_kill_for_takes(updates, original)
+        get_resource_service('archive_broadcast').kill_broadcast(updates, original)
 
     def _broadcast_kill_email(self, original):
         """

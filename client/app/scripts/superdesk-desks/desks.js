@@ -110,7 +110,13 @@
                     criteria = cards.criteria(scope.stage, queryString);
                     scope.loading = true;
                     scope.items = scope.total = null;
-                    api('archive').query(criteria).then(function(items) {
+                    var provider = 'archive';
+
+                    if (scope.stage.type && scope.stage.type === 'deskOutput') {
+                        provider = 'search';
+                    }
+
+                    api(provider).query(criteria).then(function(items) {
                         scope.items = items._items;
                         scope.total = items._meta.total;
 
