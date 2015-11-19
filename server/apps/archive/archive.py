@@ -170,6 +170,8 @@ class ArchiveService(BaseService):
             doc.setdefault('priority', DEFAULT_PRIORITY_VALUE_FOR_MANUAL_ARTICLES)
             doc.setdefault('urgency', DEFAULT_URGENCY_VALUE_FOR_MANUAL_ARTICLES)
 
+            self._add_desk_metadata(doc, {})
+
             convert_task_attributes_to_objectId(doc)
 
     def on_created(self, docs):
@@ -258,6 +260,8 @@ class ArchiveService(BaseService):
         if original.get('broadcast') and updates.get('genre') and \
                 any(genre.get('value', '').lower() != BROADCAST_GENRE.lower() for genre in updates.get('genre')):
             raise SuperdeskApiError.badRequestError('Cannot change the genre for broadcast content.')
+
+        self._add_desk_metadata(updates, original)
 
         # Do the validation after Circular Reference check passes in Package Service
         updated = original.copy()
@@ -560,6 +564,16 @@ class ArchiveService(BaseService):
                 raise SuperdeskApiError.badRequestError("A Package doesn't support Embargo")
 
             self.packageService.check_if_any_item_in_package_has_embargo(item)
+
+    def _add_desk_metadata(self, updates, original):
+        """Populate updates metadata from item desk in case it's set.
+
+        It will only add data which is not set yet on the item.
+
+        :param updates: updates to item that should be saved
+        :param original: original item version before update
+        """
+        return get_resource_service('desks').apply_desk_metadata(updates, original)
 
 
 class AutoSaveResource(Resource):

@@ -105,6 +105,7 @@ def send_to(doc, update=None, desk_id=None, stage_id=None, user_id=None):
     else:
         doc['task'].update(task)
         doc['expiry'] = get_expiry(desk_or_stage_doc=calculate_expiry_from)
+        superdesk.get_resource_service('desks').apply_desk_metadata(doc, doc)
 
 
 def apply_stage_rule(doc, update, stage, is_incoming):
