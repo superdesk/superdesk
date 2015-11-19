@@ -218,6 +218,7 @@
                     $scope.origTemplate = template || {'type': 'text'};
                     $scope.template = _.create($scope.origTemplate);
                     $scope.template.schedule = $scope.origTemplate.schedule || {};
+                    $scope.template.headline_limit = $scope.origTemplate.headline_limit || 0;
 
                     $scope.item = $scope.template;
                     $scope._editable = true;

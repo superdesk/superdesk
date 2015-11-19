@@ -1,6 +1,6 @@
 <div class="field" ng-class="{'limit-error': item.headline.length > limits.headline}">
   <label translate>Headline</label>
-    <span sd-character-count data-item="item.headline" data-html="true" data-limit="limits.headline"></span>
+    <span sd-character-count ng-if="itemTemplate.headline_limit" data-item="item.headline" data-html="true" data-limit="itemTemplate.headline_limit"></span>
     <div id="title" class="headline"
         sd-text-editor
         data-config="{disableToolbar: true, disableReturn: true}"
