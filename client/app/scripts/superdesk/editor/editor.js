@@ -578,7 +578,8 @@ function SdTextEditorController(_) {
             // save the model to update it later
             vm.model = model;
             // parse the given model and create blocks per paragraph and embed
-            $('<div>' + model.$modelValue || '' + '</div>')
+            var content = model.$modelValue || '';
+            $('<div>' + content + '</div>')
             .contents()
             .toArray()
             .forEach(function(element) {
@@ -629,9 +630,9 @@ function SdTextEditorController(_) {
                     if (angular.isDefined(block.body) && block.body.trim() !== '') {
                         if (block.blockType === 'embed') {
                             new_body += [
-                                '<!-- EMBED START '+ block.embedType.trim() +' -->',
+                                '<!-- EMBED START ' + block.embedType.trim() + ' -->',
                                 block.body,
-                                '<!-- EMBED END '+ block.embedType.trim() +' -->\n'].join('\n');
+                                '<!-- EMBED END ' + block.embedType.trim() + ' -->\n'].join('\n');
                         } else {
                             // wrap all the other blocks around <p></p>
                             new_body += '<p>' + block.body + '</p>\n';
@@ -1146,7 +1147,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                         editorElem.on('keyup', function(e) {
                             $timeout(function () {
                                 // press enter, create a new block
-                                 if (e.keyCode === KEY_CODES.enter) {
+                                if (e.keyCode === KEY_CODES.enter) {
                                     // last paragraph contains what is after the cursor
                                     var last_paragraph = extractBlockContentsFromCaret();
                                     var last_paragraph_div = document.createElement('div');
@@ -1155,9 +1156,8 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                                     .insertNewBlockAfter(scope.sdTextEditorBlockText, {
                                         body: last_paragraph_div.innerHTML.replace(/^<br>$/, '')
                                     });
-                                }
                                 // backspace
-                                else if (e.keyCode === KEY_CODES.backspace) {
+                                } else if (e.keyCode === KEY_CODES.backspace) {
                                     // remove the block if empty
                                     if ($(scope.node).text() === '') {
                                         scope.removeBlock();
