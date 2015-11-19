@@ -27,7 +27,7 @@ def populate(item, **kwargs):
 
         # chop the first sentence to size for abstract (64)
         if sentences and len(sentences) > 0:
-            item['abstract'] = BeautifulSoup(sentences[0][:64]).text
+            item['abstract'] = BeautifulSoup(sentences[0][:64], "html.parser").text
 
     return item
 

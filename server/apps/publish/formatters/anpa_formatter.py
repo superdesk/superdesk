@@ -106,7 +106,7 @@ class AAPAnpaFormatter(Formatter):
                 if article[ITEM_TYPE] == CONTENT_TYPE.PREFORMATTED:
                     anpa.append(body.encode('ascii', 'replace'))
                 else:
-                    anpa.append(BeautifulSoup(body).text.encode('ascii', 'replace'))
+                    anpa.append(BeautifulSoup(body, "html.parser").text.encode('ascii', 'replace'))
 
                 anpa.append(b'\x0D\x0A')
                 if article.get('more_coming', False):

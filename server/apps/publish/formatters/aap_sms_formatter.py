@@ -35,7 +35,7 @@ class AAPSMSFormatter(Formatter):
                 body = embargo + body
 
             if article[ITEM_TYPE] == CONTENT_TYPE.TEXT:
-                body = BeautifulSoup(body).text
+                body = BeautifulSoup(body, "html.parser").text
 
             odbc_item['StoryText'] = body.replace('\'', '\'\'')  # @article_text
             odbc_item['ident'] = '0'
