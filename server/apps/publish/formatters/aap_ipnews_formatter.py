@@ -62,7 +62,7 @@ class AAPIpNewsFormatter(Formatter):
                 if article[ITEM_TYPE] == CONTENT_TYPE.PREFORMATTED:  # @article_text
                     odbc_item['article_text'] = self.append_body_footer(article).replace('\'', '\'\'')
                 elif article[ITEM_TYPE] == CONTENT_TYPE.TEXT:
-                    soup = BeautifulSoup(self.append_body_footer(article))
+                    soup = BeautifulSoup(self.append_body_footer(article), "html.parser")
                     text = StringIO()
                     for p in soup.findAll('p'):
                         text.write('\x19\r\n')

@@ -84,6 +84,11 @@ Feature: Rewrite content
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"},
         "place": [{"qcode" : "ACT"}]}]}
       """
+      When we get "/archive/123"
+      Then we get existing resource
+      """
+      {"_id": "123", "rewritten_by": "#REWRITE_ID#", "place": [{"qcode" : "ACT"}]}
+      """
 
     @auth
     Scenario: Rewrite the non-last take fails
@@ -428,6 +433,8 @@ Feature: Rewrite content
       And we get "rewrite_of" not populated
       When we get "/published"
       Then we get "rewritten_by" not populated in results
+      When we get "/archive/123"
+      Then we get "rewritten_by" not populated
 
     @auth
     Scenario: Spike of an unpublished rewrite of a rewrite removes references from last rewrite

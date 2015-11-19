@@ -12,10 +12,10 @@ import logging
 
 from flask import request
 
-from superdesk import get_resource_service, Service
+from superdesk import get_resource_service, Service, config
 from superdesk.metadata.item import ITEM_STATE, EMBARGO
 from superdesk.resource import Resource, build_custom_hateoas
-from apps.archive.common import CUSTOM_HATEOAS, ITEM_CREATE
+from apps.archive.common import CUSTOM_HATEOAS, ITEM_CREATE, ARCHIVE
 from superdesk.metadata.utils import item_url
 from superdesk.workflow import is_workflow_state_transition_valid
 from superdesk.errors import SuperdeskApiError, InvalidStateTransitionError
@@ -41,7 +41,7 @@ class ArchiveRewriteResource(Resource):
 class ArchiveRewriteService(Service):
     def create(self, docs, **kwargs):
         original_id = request.view_args['original_id']
-        archive_service = get_resource_service('archive')
+        archive_service = get_resource_service(ARCHIVE)
         original = archive_service.find_one(req=None, _id=original_id)
         self._validate_rewrite(original)
         digital = TakesPackageService().get_take_package(original)
@@ -69,7 +69,7 @@ class ArchiveRewriteService(Service):
         if not original.get('event_id'):
             raise SuperdeskApiError.notFoundError(message='Event id does not exist')
 
-        if get_resource_service('published').is_rewritten_before(original['_id']):
+        if get_resource_service('published').is_rewritten_before(original[config.ID_FIELD]):
             raise SuperdeskApiError.badRequestError(message='Article has been rewritten before !')
 
         if not is_workflow_state_transition_valid('rewrite', original[ITEM_STATE]):
@@ -95,10 +95,10 @@ class ArchiveRewriteService(Service):
 
         if digital:
             # check if there's digital
-            rewrite['rewrite_of'] = digital['_id']
+            rewrite['rewrite_of'] = digital[config.ID_FIELD]
         else:
             # if not use original's id
-            rewrite['rewrite_of'] = original['_id']
+            rewrite['rewrite_of'] = original[config.ID_FIELD]
 
         send_to(doc=rewrite, desk_id=original['task']['desk'])
         rewrite['state'] = 'in_progress'
@@ -107,16 +107,29 @@ class ArchiveRewriteService(Service):
 
     def _add_rewritten_flag(self, original, digital, rewrite):
         """ Adds rewritten_by field to the existing published items """
-        get_resource_service('published').update_published_items(original['_id'], 'rewritten_by', rewrite['_id'])
+        get_resource_service('published').update_published_items(original[config.ID_FIELD],
+                                                                 'rewritten_by', rewrite[config.ID_FIELD])
         if digital:
-            get_resource_service('published').update_published_items(digital['_id'], 'rewritten_by', rewrite['_id'])
+            get_resource_service('published').update_published_items(digital[config.ID_FIELD], 'rewritten_by',
+                                                                     rewrite[config.ID_FIELD])
+
+        # modify the original item as well.
+        get_resource_service(ARCHIVE).system_update(original[config.ID_FIELD],
+                                                    {'rewritten_by': rewrite[config.ID_FIELD]}, original)
 
     def _clear_rewritten_flag(self, event_id, rewrite_id):
         """ Clears rewritten_by field from the existing published items """
         publish_service = get_resource_service('published')
+        archive_service = get_resource_service(ARCHIVE)
         published_rewritten_stories = publish_service.get_rewritten_items_by_event_story(event_id, rewrite_id)
+        processed_items = set()
         for doc in published_rewritten_stories:
-            get_resource_service('published').update_published_items(doc['item_id'], 'rewritten_by', None)
+            publish_service.update_published_items(doc['item_id'], 'rewritten_by', None)
+            if doc['item_id'] not in processed_items:
+                # clear the flag from the archive as well.
+                archive_item = archive_service.find_one(req=None, _id=doc['item_id'])
+                archive_service.system_update(doc['item_id'], {'rewritten_by': None}, archive_item)
+                processed_items.add(doc['item_id'])
 
     def _set_take_key(self, rewrite, event_id):
         """

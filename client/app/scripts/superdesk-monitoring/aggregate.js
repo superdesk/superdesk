@@ -373,7 +373,7 @@
     AggregateSettingsDirective.$inject = ['desks', 'workspaces', 'session', 'preferencesService', 'WizardHandler'];
     function AggregateSettingsDirective(desks, workspaces, session, preferencesService, WizardHandler) {
         return {
-            templateUrl: 'scripts/superdesk-desks/views/aggregate-settings-configuration.html',
+            templateUrl: 'scripts/superdesk-monitoring/views/aggregate-settings-configuration.html',
             scope: {
                 modalActive: '=',
                 desks: '=',
