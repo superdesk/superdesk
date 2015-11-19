@@ -11,7 +11,7 @@
         <div sd-wizard-step data-title="{{ 'General' | translate }}" data-code="general">
             <div sd-deskedit-basic>
                 <form name="generalStep">
-                    <div class="content">
+                    <div class="content desk-content">
                         <fieldset>
                             <span class="pull-right" sd-character-count data-item="desk.edit.name" data-limit="limits.desk"></span>
                             <div class="field">
@@ -49,6 +49,18 @@
                                         required>
                                     <option value=""></option>
                                 </select>
+                            </div>
+
+                            <div class="field">
+                                <label translate>CATEGORY</label>
+                                <div sd-meta-terms
+                                     class="data"
+                                     data-item="desk.edit.desk_metadata"
+                                     data-field="anpa_category"
+                                     data-unique="qcode"
+                                     data-list="metadata.categories"
+                                     data-header="true">
+                                </div>
                             </div>
                         </fieldset>
                         <span class="alert-danger" ng-show="_errorLimits" translate>Character limit exceeded, desk can not be created/updated.</span>
