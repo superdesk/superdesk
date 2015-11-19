@@ -485,10 +485,12 @@
                                }));
 
             // new take should be on the text item that are closed or last take but not killed and doesn't have embargo.
-            action.new_take = !is_read_only_state && (current_item.type === 'text' || current_item.type === 'preformatted') &&
+            action.new_take = !is_read_only_state &&
+                (current_item.type === 'text' || current_item.type === 'preformatted') &&
                 !current_item.embargo && !current_item.publish_schedule &&
                 (angular.isUndefined(current_item.takes) || current_item.takes.last_take === current_item._id) &&
-                (angular.isUndefined(current_item.more_coming) || !current_item.more_coming) && !isBroadcast;
+                (angular.isUndefined(current_item.more_coming) || !current_item.more_coming) && !isBroadcast &&
+                !current_item.rewritten_by;
 
             // item is published state - corrected, published, scheduled, killed
             if (self.isPublished(current_item)) {
@@ -509,9 +511,7 @@
 
                 action.re_write = _.contains(['published', 'corrected'], current_item.state) &&
                     _.contains(['text', 'preformatted'], current_item.type) &&
-                    !current_item.embargo &&
-                    angular.isUndefined(current_item.rewritten_by) &&
-                    (angular.isUndefined(current_item.more_coming) || !current_item.more_coming) &&
+                    !current_item.embargo && !current_item.rewritten_by && action.new_take &&
                     (!current_item.broadcast || !current_item.broadcast.master_id);
 
             } else {

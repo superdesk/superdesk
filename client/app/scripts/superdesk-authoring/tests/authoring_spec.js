@@ -724,7 +724,7 @@ describe('authoring actions', function() {
             privileges.setUserPrivileges(userPrivileges);
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
-            allowedActions(itemActions, ['new_take', 'view', 'package_item', 'multi_edit', 'create_broadcast']);
+            allowedActions(itemActions, ['view', 'package_item', 'multi_edit', 'create_broadcast']);
         }));
 
     it('can only view item if the item is spiked',
@@ -1445,7 +1445,60 @@ describe('authoring actions', function() {
             privileges.setUserPrivileges(userPrivileges);
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
-            allowedActions(itemActions, ['duplicate', 're_write', 'mark_item', 'multi_edit',
+            allowedActions(itemActions, ['duplicate', 'mark_item', 'multi_edit',
+                    'correct', 'kill', 'package_item', 'view']);
+        }));
+
+    it('rewrite is not allowed if re-written item exists.',
+        inject(function(privileges, desks, authoring, $q, $rootScope) {
+            var item = {
+                '_id': 'test',
+                'state': 'published',
+                'marked_for_not_publication': false,
+                'type': 'text',
+                'task': {
+                    'desk': 'desk1'
+                },
+                'more_coming': false,
+                '_current_version': 10,
+                'rewritten_by': '123',
+                'genre': [
+                    {'name': 'Interview', 'value': 'Interview'}
+                ],
+                'archive_item': {
+                    '_id': 'test',
+                    'state': 'published',
+                    'marked_for_not_publication': false,
+                    'type': 'text',
+                    'task': {
+                        'desk': 'desk1'
+                    },
+                    'more_coming': false,
+                    '_current_version': 10,
+                    'rewritten_by': '123',
+                    'genre': [
+                        {'name': 'Interview', 'value': 'Interview'}
+                    ]
+                }
+            };
+
+            var userPrivileges = {
+                'duplicate': true,
+                'mark_item': false,
+                'spike': true,
+                'unspike': true,
+                'mark_for_highlights': true,
+                'unlock': true,
+                'publish': true,
+                'correct': true,
+                'kill': true,
+                'create_broadcast': true
+            };
+
+            privileges.setUserPrivileges(userPrivileges);
+            $rootScope.$digest();
+            var itemActions = authoring.itemActions(item);
+            allowedActions(itemActions, ['duplicate', 'mark_item', 'multi_edit', 'create_broadcast',
                     'correct', 'kill', 'package_item', 'view']);
         }));
 });
