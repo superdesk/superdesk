@@ -124,18 +124,22 @@ describe('search', function() {
         globalSearch.openParameters();
 
         globalSearch.selectDesk('from-desk', 'Sports Desk');
+        globalSearch.goButton.click();
         expect(globalSearch.getItems().count()).toBe(1);
         expect(globalSearch.getHeadlineElement(0).getText()).toBe('From-Sports-To-Politics');
 
         globalSearch.selectDesk('to-desk', 'Politic Desk');
+        globalSearch.goButton.click();
         expect(globalSearch.getItems().count()).toBe(1);
         expect(globalSearch.getHeadlineElement(0).getText()).toBe('From-Sports-To-Politics');
 
         globalSearch.selectDesk('from-desk', '');
+        globalSearch.goButton.click();
         expect(globalSearch.getItems().count()).toBe(1);
         expect(globalSearch.getHeadlineElement(0).getText()).toBe('From-Sports-To-Politics');
 
         globalSearch.selectDesk('to-desk', '');
+        globalSearch.goButton.click();
         expect(globalSearch.getItems().count()).toBe(11);
     });
 
