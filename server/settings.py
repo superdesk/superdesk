@@ -198,7 +198,6 @@ INSTALLED_APPS.extend([
     'apps.duplication',
     'apps.aap.import_text_archive',
     'apps.aap_mm',
-    'apps.pa_img',
     'apps.spellcheck',
     'apps.templates',
     'apps.archived',
@@ -209,8 +208,9 @@ INSTALLED_APPS.extend([
 
     'superdesk.io.subjectcodes',
     'pa.topics',
-
-    'apps.archive_broadcast'
+    'apps.archive_broadcast',
+    'apps.pa_img',
+    'apps.keywords',
 ])
 
 RESOURCE_METHODS = ['GET', 'POST']
@@ -312,3 +312,7 @@ ODBC_TEST_CONNECTION_STRING = env('ODBC_TEST_CONNECTION_STRING',
 NEWSML_PROVIDER_ID = env('NEWSML_PROVIDER_ID', 'sourcefabric.org')
 ORGANIZATION_NAME = env('ORGANIZATION_NAME', 'Superdesk Associated Press')
 ORGANIZATION_NAME_ABBREVIATION = env('ORGANIZATION_NAME_ABBREVIATION', 'SAP')
+
+KEYWORDS_PROVIDER = env('KEYWORDS_PROVIDER', 'Alchemy')
+KEYWORDS_BASE_URL = env('KEYWORDS_BASE_URL', 'http://access.alchemyapi.com/calls')
+KEYWORDS_KEY_API = env('KEYWORDS_KEY_API', 'ea87a0a0a219d55492ffa706dc878ee03aadc4c7')
