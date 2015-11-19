@@ -1702,7 +1702,7 @@
                 };
 
                 /*
-                 * Returns true if Send and Send and Continue button needs to be disabled, false othervise.
+                 * Returns true if Send and Send and Continue button needs to be disabled, false otherwise.
                  * @returns {Boolean}
                  */
                 scope.disableSendButton = function () {
@@ -1710,6 +1710,15 @@
                         return !scope.selectedDesk ||
                                 (scope.mode !== 'ingest' && scope.selectedStage._id === scope.item.task.stage);
                     }
+                };
+
+                /*
+                 * Returns true if user is not a member of selected desk, false otherwise.
+                 * @returns {Boolean}
+                 */
+                scope.disableFetchAndOpenButton = function () {
+                    var _isNonMember = _.isEmpty(_.find(desks.userDesks._items, {_id: scope.selectedDesk._id}));
+                    return _isNonMember;
                 };
 
                 /**

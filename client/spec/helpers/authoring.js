@@ -73,6 +73,15 @@ function Authoring() {
         this.sendBtn.click();
     };
 
+    this.selectDeskforSendTo = function(desk) {
+        var sidebar = element.all(by.css('.slide-pane')).last(),
+            dropdown = sidebar.element(by.css('.dropdown--dark .dropdown-toggle'));
+
+        dropdown.waitReady();
+        dropdown.click();
+        sidebar.element(by.buttonText(desk)).click();
+    };
+
     this.markAction = function() {
         return element(by.className('svg-icon-add-to-list')).click();
     };

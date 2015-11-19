@@ -2,7 +2,9 @@
 'use strict';
 
 var workspace = require('./helpers/pages').workspace,
-    content = require('./helpers/pages').content;
+    content = require('./helpers/pages').content,
+    authoring = require('./helpers/authoring'),
+    desks = require('./helpers/desks');
 
 describe('fetch', function() {
     beforeEach(function() {
@@ -60,6 +62,30 @@ describe('fetch', function() {
         content.send();
         workspace.openContent();
         expect(content.count()).toBe(3);
+    });
+
+    it('can not Fetch-and-Open if selected desk as a non-member', function() {
+        workspace.openIngest();
+        content.actionOnItem('Fetch To', 0);
+
+        var btnFetchAndOpen = element(by.css('[ng-disabled="disableFetchAndOpenButton()"]'));
+        expect(btnFetchAndOpen.getAttribute('disabled')).toBeFalsy();
+
+        // Adding a new desk with no member, which serves as a non-member desk when selected
+        desks.openDesksSettings();
+        desks.getNewDeskButton().click();
+        desks.deskNameElement().sendKeys('Test Desk');
+        desks.deskDescriptionElement().sendKeys('Test Description');
+        desks.deskSourceElement().sendKeys('Test Source');
+        desks.setDeskType('authoring');
+        desks.actionDoneOnGeneralTab();
+
+        workspace.openIngest();
+        browser.sleep(1500);
+        content.actionOnItem('Fetch To', 0);
+        browser.sleep(1500);
+        authoring.selectDeskforSendTo('Test Desk');
+        expect(btnFetchAndOpen.getAttribute('disabled')).toBeTruthy();
     });
 
     it('can fetch multiple items', function() {
