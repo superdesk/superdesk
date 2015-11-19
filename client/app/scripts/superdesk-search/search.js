@@ -1631,7 +1631,7 @@
 
                     scope.canSort = function() {
                         var criteria = search.query($location.search()).getCriteria(true);
-                        return !(angular.isDefined(criteria.repo) && criteria.repo === 'aapmm');
+                        return !(angular.isDefined(criteria.repo) && (criteria.repo === 'aapmm' || criteria.repo === 'paimg'));
                     };
 
                     scope.sort = function sort(field) {

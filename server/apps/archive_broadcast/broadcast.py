@@ -33,6 +33,7 @@ logger = logging.getLogger(__name__)
 FIELDS_TO_COPY = ['urgency', 'priority', 'anpa_category', 'type',
                   'subject', 'dateline', 'slugline', 'place']
 ARCHIVE_BROADCAST_NAME = 'archive_broadcast'
+BROADCAST_GENRE = 'Broadcast Script'
 
 
 class ArchiveBroadcastResource(Resource):

@@ -12,6 +12,10 @@
         <div>
             <i class="filetype-icon-{{ :: item.type }}" title="{{ :: 'Article Type' | translate }}"></i>
         </div>
+        <div ng-if="item.profile">
+            <label translate>PROFILE</label>
+            <div class="data">{{item.profile}}</div>
+        </div>
         <div ng-if="item.type === 'text'">
             <label class="word-count"><b>{{ item.word_count || 0 }}</b> <span translate translate-n="item.word_count" translate-plural="WORDS">WORD</span></label>
         </div>
@@ -118,7 +122,7 @@
                  data-item="item" 
                  data-field="anpa_category" 
                  data-unique="qcode"
-                 data-list="availableCategories" 
+                 data-list="metadata.categories" 
                  data-header="true"
                  data-change="autosave(item)">
             </div>

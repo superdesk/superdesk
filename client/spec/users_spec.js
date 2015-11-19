@@ -183,7 +183,7 @@ describe('users', function() {
             }).then(done);
         });
 
-        it('should filter categories in the Authoring metadata head menu ' +
+        xit('should filter categories in the Authoring metadata head menu ' +
            'based on the user\'s preferred categories settings',
             function () {
                 var catListItems,  // elements in the offered category list
