@@ -2041,7 +2041,10 @@
                     if (scope.item.type === 'picture') {
                         scope.item.hasCrops = false;
                         scope.item.hasCrops = scope.metadata.crop_sizes.some(function (crop) {
-                            return scope.item.renditions && scope.item.renditions[crop.name];
+                            if (!scope.item.renditions || !scope.item.renditions[crop.name]) {
+                                return false;
+                            }
+                            return scope.item.renditions[crop.name];
                         });
                     }
                 });
