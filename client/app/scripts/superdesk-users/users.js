@@ -344,8 +344,8 @@
         $scope.profile = $scope.user._id === session.identity._id;
     }
 
-    ChangeAvatarController.$inject = ['$scope', 'upload', 'session', 'urls', 'betaService'];
-    function ChangeAvatarController($scope, upload, session, urls, beta) {
+    ChangeAvatarController.$inject = ['$scope', 'upload', 'session', 'urls', 'betaService', 'gettext', 'notify'];
+    function ChangeAvatarController($scope, upload, session, urls, beta, gettext, notify) {
 
         $scope.methods = [
             {id: 'upload', label: gettext('Upload from computer')},
@@ -390,6 +390,7 @@
                 }).then(function(response) {
 
                     if (response.data._status === 'ERR'){
+                        notify.error(gettext('There was a problem with your upload'));
                         return;
                     }
 
@@ -398,7 +399,11 @@
                     $scope.locals.data.avatar = response.data._id;
 
                     return $scope.resolve(picture_url);
-                }, null, function(update) {
+                },  function(error) {
+                    notify.error((error.statusText !== '') ?
+                                    error.statusText :
+                                    gettext('There was a problem with your upload'));
+                }, function(update) {
                     $scope.progress.width = Math.round(update.loaded / update.total * 100.0);
                 });
             });

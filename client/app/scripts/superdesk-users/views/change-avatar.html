@@ -24,6 +24,7 @@
 				<div class="input-holder">
 	                <input type="file" accept="image/*;capture=camera" ng-file-select="preview.img = $files[0]">
 				</div>
+                <div class="info" translate>The minimum image resolution is 200x200 pixels.</div>
             </div>
         </div>
 
@@ -42,7 +43,13 @@
             <label translate>Make sure you're looking the best</label>
             <div class="crop-area">
                 <div class="original">
-                    <div sd-crop data-src="preview.url" data-cords="preview.cords" data-progress-width="progress.width"></div>
+                    <div sd-crop
+                        data-src="preview.url"
+                        data-cords="preview.cords"
+                        data-progress-width="progress.width"
+                        data-file="preview.img"
+                        data-max-file-size="2">
+                    </div>
                 </div>
                 <div class="preview">
                     <div class="preview-large">
