@@ -42,11 +42,15 @@ class SearchIngestService(superdesk.Service):
         super().__init__(datasource, backend)
         self.source = source
 
-    def create(self, docs, **kwargs):
-        new_guids = []
+    def get_provider(self):
         provider = get_resource_service('ingest_providers').find_one(source=self.source, req=None)
         if provider and 'config' in provider and 'username' in provider['config']:
-                self.backend.set_credentials(provider['config']['username'], provider['config'].get('password', ''))
+            self.backend.set_credentials(provider['config']['username'], provider['config'].get('password', ''))
+        return provider
+
+    def create(self, docs, **kwargs):
+        new_guids = []
+        provider = self.get_provider()
         for doc in docs:
             if not doc.get('desk'):
                 # if no desk is selected then it is bad request
@@ -79,15 +83,24 @@ class SearchIngestService(superdesk.Service):
         return new_guids
 
     def get(self, req, lookup):
-        provider = get_resource_service('ingest_providers').find_one(source=self.source, req=None)
+        provider = self.get_provider()
         if provider:
-            if 'config' in provider and 'username' in provider['config']:
-                self.backend.set_credentials(provider['config']['username'], provider['config'].get('password', ''))
             query = self._get_query(req)
             results = self.backend.find(self.source, query, None)
             for doc in results.docs:
                 doc['ingest_provider'] = str(provider[superdesk.config.ID_FIELD])
             return results
+
+    def fetch_rendition(self, rendition):
+        """Get file stream for given rendition specs.
+
+        Rendition should be from item that was fetched via this service get method.
+        It can use api authentication if needed to fetch this binary.
+
+        :param rendition: rendition dict
+        """
+        self.get_provider()
+        return self.backend.fetch_file(rendition.get('href'))
 
     def _get_query(self, req):
         args = getattr(req, 'args', {})
