@@ -1,18 +1,16 @@
-<div ng-if="loading" class="loading"></div>
-
-<div ng-if="!loading && !items.length" class="no-items" translate>No items with this published</div>
-
-<ul ng-if="!loading && items.length" class="inline-content-items content-tasks" >
-	<li ng-repeat="item in items" class="item">
-		<span ng-show="item.name !== '-'">
-			{{item.name}}
-		</span>
-		<span ng-show="item.slugline !== '-'">
-			{{item.slugline}}
-		</span>
-		<span>{{item.headline}}</span>
-		<span ng-show="item.old_sluglines.length !== 0">
-			<label>Old sluglines : </label>{{item.old_sluglines}}
-		<span>
-	</li>
-</ul>
+<div class="slugline-content">
+	<div ng-if="loading" class="loading"></div>
+        <div ng-if="!loading && !items.length" class="no-items" translate>{{:: 'No items with this published' |
+            translate }}
+        </div>
+        <div ng-if="!loading && items.length" class="inline_slugline_item">
+            <div ng-repeat="item in items">
+                <div class="place" ng-show="item.name !== '-'">{{::item.name}}</div>
+                <div class="slugline" ng-show="item.slugline !== '-'">{{::item.slugline}}</div>
+                <div ng-show="item.old_sluglines.length !== 0">
+                    <div class="oldslugline">{{::item.old_sluglines}}</div>
+                </div>
+                <div class="headline">{{::item.headline}}</div>
+            </div>
+        </div>
+</div>

@@ -268,11 +268,12 @@ class SluglineDesksResource(Resource):
     datasource = {'source': 'published',
                   'search_backend': 'elastic',
                   'default_sort': [('place.name', 1), ('slugline', 1)],
-                  'elastic_filter': {"and": [{"range": {"versioncreated": {"gte": "now-2400H"}}},
+                  'elastic_filter': {"and": [{"range": {"versioncreated": {"gte": "now-24H"}}},
                                              {"term": {"last_published_version": True}},
                                              {"term": {"type": "text"}}
                                              ]}}
     resource_methods = ['GET']
+    item_methods = []
 
 
 class SluglineDeskService(BaseService):

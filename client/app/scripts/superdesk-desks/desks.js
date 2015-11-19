@@ -380,8 +380,7 @@
                 scope.loading = true;
                 api.get('desks/' + scope.desk + '/sluglines').then(function(items) {
                     scope.items = items._items;
-                    scope.loading = false;
-                }, function() {
+                })['finally'](function() {
                     scope.loading = false;
                 });
             }
