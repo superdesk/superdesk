@@ -5,7 +5,9 @@ sudo: false
 env:
     - TARGET=unit
     - TARGET=server_ldap
-    - TARGET=e2e_chrome
+    - TARGET=e2e_first_chrome
+    - TARGET=e2e_second_chrome
+    - TARGET=e2e_third_chrome
 #    - TARGET=e2e_firefox
 
 python:
@@ -79,18 +81,46 @@ script:
         LDAP_SERVER="ldap://sourcefabric.org" LDAP_BASE_FILTER="OU=Superdesk Users,dc=sourcefabric,dc=org" behave ./features/ --format progress2 --logging-level ERROR &&
         cd .. ;
       fi
-    - if [ "${TARGET}" != "${TARGET/e2e/}" ]; then
+    - if [ "${TARGET}" != "${TARGET/e2e_first/}" ]; then
         cd server &&
         python3 manage.py users:create -u admin -p admin -e 'admin@example.com' --admin=true 2>&1 ;
         cd ../client &&
         ./node_modules/.bin/webdriver-manager update &&
-        ./node_modules/.bin/protractor protractor-conf.js
+        ./node_modules/.bin/protractor-flake --node-bin node --max-attempts=3 -- protractor-conf-first.js
           --stackTrace --verbose
           --baseUrl 'http://127.0.0.1:9000'
           --params.baseBackendUrl 'http://127.0.0.1:5000/api'
           --params.username 'admin'
           --params.password 'admin'
-          --capabilities.browserName "${TARGET/e2e_/}"
+          --capabilities.browserName "${TARGET/e2e_first_/}"
+        ;
+      fi
+    - if [ "${TARGET}" != "${TARGET/e2e_second/}" ]; then
+        cd server &&
+        python3 manage.py users:create -u admin -p admin -e 'admin@example.com' --admin=true 2>&1 ;
+        cd ../client &&
+        ./node_modules/.bin/webdriver-manager update &&
+        ./node_modules/.bin/protractor-flake --node-bin node --max-attempts=3 -- protractor-conf-second.js
+          --stackTrace --verbose
+          --baseUrl 'http://127.0.0.1:9000'
+          --params.baseBackendUrl 'http://127.0.0.1:5000/api'
+          --params.username 'admin'
+          --params.password 'admin'
+          --capabilities.browserName "${TARGET/e2e_second_/}"
+        ;
+      fi
+    - if [ "${TARGET}" != "${TARGET/e2e_third/}" ]; then
+        cd server &&
+        python3 manage.py users:create -u admin -p admin -e 'admin@example.com' --admin=true 2>&1 ;
+        cd ../client &&
+        ./node_modules/.bin/webdriver-manager update &&
+        ./node_modules/.bin/protractor-flake --node-bin node --max-attempts=3 -- protractor-conf-third.js
+          --stackTrace --verbose
+          --baseUrl 'http://127.0.0.1:9000'
+          --params.baseBackendUrl 'http://127.0.0.1:5000/api'
+          --params.username 'admin'
+          --params.password 'admin'
+          --capabilities.browserName "${TARGET/e2e_third_/}"
         ;
       fi
 
@@ -102,3 +132,4 @@ after_success:
         cd client && grunt coveralls && cd .. ;
         cd server && coveralls --merge="../client/coveralls.json" ;
       fi
+

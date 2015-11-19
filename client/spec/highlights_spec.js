@@ -6,7 +6,7 @@ var route = require('./helpers/utils').route,
     workspace = require('./helpers/workspace'),
     highlights = require('./helpers/highlights');
 
-describe('HIGHLIGHTS', function() {
+describe('highlights', function() {
     'use strict';
 
     describe('add highlights configuration:', function() {

@@ -4,7 +4,7 @@ var openUrl = require('./helpers/utils').open,
     masterDesks = require('./helpers/master_desks'),
     authoring = require('./helpers/authoring');
 
-describe('Master Desk', function() {
+describe('master_desk', function() {
     beforeEach(function(done) {
         openUrl('/#/desks/').then(done);
     });
