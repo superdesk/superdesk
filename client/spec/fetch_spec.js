@@ -81,9 +81,7 @@ describe('fetch', function() {
         desks.actionDoneOnGeneralTab();
 
         workspace.openIngest();
-        browser.sleep(1500);
         content.actionOnItem('Fetch To', 0);
-        browser.sleep(1500);
         authoring.selectDeskforSendTo('Test Desk');
         expect(btnFetchAndOpen.getAttribute('disabled')).toBeTruthy();
     });
