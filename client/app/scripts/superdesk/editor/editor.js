@@ -778,8 +778,7 @@ function SdAddEmbedController (embedService, $element, $timeout, $q, _) {
     });
 }
 
-SdTextEditorBlockEmbedController.$inject = ['$scope'];
-function SdTextEditorBlockEmbedController($scope) {
+function SdTextEditorBlockEmbedController() {
     var vm = this;
     angular.extend(vm, {
         model: undefined,  // defined in link method
@@ -851,7 +850,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
             }
         };
     })
-    .directive('sdTextEditor', ['$timeout', 'lodash', function ($timeout, _) {
+    .directive('sdTextEditor', ['$timeout', function ($timeout) {
         return {
             scope: {type: '=', config: '=', language: '='},
             require: ['sdTextEditor', 'ngModel'],
