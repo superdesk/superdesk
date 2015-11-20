@@ -245,9 +245,9 @@
     }
 
     MonitoringGroupDirective.$inject = ['cards', 'api', 'authoringWorkspace', '$timeout', 'superdesk',
-        'activityService', 'workflowService', 'keyboardManager', 'desks'];
+        'activityService', 'workflowService', 'keyboardManager', 'desks', 'search'];
     function MonitoringGroupDirective(cards, api, authoringWorkspace, $timeout, superdesk, activityService,
-            workflowService, keyboardManager, desks) {
+            workflowService, keyboardManager, desks, search) {
 
         var ITEM_HEIGHT = 57,
             ITEMS_COUNT = 5,
@@ -280,7 +280,12 @@
                 scope.cachePreviousItems = [];
                 scope.limited = (monitoring.singleGroup || scope.group.type === 'highlights') ? false : true;
 
-                scope.uuid = uuid;
+                /**
+                  * Generates Identifier to be used by track by expression.
+                  */
+                scope.generateTrackByIdentifier = function(item) {
+                    return search.generateTrackByIdentifier(item);
+                };
                 scope.edit = edit;
                 scope.select = select;
                 scope.preview = preview;
@@ -606,10 +611,6 @@
                 }
             }
         };
-
-        function uuid(item) {
-            return (item.state === 'ingested') ? item._id : item._id + ':' + item._current_version;
-        }
     }
 
     ItemActionsMenu.$inject = ['superdesk', 'activityService', 'workflowService', 'archiveService'];

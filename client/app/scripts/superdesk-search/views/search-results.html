@@ -22,7 +22,7 @@
 
             <div sd-shadow>
                 <ul class="{{view}}-view list-view">
-                    <li ng-repeat="item in items._items track by generateTrackIdentifier(item)" class="list-item-view" ng-class="{active: item === selected.preview || item._id === selected.fetch}">
+                    <li ng-repeat="item in items._items track by generateTrackByIdentifier(item)" class="list-item-view" ng-class="{active: item === selected.preview || item._id === selected.fetch}">
                         <div sd-media-box></div>
                     </li>
                 </ul>
