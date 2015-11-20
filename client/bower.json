@@ -21,7 +21,7 @@
     "jquery-ui": "1.11.2",
     "medium-editor": "5.10.0",
     "ment.io": "0.9.22",
-    "angular-embed": "~2.0.3"
+    "angular-embed": "~2.1.0"
   },
   "ignore": [
     "**/.*",

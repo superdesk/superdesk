@@ -714,13 +714,57 @@ function SdAddEmbedController (embedService, $element, $timeout, $q, _) {
                 vm.input = '';
             }
         },
+        /**
+         * Return html code to represent an embedded picture
+         *
+         * @param {string} image link as url
+         * @param {string} headline
+         * @param {string} description
+         * @return {string} html
+         */
+        pictureToHtml: function(url, headline, description) {
+            var html = '<img alt="' + (description || '') + '" src="' + url + '">\n';
+            if (headline) {
+                html += '<figcaption>' + headline + '</figcaption>\n';
+            }
+            return html;
+        },
+        /**
+         * Return html code to represent an embedded link
+         *
+         * @param {string} link as url
+         * @param {string} title
+         * @param {string} description
+         * @param {string} illustration
+         * @return {string} html
+         */
+        linkToHtml: function(url, title, description, illustration) {
+            var html = [
+                '<div class="embed--link">',
+                angular.isDefined(illustration) ?
+                '  <img src="'+ illustration +'" class="embed--link__illustration"/>' : '',
+                '  <div class="embed--link__title">',
+                '      <a href="'+ url +'" target="_blank">'+ title +'</a>',
+                '  </div>',
+                '  <div class="embed--link__description">'+ description +'</div>',
+                '</div>'];
+            return html.join('\n');
+        },
         retrieveEmbed:function() {
             // if it's an url, use embedService to retrieve the embed code
             var embedCode;
             if (_.startsWith(vm.input, 'http')) {
                 embedCode = embedService.get(vm.input).then(function(data) {
+                    var embed = data.html;
+                    if (!angular.isDefined(embed)) {
+                        if (data.type === 'photo') {
+                            embed = vm.pictureToHtml(data.url, data.title, data.description);
+                        } else if (data.type === 'link') {
+                            embed = vm.linkToHtml(data.url, data.title, data.description, data.thumbnail_url);
+                        }
+                    }
                     return {
-                        body: data.html,
+                        body: embed,
                         provider: data.provider_name
                     };
                 });
@@ -769,11 +813,9 @@ function SdAddEmbedController (embedService, $element, $timeout, $q, _) {
                 vm.toggle(true);
             });
         },
-        createBlockFromPicture: function(picture) {
-            vm.createFigureBlock('Image', [
-                '<img alt="' + picture.description + '" src="' + picture.renditions.viewImage.href + '">',
-                '<figcaption>' + picture.headline + '</figcaption>'
-            ].join('\n'));
+        createBlockFromSdPicture: function(pic) {
+            var html = vm.pictureToHtml(pic.renditions.viewImage.href, pic.headline, pic.description);
+            vm.createFigureBlock('Image', html);
         }
     });
 }
@@ -808,7 +850,7 @@ function SdTextEditorBlockEmbedController() {
     });
 }
 
-angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embed'])
+angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embed', 'angular-embed.handlers'])
     .service('editor', EditorService)
     .directive('sdAddEmbed', function() {
         return {
@@ -835,7 +877,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                 .on('drop', function(event) {
                     event.preventDefault();
                     var item = angular.fromJson(event.originalEvent.dataTransfer.getData(PICTURE_TYPE));
-                    ctrl.createBlockFromPicture(item);
+                    ctrl.createBlockFromSdPicture(item);
                     element.removeClass('drag-active');
                 })
                 .on('dragover', function(event) {
@@ -1225,6 +1267,18 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                 }
             }
         };
-    }]);
+    }]).config(['embedlyServiceProvider', 'config', function(embedlyServiceProvider, config) {
+        // embed.ly private key
+        console.log(config);
+        embedlyServiceProvider.setKey(config.embedly.key);
+    }]).run(['embedService', 'ngEmbedTwitterHandler',
+        function(embedService, ngEmbedTwitterHandler) {
+            // don't use noembed as first choice
+            embedService.setConfig('allwaysUseEmbedlyByDefault', true);
+            // Tweets embed code are not provided by Embedly, we need to use this special handler
+            // from https://github.com/superdesk/angular-embed
+            embedService.registerHandler(ngEmbedTwitterHandler);
+        }
+    ]);
 
 })();
