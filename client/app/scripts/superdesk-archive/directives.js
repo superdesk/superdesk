@@ -566,8 +566,8 @@
          * This directive is only temporarly,
          * it will be deleted with content and ingest
          */
-        .directive('sdContentResults', ['$location', 'preferencesService', 'packages', 'tags', 'asset',
-            function ($location, preferencesService, packages, tags, asset) {
+        .directive('sdContentResults', ['$location', 'preferencesService', 'packages', 'tags', 'asset', 'search',
+            function ($location, preferencesService, packages, tags, asset, search) {
                 var update = {
                     'archive:view': {
                         'allowed': [
@@ -645,8 +645,8 @@
                         /**
                          * Generates Identifier to be used by track by expression.
                          */
-                        scope.generateTrackIdentifier = function(item) {
-                            return (item.state === 'ingested') ? item._id : item._id + ':' + (item._current_version || item.item_version);
+                        scope.generateTrackByIdentifier = function(item) {
+                            return search.generateTrackByIdentifier(item);
                         };
                     }
                 };
