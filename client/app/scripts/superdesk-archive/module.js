@@ -451,7 +451,7 @@ define([
                     label: gettext('New Take'),
                     icon: 'new-doc',
                     filters: [{action: 'list', type: 'archive'}],
-                    keyboardShortcut: 'ctrl+t',
+                    keyboardShortcut: 'ctrl+alt+t',
                     privileges: {archive: 1},
                     condition: function(item) {
                         return (item.lock_user === null || angular.isUndefined(item.lock_user));
