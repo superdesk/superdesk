@@ -8,7 +8,7 @@ var openUrl = require('./helpers/utils').open,
     authoring = require('./helpers/authoring'),
     monitoring = require('./helpers/monitoring');
 
-describe('Search', function() {
+describe('search', function() {
 
     beforeEach(function() {
         openUrl('/#/search').then(globalSearch.setListView());
@@ -105,7 +105,7 @@ describe('Search', function() {
         expect(globalSearch.getItems().count()).toBe(1);
     });
 
-    it('can search by from desk field', function() {
+    it('search by from desk field', function() {
         monitoring.openMonitoring();
         monitoring.switchToDesk('SPORTS DESK').then(authoring.createTextItem());
         authoring.writeTextToHeadline('From-Sports-To-Politics');
@@ -124,18 +124,22 @@ describe('Search', function() {
         globalSearch.openParameters();
 
         globalSearch.selectDesk('from-desk', 'Sports Desk');
+        globalSearch.goButton.click();
         expect(globalSearch.getItems().count()).toBe(1);
         expect(globalSearch.getHeadlineElement(0).getText()).toBe('From-Sports-To-Politics');
 
         globalSearch.selectDesk('to-desk', 'Politic Desk');
+        globalSearch.goButton.click();
         expect(globalSearch.getItems().count()).toBe(1);
         expect(globalSearch.getHeadlineElement(0).getText()).toBe('From-Sports-To-Politics');
 
         globalSearch.selectDesk('from-desk', '');
+        globalSearch.goButton.click();
         expect(globalSearch.getItems().count()).toBe(1);
         expect(globalSearch.getHeadlineElement(0).getText()).toBe('From-Sports-To-Politics');
 
         globalSearch.selectDesk('to-desk', '');
+        globalSearch.goButton.click();
         expect(globalSearch.getItems().count()).toBe(11);
     });
 

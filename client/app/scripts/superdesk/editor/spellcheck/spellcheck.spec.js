@@ -17,7 +17,7 @@ describe('spellcheck', function() {
                 baz: 1
             }
         },
-        LANG = 'en',
+        LANG = 'en-US',
         errors = [];
 
     beforeEach(module('superdesk.editor.spellcheck'));
@@ -41,7 +41,19 @@ describe('spellcheck', function() {
         $rootScope.$digest();
         expect(errors).toContain({word: 'test', index: 0});
         expect(errors).toContain({word: 'if', index: 10});
-        expect(dictionaries.getActive).toHaveBeenCalledWith(LANG);
+        expect(dictionaries.getActive).toHaveBeenCalledWith(LANG, 'en');
+    }));
+
+    it('can spellcheck using base dictionary',
+    inject(function(spellcheck, dictionaries, $q, $rootScope) {
+        spellcheck.setLanguage('en');
+        var p = createParagraph('test what if foo bar baz');
+
+        spellcheck.errors(p).then(assignErrors);
+        $rootScope.$digest();
+        expect(errors).toContain({word: 'test', index: 0});
+        expect(errors).toContain({word: 'if', index: 10});
+        expect(dictionaries.getActive).toHaveBeenCalledWith('en', null);
     }));
 
     it('can add words to user dictionary', inject(function(spellcheck, api, $rootScope) {

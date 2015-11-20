@@ -51,6 +51,20 @@ describe('search service', function() {
         expect(filters).toContain({term: {'task.desk': '456'}});
     }));
 
+    it('can create query for original_creator', inject(function($rootScope, search) {
+        // only to desk is specified
+        var criteria = search.query({original_creator: '123'}).getCriteria();
+        var filters = criteria.query.filtered.filter.and;
+        expect(filters).toContain({term: {'original_creator': '123'}});
+    }));
+
+    it('can create query for unique_name', inject(function($rootScope, search) {
+        // only to desk is specified
+        var criteria = search.query({unique_name: '123'}).getCriteria();
+        var filters = criteria.query.filtered.filter.and;
+        expect(filters).toContain({term: {'unique_name': '123'}});
+    }));
+
     it('can sort items', inject(function(search, $location, $rootScope) {
         search.setSort('urgency');
         $rootScope.$digest();
@@ -141,6 +155,13 @@ describe('sdSearchFacets directive', function () {
     }));
 
     /**
+     * Mock some of the dependencies of the tag service
+     */
+    beforeEach(inject(function($q) {
+        fakeMetadata.fetchSubjectcodes.and.returnValue($q.when());
+    }));
+
+    /**
      * Mock even more dependencies and compile the directive under test.
      */
     beforeEach(inject(function (
@@ -161,7 +182,6 @@ describe('sdSearchFacets directive', function () {
         fakeApi.ingestProviders.query.and.returnValue(
             $q.when({_items: [{foo: 'bar'}]})
         );
-        fakeMetadata.fetchSubjectcodes.and.returnValue($q.when());
 
         // directive compilation...
         html = [

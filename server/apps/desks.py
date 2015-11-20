@@ -17,6 +17,8 @@ from superdesk.services import BaseService
 import superdesk
 from superdesk.notification import push_notification
 from superdesk.activity import add_activity, ACTIVITY_UPDATE
+from superdesk.metadata.item import FAMILY_ID
+from eve.utils import ParsedRequest
 
 
 class DeskTypes(SuperdeskBaseEnum):
@@ -91,6 +93,9 @@ def init_app(app):
     endpoint_name = 'user_desks'
     service = UserDesksService(endpoint_name, backend=superdesk.get_backend())
     UserDesksResource(endpoint_name, app=app, service=service)
+    endpoint_name = 'sluglines'
+    service = SluglineDeskService(endpoint_name, backend=superdesk.get_backend())
+    SluglineDesksResource(endpoint_name, app=app, service=service)
 
 
 superdesk.privilege(name='desks', label='Desk Management', description='User can manage desks.')
@@ -255,3 +260,95 @@ class UserDesksService(BaseService):
     def is_member(self, user_id, desk_id):
         # desk = list(self.get(req=None, lookup={'members.user':ObjectId(user_id), '_id': ObjectId(desk_id)}))
         return len(list(self.get(req=None, lookup={'members.user': ObjectId(user_id), '_id': ObjectId(desk_id)}))) > 0
+
+
+class SluglineDesksResource(Resource):
+
+    url = 'desks/<regex("[a-f0-9]{24}"):desk_id>/sluglines'
+    datasource = {'source': 'published',
+                  'search_backend': 'elastic',
+                  'default_sort': [('place.name', 1), ('slugline', 1)],
+                  'elastic_filter': {"and": [{"range": {"versioncreated": {"gte": "now-24H"}}},
+                                             {"term": {"last_published_version": True}},
+                                             {"term": {"type": "text"}}
+                                             ]}}
+    resource_methods = ['GET']
+    item_methods = []
+
+
+class SluglineDeskService(BaseService):
+    SLUGLINE = 'slugline'
+    OLD_SLUGLINES = 'old_sluglines'
+    HEADLINE = 'headline'
+    NAME = 'name'
+    PLACE = 'place'
+
+    def get(self, req, lookup):
+        """
+        Given the desk the function will return a summary of the different places, sluglines and headlines published
+        from that desk in the last 24 hours.
+        :param req:
+        :param lookup:
+        :return:
+        """
+        lookup['task.desk'] = lookup['desk_id']
+        lookup.pop('desk_id')
+        desk_items = super().get(req, lookup)
+
+        docs = []
+        for item in desk_items:
+            slugline = item.get(self.SLUGLINE)
+            headline = item.get(self.HEADLINE)
+            placename = 'NA'
+            # Find if there are other sluglines in this items family
+            newer, older_slugline = self._find_other_sluglines(item.get(FAMILY_ID), slugline,
+                                                               item.get('versioncreated'))
+
+            # there are no newer sluglines than the current one
+            if not newer:
+                if item.get(self.PLACE):
+                    for place in item.get(self.PLACE):
+                        placename = place.get(self.NAME, 'NA')
+                        self._add_slugline_to_places(docs, placename, slugline, headline, older_slugline)
+                else:
+                    self._add_slugline_to_places(docs, placename, slugline, headline, older_slugline)
+        desk_items.docs = docs
+        return desk_items
+
+    def _add_slugline_to_places(self, places, placename, slugline, headline, old_sluglines):
+        """
+        Append a dictionary to the list, with place holders for the place name and slugline if they are already
+        present
+        :param places:
+        :param placename:
+        :param slugline:
+        :param headline:
+        :param old_sluglines:
+        :return:
+        """
+        places.append({self.NAME: placename if not any(p[self.NAME] == placename for p in places) else '-',
+                       self.SLUGLINE: slugline if not any(p[self.SLUGLINE] == slugline and
+                                                          p[self.NAME] == placename for p in places) else '-',
+                       self.HEADLINE: headline, self.OLD_SLUGLINES: old_sluglines})
+
+    def _find_other_sluglines(self, family_id, slugline, versioncreated):
+        """
+        This function given a family_id will return a tuple with the first value true if there is
+         a more recent story in the family, the second value in the tuple will be a list of any sluglines
+         that might exist for the family that are different to the one passed.
+        :param family_id:
+        :param slugline:
+        :param versioncreated:
+        :return: A tuple as described above
+        """
+        older_sluglines = []
+        req = ParsedRequest()
+        lookup = {'family_id': family_id}
+        family = superdesk.get_resource_service('published').get_from_mongo(req=req, lookup=lookup)
+        for member in family:
+            if member.get('slugline', '') != slugline:
+                if member.get('versioncreated') < versioncreated:
+                    older_sluglines.append(member.get('slugline', ''))
+                else:
+                    return (True, [])
+        return (False, older_sluglines)

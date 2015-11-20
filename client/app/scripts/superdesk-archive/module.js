@@ -240,7 +240,7 @@ define([
                             version.stage = version.task.stage;
                             version.creator = version.version_creator || version.original_creator;
 
-                            if (version.type === 'text' || version.type === 'preformatted') {
+                            if (version.type === 'text') {
                                 version.typeName = 'Story';
                             } else {
                                 version.typeName = _.capitalize(item.type);
@@ -272,7 +272,7 @@ define([
                                 version.creator = versioncreator && versioncreator.display_name;
                             }
 
-                            if (version.type === 'text' || version.type === 'preformatted') {
+                            if (version.type === 'text') {
                                 version.typeName = 'Story';
                             } else {
                                 version.typeName = _.capitalize(item.type);
@@ -401,7 +401,7 @@ define([
                 })
                 .activity('createBroadcast', {
                     label: gettext('Create Broadcast'),
-                    icon: 'copy',
+                    icon: 'broadcast',
                     monitor: true,
                     controller: ['api', 'notify', '$rootScope', 'data', 'desks', 'authoringWorkspace',
                     function(api, notify, $rootScope, data, desks, authoringWorkspace) {
@@ -480,7 +480,7 @@ define([
                 })
                 .activity('rewrite', {
                     label: gettext('Update'),
-                    icon: 'multi-star-color',
+                    icon: 'edit-line',
                     filters: [{action: 'list', type: 'archive'}],
                     group: 'corrections',
                     privileges: {archive: 1},

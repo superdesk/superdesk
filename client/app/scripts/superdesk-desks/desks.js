@@ -45,7 +45,7 @@
 
         $scope.privileges = privileges.privileges;
 
-        $scope.views = ['content', 'tasks', 'users'];
+        $scope.views = ['content', 'tasks', 'users', 'sluglines'];
 
         $scope.view = $scope.views[0];
 
@@ -110,7 +110,13 @@
                     criteria = cards.criteria(scope.stage, queryString);
                     scope.loading = true;
                     scope.items = scope.total = null;
-                    api('archive').query(criteria).then(function(items) {
+                    var provider = 'archive';
+
+                    if (scope.stage.type && scope.stage.type === 'deskOutput') {
+                        provider = 'search';
+                    }
+
+                    api(provider).query(criteria).then(function(items) {
                         scope.items = items._items;
                         scope.total = items._meta.total;
 
@@ -362,6 +368,25 @@
         };
     }
 
+    SluglinesItemListDirective.$inject = ['api'];
+    function SluglinesItemListDirective(api) {
+        return {
+            templateUrl: 'scripts/superdesk-desks/views/slugline-items.html',
+            scope: {
+                desk: '='
+            },
+            link: function(scope, elem) {
+                scope.items = [];
+                scope.loading = true;
+                api.get('desks/' + scope.desk + '/sluglines').then(function(items) {
+                    scope.items = items._items;
+                })['finally'](function() {
+                    scope.loading = false;
+                });
+            }
+        };
+    }
+
     DeskSettingsController.$inject = ['$scope', 'desks'];
     function DeskSettingsController($scope, desks) {
         desks.initialize()
@@ -417,6 +442,10 @@
                 }
             );
         };
+
+        $scope.$on('desks:refresh:stages', function() {
+            desks.refreshStages();
+        });
 
         $scope.getDeskStages = function(desk) {
             return desks.deskStages[desk._id];
@@ -761,6 +790,7 @@
         .directive('sdStageItems', StageItemListDirective)
         .directive('sdTaskStatusItems', TaskStatusItemsDirective)
         .directive('sdUserRoleItems', UserRoleItemListDirective)
+        .directive('sdSluglinesItems', SluglinesItemListDirective)
         .directive('sdDeskConfig', function() {
             return {
                 controller: DeskConfigController
@@ -845,8 +875,8 @@
                 }
             };
         }])
-        .directive('sdDeskeditBasic', ['gettext', 'desks', 'WizardHandler', 'metadata', '$filter', '$interpolate',
-            function(gettext, desks, WizardHandler, metadata, $filter, $interpolate) {
+        .directive('sdDeskeditBasic', ['gettext', 'desks', 'WizardHandler', 'metadata', '$filter', '$interpolate', '$rootScope',
+            function(gettext, desks, WizardHandler, metadata, $filter, $interpolate, $rootScope) {
             return {
 
                 link: function(scope, elem, attrs) {
@@ -883,6 +913,7 @@
                             if (_new) {
                                 scope.edit(scope.desk.edit);
                                 scope.desks._items.unshift(scope.desk.edit);
+                                $rootScope.$broadcast('desks:refresh:stages');
                             } else {
                                 var origDesk = _.find(scope.desks._items, {_id: scope.desk.edit._id});
                                 _.extend(origDesk, scope.desk.edit);
@@ -890,6 +921,7 @@
 
                             scope.desks._items = $filter('sortByName')(scope.desks._items);
                             desks.deskLookup[scope.desk.edit._id] = scope.desk.edit;
+
                             if (!done) {
                                 WizardHandler.wizard('desks').next();
                             } else {

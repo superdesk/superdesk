@@ -292,6 +292,20 @@ class PackageService():
             if g.get(RESIDREF, '') == ref_id:
                 g[field] = field_value
 
+    def remove_group_ref(self, package, ref_id):
+        groups = package[GROUPS]
+        new_groups = [{GROUP_ID: group[GROUP_ID], ROLE: group.get(ROLE),
+                       REFS: [ref for ref in group[REFS] if ref.get('guid') != ref_id]}
+                      for group in groups]
+        new_root_refs = [{ID_REF: group[GROUP_ID]} for group in new_groups if group[GROUP_ID] != ROOT_GROUP]
+
+        for group in new_groups:
+            if group[GROUP_ID] == ROOT_GROUP:
+                group[REFS] = new_root_refs
+                break
+
+        return new_groups
+
     def remove_refs_in_package(self, package, ref_id_to_remove, processed_packages=None):
         """
         Removes residRef referenced by ref_id_to_remove from the package associations and returns the package id.
@@ -312,15 +326,7 @@ class PackageService():
                 sub_package = self.find_one(req=None, _id=sub_package_id)
                 return self.remove_refs_in_package(sub_package, ref_id_to_remove)
 
-        new_groups = [{GROUP_ID: group[GROUP_ID], ROLE: group.get(ROLE),
-                       REFS: [ref for ref in group[REFS] if ref.get('guid') != ref_id_to_remove]}
-                      for group in groups]
-        new_root_refs = [{ID_REF: group[GROUP_ID]} for group in new_groups if group[GROUP_ID] != ROOT_GROUP]
-
-        for group in new_groups:
-            if group[GROUP_ID] == ROOT_GROUP:
-                group[REFS] = new_root_refs
-                break
+        new_groups = self.remove_group_ref(package, ref_id_to_remove)
 
         updates = {config.LAST_UPDATED: utcnow(), GROUPS: new_groups}
 

@@ -269,25 +269,32 @@
                 }
             };
         }])
-        .directive('sdFetchedDesks', ['desks', 'familyService', '$location', function(desks, familyService, $location) {
+        .directive('sdFetchedDesks', ['desks', 'familyService', '$location', 'superdesk',
+            function(desks, familyService, $location, superdesk) {
             return {
                 scope: {
                     item: '='
                 },
                 templateUrl: 'scripts/superdesk-archive/views/fetched-desks.html',
                 link: function(scope, elem) {
+
                     scope.$watchGroup(['item', 'item.archived'], function() {
                         if (scope.item) {
                             familyService.fetchDesks(scope.item, false)
-                                .then(function(desks) {
-                                    scope.desks = desks;
+                                .then(function(fetchedDesks) {
+                                    scope.desks = fetchedDesks;
                                 });
                         }
                     });
 
                     scope.selectFetched = function (desk) {
-                        desks.setCurrentDeskId(desk.desk._id);
-                        $location.path('/workspace/content').search('_id=' + desk.itemId);
+                        if (desk.isUserDeskMember) {
+                            desks.setCurrentDeskId(desk.desk._id);
+                            $location.url('/workspace/monitoring');
+                            if (desk.count === 1) {
+                                superdesk.intent('edit', 'item', desk.item);
+                            }
+                        }
                     };
                 }
             };
@@ -646,6 +653,7 @@
             }])
 
         .service('familyService', ['api', 'desks', function(api, desks) {
+
             this.fetchItems = function(familyId, excludeItem) {
                 var repo = 'archive';
 
@@ -681,7 +689,15 @@
                     _.each(items._items, function(i) {
                         if (i.task && i.task.desk && desks.deskLookup[i.task.desk]) {
                             if (deskIdList.indexOf(i.task.desk) < 0) {
-                                deskList.push({'desk': desks.deskLookup[i.task.desk], 'count': 1, 'itemId': i._id});
+                                var _isMember = !_.isEmpty(_.find(desks.userDesks._items, {_id: i.task.desk}));
+                                deskList.push(
+                                    {
+                                        'desk': desks.deskLookup[i.task.desk],
+                                        'count': 1,
+                                        'itemId': i._id,
+                                        'isUserDeskMember': _isMember,
+                                        'item': i
+                                    });
                                 deskIdList.push(i.task.desk);
                             } else {
                                 deskList[deskIdList.indexOf(i.task.desk)].count += 1;

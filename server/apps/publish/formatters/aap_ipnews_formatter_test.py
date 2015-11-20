@@ -245,6 +245,28 @@ class AapIpNewsFormatterTest(SuperdeskTestCase):
         self.assertEqual(doc['subject_reference'], '00000000')
         self.assertEqual(doc['headline'], 'This is a test headline')
 
+    def test_aap_ipnews_formatter_with_body_footer(self):
+        subscriber = self.app.data.find('subscribers', None, None)[0]
+        doc = self.article.copy()
+        doc['body_footer'] = 'call helpline 999 if you are planning to quit smoking'
+
+        f = AAPIpNewsFormatter()
+        seq, item = f.format(doc, subscriber)[0]
+
+        self.assertGreater(int(seq), 0)
+        self.assertEqual(seq, item['sequence'])
+        item.pop('sequence')
+        self.assertDictEqual(item,
+                             {'category': 'a', 'texttab': 't', 'fullStory': 1, 'ident': '0',
+                              'headline': 'VIC:This is a test headline', 'service_level': 'a', 'originator': 'AAP',
+                              'take_key': 'take_key',
+                              'article_text': 'The story body<br>call helpline 999 if you are planning to quit smoking',
+                              'priority': 'f', 'usn': '1',
+                              'subject_matter': 'international law', 'news_item_type': 'News',
+                              'subject_reference': '02011001', 'subject': 'crime, law and justice',
+                              'wordcount': '1', 'subject_detail': 'international court or tribunal',
+                              'genre': 'Current', 'keyword': 'slugline', 'author': 'joe'})
+
 
 class DefaultSubjectTest(SuperdeskTestCase):
 

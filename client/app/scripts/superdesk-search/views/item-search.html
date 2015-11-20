@@ -63,7 +63,7 @@
                 <label for="search-storyname">
                     {{:: 'Story Name' | translate}}
                 </label>
-                <input type="text" id="search-storyname" ng-model="meta.unique_name">
+                <input type="text" id="search-storyname" ng-model="fields.unique_name">
             </div>
             <div class="field">
                 <label for="search-storytext">
@@ -82,7 +82,9 @@
             <label for="search-creator">
                 {{:: 'Creator' | translate}}
             </label>
-            <select id="search-creator" ng-model="meta.original_creator" ng-options="user._id  as user.display_name for user in userList">
+            <select id="search-creator"
+                    ng-model="fields.original_creator"
+                    ng-options="user._id  as user.display_name for user in userList">
             <option value="" label=""></option>
             </select>
         </div>
@@ -91,7 +93,12 @@
                 {{:: 'Subject' | translate}}
             </label>
             <div class="control" id="search-subject">
-                <div sd-meta-terms data-item="subjectitems" data-field="subject" data-unique="qcode" data-list="subjectcodes" data-change="subjectSearch(subjectitems)"></div>
+                <div sd-meta-terms
+                     data-item="subjectitems"
+                     data-field="subject"
+                     data-unique="qcode"
+                     data-list="subjectcodes"
+                     data-change="subjectSearch(subjectitems)"></div>
             </div>
         </div>
         <div class="field">
@@ -101,7 +108,7 @@
             <select
                 id="from-desk" name="from-desk"
                 ng-options="d._id as d.name for d in desks._items"
-                ng-model="selectedDesk.from" ng-change="deskSearch()">
+                ng-model="fields.from_desk">
                 <option value="" label=""></option>
             </select>
         </div>
@@ -113,7 +120,7 @@
             <select
                 id="to-desk" name="to-desk"
                 ng-options="d._id as d.name for d in desks._items"
-                ng-model="selectedDesk.to" ng-change="deskSearch()">
+                ng-model="fields.to_desk">
                 <option value="" label=""></option>
             </select>
         </div>

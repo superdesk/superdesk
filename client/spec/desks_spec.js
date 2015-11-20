@@ -10,7 +10,7 @@
 'use strict';
 var desks = require('./helpers/desks');
 
-describe('desk maintenance', function() {
+describe('desks', function() {
 
     beforeEach(function() {
         desks.openDesksSettings();
@@ -58,5 +58,15 @@ describe('desk maintenance', function() {
         expect(desks.deskDescriptionElement().getAttribute('value')).toEqual('Test Description');
         expect(desks.deskSourceElement().getAttribute('value')).toEqual('Test Source');
         expect(desks.getDeskType().getAttribute('value')).toEqual('string:authoring');
+    });
+
+    it('add desk reflects default stage count', function() {
+        desks.getNewDeskButton().click();
+        desks.deskNameElement().sendKeys('Test Desk');
+        desks.deskDescriptionElement().sendKeys('Test Description');
+        desks.deskSourceElement().sendKeys('Test Source');
+        desks.setDeskType('authoring');
+        desks.actionDoneOnGeneralTab();
+        expect(desks.getStageCount('Test Desk')).toEqual('2');
     });
 });

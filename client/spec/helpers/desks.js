@@ -51,6 +51,19 @@ function Desks() {
     };
 
     /**
+     * Returns the stage count for named desk on desks settings list
+     * @param {string} name of desk
+     * @return {Promise.<string>} a promise which is resolved with the stage count
+     **/
+    this.getStageCount = function(name) {
+        return this.getRow(name).then(function(rows) {
+            return rows[0].element(by.binding('getDeskStages(desk).length')).getText().then(function(count) {
+                return count;
+            });
+        });
+    };
+
+    /**
      * Starts the edit action for named desk from desks settings list
      * @param {string} name of desk
      **/

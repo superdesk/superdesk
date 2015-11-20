@@ -244,10 +244,17 @@
                     $scope.origTemplate = null;
                     $scope.template = null;
                     $scope.vars = null;
+                    fetchTemplates();
                 };
 
                 $scope.updateStages = function(desk) {
                     $scope.stages = desk ? desks.deskStages[desk] : null;
+                };
+
+                $scope.validSchedule = function() {
+                    return $scope.template.schedule.is_active ?
+                        $scope.template.schedule.day_of_week && $scope.template.schedule.create_at :
+                        true;
                 };
 
                 fetchTemplates();

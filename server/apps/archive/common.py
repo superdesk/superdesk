@@ -344,16 +344,6 @@ def update_state(original, updates):
             updates[ITEM_STATE] = CONTENT_STATE.DRAFT
 
 
-def is_update_allowed(archive_doc):
-    """
-    Checks if the archive_doc is valid to be updated. If invalid then the method raises ForbiddenError.
-    For instance, a published item shouldn't be allowed to update.
-    """
-
-    if archive_doc.get(ITEM_STATE) == CONTENT_STATE.KILLED:
-        raise SuperdeskApiError.forbiddenError("Item isn't in a valid state to be updated.")
-
-
 def handle_existing_data(doc, pub_status_value='usable', doc_type='archive'):
     """
     Handles existing data. For now the below are handled:
@@ -450,6 +440,11 @@ def item_schema(extra=None):
                 'takes_package_id': {'type': 'string', 'mapping': not_analyzed},
                 'rewrite_id': {'type': 'string', 'mapping': not_analyzed}
             }
+        },
+        'body_footer': {  # Public Service Announcements
+            'type': 'string',
+            'nullable': True,
+            'mapping': not_analyzed
         }
     }
     schema.update(metadata_schema)
@@ -466,26 +461,6 @@ def is_item_in_package(item):
     """
     return item.get(LINKED_IN_PACKAGES, None) \
         and sum(1 for x in item.get(LINKED_IN_PACKAGES, []) if x.get(PACKAGE_TYPE, '') == '')
-
-
-def is_normal_package(doc):
-    """
-    Returns True if the passed doc is a package and not a takes package. Otherwise, returns False.
-
-    :return: True if it's a Package and not a Takes Package, False otherwise.
-    """
-
-    return not is_takes_package(doc)
-
-
-def is_takes_package(doc):
-    """
-    Returns True if the passed doc is a takes package. Otherwise, returns False.
-
-    :return: True if it's a Takes Package, False otherwise.
-    """
-
-    return doc[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE and doc.get(PACKAGE_TYPE, '') == TAKES_PACKAGE
 
 
 def convert_task_attributes_to_objectId(doc):
