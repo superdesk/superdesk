@@ -51,6 +51,19 @@ function Desks() {
     };
 
     /**
+     * Returns the stage count for named desk on desks settings list
+     * @param {string} name of desk
+     * @return {Promise.<string>} a promise which is resolved with the stage count
+     **/
+    this.getStageCount = function(name) {
+        return this.getRow(name).then(function(rows) {
+            return rows[0].element(by.binding('getDeskStages(desk).length')).getText().then(function(count) {
+                return count;
+            });
+        });
+    };
+
+    /**
      * Starts the edit action for named desk from desks settings list
      * @param {string} name of desk
      **/
@@ -185,27 +198,31 @@ function Desks() {
     };
 
     /**
-     * next button on general tab
-     * @returns {ElementFinder} next button
+     * Save & Continue action on general tab
      **/
-    this.getNextButtonOnGeneralTab = function() {
-        return element(by.id('next-general'));
+    this.actionSaveAndContinueOnGeneralTab = function() {
+        element(by.id('next-general')).click();
     };
 
     /**
-     * next button on stages tab
-     * @returns {ElementFinder} next button
+     * Done action on general tab
      **/
-    this.getNextButtonOnStagesTab = function() {
-        return element(by.id('next-stages'));
+    this.actionDoneOnGeneralTab = function() {
+        element(by.id('done-general')).click();
     };
 
     /**
-     * next button on people tab
-     * @returns {ElementFinder} next button
+     * Save & Continue action on stages tab
      **/
-    this.getNextButtonOnPeopleTab = function() {
-        return element(by.id('next-people'));
+    this.actionSaveAndContinueOnStagesTab = function() {
+        element(by.id('next-stages')).click();
+    };
+
+    /**
+     * Save & Continue action on people tab
+     **/
+    this.actionSaveAndContinueOnPeopleTab = function() {
+        element(by.id('next-people')).click();
     };
 
     /**

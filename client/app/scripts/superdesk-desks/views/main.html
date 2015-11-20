@@ -27,6 +27,9 @@
 		<div class="desk-container" ng-if="view === 'users'" ng-repeat="desk in desks._items | orderBy: 'name'">
 			<div class="desk" ng-include="'scripts/superdesk-desks/views/desk_users.html'"></div>
 		</div>
+		<div class="desk-container" ng-if="view === 'sluglines'" ng-repeat="desk in desks._items | orderBy: 'name'">
+			<div class="desk" ng-include="'scripts/superdesk-desks/views/slugline.html'"></div>			
+		</div>
 	</div>
 
 	<div sd-desk-config-modal 

@@ -5,7 +5,7 @@ var authoring = require('./helpers/authoring'),
     userPrefs = require('./helpers/user_prefs'),
     workspace = require('./helpers/workspace');
 
-describe('Users', function() {
+describe('users', function() {
     'use strict';
 
     beforeEach(function(done) {

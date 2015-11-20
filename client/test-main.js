@@ -60,8 +60,6 @@ tests.push('superdesk-content-filters/content-filters');
 tests.push('superdesk-workspace/content/content');
 tests.push('superdesk-packaging/packaging');
 tests.push('superdesk-desks/desks');
-tests.push('superdesk-desks/aggregate');
-tests.push('superdesk-desks/aggregate-widget/aggregate');
 tests.push('superdesk-groups/groups');
 tests.push('superdesk-search/search');
 tests.push('superdesk-legal-archive/legal_archive');
@@ -86,6 +84,8 @@ tests.push('superdesk/editor/spellcheck/spellcheck');
 tests.push('superdesk-templates/templates');
 tests.push('superdesk-highlights/highlights');
 tests.push('superdesk-monitoring/monitoring');
+tests.push('superdesk-monitoring/aggregate');
+tests.push('superdesk-monitoring/aggregate-widget/aggregate');
 tests.push('superdesk-workspace/workspace');
 
 // libs

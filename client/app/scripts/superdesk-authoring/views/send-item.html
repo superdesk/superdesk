@@ -79,6 +79,7 @@
             <li ng-if="showSendButtonAndDestination() && mode !== 'authoring'">
                 <button class="btn btn-info"
                         ng-click="send(true)"
+                        ng-disabled="disableFetchAndOpenButton()"
                         translate>
                     fetch and open
                 </button>

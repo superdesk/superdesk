@@ -78,13 +78,14 @@ class ArchiveSpikeService(BaseService):
     def _validate_item(self, original):
         """
         Raises an exception if the item is linked in a non-take package, the idea being that you don't whant to
-        inadvertently remove thing from packages, this force that to be done as a conscious action.
+        inadvertently remove the item from the packages, this force that to be done as a conscious action.
         :param original:
         :raise: An exception or nothing
         """
         if is_item_in_package(original):
-            raise SuperdeskApiError.badRequestError(message="This item is in a package" +
-                                                            " it needs to be removed before the item can be spiked")
+            raise SuperdeskApiError.badRequestError(
+                message="The item \"{}\" is in a package".format(original.get('slugline', '')) +
+                        " it needs to be removed before the item can be spiked")
 
     def _validate_take(self, original):
         takes_service = TakesPackageService()
@@ -134,8 +135,7 @@ class ArchiveSpikeService(BaseService):
         return item
 
     def on_updated(self, updates, original):
-        if hasattr(app, 'on_broadcast_spike_item'):
-            app.on_broadcast_spike_item(original)
+        get_resource_service('archive_broadcast').spike_item(original)
 
 
 class ArchiveUnspikeService(BaseService):

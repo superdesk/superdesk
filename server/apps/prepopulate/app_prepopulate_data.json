@@ -414,6 +414,21 @@
     },
 
     {
+        "data": {
+            "_id": "footers",
+            "display_name": "Public Service Announcements",
+            "type": "manageable",
+            "items": [
+                {"is_active": true, "name": "Suicide", "value": "Readers seeking support and information about suicide prevention can contact Lifeline on 13 11 14.<br>Suicide Call Back Service 1300 659 467<br>MensLine Australia 1300 78 99 78<br>Multicultural Mental Health Australia www.mmha.org.au<br>Local Aboriginal Medical Service available from www.vibe.com.au"},
+                {"is_active": true, "name": "Children", "value": "Kids Helpline 1800 55 1800 (for young people aged 5 to 25)"},
+                {"is_active": true, "name": "Domestic Violence", "value": "National domestic violence helpline: 1800 737 732  or 1800RESPECT. In an emergency call triple-zero."}
+            ]
+        },
+        "resource": "vocabularies",
+        "id_name": "-id vocabularies footers-"
+    },
+
+    {
     	"data": {
     		"name" : "Public API",
     		"subscriber_type": "digital",
@@ -538,7 +553,7 @@
         "username": "admin",
         "data": {
             "headline": "item5",
-            "slugline": "item5 slugline",
+            "slugline": "item5 slugline one/two ",
             "body_html" : "<p>item5 text</p>",
             "type": "text",
             "guid": "item5",
@@ -970,5 +985,64 @@
             "name": "saved search admin1",
             "user": "-id user admin1-"
         }
+    },
+    {
+        "resource": "saved_searches",
+        "username": "admin",
+        "data": {
+            "filter": {
+                "query": {
+                    "repo" : "archive",
+                    "q": "headline:(item*)"
+                }
+            },
+            "name": "global saved search item",
+            "user": "-id user admin-",
+            "is_global": true
+        }
+    },
+    {
+        "resource": "saved_searches",
+        "username": "admin",
+        "data": {
+            "filter": {
+                "query": {
+                    "repo": "ingest",
+                    "q": "headline:(ingest1)"
+                }
+            },
+            "name": "global saved search ingest1",
+            "user": "-id user admin-",
+            "is_global": true
+        }
+    },
+    {
+        "resource": "saved_searches",
+        "username": "admin",
+        "data": {
+            "filter": {
+                "query": {
+                    "q": "headline:(i*)"
+                }
+            },
+            "name": "global saved search ingest1 and item",
+            "user": "-id user admin-",
+            "is_global": true
+        }
+    },
+    {
+        "resource": "saved_searches",
+        "username": "admin",
+        "data": {
+            "filter": {
+                "query": {
+                    "q": "headline:(i*)"
+                }
+            },
+            "name": "global saved search other user",
+            "user": "-id user admin1-",
+            "is_global": true
+        }
     }
+
 ]

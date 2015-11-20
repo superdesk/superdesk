@@ -24,6 +24,20 @@ function SpellcheckService($q, api, dictionaries) {
     };
 
     /**
+     * Gets the base language (en) of different culture
+     * specific (en-AU) language
+     *
+     * @param {string} language
+     * @return {string}
+     */
+    function getBaseLanguage(language) {
+        if (language && language.indexOf('-') > 0) {
+            return language.split('-')[0];
+        }
+        return null;
+    }
+
+    /**
      * Get dictionary for spellchecking
      *
      * @return {Promise}
@@ -33,9 +47,16 @@ function SpellcheckService($q, api, dictionaries) {
             return $q.reject();
         }
 
+        var baseLang = getBaseLanguage(lang);
+
         if (!dict) {
-            dict = dictionaries.getActive(lang).then(function(items) {
+            dict = dictionaries.getActive(lang, baseLang).then(function(items) {
                 dict.content = {};
+
+                if (baseLang && _.find(items, {'language_id': lang}) && _.find(items, {'language_id': baseLang})) {
+                    items = _.filter(items, {'language_id': lang});
+                }
+
                 angular.forEach(items, addDict);
                 return dict.content;
             });
@@ -49,7 +70,7 @@ function SpellcheckService($q, api, dictionaries) {
      *
      * @param {Object} item
      */
-    function addDict(item) {
+    function addDict(item, _lang) {
         angular.extend(dict.content, item.content || {});
     }
 
@@ -118,7 +139,7 @@ function SpellcheckService($q, api, dictionaries) {
 
 SpellcheckMenuController.$inject = ['editor', '$rootScope'];
 function SpellcheckMenuController(editor, $rootScope) {
-    this.isAuto = editor.settings.spellcheck || true;
+    this.isAuto = editor.settings.spellcheck;
     this.spellcheck = spellcheck;
     this.pushSettings = pushSettings;
 

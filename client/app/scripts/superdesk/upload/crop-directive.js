@@ -8,8 +8,10 @@ define([
         return {
             scope: {
                 src: '=',
+                file: '=',
                 cords: '=',
-                progressWidth: '='
+                progressWidth: '=',
+                maxFileSize: '='
             },
             link: function(scope, elem) {
 
@@ -36,6 +38,9 @@ define([
 
                 scope.$watch('src', function(src) {
                     elem.empty();
+                    if (scope.maxFileSize && ((scope.file.size / 1048576) > parseInt(scope.maxFileSize, 10))) {
+                        notify.info(gettext('Image is bigger then ' + scope.maxFileSize + 'MB, upload file size may be limited!'));
+                    }
                     if (src) {
                         var img = new Image();
                         img.onload = function() {

@@ -6,7 +6,7 @@ var route = require('./helpers/utils').route,
     workspace = require('./helpers/workspace'),
     highlights = require('./helpers/highlights');
 
-describe('HIGHLIGHTS', function() {
+describe('highlights', function() {
     'use strict';
 
     describe('add highlights configuration:', function() {
@@ -189,7 +189,13 @@ describe('HIGHLIGHTS', function() {
             monitoring.actionOnItemSubmenu('Add to current', 'story', 2, 2);
             expect(authoring.getGroupItems('story').count()).toBe(1);
 
+            //change desk on highlights
+            workspace.showHighlightList('Highlight one');
+            workspace.selectDesk('SPORTS DESK');
+            expect(browser.getLocationAbsUrl()).toMatch('/monitoring');
+
             //show highlist three and add an item to highlight package
+            workspace.selectDesk('POLITIC DESK');
             workspace.showHighlightList('Highlight three');
             workspace.actionOnItemSubmenu('Add to current', 'sidebars', 0);
             expect(authoring.getGroupItems('sidebars').count()).toBe(1);

@@ -73,6 +73,15 @@ function Authoring() {
         this.sendBtn.click();
     };
 
+    this.selectDeskforSendTo = function(desk) {
+        var sidebar = element.all(by.css('.slide-pane')).last(),
+            dropdown = sidebar.element(by.css('.dropdown--dark .dropdown-toggle'));
+
+        dropdown.waitReady();
+        dropdown.click();
+        sidebar.element(by.buttonText(desk)).click();
+    };
+
     this.markAction = function() {
         return element(by.className('svg-icon-add-to-list')).click();
     };
@@ -244,6 +253,17 @@ function Authoring() {
         browser.actions().mouseMove(element(by.css('.highlights-toggle .dropdown-toggle'))).perform();
     };
 
+    this.toggleAutoSpellCheck = function() {
+        var toggle = element(by.id('authoring-extra-dropdown')).element(by.className('icon-dots-vertical'));
+
+        browser.wait(function() {
+            return toggle.isDisplayed();
+        });
+
+        toggle.click();
+        element(by.model('spellcheckMenu.isAuto')).click();
+    };
+
     this.getSubnav = function() {
         return element(by.id('subnav'));
     };
@@ -259,6 +279,7 @@ function Authoring() {
     var bodyHtml = element(by.model('item.body_html')).all(by.className('editor-type-html')).first();
     var headline = element(by.model('item.headline')).all(by.className('editor-type-html')).first();
     var abstract = element(by.model('item.abstract')).all(by.className('editor-type-html')).first();
+    var bodyFooter = element(by.id('body_footer')).all(by.className('editor-type-html')).first();
     var packageSlugline = element.all(by.className('keyword')).last();
 
     this.writeText = function (text) {
@@ -308,4 +329,21 @@ function Authoring() {
         element(by.className('proofread-theme-list'))
                 .all(by.className(theme)).first().click();
     };
+
+    this.addPublicServiceAnnouncement = function (psaLabel) {
+        element(by.id('psa_options')).element(by.css('option[label="' + psaLabel + '"]')).click();
+    };
+
+    this.getBodyFooter = function () {
+        return bodyFooter.getText();
+    };
+
+    this.showTransmissionDetails = function (publishedHistoryItemIndex) {
+        this.getHistoryItem(publishedHistoryItemIndex).element(
+            by.css('[ng-click="showOrHideTransmissionDetails()"]')).click();
+        browser.sleep(700);
+
+        return element.all(by.repeater('queuedItem in queuedItems'));
+    };
+
 }

@@ -1040,7 +1040,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                     });
 
                     scope.$on('spellcheck:run', render);
-                    scope.$on('key:ctrl:shift:s', render);
+                    scope.$on('key:ctrl:shift:d', render);
 
                     function cancelTimeout(event) {
                         $timeout.cancel(updateTimeout);
@@ -1098,14 +1098,6 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                             return false;
                         }
                     });
-
-                    if (scope.type === 'preformatted') {
-                        editorElem.on('keydown keyup click', function() {
-                            scope.$apply(function() {
-                                angular.extend(scope.cursor, getLineColumn());
-                            });
-                        });
-                    }
 
                     scope.$on('$destroy', function() {
                         editorElem.off();

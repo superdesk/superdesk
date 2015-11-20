@@ -344,8 +344,8 @@
         $scope.profile = $scope.user._id === session.identity._id;
     }
 
-    ChangeAvatarController.$inject = ['$scope', 'upload', 'session', 'urls', 'betaService'];
-    function ChangeAvatarController($scope, upload, session, urls, beta) {
+    ChangeAvatarController.$inject = ['$scope', 'upload', 'session', 'urls', 'betaService', 'gettext', 'notify'];
+    function ChangeAvatarController($scope, upload, session, urls, beta, gettext, notify) {
 
         $scope.methods = [
             {id: 'upload', label: gettext('Upload from computer')},
@@ -390,6 +390,7 @@
                 }).then(function(response) {
 
                     if (response.data._status === 'ERR'){
+                        notify.error(gettext('There was a problem with your upload'));
                         return;
                     }
 
@@ -398,7 +399,11 @@
                     $scope.locals.data.avatar = response.data._id;
 
                     return $scope.resolve(picture_url);
-                }, null, function(update) {
+                },  function(error) {
+                    notify.error((error.statusText !== '') ?
+                                    error.statusText :
+                                    gettext('There was a problem with your upload'));
+                }, function(update) {
                     $scope.progress.width = Math.round(update.loaded / update.total * 100.0);
                 });
             });
@@ -910,6 +915,10 @@
                     scope.dirty = false;
                     scope.errorMessage = null;
 
+                    scope.$watch('origUser', function() {
+                        scope.user = _.create(scope.origUser);
+                    });
+
                     resetUser(scope.origUser);
 
                     scope.$watchCollection('user', function(user) {
@@ -1014,22 +1023,24 @@
 
                     function resetUser(user) {
                         scope.dirty = false;
-                        return userList.getUser(user._id, true).then(function(u) {
-                            scope.error = null;
-                            scope.origUser = u;
-                            scope.user = _.create(u);
-                            scope.confirm = {password: null};
-                            scope.show = {password: false};
-                            scope._active = usersService.isActive(u);
-                            scope._pending = usersService.isPending(u);
-                            scope.profile = scope.user._id === session.identity._id;
-                            scope.userDesks = [];
-                            if (angular.isDefined(u) && angular.isDefined(u._links)) {
-                                desks.fetchUserDesks(u).then(function(response) {
-                                    scope.userDesks = response._items;
-                                });
-                            }
-                        });
+                        if (angular.isDefined(user._id)) {
+                            return userList.getUser(user._id, true).then(function(u) {
+                                scope.error = null;
+                                scope.origUser = u;
+                                scope.user = _.create(u);
+                                scope.confirm = {password: null};
+                                scope.show = {password: false};
+                                scope._active = usersService.isActive(u);
+                                scope._pending = usersService.isPending(u);
+                                scope.profile = scope.user._id === session.identity._id;
+                                scope.userDesks = [];
+                                if (angular.isDefined(u) && angular.isDefined(u._links)) {
+                                    desks.fetchUserDesks(u).then(function(response) {
+                                        scope.userDesks = response._items;
+                                    });
+                                }
+                            });
+                        }
                     }
 
                     scope.$on('user:updated', function(event, user) {
@@ -1058,6 +1069,11 @@
             return {
                 templateUrl: asset.templateUrl('superdesk-users/views/user-preferences.html'),
                 link: function(scope, element, attrs) {
+                    /*
+                     * Set this to true after adding all the preferences to the scope. If done before, then the
+                     * directives which depend on scope variables might fail to load properly.
+                     */
+                    scope.preferencesLoaded = false;
                     var orig;  // original preferences, before any changes
 
                     preferencesService.get(null, true).then(function(result) {
@@ -1250,6 +1266,7 @@
                         });
 
                         scope.locators = helperData.locators;
+                        scope.preferencesLoaded = true;
                     }
 
                     /**

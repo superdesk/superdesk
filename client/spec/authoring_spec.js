@@ -1,10 +1,9 @@
-
 'use strict';
 
 var monitoring = require('./helpers/monitoring'),
-    search = require('./helpers/search'),
     authoring = require('./helpers/authoring'),
-    ctrlKey = require('./helpers/utils').ctrlKey;
+    ctrlKey = require('./helpers/utils').ctrlKey,
+    ctrlShiftKey = require('./helpers/utils').ctrlShiftKey;
 
 describe('authoring', function() {
 
@@ -63,12 +62,8 @@ describe('authoring', function() {
         expect(monitoring.getTextItem(1, 0)).toBe('item5');
         monitoring.actionOnItem('Edit', 1, 0);
         authoring.publish();
-        monitoring.showSearch();
-        search.setListView();
-        search.showCustomSearch();
-        search.toggleByType('text');
-        expect(search.getTextItem(0)).toBe('item5');
-        search.actionOnItem('Kill item', 0);
+        monitoring.filterAction('text');
+        monitoring.actionOnItem('Kill item', 4, 0);
         authoring.sendToButton.click();
         expect(authoring.kill_button.isDisplayed()).toBe(true);
 
@@ -77,24 +72,20 @@ describe('authoring', function() {
         expect(monitoring.getTextItem(2, 2)).toBe('item6');
         monitoring.actionOnItem('Edit', 2, 2);
         authoring.publish();
-        monitoring.showSearch();
-        search.setListView();
-        search.showCustomSearch();
-        search.toggleByType('text');
-        expect(search.getTextItem(0)).toBe('item6');
-        search.actionOnItem('Correct item', 0);
+        monitoring.filterAction('text');
+        monitoring.actionOnItem('Correct item', 4, 0);
         authoring.sendToButton.click();
         expect(authoring.correct_button.isDisplayed()).toBe(true);
         authoring.close();
-        expect(search.getTextItem(0)).toBe('item6');
-        search.actionOnItem('Open', 0);
+        expect(monitoring.getTextItem(4, 0)).toBe('item6');
+        monitoring.actionOnItem('Open', 4, 0);
         expect(authoring.edit_correct_button.isDisplayed()).toBe(true);
         expect(authoring.edit_kill_button.isDisplayed()).toBe(true);
         authoring.close();
-        search.toggleByType('text');
-        search.toggleByType('composite');
-        expect(search.getTextItem(0)).toBe('item6');
-        search.actionOnItem('Open', 0);
+        monitoring.filterAction('text');
+        monitoring.filterAction('composite');
+        expect(monitoring.getTextItem(4, 0)).toBe('item6');
+        monitoring.actionOnItem('Open', 4, 0);
         expect(authoring.edit_correct_button.isDisplayed()).toBe(false);
         expect(authoring.edit_kill_button.isDisplayed()).toBe(false);
     });
@@ -140,20 +131,25 @@ describe('authoring', function() {
         //view item history publish operation
         expect(monitoring.getTextItem(2, 3)).toBe('item6');
         monitoring.actionOnItem('Edit', 2, 3);
+        authoring.addPublicServiceAnnouncement('Children');
+        expect(authoring.getBodyFooter()).toMatch(/Kids Helpline*/);
         authoring.publish();
-        monitoring.showSearch();
-        search.setListView();
-        search.showCustomSearch();
-        search.toggleByType('text');
-        expect(search.getTextItem(0)).toBe('item6');
-        search.actionOnItem('Open', 0);
+        monitoring.filterAction('composite');
+        monitoring.actionOnItem('Open', 4, 0);
         authoring.showHistory();
         expect(authoring.getHistoryItems().count()).toBe(2);
         expect(authoring.getHistoryItem(1).getText()).toMatch(/Published by.*/);
+        var transmissionDetails = authoring.showTransmissionDetails(1);
+        expect(transmissionDetails.count()).toBe(1);
+        transmissionDetails.get(0).click();
+        expect(element(by.className('modal-body')).getText()).toMatch(/Kids Helpline*/);
+        element(by.css('[ng-click="hideFormattedItem()"]')).click();
+        monitoring.filterAction('composite');
         authoring.close();
-        monitoring.showMonitoring();
 
         //view item history spike-unspike operations
+        browser.sleep(5000);
+        monitoring.showMonitoring();
         expect(monitoring.getTextItem(1, 2)).toBe('item7');
         monitoring.actionOnItem('Spike', 1, 2);
         monitoring.showSpiked();
@@ -185,7 +181,7 @@ describe('authoring', function() {
         monitoring.actionOnItem('Edit', 1, 0);
         authoring.writeText('z');
         element(by.cssContainingText('span', 'Headline')).click();
-        ctrlKey('s');
+        ctrlShiftKey('s');
         browser.wait(function() {
             return element(by.buttonText('SAVE')).getAttribute('disabled');
         }, 500);
@@ -196,7 +192,7 @@ describe('authoring', function() {
         expect(authoring.getBodyText()).toBe('zitem5 text');
 
         element(by.cssContainingText('span', 'Headline')).click();
-        ctrlKey('q');
+        ctrlShiftKey('e');
         browser.sleep(300);
 
         expect(element(by.className('authoring-embedded')).isDisplayed()).toBe(false);
@@ -214,13 +210,8 @@ describe('authoring', function() {
         expect(monitoring.getTextItem(1, 0)).toBe('item5');
         monitoring.actionOnItem('Edit', 1, 0);
         authoring.publish();
-        monitoring.showSearch();
-        search.setListView();
-        search.showCustomSearch();
-        search.toggleByType('text');
-        expect(search.getTextItem(0)).toBe('item5');
-
-        search.actionOnItem('Create Broadcast', 0);
+        monitoring.filterAction('text');
+        monitoring.actionOnItem('Create Broadcast', 4, 0);
         expect(element(by.className('content-item-preview')).isDisplayed()).toBe(true);
         expect(monitoring.getPreviewTitle()).toBe('item5');
         monitoring.closePreview();
@@ -228,5 +219,15 @@ describe('authoring', function() {
         authoring.linkToMasterButton.click();
         expect(monitoring.getPreviewTitle()).toBe('item5');
         authoring.close();
+    });
+
+    it('toggle auto spellcheck and hold changes', function() {
+        monitoring.actionOnItem('Edit', 1, 1);
+        expect(element(by.model('spellcheckMenu.isAuto')).getAttribute('checked')).toBeTruthy();
+        authoring.toggleAutoSpellCheck();
+        expect(element(by.model('spellcheckMenu.isAuto')).getAttribute('checked')).toBeFalsy();
+        authoring.close();
+        monitoring.actionOnItem('Edit', 1, 2);
+        expect(element(by.model('spellcheckMenu.isAuto')).getAttribute('checked')).toBeFalsy();
     });
 });

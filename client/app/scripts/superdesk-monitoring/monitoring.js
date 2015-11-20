@@ -170,8 +170,8 @@
         }
     }
 
-    MonitoringController.$inject = ['$location'];
-    function MonitoringController($location) {
+    MonitoringController.$inject = ['$location', 'desks'];
+    function MonitoringController($location, desks) {
         this.state = {};
 
         this.preview = preview;
@@ -188,6 +188,16 @@
 
         this.edit = edit;
         this.editItem = null;
+
+        this.isDeskChanged = function () {
+            return desks.changeDesk;
+        };
+
+        this.highlightsDeskChanged = function () {
+            if (desks.changeDesk) {
+                $location.url('/workspace/monitoring');
+            }
+        };
 
         var vm = this;
 
@@ -235,9 +245,9 @@
     }
 
     MonitoringGroupDirective.$inject = ['cards', 'api', 'authoringWorkspace', '$timeout', 'superdesk',
-        'activityService', 'workflowService', 'keyboardManager'];
+        'activityService', 'workflowService', 'keyboardManager', 'desks'];
     function MonitoringGroupDirective(cards, api, authoringWorkspace, $timeout, superdesk, activityService,
-            workflowService, keyboardManager) {
+            workflowService, keyboardManager, desks) {
 
         var ITEM_HEIGHT = 57,
             ITEMS_COUNT = 5,
@@ -294,6 +304,12 @@
                     preview(args.item);
                 });
 
+                scope.$on('item:highlight', function(event, data) {
+                    if (scope.group.type === 'highlights') {
+                        queryItems();
+                    }
+                });
+
                 scope.$on('content:update', function(event, data) {
                     if (cards.shouldUpdate(scope.group, data)) {
                         scheduleQuery();
@@ -334,12 +350,38 @@
                     superdesk.findActivities(intent, item).forEach(function (activity) {
                         if (activity.keyboardShortcut && workflowService.isActionAllowed(item, activity.action)) {
                             monitoring.bindedItems.push(activity.keyboardShortcut);
-
                             keyboardManager.bind(activity.keyboardShortcut, function () {
-                                activityService.start(activity, {data: {item: scope.selected}});
+                                if (activity._id === 'mark.item') {
+                                    bindMarkItemShortcut();
+                                } else {
+                                    activityService.start(activity, {data: {item: scope.selected}});
+                                }
                             }, {inputDisabled: true});
                         }
                     });
+                }
+
+                /*
+                 * Bind highlight dropdown action
+                 * Keyboard shortcut is defined with action
+                 *
+                 * @param {Object} item
+                 */
+                function bindMarkItemShortcut() {
+                    elem.find('.active .more-activity-toggle').click();
+                    var highlightDropdown = angular.element('.more-activity-menu.open .dropdown-noarrow');
+
+                    highlightDropdown.addClass('open');
+                    if (highlightDropdown.find('button').length > 0) {
+                        highlightDropdown.find('button:not([disabled])')[0].focus();
+
+                        keyboardManager.push('up', function () {
+                            highlightDropdown.find('button:focus').parent('li').prev().children('button').focus();
+                        });
+                        keyboardManager.push('down', function () {
+                            highlightDropdown.find('button:focus').parent('li').next().children('button').focus();
+                        });
+                    }
                 }
 
                 /*
@@ -388,6 +430,9 @@
                                     authoringWorkspace.edit(item, !lock);
                                     monitoring.preview(null);
                                 });
+                        } else if (item.type === 'composite' && item.package_type === 'takes') {
+                            authoringWorkspace.view(item);
+                            monitoring.preview(null);
                         } else {
                             authoringWorkspace.edit(item, !lock);
                             monitoring.preview(null);
@@ -415,6 +460,11 @@
 
                     if (!scope.previewingBroadcast) {
                         monitoring.preview(null);
+                    }
+
+                    if (desks.changeDesk) {
+                        desks.changeDesk = false;
+                        monitoring.singleGroup = null;
                     }
 
                     return apiquery().then(function(items) {
@@ -579,6 +629,12 @@
                 scope.toggleActions = function(isOpen) {
                     scope.actions = isOpen ? getActions(scope.item) : scope.actions;
                     scope.open = isOpen;
+
+                    if (!isOpen) {
+                        // After close, return focus to parent of selected element
+                        angular.element('.media-text.selected').parents('li').focus();
+                        angular.element('.dropdown-noarrow.open').removeClass('open');
+                    }
                 };
 
                 /**

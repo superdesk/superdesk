@@ -55,7 +55,8 @@
                         <span class="alert-danger" ng-show="_error" translate>{{ _errorMessage }}</span>
                     </div>
                     <div class="modal-footer">
-                        <button id="next-general" class="btn btn-primary" ng-click="save(desk.edit)" ng-disabled="!generalStep.$valid || _errorLimits" translate>Next</button>
+                        <button id="next-general" class="btn btn-primary" ng-click="save(desk.edit)" ng-disabled="!generalStep.$valid || _errorLimits" translate>Save & Continue</button>
+                        <button id="done-general" class="btn btn-primary" ng-click="save(desk.edit, true)" ng-disabled="!generalStep.$valid || _errorLimits" translate>Done</button>
                     </div>
                 </form>
             </div>
@@ -172,8 +173,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn pull-left" ng-click="previous()" translate>Previous</button>
-                    <button id="next-stages" class="btn btn-primary" ng-disabled="message != null" ng-click="next()" translate>Next</button>
+                    <button id="next-stages" class="btn btn-primary" ng-disabled="message != null" ng-click="next()" translate>Continue</button>
+                    <button id="done-stages" class="btn btn-primary" ng-disabled="message != null" ng-click="next(true)" translate>Done</button>
                 </div>
             </div>
         </div>
@@ -196,8 +197,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn pull-left" ng-click="previous()" translate>Previous</button>
-                    <button id="next-people" class="btn btn-primary" ng-click="save()" ng-disabled="message != null" translate>Next</button>
+                    <button id="next-people" class="btn btn-primary" ng-click="save()" ng-disabled="message != null" translate>Save & Continue</button>
+                    <button id="done-people" class="btn btn-primary" ng-click="save(true)" ng-disabled="message != null" translate>Done</button>
                 </div>
             </div>
         </div>
@@ -211,7 +212,6 @@
                     </ul>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn pull-left" ng-click="previous()" translate>Previous</button>
                     <button id="save" class="btn btn-primary" ng-click="save()" translate>Done</button>
                 </div>
             </div>

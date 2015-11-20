@@ -164,6 +164,13 @@ function GlobalSearch() {
     };
 
     /**
+     * Open the saved search tab
+     */
+    this.openSavedSearchTab = function() {
+        element(by.id('saved_searches_tab')).click();
+    };
+
+    /**
      * Open the search Parameters from
      */
     this.openParameters = function() {

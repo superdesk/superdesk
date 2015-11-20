@@ -1,6 +1,13 @@
 (function() {
     'use strict';
 
+    var PARAMETERS = Object.freeze({
+        unique_name: 'Unique Name',
+        original_creator: 'Creator',
+        from_desk: 'From Desk',
+        to_desk: 'To Desk'
+    });
+
     SearchService.$inject = ['$location', 'gettext'];
     function SearchService($location, gettext) {
         var sortOptions = [
@@ -35,35 +42,40 @@
         }
 
         /*
-         * Sets the from-to desk filters.
+         * Set filters for parameters
          */
-        function setFromToDeskFilters(filters, params) {
-            var from_desk = params.from_desk,
-                to_desk = params.to_desk,
-                desk;
-
-            if (from_desk) {
-                desk = from_desk.split('-');
-                if (desk.length === 2) {
-                    if (desk[1] === 'authoring') {
-                        filters.push({'term': {'task.last_authoring_desk': desk[0]}});
-                    } else {
-                        filters.push({'term': {'task.last_production_desk': desk[0]}});
+        function setParameters(filters, params) {
+            _.each(PARAMETERS, function(value, key) {
+                if (params[key]) {
+                    var desk;
+                    switch (key) {
+                        case 'from_desk':
+                            desk = params[key].split('-');
+                            if (desk.length === 2) {
+                                if (desk[1] === 'authoring') {
+                                    filters.push({'term': {'task.last_authoring_desk': desk[0]}});
+                                } else {
+                                    filters.push({'term': {'task.last_production_desk': desk[0]}});
+                                }
+                            }
+                            break;
+                        case 'to_desk':
+                            desk = params[key].split('-');
+                            if (desk.length === 2) {
+                                filters.push({'term': {'task.desk': desk[0]}});
+                                if (!params.from_desk) {
+                                    var field = desk[1] === 'authoring' ? 'task.last_production_desk' : 'task.last_authoring_desk';
+                                    filters.push({'exists': {'field': field}});
+                                }
+                            }
+                            break;
+                        default:
+                            var filter = {'term': {}};
+                            filter.term[key] = params[key];
+                            filters.push(filter);
                     }
-
                 }
-            }
-
-            if (to_desk) {
-                desk = to_desk.split('-');
-                if (desk.length === 2) {
-                    filters.push({'term': {'task.desk': desk[0]}});
-                    if (!from_desk) {
-                        var field = desk[1] === 'authoring' ? 'task.last_production_desk' : 'task.last_authoring_desk';
-                        filters.push({'exists': {'field': field}});
-                    }
-                }
-            }
+            });
         }
 
         /*
@@ -76,13 +88,13 @@
             }
             for (var i = 0, queryArrayLength = queryArray.length; i < queryArrayLength; i++) {
                 var queryArrayElement = queryArray[i];
-                if (queryArrayElement.indexOf('subject.name') !== -1) {
+                if (queryArrayElement.indexOf('subject.qcode') !== -1 ||
+                    queryArrayElement.indexOf('subject.name') !== -1) {
                     var elementName = queryArrayElement.substring(
                             queryArrayElement.lastIndexOf('(') + 1,
-                            queryArrayElement.lastIndexOf(')')
-                            );
+                            queryArrayElement.lastIndexOf(')'));
                     for (var j = 0, subjectCodesLength = subjectcodes.length; j < subjectCodesLength; j++) {
-                        if (subjectcodes[j].name === elementName) {
+                        if (subjectcodes[j].qcode === elementName || subjectcodes[j].name === elementName) {
                             filteredArray.push(subjectcodes[j]);
                         }
                     }
@@ -190,7 +202,7 @@
             this.getCriteria = function getCriteria(withSource) {
                 var search = params;
                 var sort = getSort();
-                setFromToDeskFilters(filters, params);
+                setParameters(filters, params);
                 var criteria = {
                     query: {filtered: {filter: {and: filters}}},
                     sort: [_.zipObject([sort.field], [sort.dir])]
@@ -202,7 +214,7 @@
 
                 if (search.q) {
                     criteria.query.filtered.query = {query_string: {
-                        query: search.q,
+                        query: search.q.replace(/\//g, '\\/'),
                         lenient: false,
                         default_operator: 'AND'
                     }};
@@ -294,13 +306,15 @@
         };
     }
 
-    TagService.$inject = ['$location', 'desks', 'userList'];
-    function TagService($location, desks, userList) {
+    TagService.$inject = ['$location', 'desks', 'userList', 'metadata'];
+    function TagService($location, desks, userList, metadata) {
         var tags = {};
         tags.selectedFacets = {};
         tags.selectedParameters = [];
         tags.selectedKeywords = [];
         tags.currentSearch = {};
+
+        var subjects;
 
         var FacetKeys = {
             'type': 1,
@@ -317,6 +331,12 @@
             'genre': 1
         };
 
+        metadata
+            .fetchSubjectcodes()
+            .then(function () {
+                subjects = metadata.values.subjectcodes;
+            });
+
         function initSelectedParameters (parameters) {
             tags.selectedParameters = [];
             while (parameters.indexOf(':') > 0 &&
@@ -326,7 +346,16 @@
                 var colonIndex = parameters.indexOf(':');
                 var parameter = parameters.substring(parameters.lastIndexOf(' ', colonIndex), parameters.indexOf(')', colonIndex) + 1);
 
-                tags.selectedParameters.push(parameter);
+                if (parameter.indexOf('subject.qcode') !== -1) {
+                    var value = parameter.substring(parameter.indexOf('(') + 1, parameter.lastIndexOf(')'));
+                    var subjectName = _.result(_.find(subjects, {qcode: value}), 'name');
+
+                    tags.selectedParameters.push('subject.name:(' + subjectName + ')');
+
+                } else {
+                    tags.selectedParameters.push(parameter);
+                }
+
                 parameters = parameters.replace(parameter, '');
             }
 
@@ -343,13 +372,27 @@
             }
         }
 
-        function initFromToDesk(params) {
-            if (params.from_desk) {
-                tags.selectedParameters.push('From Desk:' + desks.deskLookup[params.from_desk.split('-')[0]].name);
-            }
-            if (params.to_desk) {
-                tags.selectedParameters.push('To Desk:' + desks.deskLookup[params.to_desk.split('-')[0]].name);
-            }
+        function initParameters(params) {
+            _.each(PARAMETERS, function(value, key) {
+                if (angular.isDefined(params[key])) {
+                    switch (key) {
+                        case 'original_creator':
+                            userList.getUser(params[key]).then(function(user) {
+                                tags.selectedParameters.push(value + ':' + user.display_name);
+                            }, function(error) {
+                                tags.selectedParameters.push(value + ':Unknown');
+                            });
+                            break;
+                        case 'from_desk':
+                        case 'to_desk':
+                            tags.selectedParameters.push(value + ':' +
+                                desks.deskLookup[params[key].split('-')[0]].name);
+                            break;
+                        default:
+                            tags.selectedParameters.push(value + ':' + params[key]);
+                    }
+                }
+            });
         }
 
         function removeFacet (type, key) {
@@ -385,7 +428,6 @@
                 tags.selectedFacets = {};
                 tags.selectedParameters = [];
                 tags.selectedKeywords = [];
-
                 tags.currentSearch = $location.search();
 
                 var parameters = tags.currentSearch.q;
@@ -394,7 +436,7 @@
                     initSelectedKeywords(keywords);
                 }
 
-                initFromToDesk(tags.currentSearch);
+                initParameters(tags.currentSearch);
 
                 _.forEach(tags.currentSearch, function(type, key) {
                     if (key !== 'q') {
@@ -492,8 +534,19 @@
                 link: function(scope, element, attrs, controller) {
                     scope.flags = controller.flags;
                     scope.sTab = true;
+                    scope.editingSearch = false;
+
                     scope.aggregations = {};
                     scope.privileges = privileges.privileges;
+
+                    scope.$on('edit:search', function(event, args)  {
+                        scope.sTab = true;
+                        scope.editingSearch = args;
+                    });
+
+                    scope.changeTab = function() {
+                        scope.sTab = !scope.sTab;
+                    };
 
                     var initAggregations = function () {
                         scope.aggregations = {
@@ -521,15 +574,27 @@
                                 return;
                             }
 
-                            _.forEach(scope.items._aggregations.type.buckets, function(type) {
-                                scope.aggregations.type[type.key] = type.doc_count;
-                            });
+                            if (angular.isDefined(scope.items._aggregations.type)) {
+                                _.forEach(scope.items._aggregations.type.buckets, function(type) {
+                                    scope.aggregations.type[type.key] = type.doc_count;
+                                });
+                            }
 
-                            _.forEach(scope.items._aggregations.category.buckets, function(cat) {
-                                if (cat.key !== '') {
-                                    scope.aggregations.category[cat.key] = cat.doc_count;
-                                }
-                            });
+                            if (angular.isDefined(scope.items._aggregations.category)) {
+                                _.forEach(scope.items._aggregations.category.buckets, function(cat) {
+                                    if (cat.key !== '') {
+                                        scope.aggregations.category[cat.key] = cat.doc_count;
+                                    }
+                                });
+                            }
+
+                            if (angular.isDefined(scope.items._aggregations.genre)) {
+                                _.forEach(scope.items._aggregations.genre.buckets, function(g) {
+                                    if (g.key !== '') {
+                                        scope.aggregations.genre[g.key] = g.doc_count;
+                                    }
+                                });
+                            }
 
                             _.forEach(scope.items._aggregations.genre.buckets, function(g) {
                                 if (g.key !== '') {
@@ -544,34 +609,35 @@
                                 });
                             }
 
-                            _.forEach(scope.items._aggregations.priority.buckets, function(priority) {
-                                scope.aggregations.priority[priority.key] = priority.doc_count;
-                            });
+                            if (angular.isDefined(scope.items._aggregations.priority)) {
+                                _.forEach(scope.items._aggregations.priority.buckets, function(priority) {
+                                    scope.aggregations.priority[priority.key] = priority.doc_count;
+                                });
+                            }
 
-                            _.forEach(scope.items._aggregations.source.buckets, function(source) {
-                                scope.aggregations.source[source.key] = source.doc_count;
-                            });
-                            if (angular.isDefined(scope.items._aggregations.source))
-                            {
+                            if (angular.isDefined(scope.items._aggregations.source)) {
                                 _.forEach(scope.items._aggregations.source.buckets, function(source) {
                                     scope.aggregations.source[source.key] = source.doc_count;
                                 });
                             }
 
-                            if (angular.isDefined(scope.items._aggregations.credit))
-                            {
+                            if (angular.isDefined(scope.items._aggregations.credit)) {
                                 _.forEach(scope.items._aggregations.credit.buckets, function(credit) {
                                     scope.aggregations.credit[credit.key] = {'count': credit.doc_count, 'qcode': credit.qcode};
                                 });
                             }
 
-                            _.forEach(scope.items._aggregations.day.buckets, function(day) {
-                                scope.aggregations.date['Last Day'] = day.doc_count;
-                            });
+                            if (angular.isDefined(scope.items._aggregations.day)) {
+                                _.forEach(scope.items._aggregations.day.buckets, function(day) {
+                                    scope.aggregations.date['Last Day'] = day.doc_count;
+                                });
+                            }
 
-                            _.forEach(scope.items._aggregations.week.buckets, function(week) {
-                                scope.aggregations.date['Last Week'] = week.doc_count;
-                            });
+                            if (angular.isDefined(scope.items._aggregations.week)) {
+                                _.forEach(scope.items._aggregations.week.buckets, function(week) {
+                                    scope.aggregations.date['Last Week'] = week.doc_count;
+                                });
+                            }
 
                             _.forEach(scope.items._aggregations.month.buckets, function(month) {
                                 scope.aggregations.date['Last Month'] = month.doc_count;
@@ -692,11 +758,15 @@
                         tags.removeFacet(type, key);
                     };
 
+                    metadata
+                        .fetchSubjectcodes()
+                        .then(function () {
+                            scope.subjectcodes = metadata.values.subjectcodes;
+                        });
+
                     scope.removeParameter = function(param) {
                         var params = $location.search();
                         if (params.q) {
-                            params.q = params.q.replace(param, '').trim();
-                            $location.search('q', params.q || null);
                             // If it is subject code, remove it from left bar, too
                             if (param.indexOf('subject.name:') !== -1) {
                                 var elementName = param.substring(
@@ -704,7 +774,17 @@
                                     param.lastIndexOf(')')
                                 );
 
+                                var qcode = _.result(_.find(scope.subjectcodes, function(item) {
+                                                        return item.name === elementName;
+                                                    }), 'qcode');
+
+                                params.q = params.q.replace('subject.qcode:(' + qcode + ')', '').trim();
+                                $location.search('q', params.q || null);
+
                                 metadata.removeSubjectTerm(elementName);
+                            } else {
+                                params.q = params.q.replace(param, '').trim();
+                                $location.search('q', params.q || null);
                             }
                             /*
                             * remove the original creator parameter
@@ -721,13 +801,11 @@
                             }
                         }
 
-                        if (param.indexOf('From Desk') >= 0) {
-                            $location.search('from_desk', null);
-                        }
-
-                        if (param.indexOf('To Desk') >= 0) {
-                            $location.search('to_desk', null);
-                        }
+                        _.each(PARAMETERS, function(val, key) {
+                            if (param.indexOf(val) !== -1) {
+                                $location.search(key, null);
+                            }
+                        });
                     };
                 }
             };
@@ -1048,6 +1126,79 @@
             };
         }])
 
+        /**
+         * Opens and manages save search panel
+         */
+        .directive('sdSaveSearch', ['$location', 'asset', 'api', 'session', 'notify', 'gettext',
+            function($location, asset, api, session, notify, gettext) {
+            return {
+                templateUrl: asset.templateUrl('superdesk-search/views/save-search.html'),
+                link: function(scope, elem) {
+                    scope.edit = null;
+
+                    scope.editItem = function() {
+                        scope.edit = _.create(scope.editingSearch) || {};
+                    };
+
+                    scope.saveas = function() {
+                        scope.edit = _.clone(scope.editingSearch) || {};
+                        delete scope.edit._id;
+                    };
+
+                    scope.cancel = function() {
+                        scope.edit = null;
+                    };
+
+                    scope.clear = function() {
+                        scope.cancel();
+                        $location.url('/search');
+                    };
+
+                    /**
+                     * Patches or posts the given search
+                     */
+                    scope.save = function(editSearch) {
+
+                        function onSuccess() {
+                            notify.success(gettext('Saved search is saved successfully'));
+                            scope.cancel();
+                            scope.changeTab();
+                        }
+
+                        function onFail() {
+                            notify.error(gettext('Error. Saved search could not be saved.'));
+                        }
+
+                        var search = getFilters($location.search());
+                        editSearch.filter = {query: search};
+                        var originalSearch = {};
+
+                        if (editSearch._id) {
+                            originalSearch = scope.editingSearch;
+                        }
+
+                        api('saved_searches', session.identity).save(originalSearch, editSearch).then(onSuccess, onFail);
+                    };
+
+                    /**
+                     * Converts the integer fields: priority and urgency to objects
+                     * within a given search
+                     *
+                     * @return {Object} the updated search object
+                     */
+                    function getFilters(search) {
+                        _.forOwn(search, function(value, key) {
+                            if (_.contains(['priority', 'urgency'], key)) {
+                                search[key] = JSON.parse(value);
+                            }
+                        });
+
+                        return search;
+                    }
+                }
+            };
+        }])
+
         .directive('sdItemContainer', ['$filter', 'desks', 'api', function($filter, desks, api) {
             return {
                 scope: {
@@ -1272,18 +1423,16 @@
 
                     var input = elem.find('#search-input');
 
-                    function init() {
+                    /*
+                     * init function to setup the directive initial state and called by $locationChangeSuccess event
+                     * @param {boolean} load_data.
+                     */
+                    function init(load_data) {
                         var params = $location.search();
                         scope.query = params.q;
                         scope.flags = false;
-                        scope.desks = [];
-                        scope.selectedDesk = {
-                            from: null, to: null
-                        };
                         scope.meta = {};
-
-                        fetchProviders();
-                        fetchUsers();
+                        scope.fields = {};
 
                         if (params.repo) {
                             var param_list = params.repo.split(',');
@@ -1303,35 +1452,68 @@
                             }
                         }
 
-                        desks.initialize()
-                            .then(function() {
-                                scope.desks = desks.desks;
-                                initFromToDesk($location.search().from_desk, 'from');
-                                initFromToDesk($location.search().to_desk, 'to');
-                            });
+                        if ($location.search().unique_name) {
+                            scope.fields.unique_name = $location.search().unique_name;
+                        }
+
+                        if (load_data) {
+                            fetchProviders();
+                            fetchUsers();
+                            fetchDesks();
+                        } else {
+                            initializeDesksDropDown();
+                        }
                     }
 
-                    init();
+                    init(true);
 
                     /*
-                    * initlialize the creator drop down selection.
-                    */
+                     * Initialize the creator drop down selection.
+                     */
                     function fetchUsers() {
                         userList.getAll()
                         .then(function(result) {
                             scope.userList = {};
-                            scope.meta.original_creator = null;
                             _.each(result, function(user) {
                                 scope.userList[user._id] = user;
                             });
+
+                            if ($location.search().original_creator) {
+                                scope.fields.original_creator = $location.search().original_creator;
+                            }
                         });
                     }
 
+                    /*
+                     * Initialize the search providers
+                     */
                     function fetchProviders() {
                         return api.ingestProviders.query({max_results: 200})
                             .then(function(result) {
                                 scope.providers = result._items;
                             });
+                    }
+
+                    /*
+                     * Initialize the desk drop down
+                     */
+                    function fetchDesks() {
+                        scope.desks = [];
+                        desks.initialize()
+                            .then(function() {
+                                scope.desks = desks.desks;
+                                initializeDesksDropDown();
+                            });
+                    }
+
+                    /*
+                     *  Initialize Desks DropDown
+                     */
+                    function initializeDesksDropDown() {
+                        if (scope.desks && scope.desks._items) {
+                            initFromToDesk($location.search().from_desk, 'from_desk');
+                            initFromToDesk($location.search().to_desk, 'to_desk');
+                        }
                     }
 
                     /*
@@ -1343,15 +1525,17 @@
                         if (param) {
                             var deskParams = param.split('-');
                             if (deskParams.length === 2) {
-                                scope.selectedDesk[field] = deskParams[0];
+                                scope.fields[field] = deskParams[0];
                             }
                         }
                     }
 
                     scope.$on('$locationChangeSuccess', function() {
                         if (scope.query !== $location.search().q ||
-                            scope.selectedDesk.from !== $location.search().from_desk ||
-                            scope.selectedDesk.to !== $location.search().to_desk) {
+                            scope.fields.from_desk !== $location.search().from_desk ||
+                            scope.fields.to_desk !== $location.search().to_desk ||
+                            scope.fields.unique_name !== $location.search().unique_name ||
+                            scope.fields.original_creator !== $location.search().original_creator) {
                             init();
                         }
                     });
@@ -1381,6 +1565,9 @@
                         }
                     }
 
+                    /*
+                     * Get Query function build the query string
+                     */
                     function getQuery() {
                         var metas = [];
                         angular.forEach(scope.meta, function(val, key) {
@@ -1399,6 +1586,16 @@
                                         }
                                     }
                                 }
+                            }
+                        });
+
+                        angular.forEach(scope.fields, function(val, key) {
+                            if (key === 'from_desk') {
+                                $location.search('from_desk', getDeskParam('from_desk'));
+                            } else if (key === 'to_desk') {
+                                $location.search('to_desk', getDeskParam('to_desk'));
+                            } else {
+                                $location.search(key, val);
                             }
                         });
 
@@ -1467,22 +1664,14 @@
                         });
 
                     /*
-                     * filter content by desk.
-                     */
-                    scope.deskSearch = function () {
-                        $location.search('from_desk', getDeskParam('from'));
-                        $location.search('to_desk', getDeskParam('to'));
-                    };
-
-                    /*
                      * Get the Desk Type
                      * @param {string} field from or to
                      * @returns {string} desk querystring parameter
                      */
                     function getDeskParam(field) {
                         var deskId = '';
-                        if (scope.selectedDesk[field]) {
-                            deskId = scope.selectedDesk[field];
+                        if (scope.fields[field]) {
+                            deskId = scope.fields[field];
                             var desk_type = _.result(_.find(scope.desks._items, function (item) {
                                 return item._id === deskId;
                             }), 'desk_type');
@@ -1501,7 +1690,7 @@
                             var subjectCodes = search.getSubjectCodes(currentTags, scope.subjectcodes);
                             if (item.subject.length > subjectCodes.length) {
                                 /* Adding subject codes to filter */
-                                var addItemSubjectName = 'subject.name:(' + item.subject[item.subject.length - 1].name + ')',
+                                var addItemSubjectName = 'subject.qcode:(' + item.subject[item.subject.length - 1].qcode + ')',
                                     q = (scope.query ? scope.query + ' ' + addItemSubjectName : addItemSubjectName);
 
                                 $location.search('q', q);
@@ -1511,7 +1700,7 @@
                                 if (params.q) {
                                     for (var j = 0; j < subjectCodes.length; j++) {
                                         if (item.subject.indexOf(subjectCodes[j]) === -1) {
-                                            var removeItemSubjectName = 'subject.name:(' + subjectCodes[j].name + ')';
+                                            var removeItemSubjectName = 'subject.qcode:(' + subjectCodes[j].qcode + ')';
                                             params.q = params.q.replace(removeItemSubjectName, '').trim();
                                             $location.search('q', params.q || null);
                                         }
@@ -1567,8 +1756,8 @@
             };
         }])
 
-        .directive('sdSavedSearches', ['api', 'session', '$location', 'notify', 'gettext', 'asset',
-        function(api, session, $location, notify, gettext, asset) {
+        .directive('sdSavedSearches', ['$rootScope', 'api', 'session', 'notify', 'gettext', 'asset', '$location', 'desks', 'privileges',
+        function($rootScope, api, session, notify, gettext, asset, $location, desks, privileges) {
             return {
                 templateUrl: asset.templateUrl('superdesk-search/views/saved-searches.html'),
                 scope: {},
@@ -1576,47 +1765,91 @@
 
                     var resource = api('saved_searches', session.identity);
                     scope.selected = null;
-                    scope.editSearch = null;
+                    scope.searchText = null;
+                    scope.userSavedSearches = [];
+                    scope.globalSavedSearches = [];
+                    scope.privileges = privileges.privileges;
+                    var originalUserSavedSearches = [];
+                    var originalGlobalSavedSearches = [];
 
-                    resource.query({'max_results': 200}).then(function(views) {
-                        scope.views = views._items;
+                    desks.initialize()
+                    .then(function() {
+                        scope.userLookup = desks.userLookup;
                     });
 
-                    scope.select = function(view) {
-                        scope.selected = view;
-                        $location.search(view.filter.query);
-                    };
-
-                    scope.edit = function() {
-                        scope.editSearch = {};
-                    };
-
-                    scope.cancel = function() {
-                        scope.editSearch = null;
-                    };
-
-                    scope.save = function(editSearch) {
-
-                        editSearch.filter = {query: $location.search()};
-
-                        resource.save({}, editSearch)
-                        .then(function(result) {
-                            notify.success(gettext('Saved search created'));
-                            scope.cancel();
-                            scope.views.push(result);
-                        }, function() {
-                            notify.error(gettext('Error. Saved search not created.'));
+                    function initSavedSearches() {
+                        resource.query({'max_results': 200}).then(function(searches) {
+                            scope.userSavedSearches.length = 0;
+                            scope.globalSavedSearches.length = 0;
+                            scope.searches = searches._items;
+                            _.forEach(scope.searches, function(search) {
+                                if (search.user === session.identity._id) {
+                                    scope.userSavedSearches.push(setFilters(search));
+                                } else if (search.is_global) {
+                                    scope.globalSavedSearches.push(setFilters(search));
+                                }
+                            });
+                            originalUserSavedSearches = _.clone(scope.userSavedSearches);
+                            originalGlobalSavedSearches = _.clone(scope.globalSavedSearches);
                         });
+                    }
+
+                    initSavedSearches();
+
+                    scope.select = function(search) {
+                        scope.selected = search;
+                        $location.search(search.filter.query);
                     };
 
-                    scope.remove = function(view) {
-                        resource.remove(view).then(function() {
+                    /**
+                     * Converts the integer fields to string
+                     * within a given search
+                     *
+                     * @return {Object} the updated search object
+                     */
+                    function setFilters(search) {
+                        _.forOwn(search.filter.query, function(value, key) {
+                            if (_.contains(['priority', 'urgency'], key)) {
+                                search.filter.query[key] = JSON.stringify(value);
+                            }
+                        });
+
+                        return search;
+                    }
+
+                    scope.edit = function(search) {
+                        scope.select(search);
+                        $rootScope.$broadcast('edit:search', search);
+                    };
+
+                    /**
+                     * Filters the content of global and user filters
+                     *
+                     */
+                    scope.filter = function() {
+                        scope.userSavedSearches = _.clone(originalUserSavedSearches);
+                        scope.globalSavedSearches = _.clone(originalGlobalSavedSearches);
+
+                        if (scope.searchText || scope.searchText !== '') {
+                            scope.userSavedSearches = _.filter(originalUserSavedSearches, function(n) {
+                                return n.name.toUpperCase().indexOf(scope.searchText.toUpperCase()) >= 0;
+                            });
+
+                            scope.globalSavedSearches = _.filter(originalGlobalSavedSearches, function(n) {
+                                return n.name.toUpperCase().indexOf(scope.searchText.toUpperCase()) >= 0;
+                            });
+                        }
+                    };
+
+                    scope.remove = function(searches) {
+                        resource.remove(searches).then(function() {
                             notify.success(gettext('Saved search removed'));
-                            _.remove(scope.views, {_id: view._id});
+                            initSavedSearches();
                         }, function() {
                             notify.error(gettext('Error. Saved search not deleted.'));
                         });
                     };
+
                 }
             };
         }])

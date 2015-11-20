@@ -10,10 +10,10 @@
 
 import flask
 from superdesk.resource import Resource
-from superdesk.metadata.utils import extra_response_fields, item_url, aggregations
+from superdesk.metadata.utils import extra_response_fields, item_url, aggregations, is_normal_package
 from .common import remove_unwanted, update_state, set_item_expiry, remove_media_files, \
-    is_update_allowed, on_create_item, on_duplicate_item, get_user, update_version, set_sign_off, \
-    handle_existing_data, item_schema, validate_schedule, is_item_in_package, is_normal_package, \
+    on_create_item, on_duplicate_item, get_user, update_version, set_sign_off, \
+    handle_existing_data, item_schema, validate_schedule, is_item_in_package, \
     ITEM_DUPLICATE, ITEM_OPERATION, ITEM_RESTORE, ITEM_UPDATE, ITEM_DESCHEDULE, ARCHIVE as SOURCE, \
     LAST_PRODUCTION_DESK, LAST_AUTHORING_DESK, convert_task_attributes_to_objectId, BROADCAST_GENRE
 from superdesk.media.crop import CropService
@@ -146,6 +146,9 @@ class ArchiveService(BaseService):
         on_create_item(docs)
 
         for doc in docs:
+            if doc.get('body_footer') and is_normal_package(doc):
+                raise SuperdeskApiError.badRequestError("Package doesn't support Public Service Announcements")
+
             doc['version_creator'] = doc['original_creator']
             remove_unwanted(doc)
             update_word_count(doc)
@@ -188,81 +191,36 @@ class ArchiveService(BaseService):
         push_content_notification(docs)
 
     def on_update(self, updates, original):
-        updates[ITEM_OPERATION] = ITEM_UPDATE
-        is_update_allowed(original)
+        """
+        Overridden to validate the updates to the article and take necessary actions depending on the updates. In brief,
+        it does the following:
+            1. Sets state, item operation, version created, version creator, sign off and word count.
+            2. Resets Item Expiry
+            3. If the request is to de-schedule then checks and de-schedules the associated Takes Package also.
+            4. Creates Crops if article is a picture
+        """
         user = get_user()
-        convert_task_attributes_to_objectId(updates)
+        self._validate_updates(original, updates, user)
 
-        if 'publish_schedule' in updates and original['state'] == 'scheduled':
-            # this is an deschedule action
-            self.deschedule_item(updates, original)
+        if 'publish_schedule' in updates and original[ITEM_STATE] == CONTENT_STATE.SCHEDULED:
+            self.deschedule_item(updates, original)  # this is an deschedule action
+
             # check if there is a takes package and deschedule the takes package.
             package = TakesPackageService().get_take_package(original)
             if package and package.get('state') == 'scheduled':
                 package_updates = {'publish_schedule': None, 'groups': package.get('groups')}
                 self.patch(package.get(config.ID_FIELD), package_updates)
+
             return
-
-        if updates.get('publish_schedule'):
-
-            if datetime.datetime.fromtimestamp(0).date() == updates.get('publish_schedule').date():
-                # publish_schedule field will be cleared
-                updates['publish_schedule'] = None
-            else:
-                # validate the schedule
-                if is_item_in_package(original):
-                    raise SuperdeskApiError.\
-                        badRequestError(message='This item is in a package' +
-                                                ' it needs to be removed before the item can be scheduled!')
-                package = TakesPackageService().get_take_package(original) or {}
-                validate_schedule(updates.get('publish_schedule'), package.get(SEQUENCE, 1))
-
-        if 'unique_name' in updates and not is_admin(user) \
-                and (user['active_privileges'].get('metadata_uniquename', 0) == 0):
-            raise SuperdeskApiError.forbiddenError("Unauthorized to modify Unique Name")
-
-        remove_unwanted(updates)
 
         if self.__is_req_for_save(updates):
             update_state(original, updates)
 
-        lock_user = original.get('lock_user', None)
-        force_unlock = updates.get('force_unlock', False)
+        remove_unwanted(updates)
+        self._add_system_updates(original, updates, user)
 
-        updates.setdefault('original_creator', original.get('original_creator'))
-
-        str_user_id = str(user.get('_id')) if user else None
-        if lock_user and str(lock_user) != str_user_id and not force_unlock:
-            raise SuperdeskApiError.forbiddenError('The item was locked by another user')
-
-        updates['versioncreated'] = utcnow()
-        set_item_expiry(updates, original)
-        updates['version_creator'] = str_user_id
-        set_sign_off(updates, original=original)
-        update_word_count(updates)
-
-        if force_unlock:
-            del updates['force_unlock']
-
-        # create crops
-        crop_service = CropService()
-        crop_service.validate_multiple_crops(updates, original)
-        crop_service.create_multiple_crops(updates, original)
-
-        if original[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
-            self.packageService.on_update(updates, original)
-
-        update_version(updates, original)
-
-        # if broadcast then update to genre is not allowed.
-        if original.get('broadcast') and updates.get('genre') and \
-                any(genre.get('value', '').lower() != BROADCAST_GENRE.lower() for genre in updates.get('genre')):
-            raise SuperdeskApiError.badRequestError('Cannot change the genre for broadcast content.')
-
-        # Do the validation after Circular Reference check passes in Package Service
-        updated = original.copy()
-        updated.update(updates)
-        self.validate_embargo(updated)
+        if original[ITEM_TYPE] == CONTENT_TYPE.PICTURE:  # create crops
+            CropService().create_multiple_crops(updates, original)
 
     def on_updated(self, updates, original):
         get_component(ItemAutosave).clear(original['_id'])
@@ -282,6 +240,7 @@ class ArchiveService(BaseService):
                          type=updated[ITEM_TYPE])
 
         push_content_notification([updated, original])
+        get_resource_service('archive_broadcast').reset_broadcast_status(updates, original)
 
         if hasattr(app, 'on_broadcast_content_updated'):
             app.on_broadcast_content_updated(updates, original)
@@ -560,6 +519,98 @@ class ArchiveService(BaseService):
                 raise SuperdeskApiError.badRequestError("A Package doesn't support Embargo")
 
             self.packageService.check_if_any_item_in_package_has_embargo(item)
+
+    def _validate_updates(self, original, updates, user):
+        """
+        Validates updates to the article for the below conditions, if any of them then exception is raised:
+            1.  Is article locked by another user other than the user requesting for update
+            2.  Is state of the article is Killed?
+            3.  Is user trying to update the package with Public Service Announcements?
+            4.  Is user authorized to update unique name of the article?
+            5.  Is user trying to update the genre of a broadcast article?
+            6.  Is article being scheduled and is in a package?
+            7.  Is article being scheduled and schedule timestamp is invalid?
+            8.  Does article has valid crops if the article type is a picture?
+            9.  Is article a valid package if the article type is a package?
+            10. Does article has a valid Embargo?
+
+        :raises:
+            SuperdeskApiError.forbiddenError()
+                - if state of the article is killed or user is not authorized to update unique name or if article is
+                  locked by another user
+            SuperdeskApiError.badRequestError()
+                - if Public Service Announcements are being added to a package or genre is being updated for a broadcast
+                  or is invalid for scheduling
+        """
+
+        lock_user = original.get('lock_user', None)
+        force_unlock = updates.get('force_unlock', False)
+        str_user_id = str(user.get(config.ID_FIELD)) if user else None
+
+        if lock_user and str(lock_user) != str_user_id and not force_unlock:
+            raise SuperdeskApiError.forbiddenError('The item was locked by another user')
+
+        if original.get(ITEM_STATE) == CONTENT_STATE.KILLED:
+            raise SuperdeskApiError.forbiddenError("Item isn't in a valid state to be updated.")
+
+        if updates.get('body_footer') and is_normal_package(original):
+            raise SuperdeskApiError.badRequestError("Package doesn't support Public Service Announcements")
+
+        if 'unique_name' in updates and not is_admin(user) \
+                and (user['active_privileges'].get('metadata_uniquename', 0) == 0):
+            raise SuperdeskApiError.forbiddenError("Unauthorized to modify Unique Name")
+
+        # if broadcast then update to genre is not allowed.
+        if original.get('broadcast') and updates.get('genre') and \
+                any(genre.get('value', '').lower() != BROADCAST_GENRE.lower() for genre in updates.get('genre')):
+            raise SuperdeskApiError.badRequestError('Cannot change the genre for broadcast content.')
+
+        if updates.get('publish_schedule') and original[ITEM_STATE] != CONTENT_STATE.SCHEDULED \
+                and datetime.datetime.fromtimestamp(0).date() != updates['publish_schedule'].date():
+            if is_item_in_package(original):
+                raise SuperdeskApiError.badRequestError(
+                    'This item is in a package and it needs to be removed before the item can be scheduled!')
+
+            package = TakesPackageService().get_take_package(original) or {}
+            validate_schedule(updates['publish_schedule'], package.get(SEQUENCE, 1))
+
+        if original[ITEM_TYPE] == CONTENT_TYPE.PICTURE:
+            CropService().validate_multiple_crops(updates, original)
+        elif original[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
+            self.packageService.on_update(updates, original)
+
+        # Do the validation after Circular Reference check passes in Package Service
+        updated = original.copy()
+        updated.update(updates)
+        self.validate_embargo(updated)
+
+    def _add_system_updates(self, original, updates, user):
+        """
+        As the name suggests, this method adds properties which are derived based on updates sent in the request.
+            1. Sets item operation, version created, version creator, sign off and word count.
+            2. Resets Item Expiry
+        """
+
+        convert_task_attributes_to_objectId(updates)
+
+        updates[ITEM_OPERATION] = ITEM_UPDATE
+        updates.setdefault('original_creator', original.get('original_creator'))
+        updates['versioncreated'] = utcnow()
+        updates['version_creator'] = str(user.get(config.ID_FIELD)) if user else None
+
+        update_word_count(updates)
+        update_version(updates, original)
+
+        set_item_expiry(updates, original)
+        set_sign_off(updates, original=original)
+
+        # Clear publish_schedule field
+        if updates.get('publish_schedule') \
+                and datetime.datetime.fromtimestamp(0).date() == updates.get('publish_schedule').date():
+            updates['publish_schedule'] = None
+
+        if updates.get('force_unlock', False):
+            del updates['force_unlock']
 
 
 class AutoSaveResource(Resource):

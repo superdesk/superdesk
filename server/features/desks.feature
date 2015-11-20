@@ -229,3 +229,55 @@ Feature: Desks
         """
         {"_issues": {"validator exception": "400: Cannot update Desk Type as there are article(s) referenced by the Desk."}}
         """
+
+    @auth
+    @notification
+    Scenario: Simple sluglines for desk
+        Given we have "desks" with "SPORTS_DESK_ID" and success
+        """
+        [{"name": "Sports", "desk_type": "authoring"}]
+        """
+        Given "published"
+         """
+         [{"_id":"1","slugline": "slugline1", "last_published_version": "True",
+         "task": {"desk": "#SPORTS_DESK_ID#"}, "place": [{"name": "FED"}], "headline": "one", "family_id": 1},
+         {"_id":"2","slugline": "slugline2", "last_published_version": "True",
+         "task": {"desk": "#SPORTS_DESK_ID#"}, "place": [{"name": "FED"}], "headline": "two", "family_id": 2}]
+         """
+        When we post to "users"
+        """
+        {"username": "foo", "email": "foo@bar.com", "is_active": true, "sign_off": "abc"}
+        """
+        When we get "/desks/#SPORTS_DESK_ID#/sluglines"
+        Then we get existing resource
+        """
+            {"_items": [{"headline": "one", "slugline": "slugline1", "name": "FED", "old_sluglines": []},
+            {"headline": "two", "slugline": "slugline2", "name": "-", "old_sluglines": []}]}
+        """
+
+      @auth
+    @notification
+    Scenario: Simple change of slugline in same family
+        Given we have "desks" with "SPORTS_DESK_ID" and success
+        """
+        [{"name": "Sports", "desk_type": "authoring"}]
+        """
+        When we post to "published" with delay
+         """
+         [{"_id":"1","slugline": "slugline1", "last_published_version": true,
+         "task": {"desk": "#SPORTS_DESK_ID#"}, "place": [{"name": "FED"}], "headline": "one", "family_id": "1"}]
+         """
+        And we post to "published" with delay
+         """
+         [{"_id":"2","slugline": "slugline2", "last_published_version": true,
+         "task": {"desk": "#SPORTS_DESK_ID#"}, "place": [{"name": "FED"}], "headline": "one", "family_id": "1"}]
+         """
+        When we post to "users"
+        """
+        {"username": "foo", "email": "foo@bar.com", "is_active": true, "sign_off": "abc"}
+        """
+        When we get "/desks/#SPORTS_DESK_ID#/sluglines"
+        Then we get existing resource
+        """
+            {"_items": [{"name": "FED", "old_sluglines": ["slugline1"], "slugline": "slugline2", "headline": "one"}]}
+        """

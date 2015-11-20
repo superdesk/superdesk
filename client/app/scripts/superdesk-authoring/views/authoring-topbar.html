@@ -87,9 +87,8 @@
 
         <div id="authoring-extra-dropdown"
              ng-if="item._type !== 'legal_archive'"
-             class="navbtn dropdown pull-left strict"
-             title="{{ :: 'More actions' | translate }}" dropdown>
-            <button class="dropdown-toggle" dropdown-toggle>
+             class="navbtn dropdown pull-left strict" dropdown>
+            <button class="dropdown-toggle" title="{{ :: 'More actions' | translate }}" dropdown-toggle>
                 <i class="icon-dots-vertical"></i>
             </button>
             <div class="dropdown-menu pull-right">
@@ -122,11 +121,13 @@
                     <li><span class="menu-label" translate>Spell Checker</span></li>
                     <li>
                         <span>
-                            <span class="pull-right"
-                                sd-switch
-                                ng-model="spellcheckMenu.isAuto"
-                                ng-change="spellcheckMenu.pushSettings()"></span>
-                            <span translate>Run automatically</span>
+                                <span class="pull-right"
+                                    sd-switch
+                                    ng-model="spellcheckMenu.isAuto"
+                                    ng-change="spellcheckMenu.pushSettings()"
+                                    tooltip="{{ spellcheckMenu.isAuto ? 'Spell checking ON' : 'Spell checking OFF'  | translate }}" 
+                                    tooltip-placement="left"></span>
+                                <span translate>Run automatically</span>
                         </span>
                     </li>
                     <li>
@@ -134,7 +135,7 @@
                             ng-click="spellcheckMenu.spellcheck()"
                             ng-disabled="spellcheckMenu.isAuto"
                             translate>
-                                <span class="shortcut pull-right">Ctrl+Shift+S</span>
+                                <span class="shortcut pull-right">Ctrl+Shift+D</span>
                                 Check spelling
                         </button>
                     </li>

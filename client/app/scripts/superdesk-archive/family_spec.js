@@ -11,6 +11,10 @@ describe('familyService', function() {
         desk3: {title: 'desk3'}
     };
 
+    var userDesks = {
+        _items: [{'_id': 'desk1'}]
+    };
+
     beforeEach(module('superdesk.mocks'));
     beforeEach(module('superdesk.archive.directives'));
     beforeEach(module('templates'));
@@ -37,7 +41,8 @@ describe('familyService', function() {
         });
         $provide.service('desks', function() {
             return {
-                deskLookup: deskList
+                deskLookup: deskList,
+                userDesks: userDesks
             };
         });
     }));
@@ -70,6 +75,18 @@ describe('familyService', function() {
         });
         $rootScope.$digest();
         expect(memberDesks.length).toBe(1);
+    }));
+
+    it('can determine weather a user is member of fetched desk',
+    inject(function($rootScope, familyService, api, desks) {
+        var memberDesks = null;
+        familyService.fetchDesks({_id: 'z', family_id: 'family1', task: {desk: 'desk1'}})
+        .then(function(result) {
+            memberDesks = result;
+        });
+        $rootScope.$digest();
+        expect(memberDesks.length).toBe(1);
+        expect(memberDesks[0].isUserDeskMember).toBe(true);
     }));
 
     it('can fetch desks of members of a family with exclusion',
