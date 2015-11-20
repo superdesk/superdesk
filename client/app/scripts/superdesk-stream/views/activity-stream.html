@@ -4,7 +4,7 @@
 			<div class="date" ng-show="showDateHeader(activity)"><span sd-datetime data-date="activity._created"></span></div>
             <div>
                 <figure class="avatar">
-                    <img sd-user-avatar data-src="activity.user.picture_url" data-initials="activity.user.display_name">
+                    <img sd-user-avatar data-user="activity.user">
                 </figure>
                 <span ng-if="activity.name != 'notify'">
                    	<div class="activity-content">

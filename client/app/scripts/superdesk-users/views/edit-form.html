@@ -6,11 +6,11 @@
 
     <div class="profile-pic">
         <figure class="avatar">
-            <img sd-user-avatar data-src="user.picture_url" data-initials="user.display_name" alt="{{ user.FullName }}">
+            <img sd-user-avatar data-user="user" alt="{{ user.FullName }}">
             <a href="" class="change-photo" ng-click="editPicture()" translate>Change Photo</a>
         </figure>
         <span class="disabled-label" ng-if="user._id && !user.is_enabled" translate>disabled</span>
-        <span class="disabled-label" ng-if="user._id && user.is_enabled && !_active" translate>inactive</span>
+        <span class="disabled-label" ng-if="user._id && user.is_enabled && !user.is_active" translate>inactive</span>
     </div>
 
     <div class="profile-info editmode">
@@ -22,7 +22,7 @@
                  ng-if="!profile && user._id && !dirty"
                  tooltip="{{ _active ? 'Deactivate user' : 'Activate user' | translate }}"
                  tooltip-placement="left">
-              <span sd-switch ng-model="$parent._active" ng-click="toggleStatus(_active)"></span>
+              <span sd-switch ng-model="user.is_active" ng-click="toggleStatus(user.is_active)"></span>
             </div>
         </div>
         <div class="details-info form-flat" ng-class="{shifted : error}">

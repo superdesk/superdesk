@@ -2,7 +2,7 @@
 	<div class="assignee" ng-class="{'open': open}" ng-init="hoveractive = false">
 		<div class="toggle" ng-mouseenter="hoveractive = true" ng-mouseleave="hoveractive = false">
 			<div class="avatar" ng-class="{desk : desk && !user }">
-				<img sd-user-avatar data-src="user.picture_url" data-initials="user.display_name">
+				<img sd-user-avatar data-user="user">
 			</div>
 			<div class="add">
 				<i class="icon-plus-large icon-white"></i>
@@ -42,7 +42,7 @@
 					<div class="search-result">
 						<ul class="users-list-embed">
 							<li ng-repeat="user in desksService.deskMembers[desk._id] | filter:search" ng-click="$parent.user = user" ng-class="{'active': $parent.user === user}">
-								<figure class="avatar small"><img sd-user-avatar data-src="user.picture_url"></figure>
+								<figure class="avatar small"><img sd-user-avatar data-user="user"></figure>
 								<div class="name">{{user.display_name}}</div>
 								<i ng-show="$parent.user === user" class="icon-close-small icon-white" ng-click="$parent.user = null; $event.stopPropagation();"></i>
 							</li>

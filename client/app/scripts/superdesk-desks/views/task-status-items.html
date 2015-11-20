@@ -7,7 +7,7 @@
 		ng-click="action({item: item})" 
 		ng-class="{locked: item.lock_user, shifted: allowed, active: item._id === selected._id}">
 		<figure class="avatar small" title="{{users[item.task.user].display_name}}">
-            <img sd-user-avatar data-src="users[item.task.user].picture_url" data-initials="users[item.task.user].display_name">
+            <img sd-user-avatar data-user="users[item.task.user]">
         </figure>
 		<div class="text">{{item.slugline}}</div>
 	</li>

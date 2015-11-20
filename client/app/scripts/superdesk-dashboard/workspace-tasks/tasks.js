@@ -319,7 +319,7 @@ function AssigneeViewDirective(desks) {
                 var user = desks.userLookup[task.user] || {};
                 scope.deskName = desk.name || null;
                 scope.userName = user.display_name || null;
-                scope.userPicture = user.picture_url || null;
+                scope.user = user || null;
             });
         }
     };

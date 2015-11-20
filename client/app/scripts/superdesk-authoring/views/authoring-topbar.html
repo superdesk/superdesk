@@ -4,7 +4,7 @@
         <figure class="avatar small avatar-with-info" dropdown-toggle>
             <div class="logged-info"></div>
             <div class="user-image">
-                <img sd-user-avatar data-src="item.lock_user.picture_url" data-initials="item.lock_user | username">
+                <img sd-user-avatar data-user="item.lock_user">
             </div>
         </figure>
 
@@ -12,7 +12,7 @@
             <div class="menu-label" translate>Locked by</div>
             <figure class="avatar large">
                 <div class="user-image">
-                    <img sd-user-avatar data-src="item.lock_user.picture_url" data-initials="item.lock_user | username">
+                    <img sd-user-avatar data-user="item.lock_user">
                 </div>
             </figure>
             <div class="lock-text">{{ item.lock_user | username }}</div>   
