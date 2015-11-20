@@ -10,10 +10,12 @@ module.exports = function(grunt) {
         if (forceUrl) {
             server = url;
         }
-
         var config = {
             raven: {dsn: process.env.SUPERDESK_RAVEN_DSN || ''},
             server: {url: server, ws: ws},
+            embedly: {
+                key: process.env.EMBEDLY_KEY || ''
+            },
             analytics: {
                 piwik: {
                     url: process.env.PIWIK_URL || '',

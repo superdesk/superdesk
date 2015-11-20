@@ -717,7 +717,7 @@ function SdAddEmbedController (embedService, $element, $timeout, $q, _) {
         /**
          * Return html code to represent an embedded picture
          *
-         * @param {string} image link as url
+         * @param {string} url
          * @param {string} headline
          * @param {string} description
          * @return {string} html
@@ -732,7 +732,7 @@ function SdAddEmbedController (embedService, $element, $timeout, $q, _) {
         /**
          * Return html code to represent an embedded link
          *
-         * @param {string} link as url
+         * @param {string} url
          * @param {string} title
          * @param {string} description
          * @param {string} illustration
@@ -742,11 +742,11 @@ function SdAddEmbedController (embedService, $element, $timeout, $q, _) {
             var html = [
                 '<div class="embed--link">',
                 angular.isDefined(illustration) ?
-                '  <img src="'+ illustration +'" class="embed--link__illustration"/>' : '',
+                '  <img src="' + illustration + '" class="embed--link__illustration"/>' : '',
                 '  <div class="embed--link__title">',
-                '      <a href="'+ url +'" target="_blank">'+ title +'</a>',
+                '      <a href="' + url + '" target="_blank">' + title + '</a>',
                 '  </div>',
-                '  <div class="embed--link__description">'+ description +'</div>',
+                '  <div class="embed--link__description">' + description + '</div>',
                 '</div>'];
             return html.join('\n');
         },
@@ -850,7 +850,8 @@ function SdTextEditorBlockEmbedController() {
     });
 }
 
-angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embed', 'angular-embed.handlers'])
+angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embed',
+                                    'angular-embed.handlers', 'angular-embedly', 'superdesk.config'])
     .service('editor', EditorService)
     .directive('sdAddEmbed', function() {
         return {
@@ -1267,18 +1268,19 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                 }
             }
         };
-    }]).config(['embedlyServiceProvider', 'config', function(embedlyServiceProvider, config) {
-        // embed.ly private key
-        console.log(config);
-        embedlyServiceProvider.setKey(config.embedly.key);
     }]).run(['embedService', 'ngEmbedTwitterHandler',
         function(embedService, ngEmbedTwitterHandler) {
-            // don't use noembed as first choice
-            embedService.setConfig('allwaysUseEmbedlyByDefault', true);
             // Tweets embed code are not provided by Embedly, we need to use this special handler
             // from https://github.com/superdesk/angular-embed
             embedService.registerHandler(ngEmbedTwitterHandler);
         }
-    ]);
+    ]).config(['embedServiceProvider', 'embedlyServiceProvider', '$injector',
+        function(embedServiceProvider, embedlyServiceProvider, $injector) {
+        // embed.ly private key
+        var config = $injector.get('config');
+        embedlyServiceProvider.setKey(config.embedly.key);
+        // don't use noembed as first choice
+        embedServiceProvider.setConfig('allwaysUseEmbedlyByDefault', true);
+    }]);
 
 })();

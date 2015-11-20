@@ -19,8 +19,7 @@ define([
     './datetime/datetime',
     './ui/ui',
     './directives/all',
-    './services/modalService',
-    './config/config'
+    './services/modalService'
 
 ], function(angular, require) {
     'use strict';

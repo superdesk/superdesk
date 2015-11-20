@@ -1,7 +1,9 @@
 'use strict';
 
 describe('text editor', function() {
-
+    angular.module('superdesk.config', [])
+        .constant('config', {server: {url: undefined}, embedly: {key: '123'}});
+    beforeEach(module('superdesk.config'));
     beforeEach(module('superdesk.editor'));
     beforeEach(module('superdesk.editor.spellcheck'));
 
