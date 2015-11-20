@@ -817,8 +817,8 @@ function SdAddEmbedController (embedService, $element, $timeout, $q, _) {
                 vm.toggle(true);
             });
         },
-        createBlockFromSdPicture: function(pic) {
-            var html = vm.pictureToHtml(pic.renditions.viewImage.href, pic.headline, pic.description);
+        createBlockFromSdPicture: function(img, item) {
+            var html = vm.pictureToHtml(img.href, item.headline, item.description);
             vm.createFigureBlock('Image', html);
         }
     });
@@ -872,7 +872,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
             }
         };
     })
-    .directive('sdTextEditorDropZone', function () {
+    .directive('sdTextEditorDropZone', ['superdesk', 'api', function (superdesk, api) {
         return {
             scope: true,
             require: '^sdAddEmbed',
@@ -882,8 +882,14 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                 .on('drop', function(event) {
                     event.preventDefault();
                     var item = angular.fromJson(event.originalEvent.dataTransfer.getData(PICTURE_TYPE));
-                    ctrl.createBlockFromSdPicture(item);
-                    element.removeClass('drag-active');
+                    superdesk.intent('edit', 'crop', {item: item, renditions: [{name: 'embed'}]})
+                        .then(function(cropData) {
+                            return api.save('picture_crop', {item: item, crop: cropData.embed});
+                        })
+                        .then(function(image) {
+                            ctrl.createBlockFromSdPicture(image, item);
+                            element.removeClass('drag-active');
+                        });
                 })
                 .on('dragover', function(event) {
                     if (event.originalEvent.dataTransfer.types[0] === PICTURE_TYPE) {
@@ -896,7 +902,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                 });
             }
         };
-    })
+    }])
     .directive('sdTextEditor', ['$timeout', function ($timeout) {
         return {
             scope: {type: '=', config: '=', language: '='},

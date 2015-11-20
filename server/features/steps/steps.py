@@ -619,6 +619,9 @@ def step_impl_when_upload_with_crop(context):
 @when('upload a file "{file_name}" to "{destination}" with "{guid}"')
 def step_impl_when_upload_image_with_guid(context, file_name, destination, guid):
     upload_file(context, destination, file_name, 'media', {'guid': guid})
+    if destination == 'archive':
+        set_placeholder(context, 'original.href', context.archive['renditions']['original']['href'])
+        set_placeholder(context, 'original.media', context.archive['renditions']['original']['media'])
 
 
 @when('we upload a new dictionary with success')

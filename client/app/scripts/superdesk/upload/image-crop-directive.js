@@ -102,7 +102,7 @@ define([
 
                         elem.append(img);
                         $(img).Jcrop({
-                            aspectRatio: scope.rendition.width / scope.rendition.height,
+                            aspectRatio: scope.rendition.width ? scope.rendition.width / scope.rendition.height : null,
                             minSize: [scope.rendition.width, scope.rendition.height],
                             trueSize: [scope.original.width, scope.original.height],
                             boxWidth: scope.boxWidth,
@@ -145,6 +145,10 @@ define([
                  * @return {Array} [x0, y0, x1, y1]
                  */
                 function getDefaultCoordinates(img, rendition) {
+                    if (!rendition.width || !rendition.height) {
+                        return [0, 0, img.width, img.height];
+                    }
+
                     var ratio = Math.min(img.width / rendition.width, img.height / rendition.height);
                     var width = Math.floor(ratio * rendition.width);
                     var height = Math.floor(ratio * rendition.height);

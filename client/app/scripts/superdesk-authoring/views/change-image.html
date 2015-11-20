@@ -10,7 +10,7 @@
             <div class="crop-area image">
                 <ul> 
                     <li ng-repeat="rendition in data.renditions track by rendition.name">
-                    <label class="field-label">{{ rendition.name }}</label>
+                    <label class="field-label" ng-if="data.renditions.length > 1">{{ rendition.name }}</label>
                     <div sd-image-crop
                         data-show-Min-Size-Error="true"
                         data-box-width="600" 

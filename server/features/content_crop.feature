@@ -266,3 +266,17 @@ Feature: Cropping the Image Articles
       """
       And we fetch a file "#rendition.4-3.href#"
       And we get OK response
+
+    @wip
+    @auth
+    Scenario: Crop picture item without and return rendition url
+      When upload a file "bike.jpg" to "archive" with "123" 
+      When we post to "/picture_crop"
+      """
+      {"item": {"renditions": {"original": {"mimetype": "image/jpeg", "href": "#original.href#", "media": "#original.media#"}}},
+       "crop": {"CropLeft": 0, "CropRight": 10, "CropTop": 0, "CropBottom": 10}}
+      """
+      Then we get new resource
+      """
+      {"width": 10, "height": 10, "href": "__any_value__"}
+      """
