@@ -240,7 +240,7 @@ define([
                             version.stage = version.task.stage;
                             version.creator = version.version_creator || version.original_creator;
 
-                            if (version.type === 'text' || version.type === 'preformatted') {
+                            if (version.type === 'text') {
                                 version.typeName = 'Story';
                             } else {
                                 version.typeName = _.capitalize(item.type);
@@ -272,7 +272,7 @@ define([
                                 version.creator = versioncreator && versioncreator.display_name;
                             }
 
-                            if (version.type === 'text' || version.type === 'preformatted') {
+                            if (version.type === 'text') {
                                 version.typeName = 'Story';
                             } else {
                                 version.typeName = _.capitalize(item.type);

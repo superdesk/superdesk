@@ -479,14 +479,14 @@
             action.view = !lockedByMe;
 
             var isBroadcast = (current_item.genre && current_item.genre.length > 0 &&
-                               (current_item.type === 'text' || current_item.type === 'preformatted') &&
+                               current_item.type === 'text' &&
                                current_item.genre.some(function(genre) {
                                    return genre.name === 'Broadcast Script';
                                }));
 
             // new take should be on the text item that are closed or last take but not killed and doesn't have embargo.
-            action.new_take = !is_read_only_state &&
-                (current_item.type === 'text' || current_item.type === 'preformatted') &&
+
+            action.new_take = !is_read_only_state && current_item.type === 'text' &&
                 !current_item.embargo && !current_item.publish_schedule &&
                 (angular.isUndefined(current_item.takes) || current_item.takes.last_take === current_item._id) &&
                 (angular.isUndefined(current_item.more_coming) || !current_item.more_coming) && !isBroadcast &&
@@ -510,7 +510,7 @@
                 }
 
                 action.re_write = _.contains(['published', 'corrected'], current_item.state) &&
-                    _.contains(['text', 'preformatted'], current_item.type) &&
+                    _.contains(['text'], current_item.type) &&
                     !current_item.embargo && !current_item.rewritten_by && action.new_take &&
                     (!current_item.broadcast || !current_item.broadcast.master_id);
 
@@ -549,7 +549,7 @@
 
             action.create_broadcast = (!_.contains(['spiked', 'scheduled', 'killed'], current_item.state)) &&
                 (_.contains(['published', 'corrected'], current_item.state)) &&
-                (current_item.type === 'text' || current_item.type === 'preformatted') && !isBroadcast;
+                current_item.type === 'text' && !isBroadcast;
 
             action.multi_edit = !is_read_only_state;
 
@@ -590,7 +590,7 @@
          * @returns {boolean} True if a "Valid Take" else False
          */
         this.isTakeItem = function(item) {
-            return (_.contains(['text', 'preformatted'], item.type) &&
+            return (_.contains(['text'], item.type) &&
                 item.takes && item.takes.sequence > 1);
         };
     }
@@ -1775,7 +1775,7 @@
                 }
 
                 scope.canSendAndContinue = function() {
-                    return !authoring.isPublished(scope.item) && _.contains(['text', 'preformatted'], scope.item.type);
+                    return !authoring.isPublished(scope.item) && _.contains(['text'], scope.item.type);
                 };
 
                 /**

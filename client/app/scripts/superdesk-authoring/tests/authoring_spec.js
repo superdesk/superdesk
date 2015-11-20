@@ -1302,53 +1302,6 @@ describe('authoring actions', function() {
                     'correct', 'kill', 'package_item', 'view', 'create_broadcast']);
         }));
 
-    it('Create broadcast icon is available for preformatted item.',
-        inject(function(privileges, desks, authoring, $q, $rootScope) {
-            var item = {
-                '_id': 'test',
-                'state': 'published',
-                'marked_for_not_publication': false,
-                'type': 'preformatted',
-                'task': {
-                    'desk': 'desk1'
-                },
-                'more_coming': false,
-                '_current_version': 10,
-                'genre': null,
-                'archive_item': {
-                    '_id': 'test',
-                    'state': 'published',
-                    'marked_for_not_publication': false,
-                    'type': 'preformatted',
-                    'task': {
-                        'desk': 'desk1'
-                    },
-                    'more_coming': false,
-                    '_current_version': 10,
-                    'genre': null
-                }
-            };
-
-            var userPrivileges = {
-                'duplicate': true,
-                'mark_item': false,
-                'spike': true,
-                'unspike': true,
-                'mark_for_highlights': true,
-                'unlock': true,
-                'publish': true,
-                'correct': true,
-                'kill': true,
-                'create_broadcast': true
-            };
-
-            privileges.setUserPrivileges(userPrivileges);
-            $rootScope.$digest();
-            var itemActions = authoring.itemActions(item);
-            allowedActions(itemActions, ['duplicate', 'new_take', 're_write', 'mark_item', 'multi_edit',
-                    'correct', 'kill', 'package_item', 'view', 'create_broadcast']);
-        }));
-
     it('Create broadcast icon is available for text item with genre Article.',
         inject(function(privileges, desks, authoring, $q, $rootScope) {
             var item = {
