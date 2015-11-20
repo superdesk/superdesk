@@ -2241,7 +2241,7 @@
                 .activity('kill.text', {
                     label: gettext('Kill item'),
                     priority: 100,
-                    icon: 'remove',
+                    icon: 'remove-sign',
                     group: 'corrections',
                     controller: ['data', 'authoringWorkspace', function(data, authoringWorkspace) {
                         authoringWorkspace.kill(data.item);
@@ -2255,7 +2255,7 @@
                 .activity('correct.text', {
                     label: gettext('Correct item'),
                     priority: 100,
-                    icon: 'pencil',
+                    icon: 'edit-line',
                     group: 'corrections',
                     controller: ['data', 'authoringWorkspace', function(data, authoringWorkspace) {
                         authoringWorkspace.correct(data.item);
@@ -2269,7 +2269,7 @@
                 .activity('view.item', {
                     label: gettext('Open'),
                     priority: 2000,
-                    icon: 'fullscreen',
+                    icon: 'external',
                     keyboardShortcut: 'ctrl+o',
                     controller: ['data', 'authoringWorkspace', function(data, authoringWorkspace) {
                         authoringWorkspace.view(data.item || data);

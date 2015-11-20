@@ -401,7 +401,7 @@ define([
                 })
                 .activity('createBroadcast', {
                     label: gettext('Create Broadcast'),
-                    icon: 'copy',
+                    icon: 'broadcast',
                     monitor: true,
                     controller: ['api', 'notify', '$rootScope', 'data', 'desks', 'authoringWorkspace',
                     function(api, notify, $rootScope, data, desks, authoringWorkspace) {
@@ -480,7 +480,7 @@ define([
                 })
                 .activity('rewrite', {
                     label: gettext('Update'),
-                    icon: 'multi-star-color',
+                    icon: 'edit-line',
                     filters: [{action: 'list', type: 'archive'}],
                     group: 'corrections',
                     privileges: {archive: 1},
