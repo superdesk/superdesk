@@ -105,7 +105,7 @@ describe('search', function() {
         expect(globalSearch.getItems().count()).toBe(1);
     });
 
-    it('can search by from desk field', function() {
+    it('search by from desk field', function() {
         monitoring.openMonitoring();
         monitoring.switchToDesk('SPORTS DESK').then(authoring.createTextItem());
         authoring.writeTextToHeadline('From-Sports-To-Politics');

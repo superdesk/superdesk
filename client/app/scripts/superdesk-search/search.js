@@ -1398,7 +1398,6 @@
                         var params = $location.search();
                         scope.query = params.q;
                         scope.flags = false;
-                        scope.desks = [];
                         scope.meta = {};
                         scope.fields = {};
 
@@ -1427,19 +1426,16 @@
                         if (load_data) {
                             fetchProviders();
                             fetchUsers();
-                            desks.initialize()
-                                .then(function() {
-                                    scope.desks = desks.desks;
-                                    initFromToDesk($location.search().from_desk, 'from_desk');
-                                    initFromToDesk($location.search().to_desk, 'to_desk');
-                                });
+                            fetchDesks();
+                        } else {
+                            initializeDesksDropDown();
                         }
                     }
 
                     init(true);
 
                     /*
-                     * initlialize the creator drop down selection.
+                     * Initialize the creator drop down selection.
                      */
                     function fetchUsers() {
                         userList.getAll()
@@ -1455,11 +1451,36 @@
                         });
                     }
 
+                    /*
+                     * Initialize the search providers
+                     */
                     function fetchProviders() {
                         return api.ingestProviders.query({max_results: 200})
                             .then(function(result) {
                                 scope.providers = result._items;
                             });
+                    }
+
+                    /*
+                     * Initialize the desk drop down
+                     */
+                    function fetchDesks() {
+                        scope.desks = [];
+                        desks.initialize()
+                            .then(function() {
+                                scope.desks = desks.desks;
+                                initializeDesksDropDown();
+                            });
+                    }
+
+                    /*
+                     *  Initialize Desks DropDown
+                     */
+                    function initializeDesksDropDown() {
+                        if (scope.desks && scope.desks._items) {
+                            initFromToDesk($location.search().from_desk, 'from_desk');
+                            initFromToDesk($location.search().to_desk, 'to_desk');
+                        }
                     }
 
                     /*
