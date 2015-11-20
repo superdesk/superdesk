@@ -16,7 +16,7 @@ describe('authoring', function() {
     beforeEach(module('superdesk.mocks'));
     beforeEach(module('superdesk.privileges'));
     beforeEach(module('superdesk.desks'));
-    beforeEach(module('templates'));
+    beforeEach(module('superdesk.templates-cache'));
 
     beforeEach(inject(function($window) {
         $window.onbeforeunload = angular.noop;
@@ -343,7 +343,7 @@ describe('authoring', function() {
 describe('cropImage', function() {
     beforeEach(module('superdesk.authoring'));
     beforeEach(module('superdesk.mocks'));
-    beforeEach(module('templates'));
+    beforeEach(module('superdesk.templates-cache'));
 
     function startCropping() {
         var $scope;
@@ -434,7 +434,7 @@ describe('cropImage', function() {
 describe('autosave', function() {
     beforeEach(module('superdesk.authoring'));
     beforeEach(module('superdesk.mocks'));
-    beforeEach(module('templates'));
+    beforeEach(module('superdesk.templates-cache'));
 
     it('can fetch an autosave for item locked by user and is editable',
         inject(function(autosave, api, $q, $rootScope) {
@@ -497,7 +497,7 @@ describe('autosave', function() {
 describe('lock service', function() {
     beforeEach(module('superdesk.authoring'));
     beforeEach(module('superdesk.mocks'));
-    beforeEach(module('templates'));
+    beforeEach(module('superdesk.templates-cache'));
 
     var user = {_id: 'user'};
     var sess = {_id: 'sess'};
@@ -561,7 +561,7 @@ describe('authoring actions', function() {
     beforeEach(module('superdesk.authoring'));
     beforeEach(module('superdesk.mocks'));
     beforeEach(module('superdesk.desks'));
-    beforeEach(module('templates'));
+    beforeEach(module('superdesk.templates-cache'));
 
     beforeEach(inject(function(desks, $q) {
         spyOn(desks, 'fetchCurrentUserDesks').and.returnValue($q.when({_items: userDesks}));
@@ -1535,7 +1535,7 @@ describe('authoring workspace', function() {
 describe('authoring container directive', function() {
 
     beforeEach(module('superdesk.authoring'));
-    beforeEach(module('templates'));
+    beforeEach(module('superdesk.templates-cache'));
 
     beforeEach(inject(function($templateCache) {
         // avoid loading of authoring
@@ -1651,7 +1651,7 @@ describe('authoring themes', function () {
 
 describe('send item directive', function() {
     beforeEach(module('superdesk.authoring'));
-    beforeEach(module('templates'));
+    beforeEach(module('superdesk.templates-cache'));
 
     beforeEach(inject(function($templateCache) {
         $templateCache.put('scripts/superdesk-authoring/views/send-item.html', '');

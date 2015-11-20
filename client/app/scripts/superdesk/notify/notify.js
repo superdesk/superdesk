@@ -53,7 +53,7 @@ define(['angular', 'require'], function(angular, require) {
         .directive('sdNotify', ['notify', function (notify) {
             return {
                 scope: true,
-                templateUrl: require.toUrl('./views/notify.html'),
+                templateUrl: 'scripts/superdesk/notify/views/notify.html',
                 link: function (scope, element, items) {
                     scope.messages = notify.messages;
                 }

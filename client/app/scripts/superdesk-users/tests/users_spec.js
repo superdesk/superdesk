@@ -114,7 +114,7 @@ describe('mentio directive', function() {
 
     beforeEach(module('superdesk.users'));
     beforeEach(module('superdesk.mocks'));
-    beforeEach(module('templates'));
+    beforeEach(module('superdesk.templates-cache'));
 
     beforeEach(module(function($provide) {
         $provide.service('api', function($q) {
@@ -146,7 +146,7 @@ describe('user edit form', function() {
     beforeEach(module('superdesk.desks'));
     beforeEach(module('superdesk.users'));
     beforeEach(module('superdesk.mocks'));
-    beforeEach(module('templates'));
+    beforeEach(module('superdesk.templates-cache'));
 
     beforeEach(module(function($provide) {
         $provide.service('session', function() {

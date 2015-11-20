@@ -13,7 +13,7 @@ describe('sdIngestRoutingContent directive', function () {
         getTzDataDeferred,
         scope;
 
-    beforeEach(module('templates'));
+    beforeEach(module('superdesk.templates-cache'));
     beforeEach(module('superdesk.ingest'));
     beforeEach(module('superdesk.content_filters'));
 

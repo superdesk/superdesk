@@ -31,7 +31,7 @@ define([
                     widgets: '=',
                     save: '&'
                 },
-                templateUrl: require.toUrl('./views/grid.html'),
+                templateUrl: 'scripts/superdesk-dashboard/grid/views/grid.html',
                 controller: ['$scope', function($scope) {
                     this.addWidget = function(widget, element) {
                         widget.active = true;
@@ -102,7 +102,7 @@ define([
             return {
                 require: '^sdGrid',
                 transclude: true,
-                templateUrl: require.toUrl('./views/grid-item.html'),
+                templateUrl: 'scripts/superdesk-dashboard/grid/views/grid-item.html',
                 link: function(scope, element, attrs, sdGrid) {
                     sdGrid.addWidget(scope.widget, element);
 

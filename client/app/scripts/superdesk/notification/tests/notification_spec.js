@@ -1,7 +1,7 @@
 'use strict';
 describe('Reload Service', function() {
     beforeEach(module('superdesk.notification'));
-    beforeEach(module('templates'));
+    beforeEach(module('superdesk.templates-cache'));
 
     var USER_URL = '/users/1';
     var USER = {
@@ -70,7 +70,7 @@ describe('Reload Service', function() {
 });
 describe('Notify Connection Service', function() {
     beforeEach(module('superdesk.notification'));
-    beforeEach(module('templates'));
+    beforeEach(module('superdesk.templates-cache'));
 
     var rootScope, msg;
     beforeEach(function() {

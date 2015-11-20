@@ -4,7 +4,7 @@
 describe('superdesk ui', function() {
 
     beforeEach(module('superdesk.ui'));
-    beforeEach(module('templates'));
+    beforeEach(module('superdesk.templates-cache'));
 
     var datetimeHelper;
 

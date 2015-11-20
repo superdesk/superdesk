@@ -3,7 +3,7 @@
 
 describe('authoring widgets', function() {
 
-    beforeEach(module('templates'));
+    beforeEach(module('superdesk.templates-cache'));
 
     angular.module('superdesk.authoring.widgets.test', ['superdesk.authoring.widgets'])
         .config(function(authoringWidgetsProvider) {

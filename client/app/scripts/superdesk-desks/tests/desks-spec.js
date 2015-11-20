@@ -6,7 +6,7 @@ describe('desks service', function() {
     var USER_URL = 'users/1';
 
     beforeEach(module('superdesk.desks'));
-    beforeEach(module('templates'));
+    beforeEach(module('superdesk.templates-cache'));
 
     it('can fetch current user desks',
     inject(function(desks, session, api, preferencesService, $rootScope, $q) {

@@ -2,7 +2,7 @@
 
 describe('auth', function() {
 
-    beforeEach(module('templates'));
+    beforeEach(module('superdesk.templates-cache'));
     beforeEach(module('superdesk.activity'));
     beforeEach(module('superdesk.auth'));
 

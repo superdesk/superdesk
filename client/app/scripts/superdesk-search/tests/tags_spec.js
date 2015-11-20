@@ -11,7 +11,7 @@ describe('Tag Service', function() {
 
     beforeEach(module('superdesk.search'));
     beforeEach(module('superdesk.desks'));
-    beforeEach(module('templates'));
+    beforeEach(module('superdesk.templates-cache'));
 
     /**
      * Mock some of the dependencies of the parent directives.

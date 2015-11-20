@@ -1,7 +1,7 @@
 'use strict';
 
 describe('search service', function() {
-    beforeEach(module('templates'));
+    beforeEach(module('superdesk.templates-cache'));
     beforeEach(module('superdesk.search'));
 
     it('can create base query', inject(function(search) {
@@ -131,7 +131,7 @@ describe('sdSearchFacets directive', function () {
     beforeEach(module(
         'superdesk.authoring.metadata',
         'superdesk.search',
-        'templates'  // needed so that directive's template is placed into
+        'superdesk.templates-cache'  // needed so that directive's template is placed into
                      // $templateCache, avoiding the "Unexpected request" error
     ));
 

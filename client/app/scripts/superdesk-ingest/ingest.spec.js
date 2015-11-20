@@ -5,7 +5,7 @@ describe('ingest', function() {
     describe('send service', function() {
 
         beforeEach(module('superdesk.ingest.send'));
-        beforeEach(module('templates'));
+        beforeEach(module('superdesk.templates-cache'));
 
         it('can send an item', inject(function(send, api, $q, $rootScope) {
             spyOn(api, 'save').and.returnValue($q.when({_created: 'now'}));
@@ -117,7 +117,7 @@ describe('ingest', function() {
             isoScope;  // the directive's isolate scope
 
         beforeEach(module('superdesk.ingest'));
-        beforeEach(module('templates'));
+        beforeEach(module('superdesk.templates-cache'));
 
         beforeEach(module(function($provide) {
             var childDirectives = [

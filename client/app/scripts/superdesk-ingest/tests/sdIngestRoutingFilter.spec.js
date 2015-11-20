@@ -11,7 +11,7 @@ describe('sdIngestRoutingFilter directive', function () {
         $compile,
         $rootScope;
 
-    beforeEach(module('templates'));
+    beforeEach(module('superdesk.templates-cache'));
     beforeEach(module('superdesk.ingest'));
 
     beforeEach(inject(function (_$compile_, _$rootScope_) {
