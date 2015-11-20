@@ -1023,22 +1023,24 @@
 
                     function resetUser(user) {
                         scope.dirty = false;
-                        return userList.getUser(user._id, true).then(function(u) {
-                            scope.error = null;
-                            scope.origUser = u;
-                            scope.user = _.create(u);
-                            scope.confirm = {password: null};
-                            scope.show = {password: false};
-                            scope._active = usersService.isActive(u);
-                            scope._pending = usersService.isPending(u);
-                            scope.profile = scope.user._id === session.identity._id;
-                            scope.userDesks = [];
-                            if (angular.isDefined(u) && angular.isDefined(u._links)) {
-                                desks.fetchUserDesks(u).then(function(response) {
-                                    scope.userDesks = response._items;
-                                });
-                            }
-                        });
+                        if (angular.isDefined(user._id)) {
+                            return userList.getUser(user._id, true).then(function(u) {
+                                scope.error = null;
+                                scope.origUser = u;
+                                scope.user = _.create(u);
+                                scope.confirm = {password: null};
+                                scope.show = {password: false};
+                                scope._active = usersService.isActive(u);
+                                scope._pending = usersService.isPending(u);
+                                scope.profile = scope.user._id === session.identity._id;
+                                scope.userDesks = [];
+                                if (angular.isDefined(u) && angular.isDefined(u._links)) {
+                                    desks.fetchUserDesks(u).then(function(response) {
+                                        scope.userDesks = response._items;
+                                    });
+                                }
+                            });
+                        }
                     }
 
                     scope.$on('user:updated', function(event, user) {
