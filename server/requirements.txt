@@ -6,5 +6,5 @@ wooper==0.4.2
 pymongo==2.8
 Eve==0.6.0
 
--e git+git://github.com/superdesk/superdesk-core@e19ba10#egg=Superdesk-Core==0.0.1-dev
+-e git+git://github.com/superdesk/superdesk-core@c75d50b#egg=Superdesk-Core==0.0.1-dev
 
