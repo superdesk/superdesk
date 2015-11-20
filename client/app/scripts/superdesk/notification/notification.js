@@ -110,8 +110,11 @@
 
         $rootScope.$on('vocabularies:updated', function(event, data) {
             if (!data.user || data.user !== session.identity._id) {
-                notify.error(gettext(data.vocabulary +
-                    ' vocabulary has been updated. Please re-login to see updated vocabulary values'));
+                _this.message = gettext(data.vocabulary +
+                    ' vocabulary has been updated. Please re-login to see updated vocabulary values');
+                $timeout(function() {
+                    notify.error(_this.message);
+                }, 100);
             }
         });
     }
