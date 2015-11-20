@@ -220,4 +220,14 @@ describe('authoring', function() {
         expect(monitoring.getPreviewTitle()).toBe('item5');
         authoring.close();
     });
+
+    it('toggle auto spellcheck and hold changes', function() {
+        monitoring.actionOnItem('Edit', 1, 1);
+        expect(element(by.model('spellcheckMenu.isAuto')).getAttribute('checked')).toBeTruthy();
+        authoring.toggleAutoSpellCheck();
+        expect(element(by.model('spellcheckMenu.isAuto')).getAttribute('checked')).toBeFalsy();
+        authoring.close();
+        monitoring.actionOnItem('Edit', 1, 2);
+        expect(element(by.model('spellcheckMenu.isAuto')).getAttribute('checked')).toBeFalsy();
+    });
 });
