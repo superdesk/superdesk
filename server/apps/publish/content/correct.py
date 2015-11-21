@@ -26,6 +26,7 @@ class CorrectPublishService(BasePublishService):
         CropService().validate_multiple_crops(updates, original)
         super().on_update(updates, original)
         updates[ITEM_OPERATION] = ITEM_CORRECT
+        updates['versioncreated'] = utcnow()
         set_sign_off(updates, original)
 
     def on_updated(self, updates, original):

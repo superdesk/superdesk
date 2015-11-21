@@ -655,6 +655,7 @@ Feature: Content Publishing
       """
       {"_current_version": 3, "state": "corrected", "operation": "correct", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
       """
+      And we get updated timestamp "versioncreated"
       When we post to "/archive/#archive._id#/unlock"
       """
       {}
@@ -671,6 +672,7 @@ Feature: Content Publishing
       """
       {"_current_version": 4, "state": "killed", "operation": "kill", "pubstatus": "canceled", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
       """
+      And we get updated timestamp "versioncreated"
       When we post to "/archive/#archive._id#/unlock"
       """
       {}
