@@ -1,7 +1,7 @@
 <div class="notification-pane" ng-class="{show: flags.notifications}">
     <div class="header" ng-if="flags.notifications">
         <figure class="avatar medium">
-            <img sd-user-avatar data-src="currentUser.picture_url" data-initials="currentUser.display_name">
+            <img sd-user-avatar data-user="currentUser">
         </figure>
         <div class="user-info">
             <span class="name">{{currentUser.display_name }}</span>
@@ -19,7 +19,7 @@
                 <ul>
                     <li ng-repeat="notification in notifications._items" ng-class="{unread: notification._unread}" sd-mark-as-read>
                         <figure class="avatar">
-                            <img sd-user-avatar data-src="notification.user.picture_url" data-initials="notification.user.display_name">
+                            <img sd-user-avatar data-user="notification.user">
                         </figure>
                         <div class="content" ng-if="notification.name == 'notify'">
                             <time sd-datetime data-date="notification._created"></time>

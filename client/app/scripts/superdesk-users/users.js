@@ -697,7 +697,7 @@
                 box.html(
                     '<div class="avatar-holder">' +
                         '<figure class="avatar big">' +
-                            '<img sd-user-avatar data-src="user.picture_url">' +
+                            '<img sd-user-avatar data-user="user">' +
                         '</figure>' +
                     '</div>' +
                     '<div class="title">{{user.display_name}}</div>' +
