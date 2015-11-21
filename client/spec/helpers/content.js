@@ -110,7 +110,7 @@ function Content() {
 
     this.getItemCount = function () {
         waitFor(list);
-        return list.all(by.repeater('item in items track by uuid(item)')).count();
+        return list.all(by.repeater('item in items track by generateTrackByIdentifier(item)')).count();
     };
 
     /**

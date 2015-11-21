@@ -96,6 +96,13 @@
                 scope.cacheNextItems = [];
                 scope.cachePreviousItems = [];
 
+                /**
+                  * Generates Identifier to be used by track by expression.
+                  */
+                scope.generateTrackByIdentifier = function(item) {
+                    return search.generateTrackByIdentifier(item);
+                };
+
                 scope.preview = function(item) {
                     superdesk.intent('preview', 'item', item);
                 };

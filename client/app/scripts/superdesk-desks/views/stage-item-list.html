@@ -2,7 +2,7 @@
 <div ng-if="!loading && !items.length && showEmpty" class="no-items" translate>No items in this stage</div>
 <div tabindex="0">
 	<ul ng-if="items.length" class="inline-content-items">
-		<li ng-repeat="item in items track by item._id" class="item"
+		<li ng-repeat="item in items track by generateTrackByIdentifier(item)" class="item"
 			ng-click="action({item: item})" 
 			ng-class="{locked: item.lock_user, shifted: allowed, active: item._id === selected._id}">
 			<div id="{{item._id}}">

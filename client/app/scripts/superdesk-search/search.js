@@ -304,6 +304,13 @@
         this.query = function createQuery(params) {
             return new Query(params);
         };
+
+        /*
+         * Generate Track By Identifier for search results.
+         */
+        this.generateTrackByIdentifier = function (item) {
+            return (item.state === 'ingested') ? item._id : item._id + ':' + item._current_version;
+        };
     }
 
     TagService.$inject = ['$location', 'desks', 'userList', 'metadata'];
@@ -1065,8 +1072,8 @@
                     /**
                      * Generates Identifier to be used by track by expression.
                      */
-                    scope.generateTrackIdentifier = function(item) {
-                        return (item.state === 'ingested') ? item._id : item._id + ':' + item._current_version;
+                    scope.generateTrackByIdentifier = function(item) {
+                        return search.generateTrackByIdentifier(item);
                     };
                 }
             };
