@@ -2,7 +2,8 @@
 import unittest
 from datetime import datetime
 from superdesk.metadata.item import ITEM_STATE, CONTENT_STATE
-from .content_templates import get_next_run, Weekdays, get_item_from_template
+from .content_templates import get_next_run, Weekdays, get_item_from_template, render_content_template
+from test_factory import SuperdeskTestCase
 
 
 class TemplatesTestCase(unittest.TestCase):
@@ -46,3 +47,43 @@ class TemplatesTestCase(unittest.TestCase):
         self.assertEqual('Foo', item.get('headline'))
         self.assertEqual(CONTENT_STATE.SUBMITTED, item.get(ITEM_STATE))
         self.assertEqual({'desk': 'sports', 'stage': 'schedule'}, item.get('task'))
+
+
+class RenderTemplateTestCase(SuperdeskTestCase):
+
+    def test_render_content_template(self):
+        template = {
+            '_id': 'foo', 'template_name': 'test',
+            'headline': 'Foo Template: {{item.headline}}',
+            'template_desk': 'sports',
+            'template_stage': 'schedule',
+            'body_html': 'This article has slugline: {{item.slugline}} and dateline: {{item.dateline["text"]}} '
+                         'at {{item.versioncreated | format_datetime("Australia/Sydney", "%d %b %Y %H:%S %Z")}}',
+            'more_coming': False, 'urgency': 1, 'priority': 3,
+            'dateline': {},
+            'anpa_take_key': 'this is test',
+            'place': []
+        }
+
+        item = {
+            '_id': '123', 'headline': 'Test Template',
+            'slugline': 'Testing', 'body_html': 'This is test story',
+            'dateline': {
+                'text': 'hello world'
+            },
+            'urgency': 4, 'priority': 6,
+            'versioncreated': '2015-06-01T22:54:53+0000',
+            'place': ['NSW']
+        }
+
+        render_content_template(item, template)
+        self.assertEqual(item['headline'], 'Foo Template: Test Template')
+        self.assertEqual(item['task']['desk'], 'sports')
+        self.assertEqual(item['task']['stage'], 'schedule')
+        self.assertEqual(item['urgency'], 1)
+        self.assertEqual(item['priority'], 3)
+        self.assertEqual(item['dateline']['text'], 'hello world')
+        self.assertEqual(item['more_coming'], False)
+        self.assertEqual(item['body_html'], 'This article has slugline: Testing and dateline: '
+                                            'hello world at 02 Jun 2015 08:53 AEST')
+        self.assertListEqual(item['place'], ['NSW'])

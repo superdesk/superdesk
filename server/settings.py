@@ -274,6 +274,9 @@ MAIL_PASSWORD = env('MAIL_PASSWORD', '')
 ADMINS = [MAIL_USERNAME]
 SUPERDESK_TESTING = (env('SUPERDESK_TESTING', 'false').lower() == 'true')
 
+# Default TimeZone
+DEFAULT_TIMEZONE = env('DEFAULT_TIMEZONE', 'Europe/Prague')
+
 # The number of minutes since the last update of the Mongo auth object after which it will be deleted
 SESSION_EXPIRY_MINUTES = int(env('SESSION_EXPIRY_MINUTES', 240))
 

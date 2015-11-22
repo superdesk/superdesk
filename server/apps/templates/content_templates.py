@@ -11,17 +11,24 @@
 import re
 import datetime
 import superdesk
-from flask import current_app as app
-from superdesk import Resource, Service
+from flask import current_app as app, request
+from superdesk import Resource, Service, config
+from superdesk.resource import build_custom_hateoas
+from superdesk.metadata.utils import item_url
 from superdesk.utc import utcnow
 from superdesk.errors import SuperdeskApiError
 from superdesk.metadata.item import metadata_schema, ITEM_STATE, CONTENT_STATE
 from superdesk.celery_app import celery
 from apps.rules.routing_rules import Weekdays, set_time
-from apps.archive.common import ARCHIVE
+from apps.archive.common import ARCHIVE, CUSTOM_HATEOAS
+from flask import render_template_string
 
 
 CONTENT_TEMPLATE_PRIVILEGE = 'content_templates'
+TEMPLATE_FIELDS = {'template_name', 'template_type', 'schedule',
+                   'last_run', 'next_run', 'template_desk', 'template_stage',
+                   config.ID_FIELD, config.LAST_UPDATED, config.DATE_CREATED,
+                   config.ETAG, 'task'}
 
 
 def get_next_run(schedule, now=None):
@@ -117,6 +124,61 @@ class ContentTemplatesService(Service):
     def get_scheduled_templates(self, now):
         query = {'next_run': {'$lte': now}, 'schedule.is_active': True}
         return self.find(query)
+
+
+class ContentTemplatesApplyResource(Resource):
+    endpoint_name = 'content_templates_apply'
+    resource_title = endpoint_name
+    schema = {}
+    schema.update(metadata_schema)
+    resource_methods = ['POST']
+    item_methods = []
+    privileges = {'POST': ARCHIVE}
+    url = 'content_templates/<{0}:template_name>/apply'.format(item_url)
+
+
+class ContentTemplatesApplyService(Service):
+
+    def create(self, docs, **kwargs):
+        template_name = request.view_args['template_name']
+        if not template_name:
+            SuperdeskApiError.badRequestError(message='Invalid Template Name')
+
+        pattern = '^{}$'.format(re.escape(template_name.strip()))
+        query = {'template_name': re.compile(pattern, re.IGNORECASE)}
+        template = superdesk.get_resource_service('content_templates').find_one(req=None, **query)
+        if not template:
+            SuperdeskApiError.badRequestError(message='Invalid Template')
+
+        render_content_template(docs[0], template)
+        build_custom_hateoas(CUSTOM_HATEOAS, docs[0])
+        return [docs[0].get(config.ID_FIELD)]
+
+
+def render_content_template(item, template):
+    """
+    Render the template.
+    :param dict item: item on which template is applied
+    :param dict template: template
+    """
+    for key, value in template.items():
+        if key in TEMPLATE_FIELDS or template.get(key) is None:
+            continue
+
+        if isinstance(template.get(key), str):
+            item[key] = render_template_string(template.get(key), item=item)
+        elif (isinstance(template.get(key), dict) or isinstance(template.get(key), list)) and template.get(key):
+            item[key] = template.get(key)
+        elif not (isinstance(template.get(key), dict) or isinstance(template.get(key), list)):
+            item[key] = template.get(key)
+
+    if template.get('template_desk'):
+        if not item.get('task'):
+            item['task'] = {}
+
+        item['task']['desk'] = template.get('template_desk')
+        if template.get('template_stage'):
+            item['task']['stage'] = template.get('template_stage')
 
 
 def get_scheduled_templates(now):
