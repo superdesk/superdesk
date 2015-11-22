@@ -6,41 +6,22 @@ Feature: Ingest Provider
         When we get "/ingest_providers"
         Then we get list with 0 items
 
-    @auth
-    @notification
+    @auth @notification
     Scenario: Create new ingest_provider
         Given empty "ingest_providers"
         When we post to "ingest_providers"
 	    """
-        [{
-          "type": "reuters",
-          "name": "reuters 4",
-          "source": "reuters",
-          "is_closed": false,
-          "content_expiry": 0,
-          "config": {"username": "foo", "password": "bar"}
+        [{"name": "reuters 4", "source": "reuters", "feeding_service": "reuters_http", "feed_parser": "newsml2",
+          "is_closed": false, "content_expiry": 0, "config": {"username": "foo", "password": "bar"}
         }]
 	    """
         And we get "/ingest_providers"
         Then we get list with 1 items
 	    """
-        {"_items": [{
-          "type": "reuters",
-          "name": "reuters 4",
-          "content_expiry": 2880,
-          "source": "reuters",
-          "is_closed": false,
-          "config": {"username": "foo", "password": "bar"},
-          "notifications": {
-              "on_update": true,
-              "on_error": true,
-              "on_close": true,
-              "on_open": true
-          },
-          "last_opened": {
-              "opened_by": "#CONTEXT_USER_ID#"
-          }
-        }]}
+        {"_items": [{"name": "reuters 4", "content_expiry": 2880, "source": "reuters", "is_closed": false,
+         "config": {"username": "foo", "password": "bar"}, "notifications": {"on_update": true, "on_error": true, "on_close": true, "on_open": true},
+         "last_opened": {"opened_by": "#CONTEXT_USER_ID#"}}]
+         }
 	    """
         When we get "/activity/"
         Then we get existing resource
@@ -56,23 +37,15 @@ Feature: Ingest Provider
         """
         Then we get emails
         """
-        [
-          {"body": "Created Ingest Channel reuters 4"}
-        ]
-
+        [{"body": "Created Ingest Channel reuters 4"}]
         """
 
     @auth
     Scenario: Update ingest_provider aliases
         Given "ingest_providers"
 	    """
-        [{
-            "config": {"field_aliases": [{"content": "body_text"}]},
-            "is_closed": false,
-            "name": "reuters 4",
-            "source": "reuters",
-            "type": "reuters"
-        }]
+        [{"config": {"field_aliases": [{"content": "body_text"}]}, "is_closed": false, "name": "reuters 4",
+         "source": "reuters",  "feeding_service": "reuters_http", "feed_parser": "newsml2"}]
 	    """
         When we patch "/ingest_providers/#ingest_providers._id#"
         """
@@ -88,13 +61,8 @@ Feature: Ingest Provider
     Scenario: Update ingest_provider
         Given "ingest_providers"
 	    """
-        [{
-        "type": "reuters",
-        "name": "reuters 4",
-        "source": "reuters",
-        "is_closed": false,
-        "config": {"username": "foo", "password": "bar"}
-        }]
+        [{"name": "reuters 4", "source": "reuters", "is_closed": false, "config": {"username": "foo", "password": "bar"},
+          "feeding_service": "reuters_http", "feed_parser": "newsml2"}]
 	    """
         When we patch "/ingest_providers/#ingest_providers._id#"
         """
@@ -117,24 +85,15 @@ Feature: Ingest Provider
         """
         Then we get emails
         """
-        [
-          {"body": "updated Ingest Channel the test of the test ingest_provider modified"}
-        ]
-
+        [{"body": "updated Ingest Channel the test of the test ingest_provider modified"}]
         """
 
-    @auth
-    @notification
+    @auth @notification
     Scenario: Update critical errors for ingest_provider
         Given "ingest_providers"
 	    """
-        [{
-        "type": "reuters",
-        "name": "reuters 4",
-        "source": "reuters",
-        "is_closed": false,
-        "config": {"username": "foo", "password": "bar"}
-        }]
+        [{"name": "reuters 4", "source": "reuters", "is_closed": false, "config": {"username": "foo", "password": "bar"},
+          "feeding_service": "reuters_http", "feed_parser": "newsml2"}]
 	    """
         When we patch "/ingest_providers/#ingest_providers._id#"
         """
@@ -145,19 +104,12 @@ Feature: Ingest Provider
         {"critical_errors":{"6000":true, "6001":true}}
         """
 
-
-    @auth
-    @notification
+    @auth @notification
     Scenario: Open/Close ingest_provider
         Given "ingest_providers"
 	    """
-        [{
-        "type": "reuters",
-        "name": "reuters 4",
-        "source": "reuters",
-        "is_closed": false,
-        "config": {"username": "foo", "password": "bar"}
-        }]
+        [{"name": "reuters 4", "source": "reuters", "is_closed": false, "config": {"username": "foo", "password": "bar"},
+          "feeding_service": "reuters_http", "feed_parser": "newsml2"}]
 	    """
         When we patch "/ingest_providers/#ingest_providers._id#"
         """
@@ -165,10 +117,7 @@ Feature: Ingest Provider
         """
         Then we get updated response
         """
-        {
-          "is_closed": true,
-          "last_closed": {"closed_by":"#CONTEXT_USER_ID#", "message": "system misbehaving."}
-        }
+        {"is_closed": true,  "last_closed": {"closed_by":"#CONTEXT_USER_ID#", "message": "system misbehaving."}}
         """
         When we get "/activity/"
         Then we get existing resource
@@ -182,13 +131,13 @@ Feature: Ingest Provider
             ]
          }
          """
-        Then we get notifications
+        And we get notifications
         """
         [{"event": "activity", "extra": {"_dest": {"#CONTEXT_USER_ID#": 0}}},
          {"event": "ingest_provider:create", "extra": {"provider_id": "#ingest_providers._id#"}},
          {"event": "ingest_provider:update", "extra": {"provider_id": "#ingest_providers._id#"}}]
         """
-        Then we get emails
+        And we get emails
         """
         [
           {"body":"updated Ingest Channel reuters 4"},
@@ -200,20 +149,11 @@ Feature: Ingest Provider
     @notification
     Scenario: Switch Off Notification on update ingest_provider
         Given empty "ingest_providers"
-        Given "ingest_providers"
+        And "ingest_providers"
 	    """
-        [{
-        "type": "reuters",
-        "name": "reuters 4",
-        "source": "reuters",
-        "is_closed": false,
-        "config": {"username": "foo", "password": "bar"},
-        "notifications": {
-              "on_update": false,
-              "on_error": false,
-              "on_close": false,
-              "on_open": false
-        }
+        [{"name": "reuters 4", "source": "reuters", "is_closed": false, "config": {"username": "foo", "password": "bar"},
+          "feeding_service": "reuters_http", "feed_parser": "newsml2",
+          "notifications": {"on_update": false, "on_error": false, "on_close": false, "on_open": false}
         }]
         """
         When we patch "/ingest_providers/#ingest_providers._id#"
@@ -227,7 +167,7 @@ Feature: Ingest Provider
         When we get "/activity/"
         Then we get existing resource
         """
-         {"_items": [{"data": {"name": "the test of the test ingest_provider modified"}, "message": "updated Ingest Channel {{name}}"}]}
+        {"_items": [{"data": {"name": "the test of the test ingest_provider modified"}, "message": "updated Ingest Channel {{name}}"}]}
         """
         Then we get 0 emails
         When we patch "/ingest_providers/#ingest_providers._id#"
@@ -259,15 +199,13 @@ Feature: Ingest Provider
         """
         Then we get 0 emails
 
-    @auth
-    @notification
+    @auth @notification
     Scenario: Delete an Ingest Provider which hasn't received items
         Given empty "ingest_providers"
         When we post to "ingest_providers"
 	    """
-        [{
-          "type": "reuters", "name": "reuters 4", "source": "reuters", "is_closed": false
-        }]
+        [{"name": "reuters 4", "source": "reuters", "is_closed": false, "config": {"username": "foo", "password": "bar"},
+          "feeding_service": "reuters_http", "feed_parser": "newsml2"}]
 	    """
         And we get "/ingest_providers"
         Then we get list with 1 items
@@ -295,6 +233,36 @@ Feature: Ingest Provider
         """
         And we post to "ingest_providers"
 	    """
-        [{"type": "reuters", "name": "reuters 4", "source": "reuters", "is_closed": false, "content_expiry": 0, "config": {"username": "foo", "password": "bar"}}]
+        [{"name": "reuters 4", "source": "reuters", "is_closed": false, "config": {"username": "foo", "password": "bar"},
+          "feeding_service": "reuters_http", "feed_parser": "newsml2"}]
 	    """
         Then we get 1 emails
+
+
+    @auth
+    Scenario: Creating a Ingest Provider with same name fails
+        Given empty "ingest_providers"
+        When we post to "ingest_providers"
+	    """
+        [{"name": "reuters 4", "source": "reuters", "feeding_service": "reuters_http", "feed_parser": "newsml2",
+          "is_closed": false, "content_expiry": 0, "config": {"username": "foo", "password": "bar"}
+        }]
+	    """
+        And we get "/ingest_providers"
+        Then we get list with 1 items
+	    """
+        {"_items": [{"name": "reuters 4", "content_expiry": 2880, "source": "reuters", "is_closed": false,
+         "config": {"username": "foo", "password": "bar"}, "notifications": {"on_update": true, "on_error": true, "on_close": true, "on_open": true},
+         "last_opened": {"opened_by": "#CONTEXT_USER_ID#"}}]
+         }
+	    """
+        When we post to "ingest_providers"
+	    """
+        [{"name": "reuters 4", "source": "reuters", "feeding_service": "reuters_http", "feed_parser": "newsml2",
+          "is_closed": false, "content_expiry": 0, "config": {"username": "foo", "password": "bar"}
+        }]
+	    """
+        Then we get error 400
+        """
+        {"_issues": {"name": {"unique": 1}}, "_status": "ERR"}
+        """

@@ -8,11 +8,12 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
+from superdesk.metadata.item import CONTENT_STATE
 from superdesk.workflow import set_default_state
 from .common import on_create_item, handle_existing_data
 from eve.utils import config
 
-from superdesk.io.ingest import IngestResource, IngestService, STATE_INGESTED  # NOQA
+from superdesk.io.ingest import IngestResource, IngestService  # NOQA
 
 
 class AppIngestService(IngestService):
@@ -27,7 +28,7 @@ class AppIngestService(IngestService):
 
     def on_create(self, docs):
         for doc in docs:
-            set_default_state(doc, STATE_INGESTED)
+            set_default_state(doc, CONTENT_STATE.INGESTED)
             handle_existing_data(doc, doc_type='ingest')
 
         on_create_item(docs, repo_type='ingest')  # do it after setting the state otherwise it will make it draft

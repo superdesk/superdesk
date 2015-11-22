@@ -13,13 +13,16 @@ import os
 import time
 import arrow
 from datetime import datetime, timedelta
+
+from superdesk.io import registered_feeding_services
 from superdesk.io.commands.update_ingest import LAST_ITEM_UPDATE
 import superdesk
 import superdesk.tests as tests
 from behave import given, when, then  # @UnresolvedImport
 from flask import json
 from eve.methods.common import parse
-from superdesk import default_user_preferences, get_resource_service, utc
+from superdesk import default_user_preferences, get_resource_service, utc, etree
+from superdesk.io.feed_parsers import XMLFeedParser
 from superdesk.utc import utcnow, get_expiry_date
 from eve.io.mongo import MongoJSONEncoder
 from base64 import b64encode
@@ -396,12 +399,22 @@ def fetch_from_provider(context, provider_name, guid, routing_scheme=None, desk_
     ingest_provider_service = get_resource_service('ingest_providers')
     provider = ingest_provider_service.find_one(name=provider_name, req=None)
     provider['routing_scheme'] = routing_scheme
-    provider_service = context.provider_services[provider.get('type')]
-    provider_service.provider = provider
 
-    if provider.get('type') in ('aap', 'teletype', 'dpa'):
-        items = provider_service.parse_file(guid, provider)
+    provider_service = registered_feeding_services[provider['feeding_service']]
+    provider_service = provider_service.__class__()
+
+    if provider.get('name', '').lower() in ('aap', 'teletype', 'dpa'):
+        file_path = os.path.join(provider.get('config', {}).get('path', ''), guid)
+        feeding_parser = provider_service.get_feed_parser(provider)
+        if isinstance(feeding_parser, XMLFeedParser):
+            with open(file_path, 'r') as f:
+                xml_string = etree.etree.fromstring(f.read())
+                items = [feeding_parser.parse(xml_string, provider)]
+        else:
+            items = [feeding_parser.parse(file_path, provider)]
     else:
+        provider_service.provider = provider
+        provider_service.URL = provider.get('config', {}).get('url')
         items = provider_service.fetch_ingest(guid)
 
     for item in items:
