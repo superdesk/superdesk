@@ -138,7 +138,7 @@ Feature: Saved Searches
         """
         Then we get error 400
 	    """
-	    {"_message": "Fail to validate the filter.", "_status": "ERR"}
+	    {"_message": "Search cannot be saved without a filter!", "_status": "ERR"}
 	    """
 
 	@auth
@@ -175,11 +175,11 @@ Feature: Saved Searches
         """
         Then we get response code 201
         When we get "/users/#CONTEXT_USER_ID#/saved_searches/#saved_searches._id#"
-        Then we get existing resource
+        Then we get existing saved search
         """
         {
         "name": "US Pictures",
-        "filter": {"query": {"q": "US", "repo": "ingest", "type": ["picture"]}}
+        "filter": {"query": {"repo": "ingest", "q": "US", "type": ["picture"]}}
         }
         """
         When we get "/saved_searches/#saved_searches._id#/items"
@@ -247,3 +247,17 @@ Feature: Saved Searches
         {"description": "abc123"}
         """
         Then we get response code 200
+        When we patch "/users/#users._id#/saved_searches/#saved_searches._id#"
+        """
+        {
+        "name": "volleyball",
+        "filter": {"query": {"q": "volley ball", "repo": "ingest"}}
+        }
+        """
+        Then we get existing saved search
+        """
+        {
+        "name": "volleyball",
+        "filter": {"query": {"q": "volley ball", "repo": "ingest"}}
+        }
+        """

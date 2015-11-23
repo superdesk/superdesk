@@ -19,6 +19,7 @@ from apps.archive.common import get_user
 from superdesk import Resource, get_resource_service
 from superdesk.services import BaseService
 from superdesk.errors import SuperdeskApiError
+from superdesk.utils import ListCursor
 
 logger = logging.getLogger(__name__)
 
@@ -60,16 +61,30 @@ class AllSavedSearchesResource(Resource):
     schema = SavedSearchesResource.schema
 
 
+class AllSavedSearchesService(BaseService):
+    def get(self, req, lookup):
+        items = list(super().get(req, lookup))
+        for item in items:
+            item['filter'] = json.loads(item.get('filter'))
+
+        return ListCursor(items)
+
+
 class SavedSearchesService(BaseService):
     def on_create(self, docs):
         for doc in docs:
             doc.setdefault('user', request.view_args.get('user'))
-            repo, query = self.process_query(doc)
+            self.process(doc)
 
-            if repo.find(',') >= 0:
-                repo = repo.split(',').pop(0)
-
-            self.validate_and_run_elastic_query(query, repo)
+    def process(self, doc):
+        """
+        Validates, constructs and runs the query in the document
+        """
+        repo, query = self.process_query(doc)
+        if repo.find(',') >= 0:
+            repo = repo.split(',').pop(0)
+        self.validate_and_run_elastic_query(query, repo)
+        doc['filter'] = json.dumps(doc.get('filter'))
 
     def on_update(self, updates, original):
         """
@@ -79,6 +94,8 @@ class SavedSearchesService(BaseService):
         request_user = request.view_args['user']
         user = get_user(required=True)
         if str(user['_id']) == request_user or user['active_privileges'].get('global_saved_search', 0) == 0:
+            if 'filter' in updates:
+                self.process(updates)
             super().on_update(updates, original)
         else:
             raise SuperdeskApiError.forbiddenError("Unauthorized to modify global search")
@@ -90,7 +107,11 @@ class SavedSearchesService(BaseService):
 
         req = ParsedRequest()
         req.where = json.dumps({'$or': [lookup, {'is_global': True}]})
-        return super().get(req, lookup=None)
+        items = list(super().get(req, lookup=None))
+        for item in items:
+            item['filter'] = json.loads(item.get('filter'))
+
+        return ListCursor(items)
 
     def init_request(self, elastic_query):
         """
@@ -117,7 +138,7 @@ class SavedSearchesService(BaseService):
         """
 
         if not doc['filter'].get('query'):
-            raise SuperdeskApiError.badRequestError('Fail to validate the filter.')
+            raise SuperdeskApiError.badRequestError('Search cannot be saved without a filter!')
 
         return self.get_location(doc), build_elastic_query(
             {k: v for k, v in doc['filter']['query'].items() if k != 'repo'})
@@ -163,5 +184,6 @@ class SavedSearchItemsService(SavedSearchesService):
         if not saved_search:
             raise SuperdeskApiError.notFoundError("Invalid Saved Search")
 
+        saved_search['filter'] = json.loads(saved_search.get('filter'))
         repo, query = super().process_query(saved_search)
         return super().validate_and_run_elastic_query(query, repo)
