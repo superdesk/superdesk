@@ -722,6 +722,18 @@
             );
         };
 
+        /**
+         * In case $scope is dirty ask user if he want's to save changes and publish.
+         */
+        this.confirmSendTo = function confirmSendTo(action) {
+            return modal.confirm(
+                $interpolate(gettext('There are some unsaved changes, do you want to save it and {{ action }} now?'))({action: action}),
+                gettext('Save changes?'),
+                $interpolate(gettext('Save and {{ action }}'))({action: action}),
+                gettext('Cancel')
+            );
+        };
+
         this.confirmSaveWork = function confirmSavework(msg) {
             return modal.confirm(
                 $interpolate(gettext('Configuration has changed, {{ message }}. Would you like to save story to your workspace?'))
@@ -866,10 +878,11 @@
         '$q',
         '$window',
         'modal',
-        'archiveService'
+        'archiveService',
+        'confirm'
     ];
     function AuthoringDirective(superdesk, superdeskFlags, authoringWorkspace, notify, gettext, desks, authoring, api, session, lock,
-            privileges, content, $location, referrer, macros, $timeout, $q, $window, modal, archiveService) {
+            privileges, content, $location, referrer, macros, $timeout, $q, $window, modal, archiveService, confirm) {
         return {
             link: function($scope, elem, attrs) {
                 var _closing;
@@ -1189,16 +1202,20 @@
 
                 /**
                  * Called by the sendItem directive before send.
-                 * If the $scope is dirty then save the item and then unlock the item.
+                 * If the $scope is dirty then upon confirmation save the item and then unlock the item.
                  * If the $scope is not dirty then unlock the item.
                  */
-                $scope.beforeSend = function() {
+                $scope.beforeSend = function(action) {
                     $scope.sending = true;
                     if ($scope.dirty) {
-                        return $scope.save()
-                            .then(function() {
-                               return lock.unlock($scope.origItem);
-                           });
+                        return confirm.confirmSendTo(action)
+                        .then(function() {
+                            return $scope.save().then(function() {
+                                       return lock.unlock($scope.origItem);
+                                   });
+                        }, function() { // cancel
+                            return $q.reject();
+                        });
                     } else {
                         return lock.unlock($scope.origItem);
                     }
@@ -1851,7 +1868,7 @@
                 }
 
                 function sendAuthoring(deskId, stageId, macro, sendAndContinue) {
-                    var deferred;
+                    var deferred, msg;
 
                     if (sendAndContinue) {
                         deferred = $q.defer();
@@ -1862,7 +1879,8 @@
                         api.find('tasks', scope.item._id)
                         .then(function(task) {
                             scope.task = task;
-                            return scope.beforeSend();
+                            msg = sendAndContinue ? 'Send & Continue' : 'Send';
+                            return scope.beforeSend(msg);
                         })
                         .then(function(result) {
                             if (result && result._etag) {
@@ -1878,16 +1896,18 @@
                                 authoringWorkspace.close(true);
                             }
                         }, function(err) {
-                            if (angular.isDefined(err.data._message)) {
-                                notify.error(err.data._message);
-                            } else {
-                                if (angular.isDefined(err.data._issues['validator exception'])) {
-                                    notify.error(err.data._issues['validator exception']);
+                            if (err) {
+                                if (angular.isDefined(err.data._message)) {
+                                    notify.error(err.data._message);
+                                } else {
+                                    if (angular.isDefined(err.data._issues['validator exception'])) {
+                                        notify.error(err.data._issues['validator exception']);
+                                    }
                                 }
-                            }
 
-                            if (sendAndContinue) {
-                                return deferred.reject(err);
+                                if (sendAndContinue) {
+                                    return deferred.reject(err);
+                                }
                             }
                         });
                     });
