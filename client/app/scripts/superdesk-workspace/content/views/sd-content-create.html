@@ -17,9 +17,9 @@
 </li>
 
 <li ng-repeat="type in content_types track by type._id">
-    <button id="type-{{ type._id }}" ng-click="createFromType(type)">
+    <button id="type-{{ :: type._id }}" ng-click="createFromType(type)">
         <i class="icon-plus-small icon-round icon-white"></i>
-        {{ type.label }}
+        {{ :: type.label }}
     </button>
 </li>
 

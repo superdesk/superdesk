@@ -1959,7 +1959,8 @@
 
     ArticleEditDirective.$inject = ['autosave', 'authoring', 'metadata', 'renditions', 'session', '$filter', '$timeout',
     'superdesk', 'notify', 'gettext', 'content'];
-    function ArticleEditDirective(autosave, authoring, metadata, renditions, session, $filter, $timeout, superdesk, notify, gettext, content) {
+    function ArticleEditDirective(autosave, authoring, metadata, renditions, session, $filter, $timeout,
+    superdesk, notify, gettext, content) {
         return {
             templateUrl: 'scripts/superdesk-authoring/views/article-edit.html',
             link: function(scope) {

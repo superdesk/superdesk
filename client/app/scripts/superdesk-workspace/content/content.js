@@ -96,10 +96,14 @@
             });
         };
 
+        /**
+         * Get content type by id
+         *
+         * @param {string} id
+         * @return {Promise}
+         */
         this.getType = function(id) {
-            return api('content_types').getById(id).then(function(result) {
-                return result;
-            });
+            return api.find('content_types', id);
         };
     }
 

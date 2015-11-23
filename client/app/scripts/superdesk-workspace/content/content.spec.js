@@ -64,6 +64,16 @@ describe('superdesk.workspace.content', function() {
             expect(content.types).toBe(types);
         }));
 
+        it('can get content type', inject(function(api, content, $rootScope, $q) {
+            var type = {_id: 'foo'};
+            spyOn(api, 'find').and.returnValue($q.when(type));
+            var success = jasmine.createSpy('ok');
+            content.getType('foo').then(success);
+            $rootScope.$digest();
+            expect(api.find).toHaveBeenCalledWith('content_types', 'foo');
+            expect(success).toHaveBeenCalledWith(type);
+        }));
+
         it('can create item using content type', inject(function(api, content, desks) {
             var type = {_id: 'test'};
             var success = jasmine.createSpy('ok');
