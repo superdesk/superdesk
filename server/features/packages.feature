@@ -17,8 +17,27 @@ Feature: Packages
         """
 
     @auth
+    Scenario: Create new package without desk
+        Given empty "archive"
+        When we post to "archive"
+        """
+        {"guid": "tag:example.com,0000:newsml_BRE9A605", "type": "composite", "task": {}}
+        """
+        Then we get error 403
+        """
+        {
+            "_message": "Packages can not be created in the personal space.",
+            "_status": "ERR"
+        }
+        """
+
+    @auth
     Scenario: Create new package with text content
         Given empty "archive"
+        And "desks"
+        """
+        [{"name": "test desk"}]
+        """
         When we post to "archive" with success
         """
         [{"headline": "test", "guid": "tag:example.com,0000:newsml_BRE9A606"}]
@@ -41,7 +60,8 @@ Feature: Packages
                 }
             ],
             "guid": "tag:example.com,0000:newsml_BRE9A605",
-            "type": "composite"
+            "type": "composite",
+            "task": {"user": "#user._id#", "desk": "#desks._id#"}
         }
         """
         And we get "archive?source={"query":{"filtered":{"filter":{"and":[{"terms":{"type":["composite"]}}]}}}}"
@@ -73,6 +93,10 @@ Feature: Packages
     @auth
     Scenario: Create new package with image content
         Given empty "archive"
+        And "desks"
+        """
+        [{"name": "test desk"}]
+        """
         When upload a file "bike.jpg" to "archive" with "tag:example.com,0000:newsml_BRE9A605"
         When we post to "archive" with success
         """
@@ -91,7 +115,8 @@ Feature: Packages
                     "role": "main"
                 }
             ],
-            "type": "composite"
+            "type": "composite",
+            "task": {"user": "#user._id#", "desk": "#desks._id#"}
         }
         """
         And we get "archive?source={"query":{"filtered":{"filter":{"and":[{"not":{"term":{"state":"spiked"}}},{"terms":{"type":["composite"]}}]}}}}"
@@ -122,6 +147,10 @@ Feature: Packages
     @auth
     Scenario: Create package with image and text
         Given empty "archive"
+        And "desks"
+        """
+        [{"name": "test desk"}]
+        """
         When upload a file "bike.jpg" to "archive" with "tag:example.com,0000:newsml_BRE9A605"
         When we post to "archive"
         """
@@ -149,7 +178,8 @@ Feature: Packages
                     "role": "main"
                 }
             ],
-            "type": "composite"
+            "type": "composite",
+            "task": {"user": "#user._id#", "desk": "#desks._id#"}
         }
         """
         And we get "archive?source={"query":{"filtered":{"filter":{"and":[{"not":{"term":{"state":"spiked"}}},{"terms":{"type":["composite"]}}]}}}}"
@@ -185,6 +215,10 @@ Feature: Packages
     @auth
     Scenario: Fail on creating new package with duplicated content
         Given empty "archive"
+        And "desks"
+        """
+        [{"name": "test desk"}]
+        """
         When we post to "archive"
         """
         {
@@ -207,7 +241,8 @@ Feature: Packages
                     ],
                     "role": "main"
                 }
-            ]
+            ],
+            "task": {"user": "#user._id#", "desk": "#desks._id#"}
         }
         """
         Then we get error 403
@@ -217,6 +252,10 @@ Feature: Packages
 
     @auth
     Scenario: Fail on creating package with circular reference
+        Given "desks"
+        """
+        [{"name": "test desk"}]
+        """
         When we post to "archive"
         """
         [{"headline": "test", "guid": "tag:example.com,0000:newsml_BRE9A606"}]
@@ -239,7 +278,8 @@ Feature: Packages
                     "role": "main"
                 }
             ],
-            "guid": "tag:example.com,0000:newsml_BRE9A605"
+            "guid": "tag:example.com,0000:newsml_BRE9A605",
+            "task": {"user": "#user._id#", "desk": "#desks._id#"}
         }
         """
         When we post to "archive" with success
@@ -265,7 +305,8 @@ Feature: Packages
                     ],
                     "role": "main story"
                 }
-            ]
+            ],
+            "task": {"user": "#user._id#", "desk": "#desks._id#"}
         }
         """
         And we patch "/archive/tag:example.com,0000:newsml_BRE9A605"
@@ -303,6 +344,10 @@ Feature: Packages
     @auth
     Scenario: Retrieve created package
         Given empty "archive"
+        And "desks"
+        """
+        [{"name": "test desk"}]
+        """
         When we post to "archive"
         """
         [{"headline": "test", "guid": "tag:example.com,0000:newsml_BRE9A606"}]
@@ -325,7 +370,8 @@ Feature: Packages
                     "role": "main"
                 }
             ],
-            "guid": "tag:example.com,0000:newsml_BRE9A605"
+            "guid": "tag:example.com,0000:newsml_BRE9A605",
+            "task": {"user": "#user._id#", "desk": "#desks._id#"}
         }
         """
         Then we get new resource
@@ -386,6 +432,10 @@ Feature: Packages
     @auth
     Scenario: Fail on creating new package with missing root group
         Given empty "archive"
+        And "desks"
+        """
+        [{"name": "test desk"}]
+        """
         When we post to "archive"
         """
         [{"headline": "test"}]
@@ -407,7 +457,8 @@ Feature: Packages
                     "role": "grpRole:Main"
                 }
             ],
-            "guid": "tag:example.com,0000:newsml_BRE9A605"
+            "guid": "tag:example.com,0000:newsml_BRE9A605",
+            "task": {"user": "#user._id#", "desk": "#desks._id#"}
         }
         """
         Then we get error 403
@@ -418,6 +469,10 @@ Feature: Packages
     @auth
     Scenario: Fail on creating new package with duplicated root group
         Given empty "archive"
+        And "desks"
+        """
+        [{"name": "test desk"}]
+        """
         When we post to "archive"
         """
         [{"headline": "test"}]
@@ -441,7 +496,8 @@ Feature: Packages
                     "role": "grpRole:Main"
                 }
             ],
-            "guid": "tag:example.com,0000:newsml_BRE9A605"
+            "guid": "tag:example.com,0000:newsml_BRE9A605",
+            "task": {"user": "#user._id#", "desk": "#desks._id#"}
         }
         """
         Then we get error 403
@@ -452,6 +508,10 @@ Feature: Packages
     @auth
     Scenario: Fail on creating new package with missing group referenced in root
         Given empty "archive"
+        And "desks"
+        """
+        [{"name": "test desk"}]
+        """
         When we post to "archive"
         """
         [{"headline": "test"}]
@@ -474,7 +534,8 @@ Feature: Packages
                     "role": "grpRole:Main"
                 }
             ],
-            "guid": "tag:example.com,0000:newsml_BRE9A605"
+            "guid": "tag:example.com,0000:newsml_BRE9A605",
+            "task": {"user": "#user._id#", "desk": "#desks._id#"}
         }
         """
         Then we get error 403
@@ -485,6 +546,10 @@ Feature: Packages
     @auth
     Scenario: Fail on creating new package with group not referenced in root
         Given empty "archive"
+        And "desks"
+        """
+        [{"name": "test desk"}]
+        """
         When we post to "archive"
         """
         [{"headline": "test"}]
@@ -518,7 +583,8 @@ Feature: Packages
                     "role": "grpRole:Story"
                 }
             ],
-            "guid": "tag:example.com,0000:newsml_BRE9A605"
+            "guid": "tag:example.com,0000:newsml_BRE9A605",
+            "task": {"user": "#user._id#", "desk": "#desks._id#"}
         }
         """
         Then we get error 403
@@ -529,6 +595,10 @@ Feature: Packages
     @auth
     Scenario: Fail on patching created package with group not referenced in root
         Given empty "archive"
+        And "desks"
+        """
+        [{"name": "test desk"}]
+        """
         When we post to "archive"
         """
         [{"headline": "test", "guid": "tag:example.com,0000:newsml_BRE9A606"}]
@@ -553,7 +623,8 @@ Feature: Packages
                     "role": "main"
                 }
             ],
-            "guid": "tag:example.com,0000:newsml_BRE9A605"
+            "guid": "tag:example.com,0000:newsml_BRE9A605",
+            "task": {"user": "#user._id#", "desk": "#desks._id#"}
         }
         """
         And we patch latest without assert
@@ -599,6 +670,10 @@ Feature: Packages
     @auth
     Scenario: Patch created package
         Given empty "archive"
+        And "desks"
+        """
+        [{"name": "test desk"}]
+        """
         When we post to "archive"
         """
         [{"headline": "test", "guid": "tag:example.com,0000:newsml_BRE9A606"}]
@@ -622,7 +697,8 @@ Feature: Packages
                     "role": "main"
                 }
             ],
-            "guid": "tag:example.com,0000:newsml_BRE9A605"
+            "guid": "tag:example.com,0000:newsml_BRE9A605",
+            "task": {"user": "#user._id#", "desk": "#desks._id#"}
         }
         """
         And we patch latest
@@ -683,6 +759,10 @@ Feature: Packages
     @auth
     Scenario: When removing a link from the package, item.linked_in_packages gets updated
         Given empty "archive"
+        And "desks"
+        """
+        [{"name": "test desk"}]
+        """
         When we post to "archive"
         """
         [{"guid": "tag:example.com,0000:newsml_BRE9A679", "headline": "test"}]
@@ -706,7 +786,8 @@ Feature: Packages
                     "role": "main"
                 }
             ],
-            "guid": "tag:example.com,0000:newsml_BRE9A605"
+            "guid": "tag:example.com,0000:newsml_BRE9A605",
+            "task": {"user": "#user._id#", "desk": "#desks._id#"}
         }
         """
         And we patch latest
@@ -734,6 +815,10 @@ Feature: Packages
     @auth
     Scenario: Delete created package
         Given empty "archive"
+        And "desks"
+        """
+        [{"name": "test desk"}]
+        """
         When we post to "archive"
         """
         [{"headline": "test", "guid": "tag:example.com,0000:newsml_BRE9A679"}]
@@ -756,7 +841,8 @@ Feature: Packages
                     ],
                     "role": "main"
                 }
-            ]
+            ],
+            "task": {"user": "#user._id#", "desk": "#desks._id#"}
         }
         """
         When we delete "/archive/tag:example.com,0000:newsml_BRE9A678"
@@ -770,6 +856,10 @@ Feature: Packages
     @auth
     Scenario: Can not spike an item in a package
         Given empty "archive"
+        And "desks"
+        """
+        [{"name": "test desk"}]
+        """
         When we post to "archive" with success
         """
         [{"headline": "test", "guid": "tag:example.com,0000:newsml_BRE9A606", "slugline": "WORMS"}]
@@ -792,7 +882,8 @@ Feature: Packages
                 }
             ],
             "guid": "tag:example.com,0000:newsml_BRE9A605",
-            "type": "composite"
+            "type": "composite",
+            "task": {"user": "#user._id#", "desk": "#desks._id#"}
         }
         """
         When we spike "tag:example.com,0000:newsml_BRE9A606"
@@ -804,6 +895,10 @@ Feature: Packages
     @auth
     Scenario: Creating a package with Public Service Announcements fails
         Given empty "archive"
+        And "desks"
+        """
+        [{"name": "test desk"}]
+        """
         When we post to "archive" with success
         """
         [{"headline": "test", "guid": "tag:example.com,0000:newsml_BRE9A606"}]
@@ -827,7 +922,8 @@ Feature: Packages
             ],
             "guid": "tag:example.com,0000:newsml_BRE9A605",
             "type": "composite",
-            "body_footer": "Suicide Call Back Service 1300 659 467"
+            "body_footer": "Suicide Call Back Service 1300 659 467",
+            "task": {"user": "#user._id#", "desk": "#desks._id#"}
         }
         """
         Then we get error 400
@@ -838,6 +934,10 @@ Feature: Packages
     @auth
     Scenario: Updating a package with Public Service Announcements fails
         Given empty "archive"
+        And "desks"
+        """
+        [{"name": "test desk"}]
+        """
         When we post to "archive" with success
         """
         [{"headline": "test", "guid": "tag:example.com,0000:newsml_BRE9A606"}]
@@ -860,7 +960,8 @@ Feature: Packages
                 }
             ],
             "guid": "tag:example.com,0000:newsml_BRE9A605",
-            "type": "composite"
+            "type": "composite",
+            "task": {"user": "#user._id#", "desk": "#desks._id#"}
         }
         """
         And we patch "/archive/#archive._id#"

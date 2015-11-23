@@ -62,6 +62,7 @@ class PackageService():
         create_root_group(docs)
         self.check_root_group(docs)
         self.check_package_associations(docs)
+        self.check_not_in_personal_space(docs)
 
         for doc in docs:
             if not doc.get('ingest_provider'):
@@ -145,6 +146,21 @@ class PackageService():
             self.check_for_duplicates(doc, associations)
             for assoc in associations:
                 self.extract_default_association_data(group, assoc)
+
+    def check_not_in_personal_space(self, docs):
+        """ Verify that the package is not in the user personal space.
+        Retrieving details for the list of packages an item was linked in does not
+        contain packages that were in other users' personal space. One can't spike
+        items if it can't remove it from the packages it belongs to.
+        """
+        for doc in docs:
+            if not doc.get('task') or not doc['task'].get('desk'):
+                message = 'Packages can not be created in the personal space.'
+                logger.error(message)
+                raise SuperdeskApiError.forbiddenError(message=message)
+            if not doc['task'].get('stage'):
+                desk = get_resource_service('desks').find_one(req=None, _id=doc['task']['desk'])
+                doc['task']['stage'] = desk['working_stage']
 
     def extract_default_association_data(self, package, assoc):
         if assoc.get(ID_REF):

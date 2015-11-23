@@ -8,6 +8,7 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
+from bson.objectid import ObjectId
 from datetime import timedelta
 import os
 import json
@@ -38,6 +39,8 @@ class RemoveExpiredFromPublishedCollection(SuperdeskTestCase):
         super().setUp()
         self._init_data()
 
+        self.app.data.insert('users', self.users)
+        self.app.data.insert('desks', self.desks)
         self.app.data.insert('vocabularies', self.vocabularies)
         self.app.data.insert('subscribers', self.subscribers)
         self.app.data.insert(ARCHIVE, self.articles)
@@ -448,6 +451,8 @@ class RemoveExpiredFromPublishedCollection(SuperdeskTestCase):
         return items_in_published_repo
 
     def _init_data(self):
+        self.users = [{'_id': '1', 'username': 'admin'}]
+        self.desks = [{'_id': ObjectId('123456789ABCDEF123456789'), 'name': 'desk1'}]
         self.vocabularies = [
             {"_id": "rightsinfo", "items": [
                 {"is_active": True, "name": "AAP", "copyrightHolder": "Australian Associated Press",
@@ -490,6 +495,7 @@ class RemoveExpiredFromPublishedCollection(SuperdeskTestCase):
                           'subject': [{'qcode': '17004000', 'name': 'Statistics'},
                                       {'qcode': '04001002', 'name': 'Weather'}],
                           'expiry': utcnow() + timedelta(minutes=20),
+                          'task': {'user': '1', 'desk': '123456789ABCDEF123456789'},
                           ITEM_STATE: CONTENT_STATE.PROGRESS,
                           ITEM_TYPE: CONTENT_TYPE.TEXT,
                           'unique_name': '#1'},
@@ -510,6 +516,7 @@ class RemoveExpiredFromPublishedCollection(SuperdeskTestCase):
                           'keywords': ['Student', 'Crime', 'Police', 'Missing'],
                           'subject': [{'qcode': '17004000', 'name': 'Statistics'},
                                       {'qcode': '04001002', 'name': 'Weather'}],
+                          'task': {'user': '1', 'desk': '123456789ABCDEF123456789'},
                           ITEM_STATE: CONTENT_STATE.PROGRESS,
                           'expiry': utcnow() + timedelta(minutes=20),
                           ITEM_TYPE: CONTENT_TYPE.TEXT,
@@ -531,6 +538,7 @@ class RemoveExpiredFromPublishedCollection(SuperdeskTestCase):
                           'keywords': ['Student', 'Crime', 'Police', 'Missing'],
                           'subject': [{'qcode': '17004000', 'name': 'Statistics'},
                                       {'qcode': '04001002', 'name': 'Weather'}],
+                          'task': {'user': '1', 'desk': '123456789ABCDEF123456789'},
                           ITEM_STATE: CONTENT_STATE.PROGRESS,
                           'expiry': utcnow() + timedelta(minutes=20),
                           ITEM_TYPE: CONTENT_TYPE.TEXT,
