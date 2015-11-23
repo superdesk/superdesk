@@ -152,6 +152,8 @@ class PrepopulateService(BaseService):
                     superdesk.app.config['ELASTICSEARCH_INDEX'],
                     superdesk.app.config['ELASTICSEARCH_SETTINGS']
                 )
+                superdesk.app.data.elastic.put_mapping(superdesk.app)
+
             user = get_resource_service('users').find_one(username=get_default_user()['username'], req=None)
             if not user:
                 get_resource_service('users').post([get_default_user()])

@@ -230,4 +230,12 @@ describe('authoring', function() {
         monitoring.actionOnItem('Edit', 1, 2);
         expect(element(by.model('spellcheckMenu.isAuto')).getAttribute('checked')).toBeFalsy();
     });
+
+    it('related item widget', function() {
+        monitoring.actionOnItem('Edit', 1, 1);
+        authoring.openRelatedItem();
+        expect(authoring.getRelatedItems().count()).toBe(1);
+        authoring.searchRelatedItems('item');
+        expect(authoring.getRelatedItems().count()).toBe(7);
+    });
 });
