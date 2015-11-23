@@ -346,4 +346,19 @@ function Authoring() {
         return element.all(by.repeater('queuedItem in queuedItems'));
     };
 
+    this.openRelatedItem = function() {
+        element(by.css('button[id="Related Item"]')).click();
+        browser.sleep(1000);
+    };
+
+    this.searchRelatedItems = function(searchText) {
+        var elm = element(by.model('itemListOptions.keyword'));
+        elm.clear();
+        elm.sendKeys(searchText);
+        browser.sleep(2000);
+    };
+
+    this.getRelatedItems = function() {
+        return element.all(by.repeater('item in processedItems'));
+    };
 }
