@@ -4,8 +4,11 @@
         "label": "Snap",
         "priority": 80,
         "schema": {
-            "headline": {"required": true},
-            "body_html": {"required": true}
+            "slugline": {"required": true},
+            "body_html": {"required": true},
+            "subject": {},
+            "anpa_category": {},
+            "ednote": {}
         }
     },
     {
@@ -13,8 +16,11 @@
         "label": "Live",
         "priority": 50,
         "schema": {
-            "headline": {"required": true},
-            "body_html": {"required": true}
+            "slugline": {"required": true},
+            "body_html": {"required": true},
+            "subject": {},
+            "anpa_category": {},
+            "ednote": {}
         }
     },
     {
@@ -22,9 +28,16 @@
         "label": "Article",
         "priority": 30,
         "schema": {
-            "headline": {"required": true},
+            "headline": {},
             "slugline": {"required": true},
-            "body_html": {"required": true}
+            "body_html": {"required": true},
+            "abstract": {},
+            "byline": {},
+            "subject": {},
+            "anpa_category": {},
+            "ednote": {},
+
+            "feature_image": {"type": "picture"}
         }
     }
 ]
