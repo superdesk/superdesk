@@ -35,6 +35,7 @@ __entities__ = {
     'vocabularies': ('vocabularies.json', '', True),
     'validators': ('validators.json', '', True),
     'content_templates': ('content_templates.json', ['template_name'], False),
+    'content_types': ('content_types.json', '', True),
     'published': (None, [[('item_id', pymongo.ASCENDING),
                          ('state', pymongo.ASCENDING)]], False)
 }
