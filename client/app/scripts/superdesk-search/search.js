@@ -15,7 +15,7 @@
             {field: 'firstcreated', label: gettext('Created')},
             {field: 'urgency', label: gettext('News Value')},
             {field: 'anpa_category.name', label: gettext('Category')},
-            {field: 'slugline', label: gettext('Slugline')},
+            {field: 'slugline.phrase', label: gettext('Slugline')},
             {field: 'priority', label: gettext('Priority')},
             {field: 'genre.name', label: gettext('Genre')}
         ];
