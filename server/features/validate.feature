@@ -117,3 +117,18 @@ Feature: Validate
     """
     {"errors": ["validator was not found for missing"]}
     """
+
+  @auth
+  Scenario: Validate using content type
+    Given "content_types"
+    """
+    [{"_id": "snap", "schema": {"headline": {}, "foo": {"required": true}}}]
+    """
+    When we post to "/validate"
+    """
+    {"act": "publish", "type": "text", "validate": {"slugline": "x", "profile": "snap"}}
+    """
+    Then we get existing resource
+    """
+    {"errors": ["FOO is a required field"]}
+    """

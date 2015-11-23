@@ -38,10 +38,23 @@ class ValidateService(superdesk.Service):
 
         return [doc['errors'] for doc in docs]
 
-    def _validate(self, doc, **kwargs):
+    def _get_validators(self, doc):
+        """Get validators.
+
+        In case there is profile defined for item with respective content type it will
+        use its schema for validations, otherwise it will fall back to action/item_type filter.
+        """
+        profile = doc['validate'].get('profile')
+        if profile:
+            content_type = superdesk.get_resource_service('content_types').find_one(req=None, _id=profile)
+            if content_type:
+                return [content_type]
         lookup = {'act': doc['act'], 'type': doc[ITEM_TYPE]}
+        return superdesk.get_resource_service('validators').get(req=None, lookup=lookup)
+
+    def _validate(self, doc, **kwargs):
         use_headline = kwargs and 'headline' in kwargs
-        validators = superdesk.get_resource_service('validators').get(req=None, lookup=lookup)
+        validators = self._get_validators(doc)
         for validator in validators:
             v = Validator()
             v.allow_unknown = True

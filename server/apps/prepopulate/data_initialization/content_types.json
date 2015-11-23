@@ -6,8 +6,8 @@
         "schema": {
             "slugline": {"required": true},
             "body_html": {"required": true},
-            "subject": {},
             "anpa_category": {},
+            "subject": {},
             "ednote": {}
         }
     },
