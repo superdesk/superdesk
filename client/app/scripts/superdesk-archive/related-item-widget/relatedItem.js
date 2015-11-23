@@ -23,7 +23,6 @@ define([
         .controller('relatedItemController',
         ['$scope', 'api', 'BaseWidgetController', '$location', 'notify', 'superdesk',
         function ($scope, api, BaseWidgetController, $location, notify, superdesk) {
-            var before24HrDateTime = moment().subtract(1, 'days').format();
             $scope.type = 'archiveWidget';
             $scope.itemListOptions = {
                 endpoint: 'search',
@@ -31,7 +30,7 @@ define([
                 notStates: ['spiked'],
                 types: ['text', 'picture', 'audio', 'video'],
                 page: 1,
-                modificationDateAfter: before24HrDateTime
+                modificationDateAfter: 'now-1d'
             };
             $scope.options = {
                 pinEnabled: true,

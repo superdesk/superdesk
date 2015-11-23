@@ -242,11 +242,11 @@ describe('itemListService', function() {
         });
     }));
 
-    it('query using the related items', inject(function($rootScope, itemListService, api) {
+    it('related items query without hypen', inject(function($rootScope, itemListService, api) {
         var queryParams = null;
 
         itemListService.fetch({
-            keyword: 'k',
+            keyword: 'kilo',
             related: true
         })
         .then(function(params) {
@@ -254,8 +254,26 @@ describe('itemListService', function() {
         });
         $rootScope.$digest();
         expect(queryParams.source.query.filtered.query).toEqual({
-            match_phrase_prefix: {
-                'slugline.phrase': 'k'
+            prefix: {
+                'slugline.phrase': 'kilo'
+            }
+        });
+    }));
+
+    it('related items query with hypen', inject(function($rootScope, itemListService, api) {
+        var queryParams = null;
+
+        itemListService.fetch({
+            keyword: 'kilo-gram',
+            related: true
+        })
+        .then(function(params) {
+            queryParams = params;
+        });
+        $rootScope.$digest();
+        expect(queryParams.source.query.filtered.query).toEqual({
+            prefix: {
+                'slugline.phrase': 'kilo gram'
             }
         });
     }));
