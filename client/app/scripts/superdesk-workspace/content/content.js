@@ -12,8 +12,8 @@
         .directive('sdTemplateSelect', TemplateSelectDirective)
         ;
 
-    ContentService.$inject = ['api', 'superdesk', 'templates', 'desks', 'packages', 'archiveService'];
-    function ContentService(api, superdesk, templates, desks, packages, archiveService) {
+    ContentService.$inject = ['api', 'superdesk', 'templates', 'desks', 'packages', 'archiveService', '$q'];
+    function ContentService(api, superdesk, templates, desks, packages, archiveService, $q) {
 
         var TEXT_TYPE = 'text';
 
@@ -93,6 +93,12 @@
             return api.query('content_types').then(function(result) {
                 self.types = result._items;
                 return self.types;
+            });
+        };
+
+        this.getType = function(id) {
+            return api('content_types').getById(id).then(function(result) {
+                return result;
             });
         };
     }

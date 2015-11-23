@@ -30,7 +30,7 @@
             <label translate>RELATED</label>
             <div class="data"><a href="" ng-click="activateWidget()">{{relatedItems._items.length}}</a></div>
         </div>
-        <div>
+        <div ng-if="schema.genre">
             <label translate>GENRE</label>
             <div sd-meta-dropdown
                  class="data"
@@ -50,7 +50,7 @@
 
     <div class="authoring-header__detailed">
         <div class="item-wrapper">
-            <div class="item">
+            <div class="item" ng-if="schema.slugline">
                 <label translate>SLUGLINE</label>
                 <input type="text"
                        sd-autofocus
@@ -61,7 +61,7 @@
                        ng-disabled="!_editable"
                        ng-trim="false">
             </div>
-            <div class="item">
+            <div class="item" ng-if="schema.anpa_take_key">
                 <label translate>TAKEKEY</label>
                 <input type="text"
                        class="line-input"
@@ -74,7 +74,7 @@
         </div>
 
         <div class="item-wrapper">
-            <div class="item" ng-if="metadata.locators">
+            <div class="item" ng-if="metadata.locators && schema.place">
                 <label translate>PLACE</label>
                 <div sd-meta-dropdown
                      class="data"
@@ -86,7 +86,7 @@
                 </div>
             </div>
             <div class="item">
-                <div class="item">
+                <div class="item" ng-if="schema.priority">
                     <label translate>PRIORITY</label>
                     <div sd-meta-dropdown
                          data-item="item"
@@ -99,7 +99,7 @@
                     </div>
                 </div>
 
-                <div class="item">
+                <div class="item" ng-if="schema.urgency">
                     <label translate>URGENCY</label>
                     <div sd-meta-dropdown
                          data-item="item"
@@ -114,7 +114,7 @@
             </div>
         </div>
 
-        <div class="item-wrapper" ng-if="metadata.categories" id="category-setting">
+        <div class="item-wrapper" ng-if="metadata.categories && schema.anpa_category" id="category-setting">
             <label translate>CATEGORY</label>
             <div sd-meta-terms
                  class="data"
@@ -128,7 +128,7 @@
             </div>
         </div>
 
-        <div class="item-wrapper" ng-if="metadata.subjectcodes">
+        <div class="item-wrapper" ng-if="metadata.subjectcodes && schema.subject">
             <label translate>SUBJECT</label>
             <div sd-meta-terms
                  class="data"
@@ -142,7 +142,7 @@
             </div>
         </div>
 
-        <div class="item-wrapper">
+        <div class="item-wrapper" ng-if="schema.ednote">
             <label translate>ED. NOTE</label>
             <textarea class="line-input ed-note" ng-model="item.ednote" ng-disabled="!_editable" ng-change="autosave(item)"></textarea>
         </div>
