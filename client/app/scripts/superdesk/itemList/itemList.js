@@ -113,9 +113,10 @@ angular.module('superdesk.itemList', ['superdesk.search'])
 
         // Process related items only search
         if (options.related === true && options.keyword) {
+            var slugline = options.keyword.toLowerCase().replace(/-/g, ' ');
             query.source.query.filtered.query = {
-                match_phrase_prefix: {
-                    'slugline.phrase': options.keyword
+                prefix: {
+                    'slugline.phrase': slugline
                 }
             };
         }
@@ -414,7 +415,11 @@ function(ItemList, notify, itemPinService, gettext) {
             var itemList = new ItemList();
 
             var _refresh = function() {
-                itemList.fetch();
+                if (scope.options.related &&
+                    scope.itemListOptions.keyword &&
+                    scope.itemListOptions.keyword.trim().length >= 2) {
+                    itemList.fetch();
+                }
             };
             var refresh = _.debounce(_refresh, 100);
 
