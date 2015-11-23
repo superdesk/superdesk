@@ -33,10 +33,10 @@ describe('send', function() {
         authoring.sendTo('Sports Desk');
 
         //Spell check confirmation modal save action
-        element(by.className('modal-content')).all(by.css('[ng-click="ok()"]')).click();
+        authoring.confirmSendTo();
 
-        //Un-saved item confirmation modal save action
-        element(by.className('modal-content')).all(by.css('[ng-click="ok()"]')).click();
+        //Unsaved item confirmation modal save action
+        authoring.confirmSendTo();
 
         workspace.switchToDesk('SPORTS DESK');
         expect(
@@ -76,7 +76,7 @@ describe('send', function() {
         expect(monitoring.getGroups().count()).toBe(6);
     });
 
-    it('can submit item to a desk although there are spelling mistakes', function () {
+    it('can confirm before submitting unsaved item to a desk', function () {
         workspace.open();
         workspace.editItem(1);
 
@@ -86,7 +86,7 @@ describe('send', function() {
 
         authoring.writeText('Text, that not saved yet');
         authoring.sendTo('Sports Desk');
-        element(by.className('modal-content')).all(by.css('[ng-click="ok()"]')).click();
+        authoring.confirmSendTo();
 
         workspace.switchToDesk('SPORTS DESK');
 
