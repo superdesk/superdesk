@@ -157,6 +157,7 @@ class BasePublishService(BaseService):
         try:
             user = get_user()
             last_updated = updates.get(config.LAST_UPDATED, utcnow())
+            auto_publish = updates.pop('auto_publish', False)
 
             if original[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
                 self._publish_package_items(original, updates)
@@ -204,7 +205,7 @@ class BasePublishService(BaseService):
                     logger.exception('Nothing is saved to publish queue for story: {} for action: {}'.
                                      format(original[config.ID_FIELD], self.publish_type))
 
-            self._update_archive(original=original, updates=updates, should_insert_into_versions=False)
+            self._update_archive(original=original, updates=updates, should_insert_into_versions=auto_publish)
             push_notification('item:publish', item=str(id), unique_name=original['unique_name'],
                               desk=str(original.get('task', {}).get('desk', '')),
                               user=str(user.get(config.ID_FIELD, '')))
