@@ -12,8 +12,8 @@
         .directive('sdTemplateSelect', TemplateSelectDirective)
         ;
 
-    ContentService.$inject = ['api', 'superdesk', 'templates', 'desks', 'packages', 'archiveService', '$q'];
-    function ContentService(api, superdesk, templates, desks, packages, archiveService, $q) {
+    ContentService.$inject = ['api', 'superdesk', 'templates', 'desks', 'packages', 'archiveService'];
+    function ContentService(api, superdesk, templates, desks, packages, archiveService) {
 
         var TEXT_TYPE = 'text';
 

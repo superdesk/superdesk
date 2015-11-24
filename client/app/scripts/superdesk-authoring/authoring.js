@@ -55,9 +55,21 @@
     });
 
     var DEFAULT_SCHEMA = Object.freeze({
-        slugline: {},
+        slugline: {maxlength: 24},
         headline: {maxlength: 64},
-        body_html: {maxlength: 2000}
+        abstract: {maxlength: 160},
+        byline: {},
+        located: {},
+        sign_off: {},
+        genre: {},
+        anpa_take_key: {},
+        place: {},
+        priority: {},
+        urgency: {},
+        anpa_category: {},
+        subject: {},
+        ednote: {},
+        body_html: {}
     });
 
     /**
