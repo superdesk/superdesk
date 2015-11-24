@@ -196,6 +196,71 @@ function MetadataDropdownDirective($timeout) {
     };
 }
 
+MetadataTagsDirective.$inject = ['api'];
+function MetadataTagsDirective(api) {
+    var ENTER = 13;
+    var ESC = 27;
+
+    return {
+        scope: {
+            item: '=',
+            field: '@',
+            sourceField: '@',
+            change: '&',
+            disabled: '='
+        },
+        templateUrl: 'scripts/superdesk-authoring/metadata/views/metadata-tags.html',
+        link: function(scope, element) {
+            scope.adding = false;
+            scope.newTag = null;
+            scope.tags = null;
+            scope.extractedTags = null;
+            scope.item[scope.field] = scope.item[scope.field] || [];
+
+            api.save('keywords', {text: scope.item[scope.sourceField]})
+            .then(function(result) {
+                scope.extractedTags = _.pluck(result.keywords, 'text');
+                scope.tags = _.uniq(scope.extractedTags.concat(scope.item[scope.field]));
+            });
+
+            var add = function(tag) {
+                scope.tags.push(tag);
+                scope.tags = _.uniq(scope.tags);
+                scope.toggle(tag);
+                cancel();
+            };
+
+            var cancel = function() {
+                scope.newTag = null;
+                scope.adding = false;
+            };
+
+            scope.key = function($event) {
+                if ($event.keyCode === ENTER && !$event.shiftKey) {
+                    add(scope.newTag);
+                } else if ($event.keyCode === ESC && !$event.shiftKey) {
+                    cancel();
+                }
+            };
+
+            scope.isSelected = function(tag) {
+                return scope.item[scope.field].indexOf(tag) !== -1;
+            };
+
+            scope.toggle = function(tag) {
+                if (!scope.disabled) {
+                    if (scope.isSelected(tag)) {
+                        _.pull(scope.item[scope.field], tag);
+                    } else {
+                        scope.item[scope.field].push(tag);
+                    }
+                    scope.change({item: scope.item});
+                }
+            };
+        }
+    };
+};
+
 MetadataWordsListEditingDirective.$inject = ['$timeout'];
 function MetadataWordsListEditingDirective($timeout) {
     return {
@@ -571,6 +636,7 @@ angular.module('superdesk.authoring.metadata', ['superdesk.authoring.widgets'])
     .controller('MetadataWidgetCtrl', MetadataCtrl)
     .service('metadata', MetadataService)
     .directive('sdMetaTerms', MetadataListEditingDirective)
+    .directive('sdMetaTags', MetadataTagsDirective)
     .directive('sdMetaDropdown', MetadataDropdownDirective)
     .directive('sdMetaWordsList', MetadataWordsListEditingDirective)
     .directive('sdMetaLocators', MetadataLocatorsDirective);

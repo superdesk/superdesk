@@ -26,8 +26,9 @@
 				</div>
 			</li>
 			<li class="terms-box">
-				<label translate>Keywords</label>
-				<div sd-meta-words-list data-item="item" data-field="keywords" data-change="autosave(item)" data-header="_editable" data-list="metadata.keywords" data-disabled="!_editable"></div>
+				<label translate>Tags</label>
+				<!--<div sd-meta-words-list data-item="item" data-field="keywords" data-change="autosave(item)" data-header="_editable" data-list="metadata.keywords" data-disabled="!_editable"></div>-->
+				<div sd-meta-tags data-item="item" data-field="keywords" data-source-field="body_html" data-change="autosave(item)" data-disabled="!_editable">
 			</li>
 			<li>
 				<label translate>Language</label>
