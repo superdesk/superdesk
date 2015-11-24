@@ -855,7 +855,7 @@ function SdTextEditorBlockEmbedController() {
 }
 
 angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embed',
-                                    'angular-embed.handlers', 'angular-embedly', 'superdesk.config'])
+                                    'angular-embedly', 'superdesk.config'])
     .service('editor', EditorService)
     .directive('sdAddEmbed', function() {
         return {
@@ -1272,11 +1272,38 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                 }
             }
         };
-    }]).run(['embedService', 'ngEmbedTwitterHandler',
-        function(embedService, ngEmbedTwitterHandler) {
+    }]).run(['embedService', 'embedlyService', '$q', function(embedService, embedlyService, $q) {
             // Tweets embed code are not provided by Embedly, we need to use this special handler
-            // from https://github.com/superdesk/angular-embed
-            embedService.registerHandler(ngEmbedTwitterHandler);
+            embedService.registerHandler({
+                name: 'Twitter',
+                patterns: [
+                    'https?://(?:www|mobile\\.)?twitter\\.com/(?:#!/)?[^/]+/status(?:es)?/(\\d+)/?$',
+                    'https?://t\\.co/[a-zA-Z0-9]+'
+                ],
+                embed: function(url) {
+                    var deferred = $q.defer();
+                    embedlyService.embed(url).then(
+                        function successCallback(response) {
+                            var data = response.data;
+                            if (data.provider_name === 'Twitter') {
+                                data.html = [
+                                    '<blockquote class="twitter-tweet" lang="en">',
+                                    '  <p lang="en" dir="ltr">' + data.description + '</p>',
+                                    '  — ' + data.title + ' (@' + data.author_name + ')',
+                                    '  <a href="' + data.url + '">' + data.url + '</a>',
+                                    '</blockquote>',
+                                    '<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>'
+                                ].join('');
+                            }
+                            deferred.resolve(data);
+                        },
+                        function errorCallback(error) {
+                            deferred.reject(error.error_message || error.data.error_message);
+                        }
+                    );
+                    return deferred.promise;
+                }
+            });
         }
     ]).config(['embedServiceProvider', 'embedlyServiceProvider', '$injector',
         function(embedServiceProvider, embedlyServiceProvider, $injector) {
