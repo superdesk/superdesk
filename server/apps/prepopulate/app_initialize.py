@@ -36,7 +36,11 @@ __entities__ = {
     'validators': ('validators.json', '', True),
     'content_templates': ('content_templates.json', ['template_name'], False),
     'published': (None, [[('item_id', pymongo.ASCENDING),
-                         ('state', pymongo.ASCENDING)]], False)
+                         ('state', pymongo.ASCENDING)]], False),
+    'dictionaries': ('dictionaries.json', '', True),
+    'ingest_providers': ('ingest_providers.json', '', True),
+    'subscribers': ('subscribers.json', '', True),
+    'workspaces': ('workspaces.json', '', True)
 }
 
 
@@ -50,19 +54,20 @@ class AppInitializeWithDataCommand(superdesk.Command):
     """
 
     option_list = [
-        superdesk.Option('--entity-name', '-n', dest='entity_name', default='')
+        superdesk.Option('--entity-name', '-n', dest='entity_name', default=''),
+        superdesk.Option('--profile', '-p', dest='profile')
     ]
 
-    def run(self, entity_name=None, index_only='false'):
+    def run(self, entity_name=None, profile=None, index_only='false'):
         self.logger.info('Starting data import')
         if entity_name:
             (file_name, index_params, do_patch) = __entities__[entity_name]
-            self.import_file(entity_name, file_name, index_params, do_patch)
+            self.import_file(entity_name, profile, file_name, index_params, do_patch)
             return 0
 
         for name, (file_name, index_params, do_patch) in __entities__.items():
             try:
-                self.import_file(name, file_name, index_params, do_patch)
+                self.import_file(name, profile, file_name, index_params, do_patch)
             except Exception as ex:
                 self.logger.info('Exception loading entity {} from {}'.format(name, file_name))
                 self.logger.exception(ex)
@@ -70,7 +75,7 @@ class AppInitializeWithDataCommand(superdesk.Command):
         self.logger.info('Data import finished')
         return 0
 
-    def import_file(self, entity_name, file_name, index_params, do_patch=False):
+    def import_file(self, entity_name, profile, file_name, index_params, do_patch=False):
         """
         imports seed data based on the entity_name (resource name) from the file_name specified.
         index_params use to create index for that entity/resource
@@ -89,8 +94,12 @@ class AppInitializeWithDataCommand(superdesk.Command):
         """
         print('Config: ', app.config['APP_ABSPATH'])
         if file_name:
-            file_path = os.path.join(app.config.get('APP_ABSPATH'), 'apps', 'prepopulate', 'data_initialization',
-                                     file_name)
+            if profile:
+                file_path = os.path.join(app.config.get('APP_ABSPATH'), 'apps', 'prepopulate', 'data_initialization',
+                                         profile, file_name)
+            else:
+                file_path = os.path.join(app.config.get('APP_ABSPATH'), 'apps', 'prepopulate', 'data_initialization',
+                                         file_name)
             print('Got file path: ', file_path)
             with open(file_path, 'rt') as app_prepopulation:
                 json_data = json.loads(app_prepopulation.read())

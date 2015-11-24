@@ -1,0 +1,29 @@
+[
+    {
+        "_id": "5640c4aa60fcab002a65f08b",
+        "config": {
+            "username": "f4c8576221a9e4a54252047c52ab40dd",
+            "field_aliases": [],
+            "password": "f4c8576221a9e4a54252047c52ab40dd"
+        },
+        "is_closed": false,
+        "content_expiry": 2880,
+        "name": "PA IMAGES",
+        "source": "paimg",
+        "notifications": {
+            "on_close": true,
+            "on_update": true,
+            "on_open": true,
+            "on_error": true
+        },
+        "idle_time": {
+            "minutes": 0,
+            "hours": 0
+        },
+        "type": "search",
+        "update_schedule": {
+            "seconds": 0,
+            "minutes": 5
+        }
+    }
+]
