@@ -121,12 +121,17 @@ class PaImgDatalayer(DataLayer):
         if not fields:
             fields['days_since'] = 1
 
-        size = int(req.get('size', '25')) if int(req.get('size', '25')) > 0 else 25
-        if size and size != 100:
+        size = int(req.get('size', '100')) if int(req.get('size', '100')) > 0 else 100
+        if size and size < 100:
             fields['limit'] = size
+
+        page = int(req.get('from', '0')) // size + 1
+        if page > 1:
+            fields['page'] = page
 
         if self._token:
             fields['token'] = self._token
+        fields['ck'] = 'superdesk'
 
         r = self._http.request_encode_url('GET', url,
                                           fields=fields, headers=self._headers)
