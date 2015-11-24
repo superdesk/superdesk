@@ -1,6 +1,6 @@
-<div class="field" ng-class="{'limit-error': item.headline.length > limits.headline}">
+<div class="field" ng-class="{'limit-error': item.headline.length > schema.headline.maxlength}" ng-if="schema.headline">
   <label translate>Headline</label>
-    <span sd-character-count data-item="item.headline" data-html="true" data-limit="limits.headline"></span>
+    <span ng-if="schema.headline.maxlength" sd-character-count data-item="item.headline" data-html="true" data-limit="schema.headline.maxlength"></span>
     <div id="title" class="headline"
         sd-text-editor
         data-config="{disableToolbar: true, disableReturn: true}"
@@ -12,7 +12,7 @@
   <div class="headline" ng-if="!_editable">{{item.headline}}</div>
 </div>
 
-<div ng-if="item.type === 'text' && item.profile != 'snap'" class="field">
+<div ng-if="schema.feature_image" class="field">
   <label translate>Featured Image</label>
   <div sd-item-association
       data-item="item"
@@ -21,9 +21,9 @@
       data-onchange="autosave(item)"></div>
 </div>
 
-<div class="field" class="abstract" ng-class="{'limit-error': item.abstract.length > limits.abstract}">
+<div class="field" class="abstract" ng-class="{'limit-error': item.abstract.length > schema.abstract.maxlength}" ng-if="schema.abstract">
   <label translate>Abstract</label>
-    <span sd-character-count data-item="item.abstract" data-html="true" data-limit="limits.abstract"></span>
+    <span ng-if="schema.abstract.maxlength" sd-character-count data-item="item.abstract" data-html="true" data-limit="schema.abstract.maxlength"></span>
     <div id="abstract" class="abstract"
         sd-text-editor
         data-config="{disableToolbar: true}"
@@ -35,7 +35,7 @@
   <div class="abstract" ng-if="!_editable">{{item.abstract}}</div>
 </div>
 
-<div class="field">
+<div class="field" ng-if="schema.byline">
   <label translate>By</label>
   <input type="text"
          class="byline"
@@ -46,7 +46,7 @@
   <div ng-if="!_editable">{{item.byline}}</div>
 </div>
 
-<div class="field">
+<div class="field" ng-if="schema.located">
     <label translate>Dateline</label>
     <div class="dateline">
         <div sd-meta-locators
@@ -79,8 +79,9 @@
     </div>
 </div>
 
-<div class="field body" ng-if="!isMediaType">
+<div class="field body" ng-if="!isMediaType && schema.body_html">
   <label translate>Body</label>
+    <span ng-if="schema.body_html.maxlength" sd-character-count data-item="item.body_html" data-html="true" data-limit="schema.body_html.maxlength"></span>
     <span sd-word-count data-item="item.body_html" data-html="true"></span>
     <div id="bodyhtml"
          sd-text-editor
@@ -132,7 +133,7 @@
   <div sd-package data-item="item" class="composite-preview" ng-if="!_editable"></div>
 </div>
 
-<div class="field pull-left" ng-if="item.sign_off">
+<div class="field pull-left" ng-if="item.sign_off && schema.sign_off">
     <label translate>Sign-Off</label>
     <div>{{item.sign_off}}</div>
 </div>

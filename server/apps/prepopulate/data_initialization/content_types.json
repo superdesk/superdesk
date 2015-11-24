@@ -1,0 +1,43 @@
+[
+    {
+        "_id": "snap",
+        "label": "Snap",
+        "priority": 80,
+        "schema": {
+            "slugline": {"required": true},
+            "body_html": {"required": true},
+            "anpa_category": {},
+            "subject": {},
+            "ednote": {}
+        }
+    },
+    {
+        "_id": "live",
+        "label": "Live",
+        "priority": 50,
+        "schema": {
+            "slugline": {"required": true},
+            "body_html": {"required": true},
+            "subject": {},
+            "anpa_category": {},
+            "ednote": {}
+        }
+    },
+    {
+        "_id": "article",
+        "label": "Article",
+        "priority": 30,
+        "schema": {
+            "headline": {},
+            "slugline": {"required": true},
+            "body_html": {"required": true},
+            "abstract": {},
+            "byline": {},
+            "subject": {},
+            "anpa_category": {},
+            "ednote": {},
+
+            "feature_image": {"type": "picture"}
+        }
+    }
+]

@@ -232,6 +232,7 @@ INSTALLED_APPS.extend([
     'apps.archive_broadcast',
     'apps.pa_img',
     'apps.keywords',
+    'apps.content_types',
 ])
 
 RESOURCE_METHODS = ['GET', 'POST']

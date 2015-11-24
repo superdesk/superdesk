@@ -63,6 +63,48 @@
                 return newItem;
             });
         };
+
+        /**
+         * Create new item using given content type
+         *
+         * @param {Object} contentType
+         * @return {Promise}
+         */
+        this.createItemFromContentType = function(contentType) {
+            var item = {
+                type: TEXT_TYPE,
+                profile: contentType._id
+            };
+
+            if (desks.activeDeskId) {
+                item.task = {desk: desks.activeDeskId};
+            }
+
+            return save(item);
+        };
+
+        /**
+         * Get content types from server
+         *
+         * @return {Promise}
+         */
+        this.getTypes = function() {
+            var self = this;
+            return api.query('content_types').then(function(result) {
+                self.types = result._items;
+                return self.types;
+            });
+        };
+
+        /**
+         * Get content type by id
+         *
+         * @param {string} id
+         * @return {Promise}
+         */
+        this.getType = function(id) {
+            return api.find('content_types', id);
+        };
     }
 
     ContentCreateDirective.$inject = ['api', 'desks', 'templates', 'content', 'authoringWorkspace', 'superdesk'];
@@ -130,6 +172,22 @@
                         event.preventDefault();
                     }
                     scope.create();
+                });
+
+                /**
+                 * Create a new item using given type and start editing
+                 *
+                 * @param {Object} contentType
+                 */
+                scope.createFromType = function(contentType) {
+                    content.createItemFromContentType(contentType).then(edit);
+                };
+
+                /**
+                 * Populate list of available content types
+                 */
+                content.getTypes().then(function() {
+                    scope.content_types = content.types;
                 });
             }
         };
