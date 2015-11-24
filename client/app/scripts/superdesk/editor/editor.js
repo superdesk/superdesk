@@ -11,6 +11,12 @@
 
 'use strict';
 
+var EMBED_PROVIDERS = { // see http://noembed.com/#supported-sites
+    custom: 'Custom',
+    twitter: 'Twitter',
+    youtube: 'YouTube'
+};
+
 /**
  * Generate click event on given target node
  *
@@ -595,7 +601,10 @@ function SdTextEditorController(_) {
                     if (element.nodeValue.indexOf('EMBED START') > -1) {
                         commitBlock();
                         // retrieve the embed type following the comment
-                        var embed_type = angular.copy(element.nodeValue).replace(' EMBED START ', '');
+                        var embed_type = angular.copy(element.nodeValue).replace(' EMBED START ', '').trim();
+                        if (embed_type === '') {
+                            embed_type = EMBED_PROVIDERS.custom;
+                        }
                         // create the embed block
                         block = new Block({blockType: 'embed', embedType: embed_type});
                     }
@@ -770,17 +779,12 @@ function SdAddEmbedController (embedService, $element, $timeout, $q, _) {
                 });
             // otherwise we use the content of the field directly
             } else {
-                var PROVIDERS = { // see http://noembed.com/#supported-sites
-                    custom: 'Custom',
-                    twitter: 'Twitter',
-                    youtube: 'YouTube'
-                };
-                var embedType = PROVIDERS.custom;
+                var embedType = EMBED_PROVIDERS.custom;
                 // try to guess the provider of the custom embed
-                if (vm.input.indexOf('twitter.com/widgets.js')) {
-                    embedType = PROVIDERS.twitter;
-                } else if (vm.input.indexOf('https://www.youtube.com')){
-                    embedType = PROVIDERS.youtube;
+                if (vm.input.indexOf('twitter.com/widgets.js') > -1) {
+                    embedType = EMBED_PROVIDERS.twitter;
+                } else if (vm.input.indexOf('https://www.youtube.com') > -1){
+                    embedType = EMBED_PROVIDERS.youtube;
                 }
                 embedCode = $q.when({
                     body: vm.input,
