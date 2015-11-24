@@ -16,7 +16,7 @@ from .common import remove_unwanted, update_state, set_item_expiry, remove_media
     handle_existing_data, item_schema, validate_schedule, is_item_in_package, is_normal_package, \
     ITEM_DUPLICATE, ITEM_OPERATION, ITEM_RESTORE, ITEM_UPDATE, ITEM_DESCHEDULE, ARCHIVE as SOURCE, \
     LAST_PRODUCTION_DESK, LAST_AUTHORING_DESK, convert_task_attributes_to_objectId, BROADCAST_GENRE
-from .archive_crop import ArchiveCropService
+from superdesk.media.crop import CropService
 from flask import current_app as app
 from superdesk import get_resource_service
 from superdesk.errors import SuperdeskApiError
@@ -170,6 +170,8 @@ class ArchiveService(BaseService):
             doc.setdefault('priority', DEFAULT_PRIORITY_VALUE_FOR_MANUAL_ARTICLES)
             doc.setdefault('urgency', DEFAULT_URGENCY_VALUE_FOR_MANUAL_ARTICLES)
 
+            self._add_desk_metadata(doc, {})
+
             convert_task_attributes_to_objectId(doc)
 
     def on_created(self, docs):
@@ -245,7 +247,7 @@ class ArchiveService(BaseService):
             del updates['force_unlock']
 
         # create crops
-        crop_service = ArchiveCropService()
+        crop_service = CropService()
         crop_service.validate_multiple_crops(updates, original)
         crop_service.create_multiple_crops(updates, original)
 
@@ -259,6 +261,8 @@ class ArchiveService(BaseService):
                 any(genre.get('value', '').lower() != BROADCAST_GENRE.lower() for genre in updates.get('genre')):
             raise SuperdeskApiError.badRequestError('Cannot change the genre for broadcast content.')
 
+        self._add_desk_metadata(updates, original)
+
         # Do the validation after Circular Reference check passes in Package Service
         updated = original.copy()
         updated.update(updates)
@@ -270,7 +274,7 @@ class ArchiveService(BaseService):
         if original[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
             self.packageService.on_updated(updates, original)
 
-        ArchiveCropService().delete_replaced_crop_files(updates, original)
+        CropService().delete_replaced_crop_files(updates, original)
 
         updated = copy(original)
         updated.update(updates)
@@ -560,6 +564,16 @@ class ArchiveService(BaseService):
                 raise SuperdeskApiError.badRequestError("A Package doesn't support Embargo")
 
             self.packageService.check_if_any_item_in_package_has_embargo(item)
+
+    def _add_desk_metadata(self, updates, original):
+        """Populate updates metadata from item desk in case it's set.
+
+        It will only add data which is not set yet on the item.
+
+        :param updates: updates to item that should be saved
+        :param original: original item version before update
+        """
+        return get_resource_service('desks').apply_desk_metadata(updates, original)
 
 
 class AutoSaveResource(Resource):

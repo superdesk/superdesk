@@ -13,6 +13,7 @@ from functools import partial
 import logging
 from copy import deepcopy
 
+from flask import current_app as app
 from eve.versioning import resolve_document_version
 from eve.utils import config, ParsedRequest
 from eve.validation import ValidationError
@@ -41,6 +42,9 @@ from apps.archive.common import get_user, insert_into_versions, item_operations
 from apps.packages import TakesPackageService
 from apps.packages.package_service import PackageService
 from apps.publish.published_item import LAST_PUBLISHED_VERSION
+from superdesk.media.media_operations import crop_image
+from superdesk.media.crop import CropService
+from superdesk.celery_app import celery
 
 logger = logging.getLogger(__name__)
 
@@ -168,7 +172,7 @@ class BasePublishService(BaseService):
             if original[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
                 self._publish_package_items(original, updates)
             else:
-                self._resolve_associations(updates)
+                self._publish_associations(updates, id)
 
             queued_digital = False
             package = None
@@ -854,20 +858,59 @@ class BasePublishService(BaseService):
                     if doc.get('lock_session', None) and package['lock_session'] != doc['lock_session']:
                         validation_errors.extend(['{}: packaged item cannot be locked'.format(doc['headline'])])
 
-    def _resolve_associations(self, item):
-        errors = []
-        search = get_resource_service('search')
-        for rel, ref in item.get('associations', {}).items():
-            lookup = {config.ID_FIELD: ref['uri']}
-            doc = search.find_one(req=None, **lookup)
-            if doc and is_published(doc):
-                ref.update(doc)
-            elif doc:
-                errors.append('related item is not published rel=%s item=%s' % (rel, ref['uri']))
-            else:
-                errors.append('related item not found rel=%s item=%s' % (rel, ref['uri']))
-        if errors:
-            raise ValidationError(errors)
+    def _publish_associations(self, parent, guid):
+        associations = parent.get('associations', {})
+        for rel, item in associations.copy().items():
+            if item.get('pubstatus', 'usable') != 'usable':
+                associations.pop(rel)
+                continue
+            self._publish_renditions(item, rel, guid)
+
+    def _publish_renditions(self, item, rel, guid):
+        images = []
+        renditions = item.get('renditions', {})
+        original = renditions.get('original')
+        crop_service = CropService()
+        for rendition_name, rendition in renditions.items():
+            crop = get_crop(rendition)
+            rend_spec = crop_service.get_crop_by_name(rendition_name)
+            if crop and rend_spec:
+                file_name = '%s/%s/%s' % (guid, rel, rendition_name)
+                rendition['media'] = app.media.media_id(file_name)
+                rendition['href'] = app.media.url_for_media(rendition['media'])
+                rendition['width'] = rend_spec['width']
+                rendition['height'] = rend_spec['height']
+                rendition['mimetype'] = original.get('mimetype')
+                images.append({
+                    'rendition': rendition_name,
+                    'file_name': file_name,
+                    'media': rendition['media'],
+                    'spec': rend_spec,
+                    'crop': crop,
+                })
+        publish_images.delay(images=images, original=original, item=item)
+
+
+def get_crop(rendition):
+    fields = ('CropLeft', 'CropTop', 'CropRight', 'CropBottom')
+    return {field: rendition[field] for field in fields if field in rendition}
+
+
+@celery.task
+def publish_images(images, original, item):
+    orig_file = get_file(original, item)
+    for image in images:
+        content_type = original['mimetype']
+        ok, output = crop_image(orig_file, image['file_name'], image['crop'], image['spec'])
+        if ok:
+            app.media.put(output, image['file_name'], content_type, _id=image['media'])
+
+
+def get_file(rendition, item):
+    if item.get('fetch_endpoint'):
+        return get_resource_service(item['fetch_endpoint']).fetch_rendition(rendition)
+    else:
+        return app.media.fetch_rendition(rendition)
 
 
 superdesk.workflow_state('published')

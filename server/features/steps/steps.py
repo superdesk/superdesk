@@ -10,6 +10,7 @@
 
 
 import os
+import arrow
 from datetime import datetime, timedelta
 from superdesk.io.commands.update_ingest import LAST_ITEM_UPDATE
 import superdesk
@@ -1822,6 +1823,14 @@ def validate_published_item_expiry(context, publish_expiry_in_desk):
             assert_expiry(context, item, publish_expiry_in_desk)
     else:
         assert_expiry(context, response_data, publish_expiry_in_desk)
+
+
+@then('we get updated timestamp "{field}"')
+def step_we_get_updated_timestamp(context, field):
+    data = get_json_data(context.response)
+    timestamp = arrow.get(data[field])
+    now = utcnow()
+    assert timestamp + timedelta(seconds=5) > now, 'timestamp < now (%s, %s)' % (timestamp, now)  # 5s tolerance
 
 
 def assert_expiry(context, item, publish_expiry_in_desk):
