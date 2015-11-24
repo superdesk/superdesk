@@ -5,6 +5,9 @@
     &__container {
         position: relative;
         .text-editor {padding: 0;}
+        .embed-preview, .embed-editor {
+            margin: 20px 0px;
+        }
         .embed-editor {
             min-height: 200px;
         }
@@ -92,5 +95,12 @@
     img {
         max-width: 100%;
         height: auto;
+    }
+    .embed--link {
+        &__title {
+            font-size: 1.75em;
+            line-height: 1.25em;
+            margin-bottom: .50em;
+        }
     }
 }
