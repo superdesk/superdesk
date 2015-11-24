@@ -1,6 +1,10 @@
 (function() {
 'use strict';
 
+beforeEach(module(function($provide) {
+    $provide.constant('lodash', window._);
+}));
+
 /**
  * Mock services that call server on init and thus would require mocking all the time
  */
