@@ -12,8 +12,8 @@
         .directive('sdTemplateSelect', TemplateSelectDirective)
         ;
 
-    ContentService.$inject = ['api', 'superdesk', 'templates', 'desks', 'packages', 'archiveService'];
-    function ContentService(api, superdesk, templates, desks, packages, archiveService) {
+    ContentService.$inject = ['api', 'superdesk', 'templates', 'desks', 'packages', 'archiveService', '$q'];
+    function ContentService(api, superdesk, templates, desks, packages, archiveService, $q) {
 
         var TEXT_TYPE = 'text';
 
@@ -61,6 +61,44 @@
             return save(item).then(function(newItem) {
                 templates.addRecentTemplate(desks.activeDeskId, template._id);
                 return newItem;
+            });
+        };
+
+        /**
+         * Create new item using given content type
+         *
+         * @param {Object} contentType
+         * @return {Promise}
+         */
+        this.createItemFromContentType = function(contentType) {
+            var item = {
+                type: TEXT_TYPE,
+                profile: contentType._id
+            };
+
+            if (desks.activeDeskId) {
+                item.task = {desk: desks.activeDeskId};
+            }
+
+            return save(item);
+        };
+
+        /**
+         * Get content types from server
+         *
+         * @return {Promise}
+         */
+        this.getTypes = function() {
+            var self = this;
+            return api.query('content_types').then(function(result) {
+                self.types = result._items;
+                return self.types;
+            });
+        };
+
+        this.getType = function(id) {
+            return api('content_types').getById(id).then(function(result) {
+                return result;
             });
         };
     }
@@ -130,6 +168,22 @@
                         event.preventDefault();
                     }
                     scope.create();
+                });
+
+                /**
+                 * Create a new item using given type and start editing
+                 *
+                 * @param {Object} contentType
+                 */
+                scope.createFromType = function(contentType) {
+                    content.createItemFromContentType(contentType).then(edit);
+                };
+
+                /**
+                 * Populate list of available content types
+                 */
+                content.getTypes().then(function() {
+                    scope.content_types = content.types;
                 });
             }
         };

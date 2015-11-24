@@ -54,6 +54,12 @@
         send: false
     });
 
+    var DEFAULT_SCHEMA = Object.freeze({
+        slugline: {},
+        headline: {maxlength: 64},
+        body_html: {maxlength: 2000}
+    });
+
     /**
      * Extend content of dest
      *
@@ -1952,14 +1958,16 @@
     }
 
     ArticleEditDirective.$inject = ['autosave', 'authoring', 'metadata', 'renditions', 'session', '$filter', '$timeout',
-    'superdesk', 'notify', 'gettext'];
-    function ArticleEditDirective(autosave, authoring, metadata, renditions, session, $filter, $timeout, superdesk, notify, gettext) {
+    'superdesk', 'notify', 'gettext', 'content'];
+    function ArticleEditDirective(autosave, authoring, metadata, renditions, session, $filter, $timeout, superdesk, notify, gettext, content) {
         return {
             templateUrl: 'scripts/superdesk-authoring/views/article-edit.html',
             link: function(scope) {
                 scope.limits = authoring.limits;
                 scope.toggleDetails = true;
                 scope.errorMessage = null;
+                scope.contentType = null;
+                scope.schema = angular.extend({}, DEFAULT_SCHEMA);
                 var mainEditScope = scope.$parent.$parent;
 
                 /* Start: Dateline related properties */
@@ -1986,6 +1994,14 @@
                         }
 
                         _.extend(item, updates);
+
+                        if (item.profile) {
+                            content.getType(item.profile)
+                            .then(function(type) {
+                                scope.contentType = type;
+                                scope.schema = type.schema || scope.schema;
+                            });
+                        }
                     }
                 });
 
@@ -2265,12 +2281,15 @@
         };
     }
 
-    headerInfoDirective.$inject = ['api', 'familyService', 'authoringWidgets', 'authoring', '$rootScope', 'archiveService'];
-    function headerInfoDirective(api, familyService, authoringWidgets, authoring, $rootScope, archiveService) {
+    headerInfoDirective.$inject = ['api', 'familyService', 'authoringWidgets', 'authoring', '$rootScope', 'archiveService', 'content'];
+    function headerInfoDirective(api, familyService, authoringWidgets, authoring, $rootScope, archiveService, content) {
         return {
             templateUrl: 'scripts/superdesk-authoring/views/header-info.html',
             require: '^sdAuthoringWidgets',
             link: function (scope, elem, attrs, WidgetsManagerCtrl) {
+                scope.contentType = null;
+                scope.schema = angular.extend({}, DEFAULT_SCHEMA);
+
                 scope.$watch('item', function (item) {
                     if (!item) {
                         return;
@@ -2301,6 +2320,14 @@
                                 $rootScope.$broadcast('broadcast:preview', {'item': item});
                             });
                         };
+                    }
+
+                    if (item.profile) {
+                        content.getType(item.profile)
+                        .then(function(type) {
+                            scope.contentType = type;
+                            scope.schema = type.schema || scope.schema;
+                        });
                     }
 
                 });

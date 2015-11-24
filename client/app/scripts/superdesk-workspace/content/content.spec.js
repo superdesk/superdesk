@@ -5,6 +5,7 @@ describe('superdesk.workspace.content', function() {
 
     beforeEach(module('templates'));
     beforeEach(module('superdesk.mocks'));
+    beforeEach(module('superdesk.desks'));
     beforeEach(module('superdesk.workspace.content'));
 
     describe('content service', function() {
@@ -51,6 +52,24 @@ describe('superdesk.workspace.content', function() {
                 slugline: 'test_slugline',
                 body_html: 'test_body_html'
             });
+        }));
+
+        it('can fetch content types', inject(function(api, content, $rootScope, $q) {
+            var types = [{_id: 'foo'}];
+            spyOn(api, 'query').and.returnValue($q.when({_items: types}));
+            var success = jasmine.createSpy('ok');
+            content.getTypes().then(success);
+            $rootScope.$digest();
+            expect(success).toHaveBeenCalledWith(types);
+            expect(content.types).toBe(types);
+        }));
+
+        it('can create item using content type', inject(function(api, content, desks) {
+            var type = {_id: 'test'};
+            var success = jasmine.createSpy('ok');
+            desks.activeDeskId = 'sports';
+            content.createItemFromContentType(type).then(success);
+            expect(api.save).toHaveBeenCalledWith('archive', {profile: type._id, type: 'text', task: {desk: 'sports'}});
         }));
     });
 });
