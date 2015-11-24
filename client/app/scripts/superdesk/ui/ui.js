@@ -397,6 +397,76 @@ define([
         };
     }
 
+    DropdownFocus.$inject = ['keyboardManager'];
+    function DropdownFocus(keyboardManager) {
+        return {
+            require: 'dropdown',
+            link: function (scope, elem, attrs, dropdown) {
+                scope.$watch(dropdown.isOpen, function(isOpen) {
+                    if (isOpen) {
+                        _.defer(function() {
+                            var keyboardOptions = {inputDisabled: false},
+                                inputField = elem.find('input[type="text"]'),
+                                buttonList = elem.find('button:not([disabled]):not(.dropdown-toggle)');
+
+                            /*
+                             * If input field exist, put focus on it,
+                             * otherwise put it on first button in list
+                             */
+                            if (inputField.length > 0) {
+                                inputField.focus();
+                            } else {
+                                buttonList[0].focus();
+                            }
+
+                            keyboardManager.push('up', function () {
+                                var prevElem = elem.find('button:focus').parent('li').prev().children('button'),
+                                        categoryButton = elem.find('.levelup button');
+
+                                if (prevElem.length > 0) {
+                                    prevElem.focus();
+                                } else {
+                                    inputField.focus();
+                                    categoryButton.focus();
+                                }
+                            }, keyboardOptions);
+
+                            keyboardManager.push('down', function () {
+                                var nextElem = elem.find('button:focus').parent('li').next().children('button'),
+                                        categoryButton = elem.find('.levelup button');
+
+                                /*
+                                 * If category button exist, update button list with new values,
+                                 * but exclude category button
+                                 */
+                                if (categoryButton.length > 0) {
+                                    var newList = elem.find('button:not([disabled]):not(.dropdown-toggle)');
+                                    buttonList = _.without(newList, categoryButton[0]);
+                                }
+
+                                if (inputField.is(':focus') || categoryButton.is(':focus')) {
+                                    buttonList[0].focus();
+                                } else if (nextElem.length > 0) {
+                                    nextElem.focus();
+                                } else {
+                                    buttonList[0].focus();
+                                }
+                            }, keyboardOptions);
+
+                            keyboardManager.push('backspace', function () {
+                                elem.find('.backlink').click();
+                            });
+                        });
+                    } else if (isOpen === false) { // Exclusively false, prevent executing if it is undefined
+                        keyboardManager.pop('up');
+                        keyboardManager.pop('down');
+                        keyboardManager.pop('backspace');
+                    }
+                });
+            }
+        };
+    }
+
     PopupService.$inject = ['$document'];
     function PopupService($document) {
         var service = {};
@@ -1096,6 +1166,7 @@ define([
         .filter('leadingZero', LeadingZeroFilter)
         .directive('sdDropdownPosition', DropdownPositionDirective)
         .directive('sdDropdownPositionRight', DropdownPositionRightDirective)
+        .directive('sdDropdownFocus', DropdownFocus)
         .directive('sdWeekdayPicker', WeekdayPickerDirective)
         ;
 });
