@@ -1,0 +1,103 @@
+[
+    {
+        "_id": "1e7d899b7b3048d5a5aec30a",
+        "desk_order": 1,
+        "task_status": "todo",
+        "name": "Draft",
+        "desk": "1e7d899b7b3048d5a5aec30a",
+        "is_visible": true,
+        "description": "Stories that have just been created or are being worked on",
+        "content_expiry": 60000,
+        "default_incomming": true,
+        "default_incoming": false
+    },
+
+    {
+        "_id": "5640bd5160fcab002c4e4c60",
+        "content_expiry": 43200,
+        "default_incoming": false,
+        "name": "test",
+        "is_visible": true,
+        "task_status": "todo",
+        "desk_order": 2,
+        "desk": "5640bd4c60fcab002a65f059"
+    },
+
+    {
+        "_id": "5e6ec157371a469390220b1a",
+        "desk_order": 1,
+        "task_status": "check",
+        "name": "Revised",
+        "desk": "2b702ea5de13465696ef44c2",
+        "is_visible": true,
+        "description": "Stories that are ready to be checked",
+        "content_expiry": 60000,
+        "default_incomming": true,
+        "default_incoming": false
+    },
+
+    {
+        "_id": "98cf9f4310734e46ac5bd7bd",
+        "desk_order": 1,
+        "task_status": "check",
+        "name": "Revised",
+        "desk": "ab22f45e8dfd4fa2a1fab31d",
+        "is_visible": true,
+        "description": "Stories that are ready to be checked",
+        "content_expiry": 60000,
+        "default_incomming": true,
+        "default_incoming": false
+    },
+
+    {
+        "_id": "a2b0747712fd45c79af2a89f",
+        "desk_order": 1,
+        "task_status": "todo",
+        "name": "Draft",
+        "desk": "2b702ea5de13465696ef44c2",
+        "is_visible": true,
+        "description": "Stories that have just been created or are being worked on",
+        "content_expiry": 60000,
+        "default_incomming": true,
+        "default_incoming": false
+    },
+
+    {
+        "_id": "e8345490fe084f5886b32166",
+        "desk_order": 1,
+        "task_status": "todo",
+        "name": "Draft",
+        "desk": "ab22f45e8dfd4fa2a1fab31d",
+        "is_visible": true,
+        "description": "Stories that have just been created or are being worked on",
+        "content_expiry": 60000,
+        "default_incomming": true,
+        "default_incoming": false
+    },
+
+    {
+        "_id": "fafbc17b1f7b445fb9f7b693",
+        "desk_order": 1,
+        "task_status": "check",
+        "name": "Revised",
+        "desk": "1e7d899b7b3048d5a5aec30a",
+        "is_visible": true,
+        "description": "Stories that are ready to be checked",
+        "content_expiry": 60000,
+        "default_incomming": true,
+        "default_incoming": false
+    },
+
+    {
+        "_id": "ffde46d68dd949888ef0f8d1",
+        "desk_order": 1,
+        "task_status": "new",
+        "name": "New",
+        "desk": "1535983d9d114c19acf9945a",
+        "is_visible": true,
+        "description": "Stories that are being created for SNAPPA",
+        "content_expiry": 60000,
+        "default_incomming": true,
+        "default_incoming": false
+    }
+]
