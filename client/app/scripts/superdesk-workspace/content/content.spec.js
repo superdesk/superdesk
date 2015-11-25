@@ -60,6 +60,7 @@ describe('superdesk.workspace.content', function() {
             var success = jasmine.createSpy('ok');
             content.getTypes().then(success);
             $rootScope.$digest();
+            expect(api.query).toHaveBeenCalledWith('content_types', {where: {enabled: true}});
             expect(success).toHaveBeenCalledWith(types);
             expect(content.types).toBe(types);
         }));
