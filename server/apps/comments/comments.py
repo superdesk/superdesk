@@ -13,7 +13,7 @@ from superdesk.resource import Resource
 from superdesk.notification import push_notification
 from superdesk.services import BaseService
 from settings import CLIENT_URL
-from .user_mentions import get_users, get_users_mentions, notify_mentioned_users
+from .user_mentions import get_users, get_desks, get_mentions, notify_mentioned_users, notify_mentioned_desks
 from superdesk.errors import SuperdeskApiError
 
 comments_schema = {
@@ -26,6 +26,9 @@ comments_schema = {
     'item': {'type': 'string'},
     'user': Resource.rel('users', True),
     'mentioned_users': {
+        'type': 'dict'
+    },
+    'mentioned_desks': {
         'type': 'dict'
     }
 }
@@ -50,14 +53,16 @@ class CommentsService(BaseService):
                 message = 'Commenting on behalf of someone else is prohibited.'
                 raise SuperdeskApiError.forbiddenError(message)
             doc['user'] = str(user.get('_id'))
-            usernames = get_users_mentions(doc.get('text'))
-            doc['mentioned_users'] = get_users(usernames)
+            user_names, desk_names = get_mentions(doc.get('text'))
+            doc['mentioned_users'] = get_users(user_names)
+            doc['mentioned_desks'] = get_desks(desk_names)
 
     def on_created(self, docs):
         for doc in docs:
             push_notification(self.notification_key, item=str(doc.get('item')))
 
         notify_mentioned_users(docs, CLIENT_URL)
+        notify_mentioned_desks(docs)
 
     def on_updated(self, updates, original):
         push_notification(self.notification_key, updated=1)

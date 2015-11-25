@@ -25,7 +25,11 @@
                             <time sd-datetime data-date="notification._created"></time>
                             <p class="text"><b>{{ notification.user.display_name || notification.user.username }}</b> <span translate>commented on</span> <i><a ng-href="#/authoring/{{ notification.item.guid }}?_id={{ notification.item.guid }}&comments={{ notification.data.comment_id }}" title="{{ notification.item.headline }}">{{ notification.item.slugline || notification.item.headline }}</a></i>:<br>{{ notification.data.comment }}</p>
                         </div>
-                        <div class="content" ng-if="notification.name != 'notify'">
+                        <div class="content" ng-if="notification.name == 'user:mention'">
+                            <time sd-datetime data-date="notification._created"></time>
+                            <p class="text"><b>{{ notification.user.display_name || notification.user.username }}</b> <span translate>mentioned you</span> <i><a ng-href="#/authoring/{{ notification.item.guid }}?_id={{ notification.item.guid }}&comments={{ notification.data.comment_id }}" title="{{ notification.item.headline }}">{{ notification.item.slugline || notification.item.headline }}</a></i>:<br>{{ notification.data.comment }}</p>
+                        </div>
+                        <div class="content" ng-if="notification.name != 'notify' && notification.name != 'user:mention'">
                             <time sd-datetime data-date="notification._created"></time>
                             <p class="text"><b>{{ notification.user.display_name || notification.user.username || "System" }}</b>: <span sd-activity-message data-activity="notification"></span></p>
                         </div>                        

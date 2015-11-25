@@ -8,6 +8,7 @@
         .directive('sdMonitoringView', MonitoringViewDirective)
         .directive('sdMonitoringGroup', MonitoringGroupDirective)
         .directive('sdMonitoringGroupHeader', MonitoringGroupHeader)
+        .directive('sdDeskNotifications', DeskNotificationsDirective)
         .directive('sdItemActionsMenu', ItemActionsMenu)
         .config(configureMonitoring)
         .config(configureSpikeMonitoring)
@@ -612,6 +613,49 @@
                         clickItem(scope.items[nextIndex], event);
                     });
                 }
+            }
+        };
+    }
+
+    DeskNotificationsDirective.$inject = ['desks', 'deskNotifications', 'authoringWorkspace', '$timeout'];
+    function DeskNotificationsDirective(desks, deskNotifications, authoringWorkspace, $timeout) {
+        return {
+            scope: {stage: '=stage'},
+            templateUrl: 'scripts/superdesk-monitoring/views/desk-notifications.html',
+            link: function(scope) {
+                
+                function init() {
+                    scope.desk = desks.stageLookup[scope.stage].desk;
+                    scope.notifications = deskNotifications.getNotifications(scope.desk);
+                    scope.notificationCount = scope.notifications ? scope.notifications.length : 0 ;
+                }
+
+                scope.open = function(notification) {
+                    authoringWorkspace.view(notification.item);
+                    deskNotifications.markAsRead(notification, scope.desk);
+                };
+
+                function getRecipient(notification) {
+                    return _.find(notification.recipients, {'desk_id': scope.desk});
+                }
+
+                scope.isRead = function(notification) {
+                    var recipient = getRecipient(notification);
+                    return recipient && recipient.read;
+                }
+
+                scope.readBy = function(notification) {
+                    var recipient = getRecipient(notification);
+                    if (recipient && recipient.read) {
+                        return desks.userLookup[recipient.user_id].display_name;
+                    }
+                }
+
+                init();
+
+                scope.$on('desk:mention', function() {
+                    $timeout(init, 5000);
+                });
             }
         };
     }

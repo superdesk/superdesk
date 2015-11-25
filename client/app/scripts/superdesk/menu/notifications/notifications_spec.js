@@ -37,6 +37,7 @@ describe('notifications', function() {
         expect(args[0]).toBe('activity');
 
         var query = args[1].where;
+        console.log('query', query);
         expect(query.user).toEqual({$exists: true});
         expect(query.item).toEqual({$exists: true});
     }));

@@ -116,6 +116,19 @@ describe('mentio directive', function() {
     beforeEach(module('superdesk.mocks'));
     beforeEach(module('superdesk.templates-cache'));
 
+    var deskList = {
+        desk1: {title: 'desk1'},
+        desk3: {title: 'desk3'}
+    };
+
+    var deskItems = {
+        _items: [{name: 'desk1'}, {name: 'desk3'}]
+    };
+
+    var userDesks = {
+        _items: [{'_id': 'desk1'}]
+    };
+
     beforeEach(module(function($provide) {
         $provide.service('api', function($q) {
             return function(resource) {
@@ -127,6 +140,17 @@ describe('mentio directive', function() {
                 };
             };
         });
+
+        $provide.service('desks', function($q) {
+            return {
+                deskLookup: deskList,
+                userDesks: userDesks,
+                desks: deskItems,
+                initialize: function() {
+                    return $q.when([]);
+                }
+            };
+        });
     }));
 
     it('can return sorted users', inject(function($rootScope, $compile) {
@@ -135,10 +159,15 @@ describe('mentio directive', function() {
         scope.$digest();
 
         var iscope = elem.scope();
-        iscope.searchUsers();
+        iscope.searchUsersAndDesks();
         $rootScope.$digest();
-        expect(iscope.users).toEqual([{_id: 3, username: 'fast'},
-            {_id: 2, username: 'foo'}, {_id: 1, username: 'moo'}]);
+        expect(iscope.users).toEqual(
+            [{type: 'desk', item: {name: 'desk1'}},
+            {type: 'desk', item: {name: 'desk3'}},
+            {type: 'user', item: {_id: 3, username: 'fast'}},
+            {type: 'user', item: {_id: 2, username: 'foo'}},
+            {type: 'user', item: {_id: 1, username: 'moo'}}]);
+            
     }));
 });
 

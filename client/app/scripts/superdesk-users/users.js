@@ -1601,13 +1601,14 @@
             };
         }])
 
-        .directive('sdUserMentio', ['userList', 'asset', function(userList, asset) {
+        .directive('sdUserMentio', ['userList', 'desks', 'asset', '$q', function(userList, desks, asset, $q) {
             return {
                 templateUrl: asset.templateUrl('superdesk-users/views/mentions.html'),
                 link: function(scope, elem) {
                     scope.users = [];
                     scope.fetching = false;
                     scope.prefix = '';
+                    var fetchedPages = [];
 
                     var container = elem.children()[0];
                     elem.children().bind('scroll', function() {
@@ -1617,35 +1618,71 @@
                         }
                     });
 
+
                     scope.fetchNext = function() {
-                        if (!scope.fetching) {
-                            var page = scope.users.length / 10 + 1;
+                        var page = scope.users.length / 10 + 1;
+                        fetchItems(scope.prefix, page);
+                    };
+
+                    function fetchItems(prefix, page) {
+                        console.log('fetcItems entered:', prefix, page);
+                        if (!scope.fetching && !_.contains(fetchedPages, page)) {
+                            var promises = [];
                             scope.fetching = true;
 
-                            userList.get(scope.prefix, page, 10)
-                            .then(function(result) {
-                                _.each(_.sortBy(result._items.slice((page - 1) * 10, page * 10), 'username'), function(item) {
-                                    scope.users.push(item);
+                            promises.push(getFilteredUsers(prefix, scope.users, page));
+                            promises.push(getFilteredDesks(scope.prefix, scope.users, page));
+
+                            $q.all(promises).then(function() {
+                                scope.users = _.sortBy(scope.users, function(item) {
+                                    return item.type === 'user' ? item.item.username.toLowerCase() : item.item.name.toLowerCase();
                                 });
+                                console.log('fetcItems sorted:', prefix, page);
 
                                 scope.fetching = false;
+                                fetchedPages.push(page);
                             });
                         }
-                    };
+                    }
+
+                    function getFilteredUsers(prefix, list, page) {
+                        return userList.get(prefix, page, 10).then(function(result) {
+                            var filteredUsers = result._items.slice((page - 1) * 10, page * 10);
+                            _.each(filteredUsers, function(user) {
+                                list.push({'type': 'user', 'item': user});
+                            });
+                        })
+                    }
+
+                    function getFilteredDesks(prefix, list, page) {
+                        return desks.initialize().then(function() {
+                            var filteredDesks = desks.desks._items;
+                            if (!!scope.prefix) {
+                                filteredDesks = _.filter(desks.desks._items, function(item) {
+                                    return _.startsWith(item.name.toLowerCase(), prefix.toLowerCase());
+                                });
+                            }
+
+                            if (!!page) {
+                                filteredDesks = filteredDesks.slice((page - 1) * 10, page * 10);
+                            }
+
+                            _.each(filteredDesks, function (item) {
+                                list.push({'type': 'desk', 'item': item});
+                            });
+                        });
+                    }
 
                     // filter user by given prefix
-                    scope.searchUsers = function(prefix) {
+                    scope.searchUsersAndDesks = function(prefix) {
                         scope.prefix = prefix;
-
-                        return userList.get(prefix, 1, 10)
-                        .then(function(result) {
-                            scope.users = _.sortBy(result._items, 'username');
-                        });
-
+                        scope.users = [];
+                        fetchedPages = [];
+                        fetchItems(scope.prefix, 1);
                     };
 
-                    scope.selectUser = function(user) {
-                        return '@' + user.username;
+                    scope.selectUser = function(item) {
+                        return  (item.type === 'user' ? '@' + item.item.username : '#' + item.item.name);
                     };
 
                     scope.$watchCollection(

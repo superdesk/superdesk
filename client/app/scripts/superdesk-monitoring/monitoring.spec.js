@@ -204,4 +204,29 @@ describe('monitoring', function() {
             expect(authoringWorkspace.edit).toHaveBeenCalled();
         }));
     });
+
+    describe('desk notification directive', function() {
+        beforeEach(module('templates'));
+
+        beforeEach(inject(function($templateCache) {
+            // change template not to require aggregate config but rather render single group
+            $templateCache.put('scripts/superdesk-monitoring/views/desk-notifications.html',
+                '<div id="group" sd-desk-notifications data-stage="stage-1"></div>');
+        }));
+
+        it('can initiate the desk notifications', 
+            inject(function($rootScope, $compile, $q, api, $timeout, desks, deskNotifications) {
+            var scope = $rootScope.$new();
+            desks.stageLookup = {'1': {'desk': 'desk-1'}}
+            deskNotifications
+            $compile('<div sd-desk-notifications data-stage="stage-1"></div>')(scope);
+            scope.$digest();
+
+            spyOn(api, 'query').and.returnValue($q.when({_items: []}));
+            spyOn(deskNotifications, 'getDeskNotifications').and.returnValue($q.when([]));
+            scope.$digest();
+            expect(deskNotifications.getDeskNotifications).toHaveBeenCalled();
+           
+        }));
+    })
 });
