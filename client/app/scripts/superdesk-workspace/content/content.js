@@ -73,12 +73,11 @@
         this.createItemFromContentType = function(contentType) {
             var item = {
                 type: TEXT_TYPE,
-                profile: contentType._id
+                profile: contentType._id,
+                version: 0
             };
 
-            if (desks.activeDeskId) {
-                item.task = {desk: desks.activeDeskId};
-            }
+            archiveService.addTaskToArticle(item);
 
             return save(item);
         };
