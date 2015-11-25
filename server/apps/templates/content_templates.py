@@ -11,10 +11,9 @@
 import re
 import datetime
 import superdesk
-from flask import current_app as app, request
+from flask import current_app as app
 from superdesk import Resource, Service, config
 from superdesk.resource import build_custom_hateoas
-from superdesk.metadata.utils import item_url
 from superdesk.utc import utcnow
 from superdesk.errors import SuperdeskApiError
 from superdesk.metadata.item import metadata_schema, ITEM_STATE, CONTENT_STATE
@@ -129,19 +128,36 @@ class ContentTemplatesService(Service):
 class ContentTemplatesApplyResource(Resource):
     endpoint_name = 'content_templates_apply'
     resource_title = endpoint_name
-    schema = item_schema()
+    schema = {
+        'template_name': {
+            'type': 'string',
+            'required': True
+        },
+        'item': {
+            'type': 'dict',
+            'required': True,
+            'schema': item_schema()
+        }
+    }
+
     resource_methods = ['POST']
     item_methods = []
     privileges = {'POST': ARCHIVE}
-    url = 'content_templates/<{0}:template_name>/apply'.format(item_url)
+    url = 'content_templates_apply'
 
 
 class ContentTemplatesApplyService(Service):
 
     def create(self, docs, **kwargs):
-        template_name = request.view_args['template_name']
+        doc = docs[0] if len(docs) > 0 else {}
+        template_name = doc.get('template_name')
+        item = doc.get('item') or {}
+
         if not template_name:
             SuperdeskApiError.badRequestError(message='Invalid Template Name')
+
+        if not item:
+            SuperdeskApiError.badRequestError(message='Invalid Item')
 
         pattern = '^{}$'.format(re.escape(template_name.strip()))
         query = {'template_name': re.compile(pattern, re.IGNORECASE)}
@@ -149,7 +165,8 @@ class ContentTemplatesApplyService(Service):
         if not template:
             SuperdeskApiError.badRequestError(message='Invalid Template')
 
-        render_content_template(docs[0], template)
+        render_content_template(item, template)
+        docs[0] = item
         build_custom_hateoas(CUSTOM_HATEOAS, docs[0])
         return [docs[0].get(config.ID_FIELD)]
 

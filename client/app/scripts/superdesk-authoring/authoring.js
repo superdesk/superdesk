@@ -910,8 +910,11 @@
                 if ($scope.action === 'kill') {
                     // kill template is applied on the item.
                     var fields = _.union(_.keys(CONTENT_FIELDS_DEFAULTS), ['_id', 'versioncreated']);
-                    var item = _.pick($scope.origItem, fields);
-                    api.save('content_templates_apply', {}, item, {_id: 'kill'}).then(function(result) {
+                    var item = {
+                        template_name: 'kill', item: _.pick($scope.origItem, fields)
+                    };
+
+                    api.save('content_templates_apply', {}, item, {}).then(function(result) {
                         item = _.pick(result, _.keys(CONTENT_FIELDS_DEFAULTS));
                         _.each(item, function(value, key) {
                             if (!_.isEmpty(value)) {

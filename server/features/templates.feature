@@ -71,7 +71,7 @@ Feature: Templates
         And we get "/archive"
         Then we get list with 1 items
 
-    @auth
+    @auth @test
     Scenario: Apply template to an item
         When we post to "content_templates"
         """
@@ -88,18 +88,20 @@ Feature: Templates
             }
         """
         Then we get new resource
-        When we post to "content_templates/kill/apply"
+        When we post to "content_templates_apply"
         """
             {
-              "headline": "Test", "_id": "123",
-              "body_html": "test", "slugline": "testing",
-              "abstract": "abstract",
-              "urgency": 5, "priority": 6,
-              "dateline": {
-                "text": "Prague, 9 May (SAP)"
-              },
-              "versioncreated": "2015-01-01T22:54:53+0000"
-
+                "template_name": "kill",
+                "item": {
+                    "headline": "Test", "_id": "123",
+                    "body_html": "test", "slugline": "testing",
+                    "abstract": "abstract",
+                    "urgency": 5, "priority": 6,
+                    "dateline": {
+                        "text": "Prague, 9 May (SAP)"
+                    },
+                    "versioncreated": "2015-01-01T22:54:53+0000"
+                }
             }
         """
         Then we get updated response
