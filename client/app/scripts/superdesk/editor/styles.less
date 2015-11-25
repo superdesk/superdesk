@@ -5,6 +5,9 @@
     &__container {
         position: relative;
         .text-editor {padding: 0;}
+        .embed-preview, .embed-editor {
+            margin: 20px 0px;
+        }
         .embed-editor {
             min-height: 200px;
         }
@@ -88,10 +91,16 @@
 .add-embed__body .preview {
     iframe {
         max-width: 100%;
-        height: auto;
     }
-    .noembed-instagram img {
+    img {
         max-width: 100%;
         height: auto;
+    }
+    .embed--link {
+        &__title {
+            font-size: 1.75em;
+            line-height: 1.25em;
+            margin-bottom: .50em;
+        }
     }
 }

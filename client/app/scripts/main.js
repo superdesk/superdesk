@@ -31,7 +31,7 @@ define('main', [
     return function bootstrap(config, apps) {
 
         apps.unshift(superdesk.name);
-        superdesk.constant('config', config);
+        angular.module('superdesk.config', []).constant('config', config);
         superdesk.constant('lodash', _);
 
         // setup default route for superdesk - set it here to avoid it being used in unit tests

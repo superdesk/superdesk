@@ -19,7 +19,6 @@ tests.push('superdesk/mocks');
 tests.push('superdesk/api/api');
 tests.push('superdesk/auth/auth');
 tests.push('superdesk/menu/menu');
-tests.push('superdesk/config/config');
 tests.push('superdesk/editor/editor');
 tests.push('superdesk/notify/notify');
 tests.push('superdesk/activity/activity');
