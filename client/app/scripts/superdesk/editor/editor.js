@@ -634,7 +634,7 @@ function SdTextEditorController(_) {
         },
         commitChanges: function() {
             var new_body = '';
-            if (vm.blocks.length > 1) {
+            if (vm.config.multiBlockEdition) {
                 vm.blocks.forEach(function(block) {
                     if (angular.isDefined(block.body) && block.body.trim() !== '') {
                         if (block.blockType === 'embed') {
@@ -904,11 +904,12 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
             templateUrl: 'scripts/superdesk/editor/views/editor.html',
             controllerAs: 'vm',
             controller: SdTextEditorController,
+            bindToController: true,
             link: function(scope, element, attr, controllers) {
                 var controller = controllers[0];
                 var ngModel = controllers[1];
                 $timeout(function() {
-                    if (scope.config.multiBlockEdition) {
+                    if (controller.config.multiBlockEdition) {
                         controller.initEditorWithMultipleBlock(ngModel);
                     } else {
                         controller.initEditorWithOneBlock(ngModel);

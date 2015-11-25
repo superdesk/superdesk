@@ -1,5 +1,5 @@
 <div ng-repeat="block in vm.blocks" class="block__container">
-    <div ng-if="config.multiBlockEdition" class="block__remove" ng-click="vm.removeBlock(block)">
+    <div ng-if="vm.config.multiBlockEdition" class="block__remove" ng-click="vm.removeBlock(block)">
         <i class="icon-close-small"></i>
     </div>
     <div sd-text-editor-block-embed
@@ -9,10 +9,10 @@
     </div>
     <div sd-text-editor-block-text="block"
          ng-if="block.blockType === 'text'"
-         type="type"
-         config="config"
-         language="language"
+         type="vm.type"
+         config="vm.config"
+         language="vm.language"
          ng-change="vm.commitChanges()"
          ng-model="block.body"></div>
-    <sd-add-embed ng-if="config.multiBlockEdition" class="block__add-embed"></sd-add-embed>
+    <sd-add-embed ng-if="vm.config.multiBlockEdition" class="block__add-embed"></sd-add-embed>
 </div>
