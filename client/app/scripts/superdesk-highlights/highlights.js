@@ -119,8 +119,10 @@
                 highlightsService.get(desks.getCurrentDeskId()).then(function(result) {
                     scope.highlights = result._items;
                     $timeout(function () {
-                        angular.element('.more-activity-menu.open .dropdown-noarrow')
-                                .find('button:not([disabled])')[0].focus();
+                        var highlightDropdown = angular.element('.more-activity-menu.open .dropdown-noarrow');
+                        if (highlightDropdown.find('button').length > 0) {
+                            highlightDropdown.find('button:not([disabled])')[0].focus();
+                        }
                     });
                 });
             }
