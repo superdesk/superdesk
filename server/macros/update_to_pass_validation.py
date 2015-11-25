@@ -12,6 +12,9 @@ from superdesk.locators.locators import find_cities
 import logging
 from apps.archive.common import format_dateline_to_locmmmddsrc
 from superdesk.utc import get_date
+import superdesk
+from superdesk.metadata.item import CONTENT_TYPE
+from apps.publish.content.common import ITEM_PUBLISH
 
 logger = logging.getLogger(__name__)
 
@@ -26,8 +29,15 @@ def update_to_pass_validation(item, **kwargs):
     :return:
     """
     try:
-        item['slugline'] = item['slugline'][:24] if len(item['slugline']) > 24 else item['slugline']
-        item['headline'] = item['headline'][:64] if len(item['headline']) > 64 else item['headline']
+        lookup = {'act': ITEM_PUBLISH, 'type': CONTENT_TYPE.TEXT}
+        validators = superdesk.get_resource_service('validators').get(req=None, lookup=lookup)
+        if validators.count():
+            max_slugline_len = validators[0]['schema']['slugline']['maxlength']
+            max_headline_len = validators[0]['schema']['headline']['maxlength']
+            item['slugline'] = item['slugline'][:max_slugline_len] \
+                if len(item['slugline']) > max_slugline_len else item['slugline']
+            item['headline'] = item['headline'][:max_headline_len] \
+                if len(item['headline']) > max_headline_len else item['headline']
         if 'dateline' not in item:
             cities = find_cities(country_code='AU', state_code='NSW')
             located = [c for c in cities if c['city'].lower() == 'sydney']
@@ -39,6 +49,7 @@ def update_to_pass_validation(item, **kwargs):
         return item
     except:
         logging.exception('Test update to pass validation macro exception')
+
 
 name = 'update to pass validation'
 label = 'Update to pass validation'
