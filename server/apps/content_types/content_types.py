@@ -19,8 +19,12 @@ class ContentTypesResource(superdesk.Resource):
         },
         'priority': {
             'type': 'integer',
-            'default': 0
-        }
+            'default': 0,
+        },
+        'enabled': {
+            'type': 'boolean',
+            'default': True,
+        },
     }
 
     item_url = 'regex("[\w,.:-]+")'

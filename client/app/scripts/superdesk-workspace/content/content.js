@@ -90,7 +90,8 @@
          */
         this.getTypes = function() {
             var self = this;
-            return api.query('content_types').then(function(result) {
+            var where = {enabled: true};
+            return api.query('content_types', {where: where}).then(function(result) {
                 self.types = result._items;
                 return self.types;
             });
