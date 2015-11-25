@@ -274,9 +274,10 @@ Feature: Cropping the Image Articles
       When we post to "/picture_crop"
       """
       {"item": {"renditions": {"original": {"mimetype": "image/jpeg", "href": "#original.href#", "media": "#original.media#"}}},
-       "crop": {"CropLeft": 0, "CropRight": 10, "CropTop": 0, "CropBottom": 10}}
+       "crop": {"CropLeft": 0, "CropRight": 10, "CropTop": 0, "CropBottom": 10, "width": 5, "height": 10}
+      }
       """
       Then we get new resource
       """
-      {"width": 10, "height": 10, "href": "__any_value__"}
+      {"width": 5, "height": 5, "href": "__any_value__"}
       """
