@@ -75,12 +75,19 @@ describe('superdesk.workspace.content', function() {
             expect(success).toHaveBeenCalledWith(type);
         }));
 
-        it('can create item using content type', inject(function(api, content, desks) {
+        it('can create item using content type', inject(function(api, content, desks, session) {
             var type = {_id: 'test'};
             var success = jasmine.createSpy('ok');
             desks.activeDeskId = 'sports';
+            desks.userDesks = {_items: [{_id: 'sports', working_stage: 'inbox'}]};
+            session.identity = {_id: 'foo'};
             content.createItemFromContentType(type).then(success);
-            expect(api.save).toHaveBeenCalledWith('archive', {profile: type._id, type: 'text', task: {desk: 'sports'}});
+            expect(api.save).toHaveBeenCalledWith('archive', {
+                profile: type._id,
+                type: 'text',
+                version: 0,
+                task: {desk: 'sports', stage: 'inbox', user: 'foo'}
+            });
         }));
     });
 });

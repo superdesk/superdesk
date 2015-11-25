@@ -10,10 +10,17 @@
 
 import logging
 import superdesk
-from cerberus import Validator
+import cerberus
 from superdesk.metadata.item import ITEM_TYPE
 
 logger = logging.getLogger(__name__)
+
+
+class SchemaValidator(cerberus.Validator):
+
+    def _validate_type_picture(self, field, value):
+        """Allow type picture in schema."""
+        pass
 
 
 class ValidateResource(superdesk.Resource):
@@ -56,7 +63,7 @@ class ValidateService(superdesk.Service):
         use_headline = kwargs and 'headline' in kwargs
         validators = self._get_validators(doc)
         for validator in validators:
-            v = Validator()
+            v = SchemaValidator()
             v.allow_unknown = True
             v.validate(doc['validate'], validator['schema'])
             error_list = v.errors
