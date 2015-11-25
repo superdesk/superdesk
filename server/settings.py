@@ -233,6 +233,7 @@ INSTALLED_APPS.extend([
     'apps.pa_img',
     'apps.keywords',
     'apps.content_types',
+    'apps.picture_crop',
 ])
 
 RESOURCE_METHODS = ['GET', 'POST']

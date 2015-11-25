@@ -2511,10 +2511,7 @@
                 elem.on('drop', function(event) {
                     event.preventDefault();
                     var item = getItem(event, PICTURE_TYPE);
-                    scope.$apply(function() {
-                        var data = updateItemAssociation(item);
-                        scope.onchange({item: scope.item, data: data});
-                    });
+                    scope.edit(item);
                 });
 
                 function updateItemAssociation(updated) {
@@ -2535,25 +2532,25 @@
                     scope.related = related;
                 });
 
-                renditions.get().then(function() {
-                    scope.edit = function() {
-                        superdesk.intent('edit', 'crop', {item: scope.related, renditions: renditions.renditions})
-                            .then(function(crops) {
-                                var renditions = angular.extend({}, scope.related.renditions || {});
-                                angular.forEach(crops, function(crop, renditionName) {
-                                    renditions[renditionName] = angular.extend(
-                                        {},
-                                        renditions[renditionName] || {},
-                                        crop
-                                    );
-                                });
+                renditions.get();
 
-                                var updated = angular.extend({}, scope.related, {renditions: renditions});
-                                var data = updateItemAssociation(updated);
-                                scope.onchange({item: scope.item, data: data});
+                scope.edit = function(item) {
+                    superdesk.intent('edit', 'crop', {item: item, renditions: renditions.renditions})
+                        .then(function(crops) {
+                            var renditions = angular.extend({}, item.renditions || {});
+                            angular.forEach(crops, function(crop, renditionName) {
+                                renditions[renditionName] = angular.extend(
+                                    {},
+                                    renditions[renditionName] || {},
+                                    crop
+                                );
                             });
-                    };
-                });
+
+                            var updated = angular.extend({}, item, {renditions: renditions});
+                            var data = updateItemAssociation(updated);
+                            scope.onchange({item: scope.item, data: data});
+                        });
+                };
             }
         };
     }

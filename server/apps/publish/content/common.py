@@ -45,6 +45,8 @@ from apps.publish.published_item import LAST_PUBLISHED_VERSION
 from superdesk.media.media_operations import crop_image
 from superdesk.media.crop import CropService
 from superdesk.celery_app import celery
+from apps.picture_crop import get_file
+
 
 logger = logging.getLogger(__name__)
 
@@ -904,13 +906,6 @@ def publish_images(images, original, item):
         ok, output = crop_image(orig_file, image['file_name'], image['crop'], image['spec'])
         if ok:
             app.media.put(output, image['file_name'], content_type, _id=image['media'])
-
-
-def get_file(rendition, item):
-    if item.get('fetch_endpoint'):
-        return get_resource_service(item['fetch_endpoint']).fetch_rendition(rendition)
-    else:
-        return app.media.fetch_rendition(rendition)
 
 
 superdesk.workflow_state('published')
