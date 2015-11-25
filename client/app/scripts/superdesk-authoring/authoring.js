@@ -908,32 +908,18 @@
                 $scope.origItem.sign_off = $scope.origItem.sign_off || $scope.origItem.version_creator;
 
                 if ($scope.action === 'kill') {
-                    api('content_templates').getById('kill').then(function(template) {
-                        template = _.pick(template, _.keys(CONTENT_FIELDS_DEFAULTS));
-                        var body = template.body_html;
-                        if (body) {
-                            // get the placeholders out of the template
-                            var placeholders = _.words(body, /\${([\s\S]+?)}/g);
-                            placeholders = _.map(placeholders, function(placeholder) {
-                                return _.trim(placeholder, '${} ');
-                            });
-
-                            var compiled = _.template(body);
-                            var args = {};
-
-                            _.each(placeholders, function(placeholder) {
-                                args[placeholder] = (placeholder !== 'dateline') ? $scope.origItem[placeholder] :
-                                    $scope.origItem[placeholder].text.toUpperCase();
-                            });
-                            $scope.origItem.body_html = compiled(args);
-                        }
-                        _.each(template, function(value, key) {
+                    // kill template is applied on the item.
+                    var fields = _.union(_.keys(CONTENT_FIELDS_DEFAULTS), ['_id', 'versioncreated']);
+                    var item = _.pick($scope.origItem, fields);
+                    api.save('content_templates_apply', {}, item, {_id: 'kill'}).then(function(result) {
+                        item = _.pick(result, _.keys(CONTENT_FIELDS_DEFAULTS));
+                        _.each(item, function(value, key) {
                             if (!_.isEmpty(value)) {
-                                if (key !== 'body_html') {
-                                    $scope.origItem[key] = value;
-                                }
+                                $scope.origItem[key] = value;
                             }
                         });
+                    }, function(err) {
+                        notify.error(gettext('Failed to apply kill template to the item.'));
                     });
                 }
 
@@ -2317,6 +2303,14 @@
                 type: 'http',
                 backend: {
                     rel: 'move'
+                }
+            });
+        }])
+        .config(['apiProvider', function(apiProvider) {
+            apiProvider.api('content_templates_apply', {
+                type: 'http',
+                backend: {
+                    rel: 'content_templates_apply'
                 }
             });
         }]);

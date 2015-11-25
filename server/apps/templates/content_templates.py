@@ -20,7 +20,7 @@ from superdesk.errors import SuperdeskApiError
 from superdesk.metadata.item import metadata_schema, ITEM_STATE, CONTENT_STATE
 from superdesk.celery_app import celery
 from apps.rules.routing_rules import Weekdays, set_time
-from apps.archive.common import ARCHIVE, CUSTOM_HATEOAS
+from apps.archive.common import ARCHIVE, CUSTOM_HATEOAS, item_schema
 from flask import render_template_string
 
 
@@ -129,8 +129,7 @@ class ContentTemplatesService(Service):
 class ContentTemplatesApplyResource(Resource):
     endpoint_name = 'content_templates_apply'
     resource_title = endpoint_name
-    schema = {}
-    schema.update(metadata_schema)
+    schema = item_schema()
     resource_methods = ['POST']
     item_methods = []
     privileges = {'POST': ARCHIVE}
