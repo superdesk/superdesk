@@ -25,11 +25,8 @@ def format_datetime_filter(date_or_string, timezone_string=None, date_format=Non
     """
     try:
         date_time = get_date(date_or_string)
-        if not date_time:
-            return ''
 
         timezone_string = timezone_string if timezone_string else config.DEFAULT_TIMEZONE
-
         tz = timezone(timezone_string)
         if tz:
             date_time = date_time.astimezone(tz)

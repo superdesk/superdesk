@@ -62,7 +62,7 @@ class RenderTemplateTestCase(SuperdeskTestCase):
             'more_coming': False, 'urgency': 1, 'priority': 3,
             'dateline': {},
             'anpa_take_key': 'this is test',
-            'place': []
+            'place': ['Australia']
         }
 
         item = {
@@ -86,4 +86,4 @@ class RenderTemplateTestCase(SuperdeskTestCase):
         self.assertEqual(item['more_coming'], False)
         self.assertEqual(item['body_html'], 'This article has slugline: Testing and dateline: '
                                             'hello world at 02 Jun 2015 08:53 AEST')
-        self.assertListEqual(item['place'], ['NSW'])
+        self.assertListEqual(item['place'], ['Australia'])

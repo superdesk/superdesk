@@ -70,3 +70,52 @@ Feature: Templates
         And we run create content task
         And we get "/archive"
         Then we get list with 1 items
+
+    @auth
+    Scenario: Apply template to an item
+        When we post to "content_templates"
+        """
+
+            {
+            "body_html": "<p>Please kill story slugged {{ item.slugline }} ex {{ item.dateline['text'] }} at {{item.versioncreated | format_datetime(date_format='%d %b %Y %H:%S %Z')}}.<\/p>",
+            "type": "text",
+            "abstract": "This article has been removed",
+            "headline": "Kill\/Takedown notice ~~~ Kill\/Takedown notice",
+            "urgency": 1, "priority": 1,
+            "template_name": "kill",
+            "template_type": "kill",
+            "anpa_take_key": "KILL\/TAKEDOWN"
+            }
+        """
+        Then we get new resource
+        When we post to "content_templates/kill/apply"
+        """
+            {
+              "headline": "Test", "_id": "123",
+              "body_html": "test", "slugline": "testing",
+              "abstract": "abstract",
+              "urgency": 5, "priority": 6,
+              "dateline": {
+                "text": "Prague, 9 May (SAP)"
+              },
+              "versioncreated": "2015-01-01T22:54:53+0000"
+
+            }
+        """
+        Then we get updated response
+        """
+        {
+          "_id": "123",
+          "headline": "Kill\/Takedown notice ~~~ Kill\/Takedown notice",
+          "body_html": "<p>Please kill story slugged testing ex Prague, 9 May (SAP) at 01 Jan 2015 23:53 CET.<\/p>",
+          "anpa_take_key": "KILL\/TAKEDOWN",
+          "slugline": "testing",
+          "urgency": 1, "priority": 1,
+          "abstract": "This article has been removed",
+          "dateline": {
+            "text": "Prague, 9 May (SAP)"
+          },
+          "versioncreated": "2015-01-01T22:54:53+0000"
+
+        }
+        """
