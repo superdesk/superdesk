@@ -49,6 +49,25 @@ describe('desks service', function() {
         })
     );
 
+    it('can get last destination desk and stage',
+        inject(function(desks, session, api, preferencesService, $q, $rootScope) {
+            var destination = {'destination:active': ['desk:123', 'stage:456']};
+
+            spyOn(preferencesService, 'get').and.returnValue($q.when(destination));
+            spyOn(desks, 'fetchLastDestination').and.returnValue($q.when({desk: '123', stage: '456'}));
+
+            var lastDestination;
+            desks.fetchLastDestination().then(function(value) {
+                lastDestination = value;
+            });
+
+            $rootScope.$digest();
+
+            expect(lastDestination.desk).toEqual('123');
+            expect(lastDestination.stage).toEqual('456');
+        })
+    );
+
     it('can save desk changes', inject(function(desks, api, $q) {
         spyOn(api, 'save').and.returnValue($q.when({}));
         desks.save({}, {});

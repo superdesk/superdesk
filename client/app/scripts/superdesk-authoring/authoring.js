@@ -1599,9 +1599,9 @@
         };
     }
     SendItem.$inject = ['$q', 'api', 'desks', 'notify', 'authoringWorkspace', 'superdeskFlags',
-        '$location', 'macros', '$rootScope', 'authoring', 'send', 'spellcheck', 'confirm', 'archiveService'];
+        '$location', 'macros', '$rootScope', 'authoring', 'send', 'spellcheck', 'confirm', 'archiveService', 'preferencesService'];
     function SendItem($q, api, desks, notify, authoringWorkspace, superdeskFlags,
-        $location, macros, $rootScope, authoring, send, spellcheck, confirm, archiveService) {
+        $location, macros, $rootScope, authoring, send, spellcheck, confirm, archiveService, preferencesService) {
         return {
             scope: {
                 item: '=',
@@ -1623,6 +1623,7 @@
                 scope.selectedStage = null;
                 scope.selectedMacro = null;
                 scope.beforeSend = scope._beforeSend || $q.when;
+                scope.destination_last = null;
 
                 scope.$watch('item', activateItem);
                 scope.$watch(send.getConfig, activateConfig);
@@ -1653,6 +1654,17 @@
                             .then(fetchMacros)
                             .then(initializeItemActions);
                     }
+                }
+
+                function getLastDestination() {
+                    return desks.fetchLastDestination().then(function(prefs) {
+                        if (prefs) {
+                            scope.destination_last = {
+                                desk: prefs.desk,
+                                stage: prefs.stage
+                            };
+                        }
+                    });
                 }
 
                 scope.close = function() {
@@ -1890,6 +1902,16 @@
                         })
                         .then(function(value) {
                             notify.success(gettext('Item sent.'));
+
+                            // Remember last destination desk and stage
+                            if (scope.destination_last) {
+                                if (scope.destination_last.desk !== deskId && scope.destination_last.stage !== stageId) {
+                                    updateLastDestination(deskId, stageId);
+                                }
+                            } else {
+                                updateLastDestination(deskId, stageId);
+                            }
+
                             if (sendAndContinue) {
                                 return deferred.resolve();
                             } else {
@@ -1915,6 +1937,13 @@
                     if (sendAndContinue) {
                         return deferred.promise;
                     }
+                }
+
+                function updateLastDestination(deskId, stageId) {
+                    var PREFERENCE_KEY = 'destination:active';
+                    var updates = {};
+                    updates[PREFERENCE_KEY] = {desk: deskId, stage: stageId};
+                    preferencesService.update(updates, PREFERENCE_KEY);
                 }
 
                 function sendContent(deskId, stageId, macro, open) {
@@ -1967,20 +1996,29 @@
                     .then(function() {
                         scope.desks = desks.desks;
                     });
-                    if (scope.mode === 'ingest') {
-                        p = p.then(function() {
-                            scope.selectDesk(desks.getCurrentDesk());
-                        });
-                    } else {
-                        p = p.then(function() {
-                            var itemDesk = desks.getItemDesk(scope.item);
-                            if (itemDesk) {
-                                scope.selectDesk(itemDesk);
+
+                    getLastDestination().then(function() {
+                        if (scope.destination_last) {
+                            p = p.then(function() {
+                                scope.selectDesk(desks.deskLookup[scope.destination_last.desk]);
+                            });
+                        } else {
+                            if (scope.mode === 'ingest') {
+                                p = p.then(function() {
+                                    scope.selectDesk(desks.getCurrentDesk());
+                                });
                             } else {
-                                scope.selectDesk(desks.getCurrentDesk());
+                                p = p.then(function() {
+                                    var itemDesk = desks.getItemDesk(scope.item);
+                                    if (itemDesk) {
+                                        scope.selectDesk(itemDesk);
+                                    } else {
+                                        scope.selectDesk(desks.getCurrentDesk());
+                                    }
+                                });
                             }
-                        });
-                    }
+                        }
+                    });
 
                     return p;
 
@@ -1992,8 +2030,12 @@
 
                         var stage = null;
 
-                        if (scope.item.task && scope.item.task.stage) {
-                            stage = _.find(scope.stages, {_id: scope.item.task.stage});
+                        if (scope.destination_last) {
+                            stage = _.find(scope.stages, {_id: scope.destination_last.stage});
+                        } else {
+                            if (scope.item.task && scope.item.task.stage) {
+                                stage = _.find(scope.stages, {_id: scope.item.task.stage});
+                            }
                         }
 
                         if (!stage) {
