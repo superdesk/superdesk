@@ -96,7 +96,7 @@ define([
 
                 };
 
-                scope.$watch('item', initializeActivities);
+                scope.$watch('item', initializeActivities, true);
             }
         };
     }];
