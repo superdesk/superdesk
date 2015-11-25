@@ -163,7 +163,7 @@
 				margin: 0 5px 5px 0;
 				float: left;
               	.transition(all .5s);
-				i {
+				i:not(.alt) {
 					position: absolute;
 					display: none;
 					right: 5px;
@@ -179,7 +179,7 @@
 					}
 				}
 				&:hover {
-					> i {
+					> i:not(.alt) {
 						display: inline-block;
 					}
 				}

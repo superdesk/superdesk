@@ -6,5 +6,9 @@
 <div class="terms">
     <ul>
         <li ng-class="{selected: isSelected(t)}" ng-repeat="t in tags track by t" ng-click="toggle(t)">{{ t }}</li>
+        <li tooltip="{{:: 'Refresh suggestions' | translate}}" tooltip-placement="left" ng-click="refresh()">
+            <span ng-if="refreshing" translate>Refreshing...</span>
+            <i ng-if="!refreshing" class="alt icon-refresh"></i>
+        </li>
     </ul>
 </div>

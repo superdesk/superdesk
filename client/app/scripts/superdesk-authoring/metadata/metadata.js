@@ -212,16 +212,11 @@ function MetadataTagsDirective(api) {
         templateUrl: 'scripts/superdesk-authoring/metadata/views/metadata-tags.html',
         link: function(scope, element) {
             scope.adding = false;
+            scope.refreshing = false;
             scope.newTag = null;
             scope.tags = null;
             scope.extractedTags = null;
             scope.item[scope.field] = scope.item[scope.field] || [];
-
-            api.save('keywords', {text: scope.item[scope.sourceField]})
-            .then(function(result) {
-                scope.extractedTags = _.pluck(result.keywords, 'text');
-                scope.tags = _.uniq(scope.extractedTags.concat(scope.item[scope.field]));
-            });
 
             var add = function(tag) {
                 scope.tags.push(tag);
@@ -257,6 +252,18 @@ function MetadataTagsDirective(api) {
                     scope.change({item: scope.item});
                 }
             };
+
+            scope.refresh = function() {
+                scope.refreshing = true;
+                api.save('keywords', {text: scope.item[scope.sourceField]})
+                .then(function(result) {
+                    scope.extractedTags = _.pluck(result.keywords, 'text');
+                    scope.tags = _.uniq(scope.extractedTags.concat(scope.item[scope.field]));
+                    scope.refreshing = false;
+                });
+            };
+
+            scope.refresh();
         }
     };
 };
