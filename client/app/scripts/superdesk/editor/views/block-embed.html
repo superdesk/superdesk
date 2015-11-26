@@ -2,7 +2,7 @@
     <textarea ng-model="vm.embedCode" class="editor--embed"></textarea>
     <div class="editor--caption">
         <div translate>Caption</div>
-        <input type="text" ng-model="vm.caption"/>
+        <div ng-model="vm.caption" contenteditable="true"></div>
     </div>
     <a class="btn btn-default btn-small" ng-click="vm.cancel(); vm.toggleEdition()" translate>Cancel</a>
     <a class="btn btn-default btn-small" ng-click="vm.save(); vm.toggleEdition()" translate>Save</a>
