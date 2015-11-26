@@ -13,6 +13,7 @@ import datetime
 import superdesk
 from flask import current_app as app
 from superdesk import Resource, Service, config
+from superdesk.utils import SuperdeskBaseEnum
 from superdesk.resource import build_custom_hateoas
 from superdesk.utc import utcnow
 from superdesk.errors import SuperdeskApiError
@@ -28,6 +29,13 @@ TEMPLATE_FIELDS = {'template_name', 'template_type', 'schedule',
                    'last_run', 'next_run', 'template_desk', 'template_stage',
                    config.ID_FIELD, config.LAST_UPDATED, config.DATE_CREATED,
                    config.ETAG, 'task'}
+KILL_TEMPLATE_NOT_REQUIRED_FIELDS = ['schedule', 'dateline', 'template_desk', 'template_stage']
+
+
+class TemplateType(SuperdeskBaseEnum):
+    KILL = 'kill'
+    CREATE = 'create'
+    HIGHLIGHTS = 'highlights'
 
 
 def get_next_run(schedule, now=None):
@@ -72,8 +80,8 @@ class ContentTemplatesResource(Resource):
         'template_type': {
             'type': 'string',
             'required': True,
-            'allowed': ['create', 'kill', 'highlights'],
-            'default': 'create',
+            'allowed': TemplateType.values(),
+            'default': TemplateType.CREATE.value,
         },
         'template_desk': Resource.rel('desks', embeddable=False, nullable=True),
         'template_stage': Resource.rel('stages', embeddable=False, nullable=True),
@@ -100,31 +108,36 @@ class ContentTemplatesResource(Resource):
 
 
 class ContentTemplatesService(Service):
+
     def on_create(self, docs):
         for doc in docs:
             doc['template_name'] = doc['template_name'].lower().strip()
-            self.validate_template_name(doc['template_name'])
             if doc.get('schedule'):
                 doc['next_run'] = get_next_run(doc.get('schedule'))
 
     def on_update(self, updates, original):
-        if 'template_name' in updates:
-            updates['template_name'] = updates['template_name'].lower().strip()
-            self.validate_template_name(updates['template_name'])
+        if updates.get('template_type') and updates.get('template_type') != original.get('template_type') and \
+           updates.get('template_type') == TemplateType.KILL.value:
+            for key in KILL_TEMPLATE_NOT_REQUIRED_FIELDS:
+                updates[key] = None
+
         if updates.get('schedule'):
             updates['next_run'] = get_next_run(updates.get('schedule'))
 
-    def validate_template_name(self, doc_template_name):
-        if self.get_template_by_name(doc_template_name):
-            msg = 'Template name must be unique'
-            raise SuperdeskApiError.preconditionFailedError(message=msg, payload=msg)
-
     def get_scheduled_templates(self, now):
+        """
+        Get the template by schedule
+        :param datetime now:
+        :return MongoCursor:
+        """
         query = {'next_run': {'$lte': now}, 'schedule.is_active': True}
         return self.find(query)
 
     def get_template_by_name(self, template_name):
         """
+        Get the template by name
+        :param str template_name: template name
+        :return dict: template
         """
         query = {'template_name': re.compile('^{}$'.format(template_name), re.IGNORECASE)}
         return self.find_one(req=None, **query)

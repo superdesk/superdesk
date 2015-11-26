@@ -11,6 +11,9 @@
 (function() {
     'use strict';
 
+    var KILL_TEMPLATE_IGNORE_FIELDS = ['dateline', 'template_desk', 'template_stage',
+        'schedule', 'next_run', 'last_run'];
+
     TemplatesSettingsController.$inject = ['$scope'];
     function TemplatesSettingsController($scope) {
 
@@ -196,7 +199,13 @@
                 $scope.save = function() {
                     delete $scope.template._datelinedate;
                     delete $scope.template.hasCrops;
-                    api.content_templates.save($scope.origTemplate, $scope.template)
+                    var template = $scope.template;
+                    // certain field are not required for kill template
+                    if (template && template.template_type === 'kill') {
+                        template = _.omit($scope.template, KILL_TEMPLATE_IGNORE_FIELDS);
+                    }
+
+                    api.content_templates.save($scope.origTemplate, template)
                         .then(
                             function() {
                                 notify.success(gettext('Template saved.'));
@@ -287,6 +296,7 @@
                 template_type: vm.type,
                 template_desk: vm.desk
             }, _.pick(item, templates.TEMPLATE_METADATA));
+
             return api.save('content_templates', template).then(function(data) {
                 vm._issues = null;
                 return data;

@@ -69,7 +69,7 @@
               ng-options="type._id as type.label for type in types"></select>
         </div>
 
-        <div class="field">
+        <div class="field" ng-if="template.template_type !== 'kill'">
           <label for="template-desk" translate>Desk</label>
           <div class="control">
             <select id="template-desk"
@@ -81,7 +81,7 @@
           </div>
         </div>
 
-        <div class="field" ng-if="template.template_desk && stages">
+        <div class="field" ng-if="template.template_desk && stages && template.template_type !== 'kill'">
           <label for="template-stage" translate>Stage</label>
           <div class="control">
             <select id="template-stage"
@@ -91,25 +91,25 @@
           </div>
         </div>
 
-        <div class="field">
+        <div class="field" ng-if="template.template_type !== 'kill'">
           <label for="schedule-toggle" translate>Automatically create item</label>
           <div class="control">
             <span sd-switch ng-model="template.schedule.is_active"></span>
           </div>
         </div>
 
-        <div class="field" ng-if="template.schedule.is_active">
+        <div class="field" ng-if="template.schedule.is_active && template.template_type !== 'kill'">
           <label translate>On</label>
           <div class="day-filter-box clearfix" sd-weekday-picker data-model="template.schedule.day_of_week"></div>
         </div>
 
-        <div class="field" ng-if="template.schedule.is_active">
+        <div class="field" ng-if="template.schedule.is_active && template.template_type !== 'kill'">
           <label translate>At</label>
           <span sd-timepicker-alt data-model="template.schedule.create_at"></span>
         </div>
 
       </div>
-      <div class="fieldset" sd-article-edit></div>
+      <div class="fieldset article-edit" sd-article-edit></div>
     </div>
     </form>
   </div>
