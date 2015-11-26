@@ -759,8 +759,8 @@
                     BUFFER: 8
                 },
                 mgrid: {
-                    ITEM_HEIGHT: 239,
-                    ITEM_WIDTH: 190,
+                    ITEM_HEIGHT: 249,
+                    ITEM_WIDTH: 199,
                     ITEMS_COUNT: 27,
                     ITEMS_ROW: 9,
                     BUFFER: 18
@@ -919,7 +919,8 @@
                         var top, start, from, itemsCount, to, padding;
 
                         if (scope.view === 'mgrid') {
-                            itemParameters[scope.view].ITEMS_ROW = Math.floor(scrollElem.width() / itemParameters[scope.view].ITEM_WIDTH);
+                            var width = scrollElem.width() - 52;
+                            itemParameters[scope.view].ITEMS_ROW = Math.floor(width / itemParameters[scope.view].ITEM_WIDTH);
                             itemParameters[scope.view].BUFFER = itemParameters[scope.view].ITEMS_ROW * 3;
                         }
 
