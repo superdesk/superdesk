@@ -134,6 +134,8 @@ class PreferencesResource(Resource):
         'place': []
     })
 
+    superdesk.register_default_user_preference('destination:active', {})
+
     superdesk.register_default_session_preference('scratchpad:items', [])
     superdesk.register_default_session_preference('desk:last_worked', '')
     superdesk.register_default_session_preference('desk:items', [])

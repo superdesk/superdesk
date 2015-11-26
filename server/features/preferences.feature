@@ -258,3 +258,17 @@ Feature: User preferences
       """
       {"username": "test_user", "session_preferences": {}}
       """
+
+    @auth
+    Scenario: Update user preference setting active destination
+        Given we have sessions "/sessions"
+        When we get "/preferences/#SESSION_ID#"
+        When we patch "/preferences/#SESSION_ID#"
+        """
+        {"user_preferences": {"destination:active": {"desk_id":"123", "stage_id":"456"}}}
+        """
+
+        Then we get existing resource
+        """
+        {"user_preferences": {"destination:active": {"desk_id":"123", "stage_id":"456"}}}
+        """
