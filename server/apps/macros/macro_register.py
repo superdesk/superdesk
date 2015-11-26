@@ -44,6 +44,9 @@ def register_macros():
                      'callback' in dir(sys.modules[m]) and
                      not m.endswith('_test')
                      and not m.startswith('__')]
+    # DO NOT REMOVE: This is a hack introduced long time back to solve the problem
+    # where macros were not getting loaded for celery jobs.
+    print(macro_modules)
 
     for macro_module in macro_modules:
         register(name=macro_module.name,
