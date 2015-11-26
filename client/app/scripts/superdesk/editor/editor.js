@@ -1279,7 +1279,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                 }
             }
         };
-    }]).run(['embedService', 'embedlyService', '$q', function(embedService, embedlyService, $q) {
+    }]).run(['embedService', 'embedlyService', '$q', '$http', function(embedService, embedlyService, $q, $http) {
             // Tweets embed code are not provided by Embedly, we need to use this special handler
             embedService.registerHandler({
                 name: 'Twitter',
@@ -1334,6 +1334,31 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                                 ].join('');
                             }
                             deferred.resolve(data);
+                        },
+                        function errorCallback(error) {
+                            deferred.reject(error.error_message || error.data.error_message);
+                        }
+                    );
+                    return deferred.promise;
+                }
+            });
+            embedService.registerHandler({
+                name: 'Instagram',
+                patterns: [
+                    '^((http:\/\/(instagr\.am\/p\/.*|instagram\.com\/p\/.*|www\.instagram\.com\/p\/.*))|(https:\/\/(www\.instagram\.com\/p\/.*)))$'
+                ],
+                embed: function(url) {
+                    var deferred = $q.defer();
+                    embedlyService.embed(url).then(
+                        function successCallback(response) {
+                            var data = response.data;
+                            if (data.provider_name === 'Instagram') {
+                                $http.jsonp('http://instagram.com/publicapi/oembed/?callback=JSON_CALLBACK&url=' + url)
+                                .then(function(result) {
+                                    data.html = result.data.html;
+                                    deferred.resolve(data);
+                                });
+                            }
                         },
                         function errorCallback(error) {
                             deferred.reject(error.error_message || error.data.error_message);
