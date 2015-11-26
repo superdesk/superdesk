@@ -1,4 +1,4 @@
 <figure class="media" ng-if="item.renditions[rendition]">
-	<small ng-if="item.renditions[rendition].href" title="{{ item.headline }}">{{item.headline | limitTo: 90}}</small> 
+	<small ng-if="item.renditions[rendition].href" title="{{ :: item.headline }}">{{ :: item.headline | limitTo: 90}}</small> 
 	<span ng-if="item.renditions[rendition].href" sd-item-container data-item="item" class="container"></span>
 </figure>

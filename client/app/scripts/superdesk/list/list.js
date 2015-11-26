@@ -124,7 +124,7 @@
 
     mod.directive('sdListItem', ListItemDirectiveFactory);
 
-    mod.directive('sdUpdown', ['$location', 'keyboardManager', '$anchorScroll', function($location, keyboardManager, $anchorScroll) {
+    mod.directive('sdUpdowns', ['$location', 'keyboardManager', '$anchorScroll', function($location, keyboardManager, $anchorScroll) {
         return {
             transclude: true,
             template: '<div ng-transclude></div>',

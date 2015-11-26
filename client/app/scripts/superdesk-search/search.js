@@ -821,7 +821,9 @@
          * Item list with sidebar preview
          */
         .directive('sdSearchResults', ['$location', 'preferencesService', 'packages', 'asset', '$timeout', 'api', 'search', 'session',
-            function($location, preferencesService, packages, asset, $timeout, api, search, session) {
+        'moment', 'gettext', 'superdesk', 'workflowService', 'archiveService', 'activityService',
+        function($location, preferencesService, packages, asset, $timeout, api, search, session,
+        moment, gettext, superdesk, workflowService, archiveService, activityService) {
             var update = {
                 'archive:view': {
                     'allowed': [
@@ -865,7 +867,6 @@
 
                     var updateTimeout,
                         criteria = search.query($location.search()).getCriteria(true),
-                        list = elem[0].getElementsByClassName('list-view')[0],
                         scrollElem = elem.find('.content'),
                         oldQuery = _.omit($location.search(), '_id');
 
@@ -897,8 +898,12 @@
 
                     scope.$watch('view', function(newValue, oldValue) {
                         if (newValue !== oldValue) {
-                            scrollElem.scrollTop(0);
-                            render();
+                            var items = scope.items;
+                            if (newValue === 'mgrid') {
+                                listComponent.setItems(items);
+                            } else {
+                                listComponent.setItems([]);
+                            }
                         }
                     });
 
@@ -912,9 +917,7 @@
                         return _.omit($location.search(), '_id');
                     }, function(newValue, oldValue) {
                         if (newValue !== oldValue) {
-                            queryItems().then(function () {
-                                scrollElem.scrollTop(0);
-                            });
+                            queryItems();
                         }
                     }, true);
 
@@ -922,9 +925,41 @@
                      * Function for creating small delay,
                      * before activating render function
                      */
-                    function handleScroll() {
+                    function handleScroll($event) {
+                        if (scope.rendering) {
+                            $event.preventDefault();
+                            return;
+                        }
+
                         $timeout.cancel(updateTimeout);
-                        updateTimeout = $timeout(render, 100, false);
+                        updateTimeout = $timeout(renderIfNeeded, 100, false);
+                    }
+
+                    scope.rendering = false;
+                    var list = document.getElementById('content-list');
+
+                    /**
+                     * Trigger render in case user scrolls to the very end of list
+                     */
+                    function renderIfNeeded() {
+                        if (!scope.items) {
+                            return; // automatic scroll after removing items
+                        }
+
+                        if (isListEnd(list) && !scope.rendering) {
+                            scope.rendering = true;
+                            render(null, true);
+                        }
+                    }
+
+                    /**
+                     * Check if we reached end of the list elem
+                     *
+                     * @param {Element} list
+                     * @return {Boolean}
+                     */
+                    function isListEnd(list) {
+                        return list.scrollTop + list.offsetHeight + 50 >= list.scrollHeight;
                     }
 
                     /*
@@ -932,14 +967,18 @@
                      */
                     function queryItems() {
                         criteria = search.query($location.search()).getCriteria(true);
-                        criteria.source.size = 0;
+                        criteria.source.size = 50;
+                        criteria.source.from = 0;
                         scope.total = null;
+                        scope.items = null;
                         if (!scope.previewingBroadcast) {
                             scope.preview(null);
                         }
                         return api.query(getProvider(criteria), criteria).then(function (items) {
                             scope.total = items._meta.total;
-                            scope.$applyAsync(render);
+                            scope.$applyAsync(function() {
+                                render(items);
+                            });
                         });
                     }
 
@@ -963,35 +1002,503 @@
                     /*
                      * Function for fetching the elements from the database
                      *
-                     * @returns {undefined}
+                     * @param {items}
                      */
-                    function render() {
-                        var query = _.omit($location.search(), '_id');
+                    function render(items, next) {
                         var parameters = sourceParam();
+                        if (!items && !next) {
+                            var query = _.omit($location.search(), '_id');
 
-                        if (!_.isEqual(_.omit(query, 'page'), _.omit(oldQuery, 'page'))) {
-                            $location.search('page', null);
+                            if (!_.isEqual(_.omit(query, 'page'), _.omit(oldQuery, 'page'))) {
+                                $location.search('page', null);
+                            }
+
+                            criteria = search.query($location.search()).getCriteria(true);
+                            criteria.source.from = parameters.from;
+                            criteria.source.size = parameters.to - parameters.from;
+                            api.query(getProvider(criteria), criteria).then(setScopeItems);
+                            oldQuery = query;
+                        } else if (!items && next) {
+                            criteria.source.from = (criteria.source.from || 0) + criteria.source.size;
+                            api.query(getProvider(criteria), criteria).then(setScopeItems);
+                        } else {
+                            setScopeItems(items);
                         }
 
-                        criteria = search.query($location.search()).getCriteria(true);
-                        var tempItems;
+                        function setScopeItems(items) {
+                            if (!scope.items) {
+                                scope.items = items;
+                            } else if (next) {
+                                concat(scope.items._items, items._items);
+                            } else {
+                                scope.items = merge(items._items);
+                            }
 
-                        criteria.source.from = parameters.from;
-                        criteria.source.size = parameters.to - parameters.from;
+                            console.time('render');
+                            listComponent.setItems(scope.items._items);
+                            console.timeEnd('render');
+                            console.log('items:', scope.items._items.length);
+                            scope.rendering = false;
+                        }
+                    }
 
-                        api.query(getProvider(criteria), criteria).then(function (items) {
-                            scope.$applyAsync(function () {
-                                list.style.paddingTop = parameters.padding;
-                                if (!scope.items) {
-                                    scope.items = items;
-                                } else {
-                                    tempItems = {'_items': merge(items._items)};
-                                    scope.items = _.assign(tempItems, _.omit(items, '_items'));
+                    /**
+                     * Test if an item has thumbnail
+                     *
+                     * @return {Boolean}
+                     */
+                    function hasThumbnail(item) {
+                        return item.type === 'picture' && item.renditions.thumbnail;
+                    }
+
+                    /**
+                     * Media Preview - renders item thumbnail
+                     */
+                    var MediaPreview = React.createClass({
+                        render: function() {
+                            var item = this.props.item;
+                            var headline = item.headline || item.slugline || item.type;
+                            var preview;
+
+                            if (hasThumbnail(this.props.item)) {
+                                preview = React.createElement(
+                                    'img',
+                                    {src: this.props.item.renditions.thumbnail.href}
+                                );
+                            } else {
+                                preview = React.createElement(
+                                    'i',
+                                    {className: 'filetype-icon-large-' + this.props.item.type}
+                                );
+                            }
+
+                            return React.createElement(
+                                'div',
+                                {className: 'media multi'},
+                                React.createElement(
+                                    'figure',
+                                    null,
+                                    preview
+                                ),
+                                React.createElement(
+                                    'span',
+                                    {className: 'text'},
+                                    React.createElement(
+                                        'small',
+                                        {title: headline},
+                                        headline.substr(0, 90)
+                                    )
+                                )
+                            );
+                        }
+                    });
+
+                    /**
+                     * Media Info - renders item metadata
+                     */
+                    var MediaInfo = React.createClass({
+                        render: function() {
+                            var item = this.props.item;
+                            console.time('meta');
+                            var meta = [
+                                React.createElement('dt', {key: 1}, gettext('source')),
+                                React.createElement('dd', {key: 2, className: 'provider'}, item.ingest_provider),
+                                React.createElement('dt', {key: 3}, gettext('updated')),
+                                React.createElement('dd', {key: 4}, moment(item.versioncreated).fromNow())
+                            ];
+
+                            if (item.is_spiked) {
+                                meta.push(React.createElement('dt', {key: 5}, gettext('expires')));
+                                meta.push(React.createElement('dd', {key: 6}, moment(item.expiry).fromNow()));
+                            }
+
+                            var info = [];
+                            var flags = item.flags || {};
+
+                            info.push(React.createElement(
+                                'h5',
+                                {key: 1},
+                                item.slugline || item.type
+                            ));
+
+                            info.push(React.createElement(
+                                'dl',
+                                {key: 2},
+                                meta
+                            ));
+
+                            if (flags.marked_for_not_publication) {
+                                info.push(React.createElement(
+                                    'div',
+                                    {key: 3, className: 'state-label not-for-publication'},
+                                    gettext('Not for publication')
+                                ));
+                            }
+
+                            if (flags.marked_for_legal) {
+                                info.push(React.createElement(
+                                    'div',
+                                    {key: 4, className: 'state-label legal'},
+                                    gettext('Legal')
+                                ));
+                            }
+
+                            return React.createElement('div', {className: 'media-info'}, info);
+                        }
+                    });
+
+                    /**
+                     * Type icon component
+                     */
+                    var TypeIcon = React.createClass({
+                        render: function() {
+                            return React.createElement(
+                                'span',
+                                {className: 'type-icon'},
+                                React.createElement(
+                                    'i',
+                                    {className: 'filetype-icon-' + this.props.type}
+                                )
+                            );
+                        }
+                    });
+
+                    var ItemPriority = React.createClass({
+                        render: function() {
+                            var priority = this.props.priority || 3;
+                            return React.createElement(
+                                'span',
+                                {className: 'priority-label priority-label--' + priority},
+                                priority
+                            );
+                        }
+                    });
+
+                    var ItemUrgency = React.createClass({
+                        render: function() {
+                            var urgency = this.props.urgency || 3;
+                            return React.createElement(
+                                'span',
+                                {className: 'urgency-label urgency-label--' + urgency},
+                                urgency
+                            );
+                        }
+                    });
+
+                    var BroadcastStatus = React.createClass({
+                        render: function() {
+                            var broadcast = this.props.broadcast || {};
+                            return React.createElement(
+                                'span',
+                                {className: 'broadcast-status', tooltip: broadcast.status},
+                                '!'
+                            );
+                        }
+                    });
+
+                    var StateLabel = React.createClass({
+                        render: function() {
+                            var item = this.props.item;
+                            var classes = [
+                                'state-label',
+                                'state-' + item.state,
+                                item.embargo ? 'state_embargo' : ''
+                            ];
+                            return React.createElement(
+                                'div',
+                                {className: classes.join(' ')},
+                                item.state
+                            );
+                        }
+                    });
+
+                    var ActionsMenu = React.createClass({
+                        toggle: function(event) {
+                            console.time('actions');
+                            this.setState({open: !this.state.open}, function() {
+                                console.timeEnd('actions');
+                            });
+                            this.stopEvent(event);
+                        },
+
+                        stopEvent: function(event) {
+                            event.stopPropagation();
+                        },
+
+                        getInitialState: function() {
+                            return {open: false};
+                        },
+
+                        getActions: function() {
+                            var item = this.props.item;
+                            var type = this.getType();
+                            var intent = {action: 'list', type: type};
+                            var groups = {};
+                            superdesk.findActivities(intent, item).forEach(function(activity) {
+                                if (workflowService.isActionAllowed(item, activity.action)) {
+                                    var group = activity.group || 'default';
+                                    groups[group] = groups[group] || [];
+                                    groups[group].push(activity);
                                 }
                             });
-                        });
+                            return groups;
+                        },
 
-                        oldQuery = query;
+                        getType: function() {
+                            return archiveService.getType(this.props.item);
+                        },
+
+                        render: function() {
+                            var menu = [];
+                            var item = this.props.item;
+                            if (this.state.open) {
+                                var groups = this.getActions();
+                                menu.push(
+                                    React.createElement(ActionsMenu.Label, {label: gettext('Actions')}),
+                                    React.createElement(ActionsMenu.Divider)
+                                );
+                                menu.push.apply(menu, groups.default.map(function(activity) {
+                                    return React.createElement(ActionsMenu.Item, {activity: activity, item: item});
+                                }));
+
+                                menu.push(
+                                    React.createElement(ActionsMenu.Label, {label: gettext('Packaging')}),
+                                    React.createElement(ActionsMenu.Divider),
+                                    React.createElement(ActionsMenu.Label, {label: gettext('Highlights')}),
+                                    React.createElement(ActionsMenu.Divider),
+                                    React.createElement(ActionsMenu.Label, {label: gettext('Corrections')})
+                                );
+                            }
+
+                            return React.createElement(
+                                'div',
+                                {className: 'item-right toolbox'},
+                                React.createElement(
+                                    'div',
+                                    {className: 'item-actions-menu more-activity-dropdown dropdown-big'},
+                                    React.createElement(
+                                        'button',
+                                        {
+                                            className: 'more-activity-toggle condensed dropdown-toggle',
+                                            onClick: this.toggle,
+                                            onDblClick: this.stopEvent
+                                        },
+                                        React.createElement('i', {className: 'icon-dots-vertical'})
+                                    ),
+                                    React.createElement(
+                                        'ul',
+                                        {
+                                            className: 'dropdown dropdown-menu more-activity-menu open',
+                                            style: {top: 10, right: 10, display: this.state.open ? 'block' : 'none', minWidth: 200}
+                                        },
+                                        menu
+                                    )
+                                )
+                            );
+                        }
+                    });
+
+                    ActionsMenu.Label = React.createClass({
+                        render: function() {
+                            return React.createElement(
+                                'li',
+                                null,
+                                React.createElement(
+                                    'div',
+                                    {className: 'menu-label'},
+                                    this.props.label
+                                )
+                            );
+                        }
+                    });
+
+                    ActionsMenu.Divider = React.createClass({
+                        render: function() {
+                            return React.createElement('li', {className: 'divider'});
+                        }
+                    });
+
+                    ActionsMenu.Item = React.createClass({
+                        run: function(event) {
+                            activityService.start(this.props.activity, {data: {item: this.props.item}});
+                        },
+
+                        render: function() {
+                            var activity = this.props.activity;
+                            return React.createElement(
+                                'li',
+                                null,
+                                React.createElement(
+                                    'a',
+                                    {title: gettext(activity.label), onClick: this.run},
+                                    React.createElement('i', {className: 'icon-' + activity.icon}),
+                                    React.createElement('span', {style: {display: 'block'}}, gettext(activity.label))
+                                )
+                            );
+                        }
+                    });
+
+                    /**
+                     * Item component
+                     */
+                    var Item = React.createClass({
+                        shouldComponentUpdate: function(nextProps, nextState) {
+                            return nextProps.item._etag !== this.props.item._etag ||
+                                nextProps.flags.selected !== this.props.flags.selected ||
+                                nextState !== this.state;
+                        },
+
+                        select: function() {
+                            this.props.onSelect(this.props.item);
+                        },
+
+                        getInitialState: function() {
+                            return {hover: false};
+                        },
+
+                        setHoverState: function() {
+                            this.setState({hover: true});
+                        },
+
+                        unsetHoverState: function() {
+                            this.setState({hover: false});
+                        },
+
+                        render: function() {
+                            var item = this.props.item;
+                            var locked = this.props.flags.locked ? ' locked' : '';
+                            var selected = this.props.flags.selected ? ' active' : '';
+                            var broadcast = item.broadcast || {};
+                            return React.createElement(
+                                'li',
+                                {
+                                    id: item._id,
+                                    key: item._id,
+                                    className: 'list-item-view' + selected,
+                                    onMouseEnter: this.setHoverState,
+                                    onMouseLeave: this.unsetHoverState,
+                                    onClick: this.select
+                                },
+                                React.createElement(
+                                    'div',
+                                    {className: 'media-box media-' + item.type},
+                                    React.createElement(MediaPreview, {item: item}),
+                                    React.createElement(MediaInfo, {item: item}),
+                                    React.createElement(TypeIcon, {type: item.type}),
+                                    item.priority ? React.createElement(ItemPriority, {priority: item.priority}) : null,
+                                    item.urgency ? React.createElement(ItemUrgency, {urgency: item.urgency}) : null,
+                                    broadcast.status ? React.createElement(BroadcastStatus, {broadcast: broadcast}) : null,
+                                    this.state.hover ? React.createElement(ActionsMenu, {item: item}) : null
+                                )
+                            );
+                        }
+                    });
+
+                    /**
+                     * Item list component
+                     */
+                    var ItemList = React.createClass({
+                        getInitialState: function() {
+                            return {items: [], selected: null};
+                        },
+
+                        setItems: function(items) {
+                            this.setState({items: items});
+                        },
+
+                        select: function(item) {
+                            console.time('select');
+                            scope.preview(item);
+                            this.setState({
+                                selected: item._id
+                            }, function() {
+                                console.timeEnd('select');
+
+                            });
+                        },
+
+                        handleKey: function(event) {
+                            var diff;
+                            if (event.keyCode === 39) {
+                                diff = 1;
+                            } else if (event.keyCode === 37) {
+                                diff = -1;
+                            }
+
+                            if (diff != null) {
+                                event.stopPropagation();
+                                if (this.state.selected) {
+                                    for (var i = 0; i < this.state.items.length; i++) {
+                                        if (this.state.items[i]._id === this.state.selected) {
+                                            var next = Math.min(this.state.items.length - 1, Math.max(0, i + diff));
+                                            this.select(this.state.items[next]);
+                                            return;
+                                        }
+                                    }
+                                } else {
+                                    this.select(this.state.items[0]);
+                                }
+                            }
+                        },
+
+                        componentDidMount: function() {
+                            ReactDOM.findDOMNode(this).focus();
+                        },
+
+                        render: function render() {
+                            var createItem = function createItem(item) {
+                                return React.createElement(Item, {
+                                    key: item._id,
+                                    item: item,
+                                    flags: {selected: this.state.selected === item._id},
+                                    onSelect: this.select
+                                });
+                            }.bind(this);
+
+                            return React.createElement(
+                                'ul',
+                                {
+                                    className: 'mgrid-view list-view',
+                                    onKeyUp: this.handleKey,
+                                    tabIndex: '0'
+                                },
+                                this.state.items.map(createItem)
+                            );
+                        }
+                    });
+
+                    /**
+                     * Init react rendering
+                     */
+                    var listComponent;
+                    scope.$applyAsync(function() {
+                        var itemList = React.createElement(ItemList, null);
+                        var list = elem.find('.shadow-list-holder')[0];
+                        listComponent = ReactDOM.render(itemList, list);
+                    });
+
+                    /**
+                     * Add items from src into dest array
+                     *
+                     * @param {Array} dest
+                     * @param {Array} src
+                     */
+                    function concat(dest, src) {
+                        var ids = {};
+                        var i, l;
+
+                        // populate ids
+                        for (i = 0, l = dest.length; i < l; i++) {
+                            ids[dest[i].guid] = true;
+                        }
+
+                        // add only what's missing
+                        for (i = 0, l = src.length; i < l; i++) {
+                            var item = src[i];
+                            if (!ids[item.guid]) {
+                                dest.push(item);
+                            }
+                        }
                     }
 
                     /*
@@ -1103,7 +1610,7 @@
                     /**
                      * Generates Identifier to be used by track by expression.
                      */
-                    scope.generateTrackByIdentifier = function(item) {
+                    scope.uuid = function(item) {
                         return search.generateTrackByIdentifier(item);
                     };
                 }
@@ -1427,7 +1934,7 @@
                     }
 
                     function closeOnClick() {
-                        scope.$apply(function() {
+                        scope.$applyAsync(function() {
                             scope.focused = false;
                         });
                     }

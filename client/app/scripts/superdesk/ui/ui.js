@@ -1222,7 +1222,25 @@
         };
     }
 
-    angular.module('superdesk.ui', ['superdesk.dashboard.world-clock'])
+    function MouseHoverDirective() {
+        return {
+            link: function(scope, elem, attrs) {
+                var key = attrs.sdMouseHover || 'hover';
+
+                elem.on('mouseenter', function() {
+                    scope[key] = true;
+                    scope.$digest();
+                });
+
+                elem.on('mouseleave', function() {
+                    scope[key] = false;
+                    scope.$digest();
+                });
+            }
+        };
+    }
+
+    return angular.module('superdesk.ui', ['superdesk.dashboard.world-clock'])
         .directive('sdShadow', ShadowDirective)
         .directive('sdToggleBox', ToggleBoxDirective)
         .filter('nl2el', NewlineToElement)
@@ -1246,5 +1264,7 @@
         .directive('sdDropdownPositionRight', DropdownPositionRightDirective)
         .directive('sdDropdownFocus', DropdownFocus)
         .directive('sdWeekdayPicker', WeekdayPickerDirective)
-        .directive('sdSplitterWidget', splitterWidget);
-})();
+        .directive('sdSplitterWidget', splitterWidget)
+        .directive('sdMouseHover', MouseHoverDirective)
+        ;
+});
