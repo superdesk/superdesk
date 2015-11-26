@@ -4,7 +4,7 @@ var monitoring = require('./helpers/monitoring'),
     authoring = require('./helpers/authoring'),
     publishQueue = require('./helpers/publish_queue');
 
-describe('publish queue', function() {
+describe('publishing', function() {
     beforeEach(function() {
         monitoring.openMonitoring();
         monitoring.turnOffWorkingStage();
