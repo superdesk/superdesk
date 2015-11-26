@@ -205,9 +205,10 @@ describe('highlights', function() {
             highlights.exportHighlights();
 
             //check that the new highlight package and generated list are on personal
-            workspace.showList('Personal');
-            expect(workspace.getItemText(0)).toBe('Highlight two');
-            expect(workspace.getItemText(1)).toBe('Highlight two');
+            workspace.showList('Monitoring');
+            monitoring.turnOffWorkingStage(0);
+            expect(monitoring.getTextItem(5, 0)).toBe('Highlight two');
+            expect(monitoring.getTextItem(5, 1)).toBe('Highlight two');
         });
     });
 });

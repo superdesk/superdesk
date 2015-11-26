@@ -39,8 +39,8 @@ describe('spike', function() {
             personalCount = count;
         });
 
+        content.selectItem(0);
         content.selectItem(1);
-        content.selectItem(2);
         content.spikeItems();
 
         // check that there are 2 fewer items than before

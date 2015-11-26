@@ -12,8 +12,8 @@
 
     'use strict';
 
-    PackagesService.$inject = ['api', '$q', 'archiveService', 'lock', 'autosave', 'authoring'];
-    function PackagesService(api, $q, archiveService, lock, autosave, authoring) {
+    PackagesService.$inject = ['api', '$q', 'archiveService', 'lock', 'autosave', 'authoring', 'desks'];
+    function PackagesService(api, $q, archiveService, lock, autosave, authoring, desks) {
         var self = this;
 
         this.groupList = ['main', 'story', 'sidebars', 'fact box'];
@@ -48,6 +48,9 @@
             ];
             new_package = setDefaults(new_package, defaults);
             new_package.groups = groups;
+            if (!new_package.task || !new_package.task.desk) {
+                new_package.task = {desk: desks.getCurrentDeskId()};
+            }
             this.addItemsToPackage(new_package, idRef, items);
             return api.archive.save(new_package);
         };
@@ -69,6 +72,10 @@
                 ]
             };
             new_package = setDefaults(new_package, defaults);
+
+            if (!new_package.task || !new_package.task.desk) {
+                new_package.task = {desk: desks.getCurrentDeskId()};
+            }
 
             return api.save('archive', new_package);
 

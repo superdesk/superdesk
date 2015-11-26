@@ -150,9 +150,18 @@ Feature: Embargo Date and Time on an Article (User Story: https://dev.sourcefabr
 
   @auth
   Scenario: Creating/Updating a Package with Embargo should fail
+    Given "desks"
+    """
+    [{"name": "test desk"}]
+    """
     When we post to "/archive"
     """
-    [{"guid": "text-article-with-embargo", "type": "composite", "embargo": "#DATE+1#"}]
+    [{
+    	"guid": "text-article-with-embargo",
+    	"type": "composite",
+    	"embargo": "#DATE+1#",
+        "task": {"user": "#user._id#", "desk": "#desks._id#"}
+    }]
     """
     Then we get error 400
     """
@@ -166,7 +175,8 @@ Feature: Embargo Date and Time on an Article (User Story: https://dev.sourcefabr
             {"id": "main", "refs": [{"residRef": "123"}], "role": "grpRole:Main"}
         ],
         "guid": "tag:example.com,0000:newsml_BRE9A605",
-        "type": "composite"
+        "type": "composite",
+        "task": {"user": "#user._id#", "desk": "#desks._id#"}
     }
     """
     And we patch "/archive/tag:example.com,0000:newsml_BRE9A605"
@@ -192,7 +202,8 @@ Feature: Embargo Date and Time on an Article (User Story: https://dev.sourcefabr
             {"id": "main", "refs": [{"residRef": "123"}], "role": "grpRole:Main"}
         ],
         "guid": "tag:example.com,0000:newsml_BRE9A605",
-        "type": "composite"
+        "type": "composite",
+        "task": {"user": "#user._id#", "desk": "#desks._id#"}
     }
     """
     Then we get error 400

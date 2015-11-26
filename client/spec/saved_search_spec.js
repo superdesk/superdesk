@@ -15,11 +15,10 @@ describe('saved_search', function() {
     });
 
     it('can save a private search', function() {
-        expect(globalSearch.getItems().count()).toBe(10);
+        expect(globalSearch.getItems().count()).toBe(11);
         globalSearch.openFilterPanel();
-        expect(globalSearch.getItems().count()).toBe(10);
+        expect(globalSearch.getItems().count()).toBe(11);
         expect(globalSearch.getPriorityElements().count()).toBe(3);
-        browser.sleep(500);
         var priority = globalSearch.getPriorityElementByIndex(0);
         priority.click();
         expect(globalSearch.getItems().count()).toBe(1);
@@ -32,11 +31,10 @@ describe('saved_search', function() {
     });
 
     it('can save a global search and another user sees it', function() {
-        expect(globalSearch.getItems().count()).toBe(10);
+        expect(globalSearch.getItems().count()).toBe(11);
         globalSearch.openFilterPanel();
-        expect(globalSearch.getItems().count()).toBe(10);
+        expect(globalSearch.getItems().count()).toBe(11);
         expect(globalSearch.getPriorityElements().count()).toBe(3);
-        browser.sleep(500);
         var priority = globalSearch.getPriorityElementByIndex(0);
         priority.click();
         expect(globalSearch.getItems().count()).toBe(1);

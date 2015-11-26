@@ -337,7 +337,7 @@ def update_state(original, updates):
             # also don't change the stage of the package
             return
         if not is_workflow_state_transition_valid('save', original_state):
-            raise superdesk.InvalidStateTransitionError()
+            raise superdesk.errors.InvalidStateTransitionError()
         elif is_assigned_to_a_desk(original):
             updates[ITEM_STATE] = CONTENT_STATE.PROGRESS
         elif not is_assigned_to_a_desk(original):

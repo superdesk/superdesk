@@ -84,6 +84,9 @@
             if (highlight.groups && highlight.groups.length > 0) {
                 group =  highlight.groups[0];
             }
+            if (highlight.task) {
+                pkg_defaults.task = highlight.task;
+            }
 
             return packages.createEmptyPackage(pkg_defaults, group);
         };
