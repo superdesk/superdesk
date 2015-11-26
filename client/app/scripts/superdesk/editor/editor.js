@@ -1280,6 +1280,11 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
             }
         };
     }]).run(['embedService', 'embedlyService', '$q', function(embedService, embedlyService, $q) {
+            var getYoutubeId = function (url) {
+                var regExp = /.*(?:youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=)([^#\&\?]*).*/;
+                var match = url.match(regExp);
+                return (match && match[1].length == 11) ? match[1] : false;
+            };
             // Tweets embed code are not provided by Embedly, we need to use this special handler
             embedService.registerHandler({
                 name: 'Twitter',
@@ -1300,6 +1305,32 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                                     '  <a href="' + data.url + '">' + data.url + '</a>',
                                     '</blockquote>',
                                     '<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>'
+                                ].join('');
+                            }
+                            deferred.resolve(data);
+                        },
+                        function errorCallback(error) {
+                            deferred.reject(error.error_message || error.data.error_message);
+                        }
+                    );
+                    return deferred.promise;
+                }
+            });
+            embedService.registerHandler({
+                name: 'YouTube',
+                patterns: [
+                    '^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$'
+                ],
+                embed: function(url) {
+                    var deferred = $q.defer();
+                    embedlyService.embed(url).then(
+                        function successCallback(response) {
+                            var data = response.data;
+                            if (data.provider_name === 'YouTube') {
+                                data.html = [
+                                    '<iframe width="' + data.width + '" height="' + data.height + '" ',
+                                    'src="https://www.youtube.com/embed/' + getYoutubeId(data.url) + '" ',
+                                    'frameborder="0" allowfullscreen></iframe>'
                                 ].join('');
                             }
                             deferred.resolve(data);
