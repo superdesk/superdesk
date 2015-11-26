@@ -1624,6 +1624,7 @@
                 scope.selectedMacro = null;
                 scope.beforeSend = scope._beforeSend || $q.when;
                 scope.destination_last = null;
+                var PREFERENCE_KEY = 'destination:active';
 
                 scope.$watch('item', activateItem);
                 scope.$watch(send.getConfig, activateConfig);
@@ -1656,16 +1657,11 @@
                     }
                 }
 
-                function getLastDestination() {
-                    return desks.fetchLastDestination().then(function(prefs) {
-                        if (prefs) {
-                            scope.destination_last = {
-                                desk: prefs.desk,
-                                stage: prefs.stage
-                            };
-                        }
+                scope.getLastDestination = function() {
+                    return preferencesService.get(PREFERENCE_KEY).then(function(prefs) {
+                        return prefs;
                     });
-                }
+                };
 
                 scope.close = function() {
                     if (scope.mode === 'monitoring') {
@@ -1904,10 +1900,9 @@
                             notify.success(gettext('Item sent.'));
 
                             // Remember last destination desk and stage
-                            if (scope.destination_last) {
-                                if (scope.destination_last.desk !== deskId && scope.destination_last.stage !== stageId) {
-                                    updateLastDestination(deskId, stageId);
-                                }
+                            if (scope.destination_last &&
+                                    (scope.destination_last.desk !== deskId && scope.destination_last.stage !== stageId)) {
+                                updateLastDestination(deskId, stageId);
                             } else {
                                 updateLastDestination(deskId, stageId);
                             }
@@ -1940,7 +1935,6 @@
                 }
 
                 function updateLastDestination(deskId, stageId) {
-                    var PREFERENCE_KEY = 'destination:active';
                     var updates = {};
                     updates[PREFERENCE_KEY] = {desk: deskId, stage: stageId};
                     preferencesService.update(updates, PREFERENCE_KEY);
@@ -1997,26 +1991,33 @@
                         scope.desks = desks.desks;
                     });
 
-                    getLastDestination().then(function() {
-                        if (scope.destination_last) {
+                    scope.getLastDestination().then(function(result) {
+                        if (result) {
+                            scope.destination_last = {
+                                desk: result.desk,
+                                stage: result.stage
+                            };
+                        }
+
+                        if (scope.mode === 'ingest') {
                             p = p.then(function() {
-                                scope.selectDesk(desks.deskLookup[scope.destination_last.desk]);
+                                scope.selectDesk(desks.getCurrentDesk());
                             });
                         } else {
-                            if (scope.mode === 'ingest') {
-                                p = p.then(function() {
-                                    scope.selectDesk(desks.getCurrentDesk());
-                                });
-                            } else {
-                                p = p.then(function() {
-                                    var itemDesk = desks.getItemDesk(scope.item);
-                                    if (itemDesk) {
-                                        scope.selectDesk(itemDesk);
+                            p = p.then(function() {
+                                var itemDesk = desks.getItemDesk(scope.item);
+                                if (itemDesk) {
+                                    if (scope.destination_last) {
+                                        p = p.then(function() {
+                                            scope.selectDesk(desks.deskLookup[scope.destination_last.desk]);
+                                        });
                                     } else {
-                                        scope.selectDesk(desks.getCurrentDesk());
+                                        scope.selectDesk(itemDesk);
                                     }
-                                });
-                            }
+                                } else {
+                                    scope.selectDesk(desks.getCurrentDesk());
+                                }
+                            });
                         }
                     });
 
