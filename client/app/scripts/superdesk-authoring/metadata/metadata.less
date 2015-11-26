@@ -163,7 +163,7 @@
 				margin: 0 5px 5px 0;
 				float: left;
               	.transition(all .5s);
-				i {
+				i:not(.alt) {
 					position: absolute;
 					display: none;
 					right: 5px;
@@ -173,16 +173,19 @@
 				}
 				&:hover {
 					cursor: pointer;
-                    padding-right: 20px;
-					background: #e0e0e0;
+                    background: #e0e0e0;
 					i {
                     	.opacity(70);
 					}
 				}
 				&:hover {
-					> i {
+					> i:not(.alt) {
 						display: inline-block;
 					}
+				}
+				&.selected {
+					background: #333333;
+					color: #e8e8e8;
 				}
 			}
 		}
