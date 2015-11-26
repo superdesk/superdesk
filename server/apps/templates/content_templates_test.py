@@ -76,14 +76,13 @@ class RenderTemplateTestCase(SuperdeskTestCase):
             'place': ['NSW']
         }
 
-        render_content_template(item, template)
-        self.assertEqual(item['headline'], 'Foo Template: Test Template')
-        self.assertEqual(item['task']['desk'], 'sports')
-        self.assertEqual(item['task']['stage'], 'schedule')
-        self.assertEqual(item['urgency'], 1)
-        self.assertEqual(item['priority'], 3)
-        self.assertEqual(item['dateline']['text'], 'hello world')
-        self.assertEqual(item['more_coming'], False)
-        self.assertEqual(item['body_html'], 'This article has slugline: Testing and dateline: '
-                                            'hello world at 02 Jun 2015 08:53 AEST')
-        self.assertListEqual(item['place'], ['Australia'])
+        updates = render_content_template(item, template)
+        self.assertEqual(updates['headline'], 'Foo Template: Test Template')
+        self.assertEqual(updates['task']['desk'], 'sports')
+        self.assertEqual(updates['task']['stage'], 'schedule')
+        self.assertEqual(updates['urgency'], 1)
+        self.assertEqual(updates['priority'], 3)
+        self.assertEqual(updates['more_coming'], False)
+        self.assertEqual(updates['body_html'], 'This article has slugline: Testing and dateline: '
+                                               'hello world at 02 Jun 2015 08:53 AEST')
+        self.assertListEqual(updates['place'], ['Australia'])

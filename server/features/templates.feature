@@ -71,7 +71,7 @@ Feature: Templates
         And we get "/archive"
         Then we get list with 1 items
 
-    @auth @test
+    @auth
     Scenario: Apply template to an item
         When we post to "content_templates"
         """

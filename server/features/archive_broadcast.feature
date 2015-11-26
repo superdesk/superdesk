@@ -1352,7 +1352,21 @@ Feature: Archive Broadcast
         }
       ]
       """
-    When we post to "archive"
+    When we post to "content_templates"
+      """
+
+          {
+          "body_html": "<p>Please kill story slugged {{ item.slugline }} ex {{ item.dateline['text'] }}.<\/p>",
+          "type": "text",
+          "abstract": "This article has been removed",
+          "headline": "Kill\/Takedown notice ~~~ Kill\/Takedown notice",
+          "urgency": 1, "priority": 1,
+          "template_name": "kill",
+          "template_type": "kill",
+          "anpa_take_key": "KILL\/TAKEDOWN"
+          }
+      """
+    And we post to "archive"
       """
       [{
           "guid": "123",
@@ -1410,11 +1424,25 @@ Feature: Archive Broadcast
     """
     When we patch "archive/#BROADCAST_ONE#"
     """
-    {"body_html": "TEST", "headline": "TEST"}
+    {
+      "body_html": "TEST",
+      "headline": "TEST",
+      "dateline": {
+        "source": "AAP",
+        "text": "Los Angeles, Aug 11 AAP -"
+      }
+    }
     """
     Then we get OK response
     When we publish "#BROADCAST_ONE#" with "publish" type and "published" state
-    Then we get OK response
+    Then we get updated response
+    """
+      {
+        "_id": "#BROADCAST_ONE#",
+        "_current_version": 3,
+        "state": "published"
+      }
+    """
     When we post to "archive/123/broadcast" with "BROADCAST_TWO" and success
     """
     [{"desk": "#desks._id#"}]
@@ -1444,7 +1472,13 @@ Feature: Archive Broadcast
     And we get "/archive/#BROADCAST_ONE#" and match
     """
     {
-      "state": "killed"
+      "state": "killed",
+      "abstract": "This article has been removed",
+      "anpa_take_key": "KILL\/TAKEDOWN",
+      "urgency": 1, "priority": 1,
+      "_current_version": 4,
+      "headline": "Kill\/Takedown notice ~~~ Kill\/Takedown notice",
+      "body_html": "<p>Please kill story slugged comics ex Los Angeles, Aug 11 AAP -.<\/p>"
     }
     """
     And we get "/archive/#BROADCAST_TWO#" and match
@@ -1489,6 +1523,20 @@ Feature: Archive Broadcast
         }
       ]
       """
+    When we post to "content_templates"
+      """
+
+          {
+          "body_html": "<p>Please kill story slugged {{ item.slugline }} ex {{ item.dateline['text'] }}.<\/p>",
+          "type": "text",
+          "abstract": "This article has been removed",
+          "headline": "Kill\/Takedown notice ~~~ Kill\/Takedown notice",
+          "urgency": 1, "priority": 1,
+          "template_name": "kill",
+          "template_type": "kill",
+          "anpa_take_key": "KILL\/TAKEDOWN"
+          }
+      """
     When we post to "archive"
       """
       [{
@@ -1549,9 +1597,33 @@ Feature: Archive Broadcast
     """
     {"body_html": "TEST", "headline": "TEST"}
     """
-    Then we get OK response
+    Then we get updated response
+    """
+    {
+      "state": "in_progress",
+      "_id": "#BROADCAST_ONE#",
+      "_current_version": 2,
+      "broadcast": {
+        "status": "",
+        "master_id": "123"
+      },
+      "body_html": "TEST", "headline": "TEST"
+    }
+    """
     When we publish "#BROADCAST_ONE#" with "publish" type and "published" state
-    Then we get OK response
+    Then we get updated response
+    """
+    {
+      "state": "published",
+      "_id": "#BROADCAST_ONE#",
+      "_current_version": 3,
+      "broadcast": {
+        "status": "",
+        "master_id": "123"
+      },
+      "body_html": "TEST", "headline": "TEST"
+    }
+    """
     When we post to "archive/123/broadcast" with "BROADCAST_TWO" and success
     """
     [{"desk": "#desks._id#"}]
@@ -1623,13 +1695,19 @@ Feature: Archive Broadcast
     And we get "/archive/#BROADCAST_ONE#" and match
     """
     {
-      "state": "killed"
+      "state": "killed",
+      "abstract": "This article has been removed",
+      "anpa_take_key": "KILL\/TAKEDOWN",
+      "urgency": 1, "priority": 1, "_current_version": 4,
+      "headline": "Kill\/Takedown notice ~~~ Kill\/Takedown notice",
+      "body_html": "<p>Please kill story slugged comics ex Los Angeles, Aug 11 AAP -.<\/p>"
     }
     """
     And we get "/archive/#BROADCAST_TWO#" and match
     """
     {
-      "state": "spiked"
+      "state": "spiked",
+      "_current_version": 2
     }
     """
     And we get "/archive/#PACKAGE#" and match
@@ -1672,6 +1750,21 @@ Feature: Archive Broadcast
         {"schema": {}, "type": "composite", "act": "correct", "_id": "correct_composite"}
       ]
       """
+    When we post to "content_templates"
+      """
+
+          {
+          "body_html": "<p>Please kill story slugged {{ item.slugline }} ex {{ item.dateline['text'] }}.<\/p>",
+          "type": "text",
+          "abstract": "This article has been removed",
+          "headline": "Kill\/Takedown notice ~~~ Kill\/Takedown notice",
+          "urgency": 1, "priority": 1,
+          "template_name": "kill",
+          "template_type": "kill",
+          "anpa_take_key": "KILL\/TAKEDOWN"
+          }
+      """
+    Then we get OK response
     When we post to "archive"
       """
       [{
@@ -1857,7 +1950,21 @@ Feature: Archive Broadcast
         {"schema": {}, "type": "composite", "act": "correct", "_id": "correct_composite"}
       ]
       """
-    When we post to "archive"
+    When we post to "content_templates"
+      """
+
+          {
+          "body_html": "<p>Please kill story slugged {{ item.slugline }} ex {{ item.dateline['text'] }}.<\/p>",
+          "type": "text",
+          "abstract": "This article has been removed",
+          "headline": "Kill\/Takedown notice ~~~ Kill\/Takedown notice",
+          "urgency": 1, "priority": 1,
+          "template_name": "kill",
+          "template_type": "kill",
+          "anpa_take_key": "KILL\/TAKEDOWN"
+          }
+      """
+    And we post to "archive"
       """
       [{
           "guid": "123",

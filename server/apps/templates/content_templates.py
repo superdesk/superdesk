@@ -115,14 +115,19 @@ class ContentTemplatesService(Service):
             updates['next_run'] = get_next_run(updates.get('schedule'))
 
     def validate_template_name(self, doc_template_name):
-        query = {'template_name': re.compile('^{}$'.format(doc_template_name), re.IGNORECASE)}
-        if self.find_one(req=None, **query):
+        if self.get_template_by_name(doc_template_name):
             msg = 'Template name must be unique'
             raise SuperdeskApiError.preconditionFailedError(message=msg, payload=msg)
 
     def get_scheduled_templates(self, now):
         query = {'next_run': {'$lte': now}, 'schedule.is_active': True}
         return self.find(query)
+
+    def get_template_by_name(self, template_name):
+        """
+        """
+        query = {'template_name': re.compile('^{}$'.format(template_name), re.IGNORECASE)}
+        return self.find_one(req=None, **query)
 
 
 class ContentTemplatesApplyResource(Resource):
@@ -159,13 +164,12 @@ class ContentTemplatesApplyService(Service):
         if not item:
             SuperdeskApiError.badRequestError(message='Invalid Item')
 
-        pattern = '^{}$'.format(re.escape(template_name.strip()))
-        query = {'template_name': re.compile(pattern, re.IGNORECASE)}
-        template = superdesk.get_resource_service('content_templates').find_one(req=None, **query)
+        template = superdesk.get_resource_service('content_templates').get_template_by_name(template_name)
         if not template:
             SuperdeskApiError.badRequestError(message='Invalid Template')
 
-        render_content_template(item, template)
+        updates = render_content_template(item, template)
+        item.update(updates)
         docs[0] = item
         build_custom_hateoas(CUSTOM_HATEOAS, docs[0])
         return [docs[0].get(config.ID_FIELD)]
@@ -176,25 +180,27 @@ def render_content_template(item, template):
     Render the template.
     :param dict item: item on which template is applied
     :param dict template: template
+    :return dict: updates to the item
     """
+    updates = {}
     for key, value in template.items():
         if key in TEMPLATE_FIELDS or template.get(key) is None:
             continue
 
         if isinstance(template.get(key), str):
-            item[key] = render_template_string(template.get(key), item=item)
+            updates[key] = render_template_string(template.get(key), item=item)
         elif (isinstance(template.get(key), dict) or isinstance(template.get(key), list)) and template.get(key):
-            item[key] = template.get(key)
+            updates[key] = template.get(key)
         elif not (isinstance(template.get(key), dict) or isinstance(template.get(key), list)):
-            item[key] = template.get(key)
+            updates[key] = template.get(key)
 
     if template.get('template_desk'):
-        if not item.get('task'):
-            item['task'] = {}
-
-        item['task']['desk'] = template.get('template_desk')
+        updates['task'] = {}
+        updates['task']['desk'] = template.get('template_desk')
         if template.get('template_stage'):
-            item['task']['stage'] = template.get('template_stage')
+            updates['task']['stage'] = template.get('template_stage')
+
+    return updates
 
 
 def get_scheduled_templates(now):
