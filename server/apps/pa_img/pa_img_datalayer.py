@@ -44,6 +44,23 @@ def extract_params(query, names):
     return params
 
 
+def processLimits(offset, size):
+    """
+    Try to find a page index and a minimum page size so the requested interval to
+    be included in only page. Max supported page size is 200.
+    page_index * page_size <= offset
+    offset + size < (page_index + 1) * page_size
+    """
+    maxSize = 200
+    size = max(10, min(maxSize, size))
+
+    for i in range(size, maxSize):
+        page = offset // i
+        if page * i <= offset and offset + size <= (page + 1) * i:
+            return page + 1, i
+    return offset // maxSize + 1, maxSize
+
+
 class PaImgDatalayer(DataLayer):
     def set_credentials(self, user, password):
         self._token = user
@@ -76,12 +93,12 @@ class PaImgDatalayer(DataLayer):
         :return:
         """
 
-        url = self._app.config['PAIMG_SEARCH_URL'] + '/search'
+        url = self._app.config['PAIMG_SEARCH_URL']
         fields = {}
         if 'query' in req['query']['filtered']:
-            query_keywords = req['query']['filtered']['query']['query_string']['query']
-            query_keywords = query_keywords.replace('slugline:', 'keywords:')
-            query_keywords = query_keywords.replace('description:', 'caption:')
+            query_keywords = req['query']['filtered']['query']['query_string']['query'] \
+                .replace('slugline:', 'keywords:') \
+                .replace('description:', 'caption:')
             fields = extract_params(query_keywords, ['headline', 'caption', 'keywords'])
 
         for criterion in req.get('post_filter', {}).get('and', {}):
@@ -119,19 +136,20 @@ class PaImgDatalayer(DataLayer):
                         fields['photos'] = 'true'
 
         if not fields:
-            fields['days_since'] = 1
+            url += '/latest'
+            fields['ck'] = 'public'
+            fields['days_since'] = 5
+        else:
+            url += '/search'
+            fields['ck'] = 'superdesk'
 
-        size = int(req.get('size', '100')) if int(req.get('size', '100')) > 0 else 100
-        if size and size < 100:
-            fields['limit'] = size
+        page, limit = processLimits(int(req.get('from', '0')), int(req.get('size', '25')))
 
-        page = int(req.get('from', '0')) // size + 1
-        if page > 1:
-            fields['page'] = page
+        fields['page'] = page
+        fields['limit'] = limit
 
         if self._token:
             fields['token'] = self._token
-        fields['ck'] = 'superdesk'
 
         r = self._http.request_encode_url('GET', url,
                                           fields=fields, headers=self._headers)
