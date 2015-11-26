@@ -1,12 +1,12 @@
 <div class="archiving-progress" style="width:{{ _progress }}%" ng-if="_progress"></div>
 
 <div ng-click="clickAction(item)">
-    <div class="error-box" ng-show="item.archiveError">
+    <div class="error-box" ng-if="item.archiveError">
         <p class="message" translate>There was an error archiving this item</p>
         <div class="buttons"></div>
     </div>
 
-    <div class="media multi" ng-show="item.type == 'text' || item.type == 'composite' || item.type == 'preformatted' || item.type == 'picture'" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
+    <div class="media multi" ng-if="item.type == 'text' || item.type == 'composite' || item.type == 'preformatted' || item.type == 'picture'" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
         <div sd-item-rendition data-item="item" data-rendition="thumbnail"></div>
         <span class="text">
             <small title="{{ item.headline }}">{{item.headline | limitTo: 90}}</small>
@@ -18,22 +18,22 @@
         </div>
     </div>
 
-    <div class="media" ng-show="item.type == 'audio' || item.type == 'video'">
-        <i class="filetype-icon-large-{{ item.type}}"></i>
+    <div class="media" ng-if="item.type == 'audio' || item.type == 'video'">
+        <i class="filetype-icon-large-{{ :: item.type}}"></i>
     </div>
 
     <div class="media-info">
         <h5>
-            <span ng-show="item.slugline">{{ item.slugline }}</span>
-            <span ng-show="!item.slugline">{{ item.type | translate }}</span>
+            <span ng-if="item.slugline">{{ item.slugline }}</span>
+            <span ng-if="!item.slugline">{{ item.type | translate }}</span>
         </h5>
 
         <dl>
             <dt class="source"><span translate>source:</span></dt>
             <dd class="provider" sd-meta-ingest data-item="item"></dd>
             <dt translate>updated</dt>
-            <dd><time datetime="{{ item.versioncreated }}" title="{{ item.versioncreated|date:'medium' }}">{{ item.versioncreated|reldate }}</time></dd>
-            <dt ng-show="item.is_spiked" translate>expires</dt>
+            <dd><time sd-datetime data-date="item.versioncreated"></time></dd>
+            <dt ng-if="item.is_spiked" translate>expires</dt>
             <dd ng-if="item.is_spiked"><time title="{{ item.expiry | date:'medium' }}">{{ item.expiry | reldate }}</time></dd>
         </dl>
 
