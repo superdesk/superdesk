@@ -642,15 +642,6 @@
                     },
 
                     /**
-                     * Fetch current user destination desks and stage
-                     */
-                    fetchLastDestination: function() {
-                        return preferencesService.get('destination:active').then(function(prefs) {
-                            return prefs;
-                        });
-                    },
-
-                    /**
                      * Fetch current user desks and make sure active desk is present in there
                      */
                     fetchCurrentUserDesks: function() {
