@@ -1280,11 +1280,6 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
             }
         };
     }]).run(['embedService', 'embedlyService', '$q', function(embedService, embedlyService, $q) {
-            var getYoutubeId = function (url) {
-                var regExp = /.*(?:youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=)([^#\&\?]*).*/;
-                var match = url.match(regExp);
-                return (match && match[1].length == 11) ? match[1] : false;
-            };
             // Tweets embed code are not provided by Embedly, we need to use this special handler
             embedService.registerHandler({
                 name: 'Twitter',
@@ -1322,6 +1317,11 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                     '^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$'
                 ],
                 embed: function(url) {
+                    function getYoutubeId(url) {
+                        var regExp = /.*(?:youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=)([^#\&\?]*).*/;
+                        var match = url.match(regExp);
+                        return (match && match[1].length == 11) ? match[1] : false;
+                    }
                     var deferred = $q.defer();
                     embedlyService.embed(url).then(
                         function successCallback(response) {
