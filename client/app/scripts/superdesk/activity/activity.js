@@ -1,11 +1,4 @@
-define([
-    'angular',
-    'lodash',
-    'require',
-    './activity-list-directive',
-    './activity-chooser-directive',
-    './activity-modal-directive'
-], function(angular, _, require) {
+(function() {
     'use strict';
 
     var constans = {
@@ -17,8 +10,8 @@ define([
         ACTION_PREVIEW: 'preview'
     };
 
-    SuperdeskProvider.$inject = ['$routeProvider'];
-    function SuperdeskProvider($routeProvider) {
+    SuperdeskProvider.$inject = ['$routeProvider', 'lodash'];
+    function SuperdeskProvider($routeProvider, _) {
         var widgets = {};
         var activities = {};
         var permissions = {};
@@ -110,9 +103,9 @@ define([
         };
 
         this.$get = ['$q', '$route', '$rootScope', 'activityService', 'activityChooser',
-            'betaService', 'features', 'privileges', '$injector',
+            'betaService', 'features', 'privileges', '$injector', 'lodash',
             function superdeskFactory($q, $route, $rootScope, activityService, activityChooser, betaService,
-                                      features, privileges, $injector) {
+                                      features, privileges, $injector, _) {
 
                 /**
                  * Render main menu depending on registered acitivites
@@ -286,7 +279,7 @@ define([
             }];
     }
 
-    var module = angular.module('superdesk.activity', [
+    angular.module('superdesk.activity', [
         'ngRoute',
         'superdesk.notify',
         'superdesk.features',
@@ -295,12 +288,12 @@ define([
         'superdesk.services.modal',
         'superdesk.privileges',
         'superdesk.keyboard'
-    ]);
+    ])
 
-    module.provider('superdesk', SuperdeskProvider);
+    .provider('superdesk', SuperdeskProvider)
 
-    module.service('activityService', ['$location', '$injector', '$q', '$timeout', 'gettext', 'modal',
-    function($location, $injector, $q, $timeout, gettext, modal) {
+    .service('activityService', ['$location', '$injector', '$q', '$timeout', 'gettext', 'modal', 'lodash',
+    function($location, $injector, $q, $timeout, gettext, modal, _) {
         var activityStack = [];
         this.activityStack = activityStack;
 
@@ -377,9 +370,9 @@ define([
             }
         };
 
-    }]);
+    }])
 
-    module.run(['$rootScope', 'superdesk', function($rootScope, superdesk) {
+    .run(['$rootScope', 'superdesk', function($rootScope, superdesk) {
 
         $rootScope.superdesk = superdesk; // add superdesk reference so we can use constants in templates
 
@@ -391,12 +384,12 @@ define([
             var path = superdesk.link.apply(superdesk, arguments);
             return path ? '#' + path : null;
         };
-    }]);
+    }])
 
     /**
      * Activity chooser service - bridge between superdesk and activity chooser directive
      */
-    module.service('activityChooser', ['$q', function($q) {
+    .service('activityChooser', ['$q', function($q) {
         var defer;
 
         this.choose = function(activities) {
@@ -414,12 +407,12 @@ define([
             this.activities = null;
             defer.reject();
         };
-    }]);
+    }])
 
     /**
      * Referrer service to set/get the referrer Url
      */
-    module.service('referrer', function() {
+    .service('referrer', ['lodash', function(_) {
         /**
          * Serving for the purpose of setting referrer url via referrer service, also setting url in localStorage. which is utilized to
          * get last working screen on authoring page if referrer url is unidentified
@@ -487,11 +480,11 @@ define([
             }
             return completeUrl;
         }
-    });
+    }])
 
     // reject modal on route change
     // todo(petr): what about blocking route change as long as it is opened?
-    module.run(['$rootScope', 'activityService', 'referrer', function($rootScope, activityService, referrer) {
+    .run(['$rootScope', 'activityService', 'referrer', function($rootScope, activityService, referrer) {
         $rootScope.$on('$routeChangeStart', function() {
             if (activityService.activityStack.length) {
                 var item = activityService.activityStack.pop();
@@ -502,11 +495,8 @@ define([
         $rootScope.$on('$routeChangeSuccess',  function(ev, currentRoute, previousRoute) {
             referrer.setReferrer(currentRoute, previousRoute);
         });
-    }]);
-    module.directive('sdActivityList', require('./activity-list-directive'));
-    module.directive('sdActivityItem', ActivityItemDirective);
-    module.directive('sdActivityChooser', require('./activity-chooser-directive'));
-    module.directive('sdActivityModal', require('./activity-modal-directive'));
+    }])
+    .directive('sdActivityItem', ActivityItemDirective);
 
     ActivityItemDirective.$inject = ['asset'];
     function ActivityItemDirective(asset) {
@@ -515,5 +505,4 @@ define([
         };
     }
 
-    return module;
-});
+})();
