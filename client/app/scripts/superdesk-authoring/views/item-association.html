@@ -1,4 +1,4 @@
 <figure class="item-association" ng-class="{preview: related}">
     <img ng-if="related" ng-src="{{ related.renditions.viewImage.href }}" ng-click="edit(related)">
-    <figcaption contenteditable="true" ng-model="related.description_text" ng-change="onchange()"></figcaption>
+    <figcaption ng-if="related" contenteditable="true" ng-model="related.description_text" ng-change="onchange()"></figcaption>
 </figure>
