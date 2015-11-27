@@ -5,10 +5,15 @@
     &__container {
         position: relative;
         .text-editor {padding: 0;}
-        .embed-preview, .embed-editor {
+        .preview--caption, .editor--caption {
             margin: 20px 0px;
         }
-        .embed-editor {
+        .editor--caption [contenteditable] {
+            border: 1px solid @sd-blue;
+            .border-radius(3px);
+            padding: 5px;
+        }
+        .editor--embed {
             min-height: 200px;
         }
         &:hover .block__remove {opacity: 1;}
@@ -87,7 +92,7 @@
 }
 
 // Embed previews
-.block__container .embed-preview,
+.block__container .preview--embed,
 .add-embed__body .preview {
     iframe {
         max-width: 100%;

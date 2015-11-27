@@ -2118,7 +2118,8 @@
             'superdesk.authoring.packages',
             'superdesk.authoring.find-replace',
             'superdesk.authoring.macros',
-            'superdesk.desks'
+            'superdesk.desks',
+            'contenteditable'
         ])
 
         .service('authoring', AuthoringService)

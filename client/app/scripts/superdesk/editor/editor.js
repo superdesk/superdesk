@@ -562,6 +562,7 @@ function SdTextEditorController(_) {
     function Block(attrs) {
         angular.extend(this, {
             body: attrs && attrs.body || '',
+            caption: attrs && attrs.caption || undefined,
             blockType: attrs && attrs.blockType || 'text',
             embedType: attrs && attrs.embedType || undefined,
             focus: false
@@ -575,6 +576,9 @@ function SdTextEditorController(_) {
         },
         initEditorWithMultipleBlock: function(model) {
             var blocks = [], block;
+            /**
+             * push the current block into the blocks collection if it is not empty
+             */
             function commitBlock() {
                 if (block !== undefined && block.body.trim() !== '') {
                     blocks.push(block);
@@ -594,7 +598,7 @@ function SdTextEditorController(_) {
                 if (element.nodeName === 'P') {
                     commitBlock();
                     if (angular.isDefined(element.innerHTML) && element.textContent !== '' && element.textContent !== '\n') {
-                        blocks.push(new Block({body: element.innerHTML}));
+                        blocks.push(new Block({body: element.innerHTML.trim()}));
                     }
                 // detect if it's an embed
                 } else if (element.nodeName === '#comment') {
@@ -617,14 +621,29 @@ function SdTextEditorController(_) {
                         block = new Block();
                     }
                     // we want the outerHTML (ex: '<b>text</b>') or the node value for text and comment
-                    // TODO: check if it works for comment
-                    block.body += element.outerHTML || element.nodeValue || '';
+                    block.body += (element.outerHTML || element.nodeValue || '').trim();
                 }
             });
             // at the end of the loop, we push the last current block
             if (block !== undefined && block.body.trim() !== '') {
                 blocks.push(block);
             }
+            // extract body and caption from embed block
+            blocks.forEach(function(block) {
+                if (block.blockType === 'embed') {
+                    var original_body = angular.element(angular.copy(block.body));
+                    if (original_body.get(0).nodeName === 'FIGURE') {
+                        block.body = '';
+                        original_body.contents().toArray().forEach(function(element) {
+                            if (element.nodeName === 'FIGCAPTION') {
+                                block.caption = element.innerHTML;
+                            } else {
+                                block.body += element.outerHTML || element.nodeValue || '';
+                            }
+                        });
+                    }
+                }
+            });
             // if no block, create an empty one to start
             if (blocks.length === 0) {
                 blocks.push(new Block());
@@ -640,8 +659,13 @@ function SdTextEditorController(_) {
                         if (block.blockType === 'embed') {
                             new_body += [
                                 '<!-- EMBED START ' + block.embedType.trim() + ' -->',
+                                '<figure>',
                                 block.body,
-                                '<!-- EMBED END ' + block.embedType.trim() + ' -->\n'].join('\n');
+                                '<figcaption>',
+                                block.caption,
+                                '</figcaption>',
+                                '</figure>',
+                                '<!-- EMBED END ' + block.embedType.trim() + ' -->\n'].join('');
                         } else {
                             // wrap all the other blocks around <p></p>
                             new_body += '<p>' + block.body + '</p>\n';
@@ -727,15 +751,11 @@ function SdAddEmbedController (embedService, $element, $timeout, $q, _) {
          * Return html code to represent an embedded picture
          *
          * @param {string} url
-         * @param {string} headline
          * @param {string} description
          * @return {string} html
          */
-        pictureToHtml: function(url, headline, description) {
+        pictureToHtml: function(url, description) {
             var html = '<img alt="' + (description || '') + '" src="' + url + '">\n';
-            if (headline) {
-                html += '<figcaption>' + headline + '</figcaption>\n';
-            }
             return html;
         },
         /**
@@ -767,7 +787,7 @@ function SdAddEmbedController (embedService, $element, $timeout, $q, _) {
                     var embed = data.html;
                     if (!angular.isDefined(embed)) {
                         if (data.type === 'photo') {
-                            embed = vm.pictureToHtml(data.url, data.title, data.description);
+                            embed = vm.pictureToHtml(data.url, data.description);
                         } else if (data.type === 'link') {
                             embed = vm.linkToHtml(data.url, data.title, data.description, data.thumbnail_url);
                         }
@@ -798,16 +818,13 @@ function SdAddEmbedController (embedService, $element, $timeout, $q, _) {
                 angular.element($element).find('.preview').html(embed.body);
             });
         },
-        createFigureBlock: function(embedType, embedBody) {
+        createFigureBlock: function(embedType, body, caption) {
             // create a new block containing the embed
             return vm.editorCtrl.insertNewBlockAfter(vm.blockBefore, {
                 blockType: 'embed',
                 embedType: embedType,
-                body: [
-                    '<figure>',
-                    embedBody,
-                    '</figure>'
-                ].join('\n')
+                body: body,
+                caption: caption
             });
         },
         createBlockFromEmbed: function() {
@@ -818,39 +835,45 @@ function SdAddEmbedController (embedService, $element, $timeout, $q, _) {
             });
         },
         createBlockFromSdPicture: function(img, item) {
-            var html = vm.pictureToHtml(img.href, item.headline, item.description);
-            vm.createFigureBlock('Image', html);
+            var html = vm.pictureToHtml(img.href, item.description);
+            vm.createFigureBlock('Image', html, item.description);
         }
     });
 }
 
-function SdTextEditorBlockEmbedController() {
+SdTextEditorBlockEmbedController.$inject = ['$timeout', '$element', '$scope'];
+function SdTextEditorBlockEmbedController($timeout, $element, $scope) {
     var vm = this;
     angular.extend(vm, {
-        model: undefined,  // defined in link method
-        element: undefined,  // defined in link method
-        embedCode: undefined,  // defined in init method
+        embedCode: undefined,  // defined below
+        caption: undefined,  // defined below
         editable: false,
-        init: function() {
-            vm.updatePreview();
-            vm.embedCode = vm.model.$modelValue;
-        },
         toggleEdition: function() {
             vm.editable = !vm.editable;
         },
-        updatePreview: function() {
-            vm.element.find('.embed-preview').html(vm.model.$viewValue);
+        updateEmbedPreview: function() {
+            angular.element($element).find('.preview--embed').html(vm.model.body);
         },
         // in edition
         save: function() {
-            vm.model.$setViewValue(vm.embedCode);
-            vm.updatePreview();
-            vm.toggleEdition();
+            // update the block's model
+            angular.extend(vm.model, {
+                body: vm.embedCode,
+                caption: vm.caption
+            });
+            vm.updateEmbedPreview();
+            // on change callback
+            vm.onBlockChange();
         },
         cancel: function() {
-            vm.embedCode = vm.model.$modelValue;
-            vm.toggleEdition();
+            vm.embedCode = vm.model.body;
+            vm.caption = vm.model.caption;
         }
+    });
+    $timeout(function() {
+        vm.updateEmbedPreview();
+        vm.embedCode = vm.model.body;
+        vm.caption = vm.model.caption;
     });
 }
 
@@ -926,21 +949,11 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
     }])
     .directive('sdTextEditorBlockEmbed', ['$timeout', function ($timeout) {
         return {
-            scope: {type: '=', config: '=', language: '=', sdTextEditorBlockEmbed: '='},
-            require: ['sdTextEditorBlockEmbed', 'ngModel'],
+            scope: {type: '=', config: '=', language: '=', model: '=sdTextEditorBlockEmbed', onBlockChange: '&'},
             templateUrl: 'scripts/superdesk/editor/views/block-embed.html',
             controllerAs: 'vm',
-            controller: SdTextEditorBlockEmbedController,
-            link: function(scope, elem, attrs, controllers) {
-                angular.extend(controllers[0], {
-                    element: elem,
-                    model: controllers[1],
-                });
-                // init preview
-                $timeout(function() {
-                    controllers[0].init();
-                });
-            }
+            bindToController: true,
+            controller: SdTextEditorBlockEmbedController
         };
     }])
     .directive('sdTextEditorBlockText', ['editor', 'spellcheck', '$timeout', function (editor, spellcheck, $timeout) {

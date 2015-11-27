@@ -91,6 +91,7 @@ tests.push('superdesk-workspace/workspace');
 tests.push('bower_components/ment.io/dist/mentio');
 tests.push('bower_components/angular-embed/dist/angular-embed');
 tests.push('bower_components/angular-embedly/angular-embedly');
+tests.push('bower_components/angular-contenteditable/angular-contenteditable');
 
 tests.push('angular-ui');
 tests.push('angular-resource');
