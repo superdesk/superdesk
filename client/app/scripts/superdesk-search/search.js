@@ -373,7 +373,7 @@
             tags.selectedKeywords = [];
             while (keywords.indexOf('(') >= 0) {
                 var parenthesisIndex = keywords.indexOf('(');
-                var keyword = keywords.substring(parenthesisIndex, keywords.indexOf(')', parenthesisIndex) + 1);
+                var keyword = keywords.substring(parenthesisIndex, keywords.lastIndexOf(')') + 1);
                 tags.selectedKeywords.push(keyword);
                 keywords = keywords.replace(keyword, '');
             }
@@ -1556,6 +1556,7 @@
                     function getQuery() {
                         var metas = [];
                         angular.forEach(scope.meta, function(val, key) {
+                            val = val.replace(/[()]/g,'');
                             if (key === '_all') {
                                 metas.push(val.join(' '));
                             } else {
