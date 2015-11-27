@@ -1,4 +1,4 @@
-<div class="dropdown" ng-class="{'dropright': icon, 'dropdown-noarrow': !icon}" dropdown sd-dropdown-position>
+<div class="dropdown" ng-class="{'dropright': icon, 'dropdown-noarrow': !icon}" dropdown sd-dropdown-focus sd-dropdown-position>
     <button class="dropdown-toggle line-input" dropdown-toggle ng-if="(field !== 'place' && field !== 'genre') && !icon">
         {{ item[field].name || item[field] ? item[field].name || item[field] : "none" | translate }}
         <b class="caret"></b>

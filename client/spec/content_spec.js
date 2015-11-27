@@ -23,7 +23,7 @@ describe('content', function() {
     beforeEach(function() {
         openUrl('/#/workspace');
         workspace.switchToDesk('PERSONAL');
-        expect(element.all(by.repeater('items._items')).count()).toBe(3);
+        expect(element.all(by.repeater('items._items')).count()).toBe(2);
     });
 
     // wait a bit after sending keys to body
@@ -45,19 +45,19 @@ describe('content', function() {
 
     it('can navigate with keyboard', function() {
         pressKey(protractor.Key.UP);
-        expect(selectedHeadline()).toBe('package1');
-
-        pressKey(protractor.Key.DOWN);
         expect(selectedHeadline()).toBe('item1');
 
-        pressKey(protractor.Key.RIGHT);
+        pressKey(protractor.Key.DOWN);
         expect(selectedHeadline()).toBe('item2');
 
         pressKey(protractor.Key.LEFT);
         expect(selectedHeadline()).toBe('item1');
 
+        pressKey(protractor.Key.RIGHT);
+        expect(selectedHeadline()).toBe('item2');
+
         pressKey(protractor.Key.UP);
-        expect(selectedHeadline()).toBe('package1');
+        expect(selectedHeadline()).toBe('item1');
     });
 
     it('can open search with s', function() {
@@ -77,7 +77,7 @@ describe('content', function() {
 
         expect(element.all(by.css('.state-border')).count()).toBe(0);
         body.sendKeys('v');
-        expect(element.all(by.css('.state-border')).count()).toBe(3);
+        expect(element.all(by.css('.state-border')).count()).toBe(2);
         body.sendKeys('v');
         expect(element.all(by.css('.state-border')).count()).toBe(0);
     });

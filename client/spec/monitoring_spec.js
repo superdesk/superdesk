@@ -53,8 +53,8 @@ describe('monitoring', function() {
         monitoring.nextSearches();
         monitoring.nextReorder();
         monitoring.saveSettings();
-        expect(monitoring.getTextItem(0, 1)).toBe('item1');
-        expect(monitoring.getTextItem(0, 2)).toBe('item2');
+        expect(monitoring.getTextItem(0, 0)).toBe('item1');
+        expect(monitoring.getTextItem(0, 1)).toBe('item2');
     });
 
     it('configure a saved search and show it on monitoring view', function() {
@@ -145,7 +145,7 @@ describe('monitoring', function() {
         monitoring.setMaxItems(1, 1);
         monitoring.setMaxItems(2, 1);
         monitoring.saveSettings();
-        expect(monitoring.getTextItem(0, 0)).toBe('package1');
+        expect(monitoring.getTextItem(0, 0)).toBe('item1');
         expect(monitoring.getTextItem(1, 2)).toBe('item6');
         expect(monitoring.getTextItem(2, 0)).toBe('item1');
     });
@@ -169,8 +169,9 @@ describe('monitoring', function() {
         monitoring.nextSearches();
         monitoring.nextReorder();
         monitoring.saveSettings();
-        expect(monitoring.getTextItem(0, 0)).toBe('ingest1');
-        expect(monitoring.getTextItem(0, 1)).toBe('item5');
+        expect(monitoring.getTextItem(0, 0)).toBe('item5');
+        expect(monitoring.getTextItem(0, 1)).toBe('item9');
+        expect(monitoring.getTextItem(0, 3)).toBe('ingest1');
     });
 
     it('configure a saved search from other user', function() {
@@ -185,8 +186,8 @@ describe('monitoring', function() {
         monitoring.nextSearches();
         monitoring.nextReorder();
         monitoring.saveSettings();
-        expect(monitoring.getTextItem(6, 0)).toBe('ingest1');
-        expect(monitoring.getTextItem(6, 1)).toBe('item5');
+        expect(monitoring.getTextItem(6, 0)).toBe('item5');
+        expect(monitoring.getTextItem(6, 1)).toBe('item9');
         monitoring.showMonitoringSettings();
         monitoring.nextStages();
         expect(monitoring.getGlobalSearchText(0)).toBe('global saved search item by first name last name');
@@ -270,17 +271,15 @@ describe('monitoring', function() {
     it('can filter content by file type', function() {
         monitoring.showMonitoringSettings();
         monitoring.toggleDesk(0);
-        monitoring.togglePersonal();
         monitoring.nextStages();
         monitoring.nextSearches();
         monitoring.nextReorder();
         monitoring.saveSettings();
-        expect(monitoring.getTextItem(0, 0)).toBe('package1');
-        expect(monitoring.getTextItem(0, 1)).toBe('item1');
-        expect(monitoring.getTextItem(0, 2)).toBe('item2');
+        expect(monitoring.getTextItem(2, 0)).toBe('item5');
+        expect(monitoring.getTextItem(2, 1)).toBe('item9');
 
         monitoring.filterAction('composite');
-        expect(monitoring.getTextItem(0, 0)).toBe('package1');
+        expect(monitoring.getTextItem(3, 2)).toBe('package1');
 
         workspace.selectDesk('Sports Desk');
         expect(monitoring.getGroupItems(0).count()).toBe(0);
@@ -323,9 +322,8 @@ describe('monitoring', function() {
 
     it('show personal', function() {
         monitoring.showPersonal();
-        expect(monitoring.getPersonalItemText(0)).toBe('package1');
-        expect(monitoring.getPersonalItemText(1)).toBe('item1');
-        expect(monitoring.getPersonalItemText(2)).toBe('item2');
+        expect(monitoring.getPersonalItemText(0)).toBe('item1');
+        expect(monitoring.getPersonalItemText(1)).toBe('item2');
     });
 
     it('can view items in related item tab', function() {
@@ -364,11 +362,11 @@ describe('monitoring', function() {
         monitoring.nextSearches();
         monitoring.nextReorder();
         monitoring.saveSettings();
-        expect(monitoring.getGroupItems(0).count()).toBe(3);
-        monitoring.actionOnItem('Spike', 0, 0);
         expect(monitoring.getGroupItems(0).count()).toBe(2);
+        monitoring.actionOnItem('Spike', 0, 0);
+        expect(monitoring.getGroupItems(0).count()).toBe(1);
         monitoring.showSpiked();
-        expect(monitoring.getSpikedTextItem(0)).toBe('package1');
+        expect(monitoring.getSpikedTextItem(0)).toBe('item1');
         monitoring.unspikeItem(0);
         expect(monitoring.getSpikedItems().count()).toBe(0);
     });
@@ -405,18 +403,9 @@ describe('monitoring', function() {
         monitoring.nextReorder();
         monitoring.saveSettings();
 
-        monitoring.openAction(0, 0);
+        monitoring.openAction(0, 3);
 
-        monitoring.showMonitoringSettings();
-        monitoring.toggleDesk(0);
-        monitoring.toggleStage(0, 1);
-        monitoring.nextStages();
-        monitoring.toggleGlobalSearch(3);
-        monitoring.nextSearches();
-        monitoring.nextReorder();
-        monitoring.saveSettings();
-
-        expect(monitoring.getTextItem(0, 0)).toBe('ingest1');
+        expect(monitoring.getTextItem(0, 3)).toBe('ingest1');
         expect(authoring.save_button.isDisplayed()).toBe(true);
     });
 
@@ -429,7 +418,7 @@ describe('monitoring', function() {
         monitoring.nextReorder();
         monitoring.saveSettings();
 
-        monitoring.openFetchAsOptions(0, 0);
+        monitoring.openFetchAsOptions(0, 3);
 
         expect(element(by.id('publishScheduleTimestamp')).isPresent()).toBe(false);
         expect(element(by.id('embargoScheduleTimestamp')).isPresent()).toBe(false);
@@ -457,7 +446,7 @@ describe('monitoring', function() {
         monitoring.nextReorder();
         monitoring.saveSettings();
 
-        monitoring.fetchAndOpen(0, 0);
+        monitoring.fetchAndOpen(0, 3);
 
         expect(authoring.save_button.isDisplayed()).toBe(true);
     });

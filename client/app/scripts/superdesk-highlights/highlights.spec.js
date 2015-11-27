@@ -40,7 +40,7 @@ describe('highlights', function() {
             scope.$digest();
             var iscope = elem.isolateScope();
 
-            var highlight = {_id: 'foo_highlight', name: 'Foo'};
+            var highlight = {_id: 'foo_highlight', name: 'Foo', task: {desk: '123'}};
             var pkg = {_id: 'foo_package'};
             spyOn(api, 'find').and.returnValue($q.when(highlight));
             spyOn(api, 'save').and.returnValue($q.when(pkg));

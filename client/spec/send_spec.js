@@ -31,7 +31,13 @@ describe('send', function() {
         workspace.editItem(1);
         authoring.writeText('mispeled word');
         authoring.sendTo('Sports Desk');
-        element(by.className('modal-content')).all(by.css('[ng-click="ok()"]')).click();
+
+        //Spell check confirmation modal save action
+        authoring.confirmSendTo();
+
+        //Unsaved item confirmation modal save action
+        authoring.confirmSendTo();
+
         workspace.switchToDesk('SPORTS DESK');
         expect(
                 element.all(by.repeater('items._items'))
@@ -68,6 +74,28 @@ describe('send', function() {
 
         authoring.sendTo('Politic Desk');
         expect(monitoring.getGroups().count()).toBe(6);
+    });
+
+    it('can confirm before submitting unsaved item to a desk', function () {
+        workspace.open();
+        workspace.editItem(1);
+
+        //Skip spell check
+        authoring.toggleAutoSpellCheck();
+        expect(element(by.model('spellcheckMenu.isAuto')).getAttribute('checked')).toBeFalsy();
+
+        authoring.writeText('Text, that not saved yet');
+        authoring.sendTo('Sports Desk');
+        authoring.confirmSendTo();
+
+        workspace.switchToDesk('SPORTS DESK');
+
+        expect(
+                element.all(by.repeater('items._items'))
+                .first()
+                .element(by.css('.state-label'))
+                .getText()
+                ).toBe('SUBMITTED');
     });
 
 });

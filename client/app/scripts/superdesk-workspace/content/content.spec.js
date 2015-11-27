@@ -23,17 +23,26 @@ describe('superdesk.workspace.content', function() {
             expect(done).toHaveBeenCalledWith(ITEM);
         }));
 
-        it('can create packages', inject(function(api, content, $rootScope) {
+        it('can create packages', inject(function(api, content, desks, session, $rootScope) {
+            session.identity = {_id: '1'};
+            desks.userDesks = {_items: [{_id: '1', name: 'sport', working_stage: '2', incoming_stage: '3'}]};
+            desks.setCurrentDeskId('1');
+
             content.createPackageItem().then(done);
             $rootScope.$digest();
             expect(api.save).toHaveBeenCalledWith('archive', {headline: '', slugline: '',
                 description: '', type: 'composite',
                 groups: [{role: 'grpRole:NEP', refs: [{idRef: 'main'}], id: 'root'},
-                {refs: [], id: 'main', role: 'grpRole:main'}], version: 0});
+                {refs: [], id: 'main', role: 'grpRole:main'}], version: 0,
+                task: {desk: '1', stage: '2', user: '1'}});
             expect(done).toHaveBeenCalledWith(ITEM);
         }));
 
-        it('can create packages from items', inject(function(api, content, $rootScope) {
+        it('can create packages from items', inject(function(api, content, session, desks, $rootScope) {
+            session.identity = {_id: '1'};
+            desks.userDesks = {_items: [{_id: '1', name: 'sport', working_stage: '2', incoming_stage: '3'}]};
+            desks.setCurrentDeskId('1');
+
             content.createPackageItem({data: 123}).then(done);
             $rootScope.$digest();
             expect(done).toHaveBeenCalledWith(ITEM);

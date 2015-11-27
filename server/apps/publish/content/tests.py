@@ -8,6 +8,7 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
+from bson.objectid import ObjectId
 from copy import copy
 from datetime import timedelta
 import os
@@ -40,6 +41,8 @@ PUBLISHED = 'published'
 
 class ArchivePublishTestCase(SuperdeskTestCase):
     def init_data(self):
+        self.users = [{'_id': '1', 'username': 'admin'}]
+        self.desks = [{'_id': ObjectId('123456789ABCDEF123456789'), 'name': 'desk1'}]
         self.subscribers = [{"_id": "1", "name": "sub1", "is_active": True, "subscriber_type": SUBSCRIBER_TYPES.WIRE,
                              "media_type": "media", "sequence_num_settings": {"max": 10, "min": 1},
                              "email": "test@test.com",
@@ -100,6 +103,7 @@ class ArchivePublishTestCase(SuperdeskTestCase):
                           'keywords': ['Student', 'Crime', 'Police', 'Missing'],
                           'subject': [{'qcode': '17004000', 'name': 'Statistics'},
                                       {'qcode': '04001002', 'name': 'Weather'}],
+                          'task': {'user': '1', 'desk': '123456789ABCDEF123456789'},
                           ITEM_STATE: CONTENT_STATE.PUBLISHED,
                           'expiry': utcnow() + timedelta(minutes=20),
                           'unique_name': '#1'},
@@ -120,6 +124,7 @@ class ArchivePublishTestCase(SuperdeskTestCase):
                           'subject': [{'qcode': '17004000', 'name': 'Statistics'},
                                       {'qcode': '04001002', 'name': 'Weather'}],
                           'expiry': utcnow() + timedelta(minutes=20),
+                          'task': {'user': '1', 'desk': '123456789ABCDEF123456789'},
                           ITEM_STATE: CONTENT_STATE.PROGRESS,
                           'publish_schedule': "2016-05-30T10:00:00+0000",
                           ITEM_TYPE: CONTENT_TYPE.TEXT,
@@ -140,6 +145,7 @@ class ArchivePublishTestCase(SuperdeskTestCase):
                           'keywords': ['Student', 'Crime', 'Police', 'Missing'],
                           'subject': [{'qcode': '17004000', 'name': 'Statistics'},
                                       {'qcode': '04001002', 'name': 'Weather'}],
+                          'task': {'user': '1', 'desk': '123456789ABCDEF123456789'},
                           ITEM_STATE: CONTENT_STATE.KILLED,
                           'expiry': utcnow() + timedelta(minutes=20),
                           ITEM_TYPE: CONTENT_TYPE.TEXT,
@@ -161,6 +167,7 @@ class ArchivePublishTestCase(SuperdeskTestCase):
                           'keywords': ['Student', 'Crime', 'Police', 'Missing'],
                           'subject': [{'qcode': '17004000', 'name': 'Statistics'},
                                       {'qcode': '04001002', 'name': 'Weather'}],
+                          'task': {'user': '1', 'desk': '123456789ABCDEF123456789'},
                           ITEM_STATE: CONTENT_STATE.PROGRESS,
                           'expiry': utcnow() + timedelta(minutes=20),
                           ITEM_TYPE: CONTENT_TYPE.TEXT,
@@ -184,6 +191,7 @@ class ArchivePublishTestCase(SuperdeskTestCase):
                           'keywords': ['Student', 'Crime', 'Police', 'Missing'],
                           'subject': [{'qcode': '17004000', 'name': 'Statistics'},
                                       {'qcode': '04001002', 'name': 'Weather'}],
+                          'task': {'user': '1', 'desk': '123456789ABCDEF123456789'},
                           ITEM_STATE: CONTENT_STATE.PROGRESS,
                           'expiry': utcnow() + timedelta(minutes=20),
                           ITEM_TYPE: CONTENT_TYPE.TEXT,
@@ -193,6 +201,7 @@ class ArchivePublishTestCase(SuperdeskTestCase):
                           'last_version': 2,
                           config.VERSION: 3,
                           ITEM_TYPE: CONTENT_TYPE.COMPOSITE,
+                          'task': {'user': '1', 'desk': '123456789ABCDEF123456789'},
                           'groups': [{'id': 'root', 'refs': [{'idRef': 'main'}], 'role': 'grpRole:NEP'},
                                      {
                                          'id': 'main',
@@ -221,6 +230,7 @@ class ArchivePublishTestCase(SuperdeskTestCase):
                           config.VERSION: 3,
                           ITEM_TYPE: CONTENT_TYPE.COMPOSITE,
                           'package_type': 'takes',
+                          'task': {'user': '1', 'desk': '123456789ABCDEF123456789'},
                           'groups': [{'id': 'root', 'refs': [{'idRef': 'main'}], 'role': 'grpRole:NEP'},
                                      {
                                          'id': 'main',
@@ -262,11 +272,16 @@ class ArchivePublishTestCase(SuperdeskTestCase):
                           'keywords': ['Student', 'Crime', 'Police', 'Missing'],
                           'subject': [{'qcode': '17004000', 'name': 'Statistics'},
                                       {'qcode': '04001002', 'name': 'Weather'}],
+                          'task': {'user': '1', 'desk': '123456789ABCDEF123456789'},
                           ITEM_STATE: CONTENT_STATE.PROGRESS,
                           'expiry': utcnow() + timedelta(minutes=20),
                           ITEM_TYPE: CONTENT_TYPE.TEXT,
                           'unique_name': '#8'},
-                         {'_id': '9', 'urgency': 3, 'headline': 'creator', ITEM_STATE: CONTENT_STATE.FETCHED},
+                         {'_id': '9',
+                          'urgency': 3,
+                          'headline': 'creator',
+                          'task': {'user': '1', 'desk': '123456789ABCDEF123456789'},
+                          ITEM_STATE: CONTENT_STATE.FETCHED},
                          {'guid': 'tag:localhost:2015:69b961ab-a7b402fed4fb',
                           'last_version': 3,
                           config.VERSION: 4,
@@ -283,12 +298,14 @@ class ArchivePublishTestCase(SuperdeskTestCase):
                           'keywords': ['Student', 'Crime', 'Police', 'Missing'],
                           'subject': [{'qcode': '17004000', 'name': 'Statistics'},
                                       {'qcode': '04001002', 'name': 'Weather'}],
+                          'task': {'user': '1', 'desk': '123456789ABCDEF123456789'},
                           ITEM_STATE: CONTENT_STATE.PROGRESS,
                           ITEM_TYPE: CONTENT_TYPE.TEXT,
                           'unique_name': '#9'},
                          {'guid': 'tag:localhost:10:10:10:2015:69b961ab-2816-4b8a-a584-a7b402fed4fc',
                           '_id': '100',
                           config.VERSION: 3,
+                          'task': {'user': '1', 'desk': '123456789ABCDEF123456789'},
                           ITEM_TYPE: CONTENT_TYPE.COMPOSITE,
                           'groups': [{'id': 'root', 'refs': [{'idRef': 'main'}], 'role': 'grpRole:NEP'},
                                      {'id': 'main',
@@ -303,6 +320,8 @@ class ArchivePublishTestCase(SuperdeskTestCase):
         super().setUp()
         self.init_data()
 
+        self.app.data.insert('users', self.users)
+        self.app.data.insert('desks', self.desks)
         self.app.data.insert('subscribers', self.subscribers)
         self.app.data.insert(ARCHIVE, self.articles)
 
@@ -471,9 +490,8 @@ class ArchivePublishTestCase(SuperdeskTestCase):
 
         doc = copy(self.articles[9])
         schedule_date = utcnow() + timedelta(hours=2)
-        get_resource_service(ARCHIVE).patch(id=doc['_id'], updates={'publish_schedule': schedule_date, 'task': {}})
-        get_resource_service(ARCHIVE_PUBLISH).patch(id=doc['_id'], updates={ITEM_STATE: CONTENT_STATE.SCHEDULED,
-                                                                            'task': {}})
+        get_resource_service(ARCHIVE).patch(id=doc['_id'], updates={'publish_schedule': schedule_date})
+        get_resource_service(ARCHIVE_PUBLISH).patch(id=doc['_id'], updates={ITEM_STATE: CONTENT_STATE.SCHEDULED})
         queue_items = self.app.data.find(PUBLISH_QUEUE, None, None)
         self.assertEqual(7, queue_items.count())
 
@@ -601,7 +619,7 @@ class ArchivePublishTestCase(SuperdeskTestCase):
 
         ValidatorsPopulateCommand().run(self.filename)
         get_resource_service(ARCHIVE).patch(id=self.articles[1][config.ID_FIELD],
-                                            updates={'publish_schedule': None, 'task': {}})
+                                            updates={'publish_schedule': None})
 
         doc = get_resource_service(ARCHIVE).find_one(req=None, _id=self.articles[1][config.ID_FIELD])
         get_resource_service(ARCHIVE_PUBLISH).patch(id=doc[config.ID_FIELD],

@@ -38,7 +38,7 @@ define([
 
                 scope.$watch('src', function(src) {
                     elem.empty();
-                    if (scope.maxFileSize && ((scope.file.size / 1048576) > parseInt(scope.maxFileSize, 10))) {
+                    if (scope.file && scope.maxFileSize && ((scope.file.size / 1048576) > parseInt(scope.maxFileSize, 10))) {
                         notify.info(gettext('Image is bigger then ' + scope.maxFileSize + 'MB, upload file size may be limited!'));
                     }
                     if (src) {

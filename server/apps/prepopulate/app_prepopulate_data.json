@@ -690,7 +690,7 @@
             "headline": "ingest1",
             "type": "text",
             "guid": "ingest1",
-            "versioncreated": "NOW()"
+            "versioncreated": "2015-01-03T10:10:10+0000"
         }
     },
     {
@@ -700,11 +700,17 @@
     		"headline": "package1",
     		"type": "composite",
     		"guid": "package1",
-            "versioncreated": "NOW()",
+            "versioncreated": "2015-01-01T10:10:10+0000",
             "_current_version" : 1,
             "original_creator": "-id user admin-",
             "unique_id": 2,
             "unique_name": "package1",
+            "task" : {
+                "desk" : "-id desk Politic Desks-",
+                "user" : "-id user admin2-",
+                "status": "in_progress",
+                "stage": "-id stage two Politic Desks-"
+            },
 	    	"groups": [{"id": "root", "refs": [{"idRef": "main"}]}, {"id": "main", "refs": []}]
     	}
     },

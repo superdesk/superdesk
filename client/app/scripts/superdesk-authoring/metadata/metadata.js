@@ -306,7 +306,7 @@ function MetadataListEditingDirective(metadata) {
             header: '@'
         },
         templateUrl: 'scripts/superdesk-authoring/metadata/views/metadata-terms.html',
-        link: function(scope) {
+        link: function(scope, elem) {
             metadata.subjectScope = scope;
 
             scope.$watch('list', function(items) {
@@ -343,6 +343,9 @@ function MetadataListEditingDirective(metadata) {
                 scope.activeTerm = term;
                 scope.activeTree = scope.tree[term ? term.qcode : null];
                 $event.stopPropagation();
+                _.defer(function () {
+                    elem.find('button:not([disabled]):not(.dropdown-toggle)')[0].focus();
+                });
             };
 
             scope.activeList = false;

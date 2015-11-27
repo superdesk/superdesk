@@ -15,7 +15,7 @@ describe('search', function() {
     });
 
     it('can search by search field', function() {
-        expect(globalSearch.getItems().count()).toBe(10);
+        expect(globalSearch.getItems().count()).toBe(11);
         globalSearch.searchInput.click();
         globalSearch.searchInput.clear();
         globalSearch.searchInput.sendKeys('item3');
@@ -27,7 +27,7 @@ describe('search', function() {
 
     it('can search by search within field', function() {
         globalSearch.openFilterPanel();
-        expect(globalSearch.getItems().count()).toBe(10);
+        expect(globalSearch.getItems().count()).toBe(11);
 
         var searchTextbox = element(by.id('search_within'));
         searchTextbox.clear();
@@ -58,7 +58,7 @@ describe('search', function() {
 
     it('can search by priority field', function () {
         globalSearch.openFilterPanel();
-        expect(globalSearch.getItems().count()).toBe(10);
+        expect(globalSearch.getItems().count()).toBe(11);
         expect(globalSearch.getPriorityElements().count()).toBe(3);
         var priority = globalSearch.getPriorityElementByIndex(0);
         priority.click();
@@ -67,7 +67,7 @@ describe('search', function() {
 
     it('can search by byline field', function () {
         globalSearch.openFilterPanel();
-        expect(globalSearch.getItems().count()).toBe(10);
+        expect(globalSearch.getItems().count()).toBe(11);
         globalSearch.openParameters();
         var bylineTextbox = element(by.id('search-byline'));
         bylineTextbox.clear();
@@ -78,7 +78,7 @@ describe('search', function() {
 
     it('can search by slugline', function () {
         globalSearch.openFilterPanel();
-        expect(globalSearch.getItems().count()).toBe(10);
+        expect(globalSearch.getItems().count()).toBe(11);
         globalSearch.openParameters();
         var bylineTextbox = element(by.id('search-slugline'));
         bylineTextbox.clear();
@@ -89,16 +89,16 @@ describe('search', function() {
 
     it('can search by original creator', function () {
         globalSearch.openFilterPanel();
-        expect(globalSearch.getItems().count()).toBe(10);
+        expect(globalSearch.getItems().count()).toBe(11);
         globalSearch.openParameters();
         globalSearch.selectCreator('search-creator', 'first name last name');
         globalSearch.goButton.click();
-        expect(globalSearch.getItems().count()).toBe(9);
+        expect(globalSearch.getItems().count()).toBe(10);
     });
 
     it('can search by genre field', function () {
         globalSearch.openFilterPanel();
-        expect(globalSearch.getItems().count()).toBe(10);
+        expect(globalSearch.getItems().count()).toBe(11);
         expect(globalSearch.getGenreElements().count()).toBe(1);
         var genre = globalSearch.getGenreElementByIndex(0);
         genre.click();
@@ -119,7 +119,7 @@ describe('search', function() {
 
         globalSearch.openGlobalSearch();
         globalSearch.setListView();
-        expect(globalSearch.getItems().count()).toBe(11);
+        expect(globalSearch.getItems().count()).toBe(12);
         globalSearch.openFilterPanel();
         globalSearch.openParameters();
 
@@ -140,11 +140,11 @@ describe('search', function() {
 
         globalSearch.selectDesk('to-desk', '');
         globalSearch.goButton.click();
-        expect(globalSearch.getItems().count()).toBe(11);
+        expect(globalSearch.getItems().count()).toBe(12);
     });
 
     it('can dynamically update items in related tab when item duplicated', function() {
-        expect(globalSearch.getItems().count()).toBe(10);
+        expect(globalSearch.getItems().count()).toBe(11);
 
         globalSearch.actionOnItem('Duplicate', 0);
         globalSearch.itemClick(0);

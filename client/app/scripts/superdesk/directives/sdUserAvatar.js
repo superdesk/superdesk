@@ -11,34 +11,45 @@ define(['angular'], function (angular) {
                         if (user) {
                             initAvatar(user);
                         }
-                    });
+                    }, true);
+
+                    var figure = element.parents('figure');
 
                     element.on('error', function (e) {
-                        element.hide();
+                        showInitials(scope.user.display_name);
                     });
 
                     function initAvatar(user) {
-                        var figure = element.parents('figure');
-
                         if (user.picture_url) {
-                            element.attr('src', user.picture_url).show();
-                            figure.addClass('no-bg');
-
+                            showPicture(user.picture_url);
                         } else if (user.display_name) {
-                            var initials = user.display_name.replace(/\W*(\w)\w*/g, '$1').toUpperCase();
-
-                            element.hide();
-                            figure.addClass('initials');
-
-                            if (figure.has('> span').length) {
-                                figure.children('span').text(initials);
-                            } else {
-                                figure.prepend('<span>' + initials + '</span>');
-                            }
-
+                            showInitials(user.display_name);
                         } else {
                             element.hide();
-                            figure.removeClass('no-bg');
+                            figure.children('span').hide();
+                            figure.removeClass('no-bg initials');
+                        }
+                    }
+
+                    function showPicture(url) {
+                        figure.children('span').hide();
+                        figure.addClass('no-bg');
+                        figure.removeClass('initials');
+
+                        element.attr('src', url).show();
+                    }
+
+                    function showInitials(name) {
+                        var initials = name.replace(/\W*(\w)\w*/g, '$1').toUpperCase();
+
+                        element.hide();
+                        figure.addClass('initials');
+                        figure.removeClass('no-bg');
+
+                        if (figure.has('> span').length) {
+                            figure.children('span').text(initials).show();
+                        } else {
+                            figure.prepend('<span>' + initials + '</span>');
                         }
                     }
                 }
