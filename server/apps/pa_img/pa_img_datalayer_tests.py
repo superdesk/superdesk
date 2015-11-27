@@ -14,22 +14,22 @@ from apps.pa_img.pa_img_datalayer import extract_params
 class PaImgDatalayer(SuperdeskTestCase):
 
     def test_validate_query_all_first_succeeds(self):
-        query = '(all) headline:(head one) caption:(capt) keywords:(key)'
+        query = 'all headline:(head one) caption:(capt) keywords:(key)'
         names = ['headline', 'keywords']
         result = extract_params(query, names)
-        self.assertDictEqual(result, {'text': 'all', 'headline': 'head one', 'keywords': 'key'},
+        self.assertDictEqual(result, {'q': 'all', 'headline': 'head one', 'keywords': 'key'},
                              msg='Fail to parse text query all first')
 
     def test_validate_query_all_middle_succeeds(self):
-        query = 'headline:(head one) (all) caption:(capt) keywords:(key)'
+        query = 'headline:(head one) all caption:(capt) keywords:(key)'
         names = ['headline', 'keywords']
         result = extract_params(query, names)
-        self.assertDictEqual(result, {'text': 'all', 'headline': 'head one', 'keywords': 'key'},
+        self.assertDictEqual(result, {'q': 'all', 'headline': 'head one', 'keywords': 'key'},
                              msg='Fail to parse text query all middle')
 
     def test_validate_query_all_end_succeeds(self):
-        query = 'headline:(head one) caption:(capt) keywords:(key) (all)'
+        query = 'headline:(head one) caption:(capt) keywords:(key) all'
         names = ['headline', 'keywords']
         result = extract_params(query, names)
-        self.assertDictEqual(result, {'text': 'all', 'headline': 'head one', 'keywords': 'key'},
+        self.assertDictEqual(result, {'q': 'all', 'headline': 'head one', 'keywords': 'key'},
                              msg='Fail to parse text query all end')

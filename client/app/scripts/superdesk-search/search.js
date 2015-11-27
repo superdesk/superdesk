@@ -759,8 +759,8 @@
                     BUFFER: 8
                 },
                 mgrid: {
-                    ITEM_HEIGHT: 239,
-                    ITEM_WIDTH: 190,
+                    ITEM_HEIGHT: 249,
+                    ITEM_WIDTH: 199,
                     ITEMS_COUNT: 27,
                     ITEMS_ROW: 9,
                     BUFFER: 18
@@ -781,7 +781,6 @@
 
                     var updateTimeout,
                         criteria = search.query($location.search()).getCriteria(true),
-                        list = elem[0].getElementsByClassName('list-view')[0],
                         scrollElem = elem.find('.content'),
                         oldQuery = _.omit($location.search(), '_id');
 
@@ -813,8 +812,11 @@
 
                     scope.$watch('view', function(newValue, oldValue) {
                         if (newValue !== oldValue) {
-                            scrollElem.scrollTop(0);
-                            render();
+                            var items = scope.items;
+                            scope.items = null;
+                            scope.$applyAsync(function() {
+                                render(items);
+                            });
                         }
                     });
 
@@ -828,9 +830,7 @@
                         return _.omit($location.search(), '_id');
                     }, function(newValue, oldValue) {
                         if (newValue !== oldValue) {
-                            queryItems().then(function () {
-                                scrollElem.scrollTop(0);
-                            });
+                            queryItems();
                         }
                     }, true);
 
@@ -840,7 +840,35 @@
                      */
                     function handleScroll() {
                         $timeout.cancel(updateTimeout);
-                        updateTimeout = $timeout(render, 100, false);
+                        updateTimeout = $timeout(renderIfNeeded, 100, false);
+                    }
+
+                    scope.rendering = false;
+
+                    /**
+                     * Check if last item in list (which is empty placeholder)
+                     * is visible and if so it will fetch next items
+                     */
+                    function renderIfNeeded() {
+                        if (!scope.items) {
+                            return; // automatic scroll after removing items
+                        }
+
+                        var last = document.getElementById('last-item');
+                        if (isVisible(last) && !scope.rendering) {
+                            scope.rendering = true;
+                            render(null, true);
+                        }
+                    }
+
+                    function isVisible(elem) {
+                        var rect = elem.getBoundingClientRect();
+                        return (
+                            rect.top >= 0 &&
+                            rect.left >= 0 &&
+                            rect.bottom <= window.innerHeight &&
+                            rect.right <= window.innerWidth
+                        );
                     }
 
                     /*
@@ -848,14 +876,18 @@
                      */
                     function queryItems() {
                         criteria = search.query($location.search()).getCriteria(true);
-                        criteria.source.size = 0;
+                        criteria.source.size = 100;
+                        criteria.source.from = 0;
                         scope.total = null;
+                        scope.items = null;
                         if (!scope.previewingBroadcast) {
                             scope.preview(null);
                         }
                         return api.query(getProvider(criteria), criteria).then(function (items) {
                             scope.total = items._meta.total;
-                            scope.$applyAsync(render);
+                            scope.$applyAsync(function() {
+                                render(items);
+                            });
                         });
                     }
 
@@ -879,35 +911,66 @@
                     /*
                      * Function for fetching the elements from the database
                      *
-                     * @returns {undefined}
+                     * @param {items}
                      */
-                    function render() {
-                        var query = _.omit($location.search(), '_id');
+                    function render(items, next) {
                         var parameters = sourceParam();
+                        if (!items && !next) {
+                            var query = _.omit($location.search(), '_id');
 
-                        if (!_.isEqual(_.omit(query, 'page'), _.omit(oldQuery, 'page'))) {
-                            $location.search('page', null);
+                            if (!_.isEqual(_.omit(query, 'page'), _.omit(oldQuery, 'page'))) {
+                                $location.search('page', null);
+                            }
+
+                            criteria = search.query($location.search()).getCriteria(true);
+                            criteria.source.from = parameters.from;
+                            criteria.source.size = parameters.to - parameters.from;
+                            api.query(getProvider(criteria), criteria).then(setScopeItems);
+                            oldQuery = query;
+                        } else if (!items && next) {
+                            criteria.source.from = (criteria.source.from || 0) + criteria.source.size;
+                            api.query(getProvider(criteria), criteria).then(setScopeItems);
+                        } else {
+                            setScopeItems(items);
                         }
 
-                        criteria = search.query($location.search()).getCriteria(true);
-                        var tempItems;
-
-                        criteria.source.from = parameters.from;
-                        criteria.source.size = parameters.to - parameters.from;
-
-                        api.query(getProvider(criteria), criteria).then(function (items) {
+                        function setScopeItems(items) {
                             scope.$applyAsync(function () {
-                                list.style.paddingTop = parameters.padding;
+                                //list.style.paddingTop = parameters.padding;
                                 if (!scope.items) {
                                     scope.items = items;
+                                } else if (next) {
+                                    concat(scope.items._items, items._items);
                                 } else {
-                                    tempItems = {'_items': merge(items._items)};
-                                    scope.items = _.assign(tempItems, _.omit(items, '_items'));
+                                    scope.items = merge(items._items);
                                 }
+                                scope.rendering = false;
                             });
-                        });
+                        }
+                    }
 
-                        oldQuery = query;
+                    /**
+                     * Add items from src into dest array
+                     *
+                     * @param {Array} dest
+                     * @param {Array} src
+                     */
+                    function concat(dest, src) {
+                        var ids = {};
+                        var i, l;
+
+                        // populate ids
+                        for (i = 0, l = dest.length; i < l; i++) {
+                            ids[dest[i].guid] = true;
+                        }
+
+                        // add only what's missing
+                        for (i = 0, l = src.length; i < l; i++) {
+                            var item = src[i];
+                            if (!ids[item.guid]) {
+                                dest.push(item);
+                            }
+                        }
                     }
 
                     /*
@@ -919,7 +982,8 @@
                         var top, start, from, itemsCount, to, padding;
 
                         if (scope.view === 'mgrid') {
-                            itemParameters[scope.view].ITEMS_ROW = Math.floor(scrollElem.width() / itemParameters[scope.view].ITEM_WIDTH);
+                            var width = scrollElem.width() - 52;
+                            itemParameters[scope.view].ITEMS_ROW = Math.floor(width / itemParameters[scope.view].ITEM_WIDTH);
                             itemParameters[scope.view].BUFFER = itemParameters[scope.view].ITEMS_ROW * 3;
                         }
 
@@ -1245,7 +1309,7 @@
                     }
 
                     function closeOnClick() {
-                        scope.$apply(function() {
+                        scope.$applyAsync(function() {
                             scope.focused = false;
                         });
                     }

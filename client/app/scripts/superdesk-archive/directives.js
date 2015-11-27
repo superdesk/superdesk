@@ -477,10 +477,8 @@
                         if (val === undefined) {
                             stopRatioWatch();
                         }
-                        calcRatio();
+                        _.debounce(_calcRatio, 150);
                     });
-
-                    var calcRatio = _.debounce(_calcRatio, 150);
 
                     function _calcRatio() {
                         var el = elem.find('figure');

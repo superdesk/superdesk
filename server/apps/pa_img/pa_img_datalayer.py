@@ -8,23 +8,23 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-import datetime
-from io import BytesIO
+import arrow
 import json
 import logging
 import re
+import math
+import urllib3
 
+from io import BytesIO
 from eve.io.base import DataLayer
 from eve_elastic.elastic import ElasticCursor
 from superdesk.upload import url_for_media
-import urllib3
 
 from superdesk.errors import SuperdeskApiError
 from superdesk.media.media_operations import process_file_from_stream, decode_metadata, download_file_from_url
 from superdesk.media.renditions import generate_renditions, delete_file_on_error
 from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE
-from superdesk.utc import utc, utcnow
-
+from superdesk.utc import utcnow
 
 urllib3.disable_warnings()
 
@@ -34,13 +34,11 @@ logger = logging.getLogger(__name__)
 def extract_params(query, names):
     findall = re.findall('([\w]+):\(([\w\s]+)\)', query)
     params = {name: value for (name, value) in findall if name in names}
-    result = re.search('^\(([\w\s]+)\)', query)
-    if result:
-        params['text'] = result.group(1)
-    else:
-        result = re.search('[^:]+\(([\w\s]+)\)', query)
-        if result:
-            params['text'] = result.group(1)
+    for name, value in findall:
+        query = query.replace('%s:(%s)' % (name, value), '')
+    query = query.strip()
+    if query:
+        params['q'] = query
     return params
 
 
@@ -76,13 +74,13 @@ class PaImgDatalayer(DataLayer):
         :return:
         """
 
-        url = self._app.config['PAIMG_SEARCH_URL'] + '/search'
+        url = self._app.config['PAIMG_SEARCH_URL']
         fields = {}
         if 'query' in req['query']['filtered']:
-            query_keywords = req['query']['filtered']['query']['query_string']['query']
-            query_keywords = query_keywords.replace('slugline:', 'keywords:')
-            query_keywords = query_keywords.replace('description:', 'caption:')
-            fields = extract_params(query_keywords, ['headline', 'caption', 'keywords'])
+            query = req['query']['filtered']['query']['query_string']['query'] \
+                .replace('slugline:', 'keywords:') \
+                .replace('description:', 'caption:')
+            fields.update(extract_params(query, ('headline', 'keywords', 'caption')))
 
         for criterion in req.get('post_filter', {}).get('and', {}):
             # parse out the date range if possible
@@ -119,19 +117,19 @@ class PaImgDatalayer(DataLayer):
                         fields['photos'] = 'true'
 
         if not fields:
-            fields['days_since'] = 1
+            url += '/latest'
+            fields['ck'] = 'public'
+            fields['days_since'] = 5
+        else:
+            url += '/search'
+            fields['ck'] = 'superdesk'
 
-        size = int(req.get('size', '100')) if int(req.get('size', '100')) > 0 else 100
-        if size and size < 100:
-            fields['limit'] = size
-
-        page = int(req.get('from', '0')) // size + 1
-        if page > 1:
-            fields['page'] = page
+        offset, limit = int(req.get('from', '0')), max(10, int(req.get('size', '25')))
+        fields['limit'] = limit
+        fields['page'] = math.ceil((offset + 1) / limit)
 
         if self._token:
             fields['token'] = self._token
-        fields['ck'] = 'superdesk'
 
         r = self._http.request_encode_url('GET', url,
                                           fields=fields, headers=self._headers)
@@ -187,10 +185,9 @@ class PaImgDatalayer(DataLayer):
 
     def _datetime(self, string):
         try:
-            dt = datetime.datetime.strptime(string, '%Y-%m-%dT%H:%M:%S').replace(tzinfo=utc)
-        except:
-            dt = utcnow()
-        return dt
+            return arrow.get(string).datetime
+        except Exception:
+            return utcnow()
 
     def find_all(self, resource, max_results=1000):
         raise NotImplementedError
