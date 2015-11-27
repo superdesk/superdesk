@@ -1,11 +1,11 @@
-define(['lodash'], function(_) {
+(function() {
     'use strict';
 
     /**
      * Http endpoint factory
      */
-    HttpEndpointFactory.$inject = ['$http', '$q', 'urls'];
-    function HttpEndpointFactory($http, $q, urls) {
+    HttpEndpointFactory.$inject = ['$http', '$q', 'urls', 'lodash'];
+    function HttpEndpointFactory($http, $q, urls, _) {
 
         /**
          * Get url for given resource
@@ -252,5 +252,8 @@ define(['lodash'], function(_) {
         return HttpEndpoint;
     }
 
-    return HttpEndpointFactory;
-});
+
+    angular.module('superdesk.api')
+    .factory('HttpEndpointFactory', HttpEndpointFactory);
+
+})();

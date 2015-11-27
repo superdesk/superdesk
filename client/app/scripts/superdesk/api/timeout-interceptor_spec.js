@@ -1,7 +1,8 @@
-define([
-    './timeout-interceptor',
-    './request-service'
-], function(TimeoutHttpInterceptor, RequestService) {
+(function() {
+//
+//     './timeout-interceptor',
+//     './request-service'
+// ], function(TimeoutHttpInterceptor, RequestService) {
     'use strict';
 
     describe('timeout http interceptor', function() {
@@ -60,4 +61,4 @@ define([
         }));
 
     });
-});
+})();

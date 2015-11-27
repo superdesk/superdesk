@@ -1,4 +1,4 @@
-define(['./url-resolver-service'], function(URLResolver) {
+(function() {
     'use strict';
 
     describe('url resolver', function() {
@@ -8,7 +8,7 @@ define(['./url-resolver-service'], function(URLResolver) {
             RESOURCES = {_links: {child: [{title: 'users', href: USERS_URL}]}};
 
         beforeEach(module(function($provide) {
-            $provide.service('urls', URLResolver);
+            // $provide.service('urls', URLResolver);
             $provide.constant('config', {server: {url: SERVER_URL}});
         }));
 
@@ -30,4 +30,4 @@ define(['./url-resolver-service'], function(URLResolver) {
             expect(urls.item('/users/1')).toBe(SERVER_URL + '/users/1');
         }));
     });
-});
+})();

@@ -1,10 +1,10 @@
-define(['./request-service', 'superdesk/upload/upload-service'], function(RequestService, UploadService) {
+(function() {
     'use strict';
 
     describe('request service', function() {
+        beforeEach(module('superdesk.mocks'));
+        beforeEach(module('superdesk.api'));
         beforeEach(module(function($provide) {
-            $provide.service('request', RequestService);
-            $provide.service('upload', UploadService);
             $provide.service('$upload', ['$q', function($q) {
                 this.upload = function() {
                     return $q.when();
@@ -42,4 +42,4 @@ define(['./request-service', 'superdesk/upload/upload-service'], function(Reques
             expect(upload.isUpload).toHaveBeenCalledWith(config);
         }));
     });
-});
+})();

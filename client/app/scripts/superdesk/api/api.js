@@ -1,18 +1,8 @@
-define([
-    'angular',
-    'require',
-    './api-service',
-    './timeout-interceptor',
-    './request-service',
-    './url-resolver-service'
-], function(angular, require) {
+(function() {
     'use strict';
 
-    return angular.module('superdesk.api', ['superdesk.config'])
-        .provider('api', require('./api-service'))
-        .service('request', require('./request-service'))
-        .service('urls', require('./url-resolver-service'))
+    angular.module('superdesk.api', ['superdesk.config'])
         .config(['$httpProvider', function($httpProvider) {
-            $httpProvider.interceptors.push(require('./timeout-interceptor'));
+            $httpProvider.interceptors.push('timeoutInterceptor');
         }]);
-});
+})();

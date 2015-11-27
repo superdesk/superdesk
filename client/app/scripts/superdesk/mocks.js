@@ -8,6 +8,8 @@ beforeEach(module(function($provide) {
 /**
  * Mock services that call server on init and thus would require mocking all the time
  */
+angular.module('superdesk.config', []);
+
 angular.module('superdesk.mocks', [])
     .provider('config', function() {
         var config = {server: {url: 'http://test'}};

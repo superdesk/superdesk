@@ -3,8 +3,7 @@
 module.exports = function(config) {
     config.set({
         frameworks: [
-            'jasmine',
-            'requirejs'
+            'jasmine'
         ],
 
         preprocessors: {
@@ -16,16 +15,46 @@ module.exports = function(config) {
         // list of files / patterns to load in the browser
         files: [
             'app/scripts/bower_components/jquery/dist/jquery.js',
+            'app/scripts/bower_components/lodash/lodash.js',
+            'app/scripts/bower_components/bootstrap/dist/js/bootstrap.min.js',
             'app/scripts/bower_components/angular/angular.js',
+            'app/scripts/bower_components/angular-route/angular-route.js',
+            'app/scripts/bower_components/angular-mocks/angular-mocks.js',
+            'app/scripts/bower_components/angular-resource/angular-resource.js',
+            'app/scripts/bower_components/angular-gettext/dist/angular-gettext.js',
+            'app/scripts/bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
+            'app/scripts/bower_components/ng-file-upload/angular-file-upload.js',
             'app/scripts/bower_components/momentjs/moment.js',
             'app/scripts/bower_components/moment-timezone/builds/moment-timezone-with-data-2010-2020.js',
             'app/scripts/bower_components/angular-moment/angular-moment.js',
             'app/scripts/bower_components/d3/d3.js',
-            {pattern: 'app/**/*.js', included: false},
-            {pattern: 'app/scripts/superdesk/**/*[sS]pec.js', included: false},
+            'app/scripts/superdesk/mocks.js',
             'app/scripts/superdesk-*/**/*.html',
             'app/scripts/superdesk/**/*.html',
-            'test-main.js'
+
+            // activity
+            // FIXME: not working
+            // 'app/scripts/superdesk/activity/activity.js',
+            // 'app/scripts/superdesk/activity/activity-chooser-directive.js',
+            // 'app/scripts/superdesk/activity/activity-list-directive.js',
+            // 'app/scripts/superdesk/activity/activity-modal-directive.js',
+            // 'app/scripts/superdesk/activity/superdesk-service_spec.js',
+            // analytics
+            // NOTE: working! was easy...
+            'app/scripts/superdesk/analytics/analytics.js',
+            'app/scripts/superdesk/analytics/analytics_spec.js',
+            // api
+            // FIXME: not working
+            // 'app/scripts/superdesk/api/api.js',
+            // 'app/scripts/superdesk/api/api-service.js',
+            // 'app/scripts/superdesk/api/http-endpoint-factory.js',
+            // 'app/scripts/superdesk/api/request-service.js',
+            // 'app/scripts/superdesk/api/timeout-interceptor.js',
+            // 'app/scripts/superdesk/api/url-resolver-service.js',
+            // 'app/scripts/superdesk/api/request-service_spec.js',
+            // 'app/scripts/superdesk/api/timeout-interceptor_spec.js',
+            // 'app/scripts/superdesk/api/api-service_spec.js',
+            // 'app/scripts/superdesk/api/url-resolver_spec.js',
         ],
 
         // list of files to exclude

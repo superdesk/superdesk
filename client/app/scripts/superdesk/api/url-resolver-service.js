@@ -1,4 +1,4 @@
-define([], function() {
+(function() {
     'use strict';
 
     URLResolver.$inject = ['$http', '$q', 'config'];
@@ -73,5 +73,8 @@ define([], function() {
         }
     }
 
-    return URLResolver;
-});
+
+    angular.module('superdesk.api')
+    .service('urls', URLResolver);
+
+})();

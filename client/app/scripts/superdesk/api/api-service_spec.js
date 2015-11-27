@@ -1,7 +1,4 @@
-define([
-    './api-service',
-    './url-resolver-service'
-], function(APIProvider, UrlResolver) {
+(function() {
     'use strict';
 
     function collection(data) {
@@ -40,10 +37,10 @@ define([
     };
 
     function doConfig($provide) {
-        $provide.service('urls', UrlResolver);
         $provide.constant('config', {server: {url: SERVER_URL}});
-        var apiProvider = $provide.provider('api', APIProvider);
-        apiProvider.api('http', HTTP_API);
+        module('plunker', function( apiProvider ) {
+            apiProvider.api('http', HTTP_API);
+        });
     }
 
     describe('API Provider', function() {
@@ -465,4 +462,4 @@ define([
             $httpBackend.flush();
         }));
     });
-});
+})();

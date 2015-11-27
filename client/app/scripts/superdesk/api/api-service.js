@@ -1,8 +1,4 @@
-define([
-    'angular',
-    'lodash',
-    './http-endpoint-factory'
-], function(angular, _, HttpEndpointFactory) {
+(function() {
     'use strict';
 
     /**
@@ -21,11 +17,11 @@ define([
 
         this.$get = apiServiceFactory;
 
-        apiServiceFactory.$inject = ['$injector', '$q', '$http', 'urls'];
-        function apiServiceFactory($injector, $q, $http, urls) {
+        apiServiceFactory.$inject = ['$injector', '$q', '$http', 'urls', 'lodash', 'HttpEndpointFactory'];
+        function apiServiceFactory($injector, $q, $http, urls, _, HttpEndpointFactory) {
 
             var endpoints = {
-                'http': $injector.invoke(HttpEndpointFactory)
+                'http': HttpEndpointFactory
             };
 
             function isOK(response) {
@@ -278,5 +274,7 @@ define([
         }
     }
 
-    return APIProvider;
-});
+    angular.module('superdesk.api')
+    .provider('api', APIProvider);
+
+})();
