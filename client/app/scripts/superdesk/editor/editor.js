@@ -1320,7 +1320,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                     function getYoutubeId(url) {
                         var regExp = /.*(?:youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=)([^#\&\?]*).*/;
                         var match = url.match(regExp);
-                        return (match && match[1].length == 11) ? match[1] : false;
+                        return (match && match[1].length === 11) ? match[1] : false;
                     }
                     var deferred = $q.defer();
                     embedlyService.embed(url).then(
@@ -1345,7 +1345,8 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
             embedService.registerHandler({
                 name: 'Instagram',
                 patterns: [
-                    '^((http:\/\/(instagr\.am\/p\/.*|instagram\.com\/p\/.*|www\.instagram\.com\/p\/.*))|(https:\/\/(www\.instagram\.com\/p\/.*)))$'
+                    '^((http:\/\/(instagr\.am\/p\/.*|instagram\.com\/p\/.*|' +
+                    'www\.instagram\.com\/p\/.*))|(https:\/\/(www\.instagram\.com\/p\/.*)))$'
                 ],
                 embed: function(url) {
                     var deferred = $q.defer();
