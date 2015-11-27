@@ -140,10 +140,11 @@ class PaImgDatalayer(DataLayer):
         new_doc = {}
         new_doc['_id'] = doc['urn']
         new_doc['guid'] = doc['urn']
+        if 'description_text' in doc:
+            new_doc['description_text'] = doc['description_text']
         if 'headline' in doc:
             new_doc['headline'] = doc['headline']
-        if 'description_text' in doc:
-            new_doc['description'] = doc['description_text']
+            new_doc.setdefault('description_text', doc['headline'])
         if 'credit' in doc:
             new_doc['source'] = doc['credit']
             if 'original_reference' in doc:
