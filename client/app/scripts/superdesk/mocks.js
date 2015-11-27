@@ -5,11 +5,13 @@ beforeEach(module(function($provide) {
     $provide.constant('lodash', window._);
 }));
 
+beforeEach(module('superdesk.mocks'));
+
 /**
  * Mock services that call server on init and thus would require mocking all the time
  */
 angular.module('superdesk.config', []);
-
+angular.module('superdesk.preferences', []);
 angular.module('superdesk.mocks', [])
     .provider('config', function() {
         var config = {server: {url: 'http://test'}};

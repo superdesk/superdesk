@@ -55,6 +55,9 @@ module.exports = function(config) {
             // 'app/scripts/superdesk/api/timeout-interceptor_spec.js',
             // 'app/scripts/superdesk/api/api-service_spec.js',
             // 'app/scripts/superdesk/api/url-resolver_spec.js',
+            // beta
+            'app/scripts/superdesk/beta/beta.js',
+            'app/scripts/superdesk/beta/beta_spec.js',
         ],
 
         // list of files to exclude

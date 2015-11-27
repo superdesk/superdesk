@@ -1,10 +1,9 @@
-define(['./beta'], function(BetaService) {
+(function() {
     'use strict';
 
     describe('beta service', function() {
 
-        beforeEach(module('superdesk.notify'));
-        beforeEach(module(BetaService.name));
+        beforeEach(module('superdesk.services.beta'));
 
         it('can filter out sd-beta from html when beta is off',
         inject(function(betaService, $rootScope, $http, $httpBackend) {
@@ -55,4 +54,4 @@ define(['./beta'], function(BetaService) {
             expect(data).toContain('beta');
         }));
     });
-});
+})();

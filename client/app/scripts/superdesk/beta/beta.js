@@ -1,12 +1,12 @@
-define(['angular', 'jquery'], function(angular, $) {
+(function() {
     'use strict';
 
-    var module = angular.module('superdesk.services.beta', ['superdesk.preferences']);
+    angular.module('superdesk.services.beta', ['superdesk.preferences'])
 
     /**
      * Superdesk service for enabling/disabling beta preview in app
      */
-    module.service('betaService', ['$window', '$rootScope', '$q', 'preferencesService',
+    .service('betaService', ['$window', '$rootScope', '$q', 'preferencesService',
         function($window, $rootScope, $q, preferencesService) {
 
             $rootScope.beta = null;
@@ -40,9 +40,9 @@ define(['angular', 'jquery'], function(angular, $) {
                     return $q.when($rootScope.beta);
                 }
             };
-        }]);
+        }])
 
-    module.config(['$httpProvider', function($httpProvider) {
+    .config(['$httpProvider', function($httpProvider) {
         $httpProvider.interceptors.push(BetaTemplateInterceptor);
     }]);
 
@@ -87,5 +87,4 @@ define(['angular', 'jquery'], function(angular, $) {
         };
     }
 
-    return module;
-});
+})();
