@@ -34,16 +34,20 @@ postfix:
     file: common.yml
     service: postfix
 
-backend:
+superdesk:
   extends:
     file: common.yml
-    service: backend
+    service: superdesk
   links:
    - mongodb
    - redis
    - elastic
    - logstash
    - postfix
+   - pubapi
+  ports:
+   - "443:443"
+   - "80:80"
 
 pubapi:
   extends:
@@ -55,14 +59,3 @@ pubapi:
    - elastic
    - logstash
    - postfix
-
-frontend:
-  extends:
-    file: common.yml
-    service: frontend
-  links:
-   - backend
-   - pubapi
-  ports:
-   - "443:443"
-   - "80:80"
