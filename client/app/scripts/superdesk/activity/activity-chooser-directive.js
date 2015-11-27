@@ -1,10 +1,9 @@
-define([
-    'lodash',
-    'require'
-], function(_, require) {
+(function() {
     'use strict';
 
-    return ['activityChooser', 'keyboardManager', 'asset', function(activityChooser, keyboardManager, asset) {
+    angular.module('superdesk.activity')
+    .directive('sdActivityChooser', ['activityChooser', 'keyboardManager', 'asset', 'lodash', 
+    function(activityChooser, keyboardManager, asset, _) {
         return {
             scope: {},
             templateUrl: asset.templateUrl('superdesk/activity/views/activity-chooser.html'),
@@ -50,5 +49,5 @@ define([
                 };
             }
         };
-    }];
-});
+    }]);
+})();

@@ -1,9 +1,8 @@
-define([
-    'require'
-], function(require) {
+(function() {
     'use strict';
 
-    return ['activityService', 'asset', function(activityService, asset) {
+    angular.module('superdesk.activity')
+    .directive('sdActivityModal', ['activityService', 'asset', function(activityService, asset) {
         return {
             scope: true,
             templateUrl: asset.templateUrl('superdesk/activity/views/activity-modal.html'),
@@ -31,5 +30,5 @@ define([
                 });
             }
         };
-    }];
-});
+    }]);
+})();

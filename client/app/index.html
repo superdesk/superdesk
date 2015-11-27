@@ -41,6 +41,11 @@
     <!-- endbuild -->
 
     <!-- build:js scripts/superdesk-core.js -->
+    <script src="scripts/superdesk/activity/activity.js"></script>
+    <script src="scripts/superdesk/activity/activity-chooser-directive.js"></script>
+    <script src="scripts/superdesk/activity/activity-list-directive.js"></script>
+    <script src="scripts/superdesk/activity/activity-modal-directive.js"></script>
+
     <script src="scripts/superdesk/editor/editor.js"></script>
     <script src="scripts/superdesk/features/features.js"></script>
     <script src="scripts/superdesk/services/asset.js"></script>
@@ -109,7 +114,7 @@
     <script src="scripts/superdesk-ingest/ingest-stats-widget/stats.js"></script>
     <script src="scripts/superdesk-ingest/module.js"></script>
 
-    
+
     <script src="scripts/superdesk-archive/module.js"></script>
     <script src="scripts/superdesk-archive/controllers/list.js"></script>
     <script src="scripts/superdesk-archive/controllers/upload.js"></script>
@@ -165,13 +170,7 @@
             'superdesk.loading',
             'superdesk.templates-cache'
         ];
-
-        require([
-            'main',
-            //'superdesk-scratchpad/module',
-        ], function(bootstrap) {
-            bootstrap(config, modules);
-        });
+        window.bootstrapSuperdesk(config, modules);
     </script>
   </body>
 </html>

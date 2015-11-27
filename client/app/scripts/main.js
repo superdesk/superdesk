@@ -7,28 +7,10 @@
  * AUTHORS and LICENSE files distributed with this source code, or
  * at https://www.sourcefabric.org/superdesk/license
  */
-
-// loaded already
-define('jquery', [], function() {
-    'use strict';
-    return window.jQuery;
-});
-
-// loaded already
-define('angular', [], function() {
-    'use strict';
-    return window.angular;
-});
-
-define('main', [
-    'gettext',
-    'angular',
-    'superdesk/superdesk',
-    'lodash'
-], function(gettext, angular, superdesk, _) {
+(function() {
     'use strict';
 
-    return function bootstrap(config, apps) {
+    window.bootstrapSuperdesk = function bootstrap(config, apps) {
 
         // make sure there is a templates-cache module define
         try {
@@ -39,12 +21,13 @@ define('main', [
             apps.push('superdesk.templates-cache');
         }
 
-        apps.unshift(superdesk.name);
-        superdesk.constant('config', config);
-        superdesk.constant('lodash', _);
+        // apps.unshift(superdesk.name);
+        angular.module('superdesk')
+        .constant('config', config)
+        .constant('lodash', _)
 
         // setup default route for superdesk - set it here to avoid it being used in unit tests
-        superdesk.config(['$routeProvider', function($routeProvider) {
+        .config(['$routeProvider', function($routeProvider) {
             $routeProvider.when('/', {redirectTo: '/workspace'});
         }]);
 
@@ -55,4 +38,4 @@ define('main', [
             window.superdeskIsReady = true;
         });
     };
-});
+})();
