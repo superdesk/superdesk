@@ -47,6 +47,10 @@ table {
   tbody + tbody {
     border-top: 2px solid @tableBorder;
   }
+  // LAST FIELD BLANK, FULL WIDTH
+  .blank-field { 
+      width: 100%; 
+  }
 }
 
 
@@ -143,5 +147,23 @@ table {
         font-weight: 500;
         padding: 11px;
         color: #333;
+    }
+}
+
+// FIXED HEADER STYLE
+// ---------------
+.table {
+    &--fixed-header {
+        thead, tbody {
+            display: block;
+        }
+        tbody {
+            max-height: calc(~'100vh - 250px');
+            overflow: auto;
+            overflow-x: hidden;
+        }
+        th, td {
+            min-width: 80px;
+        }
     }
 }
