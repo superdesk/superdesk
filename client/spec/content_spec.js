@@ -221,16 +221,18 @@ describe('content', function() {
 
     it('can enable/disable send and continue based on emabrgo', function() {
         workspace.editItem('item3', 'SPORTS');
-        authoring.sendToButton.click();
+        authoring.sendToButton.click().then(function() {
+            // Initial State
+            expect(authoring.sendAndContinueBtn.isEnabled()).toBe(false);
+            expect(authoring.sendBtn.isEnabled()).toBe(false);
+        });
 
-        // Initial State
-        expect(authoring.sendAndContinueBtn.isEnabled()).toBe(false);
-        expect(authoring.sendBtn.isEnabled()).toBe(false);
-
-        var sidebar = element.all(by.css('.slide-pane')).last(),
+        var sidebar = element.all(by.css('.slide-pane   ')).last(),
             dropdown = sidebar.element(by.css('.dropdown--dark .dropdown-toggle'));
 
         dropdown.waitReady();
+        dropdown.click();
+        sidebar.element(by.buttonText('Sports Desk')).click();
 
         // State after selecting different Stage in the same desk
         sidebar.element(by.buttonText('two')).click();

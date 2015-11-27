@@ -98,4 +98,25 @@ describe('send', function() {
                 ).toBe('SUBMITTED');
     });
 
+    it('can remember last sent destination desk and stage', function() {
+        monitoring.openMonitoring();
+        workspace.selectDesk('Sports Desk');
+        monitoring.openAction(2, 0);
+        monitoring.showHideList();
+
+        authoring.sendTo('Politic Desk');
+        expect(monitoring.getGroups().count()).toBe(6);
+
+        //now continue to open new item to see if its remembered?
+        monitoring.openAction(4, 0);
+        monitoring.showHideList();
+        authoring.sendToButton.click();
+
+        var sidebar = element.all(by.css('.slide-pane')).last(),
+            dropdown = sidebar.element(by.css('.dropdown--dark .dropdown-toggle')),
+            dropdownSelected = dropdown.element(by.css('[ng-show="selectedDesk"]'));
+
+        expect(dropdownSelected.getText()).toEqual('Politic Desk');
+    });
+
 });

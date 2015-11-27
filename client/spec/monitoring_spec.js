@@ -404,6 +404,7 @@ describe('monitoring', function() {
         monitoring.saveSettings();
 
         monitoring.openAction(0, 3);
+        browser.sleep(500);
 
         expect(monitoring.getTextItem(0, 3)).toBe('ingest1');
         expect(authoring.save_button.isDisplayed()).toBe(true);
