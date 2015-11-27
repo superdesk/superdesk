@@ -30,12 +30,19 @@
             'stage_visibility_updated'
         ];
 
+        var readyState = {
+            'CONNECTING': 0,
+            'OPEN': 1,
+            'CLOSING': 2,
+            'CLOSED': 3
+        };
+
         if (!config.server.ws) {
             return;
         }
 
         var connect = function() {
-            if (!ws) {
+            if (!ws || ws.readyState === readyState.CLOSED) {
                 ws = new WebSocket(config.server.ws);
                 bindEvents();
             }
