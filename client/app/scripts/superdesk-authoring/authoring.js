@@ -2008,9 +2008,7 @@
                                 var itemDesk = desks.getItemDesk(scope.item);
                                 if (itemDesk) {
                                     if (scope.destination_last) {
-                                        p = p.then(function() {
-                                            scope.selectDesk(desks.deskLookup[scope.destination_last.desk]);
-                                        });
+                                        scope.selectDesk(desks.deskLookup[scope.destination_last.desk]);
                                     } else {
                                         scope.selectDesk(itemDesk);
                                     }
