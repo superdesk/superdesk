@@ -434,6 +434,6 @@ class RoutingRuleSchemeService(BaseService):
         items_to_publish = self.__fetch(ingest_item, destinations)
         for item in items_to_publish:
             try:
-                get_resource_service('archive_publish').patch(item, {})
+                get_resource_service('archive_publish').patch(item, {'auto_publish': True})
             except:
                 logger.exception("Failed to publish item %s." % item)

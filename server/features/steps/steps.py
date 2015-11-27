@@ -368,6 +368,15 @@ def step_impl_fetch_from_provider_ingest_using_routing_with_desk(context, provid
         fetch_from_provider(context, provider_name, guid, routing_scheme, desk_id, stage_id)
 
 
+@when('we ingest with routing scheme "{provider_name}" "{guid}"')
+def step_impl_ingest_with_routing_scheme(context, provider_name, guid):
+    with context.app.test_request_context(context.app.config['URL_PREFIX']):
+        _id = apply_placeholders(context, context.text)
+        routing_scheme = get_resource_service('routing_schemes').find_one(_id=_id, req=None)
+        embed_routing_scheme_rules(routing_scheme)
+        fetch_from_provider(context, provider_name, guid, routing_scheme)
+
+
 def fetch_from_provider(context, provider_name, guid, routing_scheme=None, desk_id=None, stage_id=None):
     ingest_provider_service = get_resource_service('ingest_providers')
     provider = ingest_provider_service.find_one(name=provider_name, req=None)
