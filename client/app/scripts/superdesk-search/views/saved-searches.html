@@ -5,8 +5,8 @@
 	</button>
 </div>   
 
-<div class="list">
-	<div class="title" translate>Private Saved Searches</div>
+<div class="list saved-searches">
+	<div class="saved-searches__group-title" translate>My Saved Searches</div>
 	<ul>
 	    <li ng-repeat="search in userSavedSearches | orderBy:'name' " ng-click="select(search)" ng-class="{active: search == selected}">
 	    	<div class="search-item">
@@ -19,7 +19,7 @@
 	    	</div>
 	    </li>
 	</ul>
-	<div class="title" translate>Global Saved Searches</div>
+	<div class="saved-searches__group-title" translate>Global Saved Searches</div>
 	<ul>
 	    <li ng-repeat="search in globalSavedSearches | orderBy:'name' " ng-click="select(search)" ng-class="{active: search == selected}">
 	    	<div class="search-item">
