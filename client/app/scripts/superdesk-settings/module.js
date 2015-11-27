@@ -1,8 +1,4 @@
-define([
-    'lodash',
-    'require',
-    'angular'
-], function(_, require, angular) {
+(function() {
     'use strict';
 
     return angular.module('superdesk.settings', [])
@@ -11,7 +7,7 @@ define([
                 label: gettext('Settings'),
                 description: gettext('Do some admin chores'),
                 controller: angular.noop,
-                templateUrl: require.toUrl('./views/main.html'),
+                templateUrl: 'scripts/superdesk-settings/views/main.html',
                 category: superdesk.MENU_MAIN,
                 priority: 1000,
                 adminTools: true,
@@ -22,7 +18,7 @@ define([
             return {
                 scope: {},
                 transclude: true,
-                templateUrl: require.toUrl('./views/settings-view.html'),
+                templateUrl: 'scripts/superdesk-settings/views/settings-view.html',
                 link: function(scope, elem, attrs) {
                     superdesk.getMenu(superdesk.MENU_SETTINGS).then(function(menu) {
                         scope.settings = menu;
@@ -87,4 +83,4 @@ define([
                 }
             };
         }]);
-});
+})();

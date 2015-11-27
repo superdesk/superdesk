@@ -1,9 +1,7 @@
 define([
     'angular',
-    'lodash',
-    'moment',
-    'moment-timezone'
-], function(angular, _, moment) {
+    'lodash'
+], function(angular, _) {
     'use strict';
 
     return angular.module('superdesk.filters', []).

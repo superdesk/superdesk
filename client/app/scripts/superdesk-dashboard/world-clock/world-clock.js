@@ -1,11 +1,4 @@
-define([
-    'require',
-    'angular',
-    'lodash',
-    'd3',
-    'moment',
-    'moment-timezone'
-], function(require, angular, _, d3, moment) {
+(function() {
     'use strict';
 
     angular.module('superdesk.dashboard.world-clock', [
@@ -21,7 +14,7 @@ define([
          *   avoiding the need to fetch it again every time when needed.
          */
         .factory('tzdata', ['$resource', function ($resource) {
-            var filename = require.toUrl('./timezones-all.json'),
+            var filename = 'scripts/superdesk-dashboard/world-clock/timezones-all.json',
                 tzResource = $resource(filename);
 
             /**
@@ -48,7 +41,7 @@ define([
 
         .directive('sdWorldclock', [function() {
             return {
-                templateUrl: require.toUrl('./worldClock.html'),
+                templateUrl: 'scripts/superdesk-dashboard/world-clock/worldClock.html',
                 replace: true,
                 restrict: 'A',
                 controller: 'WorldClockController'
@@ -239,11 +232,11 @@ define([
                 max_sizey: 1,
                 sizex: 1,
                 sizey: 1,
-                thumbnail: require.toUrl('./thumbnail.svg'),
-                template: require.toUrl('./widget-worldclock.html'),
-                configurationTemplate: require.toUrl('./configuration.html'),
+                thumbnail: 'scripts/superdesk-dashboard/world-clock/thumbnail.svg',
+                template: 'scripts/superdesk-dashboard/world-clock/widget-worldclock.html',
+                configurationTemplate: 'scripts/superdesk-dashboard/world-clock//configuration.html',
                 configuration: {zones: ['Europe/London', 'Asia/Tokyo', 'Europe/Moscow']},
                 description: gettext('World clock widget')
             });
         }]);
-});
+})();

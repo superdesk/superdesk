@@ -1,6 +1,6 @@
-!function(){"use strict";function a(a){a.dispatchEvent(new MouseEvent("click"))}function b(a){for(var b=a.parentNode;a.hasChildNodes();)b.insertBefore(a.childNodes.item(0),a);b.removeChild(a)}function c(a,c){for(var d=a.cloneNode(!0),e=d.getElementsByClassName(c);e.length;)b(e.item(0));return d.normalize(),d}function d(a,b){for(var c,d=document.createTreeWalker(a,NodeFilter.SHOW_TEXT),e=0,f=String.fromCharCode(65279);d.nextNode();){if(d.currentNode.textContent=d.currentNode.textContent.replace(f,""),c=d.currentNode.textContent.length,e+c>=b)return{node:d.currentNode,offset:b-e};e+=c}}function e(a){var b=[],c=-1;this.add=function(a){c+=1,b[c]=a,b.splice(c+1,b.length)},this.selectPrev=function(){c=Math.max(-1,c-1)},this.selectNext=function(){c=null!=b[c+1]?c+1:c},this.get=function(){var d=c>-1?b[c]:a;return d}}function f(a,b,f){function g(a){return c(a,q)}function h(a){var b=i(a);k(a,b,s)}function i(a){var b=[],c=t.settings.findreplace.needle||null;if(!c)return b;for(var d,e,f=document.createTreeWalker(a,NodeFilter.SHOW_TEXT),g=0;f.nextNode();){for(e=f.currentNode.textContent;(d=e.indexOf(c))>-1;)b.push({word:e.substr(d,c.length),index:g+d}),e=e.substr(d+c.length),g+=d+c.length;g+=e.length}return b}function j(b,c){a.errors(b).then(function(a){k(b,a,p,c)})}function k(a,b,c,d){if(!b.length)return void t.resetSelection(a);d||t.storeSelection(a);var e=b.shift();l(a,e,c),f(function(){k(a,b,c,!0)},0,!1)}function l(a,b,c){var e=d(a,b.index),f=d(a,b.index+b.word.length);e.node!==f.node&&(e.node=f.node,e.offset=0);var g=e.node.splitText(e.offset),h=document.createElement("span");h.classList.add(c),h.classList.add(q),g.splitText(f.offset-e.offset),h.textContent=g.textContent,g.parentNode.replaceChild(h,g)}function m(a,b){for(;a.length;){var c=a.item(0),d=document.createTextNode(b);c.parentNode.replaceChild(d,c),d.parentNode.normalize()}}function n(a){for(var b=a.getElementsByClassName("rangySelectionBoundary");b.length;){var c=b.item(0);c.parentNode.removeChild(c),c.parentNode.normalize&&c.parentNode.normalize()}return a}function o(a){var b=a.history.get();null!=b&&(a.node.innerHTML=b,a.model.$setViewValue(b))}this.settings={spellcheck:!0},this.KEY_CODES=Object.freeze({Y:"Y".charCodeAt(0),Z:"Z".charCodeAt(0)}),this.ARROWS=Object.freeze({33:1,34:1,35:1,36:1,37:1,38:1,39:1,40:1}),this.META=Object.freeze({16:1,17:1,18:1,20:1,91:1,93:1,224:1}),this.shouldIgnore=function(a){return t.ARROWS[a.keyCode]?!0:t.META[a.keyCode]?!0:a.shiftKey&&(a.ctrlKey||a.metaKey)?!0:!1};var p="sderror",q="sdhilite",r="sdactive",s="sdfindreplace",t=this,u=[];this.registerScope=function(a){u.push(a),a.history=new e(a.model.$viewValue),a.$on("$destroy",function(){var b=u.indexOf(a);u.splice(b,1)})},this.cleanScope=function(a){t.storeSelection(a.node);var b=g(a.node).innerHTML;return b=b.replace("\ufeff",""),a.node.innerHTML=b,t.resetSelection(a.node),b},this.renderScope=function(a,b,c){t.cleanScope(a),t.settings.findreplace?h(a.node):(t.settings.spellcheck||b)&&j(a.node,c)},this.render=function(){u.forEach(t.renderScope)},this.selectNext=function(){for(var a=document.body.getElementsByClassName(q),b=0;b<a.length;b++){var c=a.item(b);if(c.classList.contains(r))return c.classList.remove(r),void a.item((b+1)%a.length).classList.add(r)}a.length&&a.item(0).classList.add(r)},this.selectPrev=function(){for(var a=document.body.getElementsByClassName(q),b=0;b<a.length;b++){var c=a.item(b);if(c.classList.contains(r))return c.classList.remove(r),void a.item(0===b?a.length-1:b-1).classList.add(r)}},this.replace=function(a){u.forEach(function(b){var c=b.node.getElementsByClassName(r);m(c,a,b),t.commitScope(b)})},this.replaceAll=function(a){u.forEach(function(b){var c=b.node.getElementsByClassName(q);m(c,a),t.commitScope(b)})},this.storeSelection=function(){t.selection=window.rangy?window.rangy.saveSelection():null},this.resetSelection=function(a){t.selection&&(window.rangy.restoreSelection(t.selection),t.selection=null),n(a)},this.setSettings=function(a){t.settings=angular.extend({},t.settings,a)},this.isErrorNode=function(a){return a.classList.contains(p)},this.commit=function(){u.forEach(t.commitScope)},this.commitScope=function(a){var b=n(g(a.node)).innerHTML;b!==a.model.$viewValue&&(a.model.$setViewValue(b),a.history.add(a.model.$viewValue))},this.undo=function(a){a.history.selectPrev(),o(a)},this.redo=function(a){a.history.selectNext(),o(a)}}f.$inject=["spellcheck","$rootScope","$timeout"],angular.module("superdesk.editor",["superdesk.editor.spellcheck"]).service("editor",f).directive("sdTextEditor",["editor","spellcheck","$timeout",function(b,c,d){function e(a){function b(a){return a.split("\n").length}for(var c=0;a;)a.childNodes.length&&a.childNodes[0].nodeType===Node.TEXT_NODE?c+=b(a.childNodes[0].wholeText):a.childNodes.length&&(c+=1),a=a.previousSibling;return c}function f(){var a,b,c=window.getSelection();if(c.anchorNode.nodeType===Node.TEXT_NODE){var d=c.anchorNode.wholeText.substring(0,c.anchorOffset),f=c.anchorNode;for(a=d.length+1;"P"!==f.nodeName;)f.previousSibling?(a+=f.previousSibling.wholeText?f.previousSibling.wholeText.length:f.previousSibling.textContent.length,f=f.previousSibling):f=f.parentNode;b=0+e(f)}else b=0+e(c.anchorNode),a=1;return{line:b,column:a}}var g={buttons:["bold","italic","underline","quote","anchor"],anchorInputPlaceholder:gettext("Paste or type a full link"),disablePlaceholders:!0,spellcheck:!1};return{scope:{type:"=",config:"=",language:"="},require:"ngModel",templateUrl:"scripts/superdesk/editor/views/editor.html",link:function(e,h,i,j){function k(a,c,d){b.renderScope(e,a,d),e.node.classList.remove(s),c&&c.preventDefault()}function l(){e.$applyAsync(function(){b.undo(e),b.renderScope(e)})}function m(){e.$applyAsync(function(){b.redo(e),b.renderScope(e)})}function n(){b.commitScope(e)}function o(){d.cancel(r),r=d(k,500,!1)}e.model=j,b.registerScope(e);var p,q,r,s="typing";j.$viewChangeListeners.push(o),j.$render=function(){function i(a){d.cancel(q),e.node.classList.add(s)}var o=angular.extend({},g,e.config||{});c.setLanguage(e.language),p=h.find("preformatted"===e.type?".editor-type-text":".editor-type-html"),p.empty(),p.html(j.$viewValue||""),e.node=p[0],e.model=j,e.medium=new window.MediumEditor(e.node,o),e.$on("spellcheck:run",k),e.$on("key:ctrl:shift:d",k);var r={};r[b.KEY_CODES.Z]=l,r[b.KEY_CODES.Y]=m,p.on("keydown",function(a){b.shouldIgnore(a)||i(a)}),p.on("keyup",function(a){return b.shouldIgnore(a)?void 0:(i(a),a.ctrlKey&&r[a.keyCode]?void r[a.keyCode]():void(q=d(n,800,!1)))}),p.on("contextmenu",function(f){if(b.isErrorNode(f.target)){f.preventDefault();var g=h[0].getElementsByClassName("dropdown-menu")[0],i=h[0].getElementsByClassName("dropdown-toggle")[0];return h.find(".dropdown.open").length&&a(i),e.suggestions=null,c.suggest(f.target.textContent).then(function(b){e.suggestions=b,e.replaceTarget=f.target,d(function(){g.style.left=f.target.offsetLeft+"px",g.style.top=f.target.offsetTop+f.target.offsetHeight+"px",g.style.position="absolute",a(i)},0,!1)}),!1}}),"preformatted"===e.type&&p.on("keydown keyup click",function(){e.$apply(function(){angular.extend(e.cursor,f())})}),e.$on("$destroy",function(){p.off(),c.setLanguage(null)}),e.cursor={},k(null,null,!0)},e.replace=function(a){e.replaceTarget.parentNode.replaceChild(document.createTextNode(a),e.replaceTarget),b.commitScope(e)},e.addWordToDictionary=function(){var a=e.replaceTarget.textContent;c.addWordToUserDictionary(a),b.render()}}}}])}(),function(){"use strict";function a(a){var b=this;a.links().then(function(a){angular.extend(b,a)})}a.$inject=["urls"],angular.module("superdesk.features",["superdesk.api"]).service("features",a)}(),function(){"use strict";return angular.module("superdesk.asset",["superdesk.config"]).provider("asset",["$injector",function(a){this.templateUrl=function(b){var c=a.get("config"),d=b;return/^(https?:\/\/|\/\/|\/|.\/|..\/)/.test(b)||(d="scripts/"+d),!/^(https?:\/\/|\/\/)/.test(b)&&c.paths&&c.paths.superdesk&&(d=c.paths.superdesk+d),d=d.replace(/[^\/]+\/+\.\.\//g,"").replace(/\.\//g,"").replace(/(\w)\/\/(\w)/g,"$1/$2")},this.imageUrl=this.templateUrl,this.$get=function(){return this}}])}(),function(){"use strict";return angular.module("superdesk.imageFactory",[]).factory("imageFactory",function(){return{makeInstance:function(){return new Image}}})}(),function(){"use strict";function a(){return{link:function(a,b,c,d,e){function f(){g&&g.$destroy()}var g;a.$watch("item",function(){f(),g=a.$parent.$parent.$new(),g.item=a.item,g.items=a.items,g.extras=a.extras,g.$index=a.$index,e(g,function(a){b.empty(),b.append(a)})}),a.$on("$destroy",f)}}}var b=angular.module("superdesk.list",["superdesk.keyboard","superdesk.asset"]);return b.directive("sdListView",["$location","keyboardManager","asset",function(a,b,c){return{scope:{select:"&",extras:"=",items:"="},replace:!0,transclude:!0,templateUrl:c.templateUrl("superdesk/list/views/list-view.html"),link:function(c,d,e){function f(a){if(a){var b=_.find(c.items,{_id:a});b&&c.clickItem(b)}}function g(a){return function(){if(c.items){var b=_.indexOf(c.items,c.selected);if(-1===b)return c.clickItem(_.first(c.items));var d=_.max([0,_.min([c.items.length-1,b+a])]);return 0>d?c.clickItem(_.last(c.items)):c.clickItem(c.items[d])}}}function h(a,c){b.bind(a,c)}var i=-1,j=1;h("up",g(i)),h("left",g(i)),h("down",g(j)),h("right",g(j)),c.clickItem=function(a,b){c.selected=a,c.select({item:a}),b&&b.stopPropagation()},c.$watch("items",function(){f(a.search()._id),d.find(".list-view").focus()})}}}]),b.directive("sdSearchbar",["$location","asset",function(a,b){return{scope:!0,templateUrl:b.templateUrl("superdesk/list/views/searchbar.html"),link:function(b,c){var d=c.find("#search-input");b.q=a.search().q||null,b.flags={extended:!!b.q},b.search=function(){a.search("q",b.q||null),a.search("page",null)},b.close=function(){b.q=null,b.search(),d.focus()}}}}]),b.directive("sdListItem",a),b.directive("sdUpdown",["$location","keyboardManager","$anchorScroll",function(a,b,c){return{transclude:!0,template:"<div ng-transclude></div>",scope:{items:"=",select:"&"},link:function(d,e,f){function g(a){if(a){var b=_.find(d.items,{_id:a});b&&k(b)}}function h(b){a.hash(b),c()}function i(b){return function(){if(d.items){var c=_.findIndex(d.items,{_id:a.search()._id});if(-1===c)return k(_.first(d.items));var e=_.max([0,_.min([d.items.length-1,c+b])]);return 0>e?k(_.last(d.items)):(h(d.items[e]._id),k(d.items[e]))}}}function j(a,c){b.bind(a,c)}function k(a,b){d.select({item:a}),b&&b.stopPropagation()}var l=-1,m=1;j("up",i(l)),j("left",i(l)),j("down",i(m)),j("right",i(m)),d.$watch("items",function(){g(a.search()._id),e.find(".list-view").focus()})}}}]),b.directive("sdPagination",["$location","asset",function(a,b){return{templateUrl:b.templateUrl("superdesk/list/views/sdPagination.html"),scope:{items:"="},link:function(b,c,d){function e(){window.scrollTo(0,0)}var f=25;b.pgsizes=[25,50,100],b.$watch("items._meta",function(c){b.total=0,c&&(b.total=c.total,b.page=Number(a.search().page)||1,b.limit=Number(localStorage.getItem("pagesize"))||Number(a.search().max_results)||f,b.lastPage=b.limit?Math.ceil(b.total/b.limit):b.page,b.from=(b.page-1)*b.limit+1,b.to=Math.min(b.total,b.from+b.limit-1),b.pageChanged===!0&&(e(),b.pageChanged=null))}),b.setPage=function(c){a.search("page",c>1?c:null),b.pageChanged=!0},b.setLimit=function(c){localStorage.setItem("pagesize",c),b.setPage(0),a.search("max_results",null!=c?c:f)}}}}]),b.directive("sdPaginationAlt",["asset",function(a){return{templateUrl:a.templateUrl("superdesk/list/views/sdPaginationAlt.html"),scope:{page:"=",maxPage:"="}}}]),b}(),function(){"use strict";return angular.module("superdesk.keyboard",[]).run(["$rootScope","keyboardManager",function(a,b){a.$on("$routeChangeStart",function(){angular.forEach(b.keyboardEvent,function(a,c){a.opt.global||b.unbind(c)})})}]).run(["$rootScope","$document",function(a,b){b.on("keydown",function(b){var c=b.ctrlKey||b.metaKey,d=b.shiftKey,e=c&&d;if(b.target===document.body||e){var f=String.fromCharCode(b.which).toLowerCase(),g="";g+=c?"ctrl:":"",g+=d?"shift:":"",a.$broadcast("key:"+g+f,b)}})}]).service("keyboardManager",["$window","$timeout",function(a,b){var c=[],d={type:"keydown",propagate:!1,inputDisabled:!0,target:a.document,keyCode:!1,global:!1},e={"`":"~",1:"!",2:"@",3:"#",4:"$",5:"%",6:"^",7:"&",8:"*",9:"(",0:")","-":"_","=":"+",";":":","'":'"',",":"<",".":">","/":"?","\\":"|"},f={esc:27,escape:27,tab:9,space:32,"return":13,enter:13,backspace:8,scrolllock:145,scroll_lock:145,scroll:145,capslock:20,caps_lock:20,caps:20,numlock:144,num_lock:144,num:144,pause:19,"break":19,insert:45,home:36,"delete":46,end:35,pageup:33,page_up:33,pu:33,pagedown:34,page_down:34,pd:34,left:37,up:38,right:39,down:40,f1:112,f2:113,f3:114,f4:115,f5:116,f6:117,f7:118,f8:119,f9:120,f10:121,f11:122,f12:123};this.keyboardEvent={},this.bind=function(c,g,h){var i,j,k,l;h=angular.extend({},d,h),c=c.toLowerCase(),j=h.target,"string"==typeof h.target&&(j=document.getElementById(h.target)),i=function(d){if(d=d||a.event,h.inputDisabled){var i;if(d.target?i=d.target:d.srcElement&&(i=d.srcElement),3===i.nodeType&&(i=i.parentNode),"INPUT"===i.tagName||"TEXTAREA"===i.tagName||-1!==i.className.indexOf("editor-type-html"))return}d.keyCode?k=d.keyCode:d.which&&(k=d.which);var j=String.fromCharCode(k).toLowerCase();188===k&&(j=","),190===k&&(j=".");for(var m=c.split("+"),n=0,o={shift:{wanted:!1,pressed:d.shiftKey?!0:!1},ctrl:{wanted:!1,pressed:d.ctrlKey?!0:!1},alt:{wanted:!1,pressed:d.altKey?!0:!1},meta:{wanted:!1,pressed:d.metaKey?!0:!1}},p=0,q=m.length;l=m[p],q>p;p++){switch(l){case"ctrl":case"control":n++,o.ctrl.wanted=!0;break;case"shift":case"alt":case"meta":n++,o[l].wanted=!0}l.length>1?f[l]===k&&n++:h.keyCode?h.keyCode===k&&n++:j===l?n++:e[j]&&d.shiftKey&&(j=e[j],j===l&&n++)}return n!==m.length||o.ctrl.pressed!==o.ctrl.wanted||o.shift.pressed!==o.shift.wanted||o.alt.pressed!==o.alt.wanted||o.meta.pressed!==o.meta.wanted||(b(function(){g(d)},1),h.propagate)?void 0:(d.cancelBubble=!0,d.returnValue=!1,d.stopPropagation&&(d.stopPropagation(),d.preventDefault()),!1)},this.keyboardEvent[c]={callback:i,target:j,event:h.type,_callback:g,opt:h,label:c},j.addEventListener?j.addEventListener(h.type,i,!1):j.attachEvent?j.attachEvent("on"+h.type,i):j["on"+h.type]=i},this.push=function(a,b,d){var e=this.keyboardEvent[a.toLowerCase()];e&&(c.push(e),this.unbind(a)),this.bind(a,b,d)},this.pop=function(a){this.unbind(a);var b=_.findLastIndex(c,{label:a.toLowerCase()});-1!==b&&(this.bind(a,c[b]._callback,c[b].opt),c.splice(b,0))},this.unbind=function(a){a=a.toLowerCase();var b=this.keyboardEvent[a];if(delete this.keyboardEvent[a],b){var c=b.event,d=b.target,e=b.callback;d.detachEvent?d.detachEvent("on"+c,e):d.removeEventListener?d.removeEventListener(c,e,!1):d["on"+c]=!1}}}])}(),function(){"use strict";function a(a,b,c){var d={};this.privileges=d,a.privileges=d,this.userHasPrivileges=function(a){for(var b in a)if(a[b]&&!d[b])return!1;return!0},this.setUserPrivileges=function(a){for(var b in a)a[b]?d[b]=1:d[b]=0;return d},this.loaded=c.getPrivileges().then(this.setUserPrivileges)}a.$inject=["$rootScope","$q","preferencesService"],angular.module("superdesk.privileges",["superdesk.preferences"]).service("privileges",a)}(),function(){"use strict";function a(a,b,c,d,e){var f=null,g=-1,h=5500,i=["user_disabled","user_inactivated","user_role_changed","user_type_changed","user_privileges_revoked","role_privileges_revoked","desk_membership_revoked","desk","stage","stage_visibility_updated"];if(b.server.ws){var j=function(){f||(f=new WebSocket(b.server.ws),l())},k=function(){f&&(f.close(),f=null)},l=function(){f.onmessage=function(b){var c=angular.fromJson(b.data);a.$broadcast(c.event,c.extra),_.contains(i,c.event)&&a.$broadcast("reload",c)},f.onerror=function(a){console.error(a)},f.onopen=function(b){c.cancel(g),a.$broadcast("connected")},f.onclose=function(b){a.$broadcast("disconnected"),c.cancel(g),g=c(function(){f&&d.sessionId&&j()},h,0,!1)}};j(),a.$on(e.LOGOUT,k),a.$on(e.LOGIN,j)}}function b(a,b,c,d){var e,f,g=this;g.message=null,a.$on("disconnected",function(a){g.message="Disconnected to Notification Server, attempting to reconnect ...",d.cancel(f),f=d(function(){b.error(c(g.message))},100)}),a.$on("connected",function(a){g.message="Connected to Notification Server!",d.cancel(e),e=d(function(){b.success(c(g.message))},100)})}function c(a,b,c,d,e){var f=this;f.userDesks=[],f.result=null,f.activeDesk=null,d.fetchCurrentUserDesks().then(function(a){f.userDesks=a._items,f.activeDesk=d.active.desk});var g={user_disabled:"User is disabled",user_inactivated:"User is inactivated",user_role_changed:"User role is changed",user_type_changed:"User type is changed",user_privileges_revoked:"User privileges are revoked"},h={role_privileges_revoked:"Role role_privileges_revoked"},i={desk_membership_revoked:"User removed from desk",desk:"Desk is deleted/updated"},j={stage:"Stage is created/updated/deleted",stage_visibility_updated:"Stage visibility change"};b.$on("reload",function(a,b){f.result=f.reloadIdentifier(b),f.reload(f.result)}),this.reload=function(b){b.reload&&(null!=a.location.hash&&null!=a.location.hash.match("/authoring/")?f.broadcast(e(b.message)):a.location.reload(!0))},this.broadcast=function(a){b.$broadcast("savework",a)},this.reloadIdentifier=function(b){var d={reload:!1,message:null};return _.has(g,b.event)&&null!=b.extra.user_id&&-1!==b.extra.user_id.indexOf(c.identity._id)&&(d.message=g[b.event],d.reload=!0),_.has(h,b.event)&&-1!==b.extra.role_id.indexOf(c.identity.role)&&(d.message=h[b.event],d.reload=!0),_.has(i,b.event)&&null!=b.extra.desk_id&&null!=b.extra.user_ids&&null!=_.find(f.userDesks,{_id:b.extra.desk_id})&&-1!==b.extra.user_ids.indexOf(c.identity._id)&&(d.message=i[b.event],d.reload=!0),_.has(j,b.event)&&null!=b.extra.desk_id&&("stage_visibility_updated"===b.event?null!=_.find(f.userDesks,{_id:b.extra.desk_id})||null==a.location.hash.match("/search")&&null==a.location.hash.match("/authoring/")||(d.message=j[b.event],d.reload=!0):"stage"===b.event&&null!=_.find(f.userDesks,{_id:b.extra.desk_id})&&f.activeDesk===b.extra.desk_id&&(d.message=j[b.event],d.reload=!0)),d}}return a.$inject=["$rootScope","config","$interval","session","SESSION_EVENTS"],b.$inject=["$rootScope","notify","gettext","$timeout"],c.$inject=["$window","$rootScope","session","desks","gettext"],angular.module("superdesk.notification",["superdesk.desks"]).service("reloadService",c).service("notifyConnectionService",b).run(a)}(),function(){"use strict";var a={endpoint:"search",pageSize:25,page:1,sort:[{_updated:"desc"}]};angular.module("superdesk.itemList",["superdesk.search"]).service("itemListService",["api","$q","search",function(b,c,d){function e(a){var c={source:{query:{filtered:{}}}};if(a.sortField&&a.sortDirection){var e={};e[a.sortField]=a.sortDirection,a.sort=[e]}if(a.repo&&(a.repos=[a.repo]),(a.types||a.notStates||a.states||a.creationDateBefore||a.creationDateAfter||a.modificationDateBefore||a.modificationDateAfter||a.provider||a.source||a.urgency||a.savedSearch)&&(c.source.query.filtered.filter={and:[]}),c.source.size=a.pageSize,c.source.from=(a.page-1)*a.pageSize,c.source.sort=a.sort,a.repos&&(c.repo=a.repos.join(",")),a.types&&c.source.query.filtered.filter.and.push({terms:{type:a.types}}),a.notStates&&_.each(a.notStates,function(a){c.source.query.filtered.filter.and.push({not:{term:{state:a}}})}),a.states){var f=[];_.each(a.states,function(a){f.push({term:{state:a}})}),c.source.query.filtered.filter.and.push({or:f})}var g={creationDate:"_created",modificationDate:"_updated"},h=null;_.each(g,function(b,d){(a[d+"Before"]||a[d+"After"])&&(h={},h[b]={lte:a[d+"Before"]||void 0,gte:a[d+"After"]||void 0},c.source.query.filtered.filter.and.push({range:h}))}),_.each(["provider","source","urgency"],function(b){if(a[b]){var d={};d[b]=a[b],c.source.query.filtered.filter.and.push({term:d})}});var i={headline:"headline",subject:"subject.name",keyword:"slugline",uniqueName:"unique_name",body:"body_html"},j=[];if(_.each(i,function(b,c){a[c]&&j.push(b+":(*"+a[c]+"*)")}),j.length&&(c.source.query.filtered.query={query_string:{query:j.join(" "),lenient:!1,default_operator:"AND"}}),a.related===!0){var k=[],l=[];l=a.keyword.split(" ");var m=l.length;k.push('slugline:("'+a.keyword+'")');for(var n=0;m>n;n++)a.keyword&&k.push("slugline:("+l[n]+")");k.length&&(c.source.query.filtered.query={query_string:{query:k.join(" "),lenient:!1,default_operator:"OR"}})}if(a.search){var o=[];_.each(_.values(i),function(b){o.push(b+":(*"+a.search+"*)")}),c.source.query.filtered.query={query_string:{query:o.join(" "),lenient:!1,default_operator:"OR"}}}return a.savedSearch&&a.savedSearch._links?b.get(a.savedSearch._links.self.href).then(function(a){var b=d.query(a.filter.query).getCriteria();return c.source.query.filtered.filter.and=c.source.query.filtered.filter.and.concat(b.query.filtered.filter.and),c.source.post_filter=b.post_filter,c}):c}this.fetch=function(d){return d=_.extend({},a,d),c.when(e(d)).then(function(a){return b(d.endpoint,d.endpointParam||void 0).query(a)})}}]).provider("ItemList",function(){this.$get=["itemListService",function(b){var c=function(){this.listeners=[],this.options=_.clone(a),this.result={},this.maxPage=0};return c.prototype.setOptions=function(a){return this.options=_.extend(this.options,a),this},c.prototype.addListener=function(a){return this.listeners.push(a),this},c.prototype.removeListener=function(a){return _.remove(this.listeners,function(b){return b===a}),this},c.prototype.fetch=function(){var a=this;return b.fetch(this.options).then(function(b){return a.result=b,a.maxPage=Math.ceil(b._meta.total/a.options.pageSize)||0,_.each(a.listeners,function(a){a(b)}),b})},c}]}).factory("itemPinService",["preferencesService",function(a){var b="pinned:items",c={items:null,listeners:{ingest:[],archive:[]},load:function(){var c=this;return a.get(b).then(function(a){c.items=a}).then(function(){c.updateListeners()})},save:function(){var c=this;this.items=_.uniq(this.items,function(a){return a._id});var d={};return d[b]=this.items,a.update(d,b).then(function(){c.updateListeners()})},get:function(a){return _.filter(this.items,{_type:a})},add:function(a,b){var c=this;b._type=a,this.load().then(function(){return c.items.push(b),c.save()}).then(function(){c.updateListeners()})},remove:function(a){var b=this;this.load().then(function(){return _.remove(b.items,{_id:a._id}),b.save()}).then(function(){b.updateListeners()})},isPinned:function(a,b){return!!_.find(this.items,{_type:a,_id:b._id})},addListener:function(a,b){this.listeners[a].push(b),b(this.get(a))},removeListener:function(a,b){_.remove(this.listeners[a],function(a){return a===b})},updateListeners:function(){var a=this;_.each(this.listeners,function(b,c){_.each(b,function(b){b(a.get(c))})})}};return c.load(),c}]).directive("sdItemListWidget",["ItemList","notify","itemPinService","gettext","$timeout",function(a,b,c,d,e){return{scope:{options:"=",itemListOptions:"=",actions:"="},templateUrl:"scripts/superdesk/itemList/views/item-list-widget.html",link:function(f,g,h){function i(){e.cancel(j),j=e(function(){l.fetch()},100,!1)}f.items=null,f.processedItems=null,f.maxPage=1,f.pinnedItems=[],f.selected=null;var j,k=null,l=new a;f.view=function(a){f.selected=a},f.toggleItemType=function(a){f.itemListOptions.types.indexOf(a)>-1?f.itemListOptions.types=_.without(f.itemListOptions.types,a):f.itemListOptions.types.push(a)},f.isItemTypeEnabled=function(a){return f.itemListOptions.types.indexOf(a)>-1},f.pin=function(a){c.add(f.options.pinMode,_.clone(a))},f.unpin=function(a){c.remove(a)},f.isPinned=function(a){return c.isPinned(f.options.pinMode,a)};var m=function(){f.items&&(f.options.pinEnabled?f.processedItems=f.pinnedItems.concat(f.items._items):f.processedItems=f.items._items)},n=function(){f.maxPage=l.maxPage,f.items=l.result,m()},o=function(a){f.pinnedItems=a,_.each(f.pinnedItems,function(a){a.pinnedInstance=!0}),m()};l.addListener(n),c.addListener(f.options.pinMode,o),f.$on("$destroy",function(){l.removeListener(n),c.removeListener(o)}),f.$watch("itemListOptions",function(){l.setOptions(f.itemListOptions),i()},!0),f.$watch("options.similar",function(){f.options.similar&&f.options.item?f.options.item.slugline?(k=f.itemListOptions.search,f.itemListOptions.search=f.options.item.slugline):(b.error(d("Error: Keywords required.")),f.options.similar=!1):f.itemListOptions.search=k||null})}}}]).directive("sdRelatedItemListWidget",["ItemList","notify","itemPinService","gettext",function(a,b,c,d){return{scope:{options:"=",itemListOptions:"=",actions:"="},templateUrl:"scripts/superdesk/itemList/views/relatedItem-list-widget.html",link:function(e,f,g){e.items=null,e.processedItems=null,e.maxPage=1,e.pinnedItems=[],e.selected=null;var h=null,i=new a,j=function(){i.fetch()},k=_.debounce(j,100);e.view=function(a){e.selected=a},e.toggleItemType=function(a){e.itemListOptions.types.indexOf(a)>-1?e.itemListOptions.types=_.without(e.itemListOptions.types,a):e.itemListOptions.types.push(a)},e.isItemTypeEnabled=function(a){return e.itemListOptions.types.indexOf(a)>-1},e.pin=function(a){c.add(e.options.pinMode,_.clone(a))},e.unpin=function(a){c.remove(a)},e.isPinned=function(a){return c.isPinned(e.options.pinMode,a)};var l=function(){e.items&&(e.options.pinEnabled?e.processedItems=e.pinnedItems.concat(e.items._items):e.processedItems=e.items._items)},m=function(){e.maxPage=i.maxPage,e.items=i.result,l()},n=function(a){e.pinnedItems=a,_.each(e.pinnedItems,function(a){a.pinnedInstance=!0}),l()};i.addListener(m),c.addListener(e.options.pinMode,n),e.$on("$destroy",function(){i.removeListener(m),c.removeListener(n)}),e.$watch("itemListOptions",function(){i.setOptions(e.itemListOptions),i.setOptions({related:e.options.related}),k()},!0),e.$watch("options.related",function(){e.options.related&&e.options.item?e.options.item.slugline?(h=e.itemListOptions.keyword,e.itemListOptions.keyword=e.options.item.slugline):(b.error(d("Error: Keywords required.")),e.options.related=!1):e.itemListOptions.keyword=h||null})}}}])}(),function(){"use strict";function a(){this.flags={menu:!1,notifications:!1}}angular.module("superdesk.menu",["superdesk.menu.notifications","superdesk.asset","superdesk.api"]).service("superdeskFlags",a).directive("sdSuperdeskView",["asset",function(a){function b(a){this.flags=a.flags}return b.$inject=["superdeskFlags"],{templateUrl:a.templateUrl("superdesk/menu/views/superdesk-view.html"),controller:b,controllerAs:"superdesk"}}]).directive("sdMenuWrapper",["$route","superdesk","betaService","userNotifications","asset","lodash",function(a,b,c,d,e,f){return{require:"^sdSuperdeskView",templateUrl:e.templateUrl("superdesk/menu/views/menu.html"),link:function(e,g,h,i){function j(a){return b.getMenu(b.MENU_SETTINGS).then(function(b){return b.length||f.remove(a,{_settings:1}),a})}function k(a){f.each(e.menu,function(b){b.isActive=a&&a.href&&a.href.substr(0,b.href.length)===b.href})}e.currentRoute=null,e.flags=i.flags,e.menu=[],b.getMenu(b.MENU_MAIN).then(j).then(function(b){e.menu=b,k(a.current)}),e.toggleMenu=function(){i.flags.menu=!i.flags.menu},e.toggleNotifications=function(){i.flags.notifications=!i.flags.notifications},e.toggleBeta=function(){c.toggleBeta()},e.$on("$locationChangeStart",function(){i.flags.menu=!1}),e.$watch(function(){return a.current},function(a){e.currentRoute=a||null,k(e.currentRoute),i.flags.workspace=a?!!a.sideTemplateUrl:!1}),e.notifications=d}}}])}(),function(){"use strict";function a(a,b,c,d){function e(){var a={},b="read."+d.identity._id||"all";return a[b]={$exists:!0},"user"===d.identity.user_type&&(a.user={$exists:!0},a.item={$exists:!0}),a}function f(a){var b=a._dest||{};return d.identity&&!b[d.identity._id]}var g=1e3,h=500;this._items=null,this.unread=0,this.reload=function(){if(!d.identity)return this._items=null,void(this.unread=0);var a={where:e(),embedded:{user:1,item:1},max_results:8};return c.query("activity",a).then(angular.bind(this,function(a){this._items=a._items,this.unread=0;var b=d.identity||{};_.each(this._items,function(a){var c=a.read||{};a._unread=!c[b._id],this.unread+=a._unread?1:0},this)}))},this.markAsRead=function(a){var b=angular.extend({},a),e=a.read;return e[d.identity._id]=1,c("activity").save(b,{read:e}).then(angular.bind(this,function(){this.unread=_.max([0,this.unread-1]),a._unread=null}))};var i=angular.bind(this,this.reload);d.getIdentity().then(function(){b(i,g,!1),a.$on("activity",function(a,c){f(c)&&b(i,h,!1)})})}function b(a,b){var c=5e3;return{link:function(d){if(d.notification._unread){var e=b(function(){a.markAsRead(d.notification)},c);d.$on("$destroy",function(){b.cancel(e)})}}}}a.$inject=["$rootScope","$timeout","api","session"],b.$inject=["userNotifications","$timeout"],angular.module("superdesk.menu.notifications",["superdesk.asset"]).service("userNotifications",a).directive("sdMarkAsRead",b).directive("sdNotifications",["asset",function(a){return{require:"^sdSuperdeskView",templateUrl:a.templateUrl("superdesk/menu/notifications/views/notifications.html"),link:function(a,b,c,d){a.flags=d.flags}}}])}(),function(){"use strict";function a(a,b,c,d,e,f){function g(b){return a.save("archive",b)}var h="text";this.createItem=function(a){var b={type:a||h,version:0};return f.addTaskToArticle(b),g(b)},this.createPackageItem=function(a){var b=a?{items:[a],version:0}:{version:0};return e.createEmptyPackage(b)},this.createItemFromTemplate=function(a){var b=_.pick(a,c.TEMPLATE_METADATA);return g(b).then(function(b){return c.addRecentTemplate(d.activeDeskId,a._id),b})}}function b(a,b,c,d,e,f){return{scope:!0,templateUrl:"scripts/superdesk-workspace/content/views/sd-content-create.html",link:function(a){function g(a){e.edit(a)}var h=5;a.create=function(a){d.createItem(a).then(g)},a.createPackage=function(){d.createPackageItem().then(g)},a.createFromTemplate=function(a){d.createItemFromTemplate(a).then(g)},a.openUpload=function(){f.intent("upload","media")},a.contentTemplates=null,a.$watch(function(){return b.activeDeskId},function(){c.getRecentTemplates(b.activeDeskId,h).then(function(b){a.contentTemplates=b})}),a.$on("key:ctrl:m",function(b,c){c&&c.preventDefault(),a.create()})}}}function c(a,b,c){var d=10;return{templateUrl:"scripts/superdesk-workspace/content/views/sd-template-select.html",scope:{selectAction:"=",open:"="},link:function(a){a.maxPage=1,a.options={keyword:null,page:1},a.templates=null,a.close=function(){a.open=!1},a.select=function(b){a.selectAction(b),a.close()};var e=function(){c.fetchTemplates(a.options.page,d,"create",b.activeDeskId,a.options.keyword).then(function(b){a.maxPage=Math.ceil(b._meta.total/d),a.templates=b})};a.$watchCollection("options",e),a.$watch(function(){return b.activeDeskId},e)}}}angular.module("superdesk.workspace.content",["superdesk.api","superdesk.archive","superdesk.templates","superdesk.packaging"]).service("content",a).directive("sdContentCreate",b).directive("sdTemplateSelect",c),a.$inject=["api","superdesk","templates","desks","packages","archiveService"],b.$inject=["api","desks","templates","content","authoringWorkspace","superdesk"],c.$inject=["api","desks","templates"]}(),function(){"use strict";function a(a,b,c,d){this.statuses=[{_id:"todo",name:gettext("To Do")},{_id:"in_progress",name:gettext("In Progress")},{_id:"done",name:gettext("Done")}],this.save=function(a,b){return b.task.due_time&&(b.task.due_date=d.mergeDateTime(b.task.due_date,b.task.due_time).format()),delete b.task.due_time,b.task.user||delete b.task.user,c("tasks").save(a,b).then(function(a){return a})},this.buildFilter=function(c){var d=[],e=this;if(d.push({not:{term:{package_type:"takes"}}}),a.getCurrentDeskId()?d.push({term:{"task.desk":a.getCurrentDeskId()}}):d.push({term:{"task.user":b.currentUser._id}}),c)d.push({term:{"task.status":c}});else{var f=[];_.each(e.statuses,function(a){f.push({term:{"task.status":a._id}})}),d.push({or:f})}var g={and:d};return g},this.fetch=function(a,b){return b||(b=this.buildFilter(a)),c("tasks").query({source:{size:200,sort:[{_updated:"desc"}],filter:b}})}}function b(a,b,c,d,e,f,g,h,i){
-function j(){e.fetchDeskStages(e.getCurrentDeskId()).then(function(b){a.stages=b})}function k(){b.cancel(n),n=b(function(){var b={bool:{must:{term:{"task.desk":e.getCurrentDeskId()}},must_not:{terms:{state:["published","spiked"]}}}},d={source:{size:200,sort:[{_updated:"desc"}],filter:b}};c.query("tasks",d).then(function(b){a.stageItems=_.groupBy(b._items,function(a){return a.task.stage})})},300,!1)}function l(){var b={bool:{must:{term:{"task.desk":e.getCurrentDeskId()}},must_not:{term:{package_type:"takes"}}}};c.query("published",{source:{filter:b}}).then(function(b){a.published=b})}function m(){function b(a){return a.milliseconds(0),a.toISOString().replace(".000Z","+0000")}var d=h().hours(0).minutes(0).seconds(0),f=h().hours(23).minutes(59).seconds(59),g={template_desk:e.getCurrentDeskId(),next_run:{$gte:b(d),$lte:b(f)}};c.query("content_templates",{where:g,sort:"next_run"}).then(function(b){a.scheduled=b})}var n,o="kanban";a.selected={},a.newTask=null,a.tasks=null,a.view=o,a.statuses=f.statuses,a.activeStatus=a.statuses[0]._id,a.$watch(function(){return e.getCurrentDeskId()},function(a){a&&(k(),j(),l(),m())}),a.preview=function(b){a.selected.preview=b},a.create=function(){a.newTask={},i.addTaskToArticle(a.newTask,e.getCurrentDesk());var b=new Date;a.newTask.task.due_date=g("formatDateTimeString")(b),a.newTask.task.due_time=g("formatDateTimeString")(b,"HH:mm:ss")},a.save=function(){f.save({},a.newTask).then(function(b){d.success(gettext("Item saved.")),a.close()})},a.close=function(){a.newTask=null},a.setView=function(b){a.view!==b&&(a.view=b,a.tasks=null,k())},a.selectStatus=function(b){a.activeStatus!==b&&(a.activeStatus=b,a.tasks=null,k())},a.$on("task:new",k),a.$on("task:stage",function(a,b){var c=e.getCurrentDeskId();(c===b.old_desk||c===b.new_desk)&&k()})}function c(a,b,c,d){var e=b.initialize();return{templateUrl:"scripts/superdesk-dashboard/workspace-tasks/views/task-preview.html",scope:{item:"=",close:"&onclose"},link:function(f){var g;f.task=null,f.task_details=null,f.editmode=!1,e.then(function(){f.desks=b.deskLookup,f.users=b.userLookup}),f.$watch("item._id",function(a){a&&f.reset()}),f.save=function(){f.task.task=_.extend(f.task.task,f.task_details),a.save(g,f.task).then(function(a){c.success(gettext("Item saved.")),f.editmode=!1})},f.edit=function(){f.editmode=!0},f.reset=function(){f.editmode=!1,f.task=_.create(f.item),f.task_details=_.extend({},f.item.task),f.task_details.due_date=f.task_details.due_date?d("formatDateTimeString")(f.task_details.due_date):null,f.task_details.due_time=f.task_details.due_time?d("formatDateTimeString")(f.task_details.due_time,"HH:mm:ss"):null,g=f.item}}}}function d(){return{templateUrl:"scripts/superdesk-dashboard/workspace-tasks/views/kanban-board.html",scope:{items:"=",label:"@",cssClass:"@",selected:"="},link:function(a){a.preview=function(b){a.selected&&(a.selected.preview=b)}}}}function e(a){var b=a.initialize();return{templateUrl:"scripts/superdesk-dashboard/workspace-tasks/views/assignee-view.html",scope:{task:"=",name:"=",avatarSize:"@"},link:function(c){b.then(function(){var b=angular.extend({desk:null,user:null},c.task),d=a.deskLookup[b.desk]||{},e=a.userLookup[b.user]||{};c.deskName=d.name||null,c.userName=e.display_name||null,c.userPicture=e.picture_url||null})}}}function f(a,b){var c=b.initialize();return function(a){var d=this;c.then(function(){d.stages=null,d.selected=null,d.select=function(a){var c=a?a._id:null;d.selected=a||null,b.setCurrentStageId(c)},d.reload=function(a){d.stages=a?b.deskStages[a]:null,d.select(_.find(d.stages,{_id:b.activeStageId}))},a.$watch(function(){return b.getCurrentDeskId()},function(){d.reload(b.getCurrentDeskId())})})}}function g(){return{templateUrl:"scripts/superdesk-dashboard/workspace-tasks/views/desk-stages.html"}}a.$inject=["desks","$rootScope","api","datetimeHelper"],b.$inject=["$scope","$timeout","api","notify","desks","tasks","$filter","moment","archiveService"],c.$inject=["tasks","desks","notify","$filter"],d.$inject=[],e.$inject=["desks"],f.$inject=["api","desks"],angular.module("superdesk.workspace.tasks",[]).factory("StagesCtrl",f).directive("sdTaskPreview",c).directive("sdAssigneeView",e).directive("sdDeskStages",g).directive("sdTaskKanbanBoard",d).controller("TasksController",b).service("tasks",a).config(["superdeskProvider",function(a){a.activity("/workspace/tasks",{label:gettext("Workspace"),controller:b,templateUrl:"scripts/superdesk-dashboard/workspace-tasks/views/workspace-tasks.html",topTemplateUrl:"scripts/superdesk-dashboard/views/workspace-topnav.html",sideTemplateUrl:"scripts/superdesk-workspace/views/workspace-sidenav.html",filters:[{action:"view",type:"task"}]}),a.activity("pick.task",{label:gettext("Pick task"),icon:"pick",controller:["data","superdesk",function(a,b){return b.intent("edit","item",a.item)}],filters:[{action:a.ACTION_EDIT,type:"task"}]})}])}(),function(){"use strict";function a(a){return angular.isDefined(a.data._issues)&&angular.isDefined(a.data._issues["validator exception"])?"Error: "+a.data._issues["validator exception"]:angular.isDefined(a.data._message)?"Error: "+a.data._message:"Error. Privileges not updated."}function b(a,b,c){var d={};return d.usernamePattern=/^[A-Za-z0-9_.'-]+$/,d.phonePattern=/^(?:(?:0?[1-9][0-9]{8})|(?:(?:\+|00)[1-9][0-9]{9,11}))$/,d.signOffPattern=/^[a-zA-Z0-9]+$/,d.save=function(b,c){return a.save("users",b,c).then(function(a){return angular.extend(b,c),angular.extend(b,a),b})},d.changePassword=function(b,c,d){return a.changePassword.create({username:b.username,old_password:c,new_password:d}).then(function(a){})},d.resetPassword=function(b){return a.resetPassword.create({email:b.email}).then(function(a){})},d.isActive=function(a){return a&&a.is_active},d.isPending=function(a){return a&&a.needs_activation},d.toggleStatus=function(a,b){return this.save(a,{is_active:b})},d.isLoggedIn=function(a){return a&&_.size(a.session_preferences)>0},d}function c(a,b,c){function d(a,b,c){return a+"_"+b+"_"+c}var e={},f=c("userList"),g="_nosearch",h=1,i=20;return e.getAll=function(){function c(b,i){return b=b||h,i=i||[],a("users").query({max_results:200,page:b}).then(function(a){i=i.concat(a._items),a._links.next?(b++,d=d.then(c(b,i))):(f.put(g,i),e.resolve(i))}),e.promise}var d=b.when(),e=b.defer();return d=c(),d.then(function(a){return a})},e.get=function(c,e,j){e=e||h;var k=c||g;j=j||i,k=d(k,e,j);var l=f.get(k);if(l)return b.when(l);var m={max_results:e*j};return c&&(m.where=JSON.stringify({$or:[{display_name:{$regex:c,$options:"-i"}},{username:{$regex:c,$options:"-i"}},{first_name:{$regex:c,$options:"-i"}},{last_name:{$regex:c,$options:"-i"}},{email:{$regex:c,$options:"-i"}}]})),a("users").query(m).then(function(a){return f.put(k,a),a})},e.getUser=function(b,c){return a("users").getById(b,void 0,!c)},e.clearCache=function(){f.removeAll()},e}function d(a,b,c){function d(a,b){return angular.isUndefined(b)?!1:_.find(a,function(a){return a._links.self.href===b._links.self.href})}function e(){var c=b.search(),d={max_results:Number(c.max_results)||i};return(c.q||a.online_users)&&(d.where=f(c.q,a.online_users)),c.page&&(d.page=parseInt(c.page,10)),c.sort?d.sort=h(c.sort[0],c.sort[1]):d.sort=h("full_name","asc"),d}function f(a,b){var c=null,d=null;return a&&(c={$or:[{username:{$regex:a,$options:"-i"}},{display_name:{$regex:a,$options:"-i"}},{email:{$regex:a,$options:"-i"}}]}),b&&(d={session_preferences:{$exists:!0,$nin:[null,{}]}}),a&&b?JSON.stringify({$and:[c,d]}):a?JSON.stringify(c):b?JSON.stringify(d):null}function g(b){c.users.query(b).then(function(b){a.users=b,a.createdUsers=[]})}function h(a,b){var c="asc"===b?1:-1;switch(a){case"full_name":return'[("first_name", '+c+'), ("last_name", '+c+")]";default:return'[("'+encodeURIComponent(a)+'", '+c+")]"}}var i=25;a.selected={user:null},a.createdUsers=[],a.online_users=!1,c("roles").query().then(function(b){a.roles=_.indexBy(b._items,"_id"),a.noRolesWarning=0===b._items.length}),a.preview=function(b){a.selected.user=b},a.createUser=function(){a.intent("create","user").then(g)},a.$on("intent:create:user",function(){a.preview({})}),a.closePreview=function(){a.preview(null)},a.afterDelete=function(b){a.selected.user&&b.item&&b.item.href===a.selected.user.href&&(a.selected.user=null),g(e())},a.render=function(b){d(a.users._items,b)||d(a.createdUsers,b)||a.createdUsers.unshift(b)},a.$watchCollection(e,g)}function e(a,b,c,d,e){a.user=d,a.profile=a.user._id===e.identity._id}function f(a,b,c,d,e){a.methods=[{id:"upload",label:gettext("Upload from computer")},{id:"camera",label:gettext("Take a picture")},{id:"web",label:gettext("Use a Web URL")}],e.isBeta().then(function(b){b||(a.methods=_.reject(a.methods,{beta:!0}))}),a.activate=function(b){a.active=b,a.preview={},a.progress={width:0}},a.activate(a.methods[0]),a.upload=function(c){var e={};if(e.CropLeft=Math.round(Math.min(c.cords.x,c.cords.x2)),e.CropRight=Math.round(Math.max(c.cords.x,c.cords.x2)),e.CropTop=Math.round(Math.min(c.cords.y,c.cords.y2)),e.CropBottom=Math.round(Math.max(c.cords.y,c.cords.y2)),c.img)e.media=c.img;else{if(!c.url)return;e.URL=c.url}return d.resource("upload").then(function(c){return b.start({url:c,method:"POST",data:e}).then(function(b){if("ERR"!==b.data._status){var c=b.data.renditions.viewImage.href;return a.locals.data.picture_url=c,a.locals.data.avatar=b.data._id,a.resolve(c)}},null,function(b){a.progress.width=Math.round(b.loaded/b.total*100)})})}}function g(a,b,c,d,e,f,g){var h=b.item;return f.save(h,{is_enabled:!0,is_active:!0}).then(function(a){g.$broadcast("user:updated",a)},function(a){angular.isDefined(a.data._issues)&&angular.isDefined(a.data._issues["validator exception"])?d.error(e("Error: "+a.data._issues["validator exception"])):angular.isDefined(a.data._message)?d.error(e("Error: "+a.data._message)):d.error(e("Error. User Profile cannot be enabled."))})}function h(a,b,c,d,e,f){var g=b.item;return a.users.remove(g).then(function(b){return a.users.getById(g._id).then(function(a){return g=angular.extend(g,a),f.$broadcast("user:updated",g),g})},function(a){angular.isDefined(a.data._issues)&&angular.isDefined(a.data._issues["validator exception"])?d.error(e("Error: "+a.data._issues["validator exception"])):angular.isDefined(a.data._message)?d.error(e("Error: "+a.data._message)):d.error(e("Error. User Profile cannot be disabled."))})}function i(a,b,c,d,e){return a.users.getById(b.current.params._id).then(null,function(a){return 404===a.status&&(e.path("/users/"),c.error(d("User was not found, sorry."),5e3)),a})}function j(a,b,c,d,e){return{scope:!0,templateUrl:"scripts/superdesk-users/views/settings-roles.html",link:function(f){function g(b){var c=_.find(f.roles,function(a){return a._id!==b._id&&a.is_default});c&&a("roles").getById(c._id).then(function(a){_.extend(c,{_etag:a._etag,is_default:!1})})}function h(){return d.confirm(b("Are you sure you want to delete user role?"))}var i=null;f.editRole=null,a("roles").query().then(function(a){f.roles=e("sortByName")(a._items)}),f.edit=function(a){f.editRole=_.create(a),i=a,f.defaultRole=a.is_default},f.save=function(d){var e=d._id?!1:!0;a("roles").save(i,d).then(function(){e?(f.roles.push(i),c.success(b("User role created."))):c.success(b("User role updated.")),d.is_default&&g(d),f.cancel()},function(a){400===a.status&&"undefined"!=typeof a.data._issues.name&&1===a.data._issues.name.unique?c.error(b("I'm sorry but a role with that name already exists.")):"undefined"!=typeof a.data._issues["validator exception"]?c.error(a.data._issues["validator exception"]):c.error(b("I'm sorry but there was an error when saving the role."))})},f.cancel=function(){f.editRole=null},f.remove=function(d){h().then(function(){a("roles").remove(d).then(function(a){_.remove(f.roles,d)},function(a){angular.isDefined(a.data._message)?c.error(b("Error: "+a.data._message)):c.error(b("There is an error. Role cannot be deleted."))})})}}}}function k(b,c,d,e,f){return{scope:!0,templateUrl:"scripts/superdesk-users/views/settings-privileges.html",link:function(g){b("roles").query().then(function(a){g.roles=f("sortByName")(a._items)}),b("privileges").query().then(function(a){g.privileges=a._items}),g.saveAll=function(f){var h=[];_.each(g.roles,function(a){h.push(b.save("roles",a,_.pick(a,"privileges")).then(function(a){},function(a){console.log(a)}))}),e.all(h).then(function(){d.success(c("Privileges updated.")),f.$setPristine()},function(b){d.error(c(a(b)))})}}}}function l(a){}return b.$inject=["api","$q","notify"],c.$inject=["api","$q","$cacheFactory"],d.$inject=["$scope","$location","api"],e.$inject=["$scope","server","superdesk","user","session"],f.$inject=["$scope","upload","session","urls","betaService"],g.$inject=["api","data","$q","notify","gettext","usersService","$rootScope"],h.$inject=["api","data","$q","notify","gettext","$rootScope"],i.$inject=["api","$route","notify","gettext","$location"],j.$inject=["api","gettext","notify","modal","$filter"],k.$inject=["api","gettext","notify","$q","$filter"],l.$inject=["$scope"],angular.module("superdesk.users",["superdesk.activity","superdesk.asset"]).controller("UserEditController",e).service("usersService",b).factory("userList",c).factory("userPopup",["$compile","$timeout","userList",function(a,b,c){function d(){var a=i.get();a&&a.hide()}function e(){var a=i.get();a&&a.html("")}function f(){b.cancel(i.status)}function g(){i.status=b(d,j,!1)}function h(b,c){var d=i.get();d.html('<div class="avatar-holder"><figure class="avatar big"><img sd-user-avatar data-src="user.picture_url"></figure></div><div class="title">{{user.display_name}}</div><div class="actions"><a href="#/users/{{user._id}}">go to profile</a></div>');var e=c.$new(!0);e.user=b,a(d)(e)}var i={},j=300;return i.get=function(a){return!i.element&&a&&(i.element=$('<div class="user-popup"></div>'),i.element.appendTo("BODY"),i.element.hover(f,g),i.element.click(d)),i.element},i.set=function(a,b,d){f(),e();var g=i.get(!0),j=b.offset();g.css({left:j.left+b.outerWidth(),top:j.top+b.outerHeight()}),c.getUser(a).then(function(a){h(a,d)},function(a){console.log(a)}),g.show()},i.close=function(){var a=i.get();a&&g()},i}]).config(["superdeskProvider",function(a){a.permission("users-manage",{label:gettext("Manage users"),permissions:{users:{write:!0}}}).permission("users-read",{label:gettext("Read users"),permissions:{users:{read:!0}}}).permission("user-roles-manage",{label:gettext("Manage user roles"),permissions:{user_roles:{write:!0}}}).permission("user-roles-read",{label:gettext("Read user roles"),permissions:{user_roles:{read:!0}}})}]).config(["superdeskProvider","assetProvider",function(a,b){a.activity("/users/",{label:gettext("User management"),description:gettext("Find your colleagues"),controller:d,templateUrl:b.templateUrl("superdesk-users/views/list.html"),category:a.MENU_MAIN,adminTools:!0,reloadOnSearch:!1,filters:[{action:a.ACTION_PREVIEW,type:"user"},{action:"list",type:"user"}],privileges:{users:1}}).activity("/users/:_id",{label:gettext("Users profile"),priority:100,controller:"UserEditController",templateUrl:b.templateUrl("superdesk-users/views/edit.html"),resolve:{user:i},filters:[{action:"detail",type:"user"}],privileges:{users:1}}).activity("/settings/user-roles",{label:gettext("User Roles"),templateUrl:b.templateUrl("superdesk-users/views/settings.html"),controller:l,category:a.MENU_SETTINGS,priority:-500,privileges:{roles:1}}).activity("delete/user",{label:gettext("Disable user"),icon:"trash",confirm:gettext("Please confirm that you want to disable a user."),controller:h,filters:[{action:a.ACTION_EDIT,type:"user"}],condition:function(a){return a.is_enabled},privileges:{users:1}}).activity("restore/user",{label:gettext("Enable user"),icon:"revert",controller:g,filters:[{action:a.ACTION_EDIT,type:"user"}],condition:function(a){return!a.is_enabled},privileges:{users:1}}).activity("edit.avatar",{label:gettext("Change avatar"),modal:!0,cssClass:"upload-avatar modal-static modal-large",controller:f,templateUrl:b.templateUrl("superdesk-users/views/change-avatar.html"),filters:[{action:"edit",type:"avatar"}]})}]).config(["apiProvider",function(a){a.api("users",{type:"http",backend:{rel:"users"}}),a.api("roles",{type:"http",backend:{rel:"roles"}}),a.api("resetPassword",{type:"http",backend:{rel:"reset_user_password"}}),a.api("changePassword",{type:"http",backend:{rel:"change_user_password"}})}]).config(["$compileProvider",function(a){a.directive("compile",["$compile",function(a){return function(b,c,d){var e=b.$eval(d.compile);c.html(e);var f=b.$new(!0);_.each(b.$eval(d.data),function(a,b){f[b]=a}),a(c.contents())(f)}}])}]).directive("sdUserRoles",j).directive("sdRolesPrivileges",k).directive("sdInfoItem",function(){return{link:function(a,b){b.addClass("item"),b.find("input, select").addClass("info-value info-editable")}}}).directive("sdValidError",function(){return{link:function(a,b){b.addClass("validation-error")}}}).directive("sdValidInfo",function(){return{link:function(a,b){b.addClass("validation-info")}}}).directive("sdUserDetailsPane",["$timeout",function(a){return{replace:!0,transclude:!0,template:'<div class="user-details-pane" ng-transclude></div>',link:function(b,c,d){a(function(){$(".user-details-pane").addClass("open")},0,!1),b.closePane=function(){$(".user-details-pane").removeClass("open")}}}}]).directive("sdUserEdit",["api","gettext","notify","usersService","userList","session","$location","$route","superdesk","features","asset","privileges","desks","keyboardManager",function(a,b,c,d,e,f,g,h,i,j,k,l,m,n){return{templateUrl:k.templateUrl("superdesk-users/views/edit-form.html"),scope:{origUser:"=user",onsave:"&",oncancel:"&",onupdate:"&"},link:function(k,o){function p(a){return k.dirty=!1,e.getUser(a._id,!0).then(function(a){k.error=null,k.origUser=a,k.user=_.create(a),k.confirm={password:null},k.show={password:!1},k._active=d.isActive(a),k._pending=d.isPending(a),k.profile=k.user._id===f.identity._id,k.userDesks=[],angular.isDefined(a)&&angular.isDefined(a._links)&&m.fetchUserDesks(a).then(function(a){k.userDesks=a._items})})}k.privileges=l.privileges,k.features=j,k.usernamePattern=d.usernamePattern,k.phonePattern=d.phonePattern,k.signOffPattern=d.signOffPattern,k.dirty=!1,k.errorMessage=null,p(k.origUser),k.$watchCollection("user",function(a){_.each(a,function(b,c){""===b&&("phone"!==c||"byline"!==c?a[c]=null:delete a[c])}),k.dirty=!angular.equals(a,k.origUser)}),a("roles").query().then(function(a){k.roles=a._items}),k.cancel=function(){p(k.origUser),k.origUser.Id||k.oncancel()},k.focused=function(){n.unbind("down"),n.unbind("up")},k.editPicture=function(){i.intent("edit","avatar",k.user).then(function(a){k.user.picture_url=a})},k.save=function(){return k.error=null,c.info(b("saving..")),d.save(k.origUser,k.user).then(function(a){k.origUser=a,p(k.origUser),c.pop(),c.success(b("user saved.")),k.onsave({user:k.origUser}),k.user._id===f.identity._id&&f.updateIdentity(k.origUser),e.clearCache()},function(a){if(c.pop(),404===a.status)"/users/"===g.path()?h.reload():g.path("/users/"),c.error(b("User is not found. It might be deleted."));else{var d=b("There was an error when saving user. ");if(a.data&&a.data._issues){angular.isDefined(a.data._issues["validator exception"])&&(d=b("Error: "+a.data._issues["validator exception"])),k.error=a.data._issues,k.error.message=d;for(var e in a.data._issues)if(k.userForm[e]){k.error[e]&&(k.error[e].format=!0,k.error.message=null);for(var f in a.data._issues[e])a.data._issues[e][f]&&(k.userForm[e].$setValidity(f,!1),k.error.message=null)}}c.error(d)}})},k.toggleStatus=function(a){d.toggleStatus(k.origUser,a).then(function(){p(k.origUser),k.onupdate({user:k.origUser})})},k.$on("user:updated",function(a,b){p(b)})}}}]).directive("sdUserPreferences",["api","session","preferencesService","notify","asset","metadata","modal","$timeout","$q","userList",function(a,b,c,d,e,f,g,h,i,j){return{templateUrl:e.templateUrl("superdesk-users/views/user-preferences.html"),link:function(a,e,k){function l(b){var c,d;a.preferences={},_.each(b,function(b,c){b.label&&b.category&&(a.preferences[c]=_.create(b))}),c=["cities","categories","default_categories","locators"],d=c.some(function(a){var b=f.values||{};return angular.isUndefined(b[a])}),d?f.initialize().then(function(){m(f.values,b)}):m(f.values,b)}function m(b,c){a.cities=b.cities,a.defaultCategories={},b.default_categories.forEach(function(b){a.defaultCategories[b.qcode]=!0}),a.categories=[],b.categories.forEach(function(b){var d=_.create(b),e=c["categories:preferred"].selected;d.selected=!!e[b.qcode],a.categories.push(d)}),a.locators=b.locators,a.preferencesLoaded=!0}function n(){var b,c,d;return(d=a.categories.some(function(a){return a.selected}))?i.when():(c=["No preferred categories selected. Should you ","choose to proceed with your choice, a default ","set of categories will be selected for you."].join(""),c=gettext(c),b=g.confirm(c).then(function(){a.checkDefault()}))}function o(){var b={};return _.each(p,function(c,d){if("dateline:located"===d){var f=e.find(".input-term > input");a.changeDatelinePreview(a.preferences[d],f[0].value)}"categories:preferred"===d&&(c.selected={},a.categories.forEach(function(a){c.selected[a.qcode]=!!a.selected})),b[d]=_.extend(c,a.preferences[d])}),b}a.preferencesLoaded=!1;var p;c.get(null,!0).then(function(c){p=c,l(p),a.datelineSource=b.identity.dateline_source,a.datelinePreview=a.preferences["dateline:located"].located}),a.cancel=function(){a.userPrefs.$setPristine(),l(p),a.datelinePreview=a.preferences["dateline:located"].located},j.getUser(a.user._id,!0).then(function(b){a.user=b}),a.save=function(){n().then(function(){var b=o();return c.update(b).then(function(){j.getUser(a.user._id,!0).then(function(b){a.user=b})})},function(){return i.reject("canceledByModal")}).then(function(){d.success(gettext("User preferences saved")),a.cancel()},function(a){"canceledByModal"!==a&&d.error(gettext("User preferences could not be saved..."))})},a.changeDatelinePreview=function(b,c){""===c&&(b.located=null),h(function(){a.datelinePreview=b.located})},a.checkAll=function(){a.categories.forEach(function(a){a.selected=!0}),a.userPrefs.$setDirty()},a.checkNone=function(){a.categories.forEach(function(a){a.selected=!1}),a.userPrefs.$setDirty()},a.checkDefault=function(){a.categories.forEach(function(b){b.selected=!!a.defaultCategories[b.qcode]}),a.userPrefs.$setDirty()},a.articleDefaultsChanged=function(b){a.userPrefs.$setDirty()}}}}]).directive("sdUserPrivileges",["api","gettext","notify","userList",function(b,c,d,e){return{scope:{user:"="},templateUrl:"scripts/superdesk-users/views/user-privileges.html",link:function(f){e.getUser(f.user._id,!0).then(function(a){f.user=a}),b("privileges").query().then(function(a){f.privileges=a._items}),b("roles").getById(f.user.role).then(function(a){f.role=a},function(a){console.log(a)}),f.origPrivileges=angular.copy(f.user.privileges),f.save=function(){b.save("users",f.user,_.pick(f.user,"privileges")).then(function(){f.origPrivileges=angular.copy(f.user.privileges),f.userPrivileges.$setPristine(),d.success(c("Privileges updated."))},function(b){d.error(c(a(b)))})},f.cancel=function(){f.user.privileges=angular.copy(f.origPrivileges),f.userPrivileges.$setPristine()}}}}]).directive("sdChangePassword",["usersService","notify","gettext",function(a,b,c){return{link:function(d,e){d.$watch("user",function(){d.oldPasswordInvalid=!1}),d.changePassword=function(e,f){return a.changePassword(d.user,e,f).then(function(a){d.oldPasswordInvalid=!1,b.success(c("The password has been changed."),3e3),d.show.change_password=!1},function(a){d.oldPasswordInvalid=!0})}}}}]).directive("sdResetPassword",["usersService","notify","gettext",function(a,b,c){return{link:function(d,e){d.$watch("user",function(){d.oldPasswordInvalid=!1}),d.resetPassword=function(){return a.resetPassword(d.user).then(function(a){d.oldPasswordInvalid=!1,b.success(c("The password has been reset."),3e3),d.show.reset_password=!1},function(a){d.oldPasswordInvalid=!0})}}}}]).directive("sdUserUnique",["$q","api",function(a,b){return{require:"ngModel",scope:{exclude:"="},link:function(c,d,e,f){function g(d,f){var g=d||f;if(g&&e.uniqueField){var h={where:{}};return h.where[e.uniqueField]=g,b.users.query(h).then(function(b){return!b._items.length||c.exclude._id&&b._items[0]._id===c.exclude._id?b:a.reject(b)})}return a.when()}f.$asyncValidators.unique=g}}}]).directive("sdPasswordConfirm",[function(){var a="confirm";return{require:"ngModel",scope:{password:"="},link:function(b,c,d,e){function f(a,b){return!a||a===b}e.$validators[a]=function(a,c){var d=a||c;return f(b.password,d)},b.$watch("password",function(b){e.$setValidity(a,f(b,e.$viewValue))})}}}]).directive("sdUserList",["keyboardManager","usersService","asset",function(a,b,c){return{templateUrl:c.templateUrl("superdesk-users/views/user-list-item.html"),scope:{roles:"=",users:"=",selected:"=",done:"="},link:function(c,d,e){function f(){g(),a.bind("down",h),a.bind("up",i)}function g(){a.unbind("down"),a.unbind("up")}function h(){var a=j();-1!==a&&c.select(c.users[_.min([c.users.length-1,a+1])])}function i(){var a=j();-1!==a&&c.select(c.users[_.max([0,a-1])])}function j(){return _.findIndex(c.users,c.selected)}c.active=function(a){return b.isActive(a)},c.pending=function(a){return b.isPending(a)},c.select=function(a){c.selected=a,f()},c.$watch("selected",function(a){null==a&&f()}),c.isLoggedIn=function(a){return b.isLoggedIn(a)}}}}]).directive("sdUserListItem",["asset",function(a){return{templateUrl:a.templateUrl("superdesk-users/views/user-list-item.html")}}]).directive("sdActivity",["asset",function(a){return{templateUrl:a.templateUrl("superdesk-users/views/activity-list.html")}}]).directive("sdUserMentio",["userList","asset",function(a,b){return{templateUrl:b.templateUrl("superdesk-users/views/mentions.html"),link:function(b,c){b.users=[],b.fetching=!1,b.prefix="";var d=c.children()[0];c.children().bind("scroll",function(){d.scrollTop+d.offsetHeight>=d.scrollHeight-3&&(d.scrollTop=d.scrollTop-3,b.fetchNext())}),b.fetchNext=function(){if(!b.fetching){var c=b.users.length/10+1;b.fetching=!0,a.get(b.prefix,c,10).then(function(a){_.each(_.sortBy(a._items.slice(10*(c-1),10*c),"username"),function(a){b.users.push(a)}),b.fetching=!1})}},b.searchUsers=function(c){return b.prefix=c,a.get(c,1,10).then(function(a){b.users=_.sortBy(a._items,"username")})},b.selectUser=function(a){return"@"+a.username},b.$watchCollection(function(){return $(".users-list-embed>li.active")},function(a){a.hasClass("active")&&$(".mentio-menu").scrollTop(a.position().top)})}}}]).directive("sdUserInfo",["userPopup",function(a){return{link:function(b,c,d){c.addClass("user-link"),c.hover(function(){a.set(d.user,c,b)},function(){a.close()})}}}]).filter("username",["session",function(a){return function(a){return a?a.display_name||a.username:null}}])}(),function(){"use strict";function a(a){var b="activity";this.getUserActivity=function(c,d,e){var f={where:{user:c._id},sort:"[('_created',-1)]",embedded:{user:1,item:1}};return d&&(f.max_results=d),e>1&&(f.page=e),a.query(b,f)},this.getAllUsersActivity=function(c,d){var e={sort:"[('_created',-1)]",where:{user:{$exists:!0},item:{$exists:!0}},embedded:{user:1,item:1}};return c&&(e.max_results=c),d>1&&(e.page=d),a.query(b,e)}}a.$inject=["api"],angular.module("superdesk.users.profile",["superdesk.api","superdesk.users"]).service("profileService",a).config(["superdeskProvider","assetProvider",function(a,b){a.activity("/profile/",{label:gettext("My Profile"),controller:"UserEditController",templateUrl:b.templateUrl("superdesk-users/views/edit.html"),resolve:{user:["session","api",function(a,b){return a.getIdentity().then(function(a){return b.get(a._links.self.href)})}]}})}]).directive("sdUserActivity",["profileService","asset",function(a,b){return{restrict:"A",replace:!0,templateUrl:b.templateUrl("superdesk-users/views/activity-feed.html"),scope:{user:"="},link:function(b,c,d){var e=1,f=5;b.max_results=f,b.$watch("user",function(){a.getUserActivity(b.user,f).then(function(a){b.activityFeed=a})}),b.loadMore=function(){e++,a.getUserActivity(b.user,f,e).then(function(a){Array.prototype.push.apply(b.activityFeed._items,a._items),b.activityFeed._links=a._links,b.max_results+=f})}}}}])}(),function(){"use strict";angular.module("superdesk.users.activity",["superdesk.users","superdesk.dashboard.widgets","superdesk.asset"]).config(["widgetsProvider","assetProvider",function(a,b){a.widget("activity",{label:"Activity Stream",multiple:!0,max_sizex:2,max_sizey:2,sizex:1,sizey:2,thumbnail:b.imageUrl("superdesk-users/activity/thumbnail.svg"),template:b.templateUrl("superdesk-users/activity/widget-activity.html"),configurationTemplate:b.templateUrl("superdesk-users/activity/configuration.html"),configuration:{maxItems:5},description:"Activity stream widget",icon:"stream"})}]).controller("ActivityController",["$scope","profileService",function(a,b){function c(c){e=c,b.getAllUsersActivity(c.maxItems).then(function(b){a.activityFeed=b,a.max_results=parseInt(c.maxItems,10)}),a.loadMore=function(){d++,b.getAllUsersActivity(c.maxItems,d).then(function(b){Array.prototype.push.apply(a.activityFeed._items,b._items),a.activityFeed._links=b._links,a.max_results+=parseInt(c.maxItems,10)})}}var d=1,e=null;a.max_results=0,a.$on("changes in activity",function(){e&&c(e)}),a.$watch("widget.configuration",function(a){d=1,a&&c(a)},!0)}]).controller("ActivityConfigController",["$scope",function(a){a.notIn=function(a){return function(b){return-1===a.indexOf(b)}}}])}(),function(){"use strict";function a(a,b){function c(a,c){var d={};return d[a]=1,d.message=c,b.reject(d)}this.importUser=function(b){return a.save("import_profile",b).then(null,function(a){var b=a.data;return 404===a.status?c("profile_to_import",b._message):400===a.status?c(b._issues.profile_to_import?"profile_to_import":"credentials",b._message):c("credentials",b._message)})}}function b(a,b){a.model={},a.error=null,a.importUser=function(c){a.error=null,b.importUser(c).then(function(b){a.resolve(b)},function(b){a.error=b})}}a.$inject=["api","$q"],b.$inject=["$scope","userImport"],angular.module("superdesk.users.import",["superdesk.activity","superdesk.api"]).service("userImport",a).config(["superdeskProvider",function(a){a.activity("import.user",{label:gettext("Import user"),modal:!0,controller:b,templateUrl:"scripts/superdesk-users/import/views/import-user.html",filters:[{action:"create",type:"user"}],features:{import_profile:1}})}])}(),function(){"use strict";function a(a,b){b.initialize().then(function(){a.groups=b.groups})}function b(a,b,c,d,e,f,g){a.modalActive=!1,a.step={current:null},a.group={edit:null},a.openGroup=function(b,c){a.modalActive=!0,a.step.current=b,a.group.edit=c},a.cancel=function(){a.modalActive=!1,a.step.current=null,a.group.edit=null},a.remove=function(e){g.confirm(b("Are you sure you want to delete group?")).then(function(){d.groups.remove(e).then(function(){_.remove(a.groups._items,e),c.success(b("Group deleted."),3e3)})})}}function c(a,b,c){return{link:function(d,e,f){function g(a){a.data&&a.data._issues&&a.data._issues.name&&a.data._issues.name.unique?d._errorUniqueness=!0:d._error=!0,d.message=null}function h(){(d._errorUniqueness||d._error||d._errorLimits)&&(d._errorUniqueness=null,d._error=null,d._errorLimits=null)}var i={group:40};d.limits=i,d.$watch("step.current",function(a){"general"===a&&(d.edit(d.group.edit),d.message=null)}),d.edit=function(a){d.group.edit=_.create(a)},d.save=function(e){d.message=a("Saving...");var f=e._id?!1:!0;b.groups.save(d.group.edit,e).then(function(){if(f)d.edit(d.group.edit),d.groups._items.unshift(d.group.edit);else{var a=_.find(d.groups._items,{_id:d.group.edit._id});_.extend(a,d.group.edit)}c.wizard("usergroups").next()},g)},d.handleEdit=function(a){h(),null!=d.group.edit.name&&(d._errorLimits=d.group.edit.name.length>d.limits.group?!0:null)}}}}function d(a,b,c,d){return{link:function(e,f,g){e.$watch("step.current",function(a,b){"people"===a&&(e.search=null,e.groupMembers=[],e.users=[],e.message=null,e.group.edit&&e.group.edit._id?d.initialize().then(function(){
-e.groupMembers=d.groupMembers[e.group.edit._id]||[],e.users=d.users._items}):c.wizard("usergroups").goTo(b))}),e.add=function(a){e.groupMembers.push(a)},e.remove=function(a){_.remove(e.groupMembers,a)},e.previous=function(){c.wizard("usergroups").previous()},e.save=function(){var f=_.map(e.groupMembers,function(a){return{user:a._id}});b.groups.save(e.group.edit,{members:f}).then(function(a){_.extend(e.group.edit,a),d.groupMembers[e.group.edit._id]=e.groupMembers;var b=_.find(d.groups._items,{_id:e.group.edit._id});_.extend(b,e.group.edit),c.wizard("usergroups").finish()},function(b){e.message=a("There was a problem, members not saved.")})}}}}var e=angular.module("superdesk.groups",["superdesk.users"]);return e.config(["superdeskProvider",function(b){b.activity("/settings/groups",{label:gettext("Groups"),controller:a,templateUrl:"scripts/superdesk-groups/views/settings.html",category:b.MENU_SETTINGS,priority:-800,beta:!0,privileges:{groups:1}})}]).config(["apiProvider",function(a){a.api("groups",{type:"http",backend:{rel:"groups"}})}]).factory("groups",["$q","api","storage","userList",function(a,b,c,d){var e={groups:null,users:null,groupLookup:{},userLookup:{},groupMembers:{},loading:null,fetchGroups:function(){var a=this;return b.groups.query({max_results:500}).then(function(b){a.groups=b,_.each(b._items,function(b){a.groupLookup[b._id]=b})})},fetchUsers:function(){var a=this;return d.get(null,1,500).then(function(b){a.users=b,_.each(b._items,function(b){a.userLookup[b._id]=b})})},generateGroupMembers:function(){var b=this;return _.each(this.groups._items,function(a){b.groupMembers[a._id]=[],_.each(a.members,function(c,d){var e=_.find(b.users._items,{_id:c.user});e&&b.groupMembers[a._id].push(e)})}),a.when()},fetchUserGroups:function(a){return b.users.getByUrl(a._links.self.href+"/groups")},getCurrentGroupId:function(){return c.getItem("groups:currentGroupId")||null},setCurrentGroupId:function(a){c.setItem("groups:currentGroupId",a)},fetchCurrentGroup:function(){return b.groups.getById(this.getCurrentGroupId())},setCurrentGroup:function(a){this.setCurrentGroupId(a?a._id:null)},getCurrentGroup:function(a){return this.groupLookup[this.getCurrentGroupId()]},initialize:function(){return this.loading||(this.loading=this.fetchGroups().then(angular.bind(this,this.fetchUsers)).then(angular.bind(this,this.generateGroupMembers))),this.loading}};return e}]).directive("sdGroupeditBasic",c).directive("sdGroupeditPeople",d).directive("sdGroupsConfig",function(){return{controller:b}}).directive("sdGroupsConfigModal",function(){return{require:"^sdGroupsConfig",templateUrl:"scripts/superdesk-groups/views/groups-config-modal.html",link:function(a,b,c,d){}}}),a.$inject=["$scope","groups"],b.$inject=["$scope","gettext","notify","api","groups","WizardHandler","modal"],c.$inject=["gettext","api","WizardHandler"],d.$inject=["gettext","api","WizardHandler","groups"],e}(),function(){"use strict";function a(a,b){var c=b.privileges;a.showSubscribers=Boolean(c.subscribers),a.showFilterConditions=Boolean(c.publish_filters)}function b(a,b){var c=function(b,c){return a[b].query(c)},d={fetchSubscribers:function(a){return a=a||{},c("subscribers",a)},fetchSubscribersByKeyword:function(a){return this.fetchSubscribers({where:JSON.stringify({$or:[{name:{$regex:a,$options:"-i"}}]})})},fetchSubscribersByIds:function(a){var b=[];return _.each(a,function(a){b.push({_id:a})}),this.fetchSubscribers({where:JSON.stringify({$or:b})})},fetchPublishErrors:function(){var a={io_type:"publish"};return c("io_errors",a)}};return d}function c(a){return{templateUrl:"scripts/superdesk-publish/views/destination.html",scope:{destination:"=",actions:"="},link:function(b){b.types=a}}}function d(a,b){function c(){var a=a||{};return a.max_results=200,b.consistency.query(a)}a.consistency_records=null,a.reload=function(){c().then(function(b){a.consistency_records=b._items,a.lastRefreshedAt=new Date})},a.reload()}function e(a,b,c,d,e,f){function g(){h().then(function(b){var c=b._items;_.forEach(c,function(a){angular.extend(a,{selected:!1})}),a.publish_queue=c,a.lastRefreshedAt=new Date,a.showResendBtn=!1,a.showCancelBtn=!1,a.maxPage=Math.ceil(b._meta.total/a.pageSize)})}function h(){var b=b||{};b.max_results=a.pageSize,b.page=a.page;var d=null;_.isEmpty(a.searchQuery)||(d={$or:[{headline:{$regex:a.searchQuery,$options:"-i"}},{unique_name:a.searchQuery}]});var e=[];null!=a.selectedFilterSubscriber&&e.push({subscriber_id:a.selectedFilterSubscriber._id}),null!=a.selectedFilterStatus&&e.push({state:a.selectedFilterStatus});var f=[];return _.each(e,function(a){f.push(a)}),null!==d&&f.push(d),_.isEmpty(f)||(b.where=JSON.stringify({$and:f})),c.publish_queue.query(b)}function i(b){var c=_.find(a.publish_queue,{_id:b.queue_id});if(c){var d=["error_message","completed_at","state"];angular.extend(c,_.pick(b,d)),a.$apply()}}function j(){var b=_.find(a.publish_queue,{_id:f.search()._id})||null;b?c.archive.getById(b.item_id).then(function(b){a.selected.preview=b}):a.selected.preview=null}a.subscribers=null,a.subscriberLookup={},a.publish_queue=[],a.selectedFilterSubscriber=null,a.multiSelectCount=0,a.selectedQueueItems=[],a.showResendBtn=!1,a.showCancelBtn=!1,a.queueSearch=!1,a.selected={},a.publish_queue_statuses=["pending","in-progress","success","error"],a.pageSize=25,a.page=1,a.$watch("page",a.reload);var k=[];k.push(b.fetchSubscribers().then(function(b){a.subscribers=b._items,_.each(b._items,function(b){a.subscriberLookup[b._id]=b})})),a.search=function(b){a.searchQuery=b,a.page=1,a.reload()},a.reload=function(){d.all(k).then(function(){g(),j()})},a.buildNewSchedule=function(a){var b=["item_id","item_version","publishing_action","formatted_item","headline","content_type","subscriber_id","unique_name","destination"],c=_.pick(a,b);return c},a.scheduleToSend=function(b){var d=[];angular.isDefined(b)?d.push(a.buildNewSchedule(b)):a.multiSelectCount>0&&_.forEach(a.selectedQueueItems,function(b){d.push(a.buildNewSchedule(b))}),c.publish_queue.save([],d).then(function(b){a.reload(),a.cancelSelection(!1)},function(a){angular.isDefined(a.data._issues)?angular.isDefined(a.data._issues["validator exception"])&&e.error(gettext("Error: "+a.data._issues["validator exception"])):e.error(gettext("Error: Failed to re-schedule"))})},a.filterSchedule=function(b,c){"subscriber"===c&&(a.selectedFilterSubscriber=b),g(),a.multiSelectCount=0,a.selectedQueueItems=[],a.page=1},a.filterStatus=function(b,c){"status"===c&&(a.selectedFilterStatus=b),g(),a.multiSelectCount=0,a.selectedQueueItems=[],a.page=1},a.selectQueuedItem=function(b){b.selected?a.selectedQueueItems=_.union(a.selectedQueueItems,[b]):a.selectedQueueItems=_.without(a.selectedQueueItems,b);var c=_.findIndex(a.selectedQueueItems,function(a){return"pending"===a.state||"in-progress"===a.state||"canceled"===a.state});-1===c?(a.showResendBtn=!0,a.showCancelBtn=!1):(c=_.findIndex(a.selectedQueueItems,function(a){return"success"===a.state||"in-progress"===a.state||"canceled"===a.state||"error"===a.state}),-1===c?(a.showResendBtn=!1,a.showCancelBtn=!0):(a.showResendBtn=!1,a.showCancelBtn=!1)),a.multiSelectCount=a.selectedQueueItems.length},a.cancelSelection=function(b){(angular.isUndefined(b)||_.isNull(b)||b)&&(a.selectedFilterSubscriber=null),a.selectedQueueItems=[],a.multiSelectCount=0,a.filterSchedule()},a.preview=function(a){f.search("_id",a?a._id:a)},a.$on("$routeUpdate",j),a.$on("publish_queue:update",function(a,b){i(b)}),a.reload()}function f(a,b,c,d,e,f,g,h,i){return{templateUrl:"scripts/superdesk-publish/views/subscribers.html",link:function(e){function j(){d.fetchSubscribers().then(function(a){a._items=i("sortByName")(a._items),e.subscribers=a})}function k(){return d.fetchPublishErrors().then(function(a){e.all_errors=a._items[0].all_errors})}e.subscriber=null,e.origSubscriber=null,e.subscribers=null,e.newDestination=null,e.contentFilters=null,e.geoRestrictions=null,e.subTypes=null,angular.isDefined(f.values.geographical_restrictions)?(e.geoRestrictions=f.values.geographical_restrictions,e.subTypes=f.values.subscriber_types):f.fetchMetadataValues().then(function(){e.geoRestrictions=f.values.geographical_restrictions,e.subTypes=f.values.subscriber_types});var l=function(){return c.query("content_filters").then(function(a){e.contentFilters=a._items})},m=function(){e.subscriber&&(e.subscriber.global_filters||(e.subscriber.global_filters={}),_.each(e.globalFilters,function(a){a._id in e.subscriber.global_filters||(e.subscriber.global_filters[a._id]=!0)}))},n=function(){return g.getGlobalContentFilters().then(function(a){e.globalFilters=a})};e.addNewDestination=function(){e.newDestination={}},e.cancelNewDestination=function(){e.newDestination=null},e.saveNewDestination=function(){e.destinations.push(e.newDestination),e.newDestination=null},e.deleteDestination=function(a){_.remove(e.destinations,a)},e.save=function(){e.subscriber.content_filter&&""===e.subscriber.content_filter.filter_id&&(e.subscriber.content_filter=null),e.subscriber.destinations=e.destinations,c.subscribers.save(e.origSubscriber,e.subscriber).then(function(){b.success(a("Subscriber saved.")),e.cancel()},function(c){angular.isDefined(c.data._issues)?angular.isDefined(c.data._issues["validator exception"])?b.error(a("Error: "+c.data._issues["validator exception"])):angular.isDefined(c.data._issues.name)&&angular.isDefined(c.data._issues.name.unique)?b.error(a("Error: Subscriber with Name "+e.subscriber.name+" already exists.")):angular.isDefined(c.data._issues.destinations)&&b.error(a("Error: Subscriber must have at least one destination.")):b.error(a("Error: Failed to save Subscriber."))}).then(j)},e.edit=function(c){var d=[];d.push(k()),d.push(l()),d.push(n()),h.all(d).then(function(){e.origSubscriber=c||{},e.subscriber=_.create(e.origSubscriber),e.subscriber.critical_errors=e.origSubscriber.critical_errors,e.subscriber.content_filter=e.origSubscriber.content_filter||{},e.subscriber.global_filters=e.origSubscriber.global_filters||{},e.subscriber.content_filter.filter_type=e.subscriber.content_filter.filter_type||"blocking",e.destinations=[],angular.isDefined(e.subscriber.destinations)&&!_.isNull(e.subscriber.destinations)&&e.subscriber.destinations.length>0&&(e.destinations=_.clone(e.subscriber.destinations,!0)),e.subscriberType=e.subscriber.subscriber_type||"",e.changeFormats(e.subscriberType),m()},function(){b.error(a("Subscriber could not be initialized!"))})},e.cancel=function(){e.origSubscriber=null,e.subscriber=null,e.newDestination=null},e.changeFormats=function(c){var d=_.result(_.find(e.subTypes,{value:c}),"formats");if(e.destinations.length>0&&""!==e.subscriberType&&e.subscriberType!==c){var f=_.result(_.find(e.subTypes,{value:e.subscriberType}),"formats");_.isEqual(f,d)||(b.error(a("Error: Please re-assign new format for each destination as the changed subscriber type has formats which are not supported by existing destination(s).")),_.each(e.destinations,function(a){a.format=null}))}e.subscriberType=e.subscriber.subscriber_type,e.formats=d},j()}}}var g=angular.module("superdesk.publish",["superdesk.users","superdesk.content_filters"]);return g.value("transmissionTypes",{ftp:{label:"FTP",templateUrl:"scripts/superdesk-publish/views/ftp-config.html"},email:{label:"Email",templateUrl:"scripts/superdesk-publish/views/email-config.html"},ODBC:{label:"ODBC",templateUrl:"scripts/superdesk-publish/views/odbc-config.html"},File:{label:"File",templateUrl:"scripts/superdesk-publish/views/file-config.html"},pull:{label:"Pull"},http_push:{label:"HTTP Push",templateUrl:"scripts/superdesk-publish/views/http-push-config.html"}}),a.$inject=["$scope","privileges"],b.$inject=["api","$q"],c.$inject=["transmissionTypes"],d.$inject=["$scope","api"],e.$inject=["$scope","adminPublishSettingsService","api","$q","notify","$location"],f.$inject=["gettext","notify","api","adminPublishSettingsService","modal","metadata","contentFilters","$q","$filter"],g.service("adminPublishSettingsService",b).directive("sdAdminPubSubscribers",f).directive("sdDestination",c).controller("publishQueueCtrl",e),g.config(["superdeskProvider",function(b){b.activity("/settings/publish",{label:gettext("Publish"),templateUrl:"scripts/superdesk-publish/views/settings.html",controller:a,category:b.MENU_SETTINGS,privileges:{subscribers:1},priority:2e3,beta:!0}).activity("/publish_queue",{label:gettext("Publish Queue"),templateUrl:"scripts/superdesk-publish/views/publish-queue.html",topTemplateUrl:"scripts/superdesk-dashboard/views/workspace-topnav.html",sideTemplateUrl:"scripts/superdesk-workspace/views/workspace-sidenav.html",controller:e,category:b.MENU_MAIN,adminTools:!1,privileges:{publish_queue:1}})}]).config(["apiProvider",function(a){a.api("subscribers",{type:"http",backend:{rel:"subscribers"}}),a.api("publish_queue",{type:"http",backend:{rel:"publish_queue"}}),a.api("consistency",{type:"http",backend:{rel:"consistency"}}),a.api("legal_publish_queue",{type:"http",backend:{rel:"legal_publish_queue"}}),a.api("io_errors",{type:"http",backend:{rel:"io_errors"}})}]),g}(),function(){"use strict";function a(a){}function b(a,b,c,d){var e=10,f="templates:recent";this.TEMPLATE_METADATA=["headline","slugline","abstract","dateline","byline","subject","genre","type","language","anpa_category","anpa_take_key","keywords","priority","urgency","pubstatus","description","body_html","body_text","place","located","creditline","ednote","language"],this.types=[{_id:"kill",label:c("Kill")},{_id:"create",label:c("Create")},{_id:"highlights",label:c("Highlights")}],this.fetchTemplates=function(b,c,d,f,g){b=b||1,c=c||e;var h={};void 0!==d&&(h.template_type=d),void 0!==f&&(h.template_desk=f),g&&(h.template_name={$regex:g,$options:"-i"});var i={max_results:c,page:b};return _.isEmpty(h)||(i.where=JSON.stringify({$and:[h]})),a.content_templates.query(i).then(function(a){return a})},this.fetchTemplatesByIds=function(c){if(!c.length)return b.when();var d={max_results:e,page:1,where:JSON.stringify({_id:{$in:c}})};return a.content_templates.query(d).then(function(a){return a&&a._items&&a._items.sort(function(a,b){return c.indexOf(a._id)-c.indexOf(b._id)}),a})},this.addRecentTemplate=function(a,b){return d.get().then(function(c){return c=c||{},c[f]=c[f]||{},c[f][a]=c[f][a]||[],_.remove(c[f][a],function(a){return a===b}),c[f][a].unshift(b),d.update(c)})},this.getRecentTemplateIds=function(a,b){return b=b||e,d.get().then(function(c){return c&&c[f]&&c[f][a]?_.take(c[f][a],b):[]})},this.getRecentTemplates=function(a,b){return b=b||e,this.getRecentTemplateIds(a,b).then(this.fetchTemplatesByIds)}}function c(a,b,c,d,e,f,g,h){return{templateUrl:"scripts/superdesk-templates/views/templates.html",link:function(i){function j(){d.fetchTemplates(1,50).then(function(a){a._items=h("sortByName")(a._items,"template_name"),i.content_templates=a})}i.weekdays=g,i.content_templates=null,i.origTemplate=null,i.template=null,i.desks=null,f.initialize().then(function(){i.desks=f.desks}),i.getTemplateDesk=function(a){return _.find(i.desks._items,{_id:a.template_desk})},i.getTemplateStage=function(a){return _.find(f.stages._items,{_id:a.template_stage})},i.getTime=function(a){if(a){var b=new Date;return b.setUTCHours(a.substr(0,2)),b.setUTCMinutes(a.substr(2,2)),b}},i.types=d.types,i.save=function(){delete i.template._datelinedate,delete i.template.hasCrops,c.content_templates.save(i.origTemplate,i.template).then(function(){b.success(a("Template saved.")),i.cancel()},function(c){angular.isDefined(c.data._issues)&&angular.isDefined(c.data._issues["validator exception"])?b.error(a("Error: "+c.data._issues["validator exception"])):b.error(a("Error: Failed to save template."))}).then(j)},i.edit=function(a){i.origTemplate=a||{type:"text"},i.template=_.create(i.origTemplate),i.template.schedule=i.origTemplate.schedule||{},i.item=i.template,i._editable=!0,i.updateStages(i.template.template_desk)},i.remove=function(d){e.confirm(a("Are you sure you want to delete the template?")).then(function(){return c.content_templates.remove(d)}).then(function(a){_.remove(i.templates,d)},function(c){angular.isDefined(c.data._message)?b.error(a("Error: "+c.data._message)):b.error(a("There is an error. Template cannot be deleted."))}).then(j)},i.cancel=function(){i.origTemplate=null,i.template=null,i.vars=null},i.updateStages=function(a){i.stages=a?f.deskStages[a]:null},j()}}}function d(a,b,c,d,e){function f(){d.fetchCurrentUserDesks().then(function(a){h.desks=a._items})}function g(){var d=angular.extend({template_name:h.name,template_type:h.type,template_desk:h.desk},_.pick(a,b.TEMPLATE_METADATA));return c.save("content_templates",d).then(function(a){return h._issues=null,a},function(a){return h._issues=a.data._issues,e.reject(h._issues)})}var h=this;this.type="create",this.name=a.slugline||null,this.desk=d.active.desk||null,this.types=b.types,this.save=g,f()}function e(a){function b(b){a.open({templateUrl:"scripts/superdesk-templates/views/create-template.html",controller:"CreateTemplateController",controllerAs:"template",resolve:{item:function(){return b}}})}this.create=b}function f(b,c){b.activity("/settings/templates",{label:gettext("Templates"),templateUrl:"scripts/superdesk-templates/views/settings.html",controller:a,category:b.MENU_SETTINGS,privileges:{content_templates:1},priority:2e3,beta:!0}),c.api("templates",{type:"http",backend:{rel:"templates"}}),c.api("content_templates",{type:"http",backend:{rel:"content_templates"}})}a.$inject=["$scope"],b.$inject=["api","$q","gettext","preferencesService"],c.$inject=["gettext","notify","api","templates","modal","desks","weekdays","$filter"],d.$inject=["item","templates","api","desks","$q"],e.$inject=["$modal"],angular.module("superdesk.templates",["superdesk.activity","superdesk.authoring","superdesk.preferences"]).service("templates",b).directive("sdTemplates",c).controller("CreateTemplateController",d).controller("TemplateMenu",e).config(f),f.$inject=["superdeskProvider","apiProvider"]}();
+!function(){"use strict";function a(a){a.dispatchEvent(new MouseEvent("click"))}function b(a){for(var b=a.parentNode;a.hasChildNodes();)b.insertBefore(a.childNodes.item(0),a);b.removeChild(a)}function c(a,c){for(var d=a.cloneNode(!0),e=d.getElementsByClassName(c);e.length;)b(e.item(0));return d.normalize(),d}function d(a,b){for(var c,d=document.createTreeWalker(a,NodeFilter.SHOW_TEXT),e=0,f=String.fromCharCode(65279);d.nextNode();){if(d.currentNode.textContent=d.currentNode.textContent.replace(f,""),c=d.currentNode.textContent.length,e+c>=b)return{node:d.currentNode,offset:b-e};e+=c}}function e(a){var b=[],c=-1;this.add=function(a){c+=1,b[c]=a,b.splice(c+1,b.length)},this.selectPrev=function(){c=Math.max(-1,c-1)},this.selectNext=function(){c=null!=b[c+1]?c+1:c},this.get=function(){var d=c>-1?b[c]:a;return d}}function f(a,b,f){function g(a){return c(a,q)}function h(a){var b=i(a);k(a,b,s)}function i(a){var b=[],c=t.settings.findreplace.needle||null;if(!c)return b;for(var d,e,f=document.createTreeWalker(a,NodeFilter.SHOW_TEXT),g=0;f.nextNode();){for(e=f.currentNode.textContent;(d=e.indexOf(c))>-1;)b.push({word:e.substr(d,c.length),index:g+d}),e=e.substr(d+c.length),g+=d+c.length;g+=e.length}return b}function j(b,c){a.errors(b).then(function(a){k(b,a,p,c)})}function k(a,b,c,d){if(!b.length)return void t.resetSelection(a);d||t.storeSelection(a);var e=b.shift();l(a,e,c),f(function(){k(a,b,c,!0)},0,!1)}function l(a,b,c){var e=d(a,b.index),f=d(a,b.index+b.word.length);e.node!==f.node&&(e.node=f.node,e.offset=0);var g=e.node.splitText(e.offset),h=document.createElement("span");h.classList.add(c),h.classList.add(q),g.splitText(f.offset-e.offset),h.textContent=g.textContent,g.parentNode.replaceChild(h,g)}function m(a,b){for(;a.length;){var c=a.item(0),d=document.createTextNode(b);c.parentNode.replaceChild(d,c),d.parentNode.normalize()}}function n(a){for(var b=a.getElementsByClassName("rangySelectionBoundary");b.length;){var c=b.item(0);c.parentNode.removeChild(c),c.parentNode.normalize&&c.parentNode.normalize()}return a}function o(a){var b=a.history.get();null!=b&&(a.node.innerHTML=b,a.model.$setViewValue(b))}this.settings={spellcheck:!0},this.KEY_CODES=Object.freeze({Y:"Y".charCodeAt(0),Z:"Z".charCodeAt(0)}),this.ARROWS=Object.freeze({33:1,34:1,35:1,36:1,37:1,38:1,39:1,40:1}),this.META=Object.freeze({16:1,17:1,18:1,20:1,91:1,93:1,224:1}),this.shouldIgnore=function(a){return t.ARROWS[a.keyCode]?!0:t.META[a.keyCode]?!0:a.shiftKey&&(a.ctrlKey||a.metaKey)?!0:!1};var p="sderror",q="sdhilite",r="sdactive",s="sdfindreplace",t=this,u=[];this.registerScope=function(a){u.push(a),a.history=new e(a.model.$viewValue),a.$on("$destroy",function(){var b=u.indexOf(a);u.splice(b,1)})},this.cleanScope=function(a){t.storeSelection(a.node);var b=g(a.node).innerHTML;return b=b.replace("\ufeff",""),a.node.innerHTML=b,t.resetSelection(a.node),b},this.renderScope=function(a,b,c){t.cleanScope(a),t.settings.findreplace?h(a.node):(t.settings.spellcheck||b)&&j(a.node,c)},this.render=function(){u.forEach(t.renderScope)},this.selectNext=function(){for(var a=document.body.getElementsByClassName(q),b=0;b<a.length;b++){var c=a.item(b);if(c.classList.contains(r))return c.classList.remove(r),void a.item((b+1)%a.length).classList.add(r)}a.length&&a.item(0).classList.add(r)},this.selectPrev=function(){for(var a=document.body.getElementsByClassName(q),b=0;b<a.length;b++){var c=a.item(b);if(c.classList.contains(r))return c.classList.remove(r),void a.item(0===b?a.length-1:b-1).classList.add(r)}},this.replace=function(a){u.forEach(function(b){var c=b.node.getElementsByClassName(r);m(c,a,b),t.commitScope(b)})},this.replaceAll=function(a){u.forEach(function(b){var c=b.node.getElementsByClassName(q);m(c,a),t.commitScope(b)})},this.storeSelection=function(){t.selection=window.rangy?window.rangy.saveSelection():null},this.resetSelection=function(a){t.selection&&(window.rangy.restoreSelection(t.selection),t.selection=null),n(a)},this.setSettings=function(a){t.settings=angular.extend({},t.settings,a)},this.isErrorNode=function(a){return a.classList.contains(p)},this.commit=function(){u.forEach(t.commitScope)},this.commitScope=function(a){var b=n(g(a.node)).innerHTML;b!==a.model.$viewValue&&(a.model.$setViewValue(b),a.history.add(a.model.$viewValue))},this.undo=function(a){a.history.selectPrev(),o(a)},this.redo=function(a){a.history.selectNext(),o(a)}}f.$inject=["spellcheck","$rootScope","$timeout"],angular.module("superdesk.editor",["superdesk.editor.spellcheck"]).service("editor",f).directive("sdTextEditor",["editor","spellcheck","$timeout",function(b,c,d){var e={buttons:["bold","italic","underline","quote","anchor"],anchorInputPlaceholder:gettext("Paste or type a full link"),disablePlaceholders:!0,spellcheck:!1};return{scope:{type:"=",config:"=",language:"="},require:"ngModel",templateUrl:"scripts/superdesk/editor/views/editor.html",link:function(f,g,h,i){function j(a,c,d){b.renderScope(f,a,d),f.node.classList.remove(r),c&&c.preventDefault()}function k(){f.$applyAsync(function(){b.undo(f),b.renderScope(f)})}function l(){f.$applyAsync(function(){b.redo(f),b.renderScope(f)})}function m(){b.commitScope(f)}function n(){d.cancel(q),q=d(j,500,!1)}f.model=i,b.registerScope(f);var o,p,q,r="typing";i.$viewChangeListeners.push(n),i.$render=function(){function h(a){d.cancel(p),f.node.classList.add(r)}var n=angular.extend({},e,f.config||{});c.setLanguage(f.language),o=g.find(".editor-type-html"),o.empty(),o.html(i.$viewValue||""),f.node=o[0],f.model=i,f.medium=new window.MediumEditor(f.node,n),f.$on("spellcheck:run",j),f.$on("key:ctrl:shift:d",j);var q={};q[b.KEY_CODES.Z]=k,q[b.KEY_CODES.Y]=l,o.on("keydown",function(a){b.shouldIgnore(a)||h(a)}),o.on("keyup",function(a){return b.shouldIgnore(a)?void 0:(h(a),a.ctrlKey&&q[a.keyCode]?void q[a.keyCode]():void(p=d(m,800,!1)))}),o.on("contextmenu",function(e){if(b.isErrorNode(e.target)){e.preventDefault();var h=g[0].getElementsByClassName("dropdown-menu")[0],i=g[0].getElementsByClassName("dropdown-toggle")[0];return g.find(".dropdown.open").length&&a(i),f.suggestions=null,c.suggest(e.target.textContent).then(function(b){f.suggestions=b,f.replaceTarget=e.target,d(function(){h.style.left=e.target.offsetLeft+"px",h.style.top=e.target.offsetTop+e.target.offsetHeight+"px",h.style.position="absolute",a(i)},0,!1)}),!1}}),f.$on("$destroy",function(){o.off(),c.setLanguage(null)}),f.cursor={},j(null,null,!0)},f.replace=function(a){f.replaceTarget.parentNode.replaceChild(document.createTextNode(a),f.replaceTarget),b.commitScope(f)},f.addWordToDictionary=function(){var a=f.replaceTarget.textContent;c.addWordToUserDictionary(a),b.render()}}}}])}(),function(){"use strict";function a(a){var b=this;a.links().then(function(a){angular.extend(b,a)})}a.$inject=["urls"],angular.module("superdesk.features",["superdesk.api"]).service("features",a)}(),function(){"use strict";return angular.module("superdesk.asset",["superdesk.config"]).provider("asset",["$injector",function(a){this.templateUrl=function(b){var c=a.get("config"),d=b;return/^(https?:\/\/|\/\/|\/|.\/|..\/)/.test(b)||(d="scripts/"+d),!/^(https?:\/\/|\/\/)/.test(b)&&c.paths&&c.paths.superdesk&&(d=c.paths.superdesk+d),d=d.replace(/[^\/]+\/+\.\.\//g,"").replace(/\.\//g,"").replace(/(\w)\/\/(\w)/g,"$1/$2")},this.imageUrl=this.templateUrl,this.$get=function(){return this}}])}(),function(){"use strict";return angular.module("superdesk.imageFactory",[]).factory("imageFactory",function(){return{makeInstance:function(){return new Image}}})}(),function(){"use strict";function a(){return{link:function(a,b,c,d,e){function f(){g&&g.$destroy()}var g;a.$watch("item",function(){f(),g=a.$parent.$parent.$new(),g.item=a.item,g.items=a.items,g.extras=a.extras,g.$index=a.$index,e(g,function(a){b.empty(),b.append(a)})}),a.$on("$destroy",f)}}}var b=angular.module("superdesk.list",["superdesk.keyboard","superdesk.asset"]);return b.directive("sdListView",["$location","keyboardManager","asset",function(a,b,c){return{scope:{select:"&",extras:"=",items:"="},replace:!0,transclude:!0,templateUrl:c.templateUrl("superdesk/list/views/list-view.html"),link:function(c,d,e){function f(a){if(a){var b=_.find(c.items,{_id:a});b&&c.clickItem(b)}}function g(a){return function(){if(c.items){var b=_.indexOf(c.items,c.selected);if(-1===b)return c.clickItem(_.first(c.items));var d=_.max([0,_.min([c.items.length-1,b+a])]);return 0>d?c.clickItem(_.last(c.items)):c.clickItem(c.items[d])}}}function h(a,c){b.bind(a,c)}var i=-1,j=1;h("up",g(i)),h("left",g(i)),h("down",g(j)),h("right",g(j)),c.clickItem=function(a,b){c.selected=a,c.select({item:a}),b&&b.stopPropagation()},c.$watch("items",function(){f(a.search()._id),d.find(".list-view").focus()})}}}]),b.directive("sdSearchbar",["$location","asset",function(a,b){return{scope:!0,templateUrl:b.templateUrl("superdesk/list/views/searchbar.html"),link:function(b,c){var d=c.find("#search-input");b.q=a.search().q||null,b.flags={extended:!!b.q},b.search=function(){a.search("q",b.q||null),a.search("page",null)},b.close=function(){b.q=null,b.search(),d.focus()}}}}]),b.directive("sdListItem",a),b.directive("sdUpdown",["$location","keyboardManager","$anchorScroll",function(a,b,c){return{transclude:!0,template:"<div ng-transclude></div>",scope:{items:"=",select:"&"},link:function(d,e,f){function g(a){if(a){var b=_.find(d.items,{_id:a});b&&k(b)}}function h(b){a.hash(b),c()}function i(b){return function(){if(d.items){var c=_.findIndex(d.items,{_id:a.search()._id});if(-1===c)return k(_.first(d.items));var e=_.max([0,_.min([d.items.length-1,c+b])]);return 0>e?k(_.last(d.items)):(h(d.items[e]._id),k(d.items[e]))}}}function j(a,c){b.bind(a,c)}function k(a,b){d.select({item:a}),b&&b.stopPropagation()}var l=-1,m=1;j("up",i(l)),j("left",i(l)),j("down",i(m)),j("right",i(m)),d.$watch("items",function(){g(a.search()._id),e.find(".list-view").focus()})}}}]),b.directive("sdPagination",["$location","asset",function(a,b){return{templateUrl:b.templateUrl("superdesk/list/views/sdPagination.html"),scope:{items:"="},link:function(b,c,d){function e(){window.scrollTo(0,0)}var f=25;b.pgsizes=[25,50,100],b.$watch("items._meta",function(c){b.total=0,c&&(b.total=c.total,b.page=Number(a.search().page)||1,b.limit=Number(localStorage.getItem("pagesize"))||Number(a.search().max_results)||f,b.lastPage=b.limit?Math.ceil(b.total/b.limit):b.page,b.from=(b.page-1)*b.limit+1,b.to=Math.min(b.total,b.from+b.limit-1),b.pageChanged===!0&&(e(),b.pageChanged=null))}),b.setPage=function(c){a.search("page",c>1?c:null),b.pageChanged=!0},b.setLimit=function(c){localStorage.setItem("pagesize",c),b.setPage(0),a.search("max_results",null!=c?c:f)}}}}]),b.directive("sdPaginationAlt",["asset",function(a){return{templateUrl:a.templateUrl("superdesk/list/views/sdPaginationAlt.html"),scope:{page:"=",maxPage:"="}}}]),b}(),function(){"use strict";return angular.module("superdesk.keyboard",[]).run(["$rootScope","keyboardManager",function(a,b){a.$on("$routeChangeStart",function(){angular.forEach(b.keyboardEvent,function(a,c){a.opt.global||b.unbind(c)})})}]).run(["$rootScope","$document",function(a,b){b.on("keydown",function(b){var c=b.ctrlKey||b.metaKey,d=b.shiftKey,e=c&&d;if(b.target===document.body||e){var f=String.fromCharCode(b.which).toLowerCase(),g="";g+=c?"ctrl:":"",g+=d?"shift:":"",a.$broadcast("key:"+g+f,b)}})}]).service("keyboardManager",["$window","$timeout",function(a,b){var c=[],d={type:"keydown",propagate:!1,inputDisabled:!0,target:a.document,keyCode:!1,global:!1},e={"`":"~",1:"!",2:"@",3:"#",4:"$",5:"%",6:"^",7:"&",8:"*",9:"(",0:")","-":"_","=":"+",";":":","'":'"',",":"<",".":">","/":"?","\\":"|"},f={esc:27,escape:27,tab:9,space:32,"return":13,enter:13,backspace:8,scrolllock:145,scroll_lock:145,scroll:145,capslock:20,caps_lock:20,caps:20,numlock:144,num_lock:144,num:144,pause:19,"break":19,insert:45,home:36,"delete":46,end:35,pageup:33,page_up:33,pu:33,pagedown:34,page_down:34,pd:34,left:37,up:38,right:39,down:40,f1:112,f2:113,f3:114,f4:115,f5:116,f6:117,f7:118,f8:119,f9:120,f10:121,f11:122,f12:123};this.keyboardEvent={},this.bind=function(c,g,h){var i,j,k,l;h=angular.extend({},d,h),c=c.toLowerCase(),j=h.target,"string"==typeof h.target&&(j=document.getElementById(h.target)),i=function(d){if(d=d||a.event,h.inputDisabled){var i;if(d.target?i=d.target:d.srcElement&&(i=d.srcElement),3===i.nodeType&&(i=i.parentNode),"INPUT"===i.tagName||"TEXTAREA"===i.tagName||-1!==i.className.indexOf("editor-type-html"))return}d.keyCode?k=d.keyCode:d.which&&(k=d.which);var j=String.fromCharCode(k).toLowerCase();188===k&&(j=","),190===k&&(j=".");for(var m=c.split("+"),n=0,o={shift:{wanted:!1,pressed:d.shiftKey?!0:!1},ctrl:{wanted:!1,pressed:d.ctrlKey?!0:!1},alt:{wanted:!1,pressed:d.altKey?!0:!1},meta:{wanted:!1,pressed:d.metaKey?!0:!1}},p=0,q=m.length;l=m[p],q>p;p++){switch(l){case"ctrl":case"control":n++,o.ctrl.wanted=!0;break;case"shift":case"alt":case"meta":n++,o[l].wanted=!0}l.length>1?f[l]===k&&n++:h.keyCode?h.keyCode===k&&n++:j===l?n++:e[j]&&d.shiftKey&&(j=e[j],j===l&&n++)}return n!==m.length||o.ctrl.pressed!==o.ctrl.wanted||o.shift.pressed!==o.shift.wanted||o.alt.pressed!==o.alt.wanted||o.meta.pressed!==o.meta.wanted||(b(function(){g(d)},1),h.propagate)?void 0:(d.cancelBubble=!0,d.returnValue=!1,d.stopPropagation&&(d.stopPropagation(),d.preventDefault()),!1)},this.keyboardEvent[c]={callback:i,target:j,event:h.type,_callback:g,opt:h,label:c},j.addEventListener?j.addEventListener(h.type,i,!1):j.attachEvent?j.attachEvent("on"+h.type,i):j["on"+h.type]=i},this.push=function(a,b,d){var e=this.keyboardEvent[a.toLowerCase()];e&&(c.push(e),this.unbind(a)),this.bind(a,b,d)},this.pop=function(a){this.unbind(a);var b=_.findLastIndex(c,{label:a.toLowerCase()});-1!==b&&(this.bind(a,c[b]._callback,c[b].opt),c.splice(b,0))},this.unbind=function(a){a=a.toLowerCase();var b=this.keyboardEvent[a];if(delete this.keyboardEvent[a],b){var c=b.event,d=b.target,e=b.callback;d.detachEvent?d.detachEvent("on"+c,e):d.removeEventListener?d.removeEventListener(c,e,!1):d["on"+c]=!1}}}])}(),function(){"use strict";function a(a,b,c){var d={};this.privileges=d,a.privileges=d,this.userHasPrivileges=function(a){for(var b in a)if(a[b]&&!d[b])return!1;return!0},this.setUserPrivileges=function(a){for(var b in a)a[b]?d[b]=1:d[b]=0;return d},this.loaded=c.getPrivileges().then(this.setUserPrivileges)}a.$inject=["$rootScope","$q","preferencesService"],angular.module("superdesk.privileges",["superdesk.preferences"]).service("privileges",a)}(),function(){"use strict";function a(a,b,c,d,e){var f=null,g=-1,h=5500,i=["user_disabled","user_inactivated","user_role_changed","user_type_changed","user_privileges_revoked","role_privileges_revoked","desk_membership_revoked","desk","stage","stage_visibility_updated"];if(b.server.ws){var j=function(){f||(f=new WebSocket(b.server.ws),l())},k=function(){f&&(f.close(),f=null)},l=function(){f.onmessage=function(b){var c=angular.fromJson(b.data);a.$broadcast(c.event,c.extra),_.contains(i,c.event)&&a.$broadcast("reload",c)},f.onerror=function(a){console.error(a)},f.onopen=function(b){c.cancel(g),a.$broadcast("connected")},f.onclose=function(b){a.$broadcast("disconnected"),c.cancel(g),g=c(function(){f&&d.sessionId&&j()},h,0,!1)}};j(),a.$on(e.LOGOUT,k),a.$on(e.LOGIN,j)}}function b(a,b,c,d,e){var f,g,h=this;h.message=null,a.$on("disconnected",function(a){h.message="Disconnected to Notification Server, attempting to reconnect ...",d.cancel(g),g=d(function(){b.error(c(h.message))},100)}),a.$on("connected",function(a){h.message="Connected to Notification Server!",d.cancel(f),f=d(function(){b.success(c(h.message))},100)}),a.$on("vocabularies:updated",function(a,f){f.user&&f.user===e.identity._id||(h.message=c(f.vocabulary+" vocabulary has been updated. Please re-login to see updated vocabulary values"),d(function(){b.error(h.message)},100))})}function c(a,b,c,d,e){var f=this;f.userDesks=[],f.result=null,f.activeDesk=null,d.fetchCurrentUserDesks().then(function(a){f.userDesks=a._items,f.activeDesk=d.active.desk});var g={user_disabled:"User is disabled",user_inactivated:"User is inactivated",user_role_changed:"User role is changed",user_type_changed:"User type is changed",user_privileges_revoked:"User privileges are revoked"},h={role_privileges_revoked:"Role role_privileges_revoked"},i={desk_membership_revoked:"User removed from desk",desk:"Desk is deleted/updated"},j={stage:"Stage is created/updated/deleted",stage_visibility_updated:"Stage visibility change"};b.$on("reload",function(a,b){f.result=f.reloadIdentifier(b),f.reload(f.result)}),this.reload=function(b){b.reload&&(null!=a.location.hash&&null!=a.location.hash.match("/authoring/")?f.broadcast(e(b.message)):a.location.reload(!0))},this.broadcast=function(a){b.$broadcast("savework",a)},this.reloadIdentifier=function(b){var d={reload:!1,message:null};return _.has(g,b.event)&&null!=b.extra.user_id&&-1!==b.extra.user_id.indexOf(c.identity._id)&&(d.message=g[b.event],d.reload=!0),_.has(h,b.event)&&-1!==b.extra.role_id.indexOf(c.identity.role)&&(d.message=h[b.event],d.reload=!0),_.has(i,b.event)&&null!=b.extra.desk_id&&null!=b.extra.user_ids&&null!=_.find(f.userDesks,{_id:b.extra.desk_id})&&-1!==b.extra.user_ids.indexOf(c.identity._id)&&(d.message=i[b.event],d.reload=!0),_.has(j,b.event)&&null!=b.extra.desk_id&&("stage_visibility_updated"===b.event?null!=_.find(f.userDesks,{_id:b.extra.desk_id})||null==a.location.hash.match("/search")&&null==a.location.hash.match("/authoring/")||(d.message=j[b.event],d.reload=!0):"stage"===b.event&&null!=_.find(f.userDesks,{_id:b.extra.desk_id})&&f.activeDesk===b.extra.desk_id&&(d.message=j[b.event],d.reload=!0)),d}}return a.$inject=["$rootScope","config","$interval","session","SESSION_EVENTS"],b.$inject=["$rootScope","notify","gettext","$timeout","session"],c.$inject=["$window","$rootScope","session","desks","gettext"],angular.module("superdesk.notification",["superdesk.desks"]).service("reloadService",c).service("notifyConnectionService",b).run(a)}(),function(){"use strict";var a={endpoint:"search",pageSize:25,page:1,sort:[{_updated:"desc"}]};angular.module("superdesk.itemList",["superdesk.search"]).service("itemListService",["api","$q","search",function(b,c,d){function e(a){var c={source:{query:{filtered:{}}}};if(a.sortField&&a.sortDirection){var e={};e[a.sortField]=a.sortDirection,a.sort=[e]}if(a.repo&&(a.repos=[a.repo]),(a.types||a.notStates||a.states||a.creationDateBefore||a.creationDateAfter||a.modificationDateBefore||a.modificationDateAfter||a.provider||a.source||a.urgency||a.savedSearch)&&(c.source.query.filtered.filter={and:[]}),c.source.size=a.pageSize,c.source.from=(a.page-1)*a.pageSize,c.source.sort=a.sort,a.repos&&(c.repo=a.repos.join(",")),a.types&&c.source.query.filtered.filter.and.push({terms:{type:a.types}}),a.notStates&&_.each(a.notStates,function(a){c.source.query.filtered.filter.and.push({not:{term:{state:a}}})}),a.states){var f=[];_.each(a.states,function(a){f.push({term:{state:a}})}),c.source.query.filtered.filter.and.push({or:f})}var g={creationDate:"_created",modificationDate:"_updated"},h=null;_.each(g,function(b,d){(a[d+"Before"]||a[d+"After"])&&(h={},h[b]={lte:a[d+"Before"]||void 0,gte:a[d+"After"]||void 0},c.source.query.filtered.filter.and.push({range:h}))}),_.each(["provider","source","urgency"],function(b){if(a[b]){var d={};d[b]=a[b],c.source.query.filtered.filter.and.push({term:d})}});var i={headline:"headline",subject:"subject.name",keyword:"slugline",uniqueName:"unique_name",body:"body_html"},j=[];if(_.each(i,function(b,c){a[c]&&j.push(b+":(*"+a[c]+"*)")}),j.length&&(c.source.query.filtered.query={query_string:{query:j.join(" "),lenient:!1,default_operator:"AND"}}),a.related===!0&&a.keyword){var k=a.keyword.toLowerCase().replace(/-/g," ");c.source.query.filtered.query={prefix:{"slugline.phrase":k}}}if(a.search){var l=[];_.each(_.values(i),function(b){l.push(b+":(*"+a.search+"*)")}),c.source.query.filtered.query={query_string:{query:l.join(" "),lenient:!1,default_operator:"OR"}}}return a.savedSearch&&a.savedSearch._links?b.get(a.savedSearch._links.self.href).then(function(a){var b=d.query(a.filter.query).getCriteria();return c.source.query.filtered.filter.and=c.source.query.filtered.filter.and.concat(b.query.filtered.filter.and),c.source.post_filter=b.post_filter,c}):c}this.fetch=function(d){return d=_.extend({},a,d),c.when(e(d)).then(function(a){return b(d.endpoint,d.endpointParam||void 0).query(a)})}}]).provider("ItemList",function(){this.$get=["itemListService",function(b){var c=function(){this.listeners=[],this.options=_.clone(a),this.result={},this.maxPage=0};return c.prototype.setOptions=function(a){return this.options=_.extend(this.options,a),this},c.prototype.addListener=function(a){return this.listeners.push(a),this},c.prototype.removeListener=function(a){return _.remove(this.listeners,function(b){return b===a}),this},c.prototype.fetch=function(){var a=this;return b.fetch(this.options).then(function(b){return a.result=b,a.maxPage=Math.ceil(b._meta.total/a.options.pageSize)||0,_.each(a.listeners,function(a){a(b)}),b})},c}]}).factory("itemPinService",["preferencesService",function(a){var b="pinned:items",c={items:null,listeners:{ingest:[],archive:[]},load:function(){var c=this;return a.get(b).then(function(a){c.items=a}).then(function(){c.updateListeners()})},save:function(){var c=this;this.items=_.uniq(this.items,function(a){return a._id});var d={};return d[b]=this.items,a.update(d,b).then(function(){c.updateListeners()})},get:function(a){return _.filter(this.items,{_type:a})},add:function(a,b){var c=this;b._type=a,this.load().then(function(){return c.items.push(b),c.save()}).then(function(){c.updateListeners()})},remove:function(a){var b=this;this.load().then(function(){return _.remove(b.items,{_id:a._id}),b.save()}).then(function(){b.updateListeners()})},isPinned:function(a,b){return!!_.find(this.items,{_type:a,_id:b._id})},addListener:function(a,b){this.listeners[a].push(b),b(this.get(a))},removeListener:function(a,b){_.remove(this.listeners[a],function(a){return a===b})},updateListeners:function(){var a=this;_.each(this.listeners,function(b,c){_.each(b,function(b){b(a.get(c))})})}};return c.load(),c}]).directive("sdItemListWidget",["ItemList","notify","itemPinService","gettext","$timeout",function(a,b,c,d,e){return{scope:{options:"=",itemListOptions:"=",actions:"="},templateUrl:"scripts/superdesk/itemList/views/item-list-widget.html",link:function(f,g,h){function i(){e.cancel(j),j=e(function(){l.fetch()},100,!1)}f.items=null,f.processedItems=null,f.maxPage=1,f.pinnedItems=[],f.selected=null;var j,k=null,l=new a;f.view=function(a){f.selected=a},f.toggleItemType=function(a){f.itemListOptions.types.indexOf(a)>-1?f.itemListOptions.types=_.without(f.itemListOptions.types,a):f.itemListOptions.types.push(a)},f.isItemTypeEnabled=function(a){return f.itemListOptions.types.indexOf(a)>-1},f.pin=function(a){c.add(f.options.pinMode,_.clone(a))},f.unpin=function(a){c.remove(a)},f.isPinned=function(a){return c.isPinned(f.options.pinMode,a)};var m=function(){f.items&&(f.options.pinEnabled?f.processedItems=f.pinnedItems.concat(f.items._items):f.processedItems=f.items._items)},n=function(){f.maxPage=l.maxPage,f.items=l.result,m()},o=function(a){f.pinnedItems=a,_.each(f.pinnedItems,function(a){a.pinnedInstance=!0}),m()};l.addListener(n),c.addListener(f.options.pinMode,o),f.$on("$destroy",function(){l.removeListener(n),c.removeListener(o)}),f.$watch("itemListOptions",function(){l.setOptions(f.itemListOptions),i()},!0),f.$watch("options.similar",function(){f.options.similar&&f.options.item?f.options.item.slugline?(k=f.itemListOptions.search,f.itemListOptions.search=f.options.item.slugline):(b.error(d("Error: Keywords required.")),f.options.similar=!1):f.itemListOptions.search=k||null})}}}]).directive("sdRelatedItemListWidget",["ItemList","notify","itemPinService","gettext",function(a,b,c,d){return{scope:{options:"=",itemListOptions:"=",actions:"="},templateUrl:"scripts/superdesk/itemList/views/relatedItem-list-widget.html",link:function(e,f,g){e.items=null,e.processedItems=null,e.maxPage=1,e.pinnedItems=[],e.selected=null;var h=null,i=new a,j=function(){e.options.related&&e.itemListOptions.keyword&&e.itemListOptions.keyword.trim().length>=2&&i.fetch()},k=_.debounce(j,100);e.view=function(a){e.selected=a},e.toggleItemType=function(a){e.itemListOptions.types.indexOf(a)>-1?e.itemListOptions.types=_.without(e.itemListOptions.types,a):e.itemListOptions.types.push(a)},e.isItemTypeEnabled=function(a){return e.itemListOptions.types.indexOf(a)>-1},e.pin=function(a){c.add(e.options.pinMode,_.clone(a))},e.unpin=function(a){c.remove(a)},e.isPinned=function(a){return c.isPinned(e.options.pinMode,a)};var l=function(){e.items&&(e.options.pinEnabled?e.processedItems=e.pinnedItems.concat(e.items._items):e.processedItems=e.items._items)},m=function(){e.maxPage=i.maxPage,e.items=i.result,l()},n=function(a){e.pinnedItems=a,_.each(e.pinnedItems,function(a){a.pinnedInstance=!0}),l()};i.addListener(m),c.addListener(e.options.pinMode,n),e.$on("$destroy",function(){i.removeListener(m),c.removeListener(n)}),e.$watch("itemListOptions",function(){i.setOptions(e.itemListOptions),i.setOptions({related:e.options.related}),k()},!0),e.$watch("options.related",function(){e.options.related&&e.options.item?e.options.item.slugline?(h=e.itemListOptions.keyword,e.itemListOptions.keyword=e.options.item.slugline):(b.error(d("Error: Keywords required.")),e.options.related=!1):e.itemListOptions.keyword=h||null})}}}])}(),function(){"use strict";function a(){this.flags={menu:!1,notifications:!1}}angular.module("superdesk.menu",["superdesk.menu.notifications","superdesk.asset","superdesk.api"]).service("superdeskFlags",a).directive("sdSuperdeskView",["asset",function(a){function b(a){this.flags=a.flags}return b.$inject=["superdeskFlags"],{templateUrl:a.templateUrl("superdesk/menu/views/superdesk-view.html"),controller:b,controllerAs:"superdesk"}}]).directive("sdMenuWrapper",["$route","superdesk","betaService","userNotifications","asset","lodash",function(a,b,c,d,e,f){return{require:"^sdSuperdeskView",templateUrl:e.templateUrl("superdesk/menu/views/menu.html"),link:function(e,g,h,i){function j(a){return b.getMenu(b.MENU_SETTINGS).then(function(b){return b.length||f.remove(a,{_settings:1}),a})}function k(a){f.each(e.menu,function(b){b.isActive=a&&a.href&&a.href.substr(0,b.href.length)===b.href})}e.currentRoute=null,e.flags=i.flags,e.menu=[],b.getMenu(b.MENU_MAIN).then(j).then(function(b){e.menu=b,k(a.current)}),e.toggleMenu=function(){i.flags.menu=!i.flags.menu},e.toggleNotifications=function(){i.flags.notifications=!i.flags.notifications},e.toggleBeta=function(){c.toggleBeta()},e.$on("$locationChangeStart",function(){i.flags.menu=!1}),e.$watch(function(){return a.current},function(a){e.currentRoute=a||null,k(e.currentRoute),i.flags.workspace=a?!!a.sideTemplateUrl:!1}),e.notifications=d}}}])}(),function(){"use strict";function a(a,b,c,d){function e(){var a={},b="read."+d.identity._id||"all";return a[b]={$exists:!0},"user"===d.identity.user_type&&(a.user={$exists:!0},a.item={$exists:!0}),a}function f(a){var b=a._dest||{};return d.identity&&!b[d.identity._id]}var g=1e3,h=500;this._items=null,this.unread=0,this.reload=function(){if(!d.identity)return this._items=null,void(this.unread=0);var a={where:e(),embedded:{user:1,item:1},max_results:8};return c.query("activity",a).then(angular.bind(this,function(a){this._items=a._items,this.unread=0;var b=d.identity||{};_.each(this._items,function(a){var c=a.read||{};a._unread=!c[b._id],this.unread+=a._unread?1:0},this)}))},this.markAsRead=function(a){var b=angular.extend({},a),e=a.read;return e[d.identity._id]=1,c("activity").save(b,{read:e}).then(angular.bind(this,function(){this.unread=_.max([0,this.unread-1]),a._unread=null}))};var i=angular.bind(this,this.reload);d.getIdentity().then(function(){b(i,g,!1),a.$on("activity",function(a,c){f(c)&&b(i,h,!1)})})}function b(a,b){var c=5e3;return{link:function(d){if(d.notification._unread){var e=b(function(){a.markAsRead(d.notification)},c);d.$on("$destroy",function(){b.cancel(e)})}}}}a.$inject=["$rootScope","$timeout","api","session"],b.$inject=["userNotifications","$timeout"],angular.module("superdesk.menu.notifications",["superdesk.asset"]).service("userNotifications",a).directive("sdMarkAsRead",b).directive("sdNotifications",["asset",function(a){return{require:"^sdSuperdeskView",templateUrl:a.templateUrl("superdesk/menu/notifications/views/notifications.html"),link:function(a,b,c,d){a.flags=d.flags}}}])}(),function(){"use strict";function a(a,b,c,d,e,f){function g(b){return a.save("archive",b)}var h="text";this.createItem=function(a){var b={type:a||h,version:0};return f.addTaskToArticle(b),g(b)},this.createPackageItem=function(a){var b=a?{items:[a],version:0}:{version:0};return e.createEmptyPackage(b)},this.createItemFromTemplate=function(a){var b=_.pick(a,c.TEMPLATE_METADATA);return f.addTaskToArticle(b),g(b).then(function(b){return c.addRecentTemplate(d.activeDeskId,a._id),b})}}function b(a,b,c,d,e,f){return{scope:!0,templateUrl:"scripts/superdesk-workspace/content/views/sd-content-create.html",link:function(a){function g(a){e.edit(a)}var h=5;a.create=function(a){d.createItem(a).then(g)},a.createPackage=function(){d.createPackageItem().then(g)},a.createFromTemplate=function(a){d.createItemFromTemplate(a).then(g)},a.openUpload=function(){f.intent("upload","media")},a.contentTemplates=null,a.$watch(function(){return b.activeDeskId},function(){c.getRecentTemplates(b.activeDeskId,h).then(function(b){a.contentTemplates=b})}),a.$on("key:ctrl:m",function(b,c){c&&c.preventDefault(),a.create()})}}}function c(a,b,c){var d=10;return{templateUrl:"scripts/superdesk-workspace/content/views/sd-template-select.html",scope:{selectAction:"=",open:"="},link:function(a){a.maxPage=1,a.options={keyword:null,page:1},a.templates=null,a.close=function(){a.open=!1},a.select=function(b){a.selectAction(b),a.close()};var e=function(){c.fetchTemplates(a.options.page,d,"create",b.activeDeskId,a.options.keyword).then(function(b){a.maxPage=Math.ceil(b._meta.total/d),a.templates=b})};a.$watchCollection("options",e),a.$watch(function(){return b.activeDeskId},e)}}}angular.module("superdesk.workspace.content",["superdesk.api","superdesk.archive","superdesk.templates","superdesk.packaging"]).service("content",a).directive("sdContentCreate",b).directive("sdTemplateSelect",c),a.$inject=["api","superdesk","templates","desks","packages","archiveService"],b.$inject=["api","desks","templates","content","authoringWorkspace","superdesk"],c.$inject=["api","desks","templates"]}(),function(){"use strict";function a(a,b,c,d){this.statuses=[{_id:"todo",name:gettext("To Do")},{_id:"in_progress",name:gettext("In Progress")},{_id:"done",name:gettext("Done")}],this.save=function(a,b){return b.task.due_time&&(b.task.due_date=d.mergeDateTime(b.task.due_date,b.task.due_time).format()),delete b.task.due_time,b.task.user||delete b.task.user,c("tasks").save(a,b).then(function(a){return a})},this.buildFilter=function(c){var d=[],e=this;if(d.push({not:{term:{package_type:"takes"}}}),a.getCurrentDeskId()?d.push({term:{"task.desk":a.getCurrentDeskId()}}):d.push({term:{"task.user":b.currentUser._id}}),c)d.push({term:{"task.status":c}});else{var f=[];_.each(e.statuses,function(a){f.push({term:{"task.status":a._id}})}),d.push({or:f})}var g={and:d};return g},this.fetch=function(a,b){return b||(b=this.buildFilter(a)),c("tasks").query({source:{size:200,sort:[{_updated:"desc"}],filter:b}})}}function b(a,b,c,d,e,f,g,h){function i(){e.fetchDeskStages(e.getCurrentDeskId()).then(function(b){a.stages=b})}function j(){b.cancel(m),m=b(function(){var b={bool:{must:{term:{"task.desk":e.getCurrentDeskId()}},must_not:{terms:{state:["published","spiked"]}}}},d={source:{size:200,sort:[{_updated:"desc"}],filter:b}};c.query("tasks",d).then(function(b){a.stageItems=_.groupBy(b._items,function(a){return a.task.stage})})},300,!1)}function k(){var b={bool:{must:{term:{"task.desk":e.getCurrentDeskId()}},must_not:{term:{package_type:"takes"}}}};c.query("published",{source:{filter:b}}).then(function(b){
+a.published=b})}function l(){function b(a){return a.milliseconds(0),a.toISOString().replace(".000Z","+0000")}var d=moment().hours(0).minutes(0).seconds(0),f=moment().hours(23).minutes(59).seconds(59),g={template_desk:e.getCurrentDeskId(),next_run:{$gte:b(d),$lte:b(f)}};c.query("content_templates",{where:g,sort:"next_run"}).then(function(b){a.scheduled=b})}var m,n="kanban";a.selected={},a.newTask=null,a.tasks=null,a.view=n,a.statuses=f.statuses,a.activeStatus=a.statuses[0]._id,a.$watch(function(){return e.getCurrentDeskId()},function(a){a&&(j(),i(),k(),l())}),a.preview=function(b){a.selected.preview=b},a.create=function(){a.newTask={},h.addTaskToArticle(a.newTask,e.getCurrentDesk());var b=new Date;a.newTask.task.due_date=g("formatDateTimeString")(b),a.newTask.task.due_time=g("formatDateTimeString")(b,"HH:mm:ss")},a.save=function(){f.save({},a.newTask).then(function(b){d.success(gettext("Item saved.")),a.close()})},a.close=function(){a.newTask=null},a.setView=function(b){a.view!==b&&(a.view=b,a.tasks=null,j())},a.selectStatus=function(b){a.activeStatus!==b&&(a.activeStatus=b,a.tasks=null,j())},a.$on("task:new",j),a.$on("task:stage",function(a,b){var c=e.getCurrentDeskId();(c===b.old_desk||c===b.new_desk)&&j()})}function c(a,b,c,d){var e=b.initialize();return{templateUrl:"scripts/superdesk-dashboard/workspace-tasks/views/task-preview.html",scope:{item:"=",close:"&onclose"},link:function(f){var g;f.task=null,f.task_details=null,f.editmode=!1,e.then(function(){f.desks=b.deskLookup,f.users=b.userLookup}),f.$watch("item._id",function(a){a&&f.reset()}),f.save=function(){f.task.task=_.extend(f.task.task,f.task_details),a.save(g,f.task).then(function(a){c.success(gettext("Item saved.")),f.editmode=!1})},f.edit=function(){f.editmode=!0},f.reset=function(){f.editmode=!1,f.task=_.create(f.item),f.task_details=_.extend({},f.item.task),f.task_details.due_date=f.task_details.due_date?d("formatDateTimeString")(f.task_details.due_date):null,f.task_details.due_time=f.task_details.due_time?d("formatDateTimeString")(f.task_details.due_time,"HH:mm:ss"):null,g=f.item}}}}function d(){return{templateUrl:"scripts/superdesk-dashboard/workspace-tasks/views/kanban-board.html",scope:{items:"=",label:"@",cssClass:"@",selected:"="},link:function(a){a.preview=function(b){a.selected&&(a.selected.preview=b)}}}}function e(a){var b=a.initialize();return{templateUrl:"scripts/superdesk-dashboard/workspace-tasks/views/assignee-view.html",scope:{task:"=",name:"=",avatarSize:"@"},link:function(c){b.then(function(){var b=angular.extend({desk:null,user:null},c.task),d=a.deskLookup[b.desk]||{},e=a.userLookup[b.user]||{};c.deskName=d.name||null,c.userName=e.display_name||null,c.user=e||null})}}}function f(a,b){var c=b.initialize();return function(a){var d=this;c.then(function(){d.stages=null,d.selected=null,d.select=function(a){var c=a?a._id:null;d.selected=a||null,b.setCurrentStageId(c)},d.reload=function(a){d.stages=a?b.deskStages[a]:null,d.select(_.find(d.stages,{_id:b.activeStageId}))},a.$watch(function(){return b.getCurrentDeskId()},function(){d.reload(b.getCurrentDeskId())})})}}function g(){return{templateUrl:"scripts/superdesk-dashboard/workspace-tasks/views/desk-stages.html"}}a.$inject=["desks","$rootScope","api","datetimeHelper"],b.$inject=["$scope","$timeout","api","notify","desks","tasks","$filter","archiveService"],c.$inject=["tasks","desks","notify","$filter"],d.$inject=[],e.$inject=["desks"],f.$inject=["api","desks"],angular.module("superdesk.workspace.tasks",[]).factory("StagesCtrl",f).directive("sdTaskPreview",c).directive("sdAssigneeView",e).directive("sdDeskStages",g).directive("sdTaskKanbanBoard",d).controller("TasksController",b).service("tasks",a).config(["superdeskProvider",function(a){a.activity("/workspace/tasks",{label:gettext("Workspace"),controller:b,templateUrl:"scripts/superdesk-dashboard/workspace-tasks/views/workspace-tasks.html",topTemplateUrl:"scripts/superdesk-dashboard/views/workspace-topnav.html",sideTemplateUrl:"scripts/superdesk-workspace/views/workspace-sidenav.html",filters:[{action:"view",type:"task"}]}),a.activity("pick.task",{label:gettext("Pick task"),icon:"pick",controller:["data","superdesk",function(a,b){return b.intent("edit","item",a.item)}],filters:[{action:a.ACTION_EDIT,type:"task"}]})}])}(),function(){"use strict";function a(a){return angular.isDefined(a.data._issues)&&angular.isDefined(a.data._issues["validator exception"])?"Error: "+a.data._issues["validator exception"]:angular.isDefined(a.data._message)?"Error: "+a.data._message:"Error. Privileges not updated."}function b(a,b,c){var d={};return d.usernamePattern=/^[A-Za-z0-9_.'-]+$/,d.phonePattern=/^(?:(?:0?[1-9][0-9]{8})|(?:(?:\+|00)[1-9][0-9]{9,11}))$/,d.signOffPattern=/^[a-zA-Z0-9]+$/,d.save=function(b,c){return a.save("users",b,c).then(function(a){return angular.extend(b,c),angular.extend(b,a),b})},d.changePassword=function(b,c,d){return a.changePassword.create({username:b.username,old_password:c,new_password:d}).then(function(a){})},d.resetPassword=function(b){return a.resetPassword.create({email:b.email}).then(function(a){})},d.isActive=function(a){return a&&a.is_active},d.isPending=function(a){return a&&a.needs_activation},d.toggleStatus=function(a,b){return this.save(a,{is_active:b})},d.isLoggedIn=function(a){return a&&_.size(a.session_preferences)>0},d}function c(a,b,c){function d(a,b,c){return a+"_"+b+"_"+c}var e={},f=c("userList"),g="_nosearch",h=1,i=20;return e.getAll=function(){function c(b,i){return b=b||h,i=i||[],a("users").query({max_results:200,page:b}).then(function(a){i=i.concat(a._items),a._links.next?(b++,d=d.then(c(b,i))):(f.put(g,i),e.resolve(i))}),e.promise}var d=b.when(),e=b.defer();return d=c(),d.then(function(a){return a})},e.get=function(c,e,j){e=e||h;var k=c||g;j=j||i,k=d(k,e,j);var l=f.get(k);if(l)return b.when(l);var m={max_results:e*j};return c&&(m.where=JSON.stringify({$or:[{display_name:{$regex:c,$options:"-i"}},{username:{$regex:c,$options:"-i"}},{first_name:{$regex:c,$options:"-i"}},{last_name:{$regex:c,$options:"-i"}},{email:{$regex:c,$options:"-i"}}]})),a("users").query(m).then(function(a){return f.put(k,a),a})},e.getUser=function(b,c){return a("users").getById(b,void 0,!c)},e.clearCache=function(){f.removeAll()},e}function d(a,b,c){function d(a,b){return angular.isUndefined(b)?!1:_.find(a,function(a){return a._links.self.href===b._links.self.href})}function e(){var c=b.search(),d={max_results:Number(c.max_results)||i};return(c.q||a.online_users)&&(d.where=f(c.q,a.online_users)),c.page&&(d.page=parseInt(c.page,10)),c.sort?d.sort=h(c.sort[0],c.sort[1]):d.sort=h("full_name","asc"),d}function f(a,b){var c=null,d=null;return a&&(c={$or:[{username:{$regex:a,$options:"-i"}},{display_name:{$regex:a,$options:"-i"}},{email:{$regex:a,$options:"-i"}}]}),b&&(d={session_preferences:{$exists:!0,$nin:[null,{}]}}),a&&b?JSON.stringify({$and:[c,d]}):a?JSON.stringify(c):b?JSON.stringify(d):null}function g(b){c.users.query(b).then(function(b){a.users=b,a.createdUsers=[]})}function h(a,b){var c="asc"===b?1:-1;switch(a){case"full_name":return'[("first_name", '+c+'), ("last_name", '+c+")]";default:return'[("'+encodeURIComponent(a)+'", '+c+")]"}}var i=25;a.selected={user:null},a.createdUsers=[],a.online_users=!1,c("roles").query().then(function(b){a.roles=_.indexBy(b._items,"_id"),a.noRolesWarning=0===b._items.length}),a.preview=function(b){a.selected.user=b},a.createUser=function(){a.intent("create","user").then(g)},a.$on("intent:create:user",function(){a.preview({})}),a.closePreview=function(){a.preview(null)},a.afterDelete=function(b){a.selected.user&&b.item&&b.item.href===a.selected.user.href&&(a.selected.user=null),g(e())},a.render=function(b){d(a.users._items,b)||d(a.createdUsers,b)||a.createdUsers.unshift(b)},a.$watchCollection(e,g)}function e(a,b,c,d,e){a.user=d,a.profile=a.user._id===e.identity._id}function f(a,b,c,d,e,f,g){a.methods=[{id:"upload",label:f("Upload from computer")},{id:"camera",label:f("Take a picture")},{id:"web",label:f("Use a Web URL")}],e.isBeta().then(function(b){b||(a.methods=_.reject(a.methods,{beta:!0}))}),a.activate=function(b){a.active=b,a.preview={},a.progress={width:0}},a.activate(a.methods[0]),a.upload=function(c){var e={};if(e.CropLeft=Math.round(Math.min(c.cords.x,c.cords.x2)),e.CropRight=Math.round(Math.max(c.cords.x,c.cords.x2)),e.CropTop=Math.round(Math.min(c.cords.y,c.cords.y2)),e.CropBottom=Math.round(Math.max(c.cords.y,c.cords.y2)),c.img)e.media=c.img;else{if(!c.url)return;e.URL=c.url}return d.resource("upload").then(function(c){return b.start({url:c,method:"POST",data:e}).then(function(b){if("ERR"===b.data._status)return void g.error(f("There was a problem with your upload"));var c=b.data.renditions.viewImage.href;return a.locals.data.picture_url=c,a.locals.data.avatar=b.data._id,a.resolve(c)},function(a){g.error(""!==a.statusText?a.statusText:f("There was a problem with your upload"))},function(b){a.progress.width=Math.round(b.loaded/b.total*100)})})}}function g(a,b,c,d,e,f,g){var h=b.item;return f.save(h,{is_enabled:!0,is_active:!0}).then(function(a){g.$broadcast("user:updated",a)},function(a){angular.isDefined(a.data._issues)&&angular.isDefined(a.data._issues["validator exception"])?d.error(e("Error: "+a.data._issues["validator exception"])):angular.isDefined(a.data._message)?d.error(e("Error: "+a.data._message)):d.error(e("Error. User Profile cannot be enabled."))})}function h(a,b,c,d,e,f){var g=b.item;return a.users.remove(g).then(function(b){return a.users.getById(g._id).then(function(a){return g=angular.extend(g,a),f.$broadcast("user:updated",g),g})},function(a){angular.isDefined(a.data._issues)&&angular.isDefined(a.data._issues["validator exception"])?d.error(e("Error: "+a.data._issues["validator exception"])):angular.isDefined(a.data._message)?d.error(e("Error: "+a.data._message)):d.error(e("Error. User Profile cannot be disabled."))})}function i(a,b,c,d,e){return a.users.getById(b.current.params._id).then(null,function(a){return 404===a.status&&(e.path("/users/"),c.error(d("User was not found, sorry."),5e3)),a})}function j(a,b,c,d,e){return{scope:!0,templateUrl:"scripts/superdesk-users/views/settings-roles.html",link:function(f){function g(b){var c=_.find(f.roles,function(a){return a._id!==b._id&&a.is_default});c&&a("roles").getById(c._id).then(function(a){_.extend(c,{_etag:a._etag,is_default:!1})})}function h(){return d.confirm(b("Are you sure you want to delete user role?"))}var i=null;f.editRole=null,a("roles").query().then(function(a){f.roles=e("sortByName")(a._items)}),f.edit=function(a){f.editRole=_.create(a),i=a,f.defaultRole=a.is_default},f.save=function(d){var e=d._id?!1:!0;a("roles").save(i,d).then(function(){e?(f.roles.push(i),c.success(b("User role created."))):c.success(b("User role updated.")),d.is_default&&g(d),f.cancel()},function(a){400===a.status&&"undefined"!=typeof a.data._issues.name&&1===a.data._issues.name.unique?c.error(b("I'm sorry but a role with that name already exists.")):"undefined"!=typeof a.data._issues["validator exception"]?c.error(a.data._issues["validator exception"]):c.error(b("I'm sorry but there was an error when saving the role."))})},f.cancel=function(){f.editRole=null},f.remove=function(d){h().then(function(){a("roles").remove(d).then(function(a){_.remove(f.roles,d)},function(a){angular.isDefined(a.data._message)?c.error(b("Error: "+a.data._message)):c.error(b("There is an error. Role cannot be deleted."))})})}}}}function k(b,c,d,e,f){return{scope:!0,templateUrl:"scripts/superdesk-users/views/settings-privileges.html",link:function(g){b("roles").query().then(function(a){g.roles=f("sortByName")(a._items)}),b("privileges").query().then(function(a){g.privileges=a._items}),g.saveAll=function(f){var h=[];_.each(g.roles,function(a){h.push(b.save("roles",a,_.pick(a,"privileges")).then(function(a){},function(a){console.log(a)}))}),e.all(h).then(function(){d.success(c("Privileges updated.")),f.$setPristine()},function(b){d.error(c(a(b)))})}}}}function l(a){}return b.$inject=["api","$q","notify"],c.$inject=["api","$q","$cacheFactory"],d.$inject=["$scope","$location","api"],e.$inject=["$scope","server","superdesk","user","session"],f.$inject=["$scope","upload","session","urls","betaService","gettext","notify"],g.$inject=["api","data","$q","notify","gettext","usersService","$rootScope"],h.$inject=["api","data","$q","notify","gettext","$rootScope"],i.$inject=["api","$route","notify","gettext","$location"],j.$inject=["api","gettext","notify","modal","$filter"],k.$inject=["api","gettext","notify","$q","$filter"],l.$inject=["$scope"],angular.module("superdesk.users",["superdesk.activity","superdesk.asset"]).controller("UserEditController",e).service("usersService",b).factory("userList",c).factory("userPopup",["$compile","$timeout","userList",function(a,b,c){function d(){var a=i.get();a&&a.hide()}function e(){var a=i.get();a&&a.html("")}function f(){b.cancel(i.status)}function g(){i.status=b(d,j,!1)}function h(b,c){var d=i.get();d.html('<div class="avatar-holder"><figure class="avatar big"><img sd-user-avatar data-user="user"></figure></div><div class="title">{{user.display_name}}</div><div class="actions"><a href="#/users/{{user._id}}">go to profile</a></div>');var e=c.$new(!0);e.user=b,a(d)(e)}var i={},j=300;return i.get=function(a){return!i.element&&a&&(i.element=$('<div class="user-popup"></div>'),i.element.appendTo("BODY"),i.element.hover(f,g),i.element.click(d)),i.element},i.set=function(a,b,d){f(),e();var g=i.get(!0),j=b.offset();g.css({left:j.left+b.outerWidth(),top:j.top+b.outerHeight()}),c.getUser(a).then(function(a){h(a,d)},function(a){console.log(a)}),g.show()},i.close=function(){var a=i.get();a&&g()},i}]).config(["superdeskProvider",function(a){a.permission("users-manage",{label:gettext("Manage users"),permissions:{users:{write:!0}}}).permission("users-read",{label:gettext("Read users"),permissions:{users:{read:!0}}}).permission("user-roles-manage",{label:gettext("Manage user roles"),permissions:{user_roles:{write:!0}}}).permission("user-roles-read",{label:gettext("Read user roles"),permissions:{user_roles:{read:!0}}})}]).config(["superdeskProvider","assetProvider",function(a,b){a.activity("/users/",{label:gettext("User management"),description:gettext("Find your colleagues"),controller:d,templateUrl:b.templateUrl("superdesk-users/views/list.html"),category:a.MENU_MAIN,adminTools:!0,reloadOnSearch:!1,filters:[{action:a.ACTION_PREVIEW,type:"user"},{action:"list",type:"user"}],privileges:{users:1}}).activity("/users/:_id",{label:gettext("Users profile"),priority:100,controller:"UserEditController",templateUrl:b.templateUrl("superdesk-users/views/edit.html"),resolve:{user:i},filters:[{action:"detail",type:"user"}],privileges:{users:1}}).activity("/settings/user-roles",{label:gettext("User Roles"),templateUrl:b.templateUrl("superdesk-users/views/settings.html"),controller:l,category:a.MENU_SETTINGS,priority:-500,privileges:{roles:1}}).activity("delete/user",{label:gettext("Disable user"),icon:"trash",confirm:gettext("Please confirm that you want to disable a user."),controller:h,filters:[{action:a.ACTION_EDIT,type:"user"}],condition:function(a){return a.is_enabled},privileges:{users:1}}).activity("restore/user",{label:gettext("Enable user"),icon:"revert",controller:g,filters:[{action:a.ACTION_EDIT,type:"user"}],condition:function(a){return!a.is_enabled},privileges:{users:1}}).activity("edit.avatar",{label:gettext("Change avatar"),modal:!0,cssClass:"upload-avatar modal-static modal-large",controller:f,templateUrl:b.templateUrl("superdesk-users/views/change-avatar.html"),filters:[{action:"edit",type:"avatar"}]})}]).config(["apiProvider",function(a){a.api("users",{type:"http",backend:{rel:"users"}}),a.api("roles",{type:"http",backend:{rel:"roles"}}),a.api("resetPassword",{type:"http",backend:{rel:"reset_user_password"}}),a.api("changePassword",{type:"http",backend:{rel:"change_user_password"}})}]).config(["$compileProvider",function(a){a.directive("compile",["$compile",function(a){return function(b,c,d){var e=b.$eval(d.compile);c.html(e);var f=b.$new(!0);_.each(b.$eval(d.data),function(a,b){f[b]=a}),a(c.contents())(f)}}])}]).directive("sdUserRoles",j).directive("sdRolesPrivileges",k).directive("sdInfoItem",function(){return{link:function(a,b){b.addClass("item"),b.find("input, select").addClass("info-value info-editable")}}}).directive("sdValidError",function(){return{link:function(a,b){b.addClass("validation-error")}}}).directive("sdValidInfo",function(){return{link:function(a,b){b.addClass("validation-info")}}}).directive("sdUserDetailsPane",["$timeout",function(a){return{replace:!0,transclude:!0,template:'<div class="user-details-pane" ng-transclude></div>',link:function(b,c,d){a(function(){$(".user-details-pane").addClass("open")},0,!1),b.closePane=function(){$(".user-details-pane").removeClass("open")}}}}]).directive("sdUserEdit",["api","gettext","notify","usersService","userList","session","$location","$route","superdesk","features","asset","privileges","desks","keyboardManager",function(a,b,c,d,e,f,g,h,i,j,k,l,m,n){return{templateUrl:k.templateUrl("superdesk-users/views/edit-form.html"),scope:{origUser:"=user",onsave:"&",oncancel:"&",onupdate:"&"},link:function(k,o){function p(a){return k.dirty=!1,angular.isDefined(a._id)?e.getUser(a._id,!0).then(function(a){k.error=null,k.origUser=a,k.user=_.create(a),k.confirm={password:null},k.show={password:!1},k._active=d.isActive(a),k._pending=d.isPending(a),k.profile=k.user._id===f.identity._id,k.userDesks=[],angular.isDefined(a)&&angular.isDefined(a._links)&&m.fetchUserDesks(a).then(function(a){k.userDesks=a._items})}):void 0}k.privileges=l.privileges,k.features=j,k.usernamePattern=d.usernamePattern,k.phonePattern=d.phonePattern,k.signOffPattern=d.signOffPattern,k.dirty=!1,k.errorMessage=null,k.$watch("origUser",function(){k.user=_.create(k.origUser)}),p(k.origUser),k.$watchCollection("user",function(a){_.each(a,function(b,c){""===b&&("phone"!==c||"byline"!==c?a[c]=null:delete a[c])}),k.dirty=!angular.equals(a,k.origUser)}),a("roles").query().then(function(a){k.roles=a._items}),k.cancel=function(){p(k.origUser),k.origUser.Id||k.oncancel()},k.focused=function(){n.unbind("down"),n.unbind("up")},k.editPicture=function(){i.intent("edit","avatar",k.user).then(function(a){k.user.picture_url=a})},k.save=function(){return k.error=null,c.info(b("saving..")),d.save(k.origUser,k.user).then(function(a){k.origUser=a,p(k.origUser),c.pop(),c.success(b("user saved.")),k.onsave({user:k.origUser}),k.user._id===f.identity._id&&f.updateIdentity(k.origUser),e.clearCache()},function(a){if(c.pop(),404===a.status)"/users/"===g.path()?h.reload():g.path("/users/"),c.error(b("User is not found. It might be deleted."));else{var d=b("There was an error when saving user. ");if(a.data&&a.data._issues){angular.isDefined(a.data._issues["validator exception"])&&(d=b("Error: "+a.data._issues["validator exception"])),k.error=a.data._issues,k.error.message=d;for(var e in a.data._issues)if(k.userForm[e]){k.error[e]&&(k.error[e].format=!0,k.error.message=null);for(var f in a.data._issues[e])a.data._issues[e][f]&&(k.userForm[e].$setValidity(f,!1),k.error.message=null)}}c.error(d)}})},k.toggleStatus=function(a){d.toggleStatus(k.origUser,a).then(function(){p(k.origUser),k.onupdate({user:k.origUser})})},k.$on("user:updated",function(a,b){p(b)})}}}]).directive("sdUserPreferences",["api","session","preferencesService","notify","asset","metadata","modal","$timeout","$q","userList",function(a,b,c,d,e,f,g,h,i,j){return{templateUrl:e.templateUrl("superdesk-users/views/user-preferences.html"),link:function(a,e,k){function l(b){var c,d;a.preferences={},_.each(b,function(b,c){b.label&&b.category&&(a.preferences[c]=_.create(b))}),c=["cities","categories","default_categories","locators"],d=c.some(function(a){var b=f.values||{};return angular.isUndefined(b[a])}),d?f.initialize().then(function(){m(f.values,b)}):m(f.values,b)}function m(b,c){a.cities=b.cities,a.defaultCategories={},b.default_categories.forEach(function(b){a.defaultCategories[b.qcode]=!0}),a.categories=[],b.categories.forEach(function(b){var d=_.create(b),e=c["categories:preferred"].selected;d.selected=!!e[b.qcode],a.categories.push(d)}),a.locators=b.locators,a.preferencesLoaded=!0}function n(){var b,c,d;return(d=a.categories.some(function(a){return a.selected}))?i.when():(c=["No preferred categories selected. Should you ","choose to proceed with your choice, a default ","set of categories will be selected for you."].join(""),c=gettext(c),b=g.confirm(c).then(function(){a.checkDefault()}))}function o(){var b={};return _.each(p,function(c,d){if("dateline:located"===d){var f=e.find(".input-term > input");a.changeDatelinePreview(a.preferences[d],f[0].value)}"categories:preferred"===d&&(c.selected={},a.categories.forEach(function(a){c.selected[a.qcode]=!!a.selected})),b[d]=_.extend(c,a.preferences[d])}),b}a.preferencesLoaded=!1;var p;c.get(null,!0).then(function(c){p=c,l(p),a.datelineSource=b.identity.dateline_source,a.datelinePreview=a.preferences["dateline:located"].located}),a.cancel=function(){a.userPrefs.$setPristine(),l(p),a.datelinePreview=a.preferences["dateline:located"].located},j.getUser(a.user._id,!0).then(function(b){a.user=b}),a.save=function(){n().then(function(){var b=o();return c.update(b).then(function(){j.getUser(a.user._id,!0).then(function(b){a.user=b})})},function(){return i.reject("canceledByModal")}).then(function(){d.success(gettext("User preferences saved")),a.cancel()},function(a){"canceledByModal"!==a&&d.error(gettext("User preferences could not be saved..."))})},a.changeDatelinePreview=function(b,c){""===c&&(b.located=null),h(function(){a.datelinePreview=b.located})},a.checkAll=function(){a.categories.forEach(function(a){a.selected=!0}),a.userPrefs.$setDirty()},a.checkNone=function(){a.categories.forEach(function(a){a.selected=!1}),a.userPrefs.$setDirty()},a.checkDefault=function(){a.categories.forEach(function(b){b.selected=!!a.defaultCategories[b.qcode]}),a.userPrefs.$setDirty()},a.articleDefaultsChanged=function(b){a.userPrefs.$setDirty()}}}}]).directive("sdUserPrivileges",["api","gettext","notify","userList",function(b,c,d,e){return{scope:{user:"="},templateUrl:"scripts/superdesk-users/views/user-privileges.html",link:function(f){e.getUser(f.user._id,!0).then(function(a){f.user=a}),b("privileges").query().then(function(a){f.privileges=a._items}),b("roles").getById(f.user.role).then(function(a){f.role=a},function(a){console.log(a)}),f.origPrivileges=angular.copy(f.user.privileges),f.save=function(){b.save("users",f.user,_.pick(f.user,"privileges")).then(function(){f.origPrivileges=angular.copy(f.user.privileges),f.userPrivileges.$setPristine(),d.success(c("Privileges updated."))},function(b){d.error(c(a(b)))})},f.cancel=function(){f.user.privileges=angular.copy(f.origPrivileges),f.userPrivileges.$setPristine()}}}}]).directive("sdChangePassword",["usersService","notify","gettext",function(a,b,c){return{link:function(d,e){d.$watch("user",function(){d.oldPasswordInvalid=!1}),d.changePassword=function(e,f){return a.changePassword(d.user,e,f).then(function(a){d.oldPasswordInvalid=!1,b.success(c("The password has been changed."),3e3),d.show.change_password=!1},function(a){d.oldPasswordInvalid=!0})}}}}]).directive("sdResetPassword",["usersService","notify","gettext",function(a,b,c){return{link:function(d,e){d.$watch("user",function(){d.oldPasswordInvalid=!1}),d.resetPassword=function(){return a.resetPassword(d.user).then(function(a){d.oldPasswordInvalid=!1,b.success(c("The password has been reset."),3e3),d.show.reset_password=!1},function(a){d.oldPasswordInvalid=!0})}}}}]).directive("sdUserUnique",["$q","api",function(a,b){return{require:"ngModel",scope:{exclude:"="},link:function(c,d,e,f){function g(d,f){var g=d||f;if(g&&e.uniqueField){var h={where:{}};return h.where[e.uniqueField]=g,b.users.query(h).then(function(b){return!b._items.length||c.exclude._id&&b._items[0]._id===c.exclude._id?b:a.reject(b)})}return a.when()}f.$asyncValidators.unique=g}}}]).directive("sdPasswordConfirm",[function(){var a="confirm";return{require:"ngModel",scope:{password:"="},link:function(b,c,d,e){function f(a,b){return!a||a===b}e.$validators[a]=function(a,c){var d=a||c;return f(b.password,d)},b.$watch("password",function(b){e.$setValidity(a,f(b,e.$viewValue))})}}}]).directive("sdUserList",["keyboardManager","usersService","asset",function(a,b,c){return{templateUrl:c.templateUrl("superdesk-users/views/user-list-item.html"),scope:{roles:"=",users:"=",selected:"=",done:"="},link:function(c,d,e){function f(){g(),a.bind("down",h),a.bind("up",i)}function g(){a.unbind("down"),a.unbind("up")}function h(){var a=j();-1!==a&&c.select(c.users[_.min([c.users.length-1,a+1])])}function i(){var a=j();-1!==a&&c.select(c.users[_.max([0,a-1])])}function j(){return _.findIndex(c.users,c.selected)}c.active=function(a){return b.isActive(a)},c.pending=function(a){return b.isPending(a)},c.select=function(a){c.selected=a,f()},c.$watch("selected",function(a){null==a&&f()}),c.isLoggedIn=function(a){return b.isLoggedIn(a)}}}}]).directive("sdUserListItem",["asset",function(a){return{templateUrl:a.templateUrl("superdesk-users/views/user-list-item.html")}}]).directive("sdActivity",["asset",function(a){return{templateUrl:a.templateUrl("superdesk-users/views/activity-list.html")}}]).directive("sdUserMentio",["userList","asset",function(a,b){return{templateUrl:b.templateUrl("superdesk-users/views/mentions.html"),link:function(b,c){b.users=[],b.fetching=!1,b.prefix="";var d=c.children()[0];c.children().bind("scroll",function(){d.scrollTop+d.offsetHeight>=d.scrollHeight-3&&(d.scrollTop=d.scrollTop-3,b.fetchNext())}),b.fetchNext=function(){if(!b.fetching){var c=b.users.length/10+1;b.fetching=!0,a.get(b.prefix,c,10).then(function(a){_.each(_.sortBy(a._items.slice(10*(c-1),10*c),"username"),function(a){b.users.push(a)}),b.fetching=!1})}},b.searchUsers=function(c){return b.prefix=c,a.get(c,1,10).then(function(a){b.users=_.sortBy(a._items,"username")})},b.selectUser=function(a){return"@"+a.username},b.$watchCollection(function(){return $(".users-list-embed>li.active")},function(a){a.hasClass("active")&&$(".mentio-menu").scrollTop(a.position().top)})}}}]).directive("sdUserInfo",["userPopup",function(a){return{link:function(b,c,d){c.addClass("user-link"),c.hover(function(){a.set(d.user,c,b)},function(){a.close()})}}}]).filter("username",["session",function(a){return function(a){return a?a.display_name||a.username:null}}])}(),function(){"use strict";function a(a){var b="activity";this.getUserActivity=function(c,d,e){var f={where:{user:c._id},sort:"[('_created',-1)]",embedded:{user:1,item:1}};return d&&(f.max_results=d),e>1&&(f.page=e),a.query(b,f)},this.getAllUsersActivity=function(c,d){var e={sort:"[('_created',-1)]",where:{user:{$exists:!0},item:{$exists:!0}},embedded:{user:1,item:1}};return c&&(e.max_results=c),d>1&&(e.page=d),a.query(b,e)}}a.$inject=["api"],angular.module("superdesk.users.profile",["superdesk.api","superdesk.users"]).service("profileService",a).config(["superdeskProvider","assetProvider",function(a,b){a.activity("/profile/",{label:gettext("My Profile"),controller:"UserEditController",templateUrl:b.templateUrl("superdesk-users/views/edit.html"),resolve:{user:["session","api",function(a,b){return a.getIdentity().then(function(a){return b.get(a._links.self.href)})}]}})}]).directive("sdUserActivity",["profileService","asset",function(a,b){return{restrict:"A",replace:!0,templateUrl:b.templateUrl("superdesk-users/views/activity-feed.html"),scope:{user:"="},link:function(b,c,d){var e=1,f=5;b.max_results=f,b.$watch("user",function(){a.getUserActivity(b.user,f).then(function(a){b.activityFeed=a})}),b.loadMore=function(){e++,a.getUserActivity(b.user,f,e).then(function(a){Array.prototype.push.apply(b.activityFeed._items,a._items),b.activityFeed._links=a._links,b.max_results+=f})}}}}])}(),function(){"use strict";angular.module("superdesk.users.activity",["superdesk.users","superdesk.dashboard.widgets","superdesk.asset"]).config(["widgetsProvider","assetProvider",function(a,b){a.widget("activity",{label:"Activity Stream",multiple:!0,max_sizex:2,max_sizey:2,sizex:1,sizey:2,thumbnail:b.imageUrl("superdesk-users/activity/thumbnail.svg"),template:b.templateUrl("superdesk-users/activity/widget-activity.html"),configurationTemplate:b.templateUrl("superdesk-users/activity/configuration.html"),configuration:{maxItems:5},description:"Activity stream widget",icon:"stream"})}]).controller("ActivityController",["$scope","profileService",function(a,b){function c(c){e=c,b.getAllUsersActivity(c.maxItems).then(function(b){a.activityFeed=b,a.max_results=parseInt(c.maxItems,10)}),a.loadMore=function(){d++,b.getAllUsersActivity(c.maxItems,d).then(function(b){Array.prototype.push.apply(a.activityFeed._items,b._items),a.activityFeed._links=b._links,a.max_results+=parseInt(c.maxItems,10)})}}var d=1,e=null;a.max_results=0,a.$on("changes in activity",function(){e&&c(e)}),a.$watch("widget.configuration",function(a){d=1,a&&c(a)},!0)}]).controller("ActivityConfigController",["$scope",function(a){a.notIn=function(a){return function(b){return-1===a.indexOf(b)}}}])}(),function(){"use strict";function a(a,b){function c(a,c){var d={};return d[a]=1,d.message=c,b.reject(d)}this.importUser=function(b){return a.save("import_profile",b).then(null,function(a){var b=a.data;return 404===a.status?c("profile_to_import",b._message):400===a.status?c(b._issues.profile_to_import?"profile_to_import":"credentials",b._message):c("credentials",b._message)})}}function b(a,b){a.model={},a.error=null,a.importUser=function(c){a.error=null,b.importUser(c).then(function(b){a.resolve(b)},function(b){a.error=b})}}a.$inject=["api","$q"],b.$inject=["$scope","userImport"],angular.module("superdesk.users.import",["superdesk.activity","superdesk.api"]).service("userImport",a).config(["superdeskProvider",function(a){a.activity("import.user",{label:gettext("Import user"),modal:!0,controller:b,templateUrl:"scripts/superdesk-users/import/views/import-user.html",filters:[{action:"create",type:"user"}],features:{import_profile:1}})}])}(),function(){"use strict";function a(a,b){b.initialize().then(function(){a.groups=b.groups})}function b(a,b,c,d,e,f,g){a.modalActive=!1,a.step={current:null},a.group={edit:null},a.openGroup=function(b,c){a.modalActive=!0,a.step.current=b,a.group.edit=c},a.cancel=function(){a.modalActive=!1,a.step.current=null,a.group.edit=null},a.remove=function(e){g.confirm(b("Are you sure you want to delete group?")).then(function(){d.groups.remove(e).then(function(){_.remove(a.groups._items,e),c.success(b("Group deleted."),3e3)})})}}function c(a,b,c){return{link:function(d,e,f){function g(a){a.data&&a.data._issues&&a.data._issues.name&&a.data._issues.name.unique?d._errorUniqueness=!0:d._error=!0,d.message=null}function h(){(d._errorUniqueness||d._error||d._errorLimits)&&(d._errorUniqueness=null,d._error=null,d._errorLimits=null)}var i={group:40};d.limits=i,d.$watch("step.current",function(a){"general"===a&&(d.edit(d.group.edit),d.message=null)}),d.edit=function(a){d.group.edit=_.create(a)},d.save=function(e){d.message=a("Saving...");var f=e._id?!1:!0;b.groups.save(d.group.edit,e).then(function(){if(f)d.edit(d.group.edit),d.groups._items.unshift(d.group.edit);else{var a=_.find(d.groups._items,{_id:d.group.edit._id});_.extend(a,d.group.edit)}c.wizard("usergroups").next()},g)},d.handleEdit=function(a){h(),null!=d.group.edit.name&&(d._errorLimits=d.group.edit.name.length>d.limits.group?!0:null)}}}}function d(a,b,c,d){return{link:function(e,f,g){e.$watch("step.current",function(a,b){"people"===a&&(e.search=null,e.groupMembers=[],e.users=[],e.message=null,e.group.edit&&e.group.edit._id?d.initialize().then(function(){e.groupMembers=d.groupMembers[e.group.edit._id]||[],e.users=d.users._items}):c.wizard("usergroups").goTo(b))}),e.add=function(a){e.groupMembers.push(a)},e.remove=function(a){_.remove(e.groupMembers,a)},e.previous=function(){c.wizard("usergroups").previous()},e.save=function(){var f=_.map(e.groupMembers,function(a){return{user:a._id}});b.groups.save(e.group.edit,{
+members:f}).then(function(a){_.extend(e.group.edit,a),d.groupMembers[e.group.edit._id]=e.groupMembers;var b=_.find(d.groups._items,{_id:e.group.edit._id});_.extend(b,e.group.edit),c.wizard("usergroups").finish()},function(b){e.message=a("There was a problem, members not saved.")})}}}}var e=angular.module("superdesk.groups",["superdesk.users"]);return e.config(["superdeskProvider",function(b){b.activity("/settings/groups",{label:gettext("Groups"),controller:a,templateUrl:"scripts/superdesk-groups/views/settings.html",category:b.MENU_SETTINGS,priority:-800,beta:!0,privileges:{groups:1}})}]).config(["apiProvider",function(a){a.api("groups",{type:"http",backend:{rel:"groups"}})}]).factory("groups",["$q","api","storage","userList",function(a,b,c,d){var e={groups:null,users:null,groupLookup:{},userLookup:{},groupMembers:{},loading:null,fetchGroups:function(){var a=this;return b.groups.query({max_results:500}).then(function(b){a.groups=b,_.each(b._items,function(b){a.groupLookup[b._id]=b})})},fetchUsers:function(){var a=this;return d.get(null,1,500).then(function(b){a.users=b,_.each(b._items,function(b){a.userLookup[b._id]=b})})},generateGroupMembers:function(){var b=this;return _.each(this.groups._items,function(a){b.groupMembers[a._id]=[],_.each(a.members,function(c,d){var e=_.find(b.users._items,{_id:c.user});e&&b.groupMembers[a._id].push(e)})}),a.when()},fetchUserGroups:function(a){return b.users.getByUrl(a._links.self.href+"/groups")},getCurrentGroupId:function(){return c.getItem("groups:currentGroupId")||null},setCurrentGroupId:function(a){c.setItem("groups:currentGroupId",a)},fetchCurrentGroup:function(){return b.groups.getById(this.getCurrentGroupId())},setCurrentGroup:function(a){this.setCurrentGroupId(a?a._id:null)},getCurrentGroup:function(a){return this.groupLookup[this.getCurrentGroupId()]},initialize:function(){return this.loading||(this.loading=this.fetchGroups().then(angular.bind(this,this.fetchUsers)).then(angular.bind(this,this.generateGroupMembers))),this.loading}};return e}]).directive("sdGroupeditBasic",c).directive("sdGroupeditPeople",d).directive("sdGroupsConfig",function(){return{controller:b}}).directive("sdGroupsConfigModal",function(){return{require:"^sdGroupsConfig",templateUrl:"scripts/superdesk-groups/views/groups-config-modal.html",link:function(a,b,c,d){}}}),a.$inject=["$scope","groups"],b.$inject=["$scope","gettext","notify","api","groups","WizardHandler","modal"],c.$inject=["gettext","api","WizardHandler"],d.$inject=["gettext","api","WizardHandler","groups"],e}(),function(){"use strict";function a(a,b){var c=b.privileges;a.showSubscribers=Boolean(c.subscribers),a.showFilterConditions=Boolean(c.publish_filters)}function b(a,b){var c=function(b,c){return a[b].query(c)},d={fetchSubscribers:function(a){return a=a||{},c("subscribers",a)},fetchSubscribersByKeyword:function(a){return this.fetchSubscribers({where:JSON.stringify({$or:[{name:{$regex:a,$options:"-i"}}]})})},fetchSubscribersByIds:function(a){var b=[];return _.each(a,function(a){b.push({_id:a})}),this.fetchSubscribers({where:JSON.stringify({$or:b})})},fetchPublishErrors:function(){var a={io_type:"publish"};return c("io_errors",a)}};return d}function c(a){return{templateUrl:"scripts/superdesk-publish/views/destination.html",scope:{destination:"=",actions:"="},link:function(b){b.types=a}}}function d(a,b){function c(){var a=a||{};return a.max_results=200,b.consistency.query(a)}a.consistency_records=null,a.reload=function(){c().then(function(b){a.consistency_records=b._items,a.lastRefreshedAt=new Date})},a.reload()}function e(a,b,c,d,e,f){function g(){h().then(function(b){var c=b._items;_.forEach(c,function(a){angular.extend(a,{selected:!1})}),a.publish_queue=c,a.lastRefreshedAt=new Date,a.showResendBtn=!1,a.showCancelBtn=!1,a.maxPage=Math.ceil(b._meta.total/a.pageSize)})}function h(){var b=b||{};b.max_results=a.pageSize,b.page=a.page;var d=null;_.isEmpty(a.searchQuery)||(d={$or:[{headline:{$regex:a.searchQuery,$options:"-i"}},{unique_name:a.searchQuery}]});var e=[];null!=a.selectedFilterSubscriber&&e.push({subscriber_id:a.selectedFilterSubscriber._id}),null!=a.selectedFilterStatus&&e.push({state:a.selectedFilterStatus});var f=[];return _.each(e,function(a){f.push(a)}),null!==d&&f.push(d),_.isEmpty(f)||(b.where=JSON.stringify({$and:f})),c.publish_queue.query(b)}function i(b){var c=_.find(a.publish_queue,{_id:b.queue_id});if(c){var d=["error_message","completed_at","state"];angular.extend(c,_.pick(b,d)),a.$apply()}}function j(){var b=_.find(a.publish_queue,{_id:f.search()._id})||null;b?c.archive.getById(b.item_id).then(function(b){a.selected.preview=b}):a.selected.preview=null}a.subscribers=null,a.subscriberLookup={},a.publish_queue=[],a.selectedFilterSubscriber=null,a.multiSelectCount=0,a.selectedQueueItems=[],a.showResendBtn=!1,a.showCancelBtn=!1,a.queueSearch=!1,a.selected={},a.publish_queue_statuses=["pending","in-progress","success","error"],a.pageSize=25,a.page=1,a.$watch("page",a.reload);var k=[];k.push(b.fetchSubscribers().then(function(b){a.subscribers=b._items,_.each(b._items,function(b){a.subscriberLookup[b._id]=b})})),a.search=function(b){a.searchQuery=b,a.page=1,a.reload()},a.reload=function(){d.all(k).then(function(){g(),j()})},a.buildNewSchedule=function(a){var b=["item_id","item_version","publishing_action","formatted_item","headline","content_type","subscriber_id","unique_name","destination"],c=_.pick(a,b);return c},a.scheduleToSend=function(b){var d=[];angular.isDefined(b)?d.push(a.buildNewSchedule(b)):a.multiSelectCount>0&&_.forEach(a.selectedQueueItems,function(b){d.push(a.buildNewSchedule(b))}),c.publish_queue.save([],d).then(function(b){a.reload(),a.cancelSelection(!1)},function(a){angular.isDefined(a.data._issues)?angular.isDefined(a.data._issues["validator exception"])&&e.error(gettext("Error: "+a.data._issues["validator exception"])):e.error(gettext("Error: Failed to re-schedule"))})},a.filterSchedule=function(b,c){"subscriber"===c&&(a.selectedFilterSubscriber=b),g(),a.multiSelectCount=0,a.selectedQueueItems=[],a.page=1},a.filterStatus=function(b,c){"status"===c&&(a.selectedFilterStatus=b),g(),a.multiSelectCount=0,a.selectedQueueItems=[],a.page=1},a.selectQueuedItem=function(b){b.selected?a.selectedQueueItems=_.union(a.selectedQueueItems,[b]):a.selectedQueueItems=_.without(a.selectedQueueItems,b);var c=_.findIndex(a.selectedQueueItems,function(a){return"pending"===a.state||"in-progress"===a.state||"canceled"===a.state});-1===c?(a.showResendBtn=!0,a.showCancelBtn=!1):(c=_.findIndex(a.selectedQueueItems,function(a){return"success"===a.state||"in-progress"===a.state||"canceled"===a.state||"error"===a.state}),-1===c?(a.showResendBtn=!1,a.showCancelBtn=!0):(a.showResendBtn=!1,a.showCancelBtn=!1)),a.multiSelectCount=a.selectedQueueItems.length},a.cancelSelection=function(b){(angular.isUndefined(b)||_.isNull(b)||b)&&(a.selectedFilterSubscriber=null),a.selectedQueueItems=[],a.multiSelectCount=0,a.filterSchedule()},a.preview=function(a){f.search("_id",a?a._id:a)},a.$on("$routeUpdate",j),a.$on("publish_queue:update",function(a,b){i(b)}),a.reload()}function f(a,b,c,d,e,f,g,h,i){return{templateUrl:"scripts/superdesk-publish/views/subscribers.html",link:function(e){function j(){d.fetchSubscribers().then(function(a){a._items=i("sortByName")(a._items),e.subscribers=a})}function k(){return d.fetchPublishErrors().then(function(a){e.all_errors=a._items[0].all_errors})}e.subscriber=null,e.origSubscriber=null,e.subscribers=null,e.newDestination=null,e.contentFilters=null,e.geoRestrictions=null,e.subTypes=null,angular.isDefined(f.values.geographical_restrictions)?(e.geoRestrictions=f.values.geographical_restrictions,e.subTypes=f.values.subscriber_types):f.fetchMetadataValues().then(function(){e.geoRestrictions=f.values.geographical_restrictions,e.subTypes=f.values.subscriber_types});var l=function(){return c.query("content_filters").then(function(a){e.contentFilters=a._items})},m=function(){e.subscriber&&(e.subscriber.global_filters||(e.subscriber.global_filters={}),_.each(e.globalFilters,function(a){a._id in e.subscriber.global_filters||(e.subscriber.global_filters[a._id]=!0)}))},n=function(){return g.getGlobalContentFilters().then(function(a){e.globalFilters=a})};e.addNewDestination=function(){e.newDestination={}},e.cancelNewDestination=function(){e.newDestination=null},e.saveNewDestination=function(){e.destinations.push(e.newDestination),e.newDestination=null},e.deleteDestination=function(a){_.remove(e.destinations,a)},e.save=function(){e.subscriber.content_filter&&""===e.subscriber.content_filter.filter_id&&(e.subscriber.content_filter=null),e.subscriber.destinations=e.destinations,c.subscribers.save(e.origSubscriber,e.subscriber).then(function(){b.success(a("Subscriber saved.")),e.cancel()},function(c){angular.isDefined(c.data._issues)?angular.isDefined(c.data._issues["validator exception"])?b.error(a("Error: "+c.data._issues["validator exception"])):angular.isDefined(c.data._issues.name)&&angular.isDefined(c.data._issues.name.unique)?b.error(a("Error: Subscriber with Name "+e.subscriber.name+" already exists.")):angular.isDefined(c.data._issues.destinations)&&b.error(a("Error: Subscriber must have at least one destination.")):b.error(a("Error: Failed to save Subscriber."))}).then(j)},e.edit=function(c){var d=[];d.push(k()),d.push(l()),d.push(n()),h.all(d).then(function(){e.origSubscriber=c||{},e.subscriber=_.create(e.origSubscriber),e.subscriber.critical_errors=e.origSubscriber.critical_errors,e.subscriber.content_filter=e.origSubscriber.content_filter||{},e.subscriber.global_filters=e.origSubscriber.global_filters||{},e.subscriber.content_filter.filter_type=e.subscriber.content_filter.filter_type||"blocking",e.destinations=[],angular.isDefined(e.subscriber.destinations)&&!_.isNull(e.subscriber.destinations)&&e.subscriber.destinations.length>0&&(e.destinations=_.clone(e.subscriber.destinations,!0)),e.subscriberType=e.subscriber.subscriber_type||"",e.changeFormats(e.subscriberType),m()},function(){b.error(a("Subscriber could not be initialized!"))})},e.cancel=function(){e.origSubscriber=null,e.subscriber=null,e.newDestination=null},e.changeFormats=function(c){var d=_.result(_.find(e.subTypes,{value:c}),"formats");if(e.destinations.length>0&&""!==e.subscriberType&&e.subscriberType!==c){var f=_.result(_.find(e.subTypes,{value:e.subscriberType}),"formats");_.isEqual(f,d)||(b.error(a("Error: Please re-assign new format for each destination as the changed subscriber type has formats which are not supported by existing destination(s).")),_.each(e.destinations,function(a){a.format=null}))}e.subscriberType=e.subscriber.subscriber_type,e.formats=d},j()}}}var g=angular.module("superdesk.publish",["superdesk.users","superdesk.content_filters"]);return g.value("transmissionTypes",{ftp:{label:"FTP",templateUrl:"scripts/superdesk-publish/views/ftp-config.html"},email:{label:"Email",templateUrl:"scripts/superdesk-publish/views/email-config.html"},ODBC:{label:"ODBC",templateUrl:"scripts/superdesk-publish/views/odbc-config.html"},File:{label:"File",templateUrl:"scripts/superdesk-publish/views/file-config.html"},pull:{label:"Pull"},http_push:{label:"HTTP Push",templateUrl:"scripts/superdesk-publish/views/http-push-config.html"}}),a.$inject=["$scope","privileges"],b.$inject=["api","$q"],c.$inject=["transmissionTypes"],d.$inject=["$scope","api"],e.$inject=["$scope","adminPublishSettingsService","api","$q","notify","$location"],f.$inject=["gettext","notify","api","adminPublishSettingsService","modal","metadata","contentFilters","$q","$filter"],g.service("adminPublishSettingsService",b).directive("sdAdminPubSubscribers",f).directive("sdDestination",c).controller("publishQueueCtrl",e),g.config(["superdeskProvider",function(b){b.activity("/settings/publish",{label:gettext("Publish"),templateUrl:"scripts/superdesk-publish/views/settings.html",controller:a,category:b.MENU_SETTINGS,privileges:{subscribers:1},priority:2e3,beta:!0}).activity("/publish_queue",{label:gettext("Publish Queue"),templateUrl:"scripts/superdesk-publish/views/publish-queue.html",topTemplateUrl:"scripts/superdesk-dashboard/views/workspace-topnav.html",sideTemplateUrl:"scripts/superdesk-workspace/views/workspace-sidenav.html",controller:e,category:b.MENU_MAIN,adminTools:!1,privileges:{publish_queue:1}})}]).config(["apiProvider",function(a){a.api("subscribers",{type:"http",backend:{rel:"subscribers"}}),a.api("publish_queue",{type:"http",backend:{rel:"publish_queue"}}),a.api("consistency",{type:"http",backend:{rel:"consistency"}}),a.api("legal_publish_queue",{type:"http",backend:{rel:"legal_publish_queue"}}),a.api("io_errors",{type:"http",backend:{rel:"io_errors"}})}]),g}(),function(){"use strict";function a(a){}function b(a,b,c,d){var e=10,f="templates:recent";this.TEMPLATE_METADATA=["headline","slugline","abstract","dateline","byline","subject","genre","type","language","anpa_category","anpa_take_key","keywords","priority","urgency","pubstatus","description","body_html","body_text","place","located","creditline","ednote","language"],this.types=[{_id:"kill",label:c("Kill")},{_id:"create",label:c("Create")},{_id:"highlights",label:c("Highlights")}],this.fetchTemplates=function(b,c,d,f,g){b=b||1,c=c||e;var h={};void 0!==d&&(h.template_type=d),void 0!==f&&(h.template_desk=f),g&&(h.template_name={$regex:g,$options:"-i"});var i={max_results:c,page:b};return _.isEmpty(h)||(i.where=JSON.stringify({$and:[h]})),a.content_templates.query(i).then(function(a){return a})},this.fetchTemplatesByIds=function(c){if(!c.length)return b.when();var d={max_results:e,page:1,where:JSON.stringify({_id:{$in:c}})};return a.content_templates.query(d).then(function(a){return a&&a._items&&a._items.sort(function(a,b){return c.indexOf(a._id)-c.indexOf(b._id)}),a})},this.addRecentTemplate=function(a,b){return d.get().then(function(c){return c=c||{},c[f]=c[f]||{},c[f][a]=c[f][a]||[],_.remove(c[f][a],function(a){return a===b}),c[f][a].unshift(b),d.update(c)})},this.getRecentTemplateIds=function(a,b){return b=b||e,d.get().then(function(c){return c&&c[f]&&c[f][a]?_.take(c[f][a],b):[]})},this.getRecentTemplates=function(a,b){return b=b||e,this.getRecentTemplateIds(a,b).then(this.fetchTemplatesByIds)}}function c(a,b,c,d,e,f,g,h){return{templateUrl:"scripts/superdesk-templates/views/templates.html",link:function(i){function j(){d.fetchTemplates(1,50).then(function(a){a._items=h("sortByName")(a._items,"template_name"),i.content_templates=a})}i.weekdays=g,i.content_templates=null,i.origTemplate=null,i.template=null,i.desks=null,f.initialize().then(function(){i.desks=f.desks}),i.getTemplateDesk=function(a){return _.find(i.desks._items,{_id:a.template_desk})},i.getTemplateStage=function(a){return _.find(f.stages._items,{_id:a.template_stage})},i.getTime=function(a){if(a){var b=new Date;return b.setUTCHours(a.substr(0,2)),b.setUTCMinutes(a.substr(2,2)),b}},i.types=d.types,i.save=function(){delete i.template._datelinedate,delete i.template.hasCrops,c.content_templates.save(i.origTemplate,i.template).then(function(){b.success(a("Template saved.")),i.cancel()},function(c){angular.isDefined(c.data._issues)&&angular.isDefined(c.data._issues["validator exception"])?b.error(a("Error: "+c.data._issues["validator exception"])):b.error(a("Error: Failed to save template."))}).then(j)},i.edit=function(a){i.origTemplate=a||{type:"text"},i.template=_.create(i.origTemplate),i.template.schedule=i.origTemplate.schedule||{},i.item=i.template,i._editable=!0,i.updateStages(i.template.template_desk)},i.remove=function(d){e.confirm(a("Are you sure you want to delete the template?")).then(function(){return c.content_templates.remove(d)}).then(function(a){_.remove(i.templates,d)},function(c){angular.isDefined(c.data._message)?b.error(a("Error: "+c.data._message)):b.error(a("There is an error. Template cannot be deleted."))}).then(j)},i.cancel=function(){i.origTemplate=null,i.template=null,i.vars=null,j()},i.updateStages=function(a){i.stages=a?f.deskStages[a]:null},i.validSchedule=function(){return i.template.schedule.is_active?i.template.schedule.day_of_week&&i.template.schedule.create_at:!0},j()}}}function d(a,b,c,d,e){function f(){d.fetchCurrentUserDesks().then(function(a){h.desks=a._items})}function g(){var d=angular.extend({template_name:h.name,template_type:h.type,template_desk:h.desk},_.pick(a,b.TEMPLATE_METADATA));return c.save("content_templates",d).then(function(a){return h._issues=null,a},function(a){return h._issues=a.data._issues,e.reject(h._issues)})}var h=this;this.type="create",this.name=a.slugline||null,this.desk=d.active.desk||null,this.types=b.types,this.save=g,f()}function e(a){function b(b){a.open({templateUrl:"scripts/superdesk-templates/views/create-template.html",controller:"CreateTemplateController",controllerAs:"template",resolve:{item:function(){return b}}})}this.create=b}function f(b,c){b.activity("/settings/templates",{label:gettext("Templates"),templateUrl:"scripts/superdesk-templates/views/settings.html",controller:a,category:b.MENU_SETTINGS,privileges:{content_templates:1},priority:2e3,beta:!0}),c.api("templates",{type:"http",backend:{rel:"templates"}}),c.api("content_templates",{type:"http",backend:{rel:"content_templates"}})}a.$inject=["$scope"],b.$inject=["api","$q","gettext","preferencesService"],c.$inject=["gettext","notify","api","templates","modal","desks","weekdays","$filter"],d.$inject=["item","templates","api","desks","$q"],e.$inject=["$modal"],angular.module("superdesk.templates",["superdesk.activity","superdesk.authoring","superdesk.preferences"]).service("templates",b).directive("sdTemplates",c).controller("CreateTemplateController",d).controller("TemplateMenu",e).config(f),f.$inject=["superdeskProvider","apiProvider"]}();
 "use strict";angular.module("superdesk.templates-cache", []);angular.module("superdesk.templates-cache").run(['$templateCache', function($templateCache) {  'use strict';
 
   $templateCache.put('scripts/superdesk-archive/archive-widget/configuration.html',
@@ -34,7 +34,7 @@ e.groupMembers=d.groupMembers[e.group.edit._id]||[],e.users=d.users._items}):c.w
 
 
   $templateCache.put('scripts/superdesk-archive/views/fetched-desks.html',
-    "<dl ng-if=\"desks.length\"><dt translate>fetched in</dt><dd ng-repeat=\"desk in desks track by desk.desk._id\"><a ng-if=\"$first\" ng-click=\"selectFetched(desk)\">{{desk.desk.name.substring(0,10)}}{{desk.desk.name.length>10 ? '...' : ''}} ({{desk.count}})</a></dd><dd ng-if=\"desks.length>1\" class=\"dropdown dropup more-actions\" dropdown><button class=\"dropdown-toggle\" dropdown-toggle><i class=\"icon-dots\"></i></button><div class=\"dropdown-menu\"><ul><li ng-repeat=\"desk in desks track by desk.desk._id\"><a ng-if=\"!$first\" ng-click=\"selectFetched(desk)\">{{desk.desk.name}} ({{desk.count}})</a></li></ul></div></dd></dl>"
+    "<dl ng-if=\"desks.length\"><dt translate>fetched in</dt><dd ng-repeat=\"desk in desks track by desk.desk._id\"><a ng-if=\"$first && desk.isUserDeskMember\" ng-click=\"selectFetched(desk)\">{{desk.desk.name.substring(0,10)}}{{desk.desk.name.length>10 ? '...' : ''}} ({{desk.count}})</a> <span ng-if=\"$first && !desk.isUserDeskMember\" class=\"container\">{{desk.desk.name.substring(0,10)}}{{desk.desk.name.length>10 ? '...' : ''}} ({{desk.count}})</span></dd><dd ng-if=\"desks.length>1\" class=\"dropdown dropup more-actions\" dropdown-append-to-body dropdown><button class=\"dropdown-toggle\" dropdown-toggle><i class=\"icon-dots\"></i></button><div class=\"dropdown-menu\"><ul><li ng-repeat=\"desk in desks track by desk.desk._id\"><a ng-if=\"!$first\" ng-click=\"selectFetched(desk)\" ng-disabled=\"!desk.isUserDeskMember\">{{desk.desk.name}} ({{desk.count}})</a></li></ul></div></dd></dl>"
   );
 
 
@@ -64,12 +64,12 @@ e.groupMembers=d.groupMembers[e.group.edit._id]||[],e.users=d.users._items}):c.w
 
 
   $templateCache.put('scripts/superdesk-archive/views/media-box-grid.html',
-    "<div class=\"archiving-progress\" style=\"width:{{ _progress }}%\" ng-if=\"_progress\"></div><div ng-click=\"clickAction(item)\"><div class=\"error-box\" ng-show=\"item.archiveError\"><p class=\"message\" translate>There was an error archiving this item</p><div class=\"buttons\"></div></div><div class=\"media multi\" ng-show=\"item.type == 'text' || item.type == 'composite' || item.type == 'preformatted' || item.type == 'picture'\" ng-mouseenter=\"hover=true\" ng-mouseleave=\"hover=false\"><div sd-item-rendition data-item=\"item\" data-rendition=\"thumbnail\"></div><span class=\"text\"><small title=\"{{ item.headline }}\">{{item.headline | limitTo: 90}}</small> <span sd-item-container data-item=\"item\" class=\"container\"></span></span><div class=\"selectbox\" ng-if=\"item._type !== 'legal_archive'\" ng-show=\"hover || item.selected\"><span sd-check ng-model=\"item.selected\" ng-change=\"toggleSelected(item)\"></span></div></div><div class=\"media\" ng-show=\"item.type == 'audio' || item.type == 'video'\"><i class=\"filetype-icon-large-{{ item.type}}\"></i></div><div class=\"media-info\"><h5><span ng-show=\"item.slugline\">{{ item.slugline }}</span> <span ng-show=\"!item.slugline\">{{ item.type | translate }}</span></h5><dl><dt class=\"source\"><span translate>source:</span></dt><dd class=\"provider\" sd-meta-ingest data-item=\"item\"></dd><dt translate>updated</dt><dd><time datetime=\"{{ item.versioncreated }}\" title=\"{{ item.versioncreated|date:'medium' }}\">{{ item.versioncreated|reldate }}</time></dd><dt ng-show=\"item.is_spiked\" translate>expires</dt><dd ng-if=\"item.is_spiked\"><time title=\"{{ item.expiry | date:'medium' }}\">{{ item.expiry | reldate }}</time></dd></dl><div ng-if=\"item.marked_for_not_publication\" class=\"state-label not-for-publication\" translate>Not for publication</div><div ng-if=\"item.archived\" class=\"fetched-desk\"><div sd-fetched-desks data-item=\"item\"></div></div><div class=\"highlights-box\" ng-if=\"item.highlights\" sd-highlights-title data-item=\"item\"></div></div><span class=\"type-icon\"><i class=\"filetype-icon-{{item.type}}\"></i></span> <span class=\"urgency-label\"><i class=\"urgency-icon-{{item.priority}}\"></i></span> <span class=\"priority-label\"><span class=\"output-item-label label-{{item.urgency}}\">{{ item.urgency }}</span></span> <span class=\"broadcast-status\" tooltip=\"{{item.broadcast.status}}\" ng-if=\"item.broadcast.status\">!</span><div class=\"state-label state-{{item.state}}\" ng-class=\"{state_embargo: item.embargo}\">{{item.state}}</div><div class=\"item-right toolbox\" sd-item-actions-menu data-item=\"item\" data-active=\"focused\"></div></div>"
+    "<div class=\"archiving-progress\" style=\"width:{{ _progress }}%\" ng-if=\"_progress\"></div><div ng-click=\"clickAction(item)\"><div class=\"error-box\" ng-show=\"item.archiveError\"><p class=\"message\" translate>There was an error archiving this item</p><div class=\"buttons\"></div></div><div class=\"media multi\" ng-show=\"item.type == 'text' || item.type == 'composite' || item.type == 'picture'\" ng-mouseenter=\"hover=true\" ng-mouseleave=\"hover=false\"><div sd-item-rendition data-item=\"item\" data-rendition=\"thumbnail\"></div><span class=\"text\"><small title=\"{{ item.headline }}\">{{item.headline | limitTo: 90}}</small> <span sd-item-container data-item=\"item\" class=\"container\"></span></span><div class=\"selectbox\" ng-if=\"item._type !== 'legal_archive'\" ng-show=\"hover || item.selected\"><span sd-check ng-model=\"item.selected\" ng-change=\"toggleSelected(item)\"></span></div></div><div class=\"media\" ng-show=\"item.type == 'audio' || item.type == 'video'\"><i class=\"filetype-icon-large-{{ item.type}}\"></i></div><div class=\"media-info\"><h5><span ng-show=\"item.slugline\">{{ item.slugline }}</span> <span ng-show=\"!item.slugline\">{{ item.type | translate }}</span></h5><dl><dt class=\"source\"><span translate>source:</span></dt><dd class=\"provider\" sd-meta-ingest data-item=\"item\"></dd><dt translate>updated</dt><dd><time datetime=\"{{ item.versioncreated }}\" title=\"{{ item.versioncreated|date:'medium' }}\">{{ item.versioncreated|reldate }}</time></dd><dt ng-show=\"item.is_spiked\" translate>expires</dt><dd ng-if=\"item.is_spiked\"><time title=\"{{ item.expiry | date:'medium' }}\">{{ item.expiry | reldate }}</time></dd></dl><div ng-if=\"item.marked_for_not_publication\" class=\"state-label not-for-publication\" translate>Not for publication</div><div ng-if=\"item.archived\" class=\"fetched-desk\"><div sd-fetched-desks data-item=\"item\"></div></div><div class=\"highlights-box\" ng-if=\"item.highlights\" sd-highlights-title data-item=\"item\"></div></div><span class=\"type-icon\"><i class=\"filetype-icon-{{item.type}}\"></i></span> <span class=\"priority-label priority-label--{{item.priority}}\">{{item.priority}}</span> <span class=\"urgency-label urgency-label--{{item.urgency}}\">{{ item.urgency }}</span> <span class=\"broadcast-status\" tooltip=\"{{item.broadcast.status}}\" ng-if=\"item.broadcast.status\">!</span><div class=\"state-label state-{{item.state}}\" ng-class=\"{state_embargo: item.embargo}\">{{item.state}}</div><div class=\"item-right toolbox\" sd-item-actions-menu data-item=\"item\" data-active=\"focused\"></div></div>"
   );
 
 
   $templateCache.put('scripts/superdesk-archive/views/media-box-list.html',
-    "<div class=\"archiving-progress\" style=\"width:{{ _progress }}%\" ng-if=\"_progress\"></div><div ng-click=\"clickAction(item)\"><span class=\"state-border\"></span><div class=\"list-field type-icon\" ng-if=\"item._type === 'legal_archive'\"><i class=\"filetype-icon-{{ :: item.type}}\" ng-hide=\"hover || item.selected\"></i></div><div class=\"list-field type-icon\" ng-if=\"item._type !== 'legal_archive'\" ng-mouseenter=\"hover = true\" ng-mouseleave=\"hover = false\"><i class=\"filetype-icon-{{ :: item.type}}\" ng-hide=\"hover || item.selected\"></i> <span sd-check ng-model=\"item.selected\" ng-change=\"toggleSelected(item)\" ng-show=\"hover || item.selected\"></span></div><div class=\"list-field urgency\"><i class=\"urgency-icon-{{item.priority}}\"></i> <span ng-if=\"item.urgency\" class=\"output-item-label label-{{item.urgency}}\">{{ item.urgency }}</span></div><div class=\"item-info\"><div class=\"line\"><span class=\"word-count\">{{ item.word_count }}</span> <span class=\"keyword\" title=\"{{ item.slugline }}\" ng-if=\"item.slugline\">{{ item.slugline | limitTo: 40}}</span><div class=\"highlights-box\" ng-if=\"item.highlights\" sd-highlights-title data-item=\"item\"></div><span class=\"item-heading\" id=\"title\" title=\"{{ item.headline }}\">{{ item.headline | limitTo: 90 || item.type }}</span> <time sd-datetime data-date=\"item.versioncreated\"></time></div><div class=\"line\"><div class=\"takekey\" ng-if=\"item.anpa_take_key\">{{ item.anpa_take_key }}</div><span class=\"signal\" ng-if=\"item.signal\">{{ item.signal }}</span><div class=\"state-label state-{{item.state}}\" ng-class=\"{state_embargo: item.embargo}\" ng-hide=\"viewType !== undefined && viewType !== null && viewType !== 'deskOutput'\">{{item.state}}</div><span class=\"broadcast-status\" tooltip=\"{{item.broadcast.status}}\" ng-if=\"item.broadcast.status\">!</span><div ng-if=\"item.marked_for_not_publication\" class=\"state-label not-for-publication\" translate>Not For Publication</div><div class=\"category\" ng-if=\"item['anpa_category'].name\">{{ item['anpa_category'].name }}</div><div class=\"provider\" sd-meta-ingest data-item=\"item\"></div><div class=\"expires\" ng-if=\"item.is_spiked\"><span translate>expires</span> {{ item.expiry | reldate }}</div><div ng-if=\"item.archived\"><div sd-fetched-desks data-item=\"item\"></div></div><span sd-item-container data-item=\"item\" title=\"{{ item.container }}\" class=\"container\" ng-hide=\"viewType\"></span></div></div></div><div class=\"item-right toolbox\" sd-item-actions-menu data-item=\"item\" data-active=\"focused\"></div>"
+    "<div class=\"archiving-progress\" style=\"width:{{ _progress }}%\" ng-if=\"_progress\"></div><div ng-click=\"clickAction(item)\"><span class=\"state-border\"></span><div class=\"list-field type-icon\" ng-if=\"item._type === 'legal_archive'\"><i class=\"filetype-icon-{{ :: item.type}}\" ng-hide=\"hover || item.selected\"></i></div><div class=\"list-field type-icon\" ng-if=\"item._type !== 'legal_archive'\" ng-mouseenter=\"hover = true\" ng-mouseleave=\"hover = false\"><i class=\"filetype-icon-{{ :: item.type}}\" ng-hide=\"hover || item.selected\"></i> <span sd-check ng-model=\"item.selected\" ng-change=\"toggleSelected(item)\" ng-show=\"hover || item.selected\"></span></div><div class=\"list-field urgency\"><span class=\"priority-label priority-label--{{item.priority}}\">{{item.priority}}</span> <span ng-if=\"item.urgency\" class=\"output-item-label label-{{item.urgency}}\">{{ item.urgency }}</span></div><div class=\"item-info\"><div class=\"line\"><span class=\"word-count\">{{ item.word_count }}</span> <span class=\"keyword\" title=\"{{ item.slugline }}\" ng-if=\"item.slugline\">{{ item.slugline | limitTo: 40}}</span><div class=\"highlights-box\" ng-if=\"item.highlights\" sd-highlights-title data-item=\"item\"></div><span class=\"item-heading\" id=\"title\" title=\"{{ item.headline }}\">{{ item.headline | limitTo: 90 || item.type }}</span> <time sd-datetime data-date=\"item.versioncreated\"></time></div><div class=\"line\"><div class=\"takekey\" ng-if=\"item.anpa_take_key\">{{ item.anpa_take_key }}</div><span class=\"signal\" ng-if=\"item.signal\">{{ item.signal }}</span><div class=\"state-label state-{{item.state}}\" ng-class=\"{state_embargo: item.embargo}\" ng-hide=\"viewType !== undefined && viewType !== null && viewType !== 'deskOutput'\">{{item.state}}</div><span class=\"broadcast-status\" tooltip=\"{{item.broadcast.status}}\" ng-if=\"item.broadcast.status\">!</span><div ng-if=\"item.marked_for_not_publication\" class=\"state-label not-for-publication\" translate>Not For Publication</div><div class=\"category\" ng-if=\"item['anpa_category'].name\">{{ item['anpa_category'].name }}</div><div class=\"provider\" sd-meta-ingest data-item=\"item\"></div><div class=\"expires\" ng-if=\"item.is_spiked\"><span translate>expires</span> {{ item.expiry | reldate }}</div><div ng-if=\"item.archived\"><div sd-fetched-desks data-item=\"item\"></div></div><span sd-item-container data-item=\"item\" title=\"{{ item.container }}\" class=\"container\" ng-hide=\"viewType\"></span></div></div></div><div class=\"item-right toolbox\" sd-item-actions-menu data-item=\"item\" data-active=\"focused || (item._id === selected._id)\"></div>"
   );
 
 
@@ -89,7 +89,7 @@ e.groupMembers=d.groupMembers[e.group.edit._id]||[],e.users=d.users._items}):c.w
 
 
   $templateCache.put('scripts/superdesk-archive/views/preview.html',
-    "<div><div class=\"content-container\"><div class=\"composite-nav\" ng-if=\"selected.preview.type === 'composite'\"><div class=\"top\"><span><i class=\"filetype-icon-large-composite\"></i> {{ selected.preview.slugline }}</span></div></div><div ng-hide=\"hideActions()\" class=\"action-menu\"><div sd-item-actions-menu data-item=\"selected.preview\" data-active=\"selected.preview\"></div></div><div id=\"locked\" class=\"clearfix\" sd-item-lock data-item=\"selected.preview\"></div><div class=\"rewrite\" ng-if=\"selected.preview.rewrite_id\">{{ :: 'This story has been rewritten by: ' | translate }}<a ng-click=\"previewRewriteStory()\" class=\"open-item\"><i class=\"icon-external\"></i></a></div><p class=\"title preview-headline\" ng-if=\"selected.preview.headline\" ng-class=\"{condensed: !lock}\">{{ selected.preview.headline }}</p><p class=\"nav-space\" ng-if=\"!selected.preview.headline && !lock\"></p><div class=\"state-label state-{{selected.preview.state}}\" ng-class=\"{state_embargo: item.embargo}\">{{selected.preview.state}}</div><div ng-if=\"selected.preview.highlights\" sd-highlights-title data-item=\"selected.preview\"></div><div class=\"core-content\"><p ng-if=\"selected.preview.is_spiked\" class=\"alert alert-warning expires\"><span translate>expires</span> <time sd-datetime data-date=\"selected.preview.expiry\"></time></p><!-- item rendition --><div ng-if=\"selected.preview.type == 'picture'\" class=\"picture-preview\"><div><span translate>Original</span><div sd-item-rendition data-item=\"selected.preview\" data-rendition=\"viewImage\"></div></div><div sd-item-crops data-item=\"selected.preview\"></div></div><div ng-if=\"selected.preview.type == 'audio'\"><audio controls sd-sources data-renditions=\"selected.preview.renditions\"></audio></div><div ng-if=\"selected.preview.type == 'video'\"><video controls sd-sources data-renditions=\"selected.preview.renditions\"></video></div><div class=\"text abstract\" ng-show=\"selected.preview.abstract\" sd-html-preview=\"selected.preview.abstract\"></div><div class=\"text body-text\" ng-show=\"selected.preview.type !== 'preformatted' && selected.preview.body_html\" sd-html-preview=\"selected.preview.body_html\"></div><div class=\"text body-text\" ng-show=\"selected.preview.type === 'preformatted' && selected.preview.body_html\" sd-html-preview=\"'<pre class=wrap>' + selected.preview.body_html + '</pre>'\"></div><div class=\"composite-preview\" ng-if=\"selected.preview.type === 'composite'\"><div sd-package data-item=\"selected.preview\" data-setitem=\"openSingleItem(selected)\"></div></div></div></div></div>"
+    "<div><div class=\"content-container\"><div class=\"composite-nav\" ng-if=\"selected.preview.type === 'composite'\"><div class=\"top\"><span><i class=\"filetype-icon-large-composite\"></i> {{ selected.preview.slugline }}</span></div></div><div ng-hide=\"hideActions()\" class=\"action-menu\"><div sd-item-actions-menu data-item=\"selected.preview\" data-active=\"selected.preview\"></div></div><div id=\"locked\" class=\"clearfix\" sd-item-lock data-item=\"selected.preview\"></div><div class=\"rewrite\" ng-if=\"selected.preview.rewrite_id\">{{ :: 'This story has been rewritten by: ' | translate }}<a ng-click=\"previewRewriteStory()\" class=\"open-item\"><i class=\"icon-external\"></i></a></div><p class=\"title preview-headline\" ng-if=\"selected.preview.headline\" ng-class=\"{condensed: !lock}\">{{ selected.preview.headline }}</p><p class=\"nav-space\" ng-if=\"!selected.preview.headline && !lock\"></p><div class=\"state-label state-{{selected.preview.state}}\" ng-class=\"{state_embargo: item.embargo}\">{{selected.preview.state}}</div><div ng-if=\"selected.preview.highlights\" sd-highlights-title data-item=\"selected.preview\"></div><div class=\"core-content\"><p ng-if=\"selected.preview.is_spiked\" class=\"alert alert-warning expires\"><span translate>expires</span> <time sd-datetime data-date=\"selected.preview.expiry\"></time></p><!-- item rendition --><div ng-if=\"selected.preview.type == 'picture'\" class=\"picture-preview\"><div><span translate>Original</span><div sd-item-rendition data-item=\"selected.preview\" data-rendition=\"viewImage\"></div></div><div sd-item-crops data-item=\"selected.preview\"></div></div><div ng-if=\"selected.preview.type == 'audio'\"><audio controls sd-sources data-renditions=\"selected.preview.renditions\"></audio></div><div ng-if=\"selected.preview.type == 'video'\"><video controls sd-sources data-renditions=\"selected.preview.renditions\"></video></div><div class=\"text abstract\" ng-show=\"selected.preview.abstract\" sd-html-preview=\"selected.preview.abstract\"></div><div class=\"text body-text\" ng-show=\"selected.preview.body_html\" sd-html-preview=\"selected.preview.body_html\"></div><div class=\"composite-preview\" ng-if=\"selected.preview.type === 'composite'\"><div sd-package data-item=\"selected.preview\" data-setitem=\"openSingleItem(selected)\"></div></div></div></div></div>"
   );
 
 
@@ -114,7 +114,7 @@ e.groupMembers=d.groupMembers[e.group.edit._id]||[],e.users=d.users._items}):c.w
 
 
   $templateCache.put('scripts/superdesk-authoring/comments/views/comments-widget.html',
-    "<div class=\"notification-list-box\" ng-controller=\"CommentsWidgetCtrl\"><ul class=\"notification-list white\"><li ng-repeat=\"comment in comments\" ng-class=\"{active: comment._id === active}\"><figure class=\"avatar\"><img sd-user-avatar data-src=\"comment.user.picture_url\" data-initials=\"comment.user.display_name\"></figure><div class=\"content\"><div class=\"text\" sd-comment-text data-comment=\"comment\" data-name=\"{{comment.user.display_name || comment.user.username}}\" data-text=\"{{comment.text}}\"></div><span class=\"date\" sd-reldate ng-model=\"comment._created\"></span></div></li><li class=\"alert alert-info\" ng-show=\"comments.length === 0\" translate>No comments so far. Be the first..</li><li class=\"alert alert-info\" ng-show=\"comments === null\" translate>Loading..</li></ul><div class=\"add-comment\"><form name=\"commentsForm\"><div sd-user-mentio></div><textarea class=\"new-comment\" sd-auto-height ng-model=\"text\" mentio id=\"mentio-users\" ng-keyup=\"saveOnEnter($event)\"></textarea><div class=\"actions\"><div class=\"pull-left post\"><input type=\"checkbox\" ng-model=\"saveEnterFlag\"> <span translate>Post on 'Enter'</span></div><button class=\"btn btn-info pull-right\" ng-click=\"save()\" ng-show=\"!saveEnterFlag\" translate>Post</button> <button class=\"btn pull-right\" ng-click=\"cancel()\" ng-show=\"!saveEnterFlag\" translate>Cancel</button></div></form></div></div>"
+    "<div class=\"notification-list-box\" ng-controller=\"CommentsWidgetCtrl\"><ul class=\"notification-list white\"><li ng-repeat=\"comment in comments\" ng-class=\"{active: comment._id === active}\"><figure class=\"avatar\"><img sd-user-avatar data-user=\"comment.user\"></figure><div class=\"content\"><div class=\"text\" sd-comment-text data-comment=\"comment\" data-name=\"{{comment.user.display_name || comment.user.username}}\" data-text=\"{{comment.text}}\"></div><span class=\"date\" sd-reldate ng-model=\"comment._created\"></span></div></li><li class=\"alert alert-info\" ng-show=\"comments.length === 0\" translate>No comments so far. Be the first..</li><li class=\"alert alert-info\" ng-show=\"comments === null\" translate>Loading..</li></ul><div class=\"add-comment\"><form name=\"commentsForm\"><div sd-user-mentio></div><textarea class=\"new-comment\" sd-auto-height ng-model=\"text\" mentio id=\"mentio-users\" ng-keyup=\"saveOnEnter($event)\"></textarea><div class=\"actions\"><div class=\"pull-left post\"><input type=\"checkbox\" ng-model=\"saveEnterFlag\"> <span translate>Post on 'Enter'</span></div><button class=\"btn btn-info pull-right\" ng-click=\"save()\" ng-show=\"!saveEnterFlag\" translate>Post</button> <button class=\"btn pull-right\" ng-click=\"cancel()\" ng-show=\"!saveEnterFlag\" translate>Cancel</button></div></form></div></div>"
   );
 
 
@@ -129,7 +129,7 @@ e.groupMembers=d.groupMembers[e.group.edit._id]||[],e.users=d.users._items}):c.w
 
 
   $templateCache.put('scripts/superdesk-authoring/metadata/views/metadata-dropdown.html',
-    "<div class=\"dropdown\" ng-class=\"{'dropright': icon, 'dropdown-noarrow': !icon}\" dropdown sd-dropdown-position><button class=\"dropdown-toggle line-input\" dropdown-toggle ng-if=\"(field !== 'place' && field !== 'genre') && !icon\">{{ item[field].name || item[field] ? item[field].name || item[field] : \"none\" | translate }} <b class=\"caret\"></b></button> <button class=\"dropdown-toggle line-input\" dropdown-toggle ng-if=\"(field === 'place' || field === 'genre') && !icon\">{{ item[field].length > 0 ? item[field][0].name : \"none\" | translate }} <b class=\"caret\"></b></button> <button class=\"dropdown-toggle line-input\" dropdown-toggle ng-if=\"icon\"><i class=\"{{icon}}-{{item[field]}}\"><span ng-if=\"field === 'urgency'\">{{item[field] ? item[field] : 0}}</span></i> <b class=\"caret\"></b></button><ul class=\"dropdown-menu\"><li ng-if=\"label\"><div class=\"menu-label\">{{label}}</div></li><li ng-click=\"select()\" translate><button ng-disabled=\"disabled\">None</button></li><li ng-repeat=\"item in list\" ng-click=\"select(item)\" ng-if=\"field !== 'place'\"><button ng-disabled=\"disabled\"><i ng-if=\"icon\" class=\"{{icon}}-{{item.name}}\"><span ng-if=\"field === 'urgency'\">{{item.name}}</span></i> {{::item.name}}</button></li><li class=\"place-dropdown\" ng-repeat=\"(region, placelist) in places\" ng-if=\"field === 'place'\">{{ ::region }} <button ng-repeat=\"item in placelist\" ng-click=\"select(item)\">{{ ::item.name }}</button></li></ul></div>"
+    "<div class=\"dropdown\" ng-class=\"{'dropright': icon, 'dropdown-noarrow': !icon}\" dropdown sd-dropdown-position><button class=\"dropdown-toggle line-input\" dropdown-toggle ng-if=\"(field !== 'place' && field !== 'genre') && !icon\">{{ item[field].name || item[field] ? item[field].name || item[field] : \"none\" | translate }} <b class=\"caret\"></b></button> <button class=\"dropdown-toggle line-input\" dropdown-toggle ng-if=\"(field === 'place' || field === 'genre') && !icon\">{{ item[field].length > 0 ? item[field][0].name : \"none\" | translate }} <b class=\"caret\"></b></button> <button class=\"dropdown-toggle line-input\" dropdown-toggle ng-if=\"icon\"><span class=\"{{icon}}-{{item[field]}}\">{{item[field] ? item[field] : 0}}</span> <b class=\"caret\"></b></button><ul class=\"dropdown-menu\"><li ng-if=\"label\"><div class=\"menu-label\">{{label}}</div></li><li ng-click=\"select()\" translate><button ng-disabled=\"disabled\">None</button></li><li ng-repeat=\"item in list\" ng-click=\"select(item)\" ng-if=\"field !== 'place'\"><button ng-disabled=\"disabled\"><span ng-if=\"icon\" class=\"{{icon}}-{{item.name}}\">{{item.name}}</span> {{::item.name}}</button></li><li class=\"place-dropdown\" ng-repeat=\"(region, placelist) in places\" ng-if=\"field === 'place'\">{{ ::region }} <button ng-repeat=\"item in placelist\" ng-click=\"select(item)\">{{ ::item.name }}</button></li></ul></div>"
   );
 
 
@@ -184,7 +184,7 @@ e.groupMembers=d.groupMembers[e.group.edit._id]||[],e.users=d.users._items}):c.w
 
 
   $templateCache.put('scripts/superdesk-authoring/versioning/history/views/publish_queue.html',
-    "<div><a ng-href=\"\" ng-if=\"!show_transmission_details\" ng-click=\"showOrHideTransmissionDetails()\"><i class=\"icon-plus-small true\"></i> {{ :: 'Show sent/queued items' | translate }}</a> <a ng-href=\"\" ng-if=\"show_transmission_details\" ng-click=\"showOrHideTransmissionDetails()\"><i class=\"icon-minus-small true\"></i> {{ :: 'Hide sent/queued items' | translate }}</a><ul ng-if=\"show_transmission_details\"><li ng-repeat=\"queuedItem in queuedItems track by queuedItem._id\" ng-click=\"showFormattedItem(queuedItem)\"><div ng-if=\"queuedItem.state !== 'error'\">{{ :: 'Sent/Queued as' | translate }} <b>{{ queuedItem.unique_name }}</b> {{ :: 'on' | translate }} {{ queuedItem.destination.name }} {{ :: 'at' | translate }} <em><time sd-absdate ng-model=\"queuedItem.completed_at\"></time></em></div><div ng-if=\"queuedItem.state === 'error'\">{{ :: 'Error sending as' | translate }} <b>{{ queuedItem.unique_name }}</b> {{ :: 'on' | translate }} {{ queuedItem.destination.name }} {{ :: 'at' | translate }} <em><time sd-absdate ng-model=\"queuedItem.completed_at\"></time></em></div></li></ul><div sd-modal data-model=\"transmitted_item\" class=\"subscriber-modal modal-big moz-scroll-fix\"><div class=\"modal-header\"><a href=\"\" class=\"close\" ng-click=\"hideFormattedItem()\"><i class=\"icon-close-small\"></i></a><h3 translate>Item sent to Subscriber</h3></div><div class=\"modal-body\">{{transmitted_item }}</div></div></div>"
+    "<div><a ng-href=\"\" ng-if=\"!show_transmission_details\" ng-click=\"showOrHideTransmissionDetails()\"><i class=\"icon-plus-small true\"></i> {{ :: 'Show sent/queued items' | translate }}</a> <a ng-href=\"\" ng-if=\"show_transmission_details\" ng-click=\"showOrHideTransmissionDetails()\"><i class=\"icon-minus-small true\"></i> {{ :: 'Hide sent/queued items' | translate }}</a><ul ng-if=\"show_transmission_details && queuedItems.length === 0\"><li class=\"alert-danger\" translate><div>Not been transmitted to any subscriber</div></li></ul><ul ng-if=\"show_transmission_details && queuedItems.length > 0\"><li ng-repeat=\"queuedItem in queuedItems track by queuedItem._id\" ng-click=\"showFormattedItem(queuedItem)\"><div ng-if=\"queuedItem.state !== 'error'\">{{ :: 'Sent/Queued as' | translate }} <b>{{ queuedItem.unique_name }}</b> {{ :: 'on' | translate }} {{ queuedItem.destination.name }} {{ :: 'at' | translate }} <em><time sd-absdate ng-model=\"queuedItem.completed_at\"></time></em></div><div ng-if=\"queuedItem.state === 'error'\">{{ :: 'Error sending as' | translate }} <b>{{ queuedItem.unique_name }}</b> {{ :: 'on' | translate }} {{ queuedItem.destination.name }} {{ :: 'at' | translate }} <em><time sd-absdate ng-model=\"queuedItem.completed_at\"></time></em></div></li></ul><div sd-modal data-model=\"transmitted_item\" class=\"subscriber-modal modal-big moz-scroll-fix\"><div class=\"modal-header\"><a href=\"\" class=\"close\" ng-click=\"hideFormattedItem()\"><i class=\"icon-close-small\"></i></a><h3 translate>Item sent to Subscriber</h3></div><div class=\"modal-body\">{{transmitted_item }}</div></div></div>"
   );
 
 
@@ -199,7 +199,7 @@ e.groupMembers=d.groupMembers[e.group.edit._id]||[],e.users=d.users._items}):c.w
 
 
   $templateCache.put('scripts/superdesk-authoring/views/article-edit.html',
-    "<div class=\"field\" ng-class=\"{'limit-error': item.headline.length > limits.headline}\"><label translate>Headline</label><span sd-character-count data-item=\"item.headline\" data-html=\"true\" data-limit=\"limits.headline\"></span><div id=\"title\" class=\"headline\" sd-text-editor data-config=\"{disableToolbar: true, disableReturn: true}\" data-language=\"item.language\" ng-model=\"item.headline\" ng-change=\"autosave(item)\" ng-if=\"_editable\" ng-trim=\"false\"></div><div class=\"headline\" ng-if=\"!_editable\">{{item.headline}}</div></div><div class=\"field\" class=\"abstract\" ng-class=\"{'limit-error': item.abstract.length > limits.abstract}\"><label translate>Abstract</label><span sd-character-count data-item=\"item.abstract\" data-html=\"true\" data-limit=\"limits.abstract\"></span><div id=\"abstract\" class=\"abstract\" sd-text-editor data-config=\"{disableToolbar: true}\" data-language=\"item.language\" ng-model=\"item.abstract\" ng-change=\"autosave(item)\" ng-if=\"_editable\" ng-trim=\"false\"></div><div class=\"abstract\" ng-if=\"!_editable\">{{item.abstract}}</div></div><div class=\"field\"><label translate>By</label><input type=\"text\" class=\"byline\" id=\"byline\" ng-model=\"item.byline\" ng-change=\"autosave(item)\" ng-if=\"_editable\"><div ng-if=\"!_editable\">{{item.byline}}</div></div><div class=\"field\"><label translate>Dateline</label><div class=\"dateline\"><div sd-meta-locators class=\"dateline-city\" ng-disabled=\"!_editable\" data-list=\"metadata.cities\" data-item=\"item\" data-fieldprefix=\"dateline\" data-field=\"located\" data-postprocessing=\"updateDateline(item, city)\" data-change=\"autosave(item)\"></div><div class=\"dateline-date\"><select id=\"datelineMonth\" ng-options=\"monthName for (monthName, monthValue) in monthNames\" ng-disabled=\"!item.dateline.located || !_editable\" ng-change=\"resetNumberOfDays(true)\" ng-model=\"datelineMonth\"><option value=\"\"></option></select><select id=\"datelineDay\" ng-options=\"day for day in daysInMonth\" ng-disabled=\"!item.dateline.located || !_editable\" ng-change=\"modifyDatelineDate()\" ng-model=\"datelineDay\"><option value=\"\"></option></select></div></div></div><div class=\"field body\" ng-if=\"!isMediaType\"><label translate>Body</label><span sd-word-count data-item=\"item.body_html\" data-html=\"true\"></span><div id=\"bodyhtml\" sd-text-editor ng-model=\"item.body_html\" ng-if=\"_editable\" ng-change=\"autosave(item)\" data-language=\"item.language\" data-type=\"item.type\"></div><div class=\"text-editor\" sd-html-preview=\"item.body_html\" ng-if=\"!_editable\"></div></div><div ng-if=\"isMediaType\" class=\"field abstract\"><label translate>Description</label><textarea class=\"abstract\" sd-auto-height ng-model=\"item.description\" ng-change=\"autosave(item)\" ng-if=\"_editable\" ng-trim=\"false\"></textarea><div class=\"abstract\" ng-if=\"!_editable\">{{item.description}}</div></div><div class=\"field\" ng-if=\"isMediaType\"><div ng-if=\"item.type == 'picture'\" class=\"full-preview\" sd-ratio-calc><div><span translate>Original</span><div sd-item-rendition data-item=\"item\" data-rendition=\"baseImage\"></div></div><div sd-item-crops data-item=\"item\"></div><button id=\"btnCrop\" class=\"btn btn-medium pull-right\" ng-click=\"applyCrop()\" ng-if=\"metadata.crop_sizes\"><span ng-if=\"!item.hasCrops\" translate>APPLY CROPS</span> <span ng-if=\"item.hasCrops\" translate>EDIT CROPS</span></button></div><div ng-if=\"item.type == 'audio'\"><audio controls sd-sources data-renditions=\"item.renditions\"></audio></div><div ng-if=\"item.type == 'video'\"><video controls sd-sources data-renditions=\"item.renditions\"></video></div></div><div class=\"composite-preview\" ng-if=\"item.type === 'composite'\"><div sd-package-items-edit ng-model=\"item.groups\" ng-if=\"_editable\"></div><div sd-package data-item=\"item\" class=\"composite-preview\" ng-if=\"!_editable\"></div></div><div class=\"field pull-left\" ng-if=\"item.sign_off\"><label translate>Sign-Off</label><div>{{item.sign_off}}</div></div>"
+    "<div class=\"field\" ng-class=\"{'limit-error': item.headline.length > limits.headline}\"><label translate>Headline</label><span sd-character-count data-item=\"item.headline\" data-html=\"true\" data-limit=\"limits.headline\"></span><div id=\"title\" class=\"headline\" sd-text-editor data-config=\"{disableToolbar: true, disableReturn: true}\" data-language=\"item.language\" ng-model=\"item.headline\" ng-change=\"autosave(item)\" ng-if=\"_editable\" ng-trim=\"false\"></div><div class=\"headline\" ng-if=\"!_editable\">{{item.headline}}</div></div><div class=\"field\" class=\"abstract\" ng-class=\"{'limit-error': item.abstract.length > limits.abstract}\"><label translate>Abstract</label><span sd-character-count data-item=\"item.abstract\" data-html=\"true\" data-limit=\"limits.abstract\"></span><div id=\"abstract\" class=\"abstract\" sd-text-editor data-config=\"{disableToolbar: true}\" data-language=\"item.language\" ng-model=\"item.abstract\" ng-change=\"autosave(item)\" ng-if=\"_editable\" ng-trim=\"false\"></div><div class=\"abstract\" ng-if=\"!_editable\">{{item.abstract}}</div></div><div class=\"field\"><label translate>By</label><input type=\"text\" class=\"byline\" id=\"byline\" ng-model=\"item.byline\" ng-change=\"autosave(item)\" ng-if=\"_editable\"><div ng-if=\"!_editable\">{{item.byline}}</div></div><div class=\"field\"><label translate>Dateline</label><div class=\"dateline\"><div sd-meta-locators class=\"dateline-city\" ng-disabled=\"!_editable\" data-list=\"metadata.cities\" data-item=\"item\" data-fieldprefix=\"dateline\" data-field=\"located\" data-postprocessing=\"updateDateline(item, city)\" data-change=\"autosave(item)\"></div><div class=\"dateline-date\"><select id=\"datelineMonth\" ng-options=\"monthName for (monthName, monthValue) in monthNames\" ng-disabled=\"!item.dateline.located || !_editable\" ng-change=\"resetNumberOfDays(true)\" ng-model=\"datelineMonth\"><option value=\"\"></option></select><select id=\"datelineDay\" ng-options=\"day for day in daysInMonth\" ng-disabled=\"!item.dateline.located || !_editable\" ng-change=\"modifyDatelineDate()\" ng-model=\"datelineDay\"><option value=\"\"></option></select></div></div></div><div class=\"field body\" ng-if=\"!isMediaType\"><label translate>Body</label><span sd-word-count data-item=\"item.body_html\" data-html=\"true\"></span><div id=\"bodyhtml\" sd-text-editor ng-model=\"item.body_html\" ng-if=\"_editable\" ng-change=\"autosave(item)\" data-language=\"item.language\" data-type=\"item.type\"></div><div class=\"text-editor\" sd-html-preview=\"item.body_html\" ng-if=\"!_editable\"></div></div><div ng-if=\"isMediaType\" class=\"field abstract\"><label translate>Description</label><textarea class=\"abstract\" sd-auto-height ng-model=\"item.description\" ng-change=\"autosave(item)\" ng-if=\"_editable\" ng-trim=\"false\"></textarea><div class=\"abstract\" ng-if=\"!_editable\">{{item.description}}</div></div><div class=\"field\" ng-if=\"metadata.footers && item.type !== 'composite' && !item.package_type\"><label translate>Public Service Announcements</label><select id=\"psa_options\" ng-model=\"item.body_footer_value\" ng-disabled=\"!_editable\" ng-options=\"f.name for f in metadata.footers track by f.name\" ng-change=\"addPSAToFooter()\"><option value=\"\"></option></select></div><div class=\"field\" ng-if=\"item.body_footer\"><label translate>Footer</label><div id=\"body_footer\" class=\"body\" sd-text-editor data-config=\"{disableToolbar: true}\" data-language=\"item.language\" ng-model=\"item.body_footer\" ng-if=\"_editable\" ng-trim=\"false\"></div><div class=\"abstract\" ng-if=\"!_editable\">{{item.body_footer}}</div></div><div class=\"field\" ng-if=\"isMediaType\"><div ng-if=\"item.type == 'picture'\" class=\"full-preview\" sd-ratio-calc><div><span translate>Original</span><div sd-item-rendition data-item=\"item\" data-rendition=\"baseImage\"></div></div><div sd-item-crops data-item=\"item\"></div><button id=\"btnCrop\" class=\"btn btn-medium pull-right\" ng-click=\"applyCrop()\" ng-if=\"metadata.crop_sizes\"><span ng-if=\"!item.hasCrops\" translate>APPLY CROPS</span> <span ng-if=\"item.hasCrops\" translate>EDIT CROPS</span></button></div><div ng-if=\"item.type == 'audio'\"><audio controls sd-sources data-renditions=\"item.renditions\"></audio></div><div ng-if=\"item.type == 'video'\"><video controls sd-sources data-renditions=\"item.renditions\"></video></div></div><div class=\"composite-preview\" ng-if=\"item.type === 'composite'\"><div sd-package-items-edit ng-model=\"item.groups\" ng-if=\"_editable\"></div><div sd-package data-item=\"item\" class=\"composite-preview\" ng-if=\"!_editable\"></div></div><div class=\"field pull-left\" ng-if=\"item.sign_off\"><label translate>Sign-Off</label><div>{{item.sign_off}}</div></div>"
   );
 
 
@@ -209,7 +209,7 @@ e.groupMembers=d.groupMembers[e.group.edit._id]||[],e.users=d.users._items}):c.w
 
 
   $templateCache.put('scripts/superdesk-authoring/views/authoring-topbar.html',
-    "<div id=\"subnav\" class=\"subnav\" ng-class=\"{'auth-sendto': views.send}\"><div class=\"dropdown dropright lock-avatar pull-left\" ng-if=\"item._locked\" dropdown><figure class=\"avatar small avatar-with-info\" dropdown-toggle><div class=\"logged-info\"></div><div class=\"user-image\"><img sd-user-avatar data-src=\"item.lock_user.picture_url\" data-initials=\"item.lock_user | username\"></div></figure><div class=\"dropdown-menu\"><div class=\"menu-label\" translate>Locked by</div><figure class=\"avatar large\"><div class=\"user-image\"><img sd-user-avatar data-src=\"item.lock_user.picture_url\" data-initials=\"item.lock_user | username\"></div></figure><div class=\"lock-text\">{{ item.lock_user | username }}</div><button class=\"btn btn-medium pull-left\" ng-if=\"item._locked && !item.sendTo && can_unlock() && itemActions.save\" ng-click=\"unlock()\" ng-disabled=\"unlockClicked\" translate>Unlock</button></div></div><div class=\"authoring-topbar clearfix pull-left\" ng-class=\"{'has-highlights': item.highlights}\"><button class=\"stage\" ng-show=\"stage\" ng-if=\"item._type !== 'legal_archive'\" ng-click=\"openStage()\"><b>{{deskName}}</b> / {{ stage.name }}</button> <span class=\"stage\" ng-show=\"stage\" ng-if=\"item._type === 'legal_archive'\"><b>{{deskName}}</b> / {{ stage }}</span><div ng-if=\"item.more_coming === true\" class=\"state-label state-in_progress\" translate>More coming</div><span ng-if=\"item.highlights\" sd-highlights-title data-item=\"item\" data-orientation=\"'bottom'\"></span></div><div class=\"button-stack right-stack\"><button id=\"Edit\" class=\"btn btn-medium pull-left\" ng-if=\"item._type !== 'legal_archive'\" ng-show=\"action === 'view' && !item._locked && itemActions.edit\" ng-click=\"edit()\" translate>Edit</button> <button class=\"btn btn-medium pull-left\" ng-show=\"action === 'view' && !item._locked && itemActions.deschedule\" ng-click=\"deschedule()\" translate>Deschedule</button> <button class=\"btn btn-medium btn-info pull-left\" ng-if=\"item._type !== 'legal_archive'\" ng-show=\"action === 'view' && !item._locked && itemActions.correct\" ng-click=\"openAction('correct')\" translate>Edit and Correct</button> <button class=\"btn btn-medium btn-info pull-left\" ng-if=\"item._type !== 'legal_archive'\" ng-show=\"action === 'view' && !item._locked && itemActions.kill\" ng-click=\"openAction('kill')\" translate>Edit and Kill</button> <button class=\"btn btn-medium pull-left\" id=\"closeAuthoringBtn\" ng-click=\"close()\" translate>CLOSE</button> <button class=\"btn btn-medium btn-info pull-left\" type=\"submit\" ng-click=\"saveTopbar(item)\" ng-show=\"_editable\" ng-if=\"itemActions.save && action === 'edit'\" ng-disabled=\"!save_enabled() || saveDisabled\" translate>SAVE</button> <button id=\"export\" class=\"btn btn-medium btn-info pull-left\" ng-click=\"exportHighlight(item)\" ng-disabled=\"!_editable\" ng-if=\"highlight\" translate>Export</button> <button class=\"navbtn navbtn-hover strict\" ng-if=\"!item._locked\" title=\"{{ :: 'Minimize' | translate }}\" ng-click=\"minimize()\"><i class=\"big-icon-minimize\"></i></button><div ng-if=\"item._type !== 'legal_archive' && itemActions.multi_edit && !item._locked\" class=\"navbtn dropdown strict multiedit-dropdown pull-left strict\" title=\"{{ :: 'Multiedit' | translate }}\" dropdown><button class=\"dropdown-toggle\" dropdown-toggle><i class=\"big-icon-multiedit\"></i></button><div class=\"dropdown-menu pull-right\" sd-multiedit-dropdown></div></div><div id=\"authoring-extra-dropdown\" ng-if=\"item._type !== 'legal_archive'\" class=\"navbtn dropdown pull-left strict\" title=\"{{ :: 'More actions' | translate }}\" dropdown><button class=\"dropdown-toggle\" dropdown-toggle><i class=\"icon-dots-vertical\"></i></button><div class=\"dropdown-menu pull-right\"><ul ng-controller=\"TemplateMenu as templateMenu\"><li><span class=\"menu-label\" translate>Templates</span></li><li><button type=\"button\" ng-click=\"templateMenu.create(item)\" translate>Save as template</button></li></ul><ul ng-if=\"item.task.desk && itemActions.mark_item\" title=\"{{ :: 'Mark item' | translate }}\"><li class=\"divider\"></li><li><span class=\"menu-label\" translate>Highlights</span></li><li><div class=\"dropdown highlights-toggle\" dropdown><button class=\"dropdown-toggle\" dropdown-toggle>{{ :: 'Mark item' | translate }} <i class=\"icon-chevron-right-thin submenu-icon\"></i></button><ul class=\"dropdown-menu right-submenu\" sd-mark-highlights-dropdown></ul></div></li></ul><ul ng-if=\"_editable\" ng-controller=\"SpellcheckMenu as spellcheckMenu\"><li class=\"divider\"></li><li><span class=\"menu-label\" translate>Spell Checker</span></li><li><span><span class=\"pull-right\" sd-switch ng-model=\"spellcheckMenu.isAuto\" ng-change=\"spellcheckMenu.pushSettings()\"></span> <span translate>Run automatically</span></span></li><li><button type=\"button\" ng-click=\"spellcheckMenu.spellcheck()\" ng-disabled=\"spellcheckMenu.isAuto\" translate><span class=\"shortcut pull-right\">Ctrl+Shift+D</span> Check spelling</button></li></ul></div></div><button id=\"send-to-btn\" ng-show=\"_editable\" class=\"navbtn navbtn-hover\" title=\"{{ :: 'Send to / Publish' | translate }}\" ng-click=\"views.send = !views.send\"><i class=\"svg-icon-sendto\"></i></button></div></div>"
+    "<div id=\"subnav\" class=\"subnav\" ng-class=\"{'auth-sendto': views.send}\"><div class=\"dropdown dropright lock-avatar pull-left\" ng-if=\"item._locked\" dropdown><figure class=\"avatar small avatar-with-info\" dropdown-toggle><div class=\"logged-info\"></div><div class=\"user-image\"><img sd-user-avatar data-user=\"item.lock_user\"></div></figure><div class=\"dropdown-menu\"><div class=\"menu-label\" translate>Locked by</div><figure class=\"avatar large\"><div class=\"user-image\"><img sd-user-avatar data-user=\"item.lock_user\"></div></figure><div class=\"lock-text\">{{ item.lock_user | username }}</div><button class=\"btn btn-medium pull-left\" ng-if=\"item._locked && !item.sendTo && can_unlock() && itemActions.save\" ng-click=\"unlock()\" ng-disabled=\"unlockClicked\" translate>Unlock</button></div></div><div class=\"authoring-topbar clearfix pull-left\" ng-class=\"{'has-highlights': item.highlights}\"><button class=\"stage\" ng-show=\"stage\" ng-if=\"item._type !== 'legal_archive'\" ng-click=\"openStage()\"><b>{{deskName}}</b> / {{ stage.name }}</button> <span class=\"stage\" ng-show=\"stage\" ng-if=\"item._type === 'legal_archive'\"><b>{{deskName}}</b> / {{ stage }}</span><div ng-if=\"item.more_coming === true\" class=\"state-label state-in_progress\" translate>More coming</div><span ng-if=\"item.highlights\" sd-highlights-title data-item=\"item\" data-orientation=\"'bottom'\"></span></div><div class=\"button-stack right-stack\"><button id=\"Edit\" class=\"btn btn-medium pull-left\" ng-if=\"item._type !== 'legal_archive'\" ng-show=\"action === 'view' && !item._locked && itemActions.edit\" ng-click=\"edit()\" translate>Edit</button> <button class=\"btn btn-medium pull-left\" ng-show=\"action === 'view' && !item._locked && itemActions.deschedule\" ng-click=\"deschedule()\" translate>Deschedule</button> <button class=\"btn btn-medium btn-info pull-left\" ng-if=\"item._type !== 'legal_archive'\" ng-show=\"action === 'view' && !item._locked && itemActions.correct\" ng-click=\"openAction('correct')\" translate>Edit and Correct</button> <button class=\"btn btn-medium btn-info pull-left\" ng-if=\"item._type !== 'legal_archive'\" ng-show=\"action === 'view' && !item._locked && itemActions.kill\" ng-click=\"openAction('kill')\" translate>Edit and Kill</button> <button class=\"btn btn-medium pull-left\" id=\"closeAuthoringBtn\" ng-click=\"close()\" translate>CLOSE</button> <button class=\"btn btn-medium btn-info pull-left\" type=\"submit\" ng-click=\"saveTopbar(item)\" ng-show=\"_editable\" ng-if=\"itemActions.save && action === 'edit'\" ng-disabled=\"!save_enabled() || saveDisabled\" translate>SAVE</button> <button id=\"export\" class=\"btn btn-medium btn-info pull-left\" ng-click=\"exportHighlight(item)\" ng-disabled=\"!_editable\" ng-if=\"highlight\" translate>Export</button> <button class=\"navbtn navbtn-hover strict\" ng-if=\"!item._locked\" title=\"{{ :: 'Minimize' | translate }}\" ng-click=\"minimize()\"><i class=\"big-icon-minimize\"></i></button><div ng-if=\"item._type !== 'legal_archive' && itemActions.multi_edit && !item._locked\" class=\"navbtn dropdown strict multiedit-dropdown pull-left strict\" title=\"{{ :: 'Multiedit' | translate }}\" dropdown><button class=\"dropdown-toggle\" dropdown-toggle><i class=\"big-icon-multiedit\"></i></button><div class=\"dropdown-menu pull-right\" sd-multiedit-dropdown></div></div><div id=\"authoring-extra-dropdown\" ng-if=\"item._type !== 'legal_archive'\" class=\"navbtn dropdown pull-left strict\" dropdown><button class=\"dropdown-toggle\" title=\"{{ :: 'More actions' | translate }}\" dropdown-toggle><i class=\"icon-dots-vertical\"></i></button><div class=\"dropdown-menu pull-right\"><ul ng-controller=\"TemplateMenu as templateMenu\"><li><span class=\"menu-label\" translate>Templates</span></li><li><button type=\"button\" ng-click=\"templateMenu.create(item)\" translate>Save as template</button></li></ul><ul ng-if=\"item.task.desk && itemActions.mark_item\" title=\"{{ :: 'Mark item' | translate }}\"><li class=\"divider\"></li><li><span class=\"menu-label\" translate>Highlights</span></li><li><div class=\"dropdown highlights-toggle\" dropdown><button class=\"dropdown-toggle\" dropdown-toggle>{{ :: 'Mark item' | translate }} <i class=\"icon-chevron-right-thin submenu-icon\"></i></button><ul class=\"dropdown-menu right-submenu\" sd-mark-highlights-dropdown></ul></div></li></ul><ul ng-if=\"_editable\" ng-controller=\"SpellcheckMenu as spellcheckMenu\"><li class=\"divider\"></li><li><span class=\"menu-label\" translate>Spell Checker</span></li><li><span><span class=\"pull-right\" sd-switch ng-model=\"spellcheckMenu.isAuto\" ng-change=\"spellcheckMenu.pushSettings()\" tooltip=\"{{ spellcheckMenu.isAuto ? 'Spell checking ON' : 'Spell checking OFF'  | translate }}\" tooltip-placement=\"left\"></span> <span translate>Run automatically</span></span></li><li><button type=\"button\" ng-click=\"spellcheckMenu.spellcheck()\" ng-disabled=\"spellcheckMenu.isAuto\" translate><span class=\"shortcut pull-right\">Ctrl+Shift+D</span> Check spelling</button></li></ul></div></div><button id=\"send-to-btn\" ng-show=\"_editable\" class=\"navbtn navbtn-hover\" title=\"{{ :: 'Send to / Publish' | translate }}\" ng-click=\"views.send = !views.send\"><i class=\"svg-icon-sendto\"></i></button></div></div>"
   );
 
 
@@ -234,7 +234,7 @@ e.groupMembers=d.groupMembers[e.group.edit._id]||[],e.users=d.users._items}):c.w
 
 
   $templateCache.put('scripts/superdesk-authoring/views/header-info.html',
-    "<div class=\"authoring-header__holder\" ng-controller=\"MetadataWidgetCtrl\" ng-if=\"loaded\"><div class=\"authoring-header__short\"><label translate>Created</label><time sd-datetime data-date=\"item.firstcreated\"></time><label ng-if=\"userLookup[item.original_creator]\" translate>by</label><b>{{userLookup[item.original_creator].display_name}}</b><div ng-if=\"item.versioncreated\"><label translate>Modified</label><time sd-datetime data-date=\"item.versioncreated\"></time></div></div><div class=\"authoring-header__general-info\"><div><i class=\"filetype-icon-{{ :: item.type }}\" title=\"{{ :: 'Article Type' | translate }}\"></i></div><div ng-if=\"item.type === 'text'\"><label class=\"word-count\"><b>{{ item.word_count || 0 }}</b> <span translate translate-n=\"item.word_count\" translate-plural=\"WORDS\">WORD</span></label></div><div ng-if=\"item.signal\"><span class=\"signal\">{{ item.signal}}</span></div><div><label translate>SOURCE</label><div class=\"data\" sd-meta-ingest data-item=\"item\"></div></div><div><label translate>RELATED</label><div class=\"data\"><a href=\"\" ng-click=\"activateWidget()\">{{relatedItems._items.length}}</a></div></div><div><label translate>GENRE</label><div sd-meta-dropdown class=\"data\" data-item=\"item\" data-field=\"genre\" data-list=\"metadata.genre\" ng-disabled=\"!_editable || item.broadcast.master_id\" data-change=\"autosave(item)\"></div></div><div ng-if=\"item.broadcast.master_id\"><label translate ng-class=\"{'broadcast-status': item.broadcast.status !== ''}\" tooltip=\"{{item.broadcast.status}}\">MASTER<b ng-if=\"item.broadcast.status\">!</b></label><div class=\"data\"><a id=\"preview-master\" ng-click=\"previewMasterStory()\" title=\"{{ :: 'Preview master story' | translate }}\" class=\"open-item\"><i class=\"icon-external\"></i></a></div></div></div><div class=\"authoring-header__detailed\"><div class=\"item-wrapper\"><div class=\"item\"><label translate>SLUGLINE</label><input type=\"text\" sd-autofocus class=\"line-input slugline\" id=\"slugline\" ng-model=\"item.slugline\" ng-change=\"autosave(item)\" ng-disabled=\"!_editable\" ng-trim=\"false\"></div><div class=\"item\"><label translate>TAKEKEY</label><input type=\"text\" class=\"line-input\" id=\"anpa_take_key\" ng-model=\"item.anpa_take_key\" ng-change=\"autosave(item)\" ng-disabled=\"!_editable\" ng-trim=\"false\"></div></div><div class=\"item-wrapper\"><div class=\"item\" ng-if=\"metadata.locators\"><label translate>PLACE</label><div sd-meta-dropdown class=\"data\" data-item=\"item\" data-field=\"place\" data-list=\"metadata.locators\" ng-disabled=\"!_editable\" data-change=\"autosave(item)\"></div></div><div class=\"item\"><div class=\"item\"><label translate>PRIORITY</label><div sd-meta-dropdown data-item=\"item\" data-field=\"priority\" data-list=\"metadata.priority\" data-icon=\"urgency-icon\" data-label=\"Priority\" ng-disabled=\"!_editable\" data-change=\"autosave(item)\"></div></div><div class=\"item\"><label translate>URGENCY</label><div sd-meta-dropdown data-item=\"item\" data-field=\"urgency\" data-list=\"metadata.urgency\" data-icon=\"output-item-label label\" data-label=\"Urgency\" ng-disabled=\"!_editable\" data-change=\"autosave(item)\"></div></div></div></div><div class=\"item-wrapper\" ng-if=\"metadata.categories\" id=\"category-setting\"><label translate>CATEGORY</label><div sd-meta-terms class=\"data\" ng-disabled=\"!_editable\" data-item=\"item\" data-field=\"anpa_category\" data-unique=\"qcode\" data-list=\"availableCategories\" data-header=\"true\" data-change=\"autosave(item)\"></div></div><div class=\"item-wrapper\" ng-if=\"metadata.subjectcodes\"><label translate>SUBJECT</label><div sd-meta-terms class=\"data\" data-item=\"item\" data-field=\"subject\" data-unique=\"qcode\" data-list=\"metadata.subjectcodes\" ng-disabled=\"!_editable\" data-header=\"true\" data-change=\"autosave(item)\"></div></div><div class=\"item-wrapper\"><label translate>ED. NOTE</label><textarea class=\"line-input ed-note\" ng-model=\"item.ednote\" ng-disabled=\"!_editable\" ng-change=\"autosave(item)\"></textarea></div></div></div><button ng-class=\"{active: toggleHeader}\" ng-click=\"toggleHeader = !toggleHeader\" tabindex=\"-1\"><i class=\"icon-chevron-up-thin\"></i></button>"
+    "<div class=\"authoring-header__holder\" ng-controller=\"MetadataWidgetCtrl\" ng-if=\"loaded\"><div class=\"authoring-header__short\"><label translate>Created</label><time sd-datetime data-date=\"item.firstcreated\"></time><label ng-if=\"userLookup[item.original_creator]\" translate>by</label><b>{{userLookup[item.original_creator].display_name}}</b><div ng-if=\"item.versioncreated\"><label translate>Modified</label><time sd-datetime data-date=\"item.versioncreated\"></time></div></div><div class=\"authoring-header__general-info\"><div><i class=\"filetype-icon-{{ :: item.type }}\" title=\"{{ :: 'Article Type' | translate }}\"></i></div><div ng-if=\"item.type === 'text'\"><label class=\"word-count\"><b>{{ item.word_count || 0 }}</b> <span translate translate-n=\"item.word_count\" translate-plural=\"WORDS\">WORD</span></label></div><div ng-if=\"item.signal\"><span class=\"signal\">{{ item.signal}}</span></div><div><label translate>SOURCE</label><div class=\"data\" sd-meta-ingest data-item=\"item\"></div></div><div><label translate>RELATED</label><div class=\"data\"><a href=\"\" ng-click=\"activateWidget()\">{{relatedItems._items.length}}</a></div></div><div><label translate>GENRE</label><div sd-meta-dropdown class=\"data\" data-item=\"item\" data-field=\"genre\" data-list=\"metadata.genre\" ng-disabled=\"!_editable || item.broadcast.master_id\" data-change=\"autosave(item)\"></div></div><div ng-if=\"item.broadcast.master_id\"><label translate ng-class=\"{'broadcast-status': item.broadcast.status !== ''}\" tooltip=\"{{item.broadcast.status}}\">MASTER<b ng-if=\"item.broadcast.status\">!</b></label><div class=\"data\"><a id=\"preview-master\" ng-click=\"previewMasterStory()\" title=\"{{ :: 'Preview master story' | translate }}\" class=\"open-item\"><i class=\"icon-external\"></i></a></div></div></div><div class=\"authoring-header__detailed\"><div class=\"item-wrapper\"><div class=\"item\"><label translate>SLUGLINE</label><input type=\"text\" sd-autofocus class=\"line-input slugline\" id=\"slugline\" ng-model=\"item.slugline\" ng-change=\"autosave(item)\" ng-disabled=\"!_editable\" ng-trim=\"false\"></div><div class=\"item\"><label translate>TAKEKEY</label><input type=\"text\" class=\"line-input\" id=\"anpa_take_key\" ng-model=\"item.anpa_take_key\" ng-change=\"autosave(item)\" ng-disabled=\"!_editable\" ng-trim=\"false\"></div></div><div class=\"item-wrapper\"><div class=\"item\" ng-if=\"metadata.locators\"><label translate>PLACE</label><div sd-meta-dropdown class=\"data\" data-item=\"item\" data-field=\"place\" data-list=\"metadata.locators\" ng-disabled=\"!_editable\" data-change=\"autosave(item)\"></div></div><div class=\"item\"><div class=\"item\"><label translate>PRIORITY</label><div sd-meta-dropdown data-item=\"item\" data-field=\"priority\" data-list=\"metadata.priority\" data-icon=\"priority-label priority-label-\" data-label=\"Priority\" ng-disabled=\"!_editable\" data-change=\"autosave(item)\"></div></div><div class=\"item\"><label translate>URGENCY</label><div sd-meta-dropdown data-item=\"item\" data-field=\"urgency\" data-list=\"metadata.urgency\" data-icon=\"urgency-label urgency-label-\" data-label=\"Urgency\" ng-disabled=\"!_editable\" data-change=\"autosave(item)\"></div></div></div></div><div class=\"item-wrapper\" ng-if=\"metadata.categories\" id=\"category-setting\"><label translate>CATEGORY</label><div sd-meta-terms class=\"data\" ng-disabled=\"!_editable\" data-item=\"item\" data-field=\"anpa_category\" data-unique=\"qcode\" data-list=\"availableCategories\" data-header=\"true\" data-change=\"autosave(item)\"></div></div><div class=\"item-wrapper\" ng-if=\"metadata.subjectcodes\"><label translate>SUBJECT</label><div sd-meta-terms class=\"data\" data-item=\"item\" data-field=\"subject\" data-unique=\"qcode\" data-list=\"metadata.subjectcodes\" ng-disabled=\"!_editable\" data-header=\"true\" data-change=\"autosave(item)\"></div></div><div class=\"item-wrapper\"><label translate>ED. NOTE</label><textarea class=\"line-input ed-note\" ng-model=\"item.ednote\" ng-disabled=\"!_editable\" ng-change=\"autosave(item)\"></textarea></div></div></div><button ng-class=\"{active: toggleHeader}\" ng-click=\"toggleHeader = !toggleHeader\" tabindex=\"-1\"><i class=\"icon-chevron-up-thin\"></i></button>"
   );
 
 
@@ -249,7 +249,7 @@ e.groupMembers=d.groupMembers[e.group.edit._id]||[],e.users=d.users._items}):c.w
 
 
   $templateCache.put('scripts/superdesk-authoring/views/send-item.html',
-    "<div class=\"slide-pane slide-pane--dark content-item-preview\" ng-show=\"isActive\" ng-class=\"{open: isActive, 'slide-pane--inset': mode === 'authoring'}\"><div class=\"slide-pane__header\"><h3 ng-show=\"mode === 'authoring' && itemActions.publish\" translate>Send to / Publish</h3><h3 ng-show=\"mode === 'authoring' && !itemActions.publish\" translate>Send to</h3><h3 ng-show=\"mode !== 'authoring'\" translate>Fetch To</h3><div class=\"close\" ng-click=\"close()\"><i class=\"icon-close-small icon-white\"></i></div></div><div class=\"slide-pane__content\"><div sd-toggle-box ng-if=\"showSendButtonAndDestination()\" data-title=\"{{ :: 'Destination' | translate }}\" data-open=\"true\" data-style=\"dark\"><div class=\"dropdown dropdown-noarrow dropdown--dark\" dropdown><button class=\"dropdown-toggle\" dropdown-toggle><span ng-show=\"!selectedDesk\" translate>Select desk</span> <span ng-show=\"selectedDesk\">{{selectedDesk.name}}</span> <b class=\"caret white\"></b></button><ul class=\"dropdown-menu\"><li ng-repeat=\"desk in desks._items track by desk._id\"><button ng-click=\"selectDesk(desk)\">{{::desk.name}}</button></li></ul></div><ul class=\"btn-list\" ng-if=\"stages\"><li ng-repeat=\"stage in stages track by stage._id\"><button class=\"btn__check\" ng-class=\"{active: stage._id === selectedStage._id}\" ng-disabled=\"stage._id === item.task.stage\" ng-click=\"selectStage(stage)\">{{::stage.name}}</button></li></ul></div><div sd-toggle-box id=\"embargoTimestamp\" ng-if=\"mode === 'authoring' && showEmbargo()\" data-title=\"Embargo\" data-open=\"true\" data-style=\"dark\"><label class=\"label--lite\" translate>Embargo</label><ul class=\"btn-list\"><li class=\"datepicker-input--dark\"><div sd-datepicker ng-model=\"item.embargo_date\" ng-disabled=\"!isEmbargoEditable()\"></div></li><li class=\"timepicker-input--dark\"><div sd-timepicker ng-model=\"item.embargo_time\" ng-disabled=\"!isEmbargoEditable()\"></div></li></ul></div><div sd-toggle-box id=\"publishScheduleTimestamp\" ng-if=\"mode === 'authoring' && showPublishSchedule()\" data-title=\"Publishing\" data-open=\"true\" data-style=\"dark\"><label class=\"label--lite\" translate>Publish Schedule</label><ul class=\"btn-list\"><li class=\"datepicker-input--dark\"><div sd-datepicker ng-model=\"item.publish_schedule_date\" ng-disabled=\"!_editable\"></div></li><li class=\"timepicker-input--dark\"><div sd-timepicker ng-model=\"item.publish_schedule_time\" ng-disabled=\"!_editable\"></div></li></ul></div></div><div class=\"slide-pane__footer\"><ul class=\"btn-list\"><li ng-if=\"mode === 'authoring' && canSendAndContinue() && itemActions.send && itemActions.new_take\"><button class=\"btn btn-info\" ng-click=\"sendAndContinue()\" ng-disabled=\"item.embargo || disableSendButton()\" translate>send and continue</button></li><li ng-if=\"showSendButtonAndDestination()\"><button class=\"btn btn-info\" ng-click=\"send()\" ng-disabled=\"disableSendButton()\" translate>{{mode !== 'authoring' ? 'fetch' : 'send'}}</button></li><li ng-if=\"showSendButtonAndDestination() && mode !== 'authoring'\"><button class=\"btn btn-info\" ng-click=\"send(true)\" translate>fetch and open</button></li><li class=\"full-width\" ng-if=\"mode === 'authoring' && (itemActions.publish || itemActions.kill || itemActions.correct)\"><button type=\"submit\" class=\"btn btn-info\" ng-show=\"_editable\" ng-click=\"_publish()\" translate>{{_action === 'edit' ? 'publish' : _action}}</button></li></ul></div></div>"
+    "<div class=\"slide-pane slide-pane--dark content-item-preview\" ng-show=\"isActive\" ng-class=\"{open: isActive, 'slide-pane--inset': mode === 'authoring'}\"><div class=\"slide-pane__header\"><h3 ng-show=\"mode === 'authoring' && itemActions.publish\" translate>Send to / Publish</h3><h3 ng-show=\"mode === 'authoring' && !itemActions.publish\" translate>Send to</h3><h3 ng-show=\"mode !== 'authoring'\" translate>Fetch To</h3><div class=\"close\" ng-click=\"close()\"><i class=\"icon-close-small icon-white\"></i></div></div><div class=\"slide-pane__content\"><div sd-toggle-box ng-if=\"showSendButtonAndDestination()\" data-title=\"{{ :: 'Destination' | translate }}\" data-open=\"true\" data-style=\"dark\"><div class=\"dropdown dropdown-noarrow dropdown--dark\" dropdown><button class=\"dropdown-toggle\" dropdown-toggle><span ng-show=\"!selectedDesk\" translate>Select desk</span> <span ng-show=\"selectedDesk\">{{selectedDesk.name}}</span> <b class=\"caret white\"></b></button><ul class=\"dropdown-menu\"><li ng-repeat=\"desk in desks._items track by desk._id\"><button ng-click=\"selectDesk(desk)\">{{::desk.name}}</button></li></ul></div><ul class=\"btn-list\" ng-if=\"stages\"><li ng-repeat=\"stage in stages track by stage._id\"><button class=\"btn__check\" ng-class=\"{active: stage._id === selectedStage._id}\" ng-disabled=\"stage._id === item.task.stage\" ng-click=\"selectStage(stage)\">{{::stage.name}}</button></li></ul></div><div sd-toggle-box id=\"embargoTimestamp\" ng-if=\"mode === 'authoring' && showEmbargo()\" data-title=\"Embargo\" data-open=\"true\" data-style=\"dark\"><label class=\"label--lite\" translate>Embargo</label><ul class=\"btn-list\"><li class=\"datepicker-input--dark\"><div sd-datepicker ng-model=\"item.embargo_date\" ng-disabled=\"!isEmbargoEditable()\"></div></li><li class=\"timepicker-input--dark\"><div sd-timepicker ng-model=\"item.embargo_time\" ng-disabled=\"!isEmbargoEditable()\"></div></li></ul></div><div sd-toggle-box id=\"publishScheduleTimestamp\" ng-if=\"mode === 'authoring' && showPublishSchedule()\" data-title=\"Publishing\" data-open=\"true\" data-style=\"dark\"><label class=\"label--lite\" translate>Publish Schedule</label><ul class=\"btn-list\"><li class=\"datepicker-input--dark\"><div sd-datepicker ng-model=\"item.publish_schedule_date\" ng-disabled=\"!_editable\"></div></li><li class=\"timepicker-input--dark\"><div sd-timepicker ng-model=\"item.publish_schedule_time\" ng-disabled=\"!_editable\"></div></li></ul></div></div><div class=\"slide-pane__footer\"><ul class=\"btn-list\"><li ng-if=\"mode === 'authoring' && canSendAndContinue() && itemActions.send && itemActions.new_take\"><button class=\"btn btn-info\" ng-click=\"sendAndContinue()\" ng-disabled=\"item.embargo || disableSendButton()\" translate>send and continue</button></li><li ng-if=\"showSendButtonAndDestination()\"><button class=\"btn btn-info\" ng-click=\"send()\" ng-disabled=\"disableSendButton()\" translate>{{mode !== 'authoring' ? 'fetch' : 'send'}}</button></li><li ng-if=\"showSendButtonAndDestination() && mode !== 'authoring'\"><button class=\"btn btn-info\" ng-click=\"send(true)\" ng-disabled=\"disableFetchAndOpenButton()\" translate>fetch and open</button></li><li class=\"full-width\" ng-if=\"mode === 'authoring' && (itemActions.publish || itemActions.kill || itemActions.correct)\"><button type=\"submit\" class=\"btn btn-info\" ng-show=\"_editable\" ng-click=\"_publish()\" translate>{{_action === 'edit' ? 'publish' : _action}}</button></li></ul></div></div>"
   );
 
 
@@ -334,7 +334,7 @@ e.groupMembers=d.groupMembers[e.group.edit._id]||[],e.users=d.users._items}):c.w
 
 
   $templateCache.put('scripts/superdesk-dashboard/workspace-tasks/views/assignee-view.html',
-    "<div><figure class=\"avatar {{avatarSize}}\"><img sd-user-avatar data-src=\"userPicture\" data-initials=\"userName\"></figure><div class=\"assignee-name\" ng-if=\"name\"><span ng-show=\"task.desk\">{{deskName}} /</span> <span ng-show=\"task.user\">{{userName}}</span> <span ng-hide=\"task.user\" translate>Unassigned</span></div></div>"
+    "<div><figure class=\"avatar {{avatarSize}}\"><img sd-user-avatar data-user=\"user\"></figure><div class=\"assignee-name\" ng-if=\"name\"><span ng-show=\"task.desk\">{{deskName}} /</span> <span ng-show=\"task.user\">{{userName}}</span> <span ng-hide=\"task.user\" translate>Unassigned</span></div></div>"
   );
 
 
@@ -349,7 +349,7 @@ e.groupMembers=d.groupMembers[e.group.edit._id]||[],e.users=d.users._items}):c.w
 
 
   $templateCache.put('scripts/superdesk-dashboard/workspace-tasks/views/task-preview.html',
-    "<header><p class=\"pull-left\">{{ :: 'Created on' | translate}} <span sd-reldate-complex ng-model=\"task._created\"></span> {{ :: 'by' | translate}} {{ users[task.original_creator].display_name }}</p><button ng-click=\"close()\" class=\"close-preview\"><i class=\"icon-close-small\"></i></button></header><div class=\"content\"><form name=\"taskForm\"><div class=\"action-bar clearfix\" ng-class=\"{show: editmode}\"><button class=\"btn btn-info pull-right\" ng-click=\"save()\" translate>Save</button> <button class=\"btn pull-right\" ng-click=\"reset()\" translate>Cancel</button></div><div class=\"action-menu\"><button ng-click=\"edit()\" class=\"change\"><i class=\"icon-pencil\"></i></button><div class=\"dropdown dropdown-big pull-right\" dropdown><button class=\"dropdown-toggle condensed\" dropdown-toggle><i class=\"icon-dots-vertical\"></i></button><div class=\"dropdown-menu pull-right\" sd-activity-list data-item=\"item\" data-type=\"task\" data-action=\"edit\"></div></div></div><ul class=\"task-labels clearfix\" ng-if=\"!editmode\"><li><i class=\"icon-desk-time\"></i> <time sd-datetime data-date=\"task_details.due_date\"></time></li></ul><div ng-if=\"editmode\" class=\"time-edit\"><div class=\"field\"><label translate>Due date</label><div sd-datepicker ng-model=\"task_details.due_date\"></div></div><div class=\"field\"><label translate>Due time</label><div sd-timepicker ng-model=\"task_details.due_time\"></div></div></div><div class=\"assignee-container\" ng-if=\"!editmode\"><figure ng-if=\"!editmode\" class=\"avatar\"><img sd-user-avatar data-src=\"users[task_details.user].picture_url\" data-initials=\"users[task_details.user].display_name\"></figure><div class=\"assignee-name\"><span ng-show=\"task_details.desk\">{{desks[task_details.desk].name}} /</span> <span ng-show=\"task_details.user\">{{users[task_details.user].display_name}}</span> <span ng-hide=\"task_details.user\" translate>Unassigned</span></div></div><div ng-if=\"editmode\" sd-assignee-box data-desk-id=\"task_details.desk\" data-user-id=\"task_details.user\"></div><div ng-if=\"!editmode\" class=\"title\">{{ task.slugline }}</div><textarea ng-if=\"editmode\" class=\"title\" sd-auto-height ng-model=\"task.slugline\" placeholder=\"{{ :: 'Add title' | translate }}\" required></textarea><textarea ng-if=\"editmode\" class=\"description\" sd-auto-height ng-model=\"task.description_text\" placeholder=\"{{ :: 'Add description' | translate }}\"></textarea><div ng-if=\"!editmode\" class=\"description\">{{ task.description_text }}</div></form></div>"
+    "<header><p class=\"pull-left\">{{ :: 'Created on' | translate}} <span sd-reldate-complex ng-model=\"task._created\"></span> {{ :: 'by' | translate}} {{ users[task.original_creator].display_name }}</p><button ng-click=\"close()\" class=\"close-preview\"><i class=\"icon-close-small\"></i></button></header><div class=\"content\"><form name=\"taskForm\"><div class=\"action-bar clearfix\" ng-class=\"{show: editmode}\"><button class=\"btn btn-info pull-right\" ng-click=\"save()\" translate>Save</button> <button class=\"btn pull-right\" ng-click=\"reset()\" translate>Cancel</button></div><div class=\"action-menu\"><button ng-click=\"edit()\" class=\"change\"><i class=\"icon-pencil\"></i></button><div class=\"dropdown dropdown-big pull-right\" dropdown><button class=\"dropdown-toggle condensed\" dropdown-toggle><i class=\"icon-dots-vertical\"></i></button><div class=\"dropdown-menu pull-right\" sd-activity-list data-item=\"item\" data-type=\"task\" data-action=\"edit\"></div></div></div><ul class=\"task-labels clearfix\" ng-if=\"!editmode\"><li><i class=\"icon-desk-time\"></i> <time sd-datetime data-date=\"task_details.due_date\"></time></li></ul><div ng-if=\"editmode\" class=\"time-edit\"><div class=\"field\"><label translate>Due date</label><div sd-datepicker ng-model=\"task_details.due_date\"></div></div><div class=\"field\"><label translate>Due time</label><div sd-timepicker ng-model=\"task_details.due_time\"></div></div></div><div class=\"assignee-container\" ng-if=\"!editmode\"><figure ng-if=\"!editmode\" class=\"avatar\"><img sd-user-avatar data-user=\"users[task_details.user]\"></figure><div class=\"assignee-name\"><span ng-show=\"task_details.desk\">{{desks[task_details.desk].name}} /</span> <span ng-show=\"task_details.user\">{{users[task_details.user].display_name}}</span> <span ng-hide=\"task_details.user\" translate>Unassigned</span></div></div><div ng-if=\"editmode\" sd-assignee-box data-desk-id=\"task_details.desk\" data-user-id=\"task_details.user\"></div><div ng-if=\"!editmode\" class=\"title\">{{ task.slugline }}</div><textarea ng-if=\"editmode\" class=\"title\" sd-auto-height ng-model=\"task.slugline\" placeholder=\"{{ :: 'Add title' | translate }}\" required></textarea><textarea ng-if=\"editmode\" class=\"description\" sd-auto-height ng-model=\"task.description_text\" placeholder=\"{{ :: 'Add description' | translate }}\"></textarea><div ng-if=\"!editmode\" class=\"description\">{{ task.description_text }}</div></form></div>"
   );
 
 
@@ -368,28 +368,8 @@ e.groupMembers=d.groupMembers[e.group.edit._id]||[],e.users=d.users._items}):c.w
   );
 
 
-  $templateCache.put('scripts/superdesk-desks/aggregate-widget/aggregate-widget.html',
-    "<div class=\"widget-container\" ng-controller=\"AggregateCtrl as agg\" ng-init=\"agg.setWidget(widget)\"><div class=\"main-list\" ng-class=\"{wrap: agg.selected}\"><div class=\"search-box\"><input type=\"text\" placeholder=\"{{ :: 'Search' | translate }}\" ng-model=\"query\" ng-model-options=\"{debounce: 500}\" ng-change=\"agg.search(query)\"></div><div class=\"content-list-holder\"><div sd-shadow><div class=\"content-list\" ng-if=\"!agg.state.solo\"><div class=\"desk\" ng-repeat=\"group in agg.cards track by group._id\"><div class=\"stage\" ng-show=\"total\"><div sd-stage-header></div><div class=\"stage-content\" ng-style=\"agg.getMaxHeightStyle(group.max_items)\" ng-show=\"agg.getExpandedState(group._id) || agg.state.solo\" sd-stage-items data-stage=\"group\" data-total=\"total\" data-allowed=\"true\" data-show-empty=\"false\" data-max-items=\"group.max_items\" data-action=\"agg.preview(item)\" data-selected=\"agg.selected\" data-filter=\"group.query\"></div></div></div></div><div class=\"content-list\" ng-if=\"agg.state.solo\"><div class=\"desk\" ng-init=\"group = agg.state.solo\"><div class=\"stage\" ng-show=\"total\"><div sd-stage-header></div><div class=\"stage-content\" ng-show=\"agg.getExpandedState(group._id) || agg.state.solo\" sd-stage-items data-stage=\"group\" data-total=\"total\" data-allowed=\"true\" data-show-empty=\"false\" data-max-items=\"100\" data-action=\"agg.preview(item)\" data-selected=\"agg.selected\" data-filter=\"group.query\"></div></div></div></div></div></div></div><div class=\"preview preview-widget\" ng-init=\"contenttab = true\" ng-class=\"{wrap: !agg.selected}\"><div class=\"nav\"><button class=\"backlink\" href=\"\" ng-click=\"agg.preview()\" translate=\"\"><span class=\"ng-scope\">Back</span></button></div><ul class=\"nav nav-tabs\"><li ng-class=\"{active: contenttab}\"><button ng-click=\"contenttab = true\" translate>Content</button></li><li ng-class=\"{active: !contenttab}\"><button ng-click=\"contenttab = false\" translate>Metadata</button></li></ul><div class=\"content-item-preview\" ng-if=\"agg.selected\"><div class=\"content\" ng-if=\"contenttab\" sd-media-preview-widget data-item=\"agg.selected\"></div><div ng-if=\"!contenttab\" sd-media-metadata data-item=\"agg.selected\"></div></div></div></div>"
-  );
-
-
-  $templateCache.put('scripts/superdesk-desks/aggregate-widget/configuration.html',
-    "<div ng-controller=\"AggregateCtrl as agg\" ng-init=\"agg.setWidget(widget)\"><div ng-if=\"!agg.loading\" ng-init=\"agg.edit()\" class=\"wrapped\" sd-aggregate-settings data-desks=\"agg.desks\" data-desk-stages=\"agg.deskStages\" data-searches=\"agg.searches\" data-desk-lookup=\"agg.deskLookup\" data-stage-lookup=\"agg.stageLookup\" data-search-lookup=\"agg.searchLookup\" data-groups=\"agg.groups\" data-edit-groups=\"agg.editGroups\" data-onclose=\"$close()\" data-widget=\"widget\"></div></div>"
-  );
-
-
   $templateCache.put('scripts/superdesk-desks/views/actionpicker.html',
     "<div class=\"multiple\"><div class=\"field\"><label for=\"desk\" translate>Desk</label><select id=\"desk\" name=\"desk\" ng-options=\"d._id as d.name for d in desks\" ng-model=\"desk\"><option value=\"\"></option></select></div><div class=\"field\"><label for=\"stage\" translate>Stage</label><select id=\"stage\" name=\"stage\" ng-options=\"s._id as s.name for s in deskStages[desk]\" ng-model=\"stage\"><option value=\"\"></option></select></div><div class=\"field\"><label for=\"macro\" translate>Macro</label><select id=\"macro\" name=\"macro\" ng-options=\"m.name as m.label for m in deskMacros\" ng-model=\"macro\"><option value=\"\"></option></select></div></div>"
-  );
-
-
-  $templateCache.put('scripts/superdesk-desks/views/aggregate-settings-configuration.html',
-    "<div class=\"aggregate-widget-config modal-wrapper\" ng-if=\"widget\" ng-include=\"'scripts/superdesk-desks/views/aggregate-settings.html'\"></div><div ng-if=\"!widget\" sd-modal data-model=\"modalActive\" class=\"wrapped aggregate-widget-config\"><div class=\"modal-wrapper\" ng-include=\"'scripts/superdesk-desks/views/aggregate-settings.html'\"></div></div>"
-  );
-
-
-  $templateCache.put('scripts/superdesk-desks/views/aggregate-settings.html',
-    "<div class=\"modal-header\"><a href=\"\" class=\"close\" ng-click=\"cancel()\"><i class=\"icon-close-small\"></i></a><h3 translate>Monitoring settings</h3></div><div class=\"modal-body aggregate-settings\" sd-wizard data-name=\"aggregatesettings\" data-current-step=\"step.current\" data-finish=\"cancel()\"><div sd-wizard-step data-title=\"{{ :: 'Desks' | translate }}\" data-code=\"desks\"><div class=\"content\"><div ng-if=\"widget\"><span class=\"pull-right\" sd-character-count data-item=\"widget.configuration.label\" data-limit=\"30\"></span><div class=\"field\"><label translate>View name</label><input type=\"text\" class=\"fullwidth-input\" ng-model=\"widget.configuration.label\" ng-keyup=\"handleEdit($event);\" required></div></div><div class=\"legend\" translate>Select desks for view</div><div class=\"desk\" ng-repeat=\"desk in desks | orderBy: 'name'\"><div class=\"desk-title\">{{desk.name}} <span sd-switch class=\"pull-right\" ng-model=\"editGroups[desk._id].selected\" ng-click=\"setDeskInfo(desk._id)\"></span></div><ul class=\"stages clearfix\" ng-if=\"editGroups[desk._id].selected\"><li ng-repeat=\"stage in deskStages[desk._id]\"><span sd-check ng-model=\"editGroups[stage._id].selected\" ng-click=\"setStageInfo(stage._id)\"></span> {{stage.name}}</li><li><span sd-check ng-model=\"editGroups[desk._id + ':output'].selected\" ng-click=\"setDeskOutputInfo(desk._id + ':output')\"></span> Output/Published</li></ul></div><div class=\"desk\"><div class=\"desk-title\" translate>Personal <span sd-switch class=\"pull-right\" ng-model=\"editGroups['personal'].selected\" ng-click=\"setPersonalInfo()\"></span></div></div><div ng-show=\"\" class=\"legend\" translate>Select saved searches to view</div></div></div><div sd-wizard-step data-title=\"{{ :: 'Saved Searches' | translate }}\" data-code=\"searches\"><div class=\"content\"><div class=\"legend\" translate>Select saved searches for view. <span sd-switch class=\"pull-right\" ng-model=\"showAllSavedSearches\" ng-click=\"initSavedSearches(showAllSavedSearches)\" title=\"{{'Show all saved searches'}} | translate\"></span></div><div class=\"desk\" ng-repeat=\"search in currentSavedSearches | orderBy: 'name'\"><div class=\"desk-title\">{{search.name}} <span sd-switch class=\"pull-right\" ng-model=\"editGroups[search._id].selected\" ng-click=\"setSearchInfo(search._id)\"></span></div></div><div ng-show=\"\" class=\"legend\" translate>Select saved searches for view</div></div></div><div sd-wizard-step data-title=\"{{ :: 'Reorder Sections' | translate }}\" data-code=\"reorder\"><div class=\"content\"><div class=\"legend\" translate>Reorder stages and saved searches for view</div><ul class=\"groups draggable-list\" sd-sort-groups><li class=\"sort-item clearfix\" ng-repeat=\"item in getValues()\"><div class=\"group-title\" ng-if=\"item.type === 'stage'\">{{deskLookup[stageLookup[item._id].desk].name}} : <span>{{stageLookup[item._id].name}}</span></div><div class=\"group-title\" ng-if=\"item.type === 'deskOutput'\">{{item.name}} : <span translate>Desk Output</span></div><div class=\"group-title\" ng-if=\"item.type === 'search'\">{{searchLookup[item._id].name}}</div><div class=\"group-title\" ng-if=\"item.type === 'personal'\" translate>Personal</div></li></ul></div></div><div sd-wizard-step data-title=\"{{ :: 'Items Count' | translate }}\" data-code=\"maxitems\"><div class=\"content\"><div class=\"legend\" translate>Set maximum items per stages and saved searches for view</div><div class=\"groups\"><div ng-repeat=\"max in getValues()\" class=\"clearfix\"><div class=\"desk-title pull-left\" ng-if=\"max.type === 'stage'\">{{deskLookup[stageLookup[max._id].desk].name}} : <span>{{stageLookup[max._id].name}}</span></div><div class=\"desk-title pull-left\" ng-if=\"max.type === 'deskOutput'\">{{max.name}} : <span translate>Desk Output</span></div><div class=\"desk-title pull-left\" ng-if=\"max.type === 'search'\">{{searchLookup[max._id].name}}</div><div class=\"desk-title pull-left\" ng-if=\"max.type === 'personal'\" translate>Personal</div><div class=\"pull-right\"><input type=\"number\" id=\"maxItems\" ng-model=\"max.max_items\" min=\"1\" max=\"25\" required></div></div></div></div></div></div><div class=\"modal-footer\"><button id=\"previousBtn\" class=\"btn pull-left\" ng-if=\"step.current !== 'desks'\" ng-click=\"previous()\" translate>Previous</button> <button id=\"nextBtn\" class=\"btn\" ng-if=\"step.current !== 'maxitems'\" ng-click=\"next()\" translate>Next</button> <button class=\"btn btn-primary\" ng-click=\"save()\" translate>Done</button></div>"
   );
 
 
@@ -399,7 +379,7 @@ e.groupMembers=d.groupMembers[e.group.edit._id]||[],e.users=d.users._items}):c.w
 
 
   $templateCache.put('scripts/superdesk-desks/views/desk-config-modal.html',
-    "<div sd-modal data-model=\"modalActive\" class=\"add-desk-popup modal-large modal-static\"><div class=\"modal-header\"><a href=\"\" class=\"close\" ng-click=\"cancel()\"><i class=\"icon-close-small\"></i></a><h3 ng-show=\"!desk.edit._id\" translate>Add New Desk</h3><h3 ng-show=\"desk.edit._id\" translate>Edit \"{{desk.edit.name}}\" Desk</h3></div><div class=\"modal-body\" sd-wizard data-name=\"desks\" data-current-step=\"step.current\" data-finish=\"cancel()\"><div sd-wizard-step data-title=\"{{ 'General' | translate }}\" data-code=\"general\"><div sd-deskedit-basic><form name=\"generalStep\"><div class=\"content\"><fieldset><span class=\"pull-right\" sd-character-count data-item=\"desk.edit.name\" data-limit=\"limits.desk\"></span><div class=\"field\"><label translate>Desk name</label><input type=\"text\" class=\"fullwidth-input\" ng-model=\"desk.edit.name\" ng-keyup=\"handleEdit($event);\" required></div><div class=\"field\"><label translate>Desk description</label><textarea class=\"fullwidth-input\" ng-model=\"desk.edit.description\"></textarea></div><div class=\"field\"><label translate>Source for User Created Articles</label><input type=\"text\" class=\"fullwidth-input\" ng-model=\"desk.edit.source\" ng-keyup=\"handleEdit($event);\" required></div><ul class=\"expiry\"><li><div sd-content-expiry data-item=\"desk.edit\" data-preview=\"false\" data-expiryfield=\"spike_expiry\" data-header=\"Spike Expiry\"></div></li><li><div sd-content-expiry data-item=\"desk.edit\" data-preview=\"false\" data-expiryfield=\"published_item_expiry\" data-header=\"Published Item Expiry\"></div></li></ul><div class=\"field desk-type\"><label translate>Desk Type</label><select id=\"deskType\" ng-model=\"desk.edit.desk_type\" ng-options=\"deskType.value as deskType.name for deskType in deskTypes\" required><option value=\"\"></option></select></div></fieldset><span class=\"alert-danger\" ng-show=\"_errorLimits\" translate>Character limit exceeded, desk can not be created/updated.</span> <span class=\"alert-danger\" ng-show=\"_error\">{{ _errorMessage }}</span></div><div class=\"modal-footer\"><button id=\"next-general\" class=\"btn btn-primary\" ng-click=\"save(desk.edit)\" ng-disabled=\"!generalStep.$valid || _errorLimits\" translate>Save & Continue</button> <button id=\"done-general\" class=\"btn btn-primary\" ng-click=\"save(desk.edit, true)\" ng-disabled=\"!generalStep.$valid || _errorLimits\" translate>Done</button></div></form></div></div><div sd-wizard-step data-title=\"{{ :: 'Stages' | translate }}\" data-code=\"stages\"><div sd-deskedit-stages><div class=\"content stages\"><div class=\"col\"><a class=\"btn btn-info add\" sd-focus-element data-target=\"#insert-stage\" ng-click=\"edit({}); selected = null\" ng-disabled=\"editStage\"><i class=\"icon-plus-small icon-white\"></i></a><div class=\"header\" translate>Work stages</div><div class=\"content\"><div class=\"stages-list clearfix\" ng-class=\"{'edit-mode': editStage}\"><div ng-repeat=\"stage in stages track by stage._id\"><span ng-if=\"isActive(stage)\" sd-character-count data-item=\"editStage.name\" data-limit=\"limits.stage\"></span><div class=\"stage\" ng-click=\"select(stage)\" ng-class=\"{active: selected === stage, editable: isActive(stage)}\"><span ng-if=\"!isActive(stage)\">{{ stage.name }}<label class=\"label globalread\" ng-if=\"!(stage.is_visible || stage.is_visible == null)\" translate>GLOBAL READ OFF</label></span> <span ng-if=\"isActive(stage)\"><input type=\"text\" id=\"edit-stage\" ng-model=\"editStage.name\" ng-keyup=\"handleEdit($event);\" required></span><div class=\"actions\" ng-if=\"!editStage\"><button ng-click=\"edit(stage)\" sd-focus-element data-target=\"#edit-stage\"><i class=\"icon-pencil\"></i></button> <button ng-if=\"!stage.working_stage && !stage.default_incoming\" ng-click=\"remove(stage)\"><i class=\"icon-trash\"></i></button></div></div></div><span ng-if=\"editStage && !editStage._id\" sd-character-count data-item=\"editStage.name\" data-limit=\"limits.stage\"></span><div class=\"stage editable\" ng-show=\"editStage && !editStage._id\"><span><input type=\"text\" id=\"insert-stage\" ng-model=\"editStage.name\" required ng-keyup=\"handleEdit($event);\"></span></div></div><div ng-if=\"editStage\"><button class=\"btn\" ng-click=\"cancel()\" translate>Cancel</button> <button class=\"btn btn-primary\" ng-click=\"save()\" ng-disabled=\"!enableSave()\" translate>Save</button></div><p ng-if=\"message\">{{ message }}</p><p ng-show=\"_errorUniqueness\" translate>Stage with name \"{{ editStage.name }}\"\" already exists.</p><p ng-show=\"_errorLimits\" translate>Character limit exceeded, stage can not be created/updated.</p><span ng-show=\"_error\" translate>There was a problem, stage not created/updated.</span></div></div><div class=\"col\"><div class=\"row\" ng-if=\"selected && !editStage\"><div class=\"header\" translate>Stage Details</div><label class=\"label globalread\" ng-if=\"selected.working_stage === null || selected.working_stage\">{{:: 'Working Stage' }}</label><label class=\"label globalread\" ng-if=\"selected.default_incoming === null || selected.default_incoming\">{{:: 'Incoming Stage' }}</label><label translate>Global Read:<label class=\"label globalread\">{{(selected.is_visible == null || selected.is_visible) ? 'ON' : 'OFF'}}</label></label><label translate>Stage description: {{ selected.description}}</label><label translate>Content expiry:</label><div sd-content-expiry data-item=\"selected\" data-preview=\"true\" data-expiryfield=\"content_expiry\"></div><label translate>Incoming Rule: {{selected.incoming_macro}}</label><label translate>Outgoing Rule: {{selected.outgoing_macro}}</label></div><div class=\"row\" ng-if=\"editStage\"><div class=\"header\" translate>Stage Details</div><div class=\"field\"><label translate>Global Read</label><span sd-switch ng-model=\"editStage.is_visible\"></span></div><div class=\"field\"><label>{{:: 'Working Stage' | translate }}</label><span sd-switch ng-model=\"editStage.working_stage\"></span></div><div class=\"field\"><label>{{:: 'Incoming Stage' | translate }}</label><span sd-switch ng-model=\"editStage.default_incoming\"></span></div><div class=\"field\"><label translate>Stage description</label><textarea class=\"fullwidth-input\" ng-model=\"editStage.description\"></textarea></div><div class=\"field\"><label translate>Content expiry</label><div sd-content-expiry data-item=\"editStage\" data-preview=\"false\" data-expiryfield=\"content_expiry\"></div></div><div class=\"field\"><label translate>Incoming Rule</label><select ng-model=\"editStage.incoming_macro\"><option value=\"\"></option><option ng-repeat=\"macro in macros\" ng-selected=\"editStage.incoming_macro === macro.name\" value=\"{{macro.name}}\">{{macro.label}}</option></select></div><div class=\"field\"><label translate>Outgoing Rule</label><select ng-model=\"editStage.outgoing_macro\"><option value=\"\"></option><option ng-repeat=\"macro in macros\" ng-selected=\"editStage.outgoing_macro === macro.name\" value=\"{{macro.name}}\">{{macro.label}}</option></select></div></div></div></div><div class=\"modal-footer\"><button id=\"next-stages\" class=\"btn btn-primary\" ng-disabled=\"message != null\" ng-click=\"next()\" translate>Continue</button> <button id=\"done-stages\" class=\"btn btn-primary\" ng-disabled=\"message != null\" ng-click=\"next(true)\" translate>Done</button></div></div></div><div sd-wizard-step data-title=\"{{ 'People' | translate }}\" data-code=\"people\"><div sd-deskedit-people><div class=\"content people-stage\"><div class=\"header\" sd-user-select-list data-exclude=\"deskMembers\" data-onchoose=\"add(user)\"></div><div class=\"content\"><p ng-if=\"message\">{{ message }}</p><div class=\"member-list clearfix\"><ul><li ng-repeat=\"user in deskMembers track by user._id | orderBy: 'display_name'\" ng-class=\"{'inactive' : !user.is_enabled || !user.is_active}\"><i class=\"icon-close-small\" ng-click=\"remove(user)\"></i><figure class=\"avatar\"><img sd-user-avatar data-src=\"user.picture_url\" data-initials=\"user.display_name\"></figure><div class=\"name\">{{:: user.display_name}}</div></li></ul></div></div></div><div class=\"modal-footer\"><button id=\"next-people\" class=\"btn btn-primary\" ng-click=\"save()\" ng-disabled=\"message != null\" translate>Save & Continue</button> <button id=\"done-people\" class=\"btn btn-primary\" ng-click=\"save(true)\" ng-disabled=\"message != null\" translate>Done</button></div></div></div><div sd-wizard-step data-title=\"{{ 'Macros' | translate }}\" data-code=\"macros\"><div sd-deskedit-macros><div sd-shadow><ul class=\"pills-list\"><li ng-repeat=\"macro in macros\"><h6 class=\"pull-left\">{{ macro.label }}</h6></li></ul></div><div class=\"modal-footer\"><button id=\"save\" class=\"btn btn-primary\" ng-click=\"save()\" translate>Done</button></div></div></div></div></div>"
+    "<div sd-modal data-model=\"modalActive\" class=\"add-desk-popup modal-large modal-static\"><div class=\"modal-header\"><a href=\"\" class=\"close\" ng-click=\"cancel()\"><i class=\"icon-close-small\"></i></a><h3 ng-show=\"!desk.edit._id\" translate>Add New Desk</h3><h3 ng-show=\"desk.edit._id\" translate>Edit \"{{desk.edit.name}}\" Desk</h3></div><div class=\"modal-body\" sd-wizard data-name=\"desks\" data-current-step=\"step.current\" data-finish=\"cancel()\"><div sd-wizard-step data-title=\"{{ 'General' | translate }}\" data-code=\"general\"><div sd-deskedit-basic><form name=\"generalStep\"><div class=\"content\"><fieldset><span class=\"pull-right\" sd-character-count data-item=\"desk.edit.name\" data-limit=\"limits.desk\"></span><div class=\"field\"><label translate>Desk name</label><input type=\"text\" class=\"fullwidth-input\" ng-model=\"desk.edit.name\" ng-keyup=\"handleEdit($event);\" required></div><div class=\"field\"><label translate>Desk description</label><textarea class=\"fullwidth-input\" ng-model=\"desk.edit.description\"></textarea></div><div class=\"field\"><label translate>Source for User Created Articles</label><input type=\"text\" class=\"fullwidth-input\" ng-model=\"desk.edit.source\" ng-keyup=\"handleEdit($event);\" required></div><ul class=\"expiry\"><li><div sd-content-expiry data-item=\"desk.edit\" data-preview=\"false\" data-expiryfield=\"spike_expiry\" data-header=\"Spike Expiry\"></div></li><li><div sd-content-expiry data-item=\"desk.edit\" data-preview=\"false\" data-expiryfield=\"published_item_expiry\" data-header=\"Published Item Expiry\"></div></li></ul><div class=\"field desk-type\"><label translate>Desk Type</label><select id=\"deskType\" ng-model=\"desk.edit.desk_type\" ng-options=\"deskType.value as deskType.name for deskType in deskTypes\" required><option value=\"\"></option></select></div></fieldset><span class=\"alert-danger\" ng-show=\"_errorLimits\" translate>Character limit exceeded, desk can not be created/updated.</span> <span class=\"alert-danger\" ng-show=\"_error\">{{ _errorMessage }}</span></div><div class=\"modal-footer\"><button id=\"next-general\" class=\"btn btn-primary\" ng-click=\"save(desk.edit)\" ng-disabled=\"!generalStep.$valid || _errorLimits\" translate>Save & Continue</button> <button id=\"done-general\" class=\"btn btn-primary\" ng-click=\"save(desk.edit, true)\" ng-disabled=\"!generalStep.$valid || _errorLimits\" translate>Done</button></div></form></div></div><div sd-wizard-step data-title=\"{{ :: 'Stages' | translate }}\" data-code=\"stages\"><div sd-deskedit-stages><div class=\"content stages\"><div class=\"col\"><a class=\"btn btn-info add\" sd-focus-element data-target=\"#insert-stage\" ng-click=\"edit({}); selected = null\" ng-disabled=\"editStage\"><i class=\"icon-plus-small icon-white\"></i></a><div class=\"header\" translate>Work stages</div><div class=\"content\"><div class=\"stages-list clearfix\" ng-class=\"{'edit-mode': editStage}\"><div ng-repeat=\"stage in stages track by stage._id\"><span ng-if=\"isActive(stage)\" sd-character-count data-item=\"editStage.name\" data-limit=\"limits.stage\"></span><div class=\"stage\" ng-click=\"select(stage)\" ng-class=\"{active: selected === stage, editable: isActive(stage)}\"><span ng-if=\"!isActive(stage)\">{{ stage.name }}<label class=\"label globalread\" ng-if=\"!(stage.is_visible || stage.is_visible == null)\" translate>GLOBAL READ OFF</label></span> <span ng-if=\"isActive(stage)\"><input type=\"text\" id=\"edit-stage\" ng-model=\"editStage.name\" ng-keyup=\"handleEdit($event);\" required></span><div class=\"actions\" ng-if=\"!editStage\"><button ng-click=\"edit(stage)\" sd-focus-element data-target=\"#edit-stage\"><i class=\"icon-pencil\"></i></button> <button ng-if=\"!stage.working_stage && !stage.default_incoming\" ng-click=\"remove(stage)\"><i class=\"icon-trash\"></i></button></div></div></div><span ng-if=\"editStage && !editStage._id\" sd-character-count data-item=\"editStage.name\" data-limit=\"limits.stage\"></span><div class=\"stage editable\" ng-show=\"editStage && !editStage._id\"><span><input type=\"text\" id=\"insert-stage\" ng-model=\"editStage.name\" required ng-keyup=\"handleEdit($event);\"></span></div></div><div ng-if=\"editStage\"><button class=\"btn\" ng-click=\"cancel()\" translate>Cancel</button> <button class=\"btn btn-primary\" ng-click=\"save()\" ng-disabled=\"!enableSave()\" translate>Save</button></div><p ng-if=\"message\">{{ message }}</p><p ng-show=\"_errorUniqueness\" translate>Stage with name \"{{ editStage.name }}\"\" already exists.</p><p ng-show=\"_errorLimits\" translate>Character limit exceeded, stage can not be created/updated.</p><span ng-show=\"_error\" translate>There was a problem, stage not created/updated.</span></div></div><div class=\"col\"><div class=\"row\" ng-if=\"selected && !editStage\"><div class=\"header\" translate>Stage Details</div><label class=\"label globalread\" ng-if=\"selected.working_stage === null || selected.working_stage\">{{:: 'Working Stage' }}</label><label class=\"label globalread\" ng-if=\"selected.default_incoming === null || selected.default_incoming\">{{:: 'Incoming Stage' }}</label><label translate>Global Read:<label class=\"label globalread\">{{(selected.is_visible == null || selected.is_visible) ? 'ON' : 'OFF'}}</label></label><label translate>Stage description: {{ selected.description}}</label><label translate>Content expiry:</label><div sd-content-expiry data-item=\"selected\" data-preview=\"true\" data-expiryfield=\"content_expiry\"></div><label translate>Incoming Rule: {{selected.incoming_macro}}</label><label translate>Outgoing Rule: {{selected.outgoing_macro}}</label></div><div class=\"row\" ng-if=\"editStage\"><div class=\"header\" translate>Stage Details</div><div class=\"field\"><label translate>Global Read</label><span sd-switch ng-model=\"editStage.is_visible\"></span></div><div class=\"field\"><label>{{:: 'Working Stage' | translate }}</label><span sd-switch ng-model=\"editStage.working_stage\"></span></div><div class=\"field\"><label>{{:: 'Incoming Stage' | translate }}</label><span sd-switch ng-model=\"editStage.default_incoming\"></span></div><div class=\"field\"><label translate>Stage description</label><textarea class=\"fullwidth-input\" ng-model=\"editStage.description\"></textarea></div><div class=\"field\"><label translate>Content expiry</label><div sd-content-expiry data-item=\"editStage\" data-preview=\"false\" data-expiryfield=\"content_expiry\"></div></div><div class=\"field\"><label translate>Incoming Rule</label><select ng-model=\"editStage.incoming_macro\"><option value=\"\"></option><option ng-repeat=\"macro in macros\" ng-selected=\"editStage.incoming_macro === macro.name\" value=\"{{macro.name}}\">{{macro.label}}</option></select></div><div class=\"field\"><label translate>Outgoing Rule</label><select ng-model=\"editStage.outgoing_macro\"><option value=\"\"></option><option ng-repeat=\"macro in macros\" ng-selected=\"editStage.outgoing_macro === macro.name\" value=\"{{macro.name}}\">{{macro.label}}</option></select></div></div></div></div><div class=\"modal-footer\"><button id=\"next-stages\" class=\"btn btn-primary\" ng-disabled=\"message != null\" ng-click=\"next()\" translate>Continue</button> <button id=\"done-stages\" class=\"btn btn-primary\" ng-disabled=\"message != null\" ng-click=\"next(true)\" translate>Done</button></div></div></div><div sd-wizard-step data-title=\"{{ 'People' | translate }}\" data-code=\"people\"><div sd-deskedit-people><div class=\"content people-stage\"><div class=\"header\" sd-user-select-list data-exclude=\"deskMembers\" data-onchoose=\"add(user)\"></div><div class=\"content\"><p ng-if=\"message\">{{ message }}</p><div class=\"member-list clearfix\"><ul><li ng-repeat=\"user in deskMembers track by user._id | orderBy: 'display_name'\" ng-class=\"{'inactive' : !user.is_enabled || !user.is_active}\"><i class=\"icon-close-small\" ng-click=\"remove(user)\"></i><figure class=\"avatar\"><img sd-user-avatar data-user=\"user\"></figure><div class=\"name\">{{:: user.display_name}}</div></li></ul></div></div></div><div class=\"modal-footer\"><button id=\"next-people\" class=\"btn btn-primary\" ng-click=\"save()\" ng-disabled=\"message != null\" translate>Save & Continue</button> <button id=\"done-people\" class=\"btn btn-primary\" ng-click=\"save(true)\" ng-disabled=\"message != null\" translate>Done</button></div></div></div><div sd-wizard-step data-title=\"{{ 'Macros' | translate }}\" data-code=\"macros\"><div sd-deskedit-macros><div sd-shadow><ul class=\"pills-list\"><li ng-repeat=\"macro in macros\"><h6 class=\"pull-left\">{{ macro.label }}</h6></li></ul></div><div class=\"modal-footer\"><button id=\"save\" class=\"btn btn-primary\" ng-click=\"save()\" translate>Done</button></div></div></div></div></div>"
   );
 
 
@@ -419,7 +399,7 @@ e.groupMembers=d.groupMembers[e.group.edit._id]||[],e.users=d.users._items}):c.w
 
 
   $templateCache.put('scripts/superdesk-desks/views/main.html',
-    "<div class=\"subnav\"><div class=\"navbtn toggle-list desk-tabs\"><ul><li ng-repeat=\"v in views\" ng-class=\"{active: v === view}\"><a href=\"\" id=\"{{v}}\" ng-click=\"setView(v)\" translate>{{v}}</a><div class=\"online-users\" ng-if=\"v === view && view === 'users'\"><p><span sd-check ng-model=\"online_users\" name=\"online_users\" id=\"online_users\" ng-change=\"changeOnlineUsers(online_users)\"></span></p><label translate>show only online users</label></div></li></ul></div></div><section class=\"main-section master-desk-view\" sd-desk-config><div class=\"main-desk-container\"><div class=\"desk-container\" ng-if=\"view === 'content'\" ng-repeat=\"desk in desks._items | orderBy: 'name'\"><div class=\"desk\" ng-include=\"'scripts/superdesk-desks/views/desk.html'\"></div></div><div class=\"desk-container\" ng-if=\"view === 'tasks'\" ng-repeat=\"desk in desks._items | orderBy: 'name'\"><div class=\"desk\" ng-include=\"'scripts/superdesk-desks/views/desk-tasks.html'\"></div></div><div class=\"desk-container\" ng-if=\"view === 'users'\" ng-repeat=\"desk in desks._items | orderBy: 'name'\"><div class=\"desk\" ng-include=\"'scripts/superdesk-desks/views/desk_users.html'\"></div></div></div><div sd-desk-config-modal data-active=\"modalActive\" data-desk=\"desk\" data-desks=\"desks\" data-step=\"step\" data-cancel=\"cancel()\"></div></section>"
+    "<div class=\"subnav\"><div class=\"navbtn toggle-list desk-tabs\"><ul><li ng-repeat=\"v in views\" ng-class=\"{active: v === view}\"><a href=\"\" id=\"{{v}}\" ng-click=\"setView(v)\" translate>{{v}}</a><div class=\"online-users\" ng-if=\"v === view && view === 'users'\"><p><span sd-check ng-model=\"online_users\" name=\"online_users\" id=\"online_users\" ng-change=\"changeOnlineUsers(online_users)\"></span></p><label translate>show only online users</label></div></li></ul></div></div><section class=\"main-section master-desk-view\" sd-desk-config><div class=\"main-desk-container\"><div class=\"desk-container\" ng-if=\"view === 'content'\" ng-repeat=\"desk in desks._items | orderBy: 'name'\"><div class=\"desk\" ng-include=\"'scripts/superdesk-desks/views/desk.html'\"></div></div><div class=\"desk-container\" ng-if=\"view === 'tasks'\" ng-repeat=\"desk in desks._items | orderBy: 'name'\"><div class=\"desk\" ng-include=\"'scripts/superdesk-desks/views/desk-tasks.html'\"></div></div><div class=\"desk-container\" ng-if=\"view === 'users'\" ng-repeat=\"desk in desks._items | orderBy: 'name'\"><div class=\"desk\" ng-include=\"'scripts/superdesk-desks/views/desk_users.html'\"></div></div><div class=\"desk-container\" ng-if=\"view === 'sluglines'\" ng-repeat=\"desk in desks._items | orderBy: 'name'\"><div class=\"desk\" ng-include=\"'scripts/superdesk-desks/views/slugline.html'\"></div></div></div><div sd-desk-config-modal data-active=\"modalActive\" data-desk=\"desk\" data-desks=\"desks\" data-step=\"step\" data-cancel=\"cancel()\"></div></section>"
   );
 
 
@@ -428,28 +408,38 @@ e.groupMembers=d.groupMembers[e.group.edit._id]||[],e.users=d.users._items}):c.w
   );
 
 
+  $templateCache.put('scripts/superdesk-desks/views/slugline-items.html',
+    "<div class=\"slugline-content\"><div ng-if=\"loading\" class=\"loading\"></div><div ng-if=\"!loading && !items.length\" class=\"no-items\" translate>{{:: 'No items with this published' | translate }}</div><div ng-if=\"!loading && items.length\" class=\"inline_slugline_item\"><div ng-repeat=\"item in items\"><div class=\"place\" ng-show=\"item.name !== '-'\">{{::item.name}}</div><div class=\"slugline\" ng-show=\"item.slugline !== '-'\">{{::item.slugline}}</div><div ng-show=\"item.old_sluglines.length !== 0\"><div class=\"oldslugline\">{{::item.old_sluglines}}</div></div><div class=\"headline\">{{::item.headline}}</div></div></div></div>"
+  );
+
+
+  $templateCache.put('scripts/superdesk-desks/views/slugline.html',
+    "<div class=\"desk-header\"><div class=\"desk-name pull-left\">{{ desk.name }} <span class=\"view\" ng-if=\"isMemberOf(desk)\" ng-click=\"openDeskView(desk, 'content')\" title=\"{{ 'Open desk content' | translate}}\"><i class=\"icon-external\"></i></span></div><div class=\"desk-action pull-right dropdown\" dropdown ng-if=\"privileges.desks\"><button class=\"dropdown-toggle\" dropdown-toggle><i class=\"icon-dots\"></i></button><ul class=\"dropdown-menu\"><li><button ng-click=\"openDesk('general', desk)\"><i class=\"icon-pencil\"></i> {{ 'Edit desk' | translate }}</button></li></ul></div></div><div class=\"desk-content\"><div sd-sluglines-items data-desk=\"desk._id\"></div></div>"
+  );
+
+
   $templateCache.put('scripts/superdesk-desks/views/stage-header.html',
-    "<div class=\"stage-header clearfix\"><button class=\"toggle\" ng-if=\"agg.state.solo._id !== group._id\" ng-class=\"{closed: !agg.getExpandedState(group._id)}\" ng-click=\"agg.switchExpandedState(group._id)\"><i class=\"icon-chevron-down-thin\"></i></button> <span class=\"stage-name\"><a href=\"\" ng-show=\"agg.state.solo._id !== group._id\" ng-click=\"agg.setSoloGroup(group)\">{{ :: group.header }} <span ng-show=\"group.subheader\">/ {{ :: group.subheader }} {{ :: group.type}}</span></a> <a href=\"\" ng-click=\"agg.setSoloGroup()\" ng-show=\"agg.state.solo._id === group._id\"><i class=\"backlink\"></i> {{ :: group.header }} <span ng-show=\"group.subheader\">/ {{ :: group.subheader }} {{ :: group.type}}</span></a></span><div class=\"line\" ng-if=\"agg.state.solo._id !== group._id\"></div><span class=\"label label-total\">{{ total}}</span></div>"
+    "<div class=\"stage-header clearfix\"><button class=\"toggle\" ng-if=\"agg.state.solo._id !== group._id\" ng-class=\"{closed: !agg.getExpandedState(group._id)}\" ng-click=\"agg.switchExpandedState(group._id)\"><i class=\"icon-chevron-down-thin\"></i></button> <span class=\"stage-name\"><a href=\"\" ng-show=\"agg.state.solo._id !== group._id\" ng-click=\"agg.setSoloGroup(group)\">{{ :: group.header }} <span ng-show=\"group.subheader\">/ {{ :: group.subheader }}</span> {{ :: group.type}}</a> <a href=\"\" ng-click=\"agg.setSoloGroup()\" ng-show=\"agg.state.solo._id === group._id\"><i class=\"backlink\"></i> {{ :: group.header }} <span ng-show=\"group.subheader\">/ {{ :: group.subheader }}</span> {{ :: group.type}}</a></span><div class=\"line\" ng-if=\"agg.state.solo._id !== group._id\"></div><span class=\"label label-total\">{{ total}}</span></div>"
   );
 
 
   $templateCache.put('scripts/superdesk-desks/views/stage-item-list.html',
-    "<div ng-if=\"loading\" class=\"loading\"></div><div ng-if=\"!loading && !items.length && showEmpty\" class=\"no-items\" translate>No items in this stage</div><div tabindex=\"0\"><ul ng-if=\"items.length\" class=\"inline-content-items\"><li ng-repeat=\"item in items track by item._id\" class=\"item\" ng-click=\"action({item: item})\" ng-class=\"{locked: item.lock_user, shifted: allowed, active: item._id === selected._id}\"><div id=\"{{item._id}}\"><div class=\"type\"><i class=\"filetype-icon-{{item.type}}\"></i></div><div class=\"urgency\"><i class=\"urgency-icon-{{item.urgency}}\"></i></div><div class=\"text\"><time sd-datetime data-date=\"item.versioncreated\" class=\"pull-right\"></time> <span class=\"keywords\">{{item.slugline}}</span> <span id=\"title\" class=\"headline\">{{item.headline}}</span></div><div class=\"action\" ng-if=\"allowed\"><button ng-click=\"preview(item); $event.stopPropagation();\" tooltip=\"Preview\" tooltip-placement=\"{{$last ? 'left' : 'bottom'}}\"><i class=\"icon-external\"></i></button> <button ng-click=\"edit(item); $event.stopPropagation();\" tooltip=\"Edit\" tooltip-placement=\"{{$last ? 'left' : 'bottom'}}\"><i class=\"icon-pencil\"></i></button></div></div></li></ul></div>"
+    "<div ng-if=\"loading\" class=\"loading\"></div><div ng-if=\"!loading && !items.length && showEmpty\" class=\"no-items\" translate>No items in this stage</div><div tabindex=\"0\"><ul ng-if=\"items.length\" class=\"inline-content-items\"><li ng-repeat=\"item in items track by generateTrackByIdentifier(item)\" class=\"item\" ng-click=\"action({item: item})\" ng-class=\"{locked: item.lock_user, shifted: allowed, active: item._id === selected._id}\"><div id=\"{{item._id}}\"><div class=\"type\"><i class=\"filetype-icon-{{item.type}}\"></i></div><div class=\"urgency\"><span class=\"urgency-label urgency-label--{{item.urgency}}\">{{item.urgency}}</span></div><div class=\"text\"><time sd-datetime data-date=\"item.versioncreated\" class=\"pull-right\"></time> <span class=\"keywords\">{{item.slugline}}</span> <span id=\"title\" class=\"headline\">{{item.headline}}</span></div><div class=\"action\" ng-if=\"allowed\"><button ng-click=\"preview(item); $event.stopPropagation();\" tooltip=\"Preview\" tooltip-placement=\"{{$last ? 'left' : 'bottom'}}\"><i class=\"icon-external\"></i></button> <button ng-click=\"edit(item); $event.stopPropagation();\" tooltip=\"Edit\" tooltip-placement=\"{{$last ? 'left' : 'bottom'}}\"><i class=\"icon-pencil\"></i></button></div></div></li></ul></div>"
   );
 
 
   $templateCache.put('scripts/superdesk-desks/views/task-status-items.html',
-    "<div ng-if=\"loading\" class=\"loading\"></div><div ng-if=\"!loading && !items.length\" class=\"no-items\" translate>No items with this status</div><ul ng-if=\"!loading && items.length\" class=\"inline-content-items content-tasks\"><li ng-repeat=\"item in items\" class=\"item\" ng-click=\"action({item: item})\" ng-class=\"{locked: item.lock_user, shifted: allowed, active: item._id === selected._id}\"><figure class=\"avatar small\" title=\"{{users[item.task.user].display_name}}\"><img sd-user-avatar data-src=\"users[item.task.user].picture_url\" data-initials=\"users[item.task.user].display_name\"></figure><div class=\"text\">{{item.slugline}}</div></li></ul>"
+    "<div ng-if=\"loading\" class=\"loading\"></div><div ng-if=\"!loading && !items.length\" class=\"no-items\" translate>No items with this status</div><ul ng-if=\"!loading && items.length\" class=\"inline-content-items content-tasks\"><li ng-repeat=\"item in items\" class=\"item\" ng-click=\"action({item: item})\" ng-class=\"{locked: item.lock_user, shifted: allowed, active: item._id === selected._id}\"><figure class=\"avatar small\" title=\"{{users[item.task.user].display_name}}\"><img sd-user-avatar data-user=\"users[item.task.user]\"></figure><div class=\"text\">{{item.slugline}}</div></li></ul>"
   );
 
 
   $templateCache.put('scripts/superdesk-desks/views/user-role-items.html',
-    "<ul ng-if=\"!loading && items.length\" class=\"inline-content-items content-tasks\"><li ng-repeat=\"item in items track by item._id\" class=\"item\" ng-if=\"!online || isLoggedIn(item)\"><figure class=\"avatar avatar-with-info small\" title=\"{{item.display_name}}\" ng-class=\"{'user-logged': isLoggedIn(item)}\"><div class=\"logged-info\"></div><div class=\"user-image\"><img sd-user-avatar data-src=\"item.picture_url\" data-initials=\"item.display_name\"></div></figure><div class=\"text pull-left\">{{item.display_name}}</div><div class=\"pull-right dropdown\" dropdown ng-if=\"privilege\"><button class=\"dropdown-toggle animate-icon\" dropdown-toggle><i class=\"icon-dots-vertical\"></i></button><ul class=\"dropdown-menu\"><li><button ng-click=\"openEditUser(item)\"><i class=\"icon-pencil\"></i> {{ :: 'Edit user' | translate }}</button></li></ul></div></li></ul><div sd-modal data-model=\"user\" class=\"highlights-config-popup responsive-popup hide child-shadow\"><section class=\"main-section user-profile-page\"><div class=\"form-content\"><div class=\"user-details-pane\"><header><div class=\"modal-header\"><a href=\"\" class=\"close\" ng-click=\"closeEditUser()\"><i class=\"icon-close-small\"></i></a><h3 translate>Edit user</h3></div></header><div class=\"content\"><div sd-user-edit data-user=\"user\" data-oncancel=\"closeEditUser()\" data-onsave=\"closeEditUser()\"></div></div></div></div></section></div>"
+    "<ul ng-if=\"!loading && items.length\" class=\"inline-content-items content-tasks\"><li ng-repeat=\"item in items track by item._id\" class=\"item\" ng-if=\"!online || isLoggedIn(item)\"><figure class=\"avatar avatar-with-info small\" title=\"{{item.display_name}}\" ng-class=\"{'user-logged': isLoggedIn(item)}\"><div class=\"logged-info\"></div><div class=\"user-image\"><img sd-user-avatar data-user=\"item\"></div></figure><div class=\"text pull-left\">{{item.display_name}}</div><div class=\"pull-right dropdown\" dropdown ng-if=\"privilege\"><button class=\"dropdown-toggle animate-icon\" dropdown-toggle><i class=\"icon-dots-vertical\"></i></button><ul class=\"dropdown-menu\"><li><button ng-click=\"openEditUser(item)\"><i class=\"icon-pencil\"></i> {{ :: 'Edit user' | translate }}</button></li></ul></div></li></ul><div sd-modal data-model=\"user\" class=\"highlights-config-popup responsive-popup hide child-shadow\"><section class=\"main-section user-profile-page\"><div class=\"form-content\"><div class=\"user-details-pane\"><header><div class=\"modal-header\"><a href=\"\" class=\"close\" ng-click=\"closeEditUser()\"><i class=\"icon-close-small\"></i></a><h3 translate>Edit user</h3></div></header><div class=\"content\"><div sd-user-edit data-user=\"user\" data-oncancel=\"closeEditUser()\" data-onsave=\"closeEditUser()\"></div></div></div></div></section></div>"
   );
 
 
   $templateCache.put('scripts/superdesk-desks/views/user-select.html',
-    "<form><input type=\"text\" ng-model=\"search\" class=\"searchbar searchbar-large\"></form><div class=\"search-result\" ng-show=\"search\"><ul class=\"users-list-embed\"><li ng-repeat=\"user in users._items\" ng-class=\"{active: user === selected, 'inactive' : !user.is_enabled || !user.is_active}\" ng-click=\"choose(user)\"><figure class=\"avatar small\"><img sd-user-avatar data-src=\"user.picture_url\" data-initials=\"user.display_name\"></figure><div class=\"name\">{{user.display_name}}</div></li></ul></div>"
+    "<form><input type=\"text\" ng-model=\"search\" class=\"searchbar searchbar-large\"></form><div class=\"search-result\" ng-show=\"search\"><ul class=\"users-list-embed\"><li ng-repeat=\"user in users._items\" ng-class=\"{active: user === selected, 'inactive' : !user.is_enabled || !user.is_active}\" ng-click=\"choose(user)\"><figure class=\"avatar small\"><img sd-user-avatar data-user=\"user\"></figure><div class=\"name\">{{user.display_name}}</div></li></ul></div>"
   );
 
 
@@ -464,7 +454,7 @@ e.groupMembers=d.groupMembers[e.group.edit._id]||[],e.users=d.users._items}):c.w
 
 
   $templateCache.put('scripts/superdesk-groups/views/groups-config-modal.html',
-    "<div sd-modal data-model=\"modalActive\" class=\"add-group-popup modal-large modal-static\"><div class=\"modal-header\"><a href=\"\" class=\"close\" ng-click=\"cancel()\"><i class=\"icon-close-small\"></i></a><h3 ng-show=\"!group.edit._id\" translate>Add New Group</h3><h3 ng-show=\"group.edit._id\" translate>Edit \"{{group.edit.name}}\" Group</h3></div><div class=\"modal-body\" sd-wizard data-name=\"usergroups\" data-current-step=\"step.current\" data-finish=\"cancel()\"><div sd-wizard-step data-title=\"{{ 'General' | translate }}\" data-code=\"general\"><div sd-groupedit-basic><form name=\"generalStep\"><div class=\"content\"><fieldset><span class=\"pull-right\" sd-character-count data-item=\"group.edit.name\" data-limit=\"limits.group\"></span><div class=\"field\"><label translate>Group name</label><input type=\"text\" class=\"fullwidth-input\" ng-model=\"group.edit.name\" ng-keyup=\"handleEdit($event);\" required></div><div class=\"field\"><label translate>Group description</label><textarea class=\"fullwidth-input\" ng-model=\"group.edit.description\"></textarea></div></fieldset><p ng-if=\"message\">{{ message }}</p><span ng-show=\"_errorUniqueness\" translate>Group with name \"{{ group.edit.name }}\" already exists.</span><p ng-show=\"_errorLimits\" translate>Character limit exceeded, group can not be created/updated.</p><span ng-show=\"_error\" translate>There was a problem, group not created/updated.</span></div><div class=\"modal-footer\"><button class=\"btn btn-primary\" ng-click=\"save(group.edit)\" ng-disabled=\"!generalStep.$valid || _errorLimits\" translate>Next</button></div></form></div></div><div sd-wizard-step data-title=\"{{ 'People' | translate }}\" data-code=\"people\" data-disabled=\"!group.edit._id\"><div sd-groupedit-people><div class=\"content people-stage\"><div class=\"header\" sd-user-select-list data-exclude=\"groupMembers\" data-onchoose=\"add(user)\"></div><div class=\"content\"><p ng-if=\"message\">{{ message }}</p><div class=\"member-list clearfix\"><ul><li ng-repeat=\"user in groupMembers\" ng-class=\"{'inactive' : !user.is_enabled || !user.is_active}\"><i class=\"icon-close-small\" ng-click=\"remove(user)\"></i><figure class=\"avatar\"><img sd-user-avatar data-src=\"user.picture_url\" data-initials=\"user.display_name\"></figure><div class=\"name\">{{user.display_name}}</div></li></ul></div></div></div><div class=\"modal-footer\"><button class=\"btn pull-left\" ng-click=\"previous()\" translate>Previous</button> <button class=\"btn btn-primary\" ng-click=\"save()\" translate>Done</button></div></div></div></div></div>"
+    "<div sd-modal data-model=\"modalActive\" class=\"add-group-popup modal-large modal-static\"><div class=\"modal-header\"><a href=\"\" class=\"close\" ng-click=\"cancel()\"><i class=\"icon-close-small\"></i></a><h3 ng-show=\"!group.edit._id\" translate>Add New Group</h3><h3 ng-show=\"group.edit._id\" translate>Edit \"{{group.edit.name}}\" Group</h3></div><div class=\"modal-body\" sd-wizard data-name=\"usergroups\" data-current-step=\"step.current\" data-finish=\"cancel()\"><div sd-wizard-step data-title=\"{{ 'General' | translate }}\" data-code=\"general\"><div sd-groupedit-basic><form name=\"generalStep\"><div class=\"content\"><fieldset><span class=\"pull-right\" sd-character-count data-item=\"group.edit.name\" data-limit=\"limits.group\"></span><div class=\"field\"><label translate>Group name</label><input type=\"text\" class=\"fullwidth-input\" ng-model=\"group.edit.name\" ng-keyup=\"handleEdit($event);\" required></div><div class=\"field\"><label translate>Group description</label><textarea class=\"fullwidth-input\" ng-model=\"group.edit.description\"></textarea></div></fieldset><p ng-if=\"message\">{{ message }}</p><span ng-show=\"_errorUniqueness\" translate>Group with name \"{{ group.edit.name }}\" already exists.</span><p ng-show=\"_errorLimits\" translate>Character limit exceeded, group can not be created/updated.</p><span ng-show=\"_error\" translate>There was a problem, group not created/updated.</span></div><div class=\"modal-footer\"><button class=\"btn btn-primary\" ng-click=\"save(group.edit)\" ng-disabled=\"!generalStep.$valid || _errorLimits\" translate>Next</button></div></form></div></div><div sd-wizard-step data-title=\"{{ 'People' | translate }}\" data-code=\"people\" data-disabled=\"!group.edit._id\"><div sd-groupedit-people><div class=\"content people-stage\"><div class=\"header\" sd-user-select-list data-exclude=\"groupMembers\" data-onchoose=\"add(user)\"></div><div class=\"content\"><p ng-if=\"message\">{{ message }}</p><div class=\"member-list clearfix\"><ul><li ng-repeat=\"user in groupMembers\" ng-class=\"{'inactive' : !user.is_enabled || !user.is_active}\"><i class=\"icon-close-small\" ng-click=\"remove(user)\"></i><figure class=\"avatar\"><img sd-user-avatar data-user=\"user\"></figure><div class=\"name\">{{user.display_name}}</div></li></ul></div></div></div><div class=\"modal-footer\"><button class=\"btn pull-left\" ng-click=\"previous()\" translate>Previous</button> <button class=\"btn btn-primary\" ng-click=\"save()\" translate>Done</button></div></div></div></div></div>"
   );
 
 
@@ -639,6 +629,26 @@ e.groupMembers=d.groupMembers[e.group.edit._id]||[],e.users=d.users._items}):c.w
   );
 
 
+  $templateCache.put('scripts/superdesk-monitoring/aggregate-widget/aggregate-widget.html',
+    "<div class=\"widget-container\" ng-controller=\"AggregateCtrl as agg\" ng-init=\"agg.setWidget(widget)\"><div class=\"main-list\" ng-class=\"{wrap: agg.selected}\"><div class=\"search-box\"><input type=\"text\" placeholder=\"{{ :: 'Search' | translate }}\" ng-model=\"query\" ng-model-options=\"{debounce: 500}\" ng-change=\"agg.search(query)\"></div><div class=\"content-list-holder\"><div sd-shadow><div class=\"content-list\" ng-if=\"!agg.state.solo\"><div class=\"desk\" ng-repeat=\"group in agg.cards track by group._id\"><div class=\"stage\" ng-show=\"total\"><div sd-stage-header></div><div class=\"stage-content\" ng-style=\"agg.getMaxHeightStyle(group.max_items)\" ng-show=\"agg.getExpandedState(group._id) || agg.state.solo\" sd-stage-items data-stage=\"group\" data-total=\"total\" data-allowed=\"true\" data-show-empty=\"false\" data-max-items=\"group.max_items\" data-action=\"agg.preview(item)\" data-selected=\"agg.selected\" data-filter=\"group.query\"></div></div></div></div><div class=\"content-list\" ng-if=\"agg.state.solo\"><div class=\"desk\" ng-init=\"group = agg.state.solo\"><div class=\"stage\" ng-show=\"total\"><div sd-stage-header></div><div class=\"stage-content\" ng-show=\"agg.getExpandedState(group._id) || agg.state.solo\" sd-stage-items data-stage=\"group\" data-total=\"total\" data-allowed=\"true\" data-show-empty=\"false\" data-max-items=\"100\" data-action=\"agg.preview(item)\" data-selected=\"agg.selected\" data-filter=\"group.query\"></div></div></div></div></div></div></div><div class=\"preview preview-widget\" ng-init=\"contenttab = true\" ng-class=\"{wrap: !agg.selected}\"><div class=\"nav\"><button class=\"backlink\" href=\"\" ng-click=\"agg.preview()\" translate=\"\"><span class=\"ng-scope\">Back</span></button></div><ul class=\"nav nav-tabs\"><li ng-class=\"{active: contenttab}\"><button ng-click=\"contenttab = true\" translate>Content</button></li><li ng-class=\"{active: !contenttab}\"><button ng-click=\"contenttab = false\" translate>Metadata</button></li></ul><div class=\"content-item-preview\" ng-if=\"agg.selected\"><div class=\"content\" ng-if=\"contenttab\" sd-media-preview-widget data-item=\"agg.selected\"></div><div ng-if=\"!contenttab\" sd-media-metadata data-item=\"agg.selected\"></div></div></div></div>"
+  );
+
+
+  $templateCache.put('scripts/superdesk-monitoring/aggregate-widget/configuration.html',
+    "<div ng-controller=\"AggregateCtrl as agg\" ng-init=\"agg.setWidget(widget)\"><div ng-if=\"!agg.loading\" ng-init=\"agg.edit()\" class=\"wrapped\" sd-aggregate-settings data-desks=\"agg.desks\" data-desk-stages=\"agg.deskStages\" data-searches=\"agg.searches\" data-desk-lookup=\"agg.deskLookup\" data-stage-lookup=\"agg.stageLookup\" data-search-lookup=\"agg.searchLookup\" data-groups=\"agg.groups\" data-edit-groups=\"agg.editGroups\" data-onclose=\"$close()\" data-widget=\"widget\"></div></div>"
+  );
+
+
+  $templateCache.put('scripts/superdesk-monitoring/views/aggregate-settings-configuration.html',
+    "<div class=\"aggregate-widget-config modal-wrapper\" ng-if=\"widget\" ng-include=\"'scripts/superdesk-monitoring/views/aggregate-settings.html'\"></div><div ng-if=\"!widget\" sd-modal data-model=\"modalActive\" class=\"wrapped aggregate-widget-config\"><div class=\"modal-wrapper\" ng-include=\"'scripts/superdesk-monitoring/views/aggregate-settings.html'\"></div></div>"
+  );
+
+
+  $templateCache.put('scripts/superdesk-monitoring/views/aggregate-settings.html',
+    "<div class=\"modal-header\"><a href=\"\" class=\"close\" ng-click=\"cancel()\"><i class=\"icon-close-small\"></i></a><h3 translate>Monitoring settings</h3></div><div class=\"modal-body aggregate-settings\" sd-wizard data-name=\"aggregatesettings\" data-current-step=\"step.current\" data-finish=\"cancel()\"><div sd-wizard-step data-title=\"{{ :: 'Desks' | translate }}\" data-code=\"desks\"><div class=\"content\"><div ng-if=\"widget\"><span class=\"pull-right\" sd-character-count data-item=\"widget.configuration.label\" data-limit=\"30\"></span><div class=\"field\"><label translate>View name</label><input type=\"text\" class=\"fullwidth-input\" ng-model=\"widget.configuration.label\" ng-keyup=\"handleEdit($event);\" required></div></div><div class=\"legend\" translate>Select desks for view</div><div class=\"desk\" ng-repeat=\"desk in desks | orderBy: 'name'\"><div class=\"desk-title\">{{desk.name}} <span sd-switch class=\"pull-right\" ng-model=\"editGroups[desk._id].selected\" ng-click=\"setDeskInfo(desk._id)\"></span></div><ul class=\"stages clearfix\" ng-if=\"editGroups[desk._id].selected\"><li ng-repeat=\"stage in deskStages[desk._id]\"><span sd-check ng-model=\"editGroups[stage._id].selected\" ng-click=\"setStageInfo(stage._id)\"></span> {{stage.name}}</li><li><span sd-check ng-model=\"editGroups[desk._id + ':output'].selected\" ng-click=\"setDeskOutputInfo(desk._id + ':output')\"></span> Output/Published</li></ul></div><div class=\"desk\"><div class=\"desk-title\" translate>Personal <span sd-switch class=\"pull-right\" ng-model=\"editGroups['personal'].selected\" ng-click=\"setPersonalInfo()\"></span></div></div><div ng-show=\"\" class=\"legend\" translate>Select saved searches to view</div></div></div><div sd-wizard-step data-title=\"{{ :: 'Saved Searches' | translate }}\" data-code=\"searches\"><div class=\"content\"><div class=\"legend\" translate>Select global saved searches <span sd-switch class=\"pull-right\" ng-model=\"showGlobalSavedSearches\" title=\"{{'Show all saved searches'}} | translate\"></span></div><div class=\"desk\" ng-repeat=\"search in globalSavedSearches track by search._id | orderBy: 'name'\" ng-if=\"showGlobalSavedSearches\"><div class=\"desk-title\"><div>{{:: search.name}} <i>by {{:: userLookup[search.user].display_name}}</i><br><span class=\"search-description\">{{:: search.description}}</span></div><div class=\"switch\"><span sd-switch ng-model=\"editGroups[search._id].selected\" ng-click=\"setSearchInfo(search._id)\"></span></div></div></div><div class=\"legend\" ng-if=\"showPrivateSavedSearches\" translate>Private saved searches</div><div class=\"desk\" ng-repeat=\"search in privateSavedSearches track by search._id | orderBy: 'name'\" ng-if=\"showPrivateSavedSearches\"><div class=\"desk-title\"><div>{{:: search.name}}<br><span class=\"search-description\">{{:: search.description}}</span></div><div class=\"switch\"><span sd-switch ng-model=\"editGroups[search._id].selected\" ng-click=\"setSearchInfo(search._id)\"></span></div></div></div><div ng-show=\"\" class=\"legend\" translate>Select saved searches for view</div></div></div><div sd-wizard-step data-title=\"{{ :: 'Reorder Sections' | translate }}\" data-code=\"reorder\"><div class=\"content\"><div class=\"legend\" translate>Reorder stages and saved searches for view</div><ul class=\"groups draggable-list\" sd-sort-groups><li class=\"sort-item clearfix\" ng-repeat=\"item in getValues()\"><div class=\"group-title\" ng-if=\"item.type === 'stage'\">{{deskLookup[stageLookup[item._id].desk].name}} : <span>{{stageLookup[item._id].name}}</span></div><div class=\"group-title\" ng-if=\"item.type === 'deskOutput'\">{{item.name}} : <span translate>Desk Output</span></div><div class=\"group-title\" ng-if=\"item.type === 'search'\">{{searchLookup[item._id].name}}</div><div class=\"group-title\" ng-if=\"item.type === 'personal'\" translate>Personal</div></li></ul></div></div><div sd-wizard-step data-title=\"{{ :: 'Items Count' | translate }}\" data-code=\"maxitems\"><div class=\"content\"><div class=\"legend\" translate>Set maximum items per stages and saved searches for view</div><div class=\"groups\"><div ng-repeat=\"max in getValues()\" class=\"clearfix\"><div class=\"desk-title pull-left\" ng-if=\"max.type === 'stage'\">{{deskLookup[stageLookup[max._id].desk].name}} : <span>{{stageLookup[max._id].name}}</span></div><div class=\"desk-title pull-left\" ng-if=\"max.type === 'deskOutput'\">{{max.name}} : <span translate>Desk Output</span></div><div class=\"desk-title pull-left\" ng-if=\"max.type === 'search'\">{{searchLookup[max._id].name}}</div><div class=\"desk-title pull-left\" ng-if=\"max.type === 'personal'\" translate>Personal</div><div class=\"pull-right\"><input type=\"number\" id=\"maxItems\" ng-model=\"max.max_items\" min=\"1\" max=\"25\" required></div></div></div></div></div></div><div class=\"modal-footer\"><button id=\"previousBtn\" class=\"btn pull-left\" ng-if=\"step.current !== 'desks'\" ng-click=\"previous()\" translate>Previous</button> <button id=\"nextBtn\" class=\"btn\" ng-if=\"step.current !== 'maxitems'\" ng-click=\"next()\" translate>Next</button> <button class=\"btn btn-primary\" ng-click=\"save()\" translate>Done</button></div>"
+  );
+
+
   $templateCache.put('scripts/superdesk-monitoring/views/highlights-view.html',
     "<div sd-monitoring-view data-type=\"'highlights'\"></div>"
   );
@@ -655,7 +665,7 @@ e.groupMembers=d.groupMembers[e.group.edit._id]||[],e.users=d.users._items}):c.w
 
 
   $templateCache.put('scripts/superdesk-monitoring/views/monitoring-group.html',
-    "<div class=\"stage\"><div sd-monitoring-group-header ng-if=\"group.header\"></div><div class=\"stage-content group\" ng-class=\"{limited: limited}\" tabindex=\"0\"><ul class=\"inline-content-items compact-view list-view\" ng-class=\"{'list-without-items' : total === 0}\"><li ng-if=\"total === 0\" translate>There are currently no items in this group</li><li ng-repeat=\"item in items track by uuid(item)\" class=\"list-item-view\" tabindex=\"0\"><div sd-media-box data-view-type=\"viewType\" ng-class=\"{active: item === selected, archived: item.archived || item.created, locked: lock.isLocked}\" ng-dblclick=\"edit(item, true)\" ng-click=\"select(item)\"></div></li></ul></div></div>"
+    "<div class=\"stage\"><div sd-monitoring-group-header ng-if=\"group.header\"></div><div class=\"stage-content group\" ng-class=\"{limited: limited}\" tabindex=\"0\"><ul class=\"inline-content-items compact-view list-view\" ng-class=\"{'list-without-items' : total === 0}\"><li ng-if=\"total === 0\" translate>There are currently no items in this group</li><li ng-repeat=\"item in items track by generateTrackByIdentifier(item)\" class=\"list-item-view\" tabindex=\"0\"><div sd-media-box data-view-type=\"viewType\" ng-class=\"{active: item === selected, archived: item.archived || item.created, locked: lock.isLocked}\" ng-dblclick=\"edit(item, true)\" ng-click=\"select(item)\"></div></li></ul></div></div>"
   );
 
 
@@ -730,7 +740,7 @@ e.groupMembers=d.groupMembers[e.group.edit._id]||[],e.users=d.users._items}):c.w
 
 
   $templateCache.put('scripts/superdesk-planning/views/assignee-box.html',
-    "<div class=\"assignee-box\" ng-click=\"open = true;\"><div class=\"assignee\" ng-class=\"{'open': open}\" ng-init=\"hoveractive = false\"><div class=\"toggle\" ng-mouseenter=\"hoveractive = true\" ng-mouseleave=\"hoveractive = false\"><div class=\"avatar\" ng-class=\"{desk : desk && !user }\"><img sd-user-avatar data-src=\"user.picture_url\" data-initials=\"user.display_name\"></div><div class=\"add\"><i class=\"icon-plus-large icon-white\"></i></div></div><div class=\"tooltip right fade in\" ng-show=\"hoveractive && !open\"><div class=\"tooltip-arrow\"></div><div class=\"tooltip-inner\" ng-show=\"user || desk\"><p class=\"dark\" translate>Assigned to:</p><p class=\"name\">{{desk.name}}<span ng-show=\"user\">/ {{user.display_name}}</span></p><p translate>Click to reassign</p></div><div class=\"tooltip-inner simple\" ng-show=\"!user && !desk\"><p translate>Click to assign</p></div></div><div class=\"dropdown-content\" ng-show=\"open\" ng-click=\" $event.stopPropagation();\"><div class=\"dropdown desk-select\" dropdown><button class=\"dropdown-toggle\" dropdown-toggle><span ng-show=\"!desk.name\" translate>Select desk</span> <span ng-show=\"desk.name\">{{desk.name}}</span> <b class=\"caret\"></b></button><div class=\"dropdown-menu\"><ul><li ng-show=\"desk\"><button ng-click=\"desk = null; user = null\" translate>Select desk</button></li><li ng-repeat=\"desk in desksService.desks._items\"><button ng-click=\"$parent.desk = desk; $parent.user = null;\">{{desk.name}}</button></li></ul></div></div><div class=\"user-select\"><div ng-show=\"desk\"><form><label for=\"assignee-search\" translate>Person</label><input type=\"text\" name=\"assignee-search\" ng-model=\"search\" class=\"input-large searchbox\"></form><div class=\"search-result\"><ul class=\"users-list-embed\"><li ng-repeat=\"user in desksService.deskMembers[desk._id] | filter:search\" ng-click=\"$parent.user = user\" ng-class=\"{'active': $parent.user === user}\"><figure class=\"avatar small\"><img sd-user-avatar data-src=\"user.picture_url\"></figure><div class=\"name\">{{user.display_name}}</div><i ng-show=\"$parent.user === user\" class=\"icon-close-small icon-white\" ng-click=\"$parent.user = null; $event.stopPropagation();\"></i></li></ul></div></div></div><div class=\"footer\"><span class=\"clear pull-left\" ng-click=\"desk = null; user = null\" ng-show=\"desk || user\" translate>Clear</span> <button class=\"btn btn-info pull-right\" ng-disabled=\"!desk\" ng-click=\"assign()\" translate>Assign</button> <button class=\"btn pull-right\" ng-click=\"open = false;  $event.stopPropagation();\" translate>Cancel</button></div></div></div><div class=\"assignee-name\" ng-hide=\"hideAssignee\"><span ng-show=\"desk\">{{desk.name}} :</span> <span ng-show=\"user\">{{user.display_name}}</span> <span ng-hide=\"user\" translate>Unassigned</span></div></div>"
+    "<div class=\"assignee-box\" ng-click=\"open = true;\"><div class=\"assignee\" ng-class=\"{'open': open}\" ng-init=\"hoveractive = false\"><div class=\"toggle\" ng-mouseenter=\"hoveractive = true\" ng-mouseleave=\"hoveractive = false\"><div class=\"avatar\" ng-class=\"{desk : desk && !user }\"><img sd-user-avatar data-user=\"user\"></div><div class=\"add\"><i class=\"icon-plus-large icon-white\"></i></div></div><div class=\"tooltip right fade in\" ng-show=\"hoveractive && !open\"><div class=\"tooltip-arrow\"></div><div class=\"tooltip-inner\" ng-show=\"user || desk\"><p class=\"dark\" translate>Assigned to:</p><p class=\"name\">{{desk.name}}<span ng-show=\"user\">/ {{user.display_name}}</span></p><p translate>Click to reassign</p></div><div class=\"tooltip-inner simple\" ng-show=\"!user && !desk\"><p translate>Click to assign</p></div></div><div class=\"dropdown-content\" ng-show=\"open\" ng-click=\" $event.stopPropagation();\"><div class=\"dropdown desk-select\" dropdown><button class=\"dropdown-toggle\" dropdown-toggle><span ng-show=\"!desk.name\" translate>Select desk</span> <span ng-show=\"desk.name\">{{desk.name}}</span> <b class=\"caret\"></b></button><div class=\"dropdown-menu\"><ul><li ng-show=\"desk\"><button ng-click=\"desk = null; user = null\" translate>Select desk</button></li><li ng-repeat=\"desk in desksService.desks._items\"><button ng-click=\"$parent.desk = desk; $parent.user = null;\">{{desk.name}}</button></li></ul></div></div><div class=\"user-select\"><div ng-show=\"desk\"><form><label for=\"assignee-search\" translate>Person</label><input type=\"text\" name=\"assignee-search\" ng-model=\"search\" class=\"input-large searchbox\"></form><div class=\"search-result\"><ul class=\"users-list-embed\"><li ng-repeat=\"user in desksService.deskMembers[desk._id] | filter:search\" ng-click=\"$parent.user = user\" ng-class=\"{'active': $parent.user === user}\"><figure class=\"avatar small\"><img sd-user-avatar data-user=\"user\"></figure><div class=\"name\">{{user.display_name}}</div><i ng-show=\"$parent.user === user\" class=\"icon-close-small icon-white\" ng-click=\"$parent.user = null; $event.stopPropagation();\"></i></li></ul></div></div></div><div class=\"footer\"><span class=\"clear pull-left\" ng-click=\"desk = null; user = null\" ng-show=\"desk || user\" translate>Clear</span> <button class=\"btn btn-info pull-right\" ng-disabled=\"!desk\" ng-click=\"assign()\" translate>Assign</button> <button class=\"btn pull-right\" ng-click=\"open = false;  $event.stopPropagation();\" translate>Cancel</button></div></div></div><div class=\"assignee-name\" ng-hide=\"hideAssignee\"><span ng-show=\"desk\">{{desk.name}} :</span> <span ng-show=\"user\">{{user.display_name}}</span> <span ng-hide=\"user\" translate>Unassigned</span></div></div>"
   );
 
 
@@ -815,7 +825,7 @@ e.groupMembers=d.groupMembers[e.group.edit._id]||[],e.users=d.users._items}):c.w
 
 
   $templateCache.put('scripts/superdesk-search/views/item-search.html',
-    "<form><fieldset ng-if=\"context\"><label><input type=\"radio\" value=\"local\" ng-model=\"repo.search\"> In Superdesk</label><div ng-show=\"repo.search == 'local'\"><div class=\"field\"><label for=\"ingest-collection\">{{:: 'Ingest' | translate}} <input type=\"checkbox\" id=\"ingest-collection\" ng-model=\"repo.ingest\" ng-checked=\"repo.ingest\"></label></div><div class=\"field\"><label for=\"archive-collection\">{{:: 'Production' | translate}} <input type=\"checkbox\" id=\"archive-collection\" ng-model=\"repo.archive\" ng-checked=\"repo.archive\"></label></div><div class=\"field\"><label for=\"published-collection\">{{:: 'Published' | translate}} <input type=\"checkbox\" id=\"published-collection\" ng-model=\"repo.published\" ng-checked=\"repo.published\"></label></div><div class=\"field\"><label for=\"archived-collection\">{{:: 'Archived' | translate}} <input type=\"checkbox\" id=\"archived-collection\" ng-model=\"repo.archived\" ng-checked=\"repo.archived\"></label></div></div></fieldset><fieldset ng-if=\"context\"><div ng-repeat=\"provider in providers\"><label ng-if=\"provider.type == 'search'\"><input type=\"radio\" ng-value=\"provider.source\" ng-model=\"repo.search\"> {{:: provider.name}}</label></div></fieldset><fieldset ng-show=\"repo.search === 'local'\"><div class=\"field\"><label for=\"search-headline\">{{:: 'Headline' | translate}}</label><div class=\"control\"><input type=\"text\" id=\"search-headline\" ng-model=\"meta.headline\"></div></div><div class=\"field\"><label for=\"search-slugline\">{{:: 'Slugline' | translate}}</label><div class=\"control\"><input type=\"text\" id=\"search-slugline\" ng-model=\"meta.slugline\"></div></div><div class=\"multiple\"><div class=\"field\"><label for=\"search-storyname\">{{:: 'Story Name' | translate}}</label><input type=\"text\" id=\"search-storyname\" ng-model=\"meta.unique_name\"></div><div class=\"field\"><label for=\"search-storytext\">{{:: 'Story Text' | translate}}</label><input type=\"text\" id=\"search-storytext\" ng-model=\"meta.body_html\"></div></div><div class=\"field\"><label for=\"search-byline\">{{:: 'Byline' | translate}}</label><input type=\"text\" id=\"search-byline\" ng-model=\"meta.byline\"></div><div class=\"field\" ng-if=\"repo.archive\"><label for=\"search-creator\">{{:: 'Creator' | translate}}</label><select id=\"search-creator\" ng-model=\"meta.original_creator\" ng-options=\"user._id  as user.display_name for user in userList\"><option value=\"\" label=\"\"></option></select></div><div class=\"field\"><label for=\"search-subject\">{{:: 'Subject' | translate}}</label><div class=\"control\" id=\"search-subject\"><div sd-meta-terms data-item=\"subjectitems\" data-field=\"subject\" data-unique=\"qcode\" data-list=\"subjectcodes\" data-change=\"subjectSearch(subjectitems)\"></div></div></div><div class=\"field\"><label for=\"from-desk\">{{:: 'From Desk' | translate}}</label><select id=\"from-desk\" name=\"from-desk\" ng-options=\"d._id as d.name for d in desks._items\" ng-model=\"selectedDesk.from\" ng-change=\"deskSearch()\"><option value=\"\" label=\"\"></option></select></div><div class=\"field\"><label for=\"to-desk\">{{:: 'To Desk' | translate}}</label><select id=\"to-desk\" name=\"to-desk\" ng-options=\"d._id as d.name for d in desks._items\" ng-model=\"selectedDesk.to\" ng-change=\"deskSearch()\"><option value=\"\" label=\"\"></option></select></div></fieldset><fieldset ng-show=\"repo.search === 'aapmm'\"><div class=\"field\"><label for=\"search-slugline\">{{:: 'Slugline' | translate}}</label><div class=\"control\"><input type=\"text\" id=\"search-slugline\" ng-model=\"meta.slugline\"></div></div><div class=\"field\"><label for=\"search-decsription\">{{:: 'Description' | translate}}</label><div class=\"control\"><input type=\"text\" id=\"search-description\" ng-model=\"meta.description\"></div></div><div class=\"field\"><label for=\"search-aapkeyword\">{{:: 'AAP Image Keyword' | translate}}</label><div class=\"control\"><input type=\"text\" id=\"search-aapkeyword\" ng-model=\"meta.aapkeyword\"></div></div></fieldset></form><div class=\"actions\"><button class=\"btn btn-info pull-right\" ng-click=\"search()\" ng-disabled=\"!isSearchEnabled()\" translate>Go</button> <button class=\"btn pull-right\" ng-click=\"focusOnSearch();\" translate>Cancel</button></div>"
+    "<form><fieldset ng-if=\"context\"><label><input type=\"radio\" value=\"local\" ng-model=\"repo.search\"> In Superdesk</label><div ng-show=\"repo.search == 'local'\"><div class=\"field\"><label for=\"ingest-collection\">{{:: 'Ingest' | translate}} <input type=\"checkbox\" id=\"ingest-collection\" ng-model=\"repo.ingest\" ng-checked=\"repo.ingest\"></label></div><div class=\"field\"><label for=\"archive-collection\">{{:: 'Production' | translate}} <input type=\"checkbox\" id=\"archive-collection\" ng-model=\"repo.archive\" ng-checked=\"repo.archive\"></label></div><div class=\"field\"><label for=\"published-collection\">{{:: 'Published' | translate}} <input type=\"checkbox\" id=\"published-collection\" ng-model=\"repo.published\" ng-checked=\"repo.published\"></label></div><div class=\"field\"><label for=\"archived-collection\">{{:: 'Archived' | translate}} <input type=\"checkbox\" id=\"archived-collection\" ng-model=\"repo.archived\" ng-checked=\"repo.archived\"></label></div></div></fieldset><fieldset ng-if=\"context\"><div ng-repeat=\"provider in providers\"><label ng-if=\"provider.type == 'search'\"><input type=\"radio\" ng-value=\"provider.source\" ng-model=\"repo.search\"> {{:: provider.name}}</label></div></fieldset><fieldset ng-show=\"repo.search === 'local'\"><div class=\"field\"><label for=\"search-headline\">{{:: 'Headline' | translate}}</label><div class=\"control\"><input type=\"text\" id=\"search-headline\" ng-model=\"meta.headline\"></div></div><div class=\"field\"><label for=\"search-slugline\">{{:: 'Slugline' | translate}}</label><div class=\"control\"><input type=\"text\" id=\"search-slugline\" ng-model=\"meta.slugline\"></div></div><div class=\"multiple\"><div class=\"field\"><label for=\"search-storyname\">{{:: 'Story Name' | translate}}</label><input type=\"text\" id=\"search-storyname\" ng-model=\"fields.unique_name\"></div><div class=\"field\"><label for=\"search-storytext\">{{:: 'Story Text' | translate}}</label><input type=\"text\" id=\"search-storytext\" ng-model=\"meta.body_html\"></div></div><div class=\"field\"><label for=\"search-byline\">{{:: 'Byline' | translate}}</label><input type=\"text\" id=\"search-byline\" ng-model=\"meta.byline\"></div><div class=\"field\" ng-if=\"repo.archive\"><label for=\"search-creator\">{{:: 'Creator' | translate}}</label><select id=\"search-creator\" ng-model=\"fields.original_creator\" ng-options=\"user._id  as user.display_name for user in userList\"><option value=\"\" label=\"\"></option></select></div><div class=\"field\"><label for=\"search-subject\">{{:: 'Subject' | translate}}</label><div class=\"control\" id=\"search-subject\"><div sd-meta-terms data-item=\"subjectitems\" data-field=\"subject\" data-unique=\"qcode\" data-list=\"subjectcodes\" data-change=\"subjectSearch(subjectitems)\"></div></div></div><div class=\"field\"><label for=\"from-desk\">{{:: 'From Desk' | translate}}</label><select id=\"from-desk\" name=\"from-desk\" ng-options=\"d._id as d.name for d in desks._items\" ng-model=\"fields.from_desk\"><option value=\"\" label=\"\"></option></select></div><div class=\"field\"><label for=\"to-desk\">{{:: 'To Desk' | translate}}</label><select id=\"to-desk\" name=\"to-desk\" ng-options=\"d._id as d.name for d in desks._items\" ng-model=\"fields.to_desk\"><option value=\"\" label=\"\"></option></select></div></fieldset><fieldset ng-show=\"repo.search === 'aapmm'\"><div class=\"field\"><label for=\"search-slugline\">{{:: 'Slugline' | translate}}</label><div class=\"control\"><input type=\"text\" id=\"search-slugline\" ng-model=\"meta.slugline\"></div></div><div class=\"field\"><label for=\"search-decsription\">{{:: 'Description' | translate}}</label><div class=\"control\"><input type=\"text\" id=\"search-description\" ng-model=\"meta.description\"></div></div><div class=\"field\"><label for=\"search-aapkeyword\">{{:: 'AAP Image Keyword' | translate}}</label><div class=\"control\"><input type=\"text\" id=\"search-aapkeyword\" ng-model=\"meta.aapkeyword\"></div></div></fieldset></form><div class=\"actions\"><button class=\"btn btn-info pull-right\" ng-click=\"search()\" ng-disabled=\"!isSearchEnabled()\" translate>Go</button></div>"
   );
 
 
@@ -834,18 +844,23 @@ e.groupMembers=d.groupMembers[e.group.edit._id]||[],e.users=d.users._items}):c.w
   );
 
 
+  $templateCache.put('scripts/superdesk-search/views/save-search.html',
+    "<div class=\"save-search\" ng-hide=\"editSearch || edit\"><button id=\"clear_filters\" class=\"btn btn-info\" ng-click=\"clear()\" translate>Reset</button> <button id=\"save_search_init\" class=\"btn btn-info\" ng-click=\"editItem()\" translate>Save</button> <button id=\"saveas_search_init\" class=\"btn btn-info\" ng-click=\"saveas()\" translate ng-if=\"editingSearch\">Save As</button></div><div class=\"save-search-panel\" ng-if=\"edit\"><div class=\"title\" translate>Save search</div><div class=\"search-content\"><form name=\"viewsForm\"><fieldset><div class=\"field\"><input id=\"search_name\" type=\"text\" class=\"fullwidth-input\" ng-model=\"edit.name\" placeholder=\"{{:: 'Name' | translate}}\" required></div><div class=\"field\"><textarea id=\"search_description\" sd-auto-height ng-model=\"edit.description\" placeholder=\"{{:: 'Description' | translate}}\"></textarea></div><div class=\"field\"><label translate>Global</label><span id=\"search_global\" sd-switch ng-model=\"edit.is_global\"></span></div></fieldset></form></div><div class=\"pull-right\"><button class=\"btn btn-default\" ng-click=\"cancel()\" translate>Cancel</button> <button id=\"search_save\" class=\"btn btn-primary\" ng-click=\"save(edit)\" ng-disabled=\"!viewsForm.$valid\" translate>Ok</button></div></div>"
+  );
+
+
   $templateCache.put('scripts/superdesk-search/views/saved-searches.html',
-    "<div class=\"header\"><button class=\"btn btn-info\" ng-click=\"edit()\" translate>Save search</button></div><div class=\"list\"><ul><li ng-repeat=\"view in views | orderBy:'name' \" ng-click=\"select(view)\" ng-class=\"{active: view == selected}\">{{ view.name }} <button class=\"delete\" ng-click=\"remove(view); $event.stopPropagation();\"><i class=\"icon-trash\"></i></button></li></ul></div><div class=\"mini-modal edit-saved-searches\" ng-if=\"editSearch\"><div class=\"title\" translate>Save search</div><div class=\"close\" ng-click=\"cancel()\"><i class=\"icon-close-small\"></i></div><div class=\"content\"><form name=\"viewsForm\"><fieldset><div class=\"field\"><label>Name</label><input type=\"text\" class=\"fullwidth-input\" ng-model=\"editSearch.name\" required></div></fieldset></form></div><div class=\"footer\"><button class=\"btn btn-default\" ng-click=\"cancel()\" translate>Cancel</button> <button class=\"btn btn-primary\" ng-click=\"save(editSearch)\" ng-disabled=\"!viewsForm.$valid\" translate>Ok</button></div></div>"
+    "<div class=\"search-filters\"><input id=\"search_saved_searches\" ng-model=\"searchText\" type=\"text\" placeholder=\"{{:: 'Search saved searches' | translate}}\"> <button id=\"search_saved_searches_button\" ng-click=\"filter()\"><i class=\"svg-icon-right\"></i></button></div><div class=\"list\"><div class=\"title\" translate>Private Saved Searches</div><ul><li ng-repeat=\"search in userSavedSearches | orderBy:'name' \" ng-click=\"select(search)\" ng-class=\"{active: search == selected}\"><div class=\"search-item\"><div class=\"search-name\">{{:: search.name }} <i ng-if=\"search.is_global\" translate>[Global]</i></div><div class=\"search-description\">{{:: search.description }}</div></div><div class=\"search-button\"><button class=\"delete\" ng-click=\"edit(search)\" title=\"{{:: 'Edit search' | translate }}\"><i class=\"icon-pencil\"></i></button> <button class=\"delete\" ng-click=\"remove(search); $event.stopPropagation();\" title=\"{{:: 'Delete search' | translate }}\"><i class=\"icon-trash\"></i></button></div></li></ul><div class=\"title\" translate>Global Saved Searches</div><ul><li ng-repeat=\"search in globalSavedSearches | orderBy:'name' \" ng-click=\"select(search)\" ng-class=\"{active: search == selected}\"><div class=\"search-item\"><div class=\"search-name\">{{:: search.name }} <i>by {{:: userLookup[search.user].display_name }}</i></div><div class=\"search-description\">{{:: search.description }}</div></div><div class=\"search-button\"><button class=\"delete\" ng-click=\"edit(search)\" title=\"{{:: 'Edit search' | translate }}\" ng-if=\"privileges.global_saved_searches\"><i class=\"icon-pencil\"></i></button> <button class=\"delete\" ng-click=\"remove(search); $event.stopPropagation();\" title=\"{{:: 'Delete search' | translate }}\" ng-if=\"privileges.global_saved_searches\"><i class=\"icon-trash\"></i></button></div></li></ul></div>"
   );
 
 
   $templateCache.put('scripts/superdesk-search/views/search-facets.html',
-    "<div><div class=\"header\"><div class=\"icon\" ng-click=\"flags.facets = !flags.facets\"><i class=\"icon-filter-large\"></i></div><ul><li ng-class=\"{active: sTab}\" ng-click=\"sTab = true\" translate>Advanced Search</li><li ng-show=\"privileges.saved_searches == 1\" ng-class=\"{active: !sTab}\" ng-click=\"sTab = false\" translate>Saved</li></ul><div class=\"doopen\" ng-click=\"flags.facets = false\"><i class=\"icon-backward-thin\"></i></div></div><div class=\"content\" ng-if=\"sTab\"><div sd-search-within></div><div id=\"search-parameters\" sd-toggle-box data-title=\"{{:: 'Parameters' | translate }}\" data-open=\"false\"><div sd-item-search data-repo=\"repo\" data-context=\"context\"></div></div><div sd-toggle-box data-title=\"{{ 'Content types' | translate }}\" ng-hide=\"isEmpty('type')\" data-open=\"true\"><ul class=\"filter-box content-type-filters\"><li ng-repeat=\"(key,value) in aggregations.type\" ng-click=\"toggleFilter('type', key)\" ng-class=\"{checked: hasFilter('type',key)}\"><span class=\"hover-box\"><i class=\"filetype-icon-{{key}}\"></i> <span id=\"filetype-icon-{{key}}\" class=\"sd-checkbox\" ng-checked=\"hasFilter('type',key)\"></span></span> <span>{{:: key | translate}} <i>{{:: value }}</i></span></li></ul></div><div sd-toggle-box data-title=\"{{ 'Desks' | translate }}\" ng-hide=\"isEmpty('desk')\" data-open=\"true\"><ul class=\"filter-box\"><li ng-repeat=\"(key,value) in aggregations.desk\" ng-click=\"toggleFilter('desk', value.id)\"><span class=\"sd-checkbox\" ng-checked=\"hasFilter('desk', value.id)\"></span> <span>{{:: key | translate}} <i>{{:: value.count }}</i></span></li></ul></div><div sd-toggle-box data-title=\"{{ 'Stages' | translate }}\" ng-hide=\"isEmpty('stage')\" data-open=\"true\"><ul class=\"filter-box\"><li ng-repeat=\"(key,value) in aggregations.stage\" ng-click=\"toggleFilter('stage', value.id)\"><span class=\"sd-checkbox\" ng-checked=\"hasFilter('stage', key)\"></span> <span>{{:: key | translate}} <i>{{:: value.count }}</i></span></li></ul></div><div sd-toggle-box data-title=\"{{ 'Sources' | translate }}\" ng-hide=\"isEmpty('source')\" data-open=\"true\"><ul class=\"filter-box\"><li ng-repeat=\"(key,value) in aggregations.source\" ng-click=\"toggleFilter('source', key)\"><span class=\"sd-checkbox\" ng-checked=\"hasFilter('source',key)\"></span> <span>{{:: key | translate}} <i>{{:: value }}</i></span></li></ul></div><div sd-toggle-box data-title=\"{{ 'Credits' | translate }}\" ng-hide=\"isEmpty('credit')\" data-open=\"true\"><ul class=\"filter-box\"><li ng-repeat=\"(key,value) in aggregations.credit\" ng-click=\"toggleFilter('credit', key)\"><span class=\"sd-checkbox\" ng-checked=\"hasFilter('credit',key)\"></span> <span>{{:: key | translate}} <i>{{:: value.count }}</i></span></li></ul></div><div sd-toggle-box data-title=\"{{ 'Categories' | translate }}\" ng-hide=\"isEmpty('category')\" data-open=\"true\"><ul class=\"filter-box\"><li ng-repeat=\"(key,value) in aggregations.category\" ng-click=\"toggleFilter('category', key)\"><span class=\"sd-checkbox\" ng-checked=\"hasFilter('category',key)\"></span> <span>{{:: key | translate}} <i>{{:: value }}</i></span></li></ul></div><div sd-toggle-box data-title=\"{{ 'Genres' | translate }}\" ng-hide=\"isEmpty('genre')\" data-open=\"true\"><ul class=\"filter-box\"><li ng-repeat=\"(key,value) in aggregations.genre\" ng-click=\"toggleFilter('genre', key)\"><span class=\"sd-checkbox\" ng-checked=\"hasFilter('genre',key)\"></span> <span>{{:: key | translate}} <i>{{:: value }}</i></span></li></ul></div><div sd-toggle-box data-title=\"{{ 'Urgency' | FacetLabels }}\" ng-hide=\"isEmpty('urgency')\" data-open=\"true\"><ul class=\"filter-box\"><li ng-repeat=\"(key,value) in aggregations.urgency\" ng-click=\"toggleFilter('urgency', key)\"><span class=\"sd-checkbox\" ng-checked=\"hasFilter('urgency',key)\"></span> <span>{{:: key | translate}} <i>{{:: value }}</i></span></li></ul></div><div sd-toggle-box data-title=\"{{ 'Priority' | FacetLabels }}\" ng-hide=\"isEmpty('priority')\" data-open=\"true\"><ul class=\"filter-box\"><li ng-repeat=\"(key,value) in aggregations.priority\" ng-click=\"toggleFilter('priority', key)\"><span class=\"sd-checkbox\" ng-checked=\"hasFilter('priority',key)\"></span> <span>{{:: key | translate}} <i>{{:: value }}</i></span></li></ul></div><div sd-toggle-box data-title=\"{{ 'Dates' | translate }}\" data-open=\"true\"><form class=\"date-filter\"><div class=\"predefined-dates\"><div ng-repeat=\"(key,value) in aggregations.date\"><button ng-click=\"toggleFilter('date', key)\" class=\"btn btn-mini\" ng-class=\"{active: hasFilter('date',key)}\">{{key}}</button></div></div><fieldset ng-show=\"repo.search === 'local'\"><div class=\"multiple\"><div class=\"field\" sd-date-param data-location=\"beforefirstcreated\"><label for=\"created_before\" translate>Created before</label><div sd-datepicker ng-model=\"date\"></div></div><div class=\"field\" sd-date-param data-location=\"afterfirstcreated\"><label for=\"created_after\" translate>Created after</label><div sd-datepicker ng-model=\"date\"></div></div></div><div class=\"multiple\"><div class=\"field\" sd-date-param data-location=\"beforefirstcreated\"><label for=\"modified_before\" translate>Modified before</label><div sd-datepicker ng-model=\"date\"></div></div><div class=\"field\" sd-date-param data-location=\"afterfirstcreated\"><label for=\"modified_before\" translate>Modified before</label><div sd-datepicker ng-model=\"date\"></div></div></div></fieldset><fieldset ng-show=\"repo.search === 'aapmm'\"><div class=\"multiple\"><div class=\"field\" sd-date-param data-location=\"beforefirstcreated\"><label for=\"created_before\" translate>Created before</label><div sd-datepicker ng-model=\"date\"></div></div><div class=\"field\" sd-date-param data-location=\"afterfirstcreated\"><label for=\"created_after\" translate>Created after</label><div sd-datepicker ng-model=\"date\"></div></div></div></fieldset></form></div></div><div class=\"content views\" ng-if=\"!sTab\"><div sd-saved-searches></div></div></div>"
+    "<div><div class=\"header\"><div class=\"icon\" ng-click=\"flags.facets = !flags.facets\"><i class=\"icon-filter-large\"></i></div><ul><li ng-class=\"{active: sTab}\" ng-click=\"sTab = true\" translate>Advanced Search</li><li id=\"saved_searches_tab\" ng-show=\"privileges.saved_searches == 1\" ng-class=\"{active: !sTab}\" ng-click=\"sTab = false\" translate>Saved</li></ul><div class=\"doopen\" ng-click=\"flags.facets = false\"><i class=\"icon-backward-thin\"></i></div></div><div class=\"content\" ng-if=\"sTab\"><div sd-search-within></div><div id=\"edit-search-name\" class=\"edit-search\" ng-show=\"editingSearch\" translate>Editing: {{ editingSearch.name}}</div><div id=\"search-parameters\" sd-toggle-box data-title=\"{{:: 'Parameters' | translate }}\" data-open=\"false\"><div sd-item-search data-repo=\"repo\" data-context=\"context\"></div></div><div sd-toggle-box data-title=\"{{ 'Content types' | translate }}\" ng-hide=\"isEmpty('type')\" data-open=\"true\"><ul class=\"filter-box content-type-filters\"><li ng-repeat=\"(key,value) in aggregations.type\" ng-click=\"toggleFilter('type', key)\" ng-class=\"{checked: hasFilter('type',key)}\"><span class=\"hover-box\"><i class=\"filetype-icon-{{key}}\"></i> <span id=\"filetype-icon-{{key}}\" class=\"sd-checkbox\" ng-checked=\"hasFilter('type',key)\"></span></span> <span>{{:: key | translate}} <i>{{:: value }}</i></span></li></ul></div><div sd-toggle-box data-title=\"{{ 'Desks' | translate }}\" ng-hide=\"isEmpty('desk')\" data-open=\"true\"><ul class=\"filter-box\"><li ng-repeat=\"(key,value) in aggregations.desk\" ng-click=\"toggleFilter('desk', value.id)\"><span class=\"sd-checkbox\" ng-checked=\"hasFilter('desk', value.id)\"></span> <span>{{:: key | translate}} <i>{{:: value.count }}</i></span></li></ul></div><div sd-toggle-box data-title=\"{{ 'Stages' | translate }}\" ng-hide=\"isEmpty('stage')\" data-open=\"true\"><ul class=\"filter-box\"><li ng-repeat=\"(key,value) in aggregations.stage\" ng-click=\"toggleFilter('stage', value.id)\"><span class=\"sd-checkbox\" ng-checked=\"hasFilter('stage', key)\"></span> <span>{{:: key | translate}} <i>{{:: value.count }}</i></span></li></ul></div><div sd-toggle-box data-title=\"{{ 'Sources' | translate }}\" ng-hide=\"isEmpty('source')\" data-open=\"true\"><ul class=\"filter-box\"><li ng-repeat=\"(key,value) in aggregations.source\" ng-click=\"toggleFilter('source', key)\"><span class=\"sd-checkbox\" ng-checked=\"hasFilter('source',key)\"></span> <span>{{:: key | translate}} <i>{{:: value }}</i></span></li></ul></div><div sd-toggle-box data-title=\"{{ 'Credits' | translate }}\" ng-hide=\"isEmpty('credit')\" data-open=\"true\"><ul class=\"filter-box\"><li ng-repeat=\"(key,value) in aggregations.credit\" ng-click=\"toggleFilter('credit', key)\"><span class=\"sd-checkbox\" ng-checked=\"hasFilter('credit',key)\"></span> <span>{{:: key | translate}} <i>{{:: value.count }}</i></span></li></ul></div><div sd-toggle-box data-title=\"{{ 'Categories' | translate }}\" ng-hide=\"isEmpty('category')\" data-open=\"true\"><ul class=\"filter-box\"><li ng-repeat=\"(key,value) in aggregations.category\" ng-click=\"toggleFilter('category', key)\"><span class=\"sd-checkbox\" ng-checked=\"hasFilter('category',key)\"></span> <span>{{:: key | translate}} <i>{{:: value }}</i></span></li></ul></div><div sd-toggle-box data-title=\"{{ 'Genres' | translate }}\" ng-hide=\"isEmpty('genre')\" data-open=\"true\"><ul class=\"filter-box\"><li ng-repeat=\"(key,value) in aggregations.genre\" ng-click=\"toggleFilter('genre', key)\"><span class=\"sd-checkbox\" ng-checked=\"hasFilter('genre',key)\"></span> <span>{{:: key | translate}} <i>{{:: value }}</i></span></li></ul></div><div sd-toggle-box data-title=\"{{ 'Urgency' | FacetLabels }}\" ng-hide=\"isEmpty('urgency')\" data-open=\"true\"><ul class=\"filter-box\"><li ng-repeat=\"(key,value) in aggregations.urgency\" ng-click=\"toggleFilter('urgency', key)\"><span class=\"sd-checkbox\" ng-checked=\"hasFilter('urgency',key)\"></span> <span>{{:: key | translate}} <i>{{:: value }}</i></span></li></ul></div><div sd-toggle-box data-title=\"{{ 'Priority' | FacetLabels }}\" ng-hide=\"isEmpty('priority')\" data-open=\"true\"><ul class=\"filter-box\"><li ng-repeat=\"(key,value) in aggregations.priority\" ng-click=\"toggleFilter('priority', key)\"><span class=\"sd-checkbox\" ng-checked=\"hasFilter('priority',key)\"></span> <span>{{:: key | translate}} <i>{{:: value }}</i></span></li></ul></div><div sd-toggle-box data-title=\"{{ 'Dates' | translate }}\" data-open=\"true\"><form class=\"date-filter\"><div class=\"predefined-dates\"><div ng-repeat=\"(key,value) in aggregations.date\"><button ng-click=\"toggleFilter('date', key)\" class=\"btn btn-mini\" ng-class=\"{active: hasFilter('date',key)}\">{{key}}</button></div></div><fieldset ng-show=\"repo.search === 'local'\"><div class=\"multiple\"><div class=\"field\" sd-date-param data-location=\"beforefirstcreated\"><label for=\"created_before\" translate>Created before</label><div sd-datepicker ng-model=\"date\"></div></div><div class=\"field\" sd-date-param data-location=\"afterfirstcreated\"><label for=\"created_after\" translate>Created after</label><div sd-datepicker ng-model=\"date\"></div></div></div><div class=\"multiple\"><div class=\"field\" sd-date-param data-location=\"beforefirstcreated\"><label for=\"modified_before\" translate>Modified before</label><div sd-datepicker ng-model=\"date\"></div></div><div class=\"field\" sd-date-param data-location=\"afterfirstcreated\"><label for=\"modified_before\" translate>Modified before</label><div sd-datepicker ng-model=\"date\"></div></div></div></fieldset><fieldset ng-show=\"repo.search === 'aapmm'\"><div class=\"multiple\"><div class=\"field\" sd-date-param data-location=\"beforefirstcreated\"><label for=\"created_before\" translate>Created before</label><div sd-datepicker ng-model=\"date\"></div></div><div class=\"field\" sd-date-param data-location=\"afterfirstcreated\"><label for=\"created_after\" translate>Created after</label><div sd-datepicker ng-model=\"date\"></div></div></div></fieldset></form></div><div sd-save-search></div></div><div class=\"content views\" ng-if=\"!sTab\"><div sd-saved-searches></div></div></div>"
   );
 
 
   $templateCache.put('scripts/superdesk-search/views/search-results.html',
-    "<div class=\"preview-layout\" ng-class=\"{closed: !selected.preview && !selected.fetch}\" ng-init=\"extras={view: view, activity: {type: spike ? 'spike' : type, action: 'list'}, api: api}\"><div class=\"list-pane {{ view || 'mgrid' }}-view\"><header class=\"search-page-header\"><div class=\"filter-trigger\" title=\"{{ :: 'Filters' | translate }}\" ng-click=\"flags.facets = true\" ng-class=\"{hidden: flags.facets}\"><i class=\"icon-filter-large\"></i></div><div sd-item-sortbar></div><div sd-item-searchbar data-repo=\"repo\" data-context=\"context\" class=\"searchbar-flex-handler\"></div><div class=\"view-select\"><button title=\"{{ :: 'Switch to grid view' | translate }}\" ng-show=\"view !== 'mgrid'\" ng-click=\"setview('mgrid')\"><i class=\"icon-th\"></i></button> <button title=\"{{ :: 'Switch to list view' | translate }}\" ng-show=\"view !== 'compact'\" ng-click=\"setview('compact')\"><i class=\"icon-th-list\"></i></button></div><div sd-multi-action-bar></div></header><div class=\"content\" sd-updown data-items=\"items._items\" data-select=\"preview(item)\"><div class=\"loading-indicator\" ng-show=\"loading\" translate>loading</div><div sd-search-tags></div><div sd-shadow><ul class=\"{{view}}-view list-view\"><li ng-repeat=\"item in items._items track by generateTrackIdentifier(item)\" class=\"list-item-view\" ng-class=\"{active: item === selected.preview || item._id === selected.fetch}\"><div sd-media-box></div></li></ul></div></div><div sd-item-preview data-item=\"selected.preview\" data-close=\"preview()\" data-open-lightbox=\"openLightbox\" data-open-single-item=\"openSingleItem\"></div><div sd-send-item data-item=\"selected.fetch\" data-mode=\"monitoring\"></div></div></div>"
+    "<div class=\"preview-layout\" ng-class=\"{closed: !selected.preview && !selected.fetch}\" ng-init=\"extras={view: view, activity: {type: spike ? 'spike' : type, action: 'list'}, api: api}\"><div class=\"list-pane {{ view || 'mgrid' }}-view\"><header class=\"search-page-header\"><div class=\"filter-trigger\" title=\"{{ :: 'Filters' | translate }}\" ng-click=\"flags.facets = true\" ng-class=\"{hidden: flags.facets}\"><i class=\"icon-filter-large\"></i></div><div sd-item-sortbar></div><div sd-item-searchbar data-repo=\"repo\" data-context=\"context\" class=\"searchbar-flex-handler\"></div><div class=\"view-select\"><button title=\"{{ :: 'Switch to grid view' | translate }}\" ng-show=\"view !== 'mgrid'\" ng-click=\"setview('mgrid')\"><i class=\"icon-th\"></i></button> <button title=\"{{ :: 'Switch to list view' | translate }}\" ng-show=\"view !== 'compact'\" ng-click=\"setview('compact')\"><i class=\"icon-th-list\"></i></button></div><div sd-multi-action-bar></div></header><div class=\"content\" sd-updown data-items=\"items._items\" data-select=\"preview(item)\"><div class=\"loading-indicator\" ng-show=\"loading\" translate>loading</div><div sd-search-tags></div><div sd-shadow><ul class=\"{{view}}-view list-view\"><li ng-repeat=\"item in items._items track by generateTrackByIdentifier(item)\" class=\"list-item-view\" ng-class=\"{active: item === selected.preview || item._id === selected.fetch}\"><div sd-media-box></div></li></ul></div></div><div sd-item-preview data-item=\"selected.preview\" data-close=\"preview()\" data-open-lightbox=\"openLightbox\" data-open-single-item=\"openSingleItem\"></div><div sd-send-item data-item=\"selected.fetch\" data-mode=\"monitoring\"></div></div></div>"
   );
 
 
@@ -875,7 +890,7 @@ e.groupMembers=d.groupMembers[e.group.edit._id]||[],e.users=d.users._items}):c.w
 
 
   $templateCache.put('scripts/superdesk-stream/views/activity-stream.html',
-    "<div class=\"activity-log\"><ul class=\"activity-list card-list\"><li class=\"activity\" ng-class=\"{'with-date': showDateHeader(activity)}\" ng-repeat=\"activity in activities._items track by activity._id\"><div class=\"date\" ng-show=\"showDateHeader(activity)\"><span sd-datetime data-date=\"activity._created\"></span></div><div><figure class=\"avatar\"><img sd-user-avatar data-src=\"activity.user.picture_url\" data-initials=\"activity.user.display_name\"></figure><span ng-if=\"activity.name != 'notify'\"><div class=\"activity-content\"><p><b>{{ :: activity.user.display_name || activity.user.username || 'System' }}</b> <span sd-activity-message data-activity=\"activity\"></span></p></div><div class=\"activity-date\"><time sd-datetime data-date=\"activity._created\"></time></div></span> <span ng-if=\"activity.name == 'notify'\"><div class=\"activity-content\"><p><b>{{ :: activity.user.display_name || activity.user.username }}</b> <span translate>commented on</span> <i><a ng-href=\"#/authoring/{{ :: activity.item.guid }}?_id={{ :: activity.item.guid }}&comments={{ :: activity.data.comment_id }}\" title=\"{{ :: activity.item.headline }}\">{{ :: activity.item.slugline || activity.item.headline }}</a></i>:<br>{{ :: activity.data.comment }}</p></div><div class=\"activity-date\"><time sd-datetime date-date=\"activity._created\"></time></div></span></div></li></ul></div><button class=\"btn activity-load-more\" translate ng-click=\"loadMore()\" ng-show=\"activities._meta.total > max_results\">Load more</button>"
+    "<div class=\"activity-log\"><ul class=\"activity-list card-list\"><li class=\"activity\" ng-class=\"{'with-date': showDateHeader(activity)}\" ng-repeat=\"activity in activities._items track by activity._id\"><div class=\"date\" ng-show=\"showDateHeader(activity)\"><span sd-datetime data-date=\"activity._created\"></span></div><div><figure class=\"avatar\"><img sd-user-avatar data-user=\"activity.user\"></figure><span ng-if=\"activity.name != 'notify'\"><div class=\"activity-content\"><p><b>{{ :: activity.user.display_name || activity.user.username || 'System' }}</b> <span sd-activity-message data-activity=\"activity\"></span></p></div><div class=\"activity-date\"><time sd-datetime data-date=\"activity._created\"></time></div></span> <span ng-if=\"activity.name == 'notify'\"><div class=\"activity-content\"><p><b>{{ :: activity.user.display_name || activity.user.username }}</b> <span translate>commented on</span> <i><a ng-href=\"#/authoring/{{ :: activity.item.guid }}?_id={{ :: activity.item.guid }}&comments={{ :: activity.data.comment_id }}\" title=\"{{ :: activity.item.headline }}\">{{ :: activity.item.slugline || activity.item.headline }}</a></i>:<br>{{ :: activity.data.comment }}</p></div><div class=\"activity-date\"><time sd-datetime date-date=\"activity._created\"></time></div></span></div></li></ul></div><button class=\"btn activity-load-more\" translate ng-click=\"loadMore()\" ng-show=\"activities._meta.total > max_results\">Load more</button>"
   );
 
 
@@ -895,7 +910,7 @@ e.groupMembers=d.groupMembers[e.group.edit._id]||[],e.users=d.users._items}):c.w
 
 
   $templateCache.put('scripts/superdesk-templates/views/templates.html',
-    "<div class=\"split-content\"><div class=\"header\"><h2 translate>Templates</h2><button class=\"btn btn-info pull-right\" ng-click=\"edit()\"><i class=\"icon-plus-sign icon-white\"></i> <span translate>Add New Template</span></button></div><div class=\"content\"><div class=\"flex-grid box wrap-items small-2 medium-4 large-6\"><div class=\"flex-item card-box\" ng-repeat=\"template in content_templates._items track by template._id\" ng-if=\"desks\"><div class=\"card-box__header\"><div class=\"dropdown\" dropdown><button class=\"dropdown-toggle\" dropdown-toggle><i class=\"icon-dots-vertical\"></i></button><ul class=\"dropdown-menu more-activity-menu pull-right\"><li><div class=\"menu-label\" translate>Actions</div></li><li class=\"divider\"></li><li><button ng-click=\"edit(template)\" title=\"{{:: 'Edit Template' | translate }}\"><i class=\"icon-pencil\"></i>{{:: 'Edit'| translate}}</button></li><li><button ng-click=\"remove(template)\" title=\"{{:: 'Remove Template' | translate }}\"><i class=\"icon-trash\"></i>{{:: 'Remove'| translate}}</button></li></ul></div><div class=\"card-box__heading\">{{ template.template_name }}</div></div><div class=\"card-box__content\"><ul class=\"card-box__content-list\"><li><h4 class=\"with-value\">{{ :: 'Template type' | translate }} <span class=\"value-label\">{{ template.template_type }}</span></h4></li><li><h4>{{ :: 'Desk / Stage' | translate }}</h4><span>{{getTemplateDesk(template).name}} / {{getTemplateStage(template).name}}</span></li><li><h4>{{ :: 'Automated item creation' | translate }}</h4><span ng-repeat=\"day in template.schedule.day_of_week\">{{ :: weekdays[day] }} <span ng-if=\"$index < template.schedule.day_of_week.length-1\">,</span></span> <span class=\"creation-time\"><i class=\"icon-time\"></i> at {{getTime(template.schedule.create_at).getHours()}}:{{getTime(template.schedule.create_at).getMinutes()}}<span></span></span></li></ul></div></div></div></div></div><div sd-modal data-model=\"template\" class=\"modal-responsive\"><div class=\"modal-header\"><a href=\"\" class=\"close\" ng-click=\"cancel()\"><i class=\"icon-close-small\"></i></a><h3 translate ng-show=\"template._id\" translate>Edit Template \"{{ origTemplate.template_name }}\"</h3><h3 translate ng-hide=\"template._id\" translate>Add New Template</h3></div><div class=\"modal-body\"><form name=\"templateForm\"><div class=\"main-article\"><div class=\"fieldset\"><div class=\"field\"><label for=\"template-name\" translate>Template Name</label><input id=\"template-name\" required ng-model=\"template.template_name\"></div><div class=\"field\"><label for=\"template-type\" translate>Template Type</label><select id=\"template-type\" required ng-model=\"template.template_type\" ng-options=\"type._id as type.label for type in types\"></select></div><div class=\"field\"><label for=\"template-desk\" translate>Desk</label><div class=\"control\"><select id=\"template-desk\" ng-model=\"template.template_desk\" ng-change=\"updateStages(template.template_desk)\"><option value=\"\" translate>None</option><option ng-repeat=\"desk in desks._items track by desk._id\" value=\"{{ desk._id }}\" ng-selected=\"desk._id === template.template_desk\">{{ :: desk.name }}</option></select></div></div><div class=\"field\" ng-if=\"template.template_desk && stages\"><label for=\"template-stage\" translate>Stage</label><div class=\"control\"><select id=\"template-stage\" ng-model=\"template.template_stage\"><option ng-repeat=\"stage in stages track by stage._id\" value=\"{{ stage._id }}\" ng-selected=\"stage._id === template.template_stage\">{{ :: stage.name }}</option></select></div></div><div class=\"field\"><label for=\"schedule-toggle\" translate>Automatically create item</label><div class=\"control\"><span sd-switch ng-model=\"template.schedule.is_active\"></span></div></div><div class=\"field\" ng-if=\"template.schedule.is_active\"><label translate>On</label><div class=\"day-filter-box clearfix\" sd-weekday-picker data-model=\"template.schedule.day_of_week\"></div></div><div class=\"field\" ng-if=\"template.schedule.is_active\"><label translate>At</label><span sd-timepicker-alt data-model=\"template.schedule.create_at\"></span></div></div><div class=\"fieldset\" sd-article-edit></div></div></form></div><div class=\"modal-footer\"><button class=\"btn btn-default\" ng-click=\"cancel()\" translate>Cancel</button> <button class=\"btn btn-primary\" ng-click=\"save()\" ng-disabled=\"templateForm.$invalid\" translate>Save</button></div></div>"
+    "<div class=\"split-content\"><div class=\"header\"><h2 translate>Templates</h2><button class=\"btn btn-info pull-right\" ng-click=\"edit()\"><i class=\"icon-plus-sign icon-white\"></i> <span translate>Add New Template</span></button></div><div class=\"content\"><div class=\"flex-grid box wrap-items small-2 medium-4 large-6\"><div class=\"flex-item card-box\" ng-repeat=\"template in content_templates._items track by template._id\" ng-if=\"desks\"><div class=\"card-box__header\"><div class=\"dropdown\" dropdown><button class=\"dropdown-toggle\" dropdown-toggle><i class=\"icon-dots-vertical\"></i></button><ul class=\"dropdown-menu more-activity-menu pull-right\"><li><div class=\"menu-label\" translate>Actions</div></li><li class=\"divider\"></li><li><button ng-click=\"edit(template)\" title=\"{{:: 'Edit Template' | translate }}\"><i class=\"icon-pencil\"></i>{{:: 'Edit'| translate}}</button></li><li><button ng-click=\"remove(template)\" title=\"{{:: 'Remove Template' | translate }}\"><i class=\"icon-trash\"></i>{{:: 'Remove'| translate}}</button></li></ul></div><div class=\"card-box__heading\">{{ template.template_name }}</div></div><div class=\"card-box__content\"><ul class=\"card-box__content-list\"><li><h4 class=\"with-value\">{{ :: 'Template type' | translate }} <span class=\"value-label\">{{ template.template_type }}</span></h4></li><li ng-if=\"getTemplateDesk(template).name\"><h4>{{ :: 'Desk / Stage' | translate }}</h4><span>{{getTemplateDesk(template).name}} / {{getTemplateStage(template).name}}</span></li><li ng-if=\"template.schedule.is_active\"><h4>{{ :: 'Automated item creation' | translate }}</h4><span ng-repeat=\"day in template.schedule.day_of_week\">{{ :: weekdays[day] }} <span ng-if=\"$index < template.schedule.day_of_week.length-1\">,</span></span> <span class=\"creation-time\"><i class=\"icon-time\"></i> at {{getTime(template.schedule.create_at).getHours()}}:{{getTime(template.schedule.create_at).getMinutes()}}<span></span></span></li></ul></div></div></div></div></div><div sd-modal data-model=\"template\" class=\"modal-responsive\"><div class=\"modal-header\"><a href=\"\" class=\"close\" ng-click=\"cancel()\"><i class=\"icon-close-small\"></i></a><h3 translate ng-show=\"template._id\" translate>Edit Template \"{{ origTemplate.template_name }}\"</h3><h3 translate ng-hide=\"template._id\" translate>Add New Template</h3></div><div class=\"modal-body\"><form name=\"templateForm\"><div class=\"main-article\"><div class=\"fieldset\"><div class=\"field\"><label for=\"template-name\" translate>Template Name</label><input id=\"template-name\" required ng-model=\"template.template_name\"></div><div class=\"field\"><label for=\"template-type\" translate>Template Type</label><select id=\"template-type\" required ng-model=\"template.template_type\" ng-options=\"type._id as type.label for type in types\"></select></div><div class=\"field\"><label for=\"template-desk\" translate>Desk</label><div class=\"control\"><select id=\"template-desk\" ng-model=\"template.template_desk\" ng-change=\"updateStages(template.template_desk)\"><option value=\"\" translate>None</option><option ng-repeat=\"desk in desks._items track by desk._id\" value=\"{{ desk._id }}\" ng-selected=\"desk._id === template.template_desk\">{{ :: desk.name }}</option></select></div></div><div class=\"field\" ng-if=\"template.template_desk && stages\"><label for=\"template-stage\" translate>Stage</label><div class=\"control\"><select id=\"template-stage\" ng-model=\"template.template_stage\"><option ng-repeat=\"stage in stages track by stage._id\" value=\"{{ stage._id }}\" ng-selected=\"stage._id === template.template_stage\">{{ :: stage.name }}</option></select></div></div><div class=\"field\"><label for=\"schedule-toggle\" translate>Automatically create item</label><div class=\"control\"><span sd-switch ng-model=\"template.schedule.is_active\"></span></div></div><div class=\"field\" ng-if=\"template.schedule.is_active\"><label translate>On</label><div class=\"day-filter-box clearfix\" sd-weekday-picker data-model=\"template.schedule.day_of_week\"></div></div><div class=\"field\" ng-if=\"template.schedule.is_active\"><label translate>At</label><span sd-timepicker-alt data-model=\"template.schedule.create_at\"></span></div></div><div class=\"fieldset\" sd-article-edit></div></div></form></div><div class=\"modal-footer\"><button class=\"btn btn-default\" ng-click=\"cancel()\" translate>Cancel</button> <button class=\"btn btn-primary\" ng-click=\"save()\" ng-disabled=\"templateForm.$invalid || (!templateForm.$invalid && !validSchedule())\" translate>Save</button></div></div>"
   );
 
 
@@ -925,12 +940,12 @@ e.groupMembers=d.groupMembers[e.group.edit._id]||[],e.users=d.users._items}):c.w
 
 
   $templateCache.put('scripts/superdesk-users/views/change-avatar.html',
-    "<div class=\"modal-header\"><h3 class=\"pull-left\">{{ activity.label|translate }}</h3><button type=\"button\" class=\"close\" ng-click=\"reject()\"><i class=\"icon-close-small\"></i></button></div><div class=\"modal-body split-popup\"><aside class=\"sidebar\"><ul><li ng-repeat=\"method in methods\" ng-click=\"activate(method)\" ng-class=\"{active: active == this}\"><i class=\"avatar-icon-{{ method.id }}\"></i> {{ method.label }}</li></ul></aside><section class=\"main\" sd-image-preview=\"preview.url\" data-file=\"preview.img\" data-progress-width=\"progress.width\"><div class=\"upload-progress\" ng-show=\"progress.width\"><div class=\"bar\" style=\"width: {{ progress.width }}%\"></div></div><div class=\"computer\" ng-if=\"active.id == 'upload' && !preview.url\" ng-hide=\"progress.width\"><div class=\"dropzone\" ng-file-drop=\"preview.img = $files[0]\"><div class=\"text\" translate>Drop it here</div><div class=\"input-holder\"><input type=\"file\" accept=\"image/*;capture=camera\" ng-file-select=\"preview.img = $files[0]\"></div></div></div><div class=\"camera\" ng-if=\"active.id == 'camera' && !preview.url\"><label translate>Click to capture using camera. Be sure that you allow camera accessibility.</label><video autoplay sd-video-capture=\"preview.url\" data-file=\"preview.img\"></video></div><div class=\"web\" ng-if=\"active.id == 'web' && (!preview.cords || progress.width)\"><label translate>Enter web url</label><input type=\"url\" ng-model=\"url\" ng-change=\"preview.url = url\"><label translate ng-if=\"url\">Provided image URL is not valid.</label></div><div class=\"preview\" ng-if=\"preview.url\" ng-hide=\"!preview.cords || progress.width\"><label translate>Make sure you're looking the best</label><div class=\"crop-area\"><div class=\"original\"><div sd-crop data-src=\"preview.url\" data-cords=\"preview.cords\" data-progress-width=\"progress.width\"></div></div><div class=\"preview\"><div class=\"preview-large\"><img ng-src=\"{{preview.url}}\" class=\"preview-target-1\"></div><div class=\"preview-round\"><img ng-src=\"{{preview.url}}\" class=\"preview-target-2\"></div></div></div></div></section></div><div class=\"modal-footer\"><button type=\"button\" class=\"btn submit\" ng-click=\"upload(preview)\" ng-disabled=\"!preview.cords || progress.width\" translate>Done</button></div>"
+    "<div class=\"modal-header\"><h3 class=\"pull-left\">{{ activity.label|translate }}</h3><button type=\"button\" class=\"close\" ng-click=\"reject()\"><i class=\"icon-close-small\"></i></button></div><div class=\"modal-body split-popup\"><aside class=\"sidebar\"><ul><li ng-repeat=\"method in methods\" ng-click=\"activate(method)\" ng-class=\"{active: active == this}\"><i class=\"avatar-icon-{{ method.id }}\"></i> {{ method.label }}</li></ul></aside><section class=\"main\" sd-image-preview=\"preview.url\" data-file=\"preview.img\" data-progress-width=\"progress.width\"><div class=\"upload-progress\" ng-show=\"progress.width\"><div class=\"bar\" style=\"width: {{ progress.width }}%\"></div></div><div class=\"computer\" ng-if=\"active.id == 'upload' && !preview.url\" ng-hide=\"progress.width\"><div class=\"dropzone\" ng-file-drop=\"preview.img = $files[0]\"><div class=\"text\" translate>Drop it here</div><div class=\"input-holder\"><input type=\"file\" accept=\"image/*;capture=camera\" ng-file-select=\"preview.img = $files[0]\"></div><div class=\"info\" translate>The minimum image resolution is 200x200 pixels.</div></div></div><div class=\"camera\" ng-if=\"active.id == 'camera' && !preview.url\"><label translate>Click to capture using camera. Be sure that you allow camera accessibility.</label><video autoplay sd-video-capture=\"preview.url\" data-file=\"preview.img\"></video></div><div class=\"web\" ng-if=\"active.id == 'web' && (!preview.cords || progress.width)\"><label translate>Enter web url</label><input type=\"url\" ng-model=\"url\" ng-change=\"preview.url = url\"><label translate ng-if=\"url\">Provided image URL is not valid.</label></div><div class=\"preview\" ng-if=\"preview.url\" ng-hide=\"!preview.cords || progress.width\"><label translate>Make sure you're looking the best</label><div class=\"crop-area\"><div class=\"original\"><div sd-crop data-src=\"preview.url\" data-cords=\"preview.cords\" data-progress-width=\"progress.width\" data-file=\"preview.img\" data-max-file-size=\"2\"></div></div><div class=\"preview\"><div class=\"preview-large\"><img ng-src=\"{{preview.url}}\" class=\"preview-target-1\"></div><div class=\"preview-round\"><img ng-src=\"{{preview.url}}\" class=\"preview-target-2\"></div></div></div></div></section></div><div class=\"modal-footer\"><button type=\"button\" class=\"btn submit\" ng-click=\"upload(preview)\" ng-disabled=\"!preview.cords || progress.width\" translate>Done</button></div>"
   );
 
 
   $templateCache.put('scripts/superdesk-users/views/edit-form.html',
-    "<form name=\"userForm\" class=\"flat\" ng-submit=\"userForm.$valid && save()\"><div class=\"action-bar clearfix\" ng-class=\"{show:dirty}\"><button id=\"save-edit-btn\" type=\"submit\" class=\"btn btn-info pull-right\" ng-disabled=\"userForm.$invalid || !dirty\" translate>Save</button> <button id=\"cancel-edit-btn\" type=\"button\" class=\"btn pull-right\" ng-click=\"cancel()\" ng-disabled=\"!dirty\" translate>Cancel</button></div><div class=\"profile-pic\"><figure class=\"avatar\"><img sd-user-avatar data-src=\"user.picture_url\" data-initials=\"user.display_name\" alt=\"{{ user.FullName }}\"> <a href=\"\" class=\"change-photo\" ng-click=\"editPicture()\" translate>Change Photo</a></figure><span class=\"disabled-label\" ng-if=\"user._id && !user.is_enabled\" translate>disabled</span> <span class=\"disabled-label\" ng-if=\"user._id && user.is_enabled && !_active\" translate>inactive</span></div><div class=\"profile-info editmode\"><div class=\"header-info\"><h2>{{ user.display_name }}</h2><h5>{{ user.username }}</h5><div class=\"active\" ng-show=\"user.is_enabled\" ng-if=\"!profile && user._id && !dirty\" tooltip=\"{{ _active ? 'Deactivate user' : 'Activate user' | translate }}\" tooltip-placement=\"left\"><span sd-switch ng-model=\"$parent._active\" ng-click=\"toggleStatus(_active)\"></span></div></div><div class=\"details-info form-flat\" ng-class=\"{shifted : error}\"><div class=\"title\">{{ 'General' | translate }} <span class=\"required-info\" translate>* mandatory fields</span></div><fieldset class=\"label-light\"><div sd-info-item ng-show=\"user._id\"><label for=\"display-name\" translate>full name</label><input type=\"text\" name=\"fullName\" id=\"display-name\" ng-model=\"user.display_name\" readonly></div><div sd-info-item><label for=\"first-name\" translate>first name</label><input type=\"text\" name=\"first_name\" id=\"first-name\" ng-model=\"user.first_name\" required ng-readonly=\"user._readonly && user._readonly.first_name\"> <i ng-show=\"userForm.first_name.$error.required\" class=\"required-asteriks\">*</i></div><div sd-info-item><label for=\"last-name\" translate>last name</label><input type=\"text\" name=\"last_name\" id=\"last-name\" ng-model=\"user.last_name\" required ng-readonly=\"user._readonly && user._readonly.last_name\"> <i ng-show=\"userForm.last_name.$error.required\" class=\"required-asteriks\">*</i></div><div sd-info-item><label for=\"username\" translate>username</label><input type=\"text\" name=\"username\" id=\"username\" ng-model=\"user.username\" ng-model-options=\"{\n" +
+    "<form name=\"userForm\" class=\"flat\" ng-submit=\"userForm.$valid && save()\"><div class=\"action-bar clearfix\" ng-class=\"{show:dirty}\"><button id=\"save-edit-btn\" type=\"submit\" class=\"btn btn-info pull-right\" ng-disabled=\"userForm.$invalid || !dirty\" translate>Save</button> <button id=\"cancel-edit-btn\" type=\"button\" class=\"btn pull-right\" ng-click=\"cancel()\" ng-disabled=\"!dirty\" translate>Cancel</button></div><div class=\"profile-pic\"><figure class=\"avatar\"><img sd-user-avatar data-user=\"user\" alt=\"{{ user.FullName }}\"> <a href=\"\" class=\"change-photo\" ng-click=\"editPicture()\" translate>Change Photo</a></figure><span class=\"disabled-label\" ng-if=\"user._id && !user.is_enabled\" translate>disabled</span> <span class=\"disabled-label\" ng-if=\"user._id && user.is_enabled && !user.is_active\" translate>inactive</span></div><div class=\"profile-info editmode\"><div class=\"header-info\"><h2>{{ user.display_name }}</h2><h5>{{ user.username }}</h5><div class=\"active\" ng-show=\"user.is_enabled\" ng-if=\"!profile && user._id && !dirty\" tooltip=\"{{ _active ? 'Deactivate user' : 'Activate user' | translate }}\" tooltip-placement=\"left\"><span sd-switch ng-model=\"user.is_active\" ng-click=\"toggleStatus(user.is_active)\"></span></div></div><div class=\"details-info form-flat\" ng-class=\"{shifted : error}\"><div class=\"title\">{{ 'General' | translate }} <span class=\"required-info\" translate>* mandatory fields</span></div><fieldset class=\"label-light\"><div sd-info-item ng-show=\"user._id\"><label for=\"display-name\" translate>full name</label><input type=\"text\" name=\"fullName\" id=\"display-name\" ng-model=\"user.display_name\" readonly></div><div sd-info-item><label for=\"first-name\" translate>first name</label><input type=\"text\" name=\"first_name\" id=\"first-name\" ng-model=\"user.first_name\" required ng-readonly=\"user._readonly && user._readonly.first_name\"> <i ng-show=\"userForm.first_name.$error.required\" class=\"required-asteriks\">*</i></div><div sd-info-item><label for=\"last-name\" translate>last name</label><input type=\"text\" name=\"last_name\" id=\"last-name\" ng-model=\"user.last_name\" required ng-readonly=\"user._readonly && user._readonly.last_name\"> <i ng-show=\"userForm.last_name.$error.required\" class=\"required-asteriks\">*</i></div><div sd-info-item><label for=\"username\" translate>username</label><input type=\"text\" name=\"username\" id=\"username\" ng-model=\"user.username\" ng-model-options=\"{\n" +
     "                        updateOn: 'default blur',\n" +
     "                        debounce: {'default': 500, 'blur': 0} }\" ng-readonly=\"user._id\" ng-pattern=\"usernamePattern\" sd-user-unique data-unique-field=\"username\" data-exclude=\"user\" required> <i ng-show=\"userForm.username.$error.required\" class=\"required-asteriks\">*</i><div ng-show=\"userForm.username.$error.unique || error.username.conflict\" sd-valid-error translate>sorry, this username is already taken.</div><div ng-show=\"userForm.username.$error.pattern\" sd-valid-info><i class=\"icon-info-sign-warning\"></i> <span translate>please use only letters (a-z), numbers (0-9), dashes (&mdash;), underscores (_), apostrophes (') and periods (.)</span></div></div><div sd-info-item><label for=\"sign_off\" translate>sign off</label><input type=\"text\" name=\"sign_off\" id=\"sign_off\" ng-model=\"user.sign_off\" ng-pattern=\"signOffPattern\" required> <i ng-show=\"userForm.sign_off.$error.required\" class=\"required-asteriks\">*</i><div ng-show=\"userForm.sign_off.$error.pattern || error.sign_off.format\" sd-valid-info><i class=\"icon-info-sign-warning\"></i> <span translate>Invalid format. Only Alphanumerics are allowed.</span></div></div><div sd-info-item><label for=\"byline\" translate>byline</label><input type=\"text\" name=\"byline\" id=\"byline\" ng-model=\"user.byline\"></div><div sd-info-item class=\"password\" ng-if=\"features.reset_user_password && user._id && !profile && user.is_enabled && _active\" id=\"password-reset-trigger\"><label translate>password</label><i class=\"change-btn sd-blue\" ng-click=\"show.reset_password = !show.reset_password\" ng-show=\"!show.reset_password\">reset password</i></div><div sd-info-item class=\"password\" ng-if=\"features.reset_user_password && user._id && profile\" id=\"password-change-trigger\"><label translate>password</label><i class=\"change-btn sd-blue\" ng-click=\"show.change_password = !show.change_password\" ng-show=\"!show.change_password\">change password</i></div><div sd-info-item><label for=\"email\" translate>email</label><input type=\"email\" name=\"email\" id=\"email\" ng-model=\"user.email\" sd-user-unique data-unique-field=\"email\" data-exclude=\"user\" ng-readonly=\"user._readonly && user._readonly.email\" required> <i ng-show=\"userForm.email.$error.required\" class=\"required-asteriks\">*</i><div ng-show=\"userForm.email.$error.email || error.email.format\" sd-valid-info><i class=\"icon-info-sign-warning\"></i> <span translate>please provide a valid email address</span></div><div ng-show=\"userForm.email.$error.unique || error.email.unique\" sd-valid-error translate>sorry, a user with this email already exists</div></div><div sd-info-item class=\"user_type\" ng-if=\"privileges.users\"><label for=\"user_type\" translate>administrator</label><input type=\"checkbox\" ng-true-value=\"'administrator'\" ng-false-value=\"'user'\" ng-model=\"user.user_type\" name=\"user_type\" id=\"user_type\"></div><div sd-info-item class=\"user_role\" ng-if=\"privileges.users\"><label for=\"user_role\" translate>role</label><select ng-focus=\"focused()\" ng-model=\"user.role\" name=\"user_role\" id=\"user_role\" ng-options=\"role._id as role.name for role in roles\"></select></div><div sd-info-item class=\"user_role\" ng-if=\"userDesks && userDesks.length > 0\"><label for=\"user_default_desk\" translate>Default Desk</label><select ng-model=\"user.desk\" name=\"user_default_desk\" id=\"user_default_desk\" ng-options=\"desk._id as desk.name for desk in userDesks\"></select></div><div sd-info-item><label for=\"phone\" translate>phone number</label><input type=\"text\" name=\"phone\" id=\"phone\" ng-model=\"user.phone\" ng-pattern=\"phonePattern\" ng-readonly=\"user._readonly && user._readonly.phone\"><div ng-show=\"userForm.phone.$error.pattern || error.phone.format\" sd-valid-info><i class=\"icon-info-sign-warning\"></i> <span translate>please provide number in international format</span></div></div><div sd-info-item ng-show=\"user._id\"><label for=\"created\" translate>member since</label><span id=\"created\" class=\"info-value\" sd-reldate ng-model=\"user._created\"></span></div><div sd-info-item ng-show=\"\"><label for=\"user_role\" translate>user role</label><div sd-select class=\"info-value\" ng-model=\"user.role\" options=\"role._id as role.name for role in rolesList\"></div></div></fieldset></div></div></form><div sd-reset-password class=\"password-popup mini-modal inline\" ng-if=\"features.reset_user_password && show.reset_password && user._id\" ng-class=\"{shifted : error}\"><div class=\"title\">Reset password</div><div class=\"close\" ng-click=\"show.reset_password = false\"><i class=\"icon-close-small\"></i></div><div class=\"content\"><p translate>Do you want to reset the password for user {{ user.full_name }} ?</p></div><div class=\"footer\"><button class=\"btn btn-small\" ng-click=\"show.reset_password = false\" translate>Cancel</button> <button class=\"btn btn-info btn-small\" ng-click=\"resetPassword()\" translate>Reset password</button></div></div><div sd-change-password class=\"password-popup mini-modal inline\" ng-if=\"features.reset_user_password && show.change_password && user._id\" ng-class=\"{shifted : error}\"><div class=\"title\">Change password</div><div class=\"close\" ng-click=\"show.change_password = false\"><i class=\"icon-close-small\"></i></div><form name=\"changePasswordForm\"><div class=\"content\"><div class=\"field\"><label translate>current</label><input name=\"old\" type=\"password\" ng-model=\"oldPwd\" required><p sd-valid-error ng-show=\"oldPasswordInvalid\">sorry, but this is not the original password.</p></div><div class=\"field\"><label translate>new</label><input name=\"new\" type=\"password\" ng-model=\"newPwd\" required ng-minlength=\"5\"><p sd-valid-error ng-show=\"changePasswordForm.new.$error.minlength\">please provide password at least 5 characters long.</p></div><div class=\"field\"><label translate>confirm</label><input name=\"confirm\" type=\"password\" ng-model=\"_confirm\" required sd-password-confirm ng-model=\"_confirm\" data-password=\"newPwd\"><p sd-valid-error ng-show=\"changePasswordForm.confirm.$error.confirm\">confirm doesn't match new password yet.</p></div></div><div class=\"foooter\"><button class=\"btn btn-small\" ng-click=\"show.change_password = false\" translate>Cancel</button> <button class=\"btn btn-info btn-small\" ng-click=\"changePasswordForm.$valid && changePassword(oldPwd, newPwd)\" ng-disabled=\"changePasswordForm.$invalid\" translate>Save password</button></div></form></div>"
   );
@@ -947,7 +962,7 @@ e.groupMembers=d.groupMembers[e.group.edit._id]||[],e.users=d.users._items}):c.w
 
 
   $templateCache.put('scripts/superdesk-users/views/mentions-menu.html',
-    "<ul class=\"users-list-embed\"><li mentio-menu-item=\"user\" ng-repeat=\"user in items\"><figure class=\"avatar small\"><img sd-user-avatar data-src=\"user.picture_url\" data-initials=\"user.display_name\" alt=\"user.display_name\"></figure><span class=\"name\">{{ user.display_name }}</span></li></ul>"
+    "<ul class=\"users-list-embed\"><li mentio-menu-item=\"user\" ng-repeat=\"user in items\"><figure class=\"avatar small\"><img sd-user-avatar data-user=\"user\" alt=\"user.display_name\"></figure><span class=\"name\">{{ user.display_name }}</span></li></ul>"
   );
 
 
@@ -977,7 +992,7 @@ e.groupMembers=d.groupMembers[e.group.edit._id]||[],e.users=d.users._items}):c.w
 
 
   $templateCache.put('scripts/superdesk-users/views/user-list-item.html',
-    "<li ng-repeat=\"user in users\" ng-click=\"select(user)\" ng-class=\"{selected: user === selected, 'inactive' : !user.is_enabled || !user.is_active}\"><figure class=\"avatar avatar-with-info\" ng-class=\"{'user-logged': isLoggedIn(user)}\"><div class=\"logged-info\"></div><div class=\"user-image\"><img sd-user-avatar data-src=\"user.picture_url\" data-initials=\"user.display_name\"></div></figure><i class=\"admin-label icon-settings\" ng-if=\"user.user_type == 'administrator'\" tooltip=\"{{ :: 'admin'|translate}}\" tooltip-placement=\"top\"></i><div class=\"row-wrapper\" sd-col-width><div class=\"name\">{{ user.display_name }} <span class=\"disabled-label\" ng-if=\"!user.is_enabled\" translate>disabled</span> <span class=\"disabled-label\" ng-if=\"user.is_enabled && !user.is_active\" translate>inactive</span> <span class=\"disabled-label\" ng-if=\"user.is_enabled && user.is_active && user.needs_activation\" translate>pending</span></div><div class=\"username\">{{ user.username }}</div><div class=\"role\">{{ roles[user.role].name }}</div><div class=\"email\">{{ user.email }}</div><div class=\"created\">{{ user._created | reldate}}</div></div><div class=\"action\"><ul class=\"item-functions\" sd-activity-list data-item=\"user\" data-type=\"user\" data-action=\"edit\" data-done=\"done\"></ul></div></li><li class=\"alert alert-info\" ng-show=\"users.length == null\"><p translate>Loading..</p></li><li class=\"alert alert-info\" ng-show=\"users.length == 0\"><p translate>Oops! There are no items.</p></li>"
+    "<li ng-repeat=\"user in users\" ng-click=\"select(user)\" ng-class=\"{selected: user === selected, 'inactive' : !user.is_enabled || !user.is_active}\"><figure class=\"avatar avatar-with-info\" ng-class=\"{'user-logged': isLoggedIn(user)}\"><div class=\"logged-info\"></div><div class=\"user-image\"><img sd-user-avatar data-user=\"user\"></div></figure><i class=\"admin-label icon-settings\" ng-if=\"user.user_type == 'administrator'\" tooltip=\"{{ :: 'admin'|translate}}\" tooltip-placement=\"top\"></i><div class=\"row-wrapper\" sd-col-width><div class=\"name\">{{ user.display_name }} <span class=\"disabled-label\" ng-if=\"!user.is_enabled\" translate>disabled</span> <span class=\"disabled-label\" ng-if=\"user.is_enabled && !user.is_active\" translate>inactive</span> <span class=\"disabled-label\" ng-if=\"user.is_enabled && user.is_active && user.needs_activation\" translate>pending</span></div><div class=\"username\">{{ user.username }}</div><div class=\"role\">{{ roles[user.role].name }}</div><div class=\"email\">{{ user.email }}</div><div class=\"created\">{{ user._created | reldate}}</div></div><div class=\"action\"><ul class=\"item-functions\" sd-activity-list data-item=\"user\" data-type=\"user\" data-action=\"edit\" data-done=\"done\"></ul></div></li><li class=\"alert alert-info\" ng-show=\"users.length == null\"><p translate>Loading..</p></li><li class=\"alert alert-info\" ng-show=\"users.length == 0\"><p translate>Oops! There are no items.</p></li>"
   );
 
 
@@ -1007,7 +1022,7 @@ e.groupMembers=d.groupMembers[e.group.edit._id]||[],e.users=d.users._items}):c.w
 
 
   $templateCache.put('scripts/superdesk-workspace/content/views/sd-content-create.html',
-    "<li><div class=\"menu-label\" translate>Create new item</div></li><li><button id=\"create_text_article\" ng-click=\"create()\"><i class=\"icon-plus-small icon-round icon-white\"></i> {{ :: 'Plain text' | translate }}</button></li><li><button id=\"create_preformatted_article\" ng-click=\"create('preformatted')\"><i class=\"icon-plus-small icon-round icon-white\"></i> {{ :: 'Preformatted' | translate }}</button></li><li><button id=\"create_package\" ng-click=\"createPackage()\"><i class=\"icon-plus-small icon-round icon-white\"></i> {{ :: 'Empty Package' | translate }}</button></li><li ng-if=\"item\"><button id=\"package_item\" ng-click=\"createPackage(item)\"><i class=\"icon-plus-small icon-round icon-white\"></i> {{ :: 'Package current item' | translate }}</button></li><li class=\"divider\"></li><li><div class=\"menu-label\" translate>From template</div></li><div ng-show=\"contentTemplates._items.length\"><li translate>From template:</li><li ng-repeat=\"template in contentTemplates._items\"><button ng-click=\"createFromTemplate(template)\"><i class=\"icon-plus-small icon-round icon-white\"></i> {{ :: template.template_name }}</button></li></div><div ng-hide=\"contentTemplates._items.length\"><li translate>No recent templates.</li></div><li><button ng-click=\"displayTemplateSelect = true;\" translate>More templates...</button></li><li class=\"divider\" ng-if=\"openUpload\"></li><li ng-if=\"openUpload\"><button ng-click=\"openUpload()\" id=\"start-upload-btn\"><i class=\"icon-upload blue\"></i> {{ :: 'UPLOAD ITEM' | translate }}</button></li><div sd-template-select data-select-action=\"createFromTemplate\" data-open=\"displayTemplateSelect\"></div>"
+    "<li><div class=\"menu-label\" translate>Create new item</div></li><li><button id=\"create_text_article\" ng-click=\"create()\"><i class=\"icon-plus-small icon-round icon-white\"></i> {{ :: 'Plain text' | translate }}</button></li><li><button id=\"create_package\" ng-click=\"createPackage()\"><i class=\"icon-plus-small icon-round icon-white\"></i> {{ :: 'Empty Package' | translate }}</button></li><li ng-if=\"item\"><button id=\"package_item\" ng-click=\"createPackage(item)\"><i class=\"icon-plus-small icon-round icon-white\"></i> {{ :: 'Package current item' | translate }}</button></li><li class=\"divider\"></li><li><div class=\"menu-label\" translate>From template</div></li><div ng-show=\"contentTemplates._items.length\"><li translate>From template:</li><li ng-repeat=\"template in contentTemplates._items\"><button ng-click=\"createFromTemplate(template)\"><i class=\"icon-plus-small icon-round icon-white\"></i> {{ :: template.template_name }}</button></li></div><div ng-hide=\"contentTemplates._items.length\"><li translate>No recent templates.</li></div><li><button ng-click=\"displayTemplateSelect = true;\" translate>More templates...</button></li><li class=\"divider\" ng-if=\"openUpload\"></li><li ng-if=\"openUpload\"><button ng-click=\"openUpload()\" id=\"start-upload-btn\"><i class=\"icon-upload blue\"></i> {{ :: 'UPLOAD ITEM' | translate }}</button></li><div sd-template-select data-select-action=\"createFromTemplate\" data-open=\"displayTemplateSelect\"></div>"
   );
 
 
@@ -1042,7 +1057,7 @@ e.groupMembers=d.groupMembers[e.group.edit._id]||[],e.users=d.users._items}):c.w
 
 
   $templateCache.put('scripts/superdesk/activity/views/activity-item.html',
-    "<a title=\"{{ :: activity.label | translate }}\" ng-href=\"{{ :: $root.link(activity._id, item) }}\" ng-if=\":: !activity.dropdown\" ng-click=\"run(activity, $event)\"><i class=\"icon-{{ :: activity.icon }} {{!activity.monitor|| !item.actioning[activity._id] || 'actioning'}}\" ng-show=\":: activity.icon\"></i> <span>{{ :: activity.label | translate }}</span></a><li class=\"divider\" ng-if=\"activity._id === 'mark.item'\"></li><div ng-if=\":: activity.dropdown\" class=\"dropdown dropdown-noarrow\" dropdown><a class=\"dropdown-toggle\" title=\"{{ :: activity.label | translate }}\" dropdown-toggle><i class=\"icon-{{ :: activity.icon }}\" ng-show=\":: activity.icon\"></i> <span>{{ :: activity.label | translate }} <i class=\"icon-chevron-right-thin submenu-icon\"></i></span></a><ul class=\"dropdown-menu right-submenu\"><div ng-include=\"activity.templateUrl\"></div></ul></div>"
+    "<a title=\"{{ :: activity.label | translate }}\" ng-href=\"{{ :: $root.link(activity._id, item) }}\" ng-if=\":: !activity.dropdown\" ng-click=\"run(activity, $event)\"><i class=\"icon-{{ :: activity.icon }} {{!activity.monitor|| !item.actioning[activity._id] || 'actioning'}}\" ng-show=\":: activity.icon\"></i> <span>{{ :: activity.label | translate }}</span></a><li class=\"divider\" ng-if=\"activity._id === 'mark.item'\"></li><div ng-if=\":: activity.dropdown\" class=\"dropdown dropdown-noarrow\" ng-class=\"{open: dropdownOpen}\" ng-mouseenter=\"dropdownOpen=true\" ng-mouseleave=\"dropdownOpen=false\" dropdown><a class=\"dropdown-toggle\" title=\"{{ :: activity.label | translate }}\" dropdown-toggle><i class=\"icon-{{ :: activity.icon }}\" ng-show=\":: activity.icon\"></i> <span>{{ :: activity.label | translate }} <i class=\"icon-chevron-right-thin submenu-icon\"></i></span></a><ul class=\"dropdown-menu right-submenu\"><div ng-include=\"activity.templateUrl\"></div></ul></div>"
   );
 
 
@@ -1072,7 +1087,7 @@ e.groupMembers=d.groupMembers[e.group.edit._id]||[],e.users=d.users._items}):c.w
 
 
   $templateCache.put('scripts/superdesk/editor/views/editor.html',
-    "<div class=\"dropdown\" dropdown><pre class=\"text-editor editor-type-text\" ng-show=\"type=='preformatted'\" spellcheck></pre><div class=\"text-editor editor-type-html\" ng-show=\"type=='text' || !type\" spellcheck></div><code class=\"text-editor-info\" ng-if=\"cursor.line && type == 'preformatted'\"><small translate>Line: {{ cursor.line }}, Column: {{ cursor.column }}</small></code> <button class=\"dropdown-toggle hide\" dropdown-toggle></button><ul class=\"dropdown-menu\"><li ng-repeat=\"word in suggestions\"><button ng-click=\"replace(word)\">{{ :: word }}</button></li><li ng-show=\"suggestions.length === 0\"><button translate>SORRY, NO SUGGESTIONS.</button></li><li class=\"divider\"></li><li><button ng-click=\"addWordToDictionary()\" translate>Add to dictionary</button></li></ul></div>"
+    "<div class=\"dropdown\" dropdown><div class=\"text-editor editor-type-html\" ng-show=\"type=='text' || !type\" spellcheck></div><button class=\"dropdown-toggle hide\" dropdown-toggle></button><ul class=\"dropdown-menu\"><li ng-repeat=\"word in suggestions\"><button ng-click=\"replace(word)\">{{ :: word }}</button></li><li ng-show=\"suggestions.length === 0\"><button translate>SORRY, NO SUGGESTIONS.</button></li><li class=\"divider\"></li><li><button ng-click=\"addWordToDictionary()\" translate>Add to dictionary</button></li></ul></div>"
   );
 
 
@@ -1158,12 +1173,12 @@ e.groupMembers=d.groupMembers[e.group.edit._id]||[],e.users=d.users._items}):c.w
 
 
   $templateCache.put('scripts/superdesk/menu/notifications/views/notifications.html',
-    "<div class=\"notification-pane\" ng-class=\"{show: flags.notifications}\"><div class=\"header\" ng-if=\"flags.notifications\"><figure class=\"avatar medium\"><img sd-user-avatar data-src=\"currentUser.picture_url\" data-initials=\"currentUser.display_name\"></figure><div class=\"user-info\"><span class=\"name\">{{currentUser.display_name }}</span> <span class=\"displayname\">{{currentUser.username }}</span></div><div class=\"actions\"><a href=\"#/profile/\" ng-click=\"flags.notifications = false\" translate>Profile</a> <button ng-click=\"logout()\" translate>SIGN OUT</button></div></div><div class=\"content\" ng-if=\"flags.notifications\"><section class=\"module\"><header class=\"title\" translate>Notifications</header><div class=\"notification-list\"><ul><li ng-repeat=\"notification in notifications._items\" ng-class=\"{unread: notification._unread}\" sd-mark-as-read><figure class=\"avatar\"><img sd-user-avatar data-src=\"notification.user.picture_url\" data-initials=\"notification.user.display_name\"></figure><div class=\"content\" ng-if=\"notification.name == 'notify'\"><time sd-datetime data-date=\"notification._created\"></time><p class=\"text\"><b>{{ notification.user.display_name || notification.user.username }}</b> <span translate>commented on</span> <i><a ng-href=\"#/authoring/{{ notification.item.guid }}?_id={{ notification.item.guid }}&comments={{ notification.data.comment_id }}\" title=\"{{ notification.item.headline }}\">{{ notification.item.slugline || notification.item.headline }}</a></i>:<br>{{ notification.data.comment }}</p></div><div class=\"content\" ng-if=\"notification.name != 'notify'\"><time sd-datetime data-date=\"notification._created\"></time><p class=\"text\"><b>{{ notification.user.display_name || notification.user.username || \"System\" }}</b>: <span sd-activity-message data-activity=\"notification\"></span></p></div></li><div class=\"info\" ng-show=\"notifications._items.length === 0\" translate>All good so far.</div><div class=\"info\" ng-show=\"notifications._items == null\" translate>loading..</div></ul></div></section></div></div>"
+    "<div class=\"notification-pane\" ng-class=\"{show: flags.notifications}\"><div class=\"header\" ng-if=\"flags.notifications\"><figure class=\"avatar medium\"><img sd-user-avatar data-user=\"currentUser\"></figure><div class=\"user-info\"><span class=\"name\">{{currentUser.display_name }}</span> <span class=\"displayname\">{{currentUser.username }}</span></div><div class=\"actions\"><a href=\"#/profile/\" ng-click=\"flags.notifications = false\" translate>Profile</a> <button ng-click=\"logout()\" translate>SIGN OUT</button></div></div><div class=\"content\" ng-if=\"flags.notifications\"><section class=\"module\"><header class=\"title\" translate>Notifications</header><div class=\"notification-list\"><ul><li ng-repeat=\"notification in notifications._items\" ng-class=\"{unread: notification._unread}\" sd-mark-as-read><figure class=\"avatar\"><img sd-user-avatar data-user=\"notification.user\"></figure><div class=\"content\" ng-if=\"notification.name == 'notify'\"><time sd-datetime data-date=\"notification._created\"></time><p class=\"text\"><b>{{ notification.user.display_name || notification.user.username }}</b> <span translate>commented on</span> <i><a ng-href=\"#/authoring/{{ notification.item.guid }}?_id={{ notification.item.guid }}&comments={{ notification.data.comment_id }}\" title=\"{{ notification.item.headline }}\">{{ notification.item.slugline || notification.item.headline }}</a></i>:<br>{{ notification.data.comment }}</p></div><div class=\"content\" ng-if=\"notification.name != 'notify'\"><time sd-datetime data-date=\"notification._created\"></time><p class=\"text\"><b>{{ notification.user.display_name || notification.user.username || \"System\" }}</b>: <span sd-activity-message data-activity=\"notification\"></span></p></div></li><div class=\"info\" ng-show=\"notifications._items.length === 0\" translate>All good so far.</div><div class=\"info\" ng-show=\"notifications._items == null\" translate>loading..</div></ul></div></section></div></div>"
   );
 
 
   $templateCache.put('scripts/superdesk/menu/views/menu.html',
-    "<div><div id=\"top-menu\" ng-class=\"{'menu-open': flags.menu}\"><div class=\"nav pull-left\"><button class=\"collapse-nav pull-left\" ng-click=\"toggleMenu()\"><i class=\"icon-collapse icon-white\"></i></button> <a class=\"main-link pull-left\" ng-hide=\"currentRoute.topTemplateUrl\" ng-href=\"{{currentRoute | menuGroup}}\" translate>{{ currentRoute.label }}</a><div class=\"top-nav pull-left\" ng-include=\"currentRoute.topTemplateUrl\"></div></div><div class=\"nav pull-right\"><button class=\"current-user pull-right\" ng-click=\"toggleNotifications()\"><span class=\"label label--info circle small\" ng-show=\"notifications.unread\">{{ notifications.unread }}</span><figure class=\"avatar\"><img sd-user-avatar data-src=\"currentUser.picture_url\" data-initials=\"currentUser.display_name\" alt=\"{{currentUser.display_name || currentUser.username }}\"></figure></button> <button ng-click=\"toggleBeta()\" class=\"beta-switch pull-right\"><span class=\"stable\" ng-if=\"!beta\" tooltip=\"{{ :: 'Switch to feature preview' | translate }}\" tooltip-placement=\"left\">stable</span> <span class=\"beta\" ng-if=\"beta\" tooltip=\"{{ :: 'Turn off feature preview' | translate }}\" tooltip-placement=\"left\">feature preview</span></button></div></div><div id=\"side-menu\" ng-class=\"{'menu-open': flags.menu}\" ng-include=\"currentRoute.sideTemplateUrl\"></div><div id=\"main-menu\"><div class=\"header\"></div><div class=\"content\"><ul><li ng-repeat=\"item in menu | filter:{ adminTools: false } | orderBy:'priority'\" ng-class=\"{active: item.isActive}\"><a ng-href=\"#{{ :: item.href }}\" title=\"{{ :: item.description | translate }}\">{{ :: item.label | translate }}</a></li><li class=\"main-menu_group-header\">Admin tools</li><li ng-repeat=\"item in menu | filter:{ adminTools: true } | orderBy:'priority'\" ng-class=\"{active: item.isActive}\"><a ng-href=\"#{{ :: item.href }}\" title=\"{{ :: item.description | translate }}\">{{ :: item.label | translate }}</a></li></ul></div><div class=\"footer\"><i class=\"icon-superdesk\"></i> <span>Powered by Superdesk technology</span></div></div></div>"
+    "<div><div id=\"top-menu\" ng-class=\"{'menu-open': flags.menu}\"><div class=\"nav pull-left\"><button class=\"collapse-nav pull-left\" ng-click=\"toggleMenu()\"><i class=\"icon-collapse icon-white\"></i></button> <a class=\"main-link pull-left\" ng-hide=\"currentRoute.topTemplateUrl\" ng-href=\"{{currentRoute | menuGroup}}\" translate>{{ currentRoute.label }}</a><div class=\"top-nav pull-left\" ng-include=\"currentRoute.topTemplateUrl\"></div></div><div class=\"nav pull-right\"><button class=\"current-user pull-right\" ng-click=\"toggleNotifications()\"><span class=\"label label--info circle small\" ng-show=\"notifications.unread\">{{ notifications.unread }}</span><figure class=\"avatar\"><img sd-user-avatar data-user=\"currentUser\" alt=\"{{currentUser.display_name || currentUser.username }}\"></figure></button> <button ng-click=\"toggleBeta()\" class=\"beta-switch pull-right\"><span class=\"stable\" ng-if=\"!beta\" tooltip=\"{{ :: 'Switch to feature preview' | translate }}\" tooltip-placement=\"left\">stable</span> <span class=\"beta\" ng-if=\"beta\" tooltip=\"{{ :: 'Turn off feature preview' | translate }}\" tooltip-placement=\"left\">feature preview</span></button></div></div><div id=\"side-menu\" ng-class=\"{'menu-open': flags.menu}\" ng-include=\"currentRoute.sideTemplateUrl\"></div><div id=\"main-menu\"><div class=\"header\"></div><div class=\"content\"><ul><li ng-repeat=\"item in menu | filter:{ adminTools: false } | orderBy:'priority'\" ng-class=\"{active: item.isActive}\"><a ng-href=\"#{{ :: item.href }}\" title=\"{{ :: item.description | translate }}\">{{ :: item.label | translate }}</a></li><li class=\"main-menu_group-header\">Admin tools</li><li ng-repeat=\"item in menu | filter:{ adminTools: true } | orderBy:'priority'\" ng-class=\"{active: item.isActive}\"><a ng-href=\"#{{ :: item.href }}\" title=\"{{ :: item.description | translate }}\">{{ :: item.label | translate }}</a></li></ul></div><div class=\"footer\"><i class=\"icon-superdesk\"></i> <span>Powered by Superdesk technology</span></div></div></div>"
   );
 
 
@@ -1254,6 +1269,36 @@ e.groupMembers=d.groupMembers[e.group.edit._id]||[],e.users=d.users._items}):c.w
 
   $templateCache.put('scripts/superdesk/views/sdselect.html',
     "<div class=\"sdselect\" ng-class=\"{'open': open}\"><a class=\"sdselect-btn\" ng-click=\"toggleSelect()\" ng-disabled=\"disabled\" ng-class=\"{'error': !valid()}\"><span class=\"pull-left\">{{header}}</span> <span class=\"caret pull-right\"></span></a><div class=\"sdselect-menu\" ng-show=\"open\"><div><div class=\"sdselect-filter\" ng-show=\"showfilter\"><input class=\"input-block-level\" type=\"text\" ng-model=\"searchText.label\" autofocus placeholder=\"{{ 'Filter' | translate }}\"></div><div class=\"sdselect-all\" ng-show=\"multiple\"><a ng-click=\"checkAll()\" translate>Check all</a> <a ng-click=\"uncheckAll()\" translate>Uncheck all</a></div></div><div class=\"list-holder\"><ul><li ng-repeat=\"i in items | filter:searchText\"><a ng-click=\"select(i); focus()\"><i ng-class=\"{'icon-ok': i.checked, 'icon-empty': !i.checked}\"></i>{{i.label}}</a></li></ul></div></div></div>"
+  );
+
+
+  $templateCache.put('scripts/superdesk-archive/archive-widget/thumbnail.svg',
+    "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewbox=\"0 0 232 144\" enable-background=\"new 0 0 232 144\"><defs><path id=\"1\" opacity=\".9\" d=\"m5.937 8.442v124.03h220.61v-124.03h-220.61m63.19 103.7c-19.267 0-34.943-15.677-34.943-34.947s15.675-34.947 34.943-34.947c19.27 0 34.947 15.677 34.947 34.947s-15.677 34.947-34.947 34.947m90.47 0c-19.267 0-34.943-15.677-34.943-34.947s15.675-34.947 34.943-34.947c19.27 0 34.947 15.677 34.947 34.947s-15.677 34.947-34.947 34.947\"><path id=\"2\" opacity=\".75\" d=\"m116.37 63.44c2.77-16.191 14.226-29.409 29.399-34.705v-14h-117.61v115.26h117.61v-31.848c-15.173-5.296-26.629-18.514-29.398-34.708\"><path id=\"3\" opacity=\".5\" d=\"m196.95 61.59v32.14h-49.91v18.46h58.26v-50.6z\"><path id=\"4\" opacity=\".4\" d=\"m99.97 109.08c-.866 0-1.568-.702-1.568-1.568v-14.05c0-.866.702-1.568 1.568-1.568h69.28v-7.89h-69.28c-.866 0-1.568-.702-1.568-1.568v-14.05c0-.866.702-1.568 1.568-1.568h69.28v-36.496h-110.89c4.142 0 8.425 0 14.66 3.459 7.438 4.126 10.263 12.2 10.423 17.862.127 4.549-.448 8.302-.722 9.802 1.415.861 2.83 2.644 2.83 6.334 0 4.601-2.3 11.01-6.05 11.06-2.295 6.556-5.983 12.326-10.219 15.987v7.201l1.22 2.945c6.291 1.493 20.239 5.328 24.753 10.855 2.641 3.241 5.148 25.792 5.426 28.353l.011.1h68.55v-35.2h-69.28z\"><clippath><use xlink:href=\"#4\"></clippath><clippath id=\"0\"><use xlink:href=\"#3\"></clippath><clippath><use xlink:href=\"#1\"></clippath><clippath><use xlink:href=\"#2\"></clippath></defs><g opacity=\".75\"><g fill=\"#231f20\"><path opacity=\".45\" d=\"m86.55 126.11v-3.497h-12.374v-33.717h-16.437c-1.296 0-2.492-.457-3.432-1.215-1.251-1-2.047-2.547-2.047-4.264v-56.18c0-3.02-2.455-5.478-5.478-5.478-3.02 0-5.477 2.455-5.477 5.478v98.87c0 3.02-2.456 5.479-5.478 5.479h11.329 33.916c3.02 0 5.478-2.457 5.478-5.479\"><path opacity=\".3\" d=\"m68.749 42.865h-.056c-3.02 0-5.478 2.456-5.478 5.477v35.08c0 3.02-2.447 5.479-5.478 5.479h16.437v-40.56c-.0001-3.01-2.424-5.447-5.425-5.476\"></g><g opacity=\".7\" fill=\"#fff\"><path d=\"m30.344 126.11c0 3.02 2.456 5.479 5.479 5.479 3.02 0 5.478-2.457 5.478-5.479v-4.571h-4.659v-1.373h4.659v-2.57h-4.659v-1.373h4.659v-2.57h-4.659v-1.373h4.659v-2.57h-4.659v-1.373h4.659v-2.569h-4.659v-1.373h4.659v-2.57h-4.659v-1.373h4.659v-2.57h-4.659v-1.373h4.659v-2.57h-4.659v-1.373h4.659v-10.05h-10.957v43.594\"><path d=\"m117.86 44.47c-1.069-1.07-2.471-1.604-3.873-1.604h-16.434v-15.62c0-1.402-.535-2.804-1.607-3.873-1.067-1.07-2.471-1.604-3.872-1.604h-5.479-39.82c3.02 0 5.478 2.455 5.478 5.478v56.18c0 1.717.796 3.26 2.047 4.264.94.757 2.136 1.215 3.432 1.215 3.03 0 5.478-2.456 5.478-5.479v-7.638h-4.712v-1.373h4.712v-2.57h-4.712v-1.373h4.712v-2.571h-4.712v-1.373h4.712v-2.571h-4.712v-1.374h4.712v-2.571h-4.712v-1.373h4.712v-2.57h-4.712v-1.373h4.712v-2.572h-4.712v-1.373h4.712v-2.407c0-.055.007-.108.008-.163h-4.721v-1.373h4.935c.295-1.01.873-1.895 1.642-2.572h-6.577v-1.373h10.08v.008c-.001 0-.021.002-.031.002.046-.0001.09-.007.136-.007h.056c3 .029 5.424 2.467 5.424 5.476v40.56 33.717h12.426 32.87v-74.28c.0001-1.402-.534-2.804-1.603-3.874m-59.36-13.435h32.702v1.373h-32.702v-1.373m0 3.943h32.702v1.373h-32.702v-1.373m0 5.317v-1.373h32.702v1.373h-32.702m21.968 20.909h20.246v17.15h-20.246v-17.15m32.702 52.64h-32.702v-1.373h32.702v1.373m0-3.944h-32.702v-1.373h32.702v1.373m0-3.943h-32.702v-1.373h32.702v1.373m0-3.944h-32.702v-1.373h32.702v1.373m0-3.944h-32.702v-1.373h32.702v1.373m0-3.943h-32.702v-1.373h32.702v1.373m0-3.944h-32.702v-1.373h32.702v1.373m0-3.943h-32.702v-1.373h32.702v1.373m0-3.944h-32.702v-1.373h32.702v1.373m0-3.944h-9.693v-1.373h9.693v1.373m0-3.943h-9.693v-1.373h9.693v1.373m0-3.944h-9.693v-1.373h9.693v1.373m0-3.944h-9.693v-1.373h9.693v1.373m0-3.943h-9.693v-1.373h9.693v1.373m0-4.63h-32.702v-3.944h32.702v3.944\"></g><path opacity=\".3\" fill=\"#231f20\" d=\"m80.47 61.2h20.246v17.15h-20.246z\"></g><path opacity=\".4\" d=\"m138.69 93.06h58.26v.673h-58.26z\"><g fill=\"#fff\"><path opacity=\".85\" d=\"m138.69 43.13v49.931h58.26v-49.931h-58.26m54.965 43.22h-.055-10.791-5.509-2.671-15.737-16.908-.055v-39.865h51.672v35.36l.055.055v4.446z\"><path opacity=\".6\" d=\"m157.37 69.09l9.392 9.392 4.09-4.089 9.204 9.203 7.646-7.646 5.9 5.899v-35.36h-51.672v39.865h.055v-1.875l15.385-15.385m22.629-15.01c.139 0 .275.014.406.044.283-1.111 1.293-1.933 2.493-1.933 1.419 0 2.571 1.152 2.571 2.572 0 .007 0 .012 0 .017.104-.022.211-.032.32-.032.852 0 1.544.692 1.544 1.544 0 .854-.692 1.544-1.544 1.544h-5.79c-1.036 0-1.878-.84-1.878-1.878 0-1.038.842-1.878 1.878-1.878m-14.562 8.86c.003 0 .004 0 .005 0-.0001-.051-.005-.105-.005-.156 0-3.038 2.461-5.498 5.498-5.498 2.481 0 4.579 1.646 5.262 3.904.416-.195.876-.304 1.365-.304 1.769 0 3.202 1.436 3.202 3.203 0 .409-.075.797-.214 1.157.035 0 .07-.007.106-.007 1.135 0 2.055.921 2.055 2.057 0 1.133-.92 2.053-2.055 2.053h-15.219c-1.77 0-3.204-1.436-3.204-3.205 0-1.77 1.434-3.204 3.204-3.204m-11.962-11.944c3.28 0 5.937 2.658 5.937 5.937 0 3.28-2.658 5.937-5.937 5.937-3.279 0-5.936-2.658-5.936-5.937 0-3.28 2.657-5.937 5.936-5.937\"><path opacity=\".15\" d=\"m170.85 74.39l-4.09 4.09 7.87 7.87h2.67l2.76-2.75z\"><circle opacity=\".8\" cx=\"153.48\" cy=\"56.936\" r=\"5.937\"><path opacity=\".35\" d=\"m180 57.839h5.79c.852 0 1.544-.69 1.544-1.544 0-.852-.692-1.544-1.544-1.544-.109 0-.216.001-.32.032 0-.005 0-.001 0-.017 0-1.42-1.152-2.572-2.571-2.572-1.2 0-2.21.822-2.493 1.933-.131-.031-.268-.044-.406-.044-1.036 0-1.878.84-1.878 1.878 0 1.038.842 1.878 1.878 1.878\"><path opacity=\".2\" d=\"m165.44 69.35h15.219c1.135 0 2.055-.919 2.055-2.053 0-1.135-.92-2.057-2.055-2.057-.036 0-.071.007-.106.007.139-.36.214-.748.214-1.157 0-1.768-1.433-3.203-3.202-3.203-.489 0-.949.109-1.365.304-.684-2.258-2.781-3.904-5.262-3.904-3.037 0-5.498 2.46-5.498 5.498 0 .051.004.105.005.156-.0001 0-.002 0-.005 0-1.77 0-3.204 1.433-3.204 3.203 0 1.77 1.434 3.206 3.204 3.206\"></g><path opacity=\".2\" d=\"m187.71 75.951l-7.65 7.649-2.76 2.75h5.51 10.79.06v-4.446l-.06-.054z\"><path opacity=\".2\" d=\"m157.37 69.09l-15.38 15.39v1.87h16.91 15.73l-7.87-7.87z\"><g opacity=\".5\"><g clip-path=\"url(#0)\"><g fill=\"#fff\"><path opacity=\".85\" d=\"m147.04 61.59v49.931h58.26v-49.931h-58.26m54.965 43.22h-.055-10.791-5.509-2.671-15.737-16.908-.055v-39.865h51.672v35.36l.055.055v4.446z\"><path opacity=\".6\" d=\"m165.72 87.55l9.392 9.392 4.09-4.089 9.204 9.203 7.646-7.646 5.9 5.899v-35.36h-51.672v39.865h.055v-1.875l15.385-15.386m22.629-15.01c.139 0 .275.014.406.044.283-1.111 1.293-1.933 2.493-1.933 1.419 0 2.571 1.152 2.571 2.572 0 .007 0 .012 0 .017.104-.022.211-.032.32-.032.852 0 1.544.692 1.544 1.544 0 .854-.692 1.544-1.544 1.544h-5.79c-1.036 0-1.878-.84-1.878-1.878 0-1.038.842-1.878 1.878-1.878m-14.562 8.86c.003 0 .004 0 .005 0-.0001-.051-.005-.105-.005-.156 0-3.038 2.461-5.498 5.498-5.498 2.481 0 4.579 1.646 5.262 3.904.416-.195.876-.304 1.365-.304 1.769 0 3.202 1.436 3.202 3.203 0 .409-.075.797-.214 1.157.035 0 .07-.007.106-.007 1.135 0 2.055.921 2.055 2.057 0 1.133-.92 2.053-2.055 2.053h-15.219c-1.77 0-3.204-1.436-3.204-3.205 0-1.77 1.434-3.204 3.204-3.204m-11.962-11.945c3.28 0 5.937 2.658 5.937 5.937 0 3.28-2.658 5.937-5.937 5.937-3.279 0-5.936-2.658-5.936-5.937 0-3.279 2.657-5.937 5.936-5.937\"><path opacity=\".15\" d=\"m179.2 92.85l-4.09 4.09 7.87 7.87h2.67l2.75-2.75z\"></g><path opacity=\".2\" d=\"m196.05 94.41l-7.65 7.65-2.75 2.75h5.51 10.79.05v-4.45l-.05-.05z\"><path opacity=\".2\" d=\"m165.72 87.55l-15.39 15.39v1.87h16.91 15.74l-7.87-7.87z\"></g></g></svg>"
+  );
+
+
+  $templateCache.put('scripts/superdesk-dashboard/world-clock/thumbnail.svg',
+    "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewbox=\"0 0 232 144\" enable-background=\"new 0 0 232 144\"><defs><path id=\"1\" opacity=\".9\" d=\"m5.937 8.442v124.03h220.61v-124.03h-220.61m63.19 103.7c-19.267 0-34.943-15.677-34.943-34.947s15.675-34.947 34.943-34.947c19.27 0 34.947 15.677 34.947 34.947s-15.677 34.947-34.947 34.947m90.47 0c-19.267 0-34.943-15.677-34.943-34.947s15.675-34.947 34.943-34.947c19.27 0 34.947 15.677 34.947 34.947s-15.677 34.947-34.947 34.947\"><path id=\"2\" opacity=\".75\" d=\"m116.37 63.44c2.77-16.191 14.226-29.409 29.399-34.705v-14h-117.61v115.26h117.61v-31.848c-15.173-5.296-26.629-18.514-29.398-34.708\"><path id=\"3\" opacity=\".5\" d=\"m196.95 58.59v32.14h-49.91v18.46h58.26v-50.6z\"><path id=\"4\" opacity=\".4\" d=\"m99.97 109.08c-.866 0-1.568-.702-1.568-1.568v-14.05c0-.866.702-1.568 1.568-1.568h69.28v-7.89h-69.28c-.866 0-1.568-.702-1.568-1.568v-14.05c0-.866.702-1.568 1.568-1.568h69.28v-36.496h-110.89c4.142 0 8.425 0 14.66 3.459 7.438 4.126 10.263 12.2 10.423 17.862.127 4.549-.448 8.302-.722 9.802 1.415.861 2.83 2.644 2.83 6.334 0 4.601-2.3 11.01-6.05 11.06-2.295 6.556-5.983 12.326-10.219 15.987v7.201l1.22 2.945c6.291 1.493 20.239 5.328 24.753 10.855 2.641 3.241 5.148 25.792 5.426 28.353l.011.1h68.55v-35.2h-69.28z\"><clippath><use xlink:href=\"#4\"></clippath><clippath><use xlink:href=\"#3\"></clippath><clippath id=\"0\"><use xlink:href=\"#1\"></clippath><clippath><use xlink:href=\"#2\"></clippath></defs><g opacity=\".9\"><g clip-path=\"url(#0)\"><path opacity=\".15\" d=\"m44.541 72.25c.13.155.264.311.421.445.358.065.696-.128 1.054-.132-.247-.583-.991-.465-1.475-.313\"><path opacity=\".15\" d=\"m83.84 36.469c-.299-.1-.539-.305-.716-.557-.087.014-.169.027-.252.039-.149-.104-.315-.183-.492-.228-.016.087-.051.256-.067.342-.13.043-.26.095-.354.203-.291-.031-.582.032-.87.077-.004.083-.012.248-.02.331-.15-.087-.299-.169-.448-.244.028.157.059.313.09.472-.142.039-.279.077-.417.116.004-.372-.331-.551-.653-.616l.098-.028c-.177-.02-.35-.031-.523-.039-.039.114-.079.228-.118.342-.083.201-.161.405-.24.608.354.122.681-.148 1.035-.167 0 .09.004.268.008.352-.126.051-.244.106-.366.159l-.083-.03c-.118.049-.232.1-.346.15.028.049.083.147.11.195.268-.057.535-.102.811-.118.138.13.252.291.358.453-.126.079-.252.161-.374.244.586-.167 1.149.016 1.7.189.24.096.484-.033.716-.087.059-.094.122-.189.189-.283.386-.114.669-.417 1.01-.622.264-.165.457-.425.582-.708-.003-.236-.125-.48-.365-.545\"><path opacity=\".15\" d=\"m120.07 56.922c-.169-.14-.413.11-.276.275.138.082.355-.134.276-.275\"><path opacity=\".15\" d=\"m118.91 58.03c-.142-.287-.512-.283-.783-.287-.393-.073-.775-.114-1.149-.24.008.075.024.224.031.301.378-.004.732.246 1.11.238.197-.002.595-.008.791-.012\"><path opacity=\".15\" d=\"m158.92 79.25c-.146-.295-.46-.458-.763-.531.067.097.138.195.205.297-.02.519-.319 1.01-.169 1.543.043.457.154.913.311 1.346.405-.004.775-.181 1.118-.386.055-.272.209-.559.075-.83-.199-.509-.522-.967-.777-1.439\"><path opacity=\".15\" d=\"m151.29 16.816c.413-.094.811-.248 1.165-.5-.047-.177-.098-.352-.154-.525-.417-.061-.818-.352-1.244-.158-.008-.084-.027-.254-.031-.34-.153-.016-.346-.169-.464-.012-.594.52-.366 1.448-.429 2.137.405-.164.72-.502 1.157-.602\"><path opacity=\".15\" d=\"m174.78 19.706c-.142.254-.279.51-.417.762-.134.106-.256.226-.331.378.154-.055.311-.114.468-.171.299.254.665.454 1.07.443-.008-.295-.016-.59-.036-.885-.087-.215-.213-.409-.35-.596-.14-.027-.274.043-.404.069\"><path opacity=\".15\" d=\"m189.56 44.24c-.09.083-.181.169-.268.254.059.081.122.159.189.242-.059.362-.039.732.059 1.088.106.053.22.108.334.167-.201.714.02 1.448.149 2.154.508.445.661 1.125.976 1.702.075.213.248.36.445.468-.303-.639.315-.649.649-.791-.429-.244-.901-.453-1.271-.783-.189-.396-.185-.844-.268-1.263.197-.059.397-.106.602-.15-.09-.46-.429-.891-.279-1.381-.024-.519-.039-1.039.016-1.558-.15-.165-.327-.301-.492-.449-.26-.22-.464-.649-.921-.382.095.193.315.24.492.331-.047.144-.086.287-.122.433-.097-.031-.196-.058-.29-.082\"><path opacity=\".15\" d=\"m145.23 16.656c.335-.075.689-.097 1.019-.22.193-.254.279-.573.48-.824 0 .161 0 .323.004.486-.11.156-.22.307-.327.46.205-.029.413-.049.622-.065.095.104.201.205.323.291.453-.075.885-.24 1.362-.22.378-.043.893-.004 1.153-.366.051-.191-.201-.25-.303-.358-.055-.283-.106-.571-.181-.85-.142-.157-.358-.201-.543-.287-.138.156-.268.317-.39.484-.031-.071-.102-.213-.138-.279l.079-.026c-.09-.018-.268-.057-.358-.073-.114-.181-.248-.35-.327-.547.067-.15.153-.295.22-.445-.441-.053-.874-.087-1.294-.244-.315.382-.59.809-1.027 1.059-.043.165-.083.334-.118.504.043.02.126.057.169.077.031.297-.346.478-.468.738.11.02.323.059.429.079-.15.122-.303.244-.464.35.023.091.05.184.078.276\"><path opacity=\".15\" d=\"m129.32 29.11c.13.016.264.035.401.055.134.126.271.374.492.268.016-.055.031-.157.043-.209.043.035.13.106.173.144.012.081.043.244.059.325.547.069 1.094.13 1.653.099-.291-.382-.724-.669-.854-1.151-.083-.624.46-1.053.555-1.629-.016-.171-.051-.508-.067-.677.146-.084.291-.171.437-.254-.028-.177-.059-.352-.09-.525.523-.356 1.114-.667 1.488-1.194.275-.374.673-.752.582-1.275-.354-.157-.815-.122-1.074.197-.315.201-.275.63-.519.881-.346.366-.893.362-1.33.527-.476.274-.83.712-1.196 1.118-.134.061-.275.122-.346.26.102.014.311.039.413.053.031.435-.063.901-.472 1.116.161.071.327.149.484.232-.15.067-.299.13-.445.193-.063.126-.126.256-.244.339.067.128.157.252.193.399-.189.104-.39.179-.578.281.002.175.144.293.242.427\"><path opacity=\".15\" d=\"m128.75 31.423c-.165-.508-.787-.675-1.259-.539-.197.071-.22.342-.091.482.315.428.905.092 1.35.057\"><path opacity=\".15\" d=\"m123.64 23.2c-.122.077-.212.185-.283.307.205.043.413.088.622.144.13-.049.264-.098.401-.142.106-.126.22-.244.331-.366.193-.096.464-.165.535-.399-.118-.124-.252-.234-.374-.352-.236.098-.468.209-.681.344.024.132.055.266.083.397-.122-.12-.236-.248-.35-.38-.429.106-.85.212-1.263.354.216.365.657.117.979.093\"><path opacity=\".15\" d=\"m126.08 22.396c.287-.039.598-.031.866-.157.197-.146.224-.409.275-.632-.161-.045-.319-.092-.476-.144.106-.216.201-.441.256-.675-.165-.057-.327-.114-.488-.169-.11.346-.275.71-.146 1.074-.079-.002-.232-.004-.307-.006.004.177.016.532.02.709\"><path opacity=\".15\" d=\"m178.5 17.977c-.138-.189-.268-.382-.39-.574-.079-.008-.236-.024-.315-.03-.008-.079-.028-.234-.039-.313-.11-.047-.22-.094-.33-.144-.051.033-.161.096-.217.13-.008-.1-.027-.299-.035-.397-.256.091-.22.4-.299.61.323.413.551.903.937 1.269.342.045.543-.296.688-.551\"><path opacity=\".15\" d=\"m193.85 22.11c.622-.398 1.298-.693 1.964-1.019-.028-.161-.035-.331-.165-.437-.48-.039-.968.016-1.44.026-.193.122-.405.213-.586.356-.114.209-.185.437-.271.657.051.106.102.213.157.319.109.031.223.062.341.098\"><path opacity=\".15\" d=\"m173.18 18.14c.106.092.154.299.327.287.457.303.657-.134.708-.448.047.028.142.079.189.106.232-.118.456-.254.704-.336.185 0 .327.159.496.226l-.02-.106c.449-.124.885-.458.881-.98.075-.126.126-.264.169-.402-.433-.22-.909-.354-1.401-.268-.15-.161-.37-.216-.575-.25-.095.234-.138.484-.051.728-.433-.161-.889-.258-1.334-.354-.205.207-.413.411-.618.612.024.183.059.37.102.551-.036.11-.071.22-.102.331.171.106.344.208.525.303m2.306-1.68c.212.122.079.46-.154.423-.004-.081-.004-.238-.004-.317.04-.028.119-.079.158-.106\"><path opacity=\".15\" d=\"m106.62 54.12c-.228.342.083.596.315.718.012-.285.295-.254.504-.289.031-.378.094-.748.11-1.121-.043-.185-.153-.342-.232-.508-.177.043-.342.118-.488.222-.146.022-.287.039-.425.057.126.297.267.57.216.921\"><path opacity=\".15\" d=\"m122.94 57.984c-.11.307.342.299.531.415.216-.155.441-.297.696-.372-.02-.045-.063-.138-.087-.185.028-.063.079-.187.106-.248-.424.103-.865.166-1.246.39\"><path opacity=\".15\" d=\"m194.94 117.47c.051.053.149.151.197.203.453.079.917-.071 1.369-.118-.106-.055-.208-.102-.311-.15-.374-.319-.85-.035-1.255.065\"><path opacity=\".15\" d=\"m206.74 116.53c.008-.018.018-.035.026-.053.086-.395.134-.809.354-1.155.079-.295.118-.614.315-.858.476-.708.76-1.542.87-2.388.11-.464.287-.917.52-1.334.134-.256.201-.551.142-.834.02-.106.043-.213.071-.315-.059-.043-.177-.126-.232-.169.232-.622.283-1.328.665-1.881.008-.075.027-.228.039-.307-.154.195-.323.386-.547.498-.028-.151-.059-.303-.083-.451-.177-.157-.252-.382-.35-.584-.091-.061-.177-.124-.264-.183-.051-.146-.095-.307-.248-.366-.024-.295-.032-.586-.036-.875-.047.02-.149.061-.201.081-.106-.108-.209-.216-.315-.321-.043.065-.126.191-.169.258-.201-.47-.09-1.029-.456-1.425.031-.11.067-.216.106-.323-.315-.187-.637-.378-.877-.657-.311-.12-.594-.295-.83-.525.086-.327.008-.659.008-.99-.008-.256-.04-.518-.181-.732-.319-.484-.173-1.106-.095-1.637-.145-.1-.291-.197-.433-.291-.012-.071-.028-.218-.036-.291-.185.079-.366.169-.555.22-.334-.403-.059-1.023-.157-1.487-.051-.045-.157-.132-.208-.173.024-.13.063-.256.094-.382-.378-.157-.236-.671-.354-1-.185.165-.397.332-.457.59-.079.276-.204.539-.413.748.161.527-.299.966-.24 1.488.008.98-.299 1.952-.885 2.739-.201.14-.476.214-.697.085-.268-.11-.405-.38-.578-.59-.492-.061-.716-.517-1.098-.765-.012-.085-.039-.256-.055-.342-.032.061-.091.185-.118.248-.315-.236-.63-.484-.933-.724.098-.403.398-.72.708-.984-.303-.016-.169-.331-.11-.508.063.032.181.097.244.132.13-.299.275-.588.37-.901-.157-.055-.315-.114-.472-.169-.012.102-.035.301-.043.403-.079-.157-.149-.319-.216-.476-.169.087-.334.26-.543.193-.413-.114-.811-.307-1.228-.397-.311-.205-.626-.515-1.043-.372.138.108.299.191.472.248.055.136.11.273.169.413-.346.242-.759.161-1.153.175-.346.12-.59.401-.822.671.016.045.051.132.071.173-.327.248-.547.59-.775.919.083.122.165.244.248.374-.374-.004-.74-.14-1.078.035-.228-.364-.457-.815-.913-.917-.169.146-.366.213-.586.136-.039.169-.079.34-.122.518-.154-.047-.303-.087-.453-.118-.063.15-.122.301-.169.456-.067.02-.197.057-.26.075-.122.114-.244.228-.366.342-.047.209-.09.421-.142.631-.189-.041-.378-.071-.563-.092-.039.106-.075.215-.11.323.067.079.134.167.197.256-.102.122-.213.24-.319.358-.09-.244-.177-.488-.272-.726-.421.344-.87.762-.716 1.381-.531.372-.7 1.119-1.369 1.31-.661.24-1.373.332-1.991.679-.366.244-.858.057-1.216.307-.35.228-.665.5-1.027.708-.272.15-.429.427-.614.661-.02-.173-.039-.346-.055-.515-.122.197-.303.372-.311.618.063.502-.287.862-.472 1.281.055.466.185.939.331 1.391-.043.104-.087.212-.122.319-.043-.018-.13-.055-.173-.075-.051.145-.094.307-.252.366.024.256.055.516.094.775-.031.466.228.866.327 1.306.02.295.063.889.083 1.19.067.338.232.655.287 1 .031.543-.118 1.078-.232 1.607-.157.006-.319.014-.476.026l.083.48c.24.268.488.543.791.752.275.067.567.09.866.098.382-.132.716-.382 1.114-.48.106-.098.216-.189.342-.264.791-.148 1.578.157 2.365.189.204-.185.366-.415.535-.635.433-.106.822-.34 1.251-.47.338.031.626.088.976.028.476-.047.897-.281 1.354-.392.421-.069.87-.098 1.283-.246.193.134.386.268.579.405.22-.063.453-.045.61.142.126-.026.256-.047.386-.071.114.142.236.281.366.413-.189.027-.209.201-.228.358.145.09.295.187.441.289.071.256.248.459.378.687.039.171-.024.342-.216.374.118.134.236.268.354.407.145-.002.299-.002.453-.004-.028-.102-.055-.203-.079-.299.421-.321.838-.643 1.306-.897.22-.248.437-.502.649-.758.055.033.165.096.224.13-.075.077-.15.158-.22.24.024.049.067.145.09.193-.079.098-.232.295-.307.393-.283.264-.189.7-.421.99-.138.022-.272.037-.405.053-.047.106-.09.214-.134.327.315-.035.559-.122.897-.142.13-.311.272-.622.409-.927.114.224.291.439.307.701-.079.269-.287.474-.457.692.334.03.701-.001 1.019.159.445.437.307 1.092.315 1.655.283.293.393.872.968.661.051.097.106.199.165.301.693-.201 1.299.443 1.995.317.311-.152.63-.313.972-.395.018.011.037.02.056.03.838-1.862 2.567-3.217 4.642-3.536\"><path opacity=\".15\" d=\"m194.5 95.98c-.083.181-.165.358-.236.543.205 0 .602 0 .807 0 .075-.081.158-.161.24-.24.004-.079.012-.236.016-.315-.272.08-.559.122-.827.012\"><path opacity=\".15\" d=\"m201.57 122.14c-.136-.043-.275-.072-.426-.052-.252.346-.197.761-.146 1.165-.051.035-.15.108-.201.146-.004.201-.012.602-.016.799.298.203.681.237 1.019.133-.163-.55-.254-1.131-.254-1.735.002-.154.013-.305.024-.456\"><path opacity=\".15\" d=\"m112.32 21.3c.047.124.09.25.142.374l.098-.016c.276.185.567.34.886.435.205.047.327.222.452.374.26-.014.575-.001.85-.002.142-.169.303-.325.476-.462.008-.075.016-.224.02-.299-.327-.116-.626-.307-.842-.582-.118.027-.232.055-.342.086-.008-.11-.012-.216-.008-.327-.098-.051-.193-.102-.283-.149-.016.102-.047.303-.063.405-.386-.321-.803-.61-1.243-.842-.295.142-.555.398-.913.354.09.177.177.358.244.551.168.058.341.141.526.1\"><path opacity=\".15\" d=\"m109.52 23.46c.016.148.028.295.043.443.197-.037.393-.081.594-.116-.016.205-.201.222-.362.258-.004.075-.012.228-.016.303.5.173.925.482 1.381.742.114-.266.205-.541.279-.82.134-.095.275-.189.413-.279.016-.134.028-.264.047-.392.22-.069.189-.311.228-.492.043-.043.142-.132.189-.175.083.02.244.055.327.075.177.275.405.516.606.775-.071.149-.157.287-.228.433.161.02.492.055.649.075.028.047.087.144.114.191.342-.1.716-.222.913-.549-.165-.02-.33-.035-.496-.051-.087-.145-.169-.291-.252-.437-.079-.008-.236-.024-.315-.031-.016-.071-.043-.213-.063-.283-.11-.087-.217-.183-.315-.279-.012-.041-.039-.126-.051-.167-.354-.234-.708-.462-1.066-.681-.075-.179-.146-.36-.208-.545-.067.002-.205.004-.272.006-.031-.183-.138-.344-.295-.435-.213-.018-.429-.008-.642-.018-.161.325-.118.687-.012 1.023-.165-.187-.323-.38-.5-.549-.299-.041-.366.397-.642.474.059-.136.126-.27.193-.403-.496.189-1.137.14-1.468.626 0 .224.169.417.248.626.165.384.601.552.979.652m.48-.281c.004-.079.016-.244.02-.327.083 0 .244-.004.323-.004.047.067.134.197.181.262-.24.218-.535.36-.866.319.11-.085.224-.168.342-.25\"><path opacity=\".15\" d=\"m34.22 86.66c-.059.008-.181.016-.24.024.035.099.075.197.114.297-.059.037-.185.112-.244.151.13.016.268.031.401.045-.083.136-.173.266-.264.403.09.004.268.014.358.02.059-.037.181-.114.244-.151-.11-.159-.216-.321-.331-.474-.007-.076-.031-.234-.038-.315\"><path opacity=\".15\" d=\"m215.34 92.58c-.083-.315-.248-.622-.578-.716.031.197.071.393.11.594.153.039.307.086.468.122\"><path opacity=\".15\" d=\"m216.98 93.38c-.153-.303-.425-.517-.653-.757-.149-.001-.295-.016-.437-.022.24.256.508.498.748.771.086.003.255.005.342.008\"><path opacity=\".15\" d=\"m214.62 93.06c.016.193.035.386.035.578.094.037.193.079.295.116-.024-.057-.079-.173-.11-.23.071-.012.212-.035.279-.047.086.108.169.22.26.331.145-.26-.15-.48-.217-.72-.145-.053-.291-.102-.429-.155l-.012-.108c-.102-.045-.205-.089-.303-.126-.051.195-.102.389-.15.586.116-.078.23-.154.352-.225\"><path opacity=\".15\" d=\"m217.74 93.16c-.354.024-.295.58-.315.791.149.171.291.346.448.514-.07-.433-.192-.862-.133-1.305\"><path opacity=\".15\" d=\"m216.38 94.55c.177.032.531.091.708.122.036-.144.075-.283.118-.425-.287-.047-.567-.099-.838-.15 0 .15 0 .3.012.453\"><path opacity=\".15\" d=\"m217.55 95.12c.075.079.153.154.232.238.083.002.248.012.331.014-.004-.081-.016-.242-.02-.323-.193-.083-.382-.165-.567-.254.008.083.016.244.024.325\"><path opacity=\".15\" d=\"m136.56 54.712c-.043.158.016.218.177.175.043-.165-.016-.222-.177-.175\"><path opacity=\".15\" d=\"m106.98 83.76c-.055-.031-.161-.097-.217-.128-.09.148-.185.295-.271.449.094.004.279.008.37.008.036-.11.075-.22.118-.329\"><path opacity=\".15\" d=\"m136.24 96.9c-.13.11-.256.228-.386.344.02.138.067.277.051.425-.11.199-.291.329-.453.482-.11-.037-.213-.071-.315-.1-.016.15-.027.299-.039.451-.051.039-.15.114-.201.154-.008.142-.016.283-.02.425-.098-.027-.193-.051-.287-.073-.165.279-.48.399-.732.578-.402.297-.933.301-1.385.466-.236.35-.319.781-.472 1.176-.11.669.287 1.318.165 1.999-.153.37-.315.752-.59 1.049-.154.364-.437.722-.217 1.143.122.586.138 1.196.295 1.783.228.242.563.417.889.482.421-.197.826-.427 1.263-.596.342-.692.641-1.401.897-2.127.468-1.013.917-2.036 1.346-3.067.153-.305.106-.681.169-.999.102-.197.291-.378.268-.618-.016-.187-.047-.557-.059-.744.126.169.244.344.366.52.118-.173.201-.37.275-.563-.315-.449-.201-1.035-.327-1.539-.123-.374-.328-.7-.501-1.051\"><path opacity=\".15\" d=\"m112.89 40.15c.039-.153.087-.307.138-.456-.083.008-.24.027-.319.037-.079.069-.158.142-.232.212.043.148.083.301.126.455.094-.082.188-.165.287-.248\"><path opacity=\".15\" d=\"m113.5 38.08c.216-.043.083-.382-.098-.327-.213.059-.091.366.098.327\"><path opacity=\".15\" d=\"m52.47 72.24c.205 0 .606-.006.811-.008.122-.144.248-.287.37-.433-.33-.069-.673-.165-1.01-.13-.205.123-.15.371-.174.571\"><path opacity=\".15\" d=\"m9.823 35.03c-.035.177-.106.535-.142.716.205-.106.409-.209.626-.289-.146-.159-.315-.297-.484-.427\"><path opacity=\".15\" d=\"m13.844 41.707c-.071-.004-.209-.014-.276-.02-.086.116-.161.238-.244.356.04.11.083.22.122.335.342-.059.681-.124 1-.25.158.006.323.014.484.018 0-.155.004-.311.008-.466l.594-.001c-.055-.157-.11-.309-.161-.46-.507.17-1.014.345-1.53.497\"><path opacity=\".15\" d=\"m9.933 38.773c.004-.157.004-.313.008-.468-.185.012-.555.027-.74.035.09.145.181.287.279.431.15 0 .303 0 .453.002\"><path opacity=\".15\" d=\"m208.64 91.49c.425.307.976.49 1.507.364.425-.195.826-.447 1.279-.596.161-.051.165-.24.22-.37.275-.193.63-.464.46-.842-.205.049-.405.092-.602.13-.016.14-.028.279-.031.423-.48.266-.921.608-1.464.72-.031-.067-.094-.203-.122-.27-.016.063-.039.193-.055.26-.433-.067-.85-.055-1.271.03.02.037.059.111.079.151\"><path opacity=\".15\" d=\"m200.26 93.1c-.157.201-.283.425-.401.647.287-.008.582-.018.878-.029.248-.203.484-.279.846-.216.193.246.393.494.594.744.035.047.114.138.153.181.299-.012.602-.008.901-.043.33.12.637-.008.909-.193.012-.079.028-.232.039-.313.047.02.134.061.181.083.059-.293.224-.541.421-.754.181-.043.362-.087.547-.132.374.124.744.23 1.133.354.145.372.326.738.555 1.072.161.149.303.321.437.5.496.118 1.031.124 1.495.362.13.055.264.15.417.12.11-.077.157-.181.142-.315-.181-.108-.382-.179-.571-.258.039-.11.079-.22.122-.329-.165-.014-.327-.018-.48-.026.031-.157.075-.313.114-.468-.165.031-.323.075-.476.12-.102-.285-.193-.58-.268-.872-.181-.13-.366-.26-.492-.441-.079-.209-.13-.425-.177-.637.181-.006.543-.02.72-.024-.004-.154-.004-.303-.004-.449-.433-.161-.815-.45-1.279-.516.035-.153.075-.301.126-.445-.145-.315-.409-.543-.712-.689.098-.216-.283-.36-.421-.222-.193-.222-.464-.474-.791-.411-.468-.108-.897-.35-1.338-.519-.346-.161-.72-.315-1.11-.287-.464-.283-.948-.551-1.456-.744-.24.001-.448.157-.665.238-.008.081-.028.238-.035.317-.213.061-.425.12-.634.177-.224.315-.507.582-.759.872-.083.006-.256.012-.342.016-.102-.22-.193-.445-.264-.675-.079-.008-.236-.033-.319-.043.035-.567.114-1.125.122-1.692-.346-.061-.551-.146-.846-.248l-.012-.102-.106-.063-.102.039c-.047.004-.153.012-.201.012l-.094-.043-.122.051-.024.098c-.036.028-.114.087-.15.112l-.083.008-.032.077-.071.047c-.055-.008-.169-.028-.224-.039l-.106.069-.016.086c-.067.026-.201.073-.268.095-.031-.159-.279-.173-.386-.092-.075.098.016.295.142.291.051.071.149.211.201.277.016.179.378.171.504.077.126.181.205.386.291.586.417.091.826.118 1.251.055-.043.095-.083.189-.122.285-.464-.222-.846.348-1.33.206.153.114.323.209.48.323.11.236.169.492.173.765.075.002.232.006.307.001.087-.157.173-.311.264-.464.295.199.586.403.889.602.279.193.63.224.944.346.398.15.787.344 1.145.582.26.22.189.586.295.878.047.043.142.13.189.171-.051.211-.102.419-.146.63-.165.063-.342.118-.492.212\"><path opacity=\".15\" d=\"m212.85 90.22c.114-.319-.248-.488-.429-.675.004.372-.039.714.008 1.096.142-.136.291-.268.421-.421\"><path opacity=\".15\" d=\"m213.84 91.03c.02-.146.039-.293.063-.439-.275.226-.244.612-.331.931.059.039.177.126.236.167-.035.1-.063.199-.09.297.071.083.146.161.22.248.157-.087.315-.169.472-.252-.086-.365-.326-.674-.57-.952\"><path opacity=\".15\" d=\"m77.58 30.535c.035.144.087.285.138.423.299.087.586.197.885.272.02-.067.059-.201.083-.27 0-.183.02-.368.043-.549-.374.038-.838-.143-1.149.124\"><path opacity=\".15\" d=\"m77.38 33c-.13.075-.26.145-.386.209.02-.209.212-.291.362-.401-.039-.185-.086-.366-.134-.547.15-.049.303-.094.461-.134.094.193.189.387.275.586.366.201.763.059 1.137-.001-.031-.297-.09-.59-.138-.885-.083-.008-.24-.022-.323-.031.024-.049.067-.148.09-.199-.366-.185-.728-.374-1.102-.531-.158-.268-.311-.539-.512-.779.146-.049.287-.098.433-.146.051-.102.102-.203.157-.303.299.201.61.415 1.01.346.043-.055.13-.165.173-.22.138-.012.279-.026.417-.035.047-.11.095-.217.146-.323-.099-.001-.291-.031-.386-.043.279-.256.657-.323 1-.45-.142-.116-.307-.201-.48-.258.02-.035.051-.108.071-.146-.134-.114-.264-.226-.362-.368.165.026.334.061.504.094-.059-.317-.079-.612-.13-.921-.201-.002-.606-.001-.807-.014.004-.083.008-.248.008-.331.197-.12.386-.256.594-.352.342-.047.834.199.586.675l.063.004c.032-.401.405-.781.15-1.177-.126.051-.252.104-.378.159-.158-.108-.315-.226-.457-.356.165.02.334.047.504.083-.012-.079-.031-.232-.039-.309-.217-.045-.429-.097-.646-.134-.106.144-.205.305-.378.374.11-.38.256-.749.264-1.153.063-.022.189-.065.252-.085.11-.126.228-.236.366-.333-.086-.167-.161-.34-.22-.517.165-.014.33-.028.496-.039.055-.132.11-.264.169-.398.153-.124.303-.256.449-.395-.185-.037-.547-.112-.728-.15l.004-.079c.331-.049.681-.088 1.019-.142.012-.077.035-.226.047-.301.287-.098.799-.201.767-.59-.61-.264-1.295-.429-1.948-.256-.047.145-.094.293-.134.441-.303-.075-.602-.142-.901-.207-.15.272-.346.517-.602.702.067-.236.181-.464.216-.708-.016-.158-.071-.307-.106-.457-.094-.118-.185-.232-.268-.354.094-.118.189-.232.287-.35-.378-.224-.787-.382-1.176-.586-.067-.244-.26-.443-.476-.563-.641-.244-1.255-.673-1.971-.602-.61.032-1.444-.094-1.865.474-.055.006-.173.018-.228.026.031.146.067.295.11.441-.047.11-.091.224-.134.339-.397.041-.724-.163-1.078-.287-.484-.075-.945.092-1.401.22-.244.036-.464.122-.661.264.13.083.26.161.39.244-.232.049-.46.106-.685.181-.008.047-.024.138-.032.185.468.272 1.063.364 1.428.799-.094.008-.279.022-.374.031-.134-.106-.26-.216-.402-.309-.441-.065-.87-.165-1.275-.342-.295-.128-.614.014-.909.061.153.24.346.461.508.701-.488-.006-.909-.321-1.397-.366.035.205.067.413.094.622-.181-.246-.327-.518-.567-.708-.858.283-1.775.323-2.664.464.028.273.059.547.083.824-.193-.081-.382-.167-.567-.256-.559.181-1.023.553-1.531.832.016.177.051.441.279.441.571-.271.559.264.677.559-.13.116-.256.236-.378.358-.315.026-.657.037-.964.073-.386.252-.87.287-1.314.325-.047.138-.099.277-.142.415.323.22.653.433.964.679.153.026.307.051.464.079-.327.214-.74.244-1.117.248.142.299.472.382.756.496-.13.083-.26.165-.386.254.287.124.582.333.905.317.027-.031.079-.098.102-.134.079 0 .158 0 .236 0 .028.035.075.102.102.134.283-.027.555-.134.846-.138.696-.039 1.326.287 1.893.657-.028.053-.083.163-.11.216.047.108.094.216.142.327.071.016.22.047.291.065.075.132.161.262.244.395-.157.108-.303.228-.448.344.161.047.327.102.488.159-.039.11-.079.224-.114.334.04.031.122.094.161.126-.051.264 0 .529.047.791-.106.055-.216.112-.323.165.016.043.051.13.071.173-.145.173-.287.35-.433.519.079.096.067.338.244.309.452.281.555-.124.72-.362.079.173.161.35.244.529l-.075.039c.161.018.323.032.488.045.134.183.311.388.122.6-.401-.224-.838-.405-1.314-.378.059.134.122.268.185.398-.043.001-.134.028-.177.035-.051-.016-.146-.043-.193-.059-.039.252-.095.5-.134.751.161.047.331.095.417.256.327-.028.696-.035.98-.224-.067-.287-.389-.398-.586-.59.036-.035.099-.104.13-.142.087.083.169.163.252.248l.102.012-.016.126c.086.004.248.016.334.024.051.262.106.527.134.799l-.122.004c-.004.085-.016.256-.016.343-.374-.016-.704.073-1.019.256-.004.079-.016.236-.02.315-.327.153-.291.618-.358.925.09.004.271.014.362.017-.094.215-.256.425-.228.675.055.106.118.205.197.303-.016.041-.055.126-.071.167.079.001.24.028.323.037.272.586.331 1.245.598 1.838.051.134.193.197.295.291.071.193.15.386.228.58.307.391.523.883.964 1.155-.024.099-.047.201-.071.303.398-.11.811-.11 1.208.028.236.272.425.649.811.724.201.102.405-.008.598-.075.039-.209.099-.413.185-.606.122-.555.398-1.09.252-1.677.173-.126.343-.256.508-.391.279-.352.287-.817.378-1.237-.134-.079-.264-.158-.394-.234l.61-.027c.004-.15.008-.301.016-.451.173.032.35.114.531.083.15-.083.268-.209.386-.331.012.098.024.293.035.392.161-.104.323-.218.48-.332.291-.085.566-.213.854-.317.331-.447.397-1.132.921-1.415.008-.063.024-.191.032-.256.244.026.492.039.744.043.146-.173.37-.218.571-.291.449-.154.913-.283 1.322-.531.476-.531 1.015-.999 1.554-1.468-.531.11-1.066.063-1.593-.078\"><path opacity=\".15\" d=\"m119.96 70.23c-3.384 0-6.127-2.727-6.127-6.103 0-.827.164-1.613.456-2.332-.044.026-.083.06-.129.083-.208.097-.393-.087-.555-.181-.33-.203-.645-.521-1.054-.494-.043-.203-.429-.181-.559-.059-.11-.059-.212-.122-.311-.193-.216-.205-.224-.541-.429-.752-.622-.272-1.283-.573-1.979-.441-.165-.102-.346-.161-.535-.165v-.102c-.299-.055-.315-.391-.382-.622-.138.045-.217.142-.232.283-.153-.134-.492-.209-.409-.468.161-.156.354-.272.523-.421.122-.22.169-.464.138-.724-.106-.108-.212-.213-.307-.327-.118-.25.157-.413.299-.571.004-.079.016-.232.024-.311-.153.075-.303.151-.453.228-.091-.161-.181-.321-.268-.48-.319.067-.665.126-.901.372-.508-.144-1.023.024-1.523-.094-.224.116-.453.218-.685.321-.193-.085-.378-.226-.594-.232-.708.051-1.397.232-2.097.338-.405.051-.744.287-1.066.519-.224.036-.464.047-.645.201-.264.205-.523.425-.846.535-.157-.09-.319-.177-.472-.269-.417.029-.83.053-1.24.073-.142-.181-.283-.358-.401-.551-.13.04-.26.079-.382.116-.165.468-.39.915-.657 1.336-.429.453-1.137.523-1.515 1.041-.209.167-.268.435-.394.657-.126.226-.295.437-.338.701-.024.309.079.641.031.956-.303.604-.838 1.037-1.369 1.43-.323.246-.807.157-1.086.476l-.134.012.094.065c-.114.222-.209.453-.319.675-.09.199-.33.228-.508.317-.228.419-.516.832-.519 1.334-.213.214-.429.427-.626.651-.303.488-.425 1.074-.795 1.523-.154.177-.169.413-.185.637l.012.124h-.114c.004.096.012.289.016.388.035-.071.11-.209.15-.279.04.095.083.193.126.291.099.106.189.22.272.342.059.295-.102.574-.173.856.268.352.338.824.264 1.253-.083.339-.291.642-.299.996l-.106.02c.126.598-.244 1.094-.681 1.448.378.236.508.673.563 1.092l-.126-.008c0 .061 0 .183 0 .242.004.161.012.48.016.642.039.035.106.106.142.142l.098-.001c.067.134.146.262.224.394.15-.037.303-.077.453-.114 0 .142 0 .283.008.425.047.039.142.114.193.155.024.087.067.26.09.35.016-.049.043-.146.059-.193.291.612.905.982 1.2 1.597-.024.177-.039.354-.051.535.059.043.181.126.24.169.02.177.036.354.043.535.24.098.48.201.728.287.13.1.26.203.394.303l-.008.106c.409.283.846.547 1.196.909.413.431.905.807 1.503.944l.059-.008c.645-.216 1.244-.602 1.944-.63.476-.075.96.067 1.44.09.216.09.441.26.692.193.543-.216 1.066-.49 1.613-.708.248-.035.46-.14.637-.307.142-.051.287-.098.433-.134.236-.047.476-.091.72-.118.417-.031.83-.033 1.251.012.484.5.578 1.247 1.078 1.739.563-.112 1.129-.216 1.708-.291.035-.031.118-.09.157-.118.114.209.256.405.37.618.138.014.272.029.413.047-.02.039-.047.126-.063.169.24.37.213.795.169 1.228l.071.079c-.13.275-.275.543-.405.826l.114.014c-.024.183-.055.368-.083.553.067.063.138.128.205.197-.252.043-.213.311-.248.508-.138.094-.268.185-.405.277.197.433.327.907.598 1.308.346.407.7.807 1.023 1.243l.055-.059c.244.348.476.71.701 1.074.035.212.083.423.153.63.032.045.094.13.126.175l-.09.022c.323.594.516 1.239.744 1.873.086.273-.276.476-.169.756.118.468.346.897.5 1.358.114.319-.106.634-.114.948-.063.264-.303.401-.496.559-.279.551-.559 1.102-.602 1.735-.205.618-.283 1.259-.276 1.916.012.421.051.885.327 1.234.547.718.72 1.635 1.208 2.394.145.268.338.535.409.842.02.466-.11.933.02 1.399.284 1.021.197 2.2.87 3.079.118.09.35.275.464.368.075.254.189.498.279.751.13.372.185.769.405 1.112.24.448.618.891.425 1.452-.039.026-.126.083-.165.114-.146.327.185.598.311.874-.043.11-.087.218-.126.331.094-.026.197-.047.299-.065.091.118.224.189.358.258.063.102.126.209.193.315.05-.004.096-.019.144-.03-.345-.764-.542-1.61-.542-2.505 0-3.412 2.741-6.154 6.127-6.154 1.414 0 2.711.482 3.749 1.285.056-.118.14-.222.249-.294.527-.419 1.287-.403 1.739-.936.031-.496.09-.992.102-1.485-.153-.588-.161-1.251-.551-1.753.055-.138.106-.279.157-.417.693-.543 1.373-1.11 1.905-1.818.539-.362 1.255-.46 1.716-.96.315-.425.708-.834.822-1.373-.15-1.188-.205-2.408-.067-3.605l-.086.051c-.138-.157-.287-.299-.461-.417-.142-.614-.413-1.21-.33-1.85.008-.252.126-.484.177-.728-.158-.102-.311-.213-.468-.313.004-.502.15-.97.256-1.45.043-.012.134-.035.173-.049.22-.565.461-1.12.641-1.694.071-.02.205-.053.272-.071.15-.315.574-.409.653-.744.811-1.141 1.633-2.353 2.876-3.06.453-.27.767-.708 1.102-1.108.535-.653.98-1.385 1.326-2.156.244-.626.484-1.265.834-1.84.185-.336.37-.679.456-1.053.012-.268.079-.515.205-.746-.039-.36-.063-.728.02-1.082-.114-.041-.228-.085-.338-.126-.649.687-1.641.592-2.491.742-.15.085-.295.181-.46.224-.614-.028-1.173.291-1.779.307-.212-.236-.382-.504-.531-.781-.043-.002-.13-.002-.177-.004l-.012-.147c-.09-.004-.272-.008-.362-.012.181-.146.362-.295.535-.453-.094-.177-.197-.35-.35-.478l.055-.065c-.185-.099-.362-.209-.48-.374-.299-.394-.634-.765-.944-1.145-.252-.094-.496-.21-.748-.299-.016-.079-.047-.238-.059-.319-.102.03-.204.059-.307.092-.374-.701-.398-1.533-.85-2.194l.055-.063c-.279-.173-.543-.368-.819-.537-.228-.659-.342-1.346-.331-2.036-.161-.24-.275-.508-.334-.787-.279-.248-.547-.508-.834-.744-.028-.236-.319-.653.039-.748-.126-.154-.231-.322-.341-.486-.955 2.14-3.102 3.627-5.604 3.627m2.943 23.49c-.028.041-.087.128-.114.171-.055-.043-.153-.13-.204-.173l-.059-.069-.02-.088c-.067-.238-.142-.474-.205-.712l-.008-.077-.055-.043c-.13-.12-.264-.238-.39-.36-.004-.047-.012-.146-.012-.193l-.091-.051c-.106-.702-.094-1.417-.197-2.117.047.016.146.045.193.061l.031.088c.028.024.079.075.102.102l.031.108v.104c-.079.154-.047.283.087.386l-.008.122c.008.055.02.169.028.228l.019.098c.004.039.012.116.02.157-.004.039-.008.124-.012.167 0 .033-.004.096-.004.132 0 .039 0 .124 0 .165.138.159.291.309.441.464.016.03.043.094.055.126l.012.077c-.02.024.012.092.012.092l.024.102c.004.055.012.161.016.216l.087.067.031.094c.016.043.047.124.063.165.016.043.051.134.063.177.02.028.063.087.083.118l-.019.096m2.456 1.411c-.059.15-.024.279.102.382.008.059.024.177.035.24 0 0-.028.185.008.216.02.03.071.087.094.118.012.033.039.1.055.136l.012.092c-.004.047-.016.147-.024.197-.008.035-.031.104-.043.14-.012.033-.035.096-.047.132-.016.075-.047.228-.067.303l-.043.106.075.63.075.047.043.071c.024.028.067.079.091.102-.063.116-.106.24-.138.37-.039-.016-.122-.047-.161-.067-.142-.425-.248-.866-.323-1.306-.083-.327.075-.637.138-.95.134-.334.094-.604-.122-.805-.043-.205-.071-.405-.095-.606l.079.047c.027.02.083.059.11.079.028.029.083.081.11.106.008.052.028.165.036.22m-.787-8.551l.071-.039c.126.14.307.22.492.244l.024.09c.012.039.039.114.051.154l.039.075c-.016.043-.051.128-.067.167-.008.059-.024.175-.031.232l-.016.106-.012.097c-.027.031-.083.094-.11.126-.024.033-.071.094-.098.122l-.09.043c-.012.047-.039.144-.051.193-.02.028-.063.087-.083.116-.016.022-.04.065-.051.085l-.031.043.067.039c.012.071.039.216.055.287l-.095.012-.102.012-.11.008-.11-.016c-.095.004-.279.001-.37.012l-.004-.098-.09-.045c-.024.033-.083.1-.114.132-.028.016-.091.043-.118.055l-.071.028-.036-.087c.075-.202.071-.439-.051-.616.004-.057.024-.171.031-.226.036-.031.106-.095.142-.126l.004-.098c-.027-.04-.079-.114-.102-.154l-.043-.09.008-.095.036-.083c.024-.033.075-.095.102-.126.028-.039.083-.122.114-.161l-.031-.102c.035-.016.114-.043.153-.059.051-.016.154-.043.201-.061.158.051.283.006.378-.132.028-.017.087-.048.119-.064\"><path opacity=\".15\" d=\"m115.64 59.752c-.028.006-.056.003-.084.012-.405.085-.736.356-.992.667-.002.225.027.445.058.666.278-.494.62-.948 1.018-1.345\"><path opacity=\".15\" d=\"m111.87 51.32c.219.172.481.254.751.307-.229-.154-.442-.328-.647-.512-.03.058-.079.155-.104.205\"><path opacity=\".15\" d=\"m169.98 72.7c.232.362.563.677.653 1.114.114.553.291 1.09.46 1.631.276.266.39.639.519.99-.086 0-.256.002-.342.002l.004.11c.083.006.252.014.334.02-.055.23-.122.462-.201.687.106-.035.22-.069.334-.102-.039.279.008.598-.201.822.043.23.075.464.114.7-.173.565-.157 1.155-.145 1.743.083-.171.161-.346.248-.518.146.215.283.441.362.691.043-.016.126-.051.173-.071.016.071.051.209.067.279.264.209.445.492.661.748.075.293.063.594.043.893.035.024.102.071.138.09-.012.039-.039.114-.051.154.039.047.126.138.165.183.016.561.378.993.626 1.47.35.618 1.086.834 1.542 1.354.161-.022.492-.061.661-.079-.169-.464-.441-.874-.685-1.299-.09-.47-.031-.952-.051-1.425-.146-.466-.515-.816-.815-1.18-.043-.001-.126-.024-.169-.031-.181-.183-.35-.374-.512-.569-.138-.02-.275-.039-.405-.059-.142-.12-.287-.234-.437-.34.047-.285-.032-.571-.106-.842-.232-.177-.264-.484-.334-.744-.146.031-.287.063-.425.098-.051-.348-.13-.716-.016-1.052.035-.179.118-.358.063-.541.327-.575.307-1.251.307-1.893.177 0 .358 0 .539.016.012.224.024.451.035.679.083.001.252.029.331.037.114-.045.228-.09.346-.136.134.163.272.325.409.492l-.099.028c.102.014.311.045.413.059.118.293.236.594.358.891.157.032.248-.039.271-.205.197.142.102.378.075.58.102-.033.209-.065.315-.097.118.051.236.098.358.15.134.104.279.201.429.299-.095.397-.102.797-.047 1.208.193-.114.354-.268.504-.441.189-.075.334-.214.445-.382.047.016.142.059.189.075.095-.252.161-.508.216-.771.126.008.272.077.386-.016.327-.207.634-.441.952-.665.161-.112.307-.299.26-.504-.059-.567.067-1.141-.138-1.692-.244-.757-.563-1.554-1.224-2.036-.437-.413-1.047-.722-1.216-1.344-.263-.206-.563-.429-.633-.775-.138-.448.197-.756.389-1.094.209-.417.618-.669.901-1.023.24.008.484.004.732-.012.11.256.405.053.61.047-.157.372.028.728.185 1.063.146-.036.291-.075.441-.118-.079-.151-.157-.303-.228-.454.208-.293.507-.506.881-.525.051-.035.142-.102.189-.138.409-.016.763-.238 1.122-.429-.039-.146-.071-.291-.114-.429.146.126.299.248.468.354.138-.071.252-.181.37-.279.421-.001.838-.065 1.24-.211.055-.175.114-.348.177-.521.299-.088.547-.279.759-.508-.035-.118-.071-.236-.098-.356.145.026.291.053.437.085.039-.262.161-.498.366-.665.09 0 .264.008.354.008-.004-.071-.012-.208-.016-.275-.055.012-.161.04-.213.053-.008-.167-.047-.331-.086-.49.102-.114.201-.234.307-.35-.028-.051-.079-.154-.102-.205l.087-.026c.067-.256.204-.765.271-1.023.079-.006.24-.018.319-.024-.122-.329-.039-.667-.02-.999-.094-.313-.413-.439-.649-.622-.126.041-.252.085-.374.124.106-.268.287-.52.606-.523-.153-.329-.468-.519-.732-.748.177.012.354.035.535.055-.232-.315-.59-.496-.87-.756-.35-.397-.602-.874-.956-1.255-.291-.205-.586-.378-.897-.535-.004-.228.039-.453.213-.618.004-.045.016-.138.024-.183.197.065.445-.222.338-.415.197-.126.382-.264.582-.393.055.035.177.106.232.142.004-.088.008-.269.008-.36-.512-.218-1.051-.376-1.598-.474-.063.165-.126.329-.181.496-.216-.024-.445-.043-.634-.161-.145-.209-.252-.445-.386-.661-.417-.031-.87.051-1.247-.146-.142-.157-.177-.37-.248-.559.358.073.72.063 1.043-.114-.035-.118-.075-.232-.11-.346.173-.126.35-.252.531-.374.047-.161.102-.315.165-.472.291.024.563.13.819.272-.035.23-.079.464-.122.696.067.026.197.081.264.106-.031.169-.039.608.256.441l.028-.063c.165-.197.331-.397.5-.594.193-.012.386-.02.582-.031.287.134.645.177.874.415.138.305.244.63.315.958.216.13.425.264.645.394 0-.053.004-.157.004-.212.067.016.201.041.268.055l.004.112c.279.081.578.173.767.409.039.146-.146.218-.213.325.102.053.201.104.303.158.118.228.271.443.37.685.051.362.11.736.153 1.104.102-.001.205-.018.311-.02.039-.033.11-.089.15-.12.429.063.803-.22 1.141-.448.019-.386-.177-.695-.315-1.031-.256-.712-.933-1.161-1.503-1.601-.271-.327-.708-.433-1.07-.608-.039-.14-.099-.274-.106-.417.185-.273.39-.533.579-.809-.158-.134-.468-.398-.626-.527.035-.181.087-.358.165-.525.158-.242.228-.527.224-.818.134.047.268.092.405.14.059.092.126.187.193.279.291.075.563.258.874.254.181-.088.539-.261.716-.346-.11-.734.468-1.248.669-1.895.067-.315-.138-.633-.027-.944-.004-.382.287-.647.378-.99-.095-.494-.26-.978-.362-1.468-.106-.35.008-.714.063-1.061.236-.122.386-.339.48-.582-.094-.012-.287-.031-.386-.039.031-.055.094-.161.126-.216l-.02-.102c-.051-.039-.145-.114-.189-.15.024-.098.047-.197.079-.295-.547-.201-1.176-.327-1.554-.807-.15-.067-.299-.142-.437-.216-.22.031-.445.028-.661-.022-.043.175-.09.352-.134.531-.153.002-.303.006-.448.008-.008-.085-.02-.25-.024-.336-.075-.012-.217-.035-.287-.047-.083-.087-.161-.169-.24-.248.016.146.036.291.051.437-.307-.165-.456-.496-.712-.718-.185-.033-.366.029-.539.071-.161-.041-.319-.081-.472-.116-.008-.504.421-.874.472-1.36-.004-.494.185-.954.429-1.371-.075-.087-.138-.175-.193-.268.095-.303.197-.604.24-.921.626-.116 1.267-.214 1.912-.181.122.041.244.098.366.151.024-.041.063-.128.087-.167.547-.132 1.129-.187 1.684-.037-.079-.155-.15-.311-.22-.466.685.063 1.416-.045 2.066.242.012.081.035.238.043.317.106.043.217.091.327.138.268-.163.547-.305.819-.468.055.032.173.102.232.134.122-.077.24-.153.362-.232-.22-.126-.46-.273-.72-.161-.118-.153-.236-.311-.311-.492-.035-.519.051-1.043-.035-1.562.366-.138.744-.244 1.122-.338.086.077.173.151.268.222.086-.083.169-.167.252-.25.035.167.102.504.138.677.071.079.146.161.225.246.043-.018.122-.053.165-.071.051.171.134.333.248.474.193-.338.323-.704.409-1.08.15.022.303.051.456.081-.271-.331-.488-.706-.622-1.118.236-.083.496-.161.732-.018-.047.12-.09.238-.13.36.165.331.263.72.535.995.138.449-.331.653-.386 1.035-.087.362-.149.73-.232 1.094.142.484.04.992-.268 1.385.051.039.154.122.205.161.008.929.559 1.727.744 2.625.165.63.161 1.33.559 1.883.268.455.504.954.909 1.31.15-.333.335-.653.445-1 .028-.214-.059-.423-.059-.635.027-.146.142-.246.216-.366.094-.008.283-.024.378-.031-.083-.224-.201-.433-.26-.665.063-.185.244-.303.366-.448.177-.035.523-.102.697-.134-.016-.079-.047-.23-.059-.307-.366-.22-.618-.645-.555-1.084.169.03.334.061.508.089-.118-.309-.366-.557-.701-.594-.264-.283-.338-.673-.527-.996-.213-.073-.433-.079-.645-.035-.126-.158-.252-.313-.334-.488-.043-.218.047-.431.055-.645-.075-.279-.248-.52-.315-.801.153-.112.354-.097.539-.126.079.073.158.144.244.218.028-.203.016-.427.165-.588.275-.002.358.321.531.492.012-.086.04-.261.055-.352.114-.11.232-.222.354-.336.256-.049.515-.098.779-.151.37.205.74.429 1.121.616-.039-.289-.169-.624.15-.85.209-.368.402-.751.649-1.1.165-.153.5-.456.669-.612.394-.384.689-.95 1.291-1.057.271-.001.815-.031 1.086-.039.043-.226.098-.453.158-.673-.15-.055-.295-.104-.441-.15-.016-.071-.043-.208-.059-.279-.213-.098-.429-.185-.606-.331-.291-.358-.578-.738-.984-.968-.161.063-.295.193-.464.206-.169-.059-.323-.146-.476-.224.004-.081.012-.246.016-.327.24-.061.614-.065.874-.175.212-.26.409-.543.543-.858.09-.216.252-.441.161-.687-.059-.167-.063-.388-.252-.454-.272-.09-.539-.177-.795-.303.146-.339.402-.602.701-.805-.295.494.177.616.448.769.205.091.398.228.622.283.394-.165.72-.464 1.102-.661.252-.081.567-.138.85-.114.366.203.665.559 1.094.645.413-.035.803-.142 1.232-.098.047.051.138.153.189.205.307-.028.653-.02.972.004.181-.215.374-.413.535-.645-.193-.014-.575-.043-.767-.057.04-.279.13-.541.256-.793-.165-.236-.315-.492-.362-.783.268-.098.59-.095.811-.293.26-.407-.031-.895.134-1.334-.071-.018-.212-.053-.283-.071-.236-.242-.594-.281-.901-.384-.476-.047-.893-.295-1.358-.376-.476.144-.952.327-1.436.421-.366.073-.626.364-.909.574.637-.185.83.443 1.074.848-.264-.055-.52-.108-.771-.163-.315-.329-.712-.577-.917-.986-.154.012-.315.024-.334.209-.161-.264-.445-.448-.76-.405-.744.108-1.499.094-2.243.126-.378-.039-.751-.205-1.129-.071-.04-.049-.118-.144-.158-.191-.952-.006-1.83-.342-2.699-.663-.917.059-1.85.114-2.719-.191-.063.112-.118.228-.173.342-.96.167-1.924.346-2.908.287.071.12.149.242.232.36.02.126.047.252.075.378.449.138.783.482 1.149.765-.087.189-.173.376-.26.561-.153-.004-.303-.008-.449-.012-.09-.146-.181-.291-.268-.435-.291-.041-.582-.092-.866-.171-.122-.122-.209-.272-.299-.415.169-.001.334-.022.508-.033-.043-.189-.098-.374-.142-.559-.307-.002-.606 0-.901.004-.047.268-.098.531-.145.797-.653-.026-1.366.295-1.96-.089-.035.047-.114.142-.149.189-.327.051-.681.106-.996.161-.039.051-.118.153-.157.205-.374-.086-.751-.154-1.118-.244-.079-.252-.118-.547-.35-.712-.523-.594-1.389-.698-2.129-.567-.756-.043-1.291.659-2.046.586-.291-.319-.598-.626-1.019-.752-.216-.197-.46-.382-.756-.437.09-.169.181-.334.264-.508-.26-.201-.496-.429-.779-.584-.177-.033-.358-.033-.531-.041-.197-.116-.39-.232-.582-.342-.634-.415-1.401-.5-2.074-.834.031.193.071.386.09.582-.149.161-.378.128-.571.153-.122.211-.224.431-.26.675.122-.029.252-.055.378-.083-.161.427-.036.86.098 1.281-.102.031-.205.047-.303.051-.067-.106-.13-.213-.185-.323-.055.031-.161.095-.216.124-.268.006-.527.049-.779.116-.441-.36-.724.402-1.149.344-.299-.281-.512-.618-.732-.954-.216.578-.098 1.216-.22 1.814-.756-.641-1.373-1.452-1.779-2.353.134.032.272.067.405.106.083-.228.039-.46-.031-.685-.087-.002-.26-.006-.343-.008.102-.177.193-.358.26-.555-.098-.001-.299-.031-.397-.041.083-.112.173-.22.26-.332-.46-.291-.98-.5-1.523-.578-.173-.02-.271.059-.291.238-.079-.065-.15-.132-.213-.203-.578.083-1.208.059-1.692-.291-.008.089-.016.27-.02.36-.11.049-.216.099-.327.148 0 .075-.004.22-.004.295.114.047.224.098.342.153-.008.077-.02.23-.028.307-.437.075-.842.271-1.279.358-.594.151-1.22.126-1.826.144-.008-.089-.02-.262-.024-.348-.37.037-.72.132-1.082.043-.642-.144-1.279.126-1.893.26-.11-.118-.228-.22-.354-.317-.366.167-.905.228-1.113-.187-.154.026-.464.075-.618.102-.059.106-.114.216-.165.323.201.004.405.008.614.012-.043.043-.13.122-.169.161-.567.165-1.051.551-1.661.58-.091.106-.181.213-.272.317 0-.086 0-.262-.004-.35.468-.342.897-.738 1.342-1.113.012-.069.047-.209.063-.279.405-.256.779-.555 1.157-.854-.035-.323-.126-.649-.185-.966-.216-.179-.386-.405-.555-.624-.039.012-.118.043-.157.057-.236-.348-.598-.588-.937-.817-.437-.209-.976-.004-1.428-.079-.004.088-.012.266-.02.354l-.598-.024c.083-.191.169-.378.26-.567-.354-.224-.771-.189-1.165-.232.102-.161.216-.315.338-.462-.386-.1-.756-.195-1.129-.305-.279.181-.614.299-.803.586-.177.39-.071.82-.035 1.228-.287.083-.653.124-.925.153.075.091.142.191.22.285-.252.088-.496.211-.622.462-.063.02-.193.059-.256.081-.295.124-.606-.069-.901.024-.134.039-.397.116-.531.156-.523-.092-.488.429-.76.657-.555.289-1.169.486-1.653.893-.205.165-.425.307-.681.34.016.181.126.415-.067.537-.11-.016-.224-.037-.33-.063-.032.047-.094.144-.126.191.161.006.323.014.484.018-.083.11-.169.22-.248.332.149.006.303.018.46.026.075.099.153.201.236.301-.634.136-1.248.348-1.881.464-.393.057-.763.156-1.133.279.008.132.016.268.031.403.236.122.327.386.468.598.393.175.96.134 1.153.594-.417 0-.822-.067-1.212-.201-.441-.218-.913-.106-1.357-.008-.043.114-.087.228-.126.342.083 0 .256 0 .342 0-.004.061-.008.181-.012.242-.252-.045-.508-.147-.767-.108-.264.096-.055.358-.028.545.401.122 1-.183 1.303.226-.531-.13-1.07.097-1.606.002-.086-.159-.181-.309-.264-.47.02-.116.047-.228.09-.338-.11-.193-.228-.38-.346-.563-.087 0-.256-.002-.342-.004.165.232.319.484.354.775-.193.097-.378.205-.563.311-.043.169-.087.336-.13.508.323.142.61.352.909.539-.02.283-.118.563-.079.846.087.11.189.209.287.311.012.081.036.242.051.323.26-.071.523-.145.771-.262.433-.224.929.004 1.385.049.11.126.224.248.35.364-.031.175-.063.352-.09.531l-.102-.02c-.035-.177-.075-.356-.153-.523-.213-.151-.445-.262-.681-.36-.327.037-.614.24-.917.346.008.134.016.272.028.403.145.092.299.189.425.313.075.262-.165.421-.319.582.024.134.055.264.083.397-.232.154-.456.327-.669.508-.012.083-.024.24-.031.321-.637-.053-1.255.183-1.889.112-.051-.047-.158-.136-.209-.181.61-.106 1.22-.256 1.731-.634.075-.287.236-.539.342-.811-.012-.232-.051-.464.016-.693-.252-.083-.511-.157-.76-.24-.024-.382-.189-.712-.295-1.066-.047-.203-.055-.413-.11-.61-.145-.232-.413-.319-.645-.421.114-.464.126-.976-.149-1.385-.661.008-1.306.13-1.952.264-.012.303-.035.909-.051 1.212-.098.334-.421.525-.641.775-.012.14-.024.283-.031.427.114-.037.236-.077.358-.108-.008.189-.024.567-.031.757-.165.067-.189.238-.22.392.189-.024.378-.098.567-.067.374.146.657.486 1.086.468-.024.224-.071.443-.122.661-1.46-.448-3.02-.574-4.533-.334-.205-.147-.413-.293-.606-.451-.102.033-.201.069-.299.1-.008.083-.016.248-.02.329.228.124.457.242.692.366.063.148.161.285.228.439-.134.106-.279.201-.421.293-.016.073-.035.222-.047.297-.091 0-.268-.004-.358-.004.035-.165.079-.327.126-.49-.429-.167-.724.295-.96.578-.26.026-.508.087-.744.179-.142.153-.212.348-.299.533-.138.014-.271.029-.401.045.067-.329.114-.661.173-.992-.189.128-.37.262-.543.405-.071.185-.122.374-.165.565-.028-.057-.083-.171-.106-.23-.484.099-.929.291-1.389.433-.295.031-.594-.028-.885-.075-.008.177-.027.531-.039.708-.33-.118-.661-.248-.968-.425-.252-.216-.468-.468-.712-.687-.008-.043-.027-.132-.035-.175.299-.132.63-.067.952-.059-.126-.252-.268-.496-.405-.74-.504-.124-1.01-.232-1.507-.362.157.134.323.256.5.37-.039.33-.161.637-.24.956.157.092.319.191.464.321-.028.261-.059.525-.094.789-.338-.268-.756-.39-1.169-.459-.26.474-.704.793-1.062 1.179.134.309.397.514.669.7.071.256-.252.205-.405.276-.236-.106-.547-.209-.783-.264-.189-.11-.472-.272-.634-.028-.028.244.228.366.362.531.193.031.405.035.563.167 0 .13-.047.238-.146.325-.346-.051-.649-.258-.96-.401-.531-.165-.661-.842-.661-1.32-.275-.206-.551-.399-.83-.58.775.035 1.551.142 2.326.193.464-.313.866-.744 1.074-1.267-.059-.386-.291-.791-.673-.94-.468-.205-.956-.362-1.428-.547-.405-.179-.846-.043-1.271-.077-.228.018-.46.022-.689.037-.004-.083-.012-.248-.016-.33-.338-.001-.582.151-.866.268-.201-.128-.421-.102-.642-.051.161-.177.323-.354.476-.535-.417-.089-.83-.189-1.251-.258-.024.061-.071.183-.099.242-.047-.167-.079-.342-.197-.474-.134-.012-.268-.001-.397.006-.11.122-.145.283-.189.439-.043.006-.134.018-.181.026-.008-.094-.024-.275-.027-.366-.228.201-.453.403-.673.602.008-.075.02-.226.027-.303.177-.122.268-.319.339-.519-.189.012-.397 0-.429.228-.098-.03-.193-.063-.291-.095-.047.092-.098.185-.138.279-.15-.004-.295-.002-.437.001-.004-.049-.016-.144-.019-.191-.213.091-.421.185-.618.303.11.024.334.071.441.094-.256.112-.578.193-.846.209.024.051.071.15.094.203-.122.063-.24.124-.358.191-.173-.008-.339-.004-.508 0-.071-.126-.212-.244-.35-.13-.327.181-.685.313-.98.545.024.155.319.33.106.456-.228-.041-.448-.092-.673-.134.028-.116.059-.23.091-.344-.13.102-.252.212-.378.323-.039-.016-.122-.043-.161-.057-.134.102-.268.201-.401.297.098.016.299.047.401.063-.299.13-.685.124-.913.382.433-.069.885-.108 1.318-.206l-.02.073c-.173.104-.366.181-.496.34-.059.14-.106.285-.154.427-.134.041-.256.102-.37.177l-.075.004-.019.075-.071.02-.004.071c-.248-.012-.456.34-.378.561-.275.24-.456.576-.791.75.024.094.051.193.083.291-.063-.03-.189-.087-.252-.118-.315.189-.578.445-.834.701-.134-.026-.264-.053-.393-.075-.071.114-.146.232-.22.346-.035-.075-.11-.218-.15-.291-.008.102-.024.299-.031.401-.197-.039-.398-.081-.594-.116.079.112.165.218.256.329-.433.029-.842.142-1.251.26.012.039.04.122.051.161-.036.024-.098.077-.134.102-.002.012 0 .025-.0001.037.761.821 1.304 1.849 1.527 2.997.604-.158 1.12-.613 1.626-.972.051.118.134.195.26.224.051.252.098.504.189.744.228.409.531.775.85 1.129-.067.15-.134.303-.201.455-.087-.006-.264-.02-.354-.024-.004.061-.008.183-.008.246-.051-.031-.161-.098-.216-.13-.114.045-.228.088-.334.13.039.142.075.287.114.433.079.008.244.026.327.031-.004.049-.012.146-.02.191-.039.018-.122.053-.165.069-.13-.102-.26-.201-.386-.299-.008-.071-.02-.215-.028-.287-.161-.036-.311-.075-.464-.118.193-.216.441-.366.649-.567-.106-.016-.311-.047-.417-.065.051-.309.11-.616.13-.927-.425.142-.752.492-1.212.535-.124.056-.188.156-.229.267.0001.043.006.084.006.127 0 .12-.011.237-.018.356.012.046.02.094.036.136-.023.07-.042.14-.061.209-.004.039-.012.076-.018.115.09.006.248.017.33.024.004.154.016.309.032.466.043.246.059.496.071.746-.087.086-.169.175-.248.269-.187-.026-.373-.049-.559-.073-.9 2.259-3.111 3.855-5.702 3.855-.078 0-.155-.009-.232-.012.005.033.006.064.012.098-.288-.018-.569.002-.784-.175-.061-.001-.123-.016-.184-.028-.265.058-.666.145-.886.191.032.059.091.177.122.236-.031.055-.09.169-.122.224.48.205.968.398 1.373.732.012.138.024.277.039.421.13.1.264.206.401.309.043.157.134.474.177.63-.327.429-.279.99-.374 1.497-.063.045-.189.138-.256.185-.61-.158-1.255-.122-1.877-.24-.598-.094-1.212-.077-1.814-.138-.22-.051-.366.145-.519.268-.181.055-.366.098-.523.204.02.238.138.453.201.681.016.311-.114.582-.09.901l.122.02c.02.783-.504 1.44-.701 2.18.154.057.303.12.46.181-.016.386 0 .787-.209 1.133.339-.004.637-.039.984-.043l.027-.097c.158.001.319.018.48.03.201.301.378.631.622.905.043 0 .134 0 .181.004.323-.185.618-.435.976-.559.484-.028.972.081 1.448-.03.161-.356.484-.545.815-.716.165-.331.37-.632.704-.807-.059-.234-.22-.431-.319-.647.319-.423.649-.842.952-1.275.539-.098 1.062-.291 1.479-.663l.024-.521-.094.029c-.016-.167-.028-.332-.039-.494.197-.104.397-.209.59-.317.531.081 1.059.218 1.59.299.283-.183.563-.388.858-.557.264-.071.48-.224.606-.47.378-.006.732.14 1.082.262.142.472.335.933.669 1.302.669.23.995 1.094 1.79 1.01.055.101.11.203.165.305.173.059.35.118.523.173.016.073.04.222.047.299.173.055.35.118.523.173.134.315.272.63.366.964-.146.075-.189.224-.236.37-.496.142-1 .323-1.527.201-.252-.027-.504.032-.752.063-.004.083-.02.252-.024.334.338.11.673.24.988.413.283.136.531.35.842.421.043-.122.087-.242.134-.362-.047-.181-.083-.366-.106-.551.118-.086.24-.173.354-.271l-.028.087c.087.006.272.018.358.022.154-.305.244-.675.567-.848.012-.136.028-.268.047-.401-.122-.055-.236-.11-.35-.161-.004-.138-.004-.272 0-.405.083-.09.165-.177.252-.266.165.045.334.092.504.155.13.13.22.293.327.449.114-.122.228-.272.173-.449-.488-.46-1.121-.696-1.727-.964.04-.108.075-.216.114-.323-.445-.006-.933-.065-1.2-.464-.354-.291-.319-.87-.795-1.059-.189-.134-.378-.268-.567-.394.02-.189.047-.374.083-.559-.028-.14-.051-.277-.071-.415.205-.069.405-.147.602-.226.059.026.173.081.232.11l-.063.049c.051.214.114.423.181.635.039-.051.122-.153.157-.203.083.099.169.201.252.303.031-.075.098-.222.134-.297.079.13.158.264.248.393.079.338.394.535.614.783.126.015.256.03.388.044-1.241-1.116-2.025-2.726-2.025-4.527 0-1.642.638-3.123 1.672-4.223-.291.115-.582.227-.885.304-.039.016-.11.043-.146.059l-.086.033c-.055-.008-.161-.022-.213-.029l-.102.004c-.043-.027-.165-.271-.161-.323l-.083-.063c-.051-.043-.157-.13-.213-.173-.024.024-.075.079-.098.102-.028.02-.087.055-.114.071-.067.016-.197.051-.264.067-.039.016-.114.041-.149.053l-.09.026c-.047.012-.146.031-.197.041l-.035.094c-.201.047-.401.088-.598.132.122-.167.248-.334.37-.504-.295.039-.586.073-.874.102.004-.055.016-.161.016-.215l.016-.096c.028-.035.087-.102.118-.136.201.045.389.132.571.228.039.029.114.088.153.116.232-.047.453-.147.677-.24-.063-.026-.193-.079-.256-.104.028-.039.083-.112.11-.151.039-.02.122-.059.161-.079l-.035-.083-.09-.02c.028-.037.087-.11.114-.148.035-.057.099-.171.134-.23.035.043.11.13.15.173.004.047.012.142.019.189l.004.067.075.012c.043.012.13.028.173.035.134.028.409.134.445-.071.028-.13.043-.26.059-.389.307-.179.653-.171 1-.165.051-.102.102-.205.154-.303.051.069.106.134.169.195.067-.136.13-.273.185-.413.083-.124.287-.27.181-.435-.201-.059-.228.228-.216.362l-.051-.067c-.016-.051-.047-.15-.063-.201 0-.161 0-.319 0-.476.181-.118.181-.37.122-.553.295-.1.594-.222.834-.433.02-.018.059-.057.079-.075.012-.014.035-.045.047-.061l-.047.004.043-.071c.067-.108.126-.216.181-.33-.063-.098-.134-.189-.208-.27-.024-.018-.071-.053-.095-.073-.228-.122-.48-.195-.724-.26-.004-.051-.012-.15-.016-.197.04-.417.142-.822.236-1.228.024-.018.071-.053.091-.071.299-.238.626-.443.968-.608.031-.014.09-.041.122-.053l.079-.031c.051-.002.15-.002.197-.004l.055-.085c.158-.171.319-.336.488-.498-.083-.106-.161-.214-.236-.323.181-.177.362-.354.555-.521.134-.006.268-.037.394-.092.051 0 .154 0 .201 0 .154.037.315.047.472.024.059-.006.181-.02.24-.024l.031.1c.051.012.15.031.201.041l.087.037c.024.026.079.077.102.104.02.039.055.116.075.157-.134.067-.26.149-.366.252-.201.169-.405.342-.61.508-.028.016-.075.055-.098.071-.169.128-.338.252-.508.384-.016.03-.059.083-.079.108-.165-.067-.275-.02-.334.145l-.036.083c-.027.026-.075.079-.102.104-.161.053-.193.297-.008.348.102.346.311.706.15 1.07.004.045.008.138.012.185l.083.051.047.083c.051.004.15.016.197.02l.099.012c-.035.149.027.236.189.26.126.032.256.067.386.102l-.039.087.047.085c.039-.02.122-.057.165-.077l.098.008c.047-.012.142-.031.189-.039l.039-.098c.145.004.287.008.437.012.051-.008.153-.024.205-.031l.047-.092h.102c.161.045.354.045.484-.089.051-.008.153-.024.204-.029.055-.002.15-.001.201-.014l.055-.086c.059-.008.185-.02.248-.028l.008.091.087.043c.039-.028.114-.083.149-.11l.094-.024c.071 0 .213.002.283.004.126.092.26.179.394.268.004.049.012.149.016.201-.264-.008-.484.138-.653.327-.138.012-.271.028-.401.035l-.051-.087c-.047-.001-.15-.024-.201-.031-.086 0-.248 0-.334-.002-.106-.183-.358-.183-.484-.022-.051.001-.158.028-.209.037l-.106.004-.106-.026c-.039.029-.122.091-.161.12l-.083.037c-.031.016-.098.049-.134.067-.059.033-.189.095-.256.126l-.09-.024c-.031.029-.098.083-.13.11.051.008.161.02.212.027 0 .051.004.156.008.209-.134.04-.264.049-.393.024.028-.104.087-.189.173-.26l-.079.012c-.031-.004-.098-.008-.13-.001-.063.014-.181.039-.24.053l-.063.014c.024.012.067.035.09.047.02.027.055.083.075.11-.106.067-.216.132-.323.197.032.136.067.272.098.407.268-.238.622-.334.948-.464.055.039.169.126.224.167.024.016.075.053.102.069l-.016-.059.098.008c.008.071.024.213.031.283.039.169.079.338.122.509-.146.073-.287.156-.445.197-.26-.159-.468-.391-.74-.529-.185.004-.358.039-.535.063-.095.239-.152.485-.192.736.536-.153 1.1-.24 1.686-.24 3.39 0 6.135 2.739 6.135 6.154 0 .944-.221 1.833-.604 2.63.057.014.117.022.165.018.055-.002.161-.006.216-.008.055-.008.165-.028.216-.037.209.041.409.1.61.183l-.083.002c-.032.016-.091.045-.122.059-.059.037-.181.116-.24.151-.268.116.043.362.22.26.027.022.086.065.114.087.051.004.157.008.213.001-.063.145-.047.419.169.417l.106.024.035.092.086.035c.032-.028.09-.094.118-.126.024-.026.067-.077.087-.102.028-.024.087-.067.114-.09l.098-.008c.051-.001.15-.028.201-.035l.051-.079c.02-.033.055-.098.075-.13.063-.002.189-.002.252-.002.086-.006.264-.02.35-.027l.102-.032.047-.096-.035-.094c.071.028.22.087.291.112l.075.049c.031.02.086.061.118.083.031.024.094.075.126.1l.035.065.083.016c.441.189.881.386 1.279.661.024.016.075.047.099.065.15.1.299.199.456.303.035.026.106.077.142.102.032.022.094.055.13.073.028.026.087.075.114.098.051.012.161.035.213.045l.095.041c.035.018.102.057.138.075.028.024.087.063.114.085l.071.049c.028.031.079.095.106.126.02.043.063.136.083.181.016.039.051.118.067.157l.035.081c.008.037.027.108.035.144l-.008.075c-.008.031-.016.094-.02.13l-.02.071c-.063.049-.197.146-.264.193-.031.022-.098.067-.13.087l-.075.035c-.028.018-.09.047-.122.063l-.071.035c-.04.012-.106.039-.142.051l-.094.026-.067-.081c-.051-.002-.157-.006-.209-.008l-.114.016-.024-.091-.087-.045-.086.045-.02.092c-.055-.006-.169-.016-.228-.026-.047.001-.153.024-.205.032l-.051.091-.106-.004-.055-.086c-.055-.006-.157-.012-.209-.018l-.098-.014-.008-.079-.071-.008-.024.077-.098-.006c-.043-.031-.126-.09-.165-.122l-.102.043c-.035-.02-.102-.059-.138-.077-.047-.006-.146-.014-.189-.018l-.098-.008c-.094-.087-.185-.173-.272-.26-.126-.177-.362-.179-.547-.122-.02-.02-.067-.059-.086-.079-.04-.012-.114-.037-.154-.051-.327-.033-.645-.059-.964-.083l-.11-.001c-.047.006-.146.029-.193.037l-.024.094-.106-.014c-.047.006-.149.02-.204.026l-.051.091c-.063.035-.189.11-.252.146-.028.02-.087.051-.114.067l-.063.037c-.028.02-.087.061-.114.081-.032.027-.095.09-.126.118-.161-.035-.315-.022-.464.039-.209-.008-.622-.02-.83-.028-.11-.169-.327-.161-.496-.118l-.083-.039c-.032-.014-.099-.051-.13-.067l-.075-.043c-.031-.02-.098-.055-.13-.075.035-.161-.012-.287-.15-.378-.027-.022-.075-.067-.098-.09-.02-.022-.059-.071-.079-.094l-.008-.083c.022-.093.046-.185.069-.278-.964.627-2.114.994-3.353.994-.86 0-1.678-.177-2.42-.495.084.053.167.108.262.139.059.466-.028.942.079 1.407.197.156.378.331.559.506.083.391.433.667.61 1.021.149.012.299.022.453.032-.114.083-.232.159-.334.256-.047.216.193.327.307.472-.02.094-.039.185-.059.279.028.063.083.193.11.26.102-.035.208-.075.315-.11.051.114.098.224.154.338.071-.067.142-.134.216-.199.059.016.177.047.236.065-.016-.252-.099-.482-.252-.681.189.047.386.094.578.128-.114-.159-.236-.311-.354-.468.149.004.295.001.445.016.083.077.161.151.248.226 0-.085 0-.26 0-.346.13.028.256.059.386.087-.208-.301-.46-.594-.822-.708-.043-.169-.15-.309-.24-.451-.149-.199-.291-.401-.445-.596.028-.1.063-.197.094-.297.287.167.606.238.921.088-.075-.11-.154-.216-.228-.327.193-.043.382-.094.575-.142-.024.067-.075.197-.102.264.122-.083.236-.175.366-.248.232.006.449.098.681.138l-.067.063c.173.008.346.016.519.028-.118.067-.197.236-.346.22 0 .094-.004.291-.004.389.012.085.031.256.043.342-.055.055-.165.167-.224.22.177.083.358.157.547.209-.012-.047-.028-.145-.04-.197-.094-.071-.161-.156-.185-.268.071.006.208.016.283.02-.028.063-.075.185-.099.248.083.067.161.134.244.205-.043.122-.075.244-.106.366-.043-.026-.13-.081-.173-.106-.031.049-.086.153-.114.205-.071-.116-.165-.205-.279-.273 0 .096 0 .289 0 .386.374-.073.732.022.952.334-.098.006-.291.02-.39.026l.024.098c.071.012.212.035.283.049.086.081.173.163.264.242-.027.106-.047.211-.071.319.177-.043.358-.092.539-.138-.036.108-.071.22-.102.33.145-.022.287-.059.437-.055.263.134.488.336.728.514.185-.041.366-.077.555-.104.012-.151.028-.303.043-.454.586-.145.976.293 1.409.58.315.008.657-.067.976-.13.09-.161.193-.315.295-.466.216.057.433.136.645.218.145-.134.303-.254.48-.346 0 .195.032.431-.236.421.055.154.114.305.185.457-.047.02-.142.057-.189.077.114.293-.028.75.323.901-.094.104-.185.207-.276.313-.063.342-.165.677-.252 1.013-.068.256-.136.512-.212.765.08.103.16.205.233.312-.005-.211-.013-.421-.005-.623.114.035.224.071.342.108-.012.236-.016.474-.016.71-.056.022-.109.042-.163.062.566.931.897 2.023.897 3.2 0 .229-.015.455-.04.678.238.352.472.705.695 1.067.15.23.169.512.272.762.26.287.669.415.877.756.433.58.366 1.34.527 2.02.22.535.764.791 1.173 1.165.409.604.512 1.436 1.177 1.845.216.437.468.862.421 1.381-.122.421.126.811.248 1.204.185.415.228.87.327 1.314.378.116.811.128 1.161-.087.209-.144.386-.327.61-.452.319-.075.661-.059.98-.165.181-.083.323-.256.52-.299.539.106.712-.472 1.141-.61.602-.25 1.228-.439 1.818-.728-.09-.334.134-.543.26-.797.094.006.279.006.374.001l-.047-.086c.22-.063.437-.142.661-.205.279-.09.618 0 .858-.209.012-.144.02-.289.024-.433.252-.106.508-.193.771-.271.09-.213.145-.449.295-.636.201-.102.421-.136.649-.163-.13-.409-.055-.834.008-1.251.11.039.22.083.334.122.185-.356.394-.702.634-1.025.126-.195.283-.443.165-.673-.248-.333-.543-.639-.795-.962-.378-.086-.744-.179-1.106-.279-.279-.218-.468-.504-.614-.818-.035-.181-.083-.358-.146-.527.059-.197.118-.393.173-.59-.145-.047-.264-.004-.358.134l.031.075c-.303.48-.803.822-1.031 1.356-.22.081-.433.197-.661.246-.272-.016-.567-.14-.807.047-.185-.033-.358-.1-.508-.201-.075-.016-.22-.045-.291-.059.028-.053.083-.165.106-.216.043-.213.134-.427.071-.643-.043-.187-.051-.734-.397-.635-.232.311-.283.712-.169 1.078-.201-.401-.606-.771-.484-1.257-.09-.112-.173-.226-.252-.34-.508-.4-.862-.94-1.216-1.468-.055-.134-.118-.26-.181-.384-.016-.069-.051-.207-.067-.273-.063-.031-.185-.09-.248-.122.106-.001.323-.035.433-.049-.008-.049-.02-.147-.027-.195l-.016-.099c.161-.067.319-.153.48-.23.126.033.24.096.354.153.099-.026.201-.049.303-.073.457.508.779 1.108 1.094 1.71.189.154.448.159.645.299.342.238.63.559 1.023.72.362.016.795.447 1.133.12.083.008.165.02.252.031.201-.279.401-.665.87-.457.216.364.248.819.508 1.153.728.224 1.499.323 2.263.325.212.128.445.246.697.293.031-.039.102-.116.134-.157l-.008.118c.626-.11 1.263-.14 1.897-.138.496-.031.988-.143 1.483-.195.055.144.106.295.161.446.122.059.252.124.378.189.059.167.114.342.201.502.138.248.437.297.685.384l.059-.024c.098.35.39.636.744.716.232.002.468-.055.697-.098-.11.266-.362.382-.606.496-.071-.279-.551-.047-.232.1.413.468.807.986 1.389 1.267.268-.132.543-.262.822-.384.114-.26.09-.539.031-.811l.075.031c.04-.024.122-.067.161-.09-.012.173-.083.419.157.458-.079.217-.039.427.122.596-.095 1.283.48 2.469.72 3.699.228.651.653 1.22.937 1.847.205.443.228.952.488 1.377.402.671.826 1.352 1.01 2.127.13.58.374 1.23.948 1.503.153-.086.311-.177.468-.264 0-.156.004-.307.008-.457.209-.098.421-.189.649-.256-.106-.323.043-.631.165-.921.118.037.236.079.358.12-.031-.482-.095-.962-.067-1.442.071-.232.173-.457.236-.691.059-.691-.287-1.338-.287-2.023.051-.169.142-.325.224-.482.15-.006.295-.012.449-.016.043-.145.095-.293.146-.441.055.029.165.088.22.116.15-.085.299-.169.453-.254.008-.146.016-.291.024-.433.389-.348.787-.693 1.169-1.047.276-.34.48-.738.704-1.114.26-.028.504-.11.748-.209.099-.209.217-.409.358-.596-.063-.132-.122-.266-.181-.395.032-.059.094-.177.126-.236.217-.083.437-.163.657-.24.031.039.098.124.13.165.189.008.37.026.563.043l.004-.118c.287-.079.578-.157.878-.169.114-.085.232-.157.354-.23.091-.205.142-.47.374-.565.012.098.031.297.043.397.051-.029.157-.086.205-.118.099.409.177.834.445 1.173.201.338.484.61.744.909.055-.027.161-.083.216-.11.205.193.374.417.512.663-.083-.001-.24-.033-.319-.045.169.258.413.45.622.675.142.297.378.631.303.984-.055.36-.098.706-.067 1.08.047-.014.142-.039.189-.055.146.246.445.26.701.289.185-.327.488-.551.815-.728.043-.14.09-.287.145-.429m-49.3-34.53c-.15-.02-.291-.043-.437-.051l-.095-.004c-.012.043-.031.132-.039.173-.303-.238-.571-.508-.767-.836-.008-.043-.024-.134-.031-.177l-.024-.089c.071-.031.217-.098.291-.132.433.222.956.364 1.239.797-.05.107-.094.213-.137.319m1.708-.315c-.102-.364-.46-.453-.783-.521l.02-.112c.008-.055.031-.167.043-.222.185.039.37.079.555.134.201.12.342.321.504.494-.115.078-.229.153-.339.227m3.073 10.957c.043.026.126.073.165.097l.091-.051-.051.079c-.083.134-.161.27-.24.407-.031.041-.09.12-.122.161l.039.096c-.055.004-.173.004-.232.004h-.11c-.055 0-.161-.008-.213-.001-.067-.159-.291-.179-.378-.031-.051.016-.153.049-.204.065-.114-.083-.244-.13-.386-.13l-.079-.037c-.039-.124-.075-.25-.106-.376.161.114.303-.065.346-.209.02-.026.059-.077.083-.104.169.077.287.033.346-.136.157.075.279.035.378-.114.035-.018.102-.057.138-.075l.067-.041c.024-.02.079-.059.102-.081.177.004.394.004.508-.161.079.004.228.001.307.012.039.031.114.095.157.126-.169.077-.334.153-.508.222-.188-.033-.271.199-.098.287m-8.976 6.621l-.016.055-.09.035-.083-.004-.11-.031c-.028-.012-.083-.033-.114-.043-.043-.031-.138-.094-.185-.124.177-.12.457-.033.598.112m3.849-1.784c-.354-.022-.685-.049-1.031-.033-.091-.059-.177-.118-.264-.169.236-.145.472-.307.744-.354.284.02.547.13.807.224l.028.095c-.09 0-.275-.004-.366-.004.019.058.062.18.082.241m16.971 2.835c-.051-.001-.146-.03-.197-.039-.051.004-.15.016-.201.02l-.051.094-.102-.008c-.051.001-.153.024-.205.031l-.047.095c-.193-.004-.382-.006-.571-.008-.095-.138-.217-.173-.374-.108l-.087-.035c-.031-.018-.098-.055-.13-.073-.055-.039-.161-.116-.216-.153-.028-.024-.083-.071-.11-.091-.031-.027-.095-.083-.126-.11l-.051-.067-.09-.012c-.138-.024-.272-.047-.405-.071-.036-.02-.11-.055-.142-.071-.039-.035-.11-.098-.146-.132-.004-.049-.012-.153-.016-.205l-.09-.057.016-.104c.055-.155.008-.256-.138-.301.004-.057.004-.171.008-.228l.094-.024c.035-.039.099-.124.13-.165l.051-.091c.024-.039.067-.114.09-.153l-.075-.057-.09.02.02-.1c.036-.179.075-.35.13-.519.024-.024.075-.071.098-.094.043-.016.13-.043.173-.059.04.031.114.087.15.114l.051-.075c-.032-.032-.102-.089-.134-.118-.031-.018-.098-.057-.13-.075-.047-.008-.149-.024-.201-.03l-.09-.033-.039-.079-.031-.071-.079.008c-.173-.22-.342-.445-.523-.655-.016-.022-.055-.065-.071-.085-.028-.022-.079-.059-.106-.079-.279-.295-.551-.594-.815-.893-.016-.031-.051-.092-.067-.122-.047-.169-.142-.512-.185-.681-.02-.031-.059-.092-.079-.122-.031-.028-.09-.079-.122-.104-.031-.02-.09-.061-.122-.083-.024-.037-.067-.112-.09-.149l-.098.016c.138-.34.307-.671.515-.974.047.004.138.02.185.024l.063-.073c.047-.043.153-.128.205-.171l.039.091.094.012c.012-.045.024-.138.031-.185.091-.079.181-.155.275-.232.028-.024.083-.077.11-.102.039-.02.118-.057.157-.077.028-.018.09-.049.122-.067.027-.022.091-.065.118-.088.055-.008.153-.03.205-.039l.047-.092.102-.029c.035-.014.114-.039.154-.051.043.002.13.006.173.001.035.006.11.018.146.026l.09.018c.035.033.106.1.138.136l.102-.02c.157-.024.323-.035.488-.031.027.014.083.041.114.055.02.024.055.077.075.102.043.055.13.169.173.224 0 .09-.008.272-.008.362-.012.083-.024.252-.035.334-.032.039-.091.118-.122.156l-.098.004c-.083-.006-.248-.018-.327-.022-.035-.035-.102-.106-.138-.14h-.094c-.031.03-.098.089-.13.12-.028.035-.083.1-.106.134-.032.026-.083.079-.11.106-.04.02-.114.069-.15.092l.043.084.094.02c.035.033.098.1.134.134l-.114.016c-.153.014-.307.028-.457.041l-.098.006-.051.079c.031.033.098.099.13.13.083.122.205.169.358.138.028.028.079.083.102.11.024.028.063.087.086.112l.047.067c.024.029.063.088.083.12.028.031.071.09.095.124.016.053.043.159.059.213l.035.1c.079.012.236.035.315.047.02.03.055.095.075.126.114.136.319.175.484.11.016.039.039.108.055.144.008.049.031.147.039.199-.031.033-.098.094-.134.13l.008.096c.035.028.106.085.142.112l.024.09c.02.035.055.1.071.136.031.041.098.114.134.151.012.047.035.142.043.189l.083.039c-.004-.059-.024-.177-.031-.24l.027-.118c0-.059 0-.175 0-.234l-.004-.108c.189.028.386.039.582.039l.031.085c.024.033.067.104.086.14l.051.075c.024.031.067.09.091.118.024.024.071.075.094.096.024.026.075.073.102.097l.059.053c.024.03.067.089.09.118l.032.073-.067.029-.079.022c-.161-.02-.252.047-.272.197l-.083-.02-.059-.065c-.071-.154-.264-.242-.413-.14-.059-.097-.138-.169-.24-.216-.004.145 0 .291.008.437-.067.155-.031.275.11.364l.035.097c.016.179.244.212.378.138l.035.092c-.016.047-.051.144-.067.195l-.016.087-.051.047c.016.008.055.024.075.033.016.006.051.024.067.033l.079.04c.031.024.098.067.134.086.035.031.102.089.134.118.028.022.083.057.11.075l.008.106c-.004.086-.008.262-.008.35-.043.173-.016.37.13.492l.024.1c0 .053-.004.151-.008.205l.071.071.063.077c-.039.062-.125.204-.165.271m2.121-7.123l-.027.085c-.028.069-.071.211-.095.279l-.028.098.047.094.098.035c-.012.071-.031.215-.039.287-.02.018-.059.055-.079.075-.039-.008-.114-.02-.154-.027l.04-.092c-.035-.037-.099-.106-.134-.142.028-.213.059-.425.11-.634.016-.043.043-.13.059-.173.024-.02.079-.059.102-.083.047-.002.138-.008.185-.012-.022.053-.061.155-.085.21m.638 1.24c-.024-.031-.071-.086-.098-.114-.016-.024-.055-.067-.075-.09-.012-.032-.043-.095-.059-.126-.016-.087-.055-.252-.071-.336l.09-.02.035-.09c-.035-.028-.11-.085-.146-.11l-.004-.09c-.012-.033-.035-.108-.047-.142l-.039-.092c.027-.035.09-.108.122-.142l.098-.001c-.016.159.063.244.232.256l.094.03c.016.069.051.212.067.279l.059.143.031.089c0 .059.008.173.008.23.004.059.008.175.016.236-.077.022-.234.073-.313.099m.405-1.72l-.028-.11c-.055.012-.161.032-.212.041-.059-.012-.173-.035-.228-.047.004-.047.004-.142.008-.187l.079-.031c.098.09.216.142.358.157l-.004.067c.063.032.189.091.252.124-.056-.002-.166-.001-.225-.014m9.259-.165c-.051.039-.161.118-.216.157-.11.224-.185.464-.224.708-.028.037-.083.11-.11.145-.035-.035-.106-.102-.142-.136-.016-.026-.043-.079-.059-.104-.024-.061-.079-.181-.106-.24.091-.152.173-.313.24-.478.024-.022.067-.069.086-.094.028-.022.079-.065.106-.089.087-.012.26-.037.342-.049l.146-.022c-.015.053-.047.151-.063.202m.146-.151c.087-.016.256-.047.342-.063l.098.045c-.058.228-.334.163-.44.018m2.263.265c-.22.024-.445.037-.661.043-.138.047-.244.028-.323-.063l-.094-.051c-.075-.002-.225-.004-.295-.004l-.051-.071c.083 0 .252 0 .334.004.059-.016.185-.041.244-.055l.079.049c.094-.001.279-.031.374-.041.083-.216.575-.081.449.177l-.056.012m12.635 19.05c.154-.043.213.018.177.177-.169.047-.228-.014-.177-.177m3.356-24.915c0 .085-.004.258-.008.344-.205.11-.405.228-.622.319-.043.016-.126.039-.169.053v.104c-.016.161-.027.325-.051.488-.02.014-.059.039-.079.051-.213.124-.441.338-.701.228-.039-.027-.11-.079-.15-.102l-.083.035c.079-.075.153-.153.22-.244l.086.036c.035-.024.114-.071.153-.095.051-.051.153-.153.208-.205.016-.138.032-.275.051-.411.102-.041.205-.085.315-.124.016-.181.039-.36.067-.539.02-.012.055-.04.071-.055.016-.024.047-.079.063-.104.016-.045.047-.14.059-.189.031-.041.095-.128.122-.171.138-.153.11-.374.094-.563-.02-.331-.071-.655-.11-.982.157.092.425.152.346.395.008.043.016.138.02.181l.075.057.008.097c-.032.13-.004.244.086.342.094.185.13.389.154.594-.051.004-.154.001-.201.012l-.043.09.035.095c.051.004.149.008.197.001.004.065.012.191.016.254-.055.0001-.173-.0001-.229-.0001\"><path opacity=\".15\" d=\"m58.971 121.28c-.11.042-.216.089-.323.136.043.201.079.401.118.6.154-.039.311-.083.468-.126-.09-.205-.173-.408-.263-.61\"><path opacity=\".15\" d=\"m189.5 78.997c.224-.22.354-.507.575-.736 0-.201 0-.608.004-.811-.177.378-.35.753-.563 1.109.058.147.055.292-.016.438\"><path opacity=\".15\" d=\"m187.62 75.75c-.165-.006-.488-.012-.653-.016.248.354.48.712.72 1.074.358-.246.303-.846-.067-1.058\"><path opacity=\".15\" d=\"m191.03 76.43c-.205.002-.614.001-.819.016.004.079.012.238.02.319.185.12.382.238.547.391.031.146-.106.232-.181.329-.079-.132-.157-.262-.24-.388-.016.248-.028.494-.035.744l.114-.073c.287.132.248.5.362.769.087-.002.264-.001.346-.016-.004-.146-.008-.295-.012-.441-.051-.039-.157-.116-.208-.155-.004-.075-.02-.228-.027-.303.185.045.378.081.574.116-.201-.421-.193-.915-.441-1.308\"><path opacity=\".15\" d=\"m190.49 78.8c.169-.102.024-.411-.157-.38-.201.045-.354.199-.512.325.201.071.477.236.669.055\"><path opacity=\".15\" d=\"m187.89 71.55c-.039.045-.122.14-.161.187-.307-.053-.752-.519-.98-.148-.169.691.024 1.387.079 2.082-.157-.081-.311-.167-.46-.25.071.374.161.746.275 1.118.11.138.244.26.374.386.063-.12.165-.205.295-.252-.083.228-.181.45-.252.685.216.106.433.22.673.268.035-.059.106-.183.142-.242.086.006.256.022.338.026.193.197.386.39.594.578-.039-.202-.075-.405-.098-.606.393.433.819.854 1.369 1.078 0-.086 0-.26 0-.346-.232-.155-.413-.372-.582-.588.102-.006.307-.014.405-.018-.244-.158-.527-.26-.815-.169-.134-.199-.327-.569-.669-.256-.055.225-.26.126-.413.095-.098-.327-.22-.643-.319-.966-.024-.301.122-.608.409-.728.071-.266.055-.569.114-.828-.106-.142-.213-.285-.283-.441-.019-.226.095-.466-.035-.665\"><path opacity=\".15\" d=\"m190.22 75.51c0-.146-.071-.215-.205-.205-.028.049-.083.148-.11.199 0 .177.295.175.315.006\"><path opacity=\".15\" d=\"m184.98 79.93c.338-.149.567-.448.838-.689.161-.153.185-.389.22-.598.228-.146.453-.293.685-.445-.039-.193-.122-.575-.161-.765-.248.14-.224.443-.244.687-.157.161-.299.348-.35.571-.358.385-.842.709-.988 1.239\"><path opacity=\".15\" d=\"m188.28 76.99c.09.374.079.752.083 1.141.224-.063.457-.032.681.041.004.088.016.266.024.352-.13.035-.256.071-.378.116.059.092.118.191.181.285.146.114.272.256.362.421.134-.085.35-.146.272-.35-.122-.106-.213-.397.016-.437.012-.271.118-.523.24-.763-.181-.035-.362-.055-.539-.055-.024.087-.067.262-.09.346-.091-.285.09-.537.185-.795-.291-.001-.555-.092-.783-.244-.065-.013-.191-.044-.254-.058\"><path opacity=\".15\" d=\"m192.04 79.78c.063-.492-.366-.846-.76-1.043.031.191.067.382.098.577-.122.043-.244.092-.358.14-.051-.026-.146-.073-.193-.098-.055.11-.106.216-.157.327-.079.002-.244.008-.326.012-.008.085-.016.256-.016.34-.083-.002-.252-.002-.335-.004-.008-.081-.027-.242-.035-.321-.055-.028-.165-.079-.22-.106-.146.033-.283.071-.421.102-.012.081-.031.24-.039.323-.153.002-.303.004-.453.008-.248.301-.315.692-.35 1.068.291-.112.319-.48.472-.72l.075.012c.059.297.421.22.649.293-.016-.039-.055-.118-.075-.157.043-.069.13-.201.173-.268.146.083.295.165.449.248-.047.346-.138.673-.149 1.031.311.112.61.332.956.358.012.148.122.256.209.376.094-.167.193-.333.256-.512-.047-.23-.161-.439-.22-.663.134-.075.287-.092.433-.122.071.197.146.393.224.592.016-.089.043-.27.055-.36.051-.041.153-.12.201-.161-.033-.426.006-.863-.143-1.272\"><path opacity=\".15\" d=\"m190.12 77.12c-.114-.224-.256-.429-.393-.634-.138-.001-.275-.024-.405-.035l-.016.582c.075-.079.154-.157.232-.236.189.118.378.226.582.323\"><path opacity=\".15\" d=\"m47.957 71.869c.153.104.303.096.449-.022.268.053.543.106.818.161.031.128.071.256.122.382.209-.205.405-.423.638-.606.02.051.067.142.09.189.193.13.338-.067.488-.165.307-.09.669.026.815.315.098-.177.264-.338.279-.547-.232-.228-.551-.315-.834-.456.094-.012.287-.033.382-.043l-.008-.102c-.15-.006-.303-.008-.453-.012-.008-.079-.02-.238-.028-.319-.523-.177-1.086-.315-1.621-.104-.138-.067-.256-.152-.374-.242-.24.063-.488.151-.583.405.173.022.346.039.523.065-.031.14-.067.277-.102.419.11.114.216.228.319.35-.496.065-.995.079-1.491.134-.008.089-.02.264-.028.35.157-.008.319-.018.48-.025.028-.033.091-.096.119-.127\"><path opacity=\".15\" d=\"m190.09 60.15c.079.12.169.236.228.372-.024.114-.051.226-.083.339.118.224.205.462.366.661.126.063.268.118.413.169.13-.309.118-.642.039-.962.063-.415-.208-.687-.417-.988-.209-.041-.409-.098-.571-.238.311-.039.688-.026.901-.311.244.031.484-.001.704-.118.138-.069.272-.142.417-.201.031.126.067.252.106.378-.181-.057-.354-.118-.523-.177-.031.13-.059.264-.086.399-.146-.031-.291-.065-.433-.096-.028.177-.051.354-.087.535.079.106.158.211.24.319.094.051.193.106.291.163.051-.195.106-.384.157-.576.134.031.276.071.417.104.134-.309.055-.647.209-.952.016.165.035.332.059.5l.106-.008.004.114c.181.045.362.088.547.128.016-.146.035-.293.063-.437.161-.122.268-.417-.031-.433.303-.138.598-.283.901-.433.035-.157.087-.315.138-.464.106.079.216.165.327.248-.083-.376.157-.649.327-.937.075.165.158.329.248.492.083-.276.161-.549.244-.822-.15-.087-.295-.169-.421-.277-.102-.236-.169-.482-.189-.738-.205-.193-.382-.399-.539-.622.063-.091.126-.177.201-.262-.079-.35-.122-.789-.563-.887-.35-.205-.673-.441-1.035-.618.024.136.098.24.224.307-.024.043-.083.126-.11.167-.059-.022-.173-.073-.232-.092.012.155.031.468.043.624.126.266.405.454.437.762.145.531.059 1.084-.15 1.588-.15.167-.299.382-.535.4-.083-.159-.142-.327-.201-.492-.303.224.087.504.012.783-.031.24.008.48.047.72-.539-.035-1.074-.039-1.605-.075-.213.37-.405.791-.826.962.043.051.13.152.173.203-.208.157-.413.321-.63.464.122.183.236.368.35.555.108-.081.218-.159.328-.24\"><path opacity=\".15\" d=\"m192.68 52.723c.106.031.209.063.319.094.146-.039.295-.081.453-.114.008-.195.028-.577.039-.769.177-.154.484-.242.547-.48-.217-.273-.492-.535-.48-.915h-.043c-.047.15-.09.311-.193.439-.283.014-.555-.006-.826-.053-.299-.106-.578-.268-.893-.303-.004.354.319.563.413.877.067.303.181.614.287.909-.161.016-.315.02-.468.016.035.095.075.191.118.289-.047.114-.09.23-.13.344.169.226.339.453.52.677.26.086.216-.268.311-.421-.181-.092-.394-.148-.504-.327.067.018.197.051.264.067.085-.11.176-.22.266-.33\"><path opacity=\".15\" d=\"m178.5 70.4c-.114.165-.232.331-.35.494.024.254.051.51.09.765.185.047.37.12.567.114.244-.083.449-.248.673-.382.035-.307.193-.571.252-.868-.264-.454-.85-.131-1.232-.123\"><path opacity=\".15\" d=\"m47.721 70.37c-.161-.142-.319-.287-.48-.429-.142.037-.287.075-.429.11-.016-.087-.039-.254-.055-.338-.5-.008-.897-.315-1.318-.541-.055-.14-.114-.277-.169-.415-.055.031-.161.087-.216.116-.236-.124-.504-.289-.779-.279-.11-.191-.189-.427-.405-.521-.87-.516-1.971-.386-2.849.039-.295.152-.453.46-.519.775.197-.059.39-.15.539-.293.547-.132.976-.63 1.598-.395-.091.114-.185.228-.279.338.185.077.551.23.736.307.531.201.905.763 1.543.661-.142.693.523.775.991.895-.031.297-.374.405-.531.632.578-.085 1.153-.173 1.735-.24.304-.115.588-.288.887-.422\"><path opacity=\".15\" d=\"m218.26 121.97c-.094-.271-.216-.527-.307-.797-.13.045-.264.092-.382.156-.204.201-.193.512-.283.767-.083.008-.24.024-.319.031-.209.866-.712 1.639-1.342 2.263-.433.635-1.102 1.129-1.369 1.865.185.063.37.126.555.206.279.132.472.401.756.527.401-.035.673-.409.984-.631.252-.425.437-.885.637-1.338.083-.216.283-.358.496-.437.181-.039.366.039.555.067-.118-.234-.256-.472-.228-.74.398-.303.689-.712.976-1.118-.032-.256.02-.512.031-.767-.17-.274-.516-.073-.76-.054\"><path opacity=\".15\" d=\"m221.89 119.06c-.417.193-.61-.14-.862-.344-.035-.405-.012-.828-.201-1.196l-.043.657c-.134-.102-.268-.209-.397-.307.047-.175.087-.352.13-.525-.087-.378.004-.773.028-1.147-.177-.144-.354-.285-.543-.409-.02-.138-.035-.275-.047-.413-.055 0-.161.002-.22.004.146.514-.071 1.051.177 1.55.165.555.154 1.133.201 1.712-.169.429-.409.822-.626 1.232-.197.047-.394.108-.586.169.043.488.539.724.85 1.051-.016.459-.228.874-.472 1.251.11.154.287.256.46.342.236-.086.362-.342.508-.535.299-.523.724-.995.822-1.613.114-.287.472-.295.732-.232.272-.504.637-.976.748-1.55-.083 0-.256 0-.342 0-.105.101-.207.207-.317.303\"><path opacity=\".15\" d=\"m107.21 52.825c.071-.228.165-.457.209-.692-.012-.23-.063-.453-.095-.679-.185.169-.378.329-.574.482.028.258.083.512.142.761.106.043.212.085.318.128\"><path opacity=\".15\" d=\"m190.54 86.42c.275-.327.555-.657.74-1.049-.063-.024-.185-.065-.248-.089-.26.158-.417.445-.606.673-.811-.033-1.641-.047-2.404-.344-.09.151-.177.305-.26.462-.055-.028-.161-.083-.216-.11-.122.228-.256.46-.299.724-.122.712-.307 1.415-.441 2.127-.189.238-.295.513-.213.846.165.014.331.024.5.035-.039.504-.02 1.029-.216 1.503.043.116.118.216.185.328.185-.055.378-.098.571-.142-.008-.72.157-1.438.071-2.164.063-.075.13-.147.201-.22.087-.002.264-.004.346-.008-.031.256-.11.508-.094.767.118.142.256.266.397.392-.039.183-.067.37-.09.561.142-.002.291-.004.437-.004.031-.067.094-.193.122-.26.09.02.268.053.358.069l.031.085c-.079.014-.236.047-.311.059-.024.169-.035.338-.047.507.11.091.224.177.339.27.106-.097.216-.187.334-.275-.027-.026-.071-.081-.098-.106.039-.232.083-.462.106-.696-.059.002-.169.006-.228.001.106-.086.201-.189.287-.295-.118.012-.232.024-.342.037-.122-.124-.252-.238-.378-.348.063-.138.126-.275.193-.405-.228-.315-.448-.63-.669-.937.327-.299.724-.545.952-.94.138.032.279.071.425.106-.004-.083-.004-.25-.008-.331-.11-.041-.217-.083-.319-.12-.039.047-.11.148-.15.195-.327.051-.681.098-.999.157-.138.14-.193.516-.449.409-.213-.228-.425-.451-.598-.704-.086-.307.102-.598.209-.874.958.027 1.918.064 2.879.099\"><path opacity=\".15\" d=\"m191.5 93.29c.189-.004.378-.008.571-.008.032-.055.102-.165.134-.224-.24-.002-.476-.004-.708-.006-.0001.061.003.179.003.238\"><path opacity=\".15\" d=\"m198.1 92.05c.004-.22.008-.657.012-.876-.118.092-.236.187-.35.281-.004.134.004.27.024.403.097.07.203.133.314.192\"><path opacity=\".15\" d=\"m190.52 88.17c.248.433.822-.049 1.184.1.004.09.016.272.024.362l.063-.037c.063-.159.157-.305.271-.435-.511-.019-1.039-.113-1.542.001\"><path opacity=\".15\" d=\"m189.53 88.03c.138-.026.275-.045.417-.065.035.057.098.169.134.226.004-.167.012-.329.024-.494l-.59.014c.003.081.011.238.015.319\"><path opacity=\".15\" d=\"m195.35 92.96c-.008.15-.012.301-.008.457.146-.126.291-.254.437-.378.008-.079.028-.228.035-.307.059-.027.181-.092.24-.122-.091 0-.268 0-.354 0-.118.116-.236.234-.35.35\"><path opacity=\".15\" d=\"m180.19 87.71c.02.063.059.183.083.244-.031.421.055.826.083 1.243.366.136.748.083 1.121.008.008.157.016.313.032.472.441-.083 1.05-.555 1.417-.061.181-.006.437-.144.508.112l.055.515c.295-.138.578-.323.893-.413.122.055.228.142.358.189.043-.163.149-.358-.008-.492.09-.181.197-.439.118-.638.193-.183.012-.46.047-.685.138-.348.488-.537.767-.763-.012-.275-.091-.584-.063-.85.114-.448.575-.704 1.047-.571-.22-.33-.571-.533-.862-.783.039-.112.079-.222.126-.33-.181-.279-.35-.567-.578-.809.059-.002.169-.006.224-.006-.027-.053-.079-.161-.106-.216.055-.004.169-.012.224-.02-.031-.053-.09-.165-.122-.222.035-.053.106-.155.145-.209.028-.033.079-.106.11-.14.181.043.339-.069.468-.185-.145-.106-.291-.209-.397-.35.244-.047.492-.094.728-.177-.008-.047-.028-.132-.039-.177-.248-.157-.512-.291-.791-.388-.051-.165-.157-.205-.307-.122-.016-.146-.032-.289-.043-.435-.158-.118-.315-.236-.464-.358-.134-.138-.421.02-.327.207-.232.39-.366.885-.811 1.092.028.097.055.201.087.299-.047.035-.153.104-.204.138-.169-.26-.362.075-.5.185-.083.022-.244.059-.327.079l.059.051c-.236.571-.618 1.137-1.216 1.354-.106-.122-.429-.122-.456.061-.047.014-.142.033-.189.045l-.059.118c.016.049.047.151.059.201-.063.189-.047.415-.217.551-.086.006-.244.02-.33.024-.047-.173-.39-.22-.555-.193-.024-.035-.071-.106-.094-.142l-.09.012c-.216.279-.374.632-.327.99.13.543.256 1.092.417 1.629.098-.029.2-.056.306-.084\"><path opacity=\".15\" d=\"m195.05 89.25c-.543-.187-1.125-.085-1.684-.136-.122.13-.24.272-.154.457.063-.028.189-.085.256-.114.027.049.086.148.114.197-.173.028-.374.039-.362.264.185-.045.37-.094.559-.14 0-.1.004-.203.016-.301.362.15.775.071 1.121.266.134.065.272.128.417.183-.039-.239-.047-.548-.283-.676\"><path opacity=\".15\" d=\"m193.81 84.9c.035-.112.075-.222.114-.331-.051-.031-.157-.096-.213-.126-.094.146-.189.295-.271.449.09.0001.275.008.37.008\"><path opacity=\".15\" d=\"m194.58 88.37c.173.016.346.031.527.051-.012-.104-.032-.303-.043-.401-.181.087-.378.169-.484.35\"><path opacity=\".15\" d=\"m195.08 86.65c.051.114.102.228.157.342.071.008.209.018.279.024l.004-.077c.102-.016.299-.045.398-.059.153-.238-.248-.246-.37-.356-.158.037-.315.078-.468.126\"><path opacity=\".15\" d=\"m200.14 88.24c-.378-.112-.756-.205-1.129-.275.311.279.68.445 1.129.275\"><path opacity=\".15\" d=\"m199.77 87.61c-.09-.161-.165-.331-.291-.46-.138-.063-.283-.11-.425-.156.063.089.134.177.205.266.008.086.035.26.047.342.149.008.307.012.464.008\"><path opacity=\".15\" d=\"m177.06 91.66c.091-.626.149-1.257.177-1.887.004-.203.122-.38.189-.565.15.041.299.086.452.13-.024-.063-.079-.189-.098-.25.016-.045.055-.132.075-.175-.358-.134-.425-.519-.472-.85-.539-.315-.539.177-.685.441.169.004.331.008.504.001-.016.169-.031.342-.039.514-.024-.067-.071-.201-.09-.268-.154-.008-.307-.016-.453-.02-.24-.346-.398-.732-.492-1.137-.145-.014-.283-.026-.421-.035-.087-.083-.173-.165-.256-.24.063-.083.126-.161.197-.236-.012-.039-.032-.118-.04-.158.063-.092.126-.187.189-.279-.106-.165-.24-.307-.358-.453-.059.024-.177.067-.236.09.039-.114.079-.226.126-.339-.142-.053-.284-.106-.417-.154-.063-.096-.126-.189-.185-.279-.193-.035-.378-.079-.563-.124.04-.124.083-.246.122-.368-.118.032-.232.063-.342.099-.036-.051-.11-.158-.142-.209-.145.032-.287.071-.425.104-.331-.486-.622-1.017-1.165-1.293-.527-.254-.693-.866-1.102-1.236-.303-.043-.685-.053-.968-.059-.181-.201-.5-.476-.732-.177.051.584.555.97.972 1.326.429.319.779.752.94 1.271.205.09.409.195.594.334.264.384.287.874.425 1.314.736.498 1.055 1.373 1.31 2.184.244.5.661.885.988 1.334.236.34.61.543.889.854.205.252.413.504.63.759.043-.039.122-.122.165-.165.157-.004.315-.012.48-.018.084.068.167.137.257.21\"><path opacity=\".15\" d=\"m178.82 89.41c.157-.041.071-.279.118-.398-.126-.142-.307-.138-.468-.153-.028.181-.031.368-.012.553.118-.006.24-.006.362-.002\"><path opacity=\".15\" d=\"m171.94 87.62c.063.295.142.632.496.689-.039-.293-.126-.574-.224-.852-.068.041-.201.123-.272.163\"><path opacity=\".15\" d=\"m193.01 87.68c-.059.158-.11.323-.153.488.209-.004.421-.006.633-.008-.158-.165-.315-.327-.48-.48\"><path opacity=\".15\" d=\"m169.9 84.39c-.098.146.126.37.276.272.067-.138-.138-.339-.276-.272\"><path opacity=\".15\" d=\"m170.91 85.63c.146.266.299.539.555.722.008-.165.012-.327.02-.488-.126-.118-.248-.232-.366-.348-.052.03-.158.087-.209.114\"><path opacity=\".15\" d=\"m182.19 93.8c.354.11.704.264 1.051.411-.031-.161-.067-.325-.094-.484.201.116.386.26.492.47.146-.126.295-.254.445-.378-.106-.118-.224-.22-.346-.319-.161.055-.319.11-.48.165-.004-.098-.012-.293-.02-.39l-.169.067c-.012-.043-.035-.13-.047-.173-.319.051-.653.051-.96-.02.016-.083.043-.25.055-.334.315.031.614-.071.917-.136-.04-.045-.118-.132-.161-.175-.291.026-.579.067-.854.122-.035-.002-.11-.004-.146-.004-.449-.104-.862-.305-1.275-.508-.059.153-.114.307-.169.464-.441-.051-.881-.112-1.318-.145-.055-.146-.087-.307-.216-.402-.165-.049-.331-.079-.496-.11-.382-.169-.815-.087-1.196-.244-.102.323-.291.604-.582.781.291.029.618.077.925.124-.043.108-.079.216-.114.33.571.142 1.129.405 1.735.378.705-.106 1.22.5 1.909.492.367.047.733-.001 1.114.018\"><path opacity=\".15\" d=\"m189.98 95.27c.35-.122.677-.346.807-.706.594-.289 1.322-.399 1.767-.919-.539.047-1.086.11-1.606.252-.114.091-.189.212-.264.332-.342.073-.649.238-.917.46-.039.205-.008.48-.271.529.157.086.299.273.484.052\"><path opacity=\".15\" d=\"m184.72 94.1c.051.118.11.24.169.364.508-.199 1.035-.348 1.586-.368.012-.154.02-.305.031-.457-.354-.055-.622-.077-.952-.112.071.159.153.317.236.478-.283-.161-.622-.38-.917-.122-.032-.063-.094-.185-.126-.244-.087 0-.252-.004-.342-.004-.075.187-.146.378-.217.572.106.03.209.065.319.1.067-.072.142-.141.213-.207\"><path opacity=\".15\" d=\"m187.1 95.27c.197-.024.394-.063.586-.122-.173-.258-.397-.569-.732-.585-.319-.085-.567-.001-.74.232.193.059.393.108.598.152.095.107.194.213.288.323\"><path opacity=\".15\" d=\"m188.83 94c.079-.001.244-.03.323-.04.039-.049.114-.145.157-.193.295.051.602.039.905.067.043-.039.13-.112.173-.15.177.028.358.053.539.077-.004-.063-.012-.197-.02-.262-.15.016-.291.031-.437.055-.425.02-.846-.073-1.263-.13-.114.161-.244.317-.358.48-.157-.213-.409-.134-.614-.071-.319-.136-.681-.277-1.027-.22-.094.147-.185.299-.264.456.627.128 1.272.175 1.886-.069\"><path opacity=\".15\" d=\"m193.22 87.24c-.035-.033-.106-.095-.142-.128l.047-.083.094.018c.0001.051.0001.144.0001.193.118.083.248.161.374.242-.095-.293-.209-.578-.358-.844.004-.079.012-.236.02-.313.173-.006.523-.022.701-.03-.134-.11-.268-.216-.386-.334.09-.11.228-.169.35-.248 0-.154 0-.307 0-.462-.149.061-.295.122-.437.189l-.043.073c-.055-.13-.11-.254-.161-.378.012-.114.031-.228.051-.343-.386.272-.594.746-.393 1.228l.098-.035c-.043.016-.13.051-.173.069.039.065.114.195.153.26-.012.191-.016.384-.016.577-.087.004-.264.012-.35.014 0 .144.008.293.016.439.204.027.409.059.614.098-.017-.053-.044-.151-.06-.202\"><path opacity=\".15\" d=\"m192.62 89.37c-.102-.051-.209-.099-.307-.15-.153.051-.311.096-.46.142 0 .075 0 .22 0 .295.079.079.157.161.24.248.138-.004.275-.004.421-.004.075-.083.153-.161.24-.24-.047-.098-.091-.197-.134-.291\"><path opacity=\".15\" d=\"m52.02 52.42c0 1.413-.485 2.707-1.292 3.74.348.025.694-.063 1.04-.088.004-.051.02-.154.024-.205-.291.028-.574.049-.862.067.425-.197.897-.22 1.358-.236.032-.039.091-.122.118-.163.279.128.578.167.878.092-.193-.185-.618-.494-.315-.756.169-.287.354-.567.551-.834.224-.004.445-.033.669-.061.047-.1.095-.203.15-.301.425.02.905.087 1.287-.157-.012-.039-.039-.126-.055-.165.311-.049.622-.094.937-.134.039-.016.114-.053.154-.069.13.061.224.159.283.289-.295.075-.563.23-.842.35-.047.14-.102.279-.134.425.079.154.224.26.354.366.389-.169.708-.464 1.078-.661.638-.201 1.291-.327 1.928-.519-.02-.047-.063-.142-.087-.189.358-.016.701-.163.925-.453-.122-.053-.24-.106-.358-.159-.012-.167-.024-.335-.04-.502-.37.185-.535.592-.708.944-.098-.018-.197-.031-.291-.049-.425.061-.94-.006-1.232-.34-.063-.02-.201-.057-.272-.077-.043-.216-.138-.427-.122-.651.051-.167.13-.319.201-.476-.319.012-.563-.071-.826-.209.201-.02.602-.059.807-.079.118-.077.236-.151.362-.22.008-.138.012-.279.02-.413-.264-.077-.519-.226-.795-.22-.85.15-1.688.382-2.456.779l-.106-.002c.429-.431.936-.844 1.586-.844.185-.248.346-.551.669-.634.984-.134 1.979.15 2.959.031.22.142.59.161.799-.016l-.012-.051c.46-.098.696-.628 1.177-.71.468-.1.933-.234 1.35-.49l-.024-.096.035.086c.059-.301.051-.612.004-.911.071-.169-.13-.303-.193-.441-.146.004-.295.016-.441.032.004-.22-.193-.319-.35-.415.079-.096.15-.199.228-.291-.22-.14-.48-.305-.74-.327-.232-.15-.496-.234-.759-.297.02-.047.063-.138.083-.181-.256-.205-.61-.362-.677-.718.02-.175.185-.283.217-.453-.099-.134-.209-.256-.311-.384.02-.089.035-.181.059-.268-.201-.303-.264-.669-.445-.978-.236-.419-.614-.793-.523-1.33-.457.384-.657.954-.984 1.436-.055-.027-.165-.084-.22-.112-.055.102-.106.209-.161.315-.177.047-.354.1-.531.15-.13-.187-.26-.378-.382-.571-.145-.006-.295-.014-.441-.02.028-.057.083-.173.11-.23-.024-.053-.071-.159-.098-.212.11-.427.146-.876.335-1.281-.047.016-.146.045-.193.061-.22-.14-.461-.242-.7-.346-.028-.506-.468-.832-.74-1.22-.602.329-1.251-.031-1.838-.23-.122.077-.24.153-.358.232.02.171.063.508.083.677-.126.161-.256.32-.39.474.059.285.051.551.032.852-.197.315-.441.602-.764.795 0 .075-.012.224-.012.297.146.128.437.386.578.515-.008.27-.024.809-.035 1.08-.334.813-1.244 1.129-2.023 1.373.146.677-.197 1.324-.063 2.01-.106.057-.213.12-.315.179-.002.043-.005.108-.008.173 1.281 1.128 2.096 2.778 2.096 4.63\"><path opacity=\".15\" d=\"m49.744 57.16c.055.028.109.057.164.085.303-.205.563-.47.728-.799-.018-.036-.036-.071-.053-.106-.252.299-.533.574-.839.82\"><path opacity=\".15\" d=\"m74.67 90.97c-.287-.008-.578-.026-.866-.047-.374-.138-.677-.409-.933-.708-.386-.496-.952-.799-1.483-1.098-.343-.037-.677.026-1.01.059-.083-.045-.165-.086-.244-.126-.346.061-.626-.183-.936-.271-.307.022-.61.081-.905-.004-.047-.154-.09-.307-.153-.449-.134-.193-.37-.268-.567-.37-.5-.228-1-.457-1.488-.706-.181.051-.362.092-.539.152-.173.157-.209.409-.331.606-.157.138-.346.224-.539.291.264-.405.531-.815.696-1.275-.252-.04-.504-.161-.759-.095-.055-.134-.114-.266-.169-.393-.153.004-.307.001-.457.018.02-.069.055-.207.075-.274-.047.008-.142.028-.185.033.051-.037.15-.11.201-.149.059-.25.118-.506.153-.758-.106-.059-.212-.114-.315-.165-.012-.106-.02-.209-.028-.311-.059.024-.177.067-.24.09-.173-.626-.217-1.291-.48-1.889-.055.051-.165.151-.22.205-.008-.087-.02-.256-.028-.342-.492-.35-.933-.799-1.535-.95l-.083.053c-.028-.043-.09-.126-.126-.165-.693-.059-1.385.067-2.082-.008-.122-.374-.551-.561-.822-.826-.055.024-.173.067-.228.09.043-.118.09-.236.138-.35-.22-.415-.547-.811-1.01-.95-.22-.138-.448-.258-.661-.398-.051.018-.153.045-.205.063.075-.175.177-.342.228-.529-.173-.116-.362-.212-.519-.346-.205-.039-.409-.075-.614-.089-.095-.169-.185-.334-.272-.504.063.026.201.081.264.106.114-.079.236-.156.354-.238-.46-.004-.94-.018-1.373.147-.307.097-.574.274-.846.437-.334-.128-.645-.301-.96-.458-.449-.051-.897.073-1.342.079.236-.63-.46-.817-.881-.85-.201-.043-.389.077-.574.132-.339.148-.72.222-.992.482-.039-.213-.146-.398-.264-.575.224-.165.492-.275.696-.476.091-.283-.303-.417-.488-.248-.354.269-.701.549-1.043.83-.189.012-.567.031-.756.043-.055.151-.118.303-.169.461-.079-.122-.154-.244-.228-.362-.169.134-.342.264-.5.411-.252.26-.205.651-.228.99-.067.004-.197.012-.264.012-.173.281-.37.559-.677.703.024.189.039.38.055.573-.051-.114-.098-.222-.145-.335-.098-.086-.189-.177-.287-.26-.307-.535-.925-.787-1.519-.801-.37.214-.716.472-1.11.647-.248.126-.421-.171-.602-.295-.036.057-.11.165-.146.216-.055-.151-.106-.307-.153-.46l-.102.004c-.303-.33-.63-.663-.716-1.116l-.071-.002c-.031-.13-.063-.26-.09-.39.094-.173.149-.362.142-.561.185-.415.209-.868.283-1.305.15-.391.268-.795.362-1.2-.134-.112-.287-.191-.453-.238-.102-.138-.197-.277-.295-.411-.256-.067-.519-.118-.787-.079-.704.024-1.44-.001-2.113.212.051-.181-.22-.281-.323-.155.087-.144.236-.38.307-.506.299-.386.189-.903.413-1.314.11-.087.228-.165.346-.236l-.083-.02c.181-.303.319-.637.339-.99.035-.549.574-.872.763-1.355-.028-.118-.059-.23-.098-.34-.189.041-.378.11-.575.077-.535-.11-1.039.193-1.558.244-.559.138-.52.828-.724 1.251-.083.319-.358.504-.622.661-.008.081-.031.236-.039.315-.791-.13-1.562.124-2.31.342-.051-.1-.098-.203-.142-.301-.256-.1-.512-.195-.767-.289-.189-.441-.279-.919-.519-1.338-.189-.323-.232-.703-.279-1.066-.098-.555.189-1.082.26-1.625.268-.15.468-.378.523-.689l.094.02c-.075-.291-.165-.614-.055-.909.102-.244.248-.472.354-.714.244-.183.484-.368.732-.541.016-.079.047-.236.063-.315.098.024.197.051.299.079.346-.197.704-.372 1.062-.555.004-.083.004-.252.008-.332l.11.002c0 .051 0 .15-.004.201.716-.301 1.464-.029 2.2-.043.114.13.236.26.358.384.181-.045.366-.049.551-.022.043-.136.138-.195.279-.177.047.114.087.23.134.346.106-.039.22-.077.331-.114-.039-.061-.11-.189-.146-.25-.055.002-.161.001-.216.001.075-.149.334-.334.114-.468.354-.313.858-.246 1.299-.323 0 .053 0 .157 0 .212.295-.039.602-.085.909-.092.303.022.496.293.649.529.37.032.704-.169 1.066-.193.228.26.413.547.598.834.047.334-.311.63-.181.972.209.582.578 1.086.834 1.647l.464-.026c.161-.287.319-.582.397-.903.016-.506-.228-.992-.142-1.491-.177-.596-.425-1.328.035-1.859.323-.679 1.184-.724 1.676-1.232.216-.228.488-.382.767-.519.051.028.153.083.205.11.173-.358.559-.496.917-.61.098.001.295.031.394.039.028-.047.079-.142.106-.189-.067-.043-.205-.136-.272-.179l.047-.065c.15-.02.303-.035.457-.051.071-.09.146-.181.22-.272-.083-.079-.158-.151-.232-.228.382-.039.283-.527.032-.677.043-.177.091-.35.142-.523.052-.104.106-.21.159-.316-.878.481-1.887.756-2.961.756-3.384 0-6.127-2.723-6.127-6.103 0-3.412 2.743-6.154 6.127-6.154.965 0 1.875.229 2.688.626-.028-.063-.061-.124-.083-.189l.106-.033c.209.087.425.175.642.254-.043-.138-.087-.272-.13-.409v-.048c-.201-.041-.512.024-.492-.275.13-.161.122-.358.087-.547.122-.216.256-.433.307-.677-.437-.126-.877-.256-1.33-.343-.37-.201-.728-.433-1.066-.681-.161-.189-.303-.398-.464-.579-.323-.189-.653-.37-.995-.504-.224.016-.445.073-.669.106.051-.464.083-.933.114-1.393l-.626-.039c.055-.423.177-.848.441-1.192.551-.759 1.287-1.397 2.109-1.846-.016-.049-.047-.15-.063-.197.11.035.216.067.323.106.145-.047.291-.09.437-.134.051-.11.102-.22.157-.329-.039-.022-.118-.065-.153-.085l-.079-.043.043-.083c.008.031.024.094.036.126.193-.059.39-.12.586-.177.043-.092.087-.187.13-.279.26.037.523.063.791.077.26-.283.665-.456.826-.824.157-.372.516-.588.83-.815-.079-.108-.149-.22-.228-.329.457-.203.606.218.834.448.039-.043.11-.132.149-.177.04.022.122.057.161.077.012-.094.031-.283.043-.376.031.069.095.201.126.266.527-.15 1.106-.37 1.362-.893-.095-.138-.189-.277-.279-.417.126-.12.157-.331.154-.496.153.012.303-.039.456-.067-.016-.173-.027-.343-.035-.514-.177-.144-.319-.317-.445-.498-.338-.055-.696-.118-1.035-.157-.087.224-.087.468-.032.704-.02.053-.059.163-.083.22-.051-.024-.15-.071-.201-.091-.094.173-.283.527-.378.702-.153-.033-.248-.151-.346-.254-.031.171-.094.516-.126.689-.142.047-.287.098-.433.15-.051-.271-.098-.543-.138-.815.095-.006.279-.024.374-.028-.012-.157-.028-.472-.039-.628-.102-.128-.205-.348-.402-.266-.216.256-.448.494-.704.708.047-.138.094-.272.142-.405-.071-.244.016-.476.154-.681-.244-.031-.515-.004-.704-.185.161-.114.323-.222.496-.323-.004-.211-.036-.421-.201-.571.028-.201.102-.407.059-.61-.098-.15-.216-.275-.323-.413.161-.15.35-.264.539-.382.047-.134.098-.268.146-.4.169.018.5.053.669.073.358-.315.736-.61 1.11-.901-.287-.083-.575-.169-.862-.22l.024-.128c-.342.002-.712-.001-1.047-.002l.028.132-.106.004c-.106.132-.224.254-.342.376-.232.409-.272.875-.421 1.314-.232.283-.575.441-.862.653-.138.232-.122.553-.358.712-.012.13-.024.26-.028.39.181.144.338.334.563.413.012.043.032.126.043.169-.122.161-.244.319-.358.484.09.008.268.02.354.028-.232.275-.555.657-.956.458-.138.242-.354.45-.232.783-.122-.049-.24-.092-.362-.14.102-.228.236-.445.354-.663-.106-.12-.228-.222-.342-.328.11.004.22.02.327.037.201-.077.401-.152.61-.214-.177-.4-.386-.777-.61-1.147-.279.13-.531.311-.689.578-.161.022-.323.043-.48.069.177.216.425.35.649.519-.157.063-.315.122-.472.177-.055.136-.11.268-.161.403-.09.001-.268.033-.358.043-.378-.136-.779-.026-1.161-.122-.197-.039-.33-.207-.48-.327-.122-.026-.248-.053-.37-.077-.051-.043-.142-.132-.189-.175.008-.203.016-.405.02-.608-.559.098-1.165.071-1.665.378.13.118.272.232.437.295-.13.086-.256.179-.378.271.075.212.154.478-.106.596-.028-.384-.335-.647-.531-.95-.224.037-.445.094-.653.171-.236-.136-.594-.14-.822.004-.303-.092-.59-.226-.858-.392.268-.114.555-.165.854-.157-.004-.138-.008-.279-.012-.417-.083-.077-.165-.157-.244-.234-.283-.016-.563-.037-.846-.061-.641-.303-1.149-.936-1.889-.984-.22.146-.433.315-.7.358.067-.244.142-.492.204-.736-.275.142-.504.35-.744.543-.11.126-.331-.055-.275-.189.024-.22.083-.439.09-.661-.106-.069-.213-.13-.319-.185-.016.088-.047.268-.063.358-.099.053-.197.106-.291.165-.095-.008-.283-.024-.378-.029.004-.057.008-.177.016-.236-.098.012-.287.033-.382.049l-.09-.035c-.464.165-.937.295-1.413.429-.157.04-.24-.027-.252-.197-.154.051-.307.11-.46.169-.173-.039-.35.045-.519.067l-.012.122c-.201.051-.401.09-.602.122-.279-.213-.421-.551-.61-.83-.142-.014-.279-.024-.421-.026-.244-.189-.464-.403-.744-.541-.287-.035-.574-.051-.862-.049-.047-.041-.146-.12-.193-.161-.457.026-.791-.289-1.181-.45-.405-.102-.818-.181-1.224-.272.043-.12.087-.238.13-.354-.311-.008-.622-.014-.933-.016-.004-.083-.016-.248-.02-.33-.075-.001-.224-.032-.303-.042-.13-.102-.22-.281-.397-.305-.311.031-.614.142-.925.181-.236-.059-.701-.173-.937-.232-.578.024-1.157.122-1.743.071-.815.112-1.436.754-2.204 1.015-.409.185-.842.075-1.259.035-.232.22-.488.421-.704.657.138.287.346.543.417.862-.008.327-.039.657-.067.988.079.002.24.004.319.004-.055.191-.146.452.11.537-.004.167-.008.336-.008.508-.063.014-.189.037-.252.053-.311.327-.744.087-1.114.039.126-.22.268-.433.378-.661-.24.004-.472.045-.689.14-.736.285-1.499.494-2.255.706.094.189.22.364.33.543-.161.242-.287.508-.33.799.492.142 1 .244 1.511.228.397-.134.775-.35 1.204-.329-.122.203-.346.246-.563.273-.043.209-.083.429-.189.622-.307.321-.744.474-1.192.443-.146.089-.287.179-.441.25-.209.022-.413-.047-.622-.047-.527.559-1.11 1.078-1.55 1.714-.224.293.157.73-.201.966.036.216.075.433.106.653.303-.035.614-.055.917-.094-.012.138-.024.279-.035.417-.24.213-.366.506-.448.811.149-.016.295-.027.448-.031.173-.149.378-.138.575-.035.047.158.102.319.157.476.079-.122.157-.242.244-.358.035.045.11.138.146.185.138.016.275.028.409.039-.268.274-.484.592-.712.895-.39.151-.76.344-1.153.478-.216.087-.492.142-.59.386-.398-.358-.94.004-1.303.244-.358-.11-.807.028-.913.417.449-.075.909-.122 1.318-.323.11-.022.22-.047.327-.075.099.063.197.128.299.191.094-.49.83-.081 1.106-.254l-.028-.116.102.002c.157-.461.862-.165 1.181-.366.094-.102.189-.201.283-.301.476-.065.952-.136 1.424-.199.193-.099.393-.165.606-.216.087-.067.177-.136.268-.205-.098-.173-.362-.317-.319-.531.264-.15.555-.24.85-.319.122-.114.244-.222.37-.329.02-.065.059-.193.079-.258.173-.118.311-.272.35-.48.448-.268.858-.777 1.428-.736.063.102.126.212.181.323-.165-.024-.323-.063-.488-.071-.193.051-.366.155-.547.244-.095.496-.405.905-.61 1.357.055.114.13.22.201.327-.287-.002-.516.189-.46.488.193-.039.382-.083.574-.136.578-.195.87-.866 1.499-.946.232-.401.453-.805.63-1.232.047.016.134.047.177.063.185-.079.37-.145.567-.189.185.405.571.696.999.791.693-.112 1.377.132 2.07.039-.079.108-.158.216-.228.334.098.095.205.177.315.266.036.191.016.423.209.539.036.38-.008.805-.26 1.106.016.095.032.189.051.283-.027.171-.134.387.091.472l.008.073.071-.004c.012.134.091.22.224.264-.118.165-.271.307-.448.411-.008.144-.012.287-.016.431.102-.13.204-.26.311-.386.02.106.059.323.079.429.138-.114.264-.242.382-.372.13.157.271.305.409.458-.098.122-.13.272-.173.421-.059-.02-.173-.061-.232-.083l.016.106c-.106.128-.216.258-.327.386.032.1.063.201.099.303.118-.035.236-.067.358-.097l-.024-.092c.051-.008.154-.024.201-.033l.059.097c-.177.116-.331.268-.496.405l-.063-.051c-.008.091-.024.275-.031.366.059-.002.177-.004.24-.008 0 .063.004.183.008.244l-.091.031c-.079.26-.161.518-.256.771l.11.004-.004.114c.087 0 .264 0 .35 0-.008.094-.02.287-.028.382-.236-.106-.46-.236-.669-.38-.118.049-.236.098-.35.148.031.812.575 1.554 1.259 1.964.118-.059.236-.114.358-.165.027-.153.165-.33.051-.476-.079-.163-.248-.236-.389-.334.087-.169.134-.374.311-.472.047.134.13.24.252.319-.028.043-.075.122-.098.165.086.008.268.024.358.032-.043.114-.083.228-.126.344l.106.006c-.008.073-.02.216-.027.289-.059.102-.114.21-.165.319-.413.065-.846.073-1.204-.159-.173.567-.343 1.143-.673 1.637-.025.039-.055.074-.081.113.021 0 .042-.003.063-.003 3.388 0 6.139 2.739 6.139 6.154 0 3.376-2.751 6.103-6.139 6.103-.033 0-.065-.004-.097-.005-.024.393-.036.785-.058 1.181-.075.118-.145.238-.216.362.09.016.264.043.35.055.027.313.153.598.287.878.098.043.197.087.295.138-.043.185-.079.372-.106.562.102.063.208.122.315.185.091.181.232.342.279.539-.043.203-.193.366-.228.575.071.321.401.458.642.641l.118.457c.413.645.791 1.31 1.149 1.985.161.332.216.754.547.972.323.211.586.496.862.765.311.197.677.268 1.027.37.508.563 1.22.838 1.905 1.121.472.246.956.468 1.472.622.421.063.87-.057 1.196-.334.067.008.201.027.268.035l-.012-.112c.232.081.464.157.7.23.311.413.693.76 1.051 1.133l-.012.106c.224.185.433.421.728.482.169.028.508.081.677.108.464.34 1.066.51 1.645.47l.012-.094c.114.065.224.14.342.211-.063.004-.185.012-.248.016.24.63.866 1.031 1.177 1.629.016.11.036.222.059.33-.071.12-.134.236-.201.356.209.163.382.486.681.448.004-.049.012-.155.016-.206.272.285.61.496.937.718-.047.148-.099.297-.146.447.177.049.358.094.543.13l-.043.065c.256-.001.512.014.767.045.153.144.26.397.496.413.098.134.197.264.291.401.224-.051.441-.14.653-.236-.122-.183-.24-.37-.35-.555.362-.177.567-.563.925-.732.267.144.433.425.657.626-.02.165-.063.332-.043.5.067.146.169.275.275.399.13.183.252.368.374.557-.067.189-.071.388-.035.584-.138.608.016 1.226.004 1.842-.134.238-.279.47-.445.691-.22.15-.46.258-.681.398.035.104.071.209.11.315-.122.051-.24.104-.358.159.047.045.138.136.181.181-.26.425-1.043.305-.929 1.01-.095.285-.252.549-.323.844-.09.047-.177.095-.268.146.114.346.035.7-.004 1.057.173.128.323.336.559.348l-.036.083.04.099.098.045c.035-.026.106-.079.142-.104-.087.153-.173.305-.232.472-.393.175-.693.516-.822.923-.028.151.114.262.177.391-.004.033-.012.098-.016.13.224.236.13.543.079.826.283.134.578.272.811.492.295.34.48.754.732 1.129.35.539.527 1.165.822 1.731.488.864 1.015 1.7 1.519 2.554-.024.815.638 1.346 1.22 1.8.815.616 1.861.852 2.601 1.58.228.242.433.551.783.633.213.74.437 1.484.519 2.255.15.87-.169 1.751.043 2.621.201 1.275.146 2.579.024 3.862-.035.218.118.395.177.592-.02.27-.063.594-.059.877.087.417.315.787.425 1.196.11.376.004.795.185 1.155-.063.828-.142 1.655-.228 2.481-.028.173.012.348.043.523-.083.004-.248.012-.331.016.126.295.26.594.37.901.118.354.382.635.574.948-.071.122-.142.242-.212.364.075.515.134 1.041.437 1.485-.22.405.145.86.118 1.279.15.004.303.008.453.014-.004-.152-.004-.301-.008-.447-.055-.039-.165-.122-.22-.163.024-.104.051-.203.079-.303-.063-.108-.122-.215-.177-.321.114-.097.224-.193.338-.287.043.146.087.295.126.449.091.016.264.043.346.059-.055.024-.169.071-.224.096.15.679.405 1.352.393 2.056.09.209.146.433.059.659-.146-.258-.24-.539-.283-.828-.091 0-.181.004-.272.006-.071.027-.216.083-.291.11.086.065.181.128.271.191.032.069.094.204.126.271l-.035-.037c-.075.189-.142.384-.209.58.016.051.051.153.071.205-.126.142-.331.252-.319.472.106.059.209.118.323.177-.024-.073-.063-.213-.086-.283.354.122.87.051 1.059.423-.287.002-.268.289-.244.498-.158.083-.311.169-.46.254.043.151.083.301.122.458.189.002.382.001.571 0-.051.301-.098.608-.13.917.059.004.173.012.228.016.075.256.197.498.346.72.031-.112.059-.22.094-.33.031-.016.106-.051.142-.071l.087.047c.047.104.094.212.142.321-.059.022-.173.065-.228.087.087.085.177.171.268.262-.059.114-.118.232-.169.354.126-.047.256-.092.386-.134-.027-.059-.091-.171-.118-.23.043-.037.134-.11.177-.144.134.112.272.222.413.334-.075.13-.157.256-.236.386.13.083.252.171.382.26l-.035.04c.118 0 .232 0 .354-.004-.043.112-.087.224-.13.342.138.006.283.008.425.008.031.057.098.165.13.22-.024.051-.075.161-.098.215.146.043.295.088.445.128-.059.065-.118.13-.177.197.142.126.291.246.433.374 0-.061-.004-.181-.004-.244.106.079.173.275.334.236.295.067.59.13.889.209-.189-.026-.287.057-.295.244.268-.024.535-.028.803.004-.028.067-.083.197-.11.262.185.045.374.085.567.12-.008-.059-.016-.181-.024-.244.035-.012.102-.032.142-.043.071.169.118.486.374.366.02.203.358.142.433.008l.043.063c.087.016.26.041.35.055.043.041.138.124.185.165-.016-.073-.047-.224-.063-.299.224-.016.453-.012.677-.006-.028-.053-.087-.151-.118-.203.268.006.539-.016.811-.061.051-.079.098-.155.149-.238-.582-.051-1.157-.197-1.641-.531-.354-.197-.637-.514-1.043-.59.02-.045.059-.136.079-.181-.118-.118-.236-.236-.346-.354-.102.037-.204.077-.303.12-.079-.053-.232-.152-.311-.203.02-.043.055-.124.071-.169.185.045.374.083.567.116-.354-.484-.949-.86-1.043-1.485.173-.161.374-.283.574-.405-.027-.25-.102-.498-.086-.75.193-.474.885-.651.692-1.305-.413-.264-.936-.266-1.31-.598l-.366-.228c.035-.323.086-.618.142-.927.252-.043.508-.085.763-.114-.028-.293-.012-.62.02-.899-.047-.043-.142-.122-.189-.161.047-.134.095-.268.146-.398.106-.088.212-.177.315-.266-.157-.037-.311-.081-.468-.124.039-.114.071-.228.095-.342-.311-.382-.622-.783-.712-1.279.334.079.657.201.988.303.342.104.637-.075.921-.217-.079-.161-.173-.315-.236-.48-.027-.161.051-.307.087-.455-.114-.222-.24-.435-.354-.655 1.027.122 2.125-.087 3.02-.622.024-.374.197-.708.366-1.031-.051-.138-.106-.276-.153-.415-.193-.073-.401-.149-.527-.323-.024-.187.035-.372.079-.549-.327-.315-.752-.468-1.137-.685.004-.098.016-.295.024-.394.26.252.61.37.96.46.275.073.531.266.834.228.268-.031.543.037.815.018.382-.163.751-.529.728-.972.161-.167.405-.297.46-.535-.008-.372.177-.671.338-.982-.142-.035-.209-.122-.205-.256.169-.287.433-.535.39-.907.142-.049.283-.098.429-.145-.008.143-.012.293-.016.439-.055.037-.165.11-.22.144.008.092.02.279.028.372.622-.637.354-1.844 1.212-2.288.256-.545.028-1.149-.035-1.71-.02-.338.004-.677-.024-1.01.079-.012.232-.028.311-.035.008-.079.028-.234.04-.311.46-.315.865-.724 1.385-.937.15.014.295.053.441.087-.024-.049-.067-.146-.09-.197.079-.079.161-.158.244-.232.079-.012.236-.026.315-.031-.024-.059-.063-.173-.086-.228.094.024.193.051.287.083.02-.035.063-.102.083-.134.488.004.964-.055 1.452-.083.004-.077.02-.236.027-.317.181-.132.362-.258.547-.384.039-.334.095-.651.173-.972.26-.145.315-.447.35-.714.095-.1.193-.199.291-.297-.031-.315-.083-.577-.075-.88.09-.403.374-.746.339-1.182.067-.441.122-.885.035-1.326-.075-.771-.083-1.552.075-2.31.043.075.134.222.177.299.504-.403.598-1.08.913-1.611.358-.454.807-.836 1.106-1.336.421-.58.563-1.33.429-2.028-.113-.529-.207-1.106-.553-1.551m-34.507-43.46l-.008.073c-.02.026-.055.077-.071.1-.043.031-.122.092-.161.122-.032-.028-.087-.083-.118-.11l.012-.087c.016-.028.043-.079.059-.102.047-.031.146-.09.197-.118l.079.047c.016-.012.043-.045.059-.059l.004.055-.063.004.011.075m-.365-1.767c-.024-.065-.079-.189-.102-.252l.063-.073c.02-.026.067-.081.087-.11.012-.026.043-.077.059-.104l.093-.016c.055-.008.169-.027.228-.035.027.039.086.12.114.161l.051.091c-.004.15 0 .303.012.456l-.004.118c0 .081-.004.242-.008.323l-.004.1c-.075.128-.149.254-.236.372l-.008-.092c-.031-.022-.09-.071-.122-.094-.024-.001-.067-.03-.087-.039l.02.051c-.079-.1-.157-.195-.244-.281-.004-.055-.024-.163-.028-.218.008-.049.028-.154.04-.203l.075-.065.086-.001c-.023-.023-.066-.06-.085-.08m-2.184-8.114c.043.004.134.008.181.014l-.016.092c-.043-.004-.138-.006-.185-.008l.02-.098m-.567.309c.016.045.047.136.063.183-.028.001-.094.031-.122.043l-.079.045c-.035.001-.102.029-.138.041l-.09.043c-.063.024-.193.073-.26.096l-.098.022c-.087-.146-.169-.142-.244.012l-.087.036c-.028.026-.083.075-.11.102l-.047.079c-.15-.008-.295.004-.445.032-.205-.008-.618-.016-.822-.02l-.087-.047c-.035-.014-.102-.035-.134-.047l.043-.083.094-.029c.051-.002.15-.012.201-.014.086.15.161.138.224-.028.043-.031.114-.09.154-.122.031-.02.086-.059.114-.079.028-.02.087-.063.114-.083.047-.012.146-.039.193-.051l.102-.027.087-.02.016-.083.024-.098c.012-.075.031-.224.047-.299l.075.002c.027.018.086.053.118.071.051.037.15.114.201.152.027.026.075.075.098.098l.071.045c.209.018.417.026.626.026l.098.002m-3.156-3.083c.024-.031.071-.09.091-.122.063-.043.181-.126.24-.165l.083-.012.031-.073c.067-.032.197-.092.264-.124.067-.027.201-.079.268-.106l-.024-.039c-.016-.02-.036-.053-.051-.071-.024-.02-.075-.059-.102-.077-.15-.094-.354-.085-.472.053l-.098-.022c-.031-.051-.098-.151-.13-.199.153.012.303.012.456-.002.146.03.272 0 .382-.092l.098-.018c.138.02.264-.014.37-.108.079-.004.244-.014.327-.018.153.014.311.014.464 0l-.032.073-.083.036c-.059.027-.181.083-.24.11l-.098.035-.102.004-.098.006-.064.081.051.086.095.016.094.014.095.022c.256.059.511.122.771.189-.075.039-.216.118-.291.157-.031.033-.094.098-.126.132l.031.089c-.13-.036-.256-.087-.37-.146-.09-.142-.283-.095-.346.043-.024.024-.071.071-.099.09-.031.031-.094.087-.13.118l.016.09-.079-.039-.059-.059-.008-.087-.012-.086-.079-.051c-.031.033-.094.102-.126.138l-.101-.008-.106-.008c-.031.037-.087.114-.114.153-.031.012-.094.039-.13.055-.161.057-.327.102-.492.146.008-.053.027-.153.035-.204m4.884 42.719c-.079-.075-.154-.15-.232-.22.004-.165.004-.327.012-.492.204.114.405.238.598.382l-.004.079.067.055c.004.081.012.242.02.325-.159-.047-.308-.086-.461-.129m9.92 1.778c-.087-.14-.177-.274-.268-.402-.004-.13-.004-.261 0-.389.138-.165.268-.338.409-.5.106.34.248.675.287 1.035-.141.087-.287.174-.428.256m2.089 20.695c-.039-.028-.122-.091-.165-.12-.043-.024-.13-.069-.173-.092.004-.067.004-.201.008-.27l.024-.092.094-.026.079.041c.028.028.079.085.102.11.024.024.071.073.094.094.024.024.067.071.091.09l.035.063c-.047.052-.142.154-.189.202m.331.236l-.039-.079c.028.016.079.047.106.063l-.067.016m2.18 24.13c.043-.051.122-.146.165-.193.028.016.087.051.114.071l.059.059c.004.075.012.228.016.301-.154-.012-.252-.144-.354-.238m2.329-28.848c-3.386 0-6.127-2.723-6.127-6.103 0-3.412 2.741-6.154 6.127-6.154 3.388 0 6.139 2.743 6.139 6.154 0 3.38-2.751 6.103-6.139 6.103m6.788-7.596c.079-.1.37-.104.354.061-.082.094-.37.104-.354-.061m1.086-1.36l.079.059.016.096c-.055-.002-.154-.008-.205-.012.032-.036.083-.107.11-.143m-.13.699l-.098-.028c-.016-.039-.047-.12-.063-.159.118-.122.307-.157.457-.075-.052.138-.15.224-.296.262\"><path opacity=\".15\" d=\"m49.08 58.04c-.142.14-.275.293-.339.488.299-.209.555-.476.83-.716-.021-.16-.043-.317-.066-.475-.187.136-.38.263-.582.378.05.109.101.217.157.325\"><path opacity=\".15\" d=\"m20.439 63.01c.295.309.398.73.551 1.118-.114.193-.228.393-.393.555-.154-.004-.303-.039-.456-.067.122.413.378.761.63 1.102.071.014.212.043.283.059.055.234.204.421.37.594.051.395-.142.744-.299 1.086.429.531 1.074 1.027 1.051 1.785.189-.045.374-.097.563-.148-.016-.374-.138-.736-.366-1.031-.055.028-.161.083-.216.11.177-.602-.11-1.187-.055-1.792.02-.427-.256-.789-.327-1.2-.106-.549-.146-1.106-.209-1.659.071.083.149.169.224.256 0-.16 0-.319 0-.476-.083-.004-.24-.018-.323-.024-.11-.234-.335-.468-.217-.744.025-.072.045-.146.067-.22-.297-.057-.584-.139-.863-.237-.002.311-.006.622-.015.933\"><path opacity=\".15\" d=\"m186.08 66.25c-.256.462-.464.982-.362 1.521.079.277.276.494.492.677.047.146.095.305.279.329-.032-.126-.063-.248-.091-.368.161-.523.409-1.049.331-1.613.114-.382-.075-.596-.256-.856-.137.098-.291.179-.393.31\"><path opacity=\".15\" d=\"m51.42 24.824c-.323-.193-.634-.421-1.01-.49-.067.232-.126.466-.169.706.071.001.216.026.287.035-.095.067-.185.138-.279.209l.122.004c.055.037.169.114.224.154.012.075.031.222.043.295.291.037.602.083.901.126.087-.114.177-.23.268-.346-.279-.092-.579-.159-.858-.216.086-.004.26-.012.346-.016.035-.155.078-.31.122-.461\"><path opacity=\".15\" d=\"m51.2 26.819c.031.358-.027.696-.295.944 0 .145-.016.293-.031.441.374.213.799.177 1.212.136.027.159.126.226.287.201l-.012.12c.433 0 1.306 0 1.739 0l-.008-.108c.244.033.472.14.712.191.393-.03.759-.215 1.129-.35-.008-.036-.031-.114-.043-.15.071-.12.165-.232.185-.374-.232-.134-.472-.26-.724-.34-.63.001-1.259.03-1.877.142-.346.065-.689-.089-1.023-.151l-.087-.053c-.083-.14-.161-.281-.24-.419.153-.012.311-.02.464-.028-.031-.024-.106-.073-.142-.095.031-.059.09-.177.118-.234.547.333 1.216.285 1.83.285.138-.043.268-.098.401-.153.031.045.098.134.13.179.346-.002.689-.045 1.031-.088-.032.128-.059.252-.087.382.405-.075.807-.181 1.2-.311.177-.055.236-.24.319-.389-.169-.012-.338-.024-.508-.035.055-.102.106-.205.161-.307.177-.051.35-.106.531-.161.012-.15.024-.299.039-.449.334.039.673.039 1-.016.027-.071.075-.214.098-.287.15.053.378-.153.37-.303l-.051-.059c.13-.228.205-.476.102-.732.299.041.535-.051.704-.284.157.051.33.036.5.043.094-.244.22-.478.429-.641l.047-.071c.311-.15.594-.346.846-.578l.102-.028.039-.083.079.047c.051-.02.157-.063.208-.083l.008-.085.098.041.11-.039.051-.094-.036-.091.02-.142c.315-.063.61-.189.917-.272l-.028-.134c.071-.02.212-.061.279-.083-.004-.075-.012-.228-.016-.303-.535-.039-.885-.5-1.401-.582l.008-.112c-.279.014-.519-.069-.72-.246-.149 0-.299.002-.448.008-.26-.142-.531-.279-.815-.362-.343-.045-.685.032-1.019.063-.047-.024-.142-.071-.193-.092l.098-.045c-.401-.075-.811-.031-1.204.051l-.004-.136c-.256.045-.504.108-.751.173-.091.114-.177.228-.268.344-.15.11-.295.224-.449.33l-.039-.083c-.213-.055-.421-.11-.637-.149l-.028.104c-.362.161-.756.277-1.157.27l-.047.13-.075.012-.008.071-.075-.047c-.071.004-.209.016-.279.022l-.086.073.004.071-.102-.043-.11.059-.008.106c-.071-.006-.216-.014-.287-.016.004.081.02.246.027.327.11.043.22.09.331.134 0 .086 0 .264 0 .35l.118-.028c.26.27.575.482.952.535.059 0 .173-.004.232-.004l-.059.063c.008.061.024.181.031.244l-.11-.012c.012.049.035.15.047.199-.024.112-.071.333-.095.443-.035-.124-.067-.25-.098-.376l-.134.026c-.039-.201-.134-.382-.26-.535-.086.134-.173.268-.264.403-.004-.094-.02-.281-.024-.374-.083-.002-.244-.001-.327-.014-.228-.266-.421-.555-.614-.846l.071-.051c-.472-.248-.645.165-.905.389-.047-.008-.142-.031-.189-.043.024.15.055.299.09.448-.134.006-.268.012-.397.024-.095.11-.189.215-.283.323.059 0 .177 0 .236.004l.004.108c-.09.006-.268.012-.362.016.055.268.11.533.15.801.145 0 .287-.004.433-.016.028.063.09.193.122.256-.063.004-.189.012-.248.012.106.315.232.618.366.925.429.179.881-.09 1.307.092.012-.041.031-.12.043-.159.13-.024.26-.047.389-.069.004.089.008.266.008.356l.126-.035c.181-.002.366.008.547.033.028.165.067.329.122.49l-.012.108c.094-.006.287-.014.386-.018l-.028.144c-.535.195-.689-.319-.932-.62-.236.029-.464.081-.693.142.079.195.165.386.252.578-.338.085-.673.169-1.015.248l-.043.083c-.106-.047-.213-.091-.315-.138-.059.138-.114.273-.161.413-.024-.032-.075-.094-.102-.126-.189-.012-.578-.043-.771-.055-.055-.104-.11-.207-.165-.307-.386-.055-.783-.122-1.173-.114.043.181.09.366.169.537.274.267.687.263 1.029.163\"><path opacity=\".15\" d=\"m50.704 23.588c.016-.175.031-.35.047-.523-.177.016-.35.031-.519.049.094.208.259.372.472.474\"><path opacity=\".15\" d=\"m54.997 34.3c-.409.12-.429.644-.429.986.276-.035.701-.004.913-.264.102-.14.157-.307.232-.46l.031-.083c-.232-.102-.492-.346-.747-.179\"><path opacity=\".15\" d=\"m40.52 26.22c.039-.028.126-.081.165-.106.051.205.252.22.429.262.036-.13.067-.26.106-.39.055.035.165.1.224.136.189-.128.378-.258.551-.403.012.059.031.173.039.232.464.043.917-.252 1.189-.618.079-.02.244-.059.327-.079-.118-.11-.216-.252-.366-.311-.099.055-.193.114-.279.177l-.055.014c-.311-.045-.657-.116-.94.039-.602.297-1.224.537-1.873.704-.033.279.306.245.483.343\"><path opacity=\".15\" d=\"m52.832 25.634c-.157 0-.315.004-.468.004-.004.09-.008.268-.012.36.15.043.303.086.457.126.008-.163.015-.329.023-.49\"><path opacity=\".15\" d=\"m22.285 44.495c.153-.152.299-.305.441-.462-.197-.047-.39-.1-.579-.151-.413.48-.504 1.145-.342 1.743.055-.035.169-.102.224-.134-.032-.104-.067-.209-.099-.311.099-.09.205-.179.307-.268.012-.14.032-.28.048-.417\"><path opacity=\".15\" d=\"m42.04 26.12c-.315.061-.645.094-.925.26-.043.043-.134.134-.177.177.448.134.81-.161 1.102-.437\"><path opacity=\".15\" d=\"m45.592 25.27c.138-.181.275-.358.405-.547-.472-.028-.944.031-1.405.12-.039.108-.079.214-.11.323.067.065.138.132.205.201.307-.048.582-.093.905-.097\"><path opacity=\".15\" d=\"m43.821 25.729c.016-.169-.276-.161-.354-.063-.02.165.271.157.354.063\"><path opacity=\".15\" d=\"m44.48 24.928c-.047-.114-.09-.226-.134-.336-.114.047-.228.095-.342.142.028.051.083.15.11.201.091-.003.272-.005.366-.007\"><path opacity=\".15\" d=\"m62.55 48.654l.051.077c-.047.014-.134.033-.181.045-.327.358-.641.732-.866 1.165-.177.411-.496.72-.799 1.039.051.012.153.035.204.047-.134.126-.271.24-.421.342-.012.073-.031.22-.043.293.85-.006 1.708.092 2.565.073-.201.169-.409.331-.606.502.161.006.323.014.488.018.047-.1.098-.201.15-.299.106-.059.208-.122.315-.185l.083.001c.036-.053.11-.157.145-.21.032.055.094.167.13.224-.079.14-.157.287-.232.431.149.033.319.057.389.218.09.004.185.004.279.008.154-.232.224-.523.366-.771-.071-.033-.205-.102-.275-.138.016-.051.051-.15.071-.199-.142.024-.283.053-.421.081.13-.187.283-.354.433-.529-.177.029-.35.053-.523.077.035-.209.13-.397.24-.575-.272-.071-.539-.14-.807-.22 0 .055-.004.167-.004.22-.189-.049-.382-.098-.571-.144.035-.11.075-.218.11-.328-.118-.042-.236-.083-.35-.122-.035-.028-.102-.083-.134-.108.173-.187.358-.366.5-.58l-.034-.08c.098-.122.205-.24.303-.364-.185-.008-.37-.016-.555-.018\"><path opacity=\".15\" d=\"m46.48 24.58c-.055-.116-.122-.228-.193-.334-.437-.02-.874.057-1.299.149-.028.036-.083.11-.11.145.536-.067 1.063.128 1.602.04\"><path opacity=\".15\" d=\"m59.27 50.48c-.346-.5-1.043-.516-1.57-.659.409.423.929.787 1.57.659\"><path opacity=\".15\" d=\"m57.36 52.36c.323.193.641.425 1.027.476.138-.097.252-.218.374-.331-.464.004-.921-.043-1.283-.362-.032.056-.087.162-.118.217\"><path opacity=\".15\" d=\"m51.786 38.3c.157-.063.303-.142.456-.22-.043-.112-.086-.224-.13-.336-.055.029-.169.085-.22.114-.059-.187-.102-.374-.145-.563-.327-.25-.661-.494-.937-.797-.098.02-.197.043-.295.067 0-.059-.008-.173-.016-.232.09.002.268.008.354.012-.004-.099-.008-.297-.012-.398-.118.049-.236.102-.35.161l-.004-.118c-.543.354-.673 1.031-.968 1.566-.216.075-.397.216-.559.38.185.001.559.03.748.039-.043.12-.09.242-.134.364.425.177.752-.277 1.114-.431.071-.1.142-.199.22-.293.059.175.236.222.394.272-.024.043-.067.128-.091.169.075.02.22.051.295.071.091.061.181.118.28.173\"><path opacity=\".15\" d=\"m50.42 44.12c0 .15-.012.297-.02.451.083.002.24.012.319.014.035-.053.095-.159.126-.214.102-.012.299-.037.402-.051-.091-.116-.193-.224-.323-.287-.173-.033-.339.05-.504.087\"><path opacity=\".15\" d=\"m50.51 38.659c-.138.179-.275.362-.394.555.515.15.936-.165 1.216-.539-.205-.004-.618-.012-.822-.016\"><path opacity=\".15\" d=\"m52.37 39.37c-.063-.043-.185-.126-.248-.169-.122.053-.244.106-.366.161.035.201.083.398.138.594.157-.198.315-.393.476-.586\"><path opacity=\".15\" d=\"m36.758 29.516c.02.053.063.159.087.211 0 .143.008.287.024.433.37-.124.748-.22 1.133-.279.291-.059.398-.391.653-.515.228-.118.457-.228.681-.354.039.031.122.098.165.134-.232.232-.508.417-.748.635.197.14.398.329.665.25.039.031.126.092.165.122-.275.024-.551.067-.818.134-.004.09-.008.272-.012.362.531.216 1.09.232 1.645.106.24.138.48.283.716.437-.866-.02-1.747-.189-2.605.014.055.191.11.386.158.58.342.098.685.161 1.031.244-.055.228-.106.459-.138.691.634-.006 1.275.061 1.901-.083.453-.128.944-.161 1.33-.45.102.134.228.261.394.321.004.045.016.142.024.187l.118.065c.047-.014.15-.041.201-.057.224.173.492.224.807.161-.028.051-.075.157-.102.213.083 0 .248.004.33.004-.031-.102-.059-.205-.086-.303.047-.02.138-.059.185-.079.012-.226-.051-.447-.079-.669.24.069.476.148.712.232.035-.14.063-.281.095-.421-.315-.216-.626-.437-.94-.649.024-.189.063-.374.13-.555.153-.411.165-.858.224-1.291.275-.138.696-.299.696-.661-.224-.299-.637-.059-.952-.031.043.059.134.181.173.242-.032.026-.099.083-.134.108l-.024-.087c-.185-.041-.366-.091-.551-.136-.067.091-.142.179-.209.27-.09.37-.232.724-.303 1.1-.079.008-.232.026-.311.033.079-.244.146-.49.232-.728-.157-.224-.334-.437-.567-.584-.016.163-.028.33-.035.498-.071-.012-.216-.036-.287-.045-.134-.344-.504-.447-.838-.439-.043.065-.122.193-.165.256-.055-.027-.161-.083-.213-.112.161-.128.327-.277.374-.488l-.114.001c-.122-.116-.248-.236-.366-.352-.09-.22-.24-.407-.37-.6-.197.031-.39.067-.582.112-.275-.14-.531-.317-.818-.431-.311-.004-.933-.001-1.247-.012-.059.218-.114.439-.161.661-.555.413-1.098.846-1.676 1.228-.094.253.256.253.402.357\"><path opacity=\".15\" d=\"m56.36 34.787c-.114-.126-.244-.24-.374-.344-.067.029-.205.092-.272.124.004.067.012.201.012.268.209-.017.422-.03.634-.048\"><path opacity=\".15\" d=\"m52.95 38.28c.035.171.079.338.122.512.126-.055.252-.11.382-.165-.09-.205-.319-.262-.504-.347\"><path opacity=\".15\" d=\"m49.21 27.846c.264.281.681.378 1.043.496.138-.279.437-.704.094-.948-.44-.09-.846.157-1.137.452\"><path opacity=\".15\" d=\"m54.32 33.394c-.134.11-.295.206-.346.386.193-.073.374-.169.559-.266.039-.147.083-.309.244-.372.004-.047.012-.142.016-.189-.146.043-.295.094-.441.142-.009.075-.024.224-.032.299\"><path opacity=\".15\" d=\"m53.56 38.22c-.138.161.126.421.283.285.134-.159-.125-.418-.283-.285\"><path opacity=\".15\" d=\"m59.48 33.29c-.087-.191-.177-.376-.264-.561-.122.075-.244.152-.37.226.079-.159.169-.313.26-.464-.284-.156-.665-.161-.866-.431-.083.002-.244.002-.323.002l-.02.088c-.13.028-.228-.012-.291-.118.051-.001.157-.029.213-.039l.098.069c.051-.122.098-.244.15-.366-.153-.077-.303-.153-.452-.23-.118.122-.24.24-.358.358-.122-.307-.228-.622-.397-.909-.11-.213-.248-.433-.515-.425.063-.106.134-.206.189-.317-.079-.303-.307-.569-.614-.659-.362-.086-.732-.102-1.102-.157-.051.167-.106.334-.157.502-.047-.128-.09-.258-.13-.386.004-.199-.35-.191-.437-.061l-.087-.024-.095-.051-.118.043-.027.098c-.209.008-.413.059-.614.094-.169.114-.323.248-.472.386l-.084-.007c-.028.158-.197.358.012.461-.035.039-.102.118-.138.157l.031.092c-.063.026-.189.077-.252.104-.012.252.272.362.358.582-.319-.043-.512-.303-.598-.586.063-.098.134-.191.209-.277-.031-.136-.055-.272-.087-.403.331-.303.696-.557 1.059-.819l-.02-.134c-.342.004-.712-.008-1.047 0l.008.118c-.323.024-.594.252-.83.453-.393.449-.756.94-.948 1.511.334.13.756.154.972.476-.295-.033-.578-.126-.858-.224-.161.305.091.577.323.754.653.175 1.295.423 1.979.472.189.142.401.144.602.03.126.154.256.307.382.464.157-.047.315-.091.472-.13 0-.049-.004-.147-.004-.197.079.004.248.008.327.001.008-.163.016-.325.02-.486.15.094.299.189.453.277-.031.1-.059.203-.087.305.079.004.244.008.323.012-.024.051-.079.161-.106.217.145.088.291.173.433.268.012.049.028.153.036.205-.161-.002-.319-.004-.472-.004.004.096.016.287.016.386.208-.095.405-.197.61-.301.138.34.445.565.736.777.063.283.126.571.157.862-.386.264-.751.565-1.173.775.059.216.15.417.236.622-.268.059-.531.161-.803.126-.327-.004-.598-.102-.909-.075-.161.075-.311.165-.472.24-.059.175-.118.354-.161.535.161.071.331.142.508.189.228-.024.453-.088.677-.138.299.047.602.02.909-.006.134.254.264.51.382.769.083.006.244.016.327.024-.031.169-.067.342-.091.517l.087.041c.043.154.095.309.142.464.083.004.248.008.334.012l.059-.177c.193.118.307.319.441.492.445.157.889.334 1.338.496.035-.114.079-.224.122-.334-.303-.319-.598-.642-.921-.935-.134-.124-.173-.309-.236-.474.138.098.272.205.402.315.035-.012.106-.031.138-.043.232.437.779.519 1.078.889-.094.274.401.301.33.03-.075-.104-.165-.138-.275-.097.039-.051.126-.153.169-.205-.031-.177-.063-.356-.09-.533.079.071.161.144.24.213-.016-.218-.043-.435-.075-.651-.114-.079-.11-.214-.118-.338-.079-.108-.149-.22-.22-.331-.169-.14-.33-.285-.488-.439-.028-.214-.079-.431-.272-.561.09 0 .272-.004.366-.004-.043-.15-.086-.295-.126-.443.047.018.138.057.181.073.035-.047.11-.148.145-.199.11.156.213.317.323.478l.098-.006c-.039.128.028.376.161.429-.004.38.472.449.728.628.051-.193.099-.386.138-.578.134-.014.272-.028.413-.037.126-.215.244-.449.448-.608.087-.102.224-.171.264-.307-.067-.122-.149-.232-.228-.346-.193.041-.386.087-.578.12.035-.12.067-.24.106-.36-.15-.002-.299-.002-.445-.002-.012-.144-.027-.283-.039-.423-.094-.067-.185-.136-.272-.205-.48.094-.681-.323-.901-.63-.079-.012-.236-.039-.311-.053.106-.085.134-.183.075-.295l.102.004c-.012-.069-.028-.205-.039-.271.197.029.393.065.59.108-.051-.106-.102-.213-.149-.317-.157-.002-.307-.004-.46-.006 0-.057 0-.171 0-.228l.607-.027m-1.826 2.914c-.181-.012-.386-.012-.523.126-.031-.036-.094-.11-.126-.146l.004-.108c.004-.051.016-.156.016-.207l.043-.086c.008-.035.028-.102.035-.138l.071.043c.051.047.153.142.205.189l.02.092c.047.001.146.03.193.041l.106.006c-.013.048-.033.14-.044.188\"><path opacity=\".15\" d=\"m46.44 27.637c.055-.035.169-.106.224-.142-.008-.094-.028-.287-.035-.386-.161.106-.311.224-.46.35.07.044.2.131.271.178\"><path opacity=\".15\" d=\"m57.15 41.35l-.04.1.04.093.09.04.1-.04.04-.093-.04-.1-.1-.04z\"><path opacity=\".15\" d=\"m48.4 28.542c-.275-.028-.512.035-.72.191-.157-.014-.472-.041-.63-.055-.134.108-.272.212-.394.332.067.091.138.177.209.264-.031.096-.067.195-.098.291-.079.008-.244.024-.327.035-.051-.122-.102-.24-.149-.358-.153.043-.303.095-.453.142.043.224.087.484.295.618.358.224.468.649.669.996.346-.185.724-.303 1.102-.397.118-.222.256-.435.374-.657-.122-.197-.272-.382-.449-.535.232-.138.484-.244.685-.419-.028-.153-.075-.302-.114-.448\"><path opacity=\".15\" d=\"m47.17 27.22c.09.008.275.028.366.036l-.071-.079c.212-.002.637-.008.85-.012-.248.11-.559.216-.508.547.382.083.795.163 1.177.024-.024-.059-.079-.173-.102-.228.098-.055.197-.114.295-.165.145-.323.409-.675.161-1.019-.106.03-.212.057-.315.087-.22-.118-.464-.187-.712-.213.031.209.063.415.091.626-.095-.112-.185-.224-.268-.339-.075-.008-.22-.022-.295-.03-.004.142-.008.285-.012.429l-.102.026c-.051-.031-.154-.094-.201-.124.114-.254.004-.486-.161-.687-.083.006-.248.016-.331.024-.043.185-.091.368-.138.555.055.004.169.014.228.02.012.172.028.347.048.522\"><path opacity=\".15\" d=\"m42.499 27.735c.472-.022.98.008 1.393-.268.13.106.504.122.539-.075.417.079.842.075 1.267.092.201-.199.401-.4.602-.604.055-.138-.063-.327-.22-.285-.193-.006-.425.14-.567-.051.043-.238.13-.468.201-.698-.319.032-.614.154-.897.288.02.094.039.193.059.289-.224.136-.071.329.024.498-.311-.047-.59-.083-.893-.134.02-.043.055-.138.075-.185-.122-.161-.236-.329-.346-.498-.106.033-.213.067-.315.1-.012-.059-.043-.177-.055-.234.012-.213-.527-.191-.492.03-.197.039-.382.096-.571.147-.114.169-.268.305-.461.366-.145.132-.287.262-.429.398.649.342 1.397.136 2.09.24l.016.1c-.429.032-.85.079-1.275.138.082.114.168.228.255.346\"><path opacity=\".15\" d=\"m48.41 25.41c.193-.004.393-.008.59-.008-.035-.057-.098-.167-.134-.22-.15-.004-.303-.008-.453-.012-.003.059-.003.179-.003.24\"><path opacity=\".15\" d=\"m47.16 25.13c-.02.211-.032.423-.043.637.098-.001.299-.028.397-.039-.067-.226-.118-.493-.354-.598\"><path opacity=\".15\" d=\"m48.04 24.934c.189-.051.382-.091.578-.12l.039.118c.134.012.271.022.409.037.09.151.177.307.311.425.15.022.327.035.386-.14.02-.258.016-.515.047-.771-.13-.112-.26-.22-.382-.332-.071-.012-.217-.037-.291-.049-.094-.1-.193-.203-.299-.293-.268-.02-.535.079-.799.114.012.045.035.134.047.181.106.161.232.315.346.472-.169-.028-.334-.059-.5-.086.03.149.069.294.108.444\"><path opacity=\".3\" d=\"m55.626 83.31c-3.386 0-6.127 2.743-6.127 6.154 0 3.38 2.741 6.103 6.127 6.103 3.388 0 6.139-2.723 6.139-6.103 0-3.412-2.751-6.154-6.139-6.154m.004 8.318c-1.212 0-2.192-.972-2.192-2.18 0-1.22.98-2.204 2.192-2.204 1.21 0 2.194.984 2.194 2.204 0 1.209-.984 2.18-2.194 2.18\"><path opacity=\".3\" fill=\"#fff\" d=\"m55.63 87.24c-1.212 0-2.192.984-2.192 2.204 0 1.208.98 2.18 2.192 2.18 1.21 0 2.194-.972 2.194-2.18 0-1.22-.984-2.204-2.194-2.204m0 2.876c-.378 0-.681-.303-.681-.681 0-.378.303-.685.681-.685.378 0 .683.307.683.685 0 .378-.305.681-.683.681\"><circle opacity=\".6\" cx=\"55.63\" cy=\"89.44\" r=\".683\"><path opacity=\".3\" d=\"m28.626 56.32c0-3.416-2.751-6.154-6.139-6.154-.021 0-.042.003-.063.003-3.357.034-6.06 2.757-6.06 6.151 0 2.664 1.709 4.917 4.092 5.752.28.098.567.18.863.237.348.067.707.103 1.074.109.033.0001.064.005.097.005 3.389.0001 6.14-2.726 6.14-6.103m-8.326-.019c0-1.22.98-2.2 2.192-2.2 1.21 0 2.194.98 2.194 2.2 0 1.208-.984 2.184-2.194 2.184-1.213 0-2.192-.976-2.192-2.184\"><path opacity=\".3\" fill=\"#fff\" d=\"m24.685 56.3c0-1.22-.984-2.2-2.194-2.2-1.212 0-2.192.98-2.192 2.2 0 1.208.98 2.184 2.192 2.184 1.21 0 2.194-.976 2.194-2.184m-2.874-.004c0-.382.305-.685.681-.685.378 0 .683.303.683.685 0 .374-.305.677-.683.677-.377 0-.681-.303-.681-.677\"><path opacity=\".6\" d=\"m23.17 56.3c0-.382-.305-.685-.683-.685-.376 0-.681.303-.681.685 0 .374.305.677.681.677.378 0 .683-.303.683-.677\"><path opacity=\".3\" d=\"m39.752 52.42c0 3.38 2.743 6.103 6.127 6.103 1.074 0 2.083-.275 2.961-.756.03-.016.057-.035.086-.052.202-.115.395-.242.582-.378.079-.058.16-.114.236-.175.305-.246.586-.521.839-.82.05-.059.095-.121.142-.181.807-1.032 1.292-2.327 1.292-3.74 0-1.852-.814-3.502-2.097-4.628-.407-.357-.862-.66-1.353-.9-.813-.397-1.723-.626-2.688-.626-3.384-.002-6.127 2.741-6.127 6.153m8.327-.016c0 1.208-.984 2.18-2.196 2.18s-2.192-.972-2.192-2.18c0-1.22.98-2.204 2.192-2.204s2.196.984 2.196 2.204\"><path opacity=\".3\" fill=\"#fff\" d=\"m43.691 52.41c0 1.208.98 2.18 2.192 2.18s2.196-.972 2.196-2.18c0-1.22-.984-2.204-2.196-2.204s-2.192.984-2.192 2.204m2.877-.008c0 .378-.307.681-.685.681-.376 0-.681-.303-.681-.681 0-.378.305-.685.681-.685.378 0 .685.307.685.685\"><path opacity=\".6\" d=\"m45.2 52.4c0 .378.305.681.681.681.378 0 .685-.303.685-.681 0-.378-.307-.685-.685-.685-.376 0-.681.307-.681.685\"><path opacity=\".3\" d=\"m125.19 60.923c-.052-.086-.102-.175-.158-.259-.073-.108-.154-.21-.233-.312-1.122-1.451-2.874-2.384-4.848-2.384-1.685 0-3.211.68-4.319 1.784-.398.397-.74.851-1.018 1.346-.125.223-.237.454-.334.693-.292.718-.456 1.504-.456 2.332 0 3.376 2.743 6.103 6.127 6.103 2.502 0 4.649-1.487 5.605-3.622.251-.562.422-1.167.492-1.803.025-.223.04-.448.04-.678 0-1.177-.332-2.269-.898-3.2m-5.235 5.364c-1.212 0-2.192-.976-2.192-2.184 0-1.22.98-2.2 2.192-2.2 1.21 0 2.194.98 2.194 2.2 0 1.208-.984 2.184-2.194 2.184\"><path opacity=\".3\" fill=\"#fff\" d=\"m119.96 61.903c-1.212 0-2.192.98-2.192 2.2 0 1.208.98 2.184 2.192 2.184 1.21 0 2.194-.976 2.194-2.184 0-1.22-.984-2.2-2.194-2.2m0 2.873c-.378 0-.681-.303-.681-.677 0-.382.303-.685.681-.685.378 0 .685.303.685.685 0 .374-.307.677-.685.677\"><path opacity=\".6\" d=\"m119.96 63.41c-.378 0-.681.303-.681.685 0 .374.303.677.681.677.378 0 .685-.303.685-.677 0-.382-.307-.685-.685-.685\"><path opacity=\".3\" d=\"m100.23 46.821c.078.003.154.012.232.012 2.592 0 4.802-1.596 5.702-3.855.181-.453.307-.933.374-1.433.005-.039.013-.076.018-.115.013-.114.019-.23.025-.345.007-.118.018-.236.018-.356 0-.043-.005-.084-.006-.127-.007-.364-.043-.72-.11-1.066-.223-1.149-.766-2.176-1.527-2.997-1.12-1.208-2.716-1.965-4.493-1.965-3.384 0-6.127 2.739-6.127 6.154 0 2.97 2.124 5.436 4.939 5.987.06.012.123.018.184.028.251.042.508.068.771.078m2.43-6.112c0 1.208-.984 2.184-2.194 2.184-1.212 0-2.192-.976-2.192-2.184 0-1.22.98-2.2 2.192-2.2 1.21 0 2.194.98 2.194 2.2\"><path opacity=\".3\" fill=\"#fff\" d=\"m98.27 40.709c0 1.208.98 2.184 2.192 2.184 1.21 0 2.194-.976 2.194-2.184 0-1.22-.984-2.2-2.194-2.2-1.212 0-2.192.98-2.192 2.2m2.876-.004c0 .374-.307.677-.685.677-.378 0-.681-.303-.681-.677 0-.382.303-.685.681-.685.379 0 .685.304.685.685\"><path opacity=\".6\" d=\"m99.78 40.705c0 .374.303.677.681.677.378 0 .685-.303.685-.677 0-.382-.307-.685-.685-.685-.378 0-.681.304-.681.685\"><path opacity=\".3\" d=\"m119.41 51.686c.937-.609 1.692-1.467 2.178-2.479.383-.797.604-1.687.604-2.63 0-3.416-2.745-6.154-6.135-6.154-.585 0-1.15.087-1.686.24-1.074.307-2.025.898-2.771 1.691-1.034 1.1-1.672 2.581-1.672 4.223 0 1.8.784 3.41 2.025 4.527.006.005.012.011.018.016.205.183.419.357.647.512.319.215.66.401 1.018.554.743.318 1.56.495 2.42.495 1.24-.002 2.39-.369 3.354-.995m-5.541-5.129c0-1.22.98-2.2 2.192-2.2 1.21 0 2.194.98 2.194 2.2 0 1.208-.984 2.184-2.194 2.184-1.212 0-2.192-.976-2.192-2.184\"><path opacity=\".3\" fill=\"#fff\" d=\"m118.26 46.557c0-1.22-.984-2.2-2.194-2.2-1.212 0-2.192.98-2.192 2.2 0 1.208.98 2.184 2.192 2.184 1.21 0 2.194-.976 2.194-2.184m-2.875-.004c0-.382.303-.685.681-.685s.683.303.683.685c0 .374-.305.677-.683.677s-.681-.303-.681-.677\"><path opacity=\".6\" d=\"m116.75 46.553c0-.382-.305-.685-.683-.685s-.681.303-.681.685c0 .374.303.677.681.677s.683-.303.683-.677\"><path opacity=\".3\" d=\"m207.97 54.37c0-3.416-2.745-6.154-6.135-6.154-3.386 0-6.129 2.739-6.129 6.154 0 3.376 2.743 6.103 6.129 6.103 3.39.0001 6.135-2.726 6.135-6.103m-8.323-.019c0-1.22.98-2.2 2.192-2.2 1.21 0 2.194.98 2.194 2.2 0 1.208-.984 2.184-2.194 2.184-1.212 0-2.192-.976-2.192-2.184\"><path opacity=\".3\" fill=\"#fff\" d=\"m204.03 54.36c0-1.22-.984-2.2-2.194-2.2-1.212 0-2.192.98-2.192 2.2 0 1.208.98 2.184 2.192 2.184 1.21 0 2.194-.976 2.194-2.184m-2.875-.004c0-.382.303-.685.681-.685.378 0 .683.303.683.685 0 .374-.305.677-.683.677-.378 0-.681-.303-.681-.677\"><path opacity=\".6\" d=\"m202.52 54.35c0-.382-.305-.685-.683-.685-.378 0-.681.303-.681.685 0 .374.303.677.681.677.378 0 .683-.303.683-.677\"><path opacity=\".3\" d=\"m207.68 116.45c-.319 0-.63.032-.935.079-2.075.318-3.805 1.674-4.644 3.533-.291.644-.473 1.346-.527 2.087-.011.151-.023.302-.023.456 0 .604.091 1.185.254 1.735.75 2.53 3.094 4.369 5.875 4.369 3.39 0 6.135-2.723 6.135-6.103 0-3.414-2.744-6.156-6.135-6.156m.004 8.318c-1.212 0-2.192-.972-2.192-2.18 0-1.22.98-2.203 2.192-2.203 1.21 0 2.194.984 2.194 2.203 0 1.208-.983 2.18-2.194 2.18\"><path opacity=\".3\" fill=\"#fff\" d=\"m207.68 120.38c-1.212 0-2.192.984-2.192 2.203 0 1.208.98 2.18 2.192 2.18 1.21 0 2.194-.972 2.194-2.18 0-1.22-.983-2.203-2.194-2.203m0 2.876c-.378 0-.681-.303-.681-.681 0-.378.303-.685.681-.685.378 0 .683.307.683.685 0 .378-.305.681-.683.681\"><circle opacity=\".6\" cx=\"207.68\" cy=\"122.58\" r=\".683\"><path opacity=\".3\" d=\"m113.83 112.85c0 .895.197 1.74.542 2.505.959 2.124 3.095 3.599 5.585 3.599 3.39 0 6.137-2.723 6.137-6.103 0-1.989-.937-3.746-2.388-4.869-1.037-.803-2.335-1.285-3.749-1.285-3.386-.002-6.127 2.741-6.127 6.153m8.325-.016c0 1.208-.984 2.18-2.194 2.18-1.212 0-2.192-.972-2.192-2.18 0-1.22.98-2.203 2.192-2.203 1.21 0 2.194.983 2.194 2.203\"><path opacity=\".3\" fill=\"#fff\" d=\"m117.77 112.84c0 1.208.98 2.18 2.192 2.18 1.21 0 2.194-.972 2.194-2.18 0-1.22-.984-2.203-2.194-2.203-1.212 0-2.192.983-2.192 2.203m2.192-.692c.378 0 .681.307.681.685 0 .378-.303.681-.681.681-.378 0-.681-.303-.681-.681 0-.378.303-.685.681-.685\"><circle opacity=\".6\" cx=\"119.96\" cy=\"112.83\" r=\".683\"></g></g><path opacity=\".5\" d=\"m69.13 43.697c-18.496 0-33.491 14.994-33.491 33.496 0 18.503 14.996 33.496 33.491 33.496 18.504 0 33.496-14.993 33.496-33.496.0001-18.502-14.992-33.496-33.496-33.496m0 61.08c-15.231 0-27.581-12.349-27.581-27.582 0-15.233 12.35-27.583 27.581-27.583 15.24 0 27.585 12.35 27.585 27.583 0 15.233-12.344 27.582-27.585 27.582\"><path opacity=\".1\" d=\"m71.52 79.11l-.726-.726c.243-.338.39-.748.39-1.195 0-1.134-.917-2.055-2.051-2.05-.446 0-.856.147-1.193.39l-.727-.727-10.516-10.517-.465.468 10.513 10.515.726.726c-.245.338-.394.749-.396 1.197 0 1.128.922 2.054 2.054 2.051.449 0 .861-.148 1.198-.392l.726.726.778.778.466-.467-.777-.777m-2.391-.899c-.562 0-1.021-.455-1.021-1.02 0-.57.458-1.028 1.021-1.028.566 0 1.031.458 1.031 1.028.0001.565-.465 1.02-1.031 1.02\"><g opacity=\".85\"><path d=\"m69.13 79.24c-1.132.002-2.054-.923-2.054-2.051.002-.448.151-.859.396-1.197l-.726-.726c-.425.527-.69 1.189-.69 1.921 0 1.41.956 2.591 2.251 2.955v10.418h1.658v-10.421c.405-.115.772-.308 1.09-.565l-.726-.726c-.338.244-.749.392-1.199.392\"><path d=\"m84.6 68.873l-.555-.955-12.563 7.303c-.565-.671-1.402-1.105-2.35-1.105-.729 0-1.39.264-1.917.688l.727.727c.337-.243.748-.39 1.193-.39 1.134-.005 2.051.916 2.051 2.05 0 .446-.147.857-.39 1.195l.726.726c.426-.529.691-1.192.691-1.921 0-.357-.073-.694-.184-1.012l12.571-7.306\"><path d=\"m70.16 77.19c0-.57-.465-1.028-1.031-1.028-.562 0-1.021.458-1.021 1.028 0 .565.458 1.02 1.021 1.02.565 0 1.031-.455 1.031-1.02\"></g><path opacity=\".5\" d=\"m159.6 43.697c-18.496 0-33.491 14.994-33.491 33.496 0 18.503 14.996 33.496 33.491 33.496 18.504 0 33.496-14.993 33.496-33.496 0-18.502-14.993-33.496-33.496-33.496m0 61.08c-15.231 0-27.581-12.349-27.581-27.582 0-15.233 12.35-27.583 27.581-27.583 15.24 0 27.585 12.35 27.585 27.583-.0001 15.233-12.345 27.582-27.585 27.582\"><path opacity=\".8\" fill=\"#fff\" d=\"m159.6 49.61c-15.231 0-27.581 12.35-27.581 27.583 0 15.233 12.35 27.582 27.581 27.582 15.24 0 27.585-12.349 27.585-27.582-.0001-15.233-12.345-27.583-27.585-27.583m2.897 26.568c.111.318.184.655.184 1.012 0 .729-.266 1.392-.691 1.921l.778.778-.466.467-.778-.778c-.529.427-1.192.694-1.924.694-1.407 0-2.581-.957-2.946-2.249h-12.481v-1.658h12.479c.114-.407.307-.776.564-1.095l-10.514-10.514.465-.468 10.516 10.516c.527-.424 1.188-.688 1.917-.688.948 0 1.785.434 2.35 1.105l12.563-7.303.555.955-12.571 7.305\"><path opacity=\".1\" d=\"m161.99 79.11l-.726-.726c.243-.338.39-.748.39-1.195 0-1.134-.917-2.055-2.051-2.05-.446 0-.856.147-1.193.39l-.727-.727-10.516-10.516-.465.468 10.514 10.514.727.726c-.245.338-.394.749-.396 1.197 0 1.128.922 2.054 2.054 2.051.449 0 .861-.148 1.198-.392l.726.726.778.778.466-.467-.779-.777m-2.39-.899c-.562 0-1.021-.455-1.021-1.02 0-.57.458-1.028 1.021-1.028.566 0 1.031.458 1.031 1.028 0 .565-.465 1.02-1.031 1.02\"><g opacity=\".85\"><path d=\"m175.07 68.873l-.555-.955-12.563 7.303c-.565-.671-1.402-1.105-2.35-1.105-.729 0-1.39.264-1.917.688l.727.727c.337-.243.748-.39 1.193-.39 1.134-.005 2.051.916 2.051 2.05 0 .446-.147.857-.39 1.195l.726.726c.426-.529.691-1.192.691-1.921 0-.357-.073-.694-.184-1.012l12.571-7.306\"><path d=\"m159.6 79.24c-1.132.002-2.054-.923-2.054-2.051.002-.448.151-.859.396-1.197l-.727-.726c-.258.32-.451.689-.564 1.095h-12.479v1.658h12.481c.365 1.292 1.539 2.249 2.946 2.249.732 0 1.396-.267 1.924-.694l-.726-.726c-.337.244-.748.392-1.197.392\"><path d=\"m160.63 77.19c0-.57-.465-1.028-1.031-1.028-.562 0-1.021.458-1.021 1.028 0 .565.458 1.02 1.021 1.02.566 0 1.031-.455 1.031-1.02\"></g><path opacity=\".8\" fill=\"#fff\" d=\"m69.13 49.61c-15.231 0-27.581 12.35-27.581 27.583 0 15.233 12.35 27.582 27.581 27.582 15.24 0 27.585-12.349 27.585-27.582 0-15.233-12.344-27.583-27.585-27.583m3.082 27.581c0 .729-.265 1.392-.691 1.921l.778.778-.466.467-.778-.778c-.318.257-.686.45-1.09.565v10.421h-1.658v-10.419c-1.295-.364-2.251-1.545-2.251-2.955 0-.732.265-1.394.69-1.921l-10.514-10.515.465-.468 10.516 10.516c.527-.424 1.188-.688 1.917-.688.948 0 1.785.434 2.35 1.105l12.563-7.303.555.955-12.57 7.305c.111.32.184.657.184 1.014\"></svg>"
+  );
+
+
+  $templateCache.put('scripts/superdesk-ingest/ingest-stats-widget/thumbnail.svg',
+    "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewbox=\"0 0 232 144\" enable-background=\"new 0 0 232 144\"><defs><path id=\"0\" opacity=\".9\" d=\"m5.937 8.442v124.03h220.61v-124.03h-220.61m63.19 103.7c-19.267 0-34.943-15.677-34.943-34.947s15.675-34.947 34.943-34.947c19.27 0 34.947 15.677 34.947 34.947s-15.677 34.947-34.947 34.947m90.47 0c-19.267 0-34.943-15.677-34.943-34.947s15.675-34.947 34.943-34.947c19.27 0 34.947 15.677 34.947 34.947s-15.677 34.947-34.947 34.947\"><path id=\"1\" opacity=\".75\" d=\"m116.37 66.44c2.77-16.191 14.226-29.409 29.399-34.705v-14h-117.61v115.26h117.61v-31.848c-15.173-5.296-26.629-18.514-29.398-34.708\"><path id=\"2\" opacity=\".5\" d=\"m196.95 61.59v32.14h-49.91v18.46h58.26v-50.6z\"><path id=\"3\" opacity=\".4\" d=\"m99.97 109.08c-.866 0-1.568-.702-1.568-1.568v-14.05c0-.866.702-1.568 1.568-1.568h69.28v-7.89h-69.28c-.866 0-1.568-.702-1.568-1.568v-14.05c0-.866.702-1.568 1.568-1.568h69.28v-36.496h-110.89c4.142 0 8.425 0 14.66 3.459 7.438 4.126 10.263 12.2 10.423 17.862.127 4.549-.448 8.302-.722 9.802 1.415.861 2.83 2.644 2.83 6.334 0 4.601-2.3 11.01-6.05 11.06-2.295 6.556-5.983 12.326-10.219 15.987v7.201l1.22 2.945c6.291 1.493 20.239 5.328 24.753 10.855 2.641 3.241 5.148 25.792 5.426 28.353l.011.1h68.55v-35.2h-69.28z\"><clippath><use xlink:href=\"#3\"></clippath><clippath><use xlink:href=\"#2\"></clippath><clippath><use xlink:href=\"#0\"></clippath><clippath><use xlink:href=\"#1\"></clippath></defs><path opacity=\".55\" fill=\"#fff\" d=\"m58.32 20.793v30.22h30.23c.0001-16.705-13.52-30.22-30.23-30.22\"><path opacity=\".5\" d=\"m58.32 51.01v-30.22c-16.674 0-30.21 13.514-30.21 30.22 0 16.689 13.539 30.19 30.21 30.19 8.37 0 15.899-3.385 21.357-8.857l-21.357-21.333\"><path opacity=\".3\" d=\"m58.32 51.01l21.357 21.332c5.422-5.441 8.87-12.993 8.87-21.332h-30.23\"><g fill=\"#fff\"><path opacity=\".85\" d=\"m118.64 134.76h13.358v9.239h-13.358z\"><path opacity=\".45\" d=\"m136.66 117.78h13.362v26.22h-13.362z\"><path opacity=\".85\" d=\"m154.68 127.97h13.358v16.03h-13.358z\"><path opacity=\".45\" d=\"m172.7 93.37h13.36v50.627h-13.36z\"><path opacity=\".85\" d=\"m190.71 112.28h13.358v31.724h-13.358z\"><path opacity=\".45\" d=\"m28.535 114.69h13.358v29.31h-13.358z\"><path opacity=\".85\" d=\"m46.552 123.33h13.362v20.673h-13.362z\"><path opacity=\".45\" d=\"m64.57 113.66h13.358v30.34h-13.358z\"><path opacity=\".85\" d=\"m82.59 104.98h13.36v39.02h-13.36z\"><path opacity=\".45\" d=\"m100.6 117.78h13.358v26.22h-13.358z\"></g><path opacity=\".15\" d=\"m107.28 27.688h44.06v3.085h-44.06z\"><path opacity=\".7\" fill=\"#fff\" d=\"m107.28 34.771h96.53v3.085h-96.53z\"><path opacity=\".15\" d=\"m107.28 41.854h77.78v3.086h-77.78z\"><path opacity=\".7\" fill=\"#fff\" d=\"m107.28 48.936h83.75v3.087h-83.75z\"><path opacity=\".15\" d=\"m107.28 56.02h73.878v3.084h-73.878z\"><path opacity=\".7\" fill=\"#fff\" d=\"m107.28 63.1h31.519v3.082h-31.519z\"><path opacity=\".15\" d=\"m107.28 70.19h69.35v3.084h-69.35z\"></svg>"
+  );
+
+
+  $templateCache.put('scripts/superdesk-ingest/ingest-widget/thumbnail.svg',
+    "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewbox=\"0 0 232 144\" enable-background=\"new 0 0 232 144\"><defs><path id=\"0\" opacity=\".9\" d=\"m5.937 8.442v124.03h220.61v-124.03h-220.61m63.19 103.7c-19.267 0-34.943-15.677-34.943-34.947s15.675-34.947 34.943-34.947c19.27 0 34.947 15.677 34.947 34.947s-15.677 34.947-34.947 34.947m90.47 0c-19.267 0-34.943-15.677-34.943-34.947s15.675-34.947 34.943-34.947c19.27 0 34.947 15.677 34.947 34.947s-15.677 34.947-34.947 34.947\"><path id=\"1\" opacity=\".75\" d=\"m116.37 66.44c2.77-16.191 14.226-29.409 29.399-34.705v-14h-117.61v115.26h117.61v-31.848c-15.173-5.296-26.629-18.514-29.398-34.708\"><path id=\"2\" opacity=\".5\" d=\"m196.95 61.59v32.14h-49.91v18.46h58.26v-50.6z\"><path id=\"3\" opacity=\".4\" d=\"m99.97 109.08c-.866 0-1.568-.702-1.568-1.568v-14.05c0-.866.702-1.568 1.568-1.568h69.28v-7.89h-69.28c-.866 0-1.568-.702-1.568-1.568v-14.05c0-.866.702-1.568 1.568-1.568h69.28v-36.496h-110.89c4.142 0 8.425 0 14.66 3.459 7.438 4.126 10.263 12.2 10.423 17.862.127 4.549-.448 8.302-.722 9.802 1.415.861 2.83 2.644 2.83 6.334 0 4.601-2.3 11.01-6.05 11.06-2.295 6.556-5.983 12.326-10.219 15.987v7.201l1.22 2.945c6.291 1.493 20.239 5.328 24.753 10.855 2.641 3.241 5.148 25.792 5.426 28.353l.011.1h68.55v-35.2h-69.28z\"><clippath><use xlink:href=\"#3\"></clippath><clippath><use xlink:href=\"#2\"></clippath><clippath><use xlink:href=\"#0\"></clippath><clippath><use xlink:href=\"#1\"></clippath></defs><g opacity=\".75\"><path fill=\"#fff\" d=\"m134.33 22.968c-.661-.662-1.529-.993-2.397-.993l-27.993.002c1.857.018 3.356 1.526 3.356 3.388v43.19h28.03v-43.19c.0001-.867-.33-1.734-.992-2.396m-23.14 8.508h12.527v10.61h-12.527v-10.61m20.234 30.13h-20.234v-.849h20.234v.849m0-2.44h-20.234v-.849h20.234v.849m0-2.44h-20.234v-.849h20.234v.849m0-2.44h-20.234v-.849h20.234v.849m0-2.44h-20.234v-.849h20.234v.849m0-2.44h-20.234v-.849h20.234v.849m0-2.44h-20.234v-.849h20.234v.849m0-2.44h-20.234v-.849h20.234v.849m0-2.44h-5.998v-.849h5.998v.849m0-2.44h-5.998v-.849h5.998v.849m0-2.44h-5.998v-.849h5.998v.849m0-2.44h-5.998v-.849h5.998v.849m0-2.441h-5.998v-.849h5.998v.849m0-2.864h-20.234v-2.44h20.234v2.44\" opacity=\".7\"><path opacity=\".3\" fill=\"#231f20\" d=\"m111.2 31.476h12.527v10.61h-12.527z\"></g><path opacity=\".3\" fill=\"#231f20\" d=\"m107.3 42.09v-16.72c0-1.862-1.499-3.37-3.356-3.388h-.035c-1.87 0-3.39 1.52-3.39 3.389v16.72h6.781z\"><path opacity=\".4\" d=\"m36.25 66.65h33.09v.382h-33.09z\"><g fill=\"#fff\"><path opacity=\".85\" d=\"m36.25 38.29v28.363h33.09v-28.363h-33.09m31.22 24.552h-.031-6.13-3.129-1.517-8.939-9.604-.031v-22.645h29.352v20.09l.031.031v2.526z\"><path opacity=\".6\" d=\"m46.857 53.04l5.335 5.335 2.323-2.323 5.228 5.228 4.343-4.343 3.351 3.351v-20.09h-29.35v22.645h.031v-1.065l8.739-8.74m12.854-8.525c.079 0 .156.008.231.025.161-.631.734-1.098 1.416-1.098.806 0 1.46.654 1.46 1.461 0 .004 0 .007 0 .001.059-.013.12-.018.182-.018.484 0 .877.393.877.877 0 .485-.393.877-.877.877h-3.289c-.589 0-1.067-.477-1.067-1.067.0001-.589.479-1.067 1.067-1.067m-8.271 5.03c.002 0 .002 0 .002 0 0-.029-.002-.06-.002-.089 0-1.726 1.398-3.123 3.123-3.123 1.409 0 2.601.935 2.989 2.218.236-.111.498-.173.775-.173 1.01 0 1.819.815 1.819 1.82 0 .232-.043.453-.122.657.02 0 .04-.004.06-.004.644 0 1.167.523 1.167 1.168 0 .644-.523 1.166-1.167 1.166h-8.644c-1.01 0-1.82-.815-1.82-1.821-.0001-1.01.814-1.819 1.82-1.819m-6.795-6.786c1.863 0 3.373 1.51 3.373 3.373 0 1.863-1.51 3.373-3.373 3.373-1.862 0-3.372-1.51-3.372-3.373 0-1.863 1.509-3.373 3.372-3.373\"><path opacity=\".15\" d=\"m54.52 56.05l-2.33 2.32 4.472 4.473h1.518l1.564-1.563z\"><circle opacity=\".8\" cx=\"44.645\" cy=\"46.13\" r=\"3.373\"><path opacity=\".35\" d=\"m59.711 46.647h3.289c.484 0 .877-.392.877-.877 0-.484-.393-.877-.877-.877-.062 0-.123.006-.182.018 0-.003 0-.006 0-.001 0-.806-.654-1.461-1.46-1.461-.682 0-1.255.467-1.416 1.098-.075-.017-.152-.025-.231-.025-.589 0-1.067.477-1.067 1.067.0001.59.479 1.067 1.067 1.067\"><path opacity=\".2\" d=\"m51.44 53.19h8.645c.644 0 1.167-.522 1.167-1.166 0-.645-.523-1.168-1.167-1.168-.021 0-.04.004-.06.004.079-.204.122-.425.122-.657 0-1-.814-1.82-1.819-1.82-.278 0-.539.062-.775.173-.388-1.283-1.58-2.218-2.989-2.218-1.725 0-3.123 1.397-3.123 3.123 0 .029.002.06.003.089 0 0-.0001 0-.003 0-1.01 0-1.82.814-1.82 1.82-.002 1 .813 1.82 1.819 1.82\"></g><path opacity=\".2\" d=\"m64.09 56.935l-4.346 4.345-1.564 1.563h3.13 6.13.03v-2.523l-.03-.03z\"><path opacity=\".2\" d=\"m46.857 53.04l-8.737 8.738v1.065h9.602 8.94l-4.472-4.473z\"><g fill=\"#fff\"><path opacity=\".55\" d=\"m35.436 37.498h31.25v-1.907h-33.09v28.363h1.84z\"><path opacity=\".25\" d=\"m32.699 34.761h31.25v-1.907h-33.09v28.366h1.84z\"></g><path opacity=\".4\" d=\"m163.81 68.55h31.385v.363h-31.385z\"><g fill=\"#fff\"><path opacity=\".85\" d=\"m163.81 41.646v26.899h31.385v-26.899h-31.385m29.61 23.284h-.029-5.814-2.968-1.439-8.478-9.109-.029v-21.476h27.837v19.05l.029.029v2.396\"><path opacity=\".6\" d=\"m173.87 55.632l5.06 5.06 2.203-2.203 4.959 4.958 4.119-4.119 3.178 3.178v-19.05h-27.837v21.476h.029v-1.01l8.289-8.288m12.191-8.09c.075 0 .148.007.219.024.152-.599.696-1.041 1.343-1.041.764 0 1.385.621 1.385 1.385 0 .004 0 .006 0 .009.056-.012.114-.017.173-.017.459 0 .832.373.832.832 0 .46-.373.832-.832.832h-3.119c-.558 0-1.012-.453-1.012-1.012-.0001-.559.453-1.012 1.01-1.012m-7.845 4.773c.002 0 .002 0 .002 0 0-.028-.002-.057-.002-.084 0-1.637 1.326-2.962 2.962-2.962 1.337 0 2.467.886 2.835 2.103.224-.105.472-.164.735-.164.953 0 1.725.773 1.725 1.726 0 .22-.04.429-.115.623.019 0 .037-.004.057-.004.611 0 1.107.496 1.107 1.108 0 .611-.496 1.106-1.107 1.106h-8.199c-.953 0-1.726-.773-1.726-1.727 0-.952.772-1.725 1.726-1.725m-6.444-6.434c1.767 0 3.199 1.432 3.199 3.199 0 1.767-1.432 3.199-3.199 3.199-1.766 0-3.198-1.432-3.198-3.199 0-1.768 1.431-3.199 3.198-3.199\"><path opacity=\".15\" d=\"m181.13 58.49l-2.2 2.202 4.23 4.238h1.44l1.49-1.48z\"><circle opacity=\".8\" cx=\"171.77\" cy=\"49.08\" r=\"3.199\"><path opacity=\".35\" d=\"m186.06 49.571h3.119c.459 0 .832-.372.832-.832 0-.459-.373-.832-.832-.832-.059 0-.117.006-.173.017 0-.003 0-.006 0-.009 0-.765-.621-1.385-1.385-1.385-.646 0-1.19.443-1.343 1.041-.071-.017-.144-.024-.219-.024-.558 0-1.012.453-1.012 1.012.0001.559.455 1.012 1.013 1.012\"><path opacity=\".2\" d=\"m178.21 55.773h8.199c.611 0 1.107-.495 1.107-1.106 0-.612-.496-1.108-1.107-1.108-.02 0-.038.004-.057.004.075-.194.115-.403.115-.623 0-.952-.772-1.726-1.725-1.726-.263 0-.511.059-.735.164-.368-1.217-1.498-2.103-2.835-2.103-1.636 0-2.962 1.325-2.962 2.962 0 .028.002.057.003.084 0 0-.0001 0-.003 0-.953 0-1.726.772-1.726 1.726 0 .952.772 1.726 1.726 1.726\"></g><path opacity=\".2\" d=\"m190.21 59.33l-4.12 4.12-1.49 1.48h2.97 5.82.02v-2.4l-.02-.02z\"><path opacity=\".2\" d=\"m173.87 55.632l-8.29 8.288v1.01h9.11 8.47l-4.23-4.238z\"><g fill=\"#fff\"><path opacity=\".55\" d=\"m196.1 40.646h-29.68v-1.811h31.42v26.936h-1.74z\"><path opacity=\".25\" d=\"m198.79 37.851h-29.68v-1.811h31.43v26.936h-1.75z\"></g><g opacity=\".75\"><path opacity=\".3\" fill=\"#231f20\" d=\"m181.98 92.75h11.165v9.456h-11.165z\"></g><g fill=\"#fff\"><path opacity=\".5\" d=\"m178.5 84.59v35.04h24.979v-35.04h-24.979m3.473 8.165h11.165v9.456h-11.165v-9.456m18.03 22.505h-18.03v-.757h18.03v.757m0-2.175h-18.03v-.757h18.03v.757m0-2.175h-18.03v-.757h18.03v.757m0-2.175h-18.03v-.757h18.03v.757m0-2.174h-18.03v-.757h18.03v.757m0-2.175h-18.03v-.757h18.03v.757m0-2.175h-5.345v-.757h5.345v.757m0-2.175h-5.345v-.757h5.345v.757m0-2.175h-5.345v-.757h5.345v.757m0-2.174h-5.345v-.757h5.345v.757m0-2.175h-5.345v-.757h5.345v.757m0-2.554h-18.03v-2.175h18.03v2.175\"><path opacity=\".4\" d=\"m180.36 82.74v.92h24.05v34.11h.93v-35.03z\"><path opacity=\".3\" d=\"m182.2 80.892v.918h24.06v34.12h.92v-35.04z\"></g><path opacity=\".3\" d=\"m151.75 144v-20.839c0-.463-.375-.838-.838-.838h-63.22c-.463 0-.838.375-.838.838v20.839h64.894m-41.614-14.569c0-.672.545-1.218 1.218-1.218h15.899c.672 0 1.218.545 1.218 1.218v2.164c0 .672-.545 1.218-1.218 1.218h-15.9c-.672 0-1.218-.545-1.218-1.218v-2.164z\"><path opacity=\".4\" fill=\"#fff\" d=\"m74.63 82.33h-46.34c-.318 0-.575.258-.575.575v29.881c0 .318.258.575.575.575h46.34c.318 0 .575-.258.575-.575v-29.881c.0001-.318-.257-.575-.575-.575m-26.957 28.959c-.527 0-.955-.428-.955-.955 0-.527.428-.955.955-.955.527 0 .955.428.955.955 0 .528-.427.955-.955.955m3.82 0c-.527 0-.955-.428-.955-.955 0-.527.428-.955.955-.955.527 0 .955.428.955.955 0 .528-.427.955-.955.955m3.82 0c-.527 0-.955-.428-.955-.955 0-.527.428-.955.955-.955.527 0 .955.428.955.955 0 .528-.427.955-.955.955m17.728-3.701h-43.16v-23.09h43.16v23.09\"><path opacity=\".3\" d=\"m29.883 107.59h43.16v-23.09h-43.16v23.09m18.423-15.335c0-.207.218-.343.404-.251l7.571 3.726c.207.102.209.396.003.501l-7.571 3.845c-.186.095-.407-.041-.407-.25v-7.571\"><path opacity=\".7\" fill=\"#fff\" d=\"m48.713 100.07l7.571-3.845c.206-.104.204-.399-.003-.501l-7.571-3.726c-.186-.092-.404.044-.404.251v7.571c0 .21.221.345.407.25\"><circle opacity=\".1\" cx=\"47.674\" cy=\"110.33\" r=\".955\"><circle opacity=\".1\" cx=\"51.49\" cy=\"110.33\" r=\".955\"><circle opacity=\".1\" cx=\"55.31\" cy=\"110.33\" r=\".955\"><path fill=\"#fff\" d=\"m129.17 95.75c-.704-.704-1.846-.704-2.551 0l-5.359 5.359v-15.02c0-.996-.807-1.804-1.804-1.804-.996 0-1.804.807-1.804 1.804v15.02l-5.359-5.359c-.704-.704-1.846-.704-2.551 0-.704.704-.704 1.846 0 2.551l8.438 8.438c.084.084.176.159.275.225.045.03.093.05.14.076.056.031.111.065.171.09.059.024.12.038.181.056.052.015.102.035.156.046.116.023.234.035.352.035 0 0 .0001 0 .0001 0 .118 0 .237-.012.353-.036.053-.011.103-.031.154-.046.061-.018.123-.032.182-.057.059-.025.113-.058.169-.089.047-.026.097-.047.142-.077.099-.066.191-.141.275-.224l8.438-8.438c.705-.704.705-1.846.0001-2.55\"><g opacity=\".25\" fill=\"none\" stroke=\"#fff\" stroke-linecap=\"round\" stroke-width=\"2\" stroke-miterlimit=\"10\"><path d=\"m72.83 61.03c.641.211 1.272.43 1.894.657\"><path stroke-dasharray=\"4.1527 5.1909\" d=\"m79.52 63.67c22.608 10.465 31.32 31.768 32.545 50.12\"><path d=\"m112.19 116.36c.02.671.029 1.338.029 1.999\"></g><g fill=\"none\" stroke=\"#fff\" stroke-linecap=\"round\" stroke-width=\"2\" stroke-miterlimit=\"10\"><g opacity=\".25\"><path d=\"m78.2 93.65c.675.07 1.336.154 1.984.252\"><path stroke-dasharray=\"4.451 5.5638\" d=\"m85.61 95.13c9.797 3.03 15.679 9.797 18.347 18.583\"><path d=\"m104.66 116.4c.143.645.271 1.3.383 1.963\"></g><g opacity=\".25\"><path d=\"m175.63 91.96c-.677 0-1.344.008-2 .024\"><path stroke-dasharray=\"3.9587 4.9483\" d=\"m168.68 92.27c-18.426 1.707-27.61 10.383-33.376 22.02\"><path d=\"m134.25 116.53c-.27.605-.533 1.218-.789 1.836\"></g><g opacity=\".25\"><path d=\"m159.82 62.37c-.583.331-1.159.668-1.726 1.01\"><path stroke-dasharray=\"3.77 4.7125\" d=\"m154.15 65.965c-15.964 11.257-24.716 28.04-27.463 48.07\"><path d=\"m126.39 116.37c-.074.66-.142 1.323-.204 1.99\"></g><g opacity=\".25\"><path d=\"m119.34 71.32v2\"><path stroke-dasharray=\"4.1995 5.2493\" d=\"m119.34 78.57v35.17\"><path d=\"m119.34 116.36v2\"></g></g></svg>"
+  );
+
+
+  $templateCache.put('scripts/superdesk-monitoring/aggregate-widget/thumbnail.svg',
+    "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewbox=\"0 0 232 144\" enable-background=\"new 0 0 232 144\"><defs><path id=\"1\" opacity=\".9\" d=\"m5.937 8.442v124.03h220.61v-124.03h-220.61m63.19 103.7c-19.267 0-34.943-15.677-34.943-34.947s15.675-34.947 34.943-34.947c19.27 0 34.947 15.677 34.947 34.947s-15.677 34.947-34.947 34.947m90.47 0c-19.267 0-34.943-15.677-34.943-34.947s15.675-34.947 34.943-34.947c19.27 0 34.947 15.677 34.947 34.947s-15.677 34.947-34.947 34.947\"><path id=\"2\" opacity=\".75\" d=\"m116.37 66.44c2.77-16.191 14.226-29.409 29.399-34.705v-14h-117.61v115.26h117.61v-31.848c-15.173-5.296-26.629-18.514-29.398-34.708\"><path id=\"3\" opacity=\".5\" d=\"m196.95 61.59v32.14h-49.91v18.46h58.26v-50.6z\"><path id=\"4\" opacity=\".4\" d=\"m99.97 109.08c-.866 0-1.568-.702-1.568-1.568v-14.05c0-.866.702-1.568 1.568-1.568h69.28v-7.89h-69.28c-.866 0-1.568-.702-1.568-1.568v-14.05c0-.866.702-1.568 1.568-1.568h69.28v-36.496h-110.89c4.142 0 8.425 0 14.66 3.459 7.438 4.126 10.263 12.2 10.423 17.862.127 4.549-.448 8.302-.722 9.802 1.415.861 2.83 2.644 2.83 6.334 0 4.601-2.3 11.01-6.05 11.06-2.295 6.556-5.983 12.326-10.219 15.987v7.201l1.22 2.945c6.291 1.493 20.239 5.328 24.753 10.855 2.641 3.241 5.148 25.792 5.426 28.353l.011.1h68.55v-35.2h-69.28z\"><clippath><use xlink:href=\"#4\"></clippath><clippath><use xlink:href=\"#3\"></clippath><clippath><use xlink:href=\"#1\"></clippath><clippath id=\"0\"><use xlink:href=\"#2\"></clippath></defs><g opacity=\".75\"><g clip-path=\"url(#0)\"><g fill=\"#231f20\"><path opacity=\".45\" d=\"m91.75 125.31v-3.422h-12.11v-32.993h-16.08c-1.269 0-2.439-.447-3.358-1.189-1.224-.983-2-2.493-2-4.173v-54.973c0-2.957-2.402-5.36-5.36-5.36-2.957 0-5.359 2.403-5.359 5.36v96.75c0 2.957-2.403 5.361-5.36 5.361h11.09 33.19c2.954 0 5.358-2.404 5.358-5.361\"><path opacity=\".3\" d=\"m74.34 43.845h-.055c-2.957 0-5.36 2.403-5.36 5.36v34.33c0 2.958-2.394 5.361-5.36 5.361h16.08v-39.69c-.0001-2.944-2.372-5.329-5.309-5.358\"></g><g opacity=\".7\" fill=\"#fff\"><path d=\"m36.756 125.31c0 2.957 2.403 5.361 5.362 5.361 2.957 0 5.36-2.404 5.36-5.361v-4.473h-4.558v-1.343h4.559v-2.515h-4.559v-1.343h4.559v-2.515h-4.559v-1.343h4.559v-2.515h-4.559v-1.343h4.559v-2.514h-4.559v-1.343h4.559v-2.515h-4.559v-1.346h4.559v-2.515h-4.559v-1.343h4.559v-2.515h-4.559v-1.343h4.559v-9.834h-10.723v42.658\"><path d=\"m122.4 45.41c-1.046-1.047-2.418-1.57-3.79-1.57h-16.08v-15.284c0-1.372-.523-2.744-1.573-3.79-1.044-1.047-2.418-1.57-3.789-1.57h-5.362-38.964c2.958 0 5.36 2.403 5.36 5.36v54.974c0 1.68.779 3.19 2 4.173.92.741 2.09 1.189 3.358 1.189 2.966 0 5.36-2.403 5.36-5.361v-7.474h-4.611v-1.343h4.611v-2.515h-4.611v-1.343h4.611v-2.516h-4.611v-1.343h4.611v-2.519h-4.611v-1.343h4.611v-2.516h-4.611v-1.343h4.611v-2.515h-4.611v-1.343h4.611v-2.517h-4.611v-1.343h4.611v-2.355c0-.054.006-.106.008-.159h-4.619v-1.343h4.829c.289-.987.854-1.854 1.607-2.517h-6.436v-1.343h9.869v.007c-.001 0-.02.002-.03.002.045-.0001.088-.007.133-.007h.055c2.936.029 5.308 2.414 5.308 5.358v39.689 32.993h12.159 32.16v-72.68c.0001-1.371-.523-2.743-1.57-3.79m-58.09-13.147h32v1.343h-32v-1.343m0 3.859h32v1.343h-32v-1.343m0 5.203v-1.343h32v1.343h-32m21.497 20.46h19.812v16.779h-19.812v-16.779m32 51.51h-32v-1.343h32v1.343m0-3.859h-32v-1.343h32v1.343m0-3.859h-32v-1.343h32v1.343m0-3.859h-32v-1.343h32v1.343m0-3.859h-32v-1.343h32v1.343m0-3.859h-32v-1.343h32v1.343m0-3.859h-32v-1.343h32v1.343m0-3.859h-32v-1.344h32v1.344m0-3.859h-32v-1.343h32v1.343m0-3.859h-9.485v-1.343h9.485v1.343m0-3.859h-9.485v-1.343h9.485v1.343m0-3.859h-9.485v-1.343h9.485v1.343m0-3.859h-9.485v-1.343h9.485v1.343m0-3.859h-9.485v-1.343h9.485v1.343m0-4.531h-32v-3.859h32v3.859\"></g><path opacity=\".3\" fill=\"#231f20\" d=\"m85.81 61.787h19.812v16.779h-19.812z\"></g></g><g fill=\"#231f20\"><path opacity=\".25\" d=\"m160.53 29.24c-22.16 0-40.548 16.08-44.16 37.2 3.614 21.13 22.01 37.21 44.16 37.21 22.16 0 40.544-16.08 44.16-37.21-3.62-21.12-22-37.2-44.16-37.2m0 58.657c-18.332 0-34.34-8.631-42.9-21.455 8.559-12.814 24.568-21.445 42.9-21.445 18.327 0 34.34 8.631 42.906 21.445-8.564 12.824-24.579 21.455-42.906 21.455\"><path opacity=\".2\" d=\"m151.72 45.677c.857-.133 1.722-.246 2.594-.341-.872.094-1.737.207-2.594.341\"><path opacity=\".2\" d=\"m148.73 46.22c.877-.186 1.765-.347 2.66-.492-.895.145-1.783.307-2.66.492\"><path opacity=\".2\" d=\"m157.73 45.07c.926-.045 1.857-.073 2.796-.073-.939 0-1.87.028-2.796.073\"><path opacity=\".2\" d=\"m163.06 87.83c-.284.012-.568.028-.853.037.285-.009.568-.025.853-.037\"><path opacity=\".2\" d=\"m154.74 45.29c.871-.088 1.749-.159 2.633-.207-.884.048-1.761.119-2.633.207\"><path opacity=\".2\" d=\"m165.03 87.72c-.393.031-.786.062-1.181.085.395-.023.788-.054 1.181-.085\"><path opacity=\".2\" d=\"m140.58 48.623c.831-.317 1.673-.615 2.527-.893-.854.278-1.696.576-2.527.893\"><path opacity=\".2\" d=\"m157.2 87.8c-.394-.023-.786-.053-1.178-.084.391.03.783.061 1.178.084\"><path opacity=\".2\" d=\"m152.4 87.32c-.523-.075-1.043-.157-1.561-.246.518.088 1.038.171 1.561.246\"><path opacity=\".2\" d=\"m155.58 87.68c-.46-.04-.918-.087-1.375-.138.457.05.914.098 1.375.138\"><path opacity=\".2\" d=\"m160.53 44.996c.939 0 1.871.028 2.798.073-.927-.045-1.858-.073-2.798-.073\"><path opacity=\".2\" d=\"m143.27 47.678c1.76-.567 3.567-1.052 5.416-1.445-1.85.393-3.656.878-5.416 1.445\"><path opacity=\".2\" d=\"m137.93 49.716c.821-.365 1.657-.71 2.504-1.036-.847.326-1.683.671-2.504 1.036\"><path opacity=\".2\" d=\"m158.85 87.87c-.287-.008-.571-.024-.857-.037.286.013.57.029.857.037\"><path opacity=\".2\" d=\"m153.98 87.52c-.5-.058-.998-.122-1.494-.193.495.07.993.135 1.494.193\"><path opacity=\".2\" d=\"m177.94 47.73c.855.279 1.699.577 2.531.895-.833-.318-1.676-.617-2.531-.895\"><path opacity=\".2\" d=\"m172.37 46.23c1.85.394 3.658.879 5.42 1.447-1.762-.568-3.57-1.054-5.42-1.447\"><path opacity=\".2\" d=\"m168.57 87.33c-.496.071-.995.135-1.496.193.501-.057 1-.122 1.496-.193\"></g><path fill=\"#fff\" d=\"m203.43 66.44c-5.221-7.813-13.216-14.07-22.812-17.76.848.326 1.684.671 2.506 1.037 2.41 3.982 3.797 8.651 3.797 13.643 0 9.938-5.493 18.584-13.605 23.09 12.829-2.965 23.617-10.276 30.11-20\"><path opacity=\".2\" fill=\"#231f20\" d=\"m173.32 86.45c-1.526.353-3.082.644-4.662.871 1.581-.226 3.135-.519 4.662-.871\"><path fill=\"#fff\" d=\"m134.13 63.36c0-4.993 1.389-9.662 3.799-13.645-8.482 3.774-15.545 9.601-20.303 16.725 7.01 10.504 19.02 18.19 33.21 20.63-1.044-.18-2.077-.388-3.097-.624-8.112-4.501-13.608-13.148-13.608-23.09\"><g fill=\"#231f20\"><path opacity=\".2\" d=\"m166.85 87.54c-.457.051-.916.098-1.377.138.461-.039.92-.087 1.377-.138\"><path opacity=\".2\" d=\"m169.66 45.731c.896.145 1.784.307 2.662.493-.877-.186-1.766-.348-2.662-.493\"><path opacity=\".2\" d=\"m166.74 45.34c.872.095 1.738.208 2.595.341-.858-.133-1.723-.247-2.595-.341\"><path opacity=\".2\" d=\"m163.68 45.09c.885.048 1.763.119 2.634.207-.872-.088-1.749-.159-2.634-.207\"></g><g fill=\"#b9db92\"><path d=\"m165.47 87.68c-.147.013-.295.021-.442.033.148-.012.296-.02.442-.033\"><path d=\"m156.03 87.72c-.148-.012-.296-.02-.444-.033.147.013.296.022.444.033\"><path d=\"m163.85 87.8c-.264.015-.53.024-.795.035.265-.011.531-.019.795-.035\"><path d=\"m160.53 87.9c-.561 0-1.119-.009-1.675-.025.556.016 1.114.025 1.675.025\"><path d=\"m162.2 87.87c-.556.016-1.115.025-1.676.025.561 0 1.12-.009 1.676-.025\"><path d=\"m158 87.83c-.264-.012-.529-.02-.793-.035.264.015.529.023.793.035\"><path d=\"m168.66 87.32c-.028.004-.057.007-.085.011.028-.004.057-.007.085-.011\"><path d=\"m167.08 87.52c-.074.009-.15.015-.224.023.074-.008.149-.014.224-.023\"><path d=\"m166.31 45.29c.141.014.283.028.424.044-.141-.016-.282-.03-.424-.044\"><path d=\"m169.33 45.677c.111.017.221.036.331.054-.11-.018-.22-.037-.331-.054\"><path d=\"m163.33 45.07c.118.006.236.009.354.016-.118-.007-.236-.001-.354-.016\"><path d=\"m157.37 45.09c.118-.006.238-.001.356-.016-.118.006-.237.009-.356.016\"><path d=\"m172.33 46.22c.014.003.027.006.041.009-.014-.003-.027-.006-.041-.009\"><path d=\"m154.21 87.55c-.075-.008-.151-.015-.225-.023.075.008.15.015.225.023\"><path d=\"m154.32 45.34c.141-.015.283-.03.424-.044-.142.014-.283.028-.424.044\"><path d=\"m177.79 47.68c.052.017.105.033.157.05-.053-.017-.105-.033-.157-.05\"><path d=\"m180.47 48.624c.049.019.098.038.146.056-.048-.018-.097-.037-.146-.056\"><path d=\"m150.84 87.07c0 0-.002 0-.003 0 .002 0 .003 0 .003 0\"><path d=\"m152.49 87.33c-.029-.004-.058-.007-.086-.012.028.005.057.008.086.012\"><path d=\"m151.39 45.731c.111-.018.223-.037.334-.055-.112.018-.223.037-.334.055\"><path d=\"m140.44 48.68c.05-.019.099-.038.148-.057-.049.019-.099.038-.148.057\"><path d=\"m148.69 46.23c.014-.003.028-.007.043-.001-.015.003-.029.007-.043.001\"><path d=\"m143.11 47.73c.053-.017.107-.034.161-.051-.054.017-.108.033-.161.051\"></g><path opacity=\".5\" fill=\"#fff\" d=\"m183.13 49.717c-.822-.366-1.658-.71-2.506-1.037-.049-.019-.097-.038-.146-.056-.832-.318-1.676-.616-2.531-.895-.052-.017-.105-.033-.157-.05-1.762-.568-3.57-1.053-5.42-1.447-.014-.003-.027-.006-.041-.009-.878-.186-1.767-.348-2.662-.493-.111-.018-.221-.037-.331-.054-.857-.134-1.723-.247-2.595-.341-.141-.015-.282-.029-.424-.044-.872-.088-1.749-.159-2.634-.207-.118-.006-.236-.001-.354-.016-.926-.045-1.858-.073-2.798-.073-.939 0-1.87.028-2.796.073-.119.006-.238.009-.356.016-.885.048-1.762.119-2.633.207-.142.014-.283.029-.424.044-.872.095-1.737.208-2.594.341-.112.017-.223.037-.334.055-.895.145-1.783.306-2.66.492-.014.003-.028.007-.043.001-1.848.393-3.655.878-5.416 1.445-.054.017-.108.034-.161.051-.854.278-1.697.576-2.527.893-.05.019-.099.038-.148.057-.847.326-1.682.67-2.504 1.036-2.41 3.982-3.799 8.652-3.799 13.645 0 9.939 5.496 18.585 13.609 23.09 1.02.236 2.052.444 3.097.624.0001 0 .002 0 .002 0 .518.089 1.039.171 1.562.247.029.004.058.007.086.012.496.07.994.135 1.494.193.075.009.15.015.225.023.457.051.914.098 1.375.138.147.013.296.021.444.033.392.031.784.061 1.178.084.263.015.528.023.793.035.286.013.57.028.857.037.556.016 1.114.025 1.675.025.561 0 1.119-.009 1.676-.025.286-.008.569-.024.853-.037.265-.012.531-.02.795-.035.395-.023.788-.054 1.181-.085.147-.012.295-.02.442-.033.461-.04.919-.087 1.377-.138.074-.008.15-.015.224-.023.501-.058 1-.122 1.496-.193.028-.004.057-.007.085-.011 1.58-.227 3.135-.519 4.662-.871h.0001c8.112-4.501 13.605-13.147 13.605-23.09-.003-4.993-1.39-9.662-3.8-13.644m-22.599 27.42c-7.595 0-13.768-6.177-13.768-13.776 0-7.6 6.173-13.771 13.768-13.771 7.601 0 13.771 6.171 13.771 13.771 0 7.598-6.17 13.776-13.771 13.776\"><path opacity=\".65\" fill=\"#231f20\" d=\"m160.53 49.589c-7.595 0-13.768 6.171-13.768 13.771 0 7.599 6.173 13.776 13.768 13.776 7.601 0 13.771-6.177 13.771-13.776 0-7.6-6.17-13.771-13.771-13.771m-1.923 11.854c-1.434 1.439-3.58 1.645-4.771.449-1.199-1.199-.999-3.333.448-4.784 1.439-1.439 3.573-1.644 4.772-.442 1.199 1.196 1 3.336-.449 4.777\"><path fill=\"#fff\" d=\"m154.28 57.11c-1.446 1.451-1.647 3.585-.448 4.784 1.192 1.196 3.337.99 4.771-.449 1.451-1.44 1.648-3.581.449-4.776-1.199-1.204-3.332-.998-4.772.441\"></svg>"
+  );
+
+
+  $templateCache.put('scripts/superdesk-users/activity/thumbnail.svg',
+    "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewbox=\"0 0 232 144\" enable-background=\"new 0 0 232 144\"><defs><path id=\"1\" opacity=\".9\" d=\"m5.937 8.442v124.03h220.61v-124.03h-220.61m63.19 103.7c-19.267 0-34.943-15.677-34.943-34.947s15.675-34.947 34.943-34.947c19.27 0 34.947 15.677 34.947 34.947s-15.677 34.947-34.947 34.947m90.47 0c-19.267 0-34.943-15.677-34.943-34.947s15.675-34.947 34.943-34.947c19.27 0 34.947 15.677 34.947 34.947s-15.677 34.947-34.947 34.947\"><path id=\"2\" opacity=\".75\" d=\"m116.37 63.44c2.77-16.191 14.226-29.409 29.399-34.705v-14h-117.61v115.26h117.61v-31.848c-15.173-5.296-26.629-18.514-29.398-34.708\"><path id=\"3\" opacity=\".5\" d=\"m196.95 58.59v32.14h-49.91v18.46h58.26v-50.6z\"><path id=\"4\" opacity=\".4\" d=\"m99.97 109.08c-.866 0-1.568-.702-1.568-1.568v-14.05c0-.866.702-1.568 1.568-1.568h69.28v-7.89h-69.28c-.866 0-1.568-.702-1.568-1.568v-14.05c0-.866.702-1.568 1.568-1.568h69.28v-36.496h-110.89c4.142 0 8.425 0 14.66 3.459 7.438 4.126 10.263 12.2 10.423 17.862.127 4.549-.448 8.302-.722 9.802 1.415.861 2.83 2.644 2.83 6.334 0 4.601-2.3 11.01-6.05 11.06-2.295 6.556-5.983 12.326-10.219 15.987v7.201l1.22 2.945c6.291 1.493 20.239 5.328 24.753 10.855 2.641 3.241 5.148 25.792 5.426 28.353l.011.1h68.55v-35.2h-69.28z\"><clippath id=\"0\"><use xlink:href=\"#4\"></clippath><clippath><use xlink:href=\"#3\"></clippath><clippath><use xlink:href=\"#1\"></clippath><clippath><use xlink:href=\"#2\"></clippath></defs><path fill=\"#f9fcfc\" d=\"m58.36 106.82l-.001.001h.001z\"><g fill=\"#fff\"><path d=\"m58.36 106.82c3.157-.084 6-.436 7.845-1.393-6.976-1.638-13.154-5.34-17.844-10.434v7.331c.082 3.429 4.588 4.351 9.999 4.496\"><path opacity=\".75\" d=\"m66.2 105.43c1.316-.683 2.119-1.675 2.153-3.103v-7.925c-3.02 2.512-6.414 4.03-10.01 4.03-3.586 0-6.976-1.517-9.99-4.02v.581c4.69 5.094 10.868 8.796 17.843 10.434\"><path d=\"m37.765 61.58c-.878-.167-1.507-.105-1.945.009-.003.036-.005.073-.008.11.451-.105.928-.159 1.427-.159.178-.0001.353.013.526.04\"><path d=\"m44.614 45.578c0 1.377-.689 7.313-1.246 8.528s-2.522 2.75-3.089 4.132c-.295.718-.567 2.526-.761 4.099-.179 1.454-.292 2.707-.292 2.707h-1.426l-.035-3.465c-.173-.026-.348-.041-.526-.041-.5 0-.976.054-1.427.159-2.201.512-3.737 2.333-3.737 6.087 0 4.523 2.227 10.135 5.164 10.135.205 0 .406-.022.604-.056 2.193 6.601 5.914 12.731 10.514 16.554 3.02 2.505 6.404 4.02 9.99 4.02v-45.63c-8.991-1.22-13.733-8.607-13.733-7.23\"><path opacity=\".9\" d=\"m80.889 61.698c-.003-.038-.005-.076-.008-.114-.438-.112-1.062-.17-1.931-.006l-.035 3.467h-1.427c0 0-.486-5.424-1.053-6.806-.567-1.382-2.532-2.917-3.089-4.132-.557-1.215-8.321-.396-14.989-1.297-.003 0-.006-.0001-.001-.002v45.63c3.592 0 6.987-1.522 10.01-4.03 4.595-3.823 8.311-9.947 10.502-16.541.198.034.398.056.601.056 2.938 0 5.164-5.611 5.164-10.135.002-3.752-1.532-5.573-3.731-6.086\"></g><path opacity=\".3\" d=\"m37.765 61.58l.035 3.466h1.427c0 0 .113-1.254.292-2.707.194-1.573.466-3.38.761-4.099.567-1.382 2.532-2.917 3.089-4.132s1.246-7.151 1.246-8.528c0-1.377 4.742 6.01 13.734 7.23.003 0 .006.0001.001.002 6.668.901 14.432.081 14.989 1.297.557 1.215 2.522 2.75 3.089 4.132.567 1.382 1.053 6.806 1.053 6.806h1.427l.035-3.467c.868-.164 1.492-.105 1.931.006.545.139.795.361.795.361s.999-4.517.837-10.27c-.162-5.753-3.053-13.253-9.945-17.08-6.02-3.338-10.05-3.342-14.21-3.342s-8.272.065-14.29 3.403c-6.892 3.823-9.703 11.262-9.865 17.02-.162 5.753.837 10.27.837 10.27s.246-.218.78-.357c.436-.114 1.065-.175 1.943-.001\"><g fill=\"#fff\"><path opacity=\".65\" d=\"m94.54 116.42c-4.563-5.586-19.885-9.522-24.711-10.647l.0001.0001-3.573 8.79c0 0-1.227-1.602-3.056-3.507l-3.423 4.522c2.513 7.291 4.205 17.738 4.604 28.707h35.38c0 0-2.679-24.745-5.221-27.866\"><path opacity=\".65\" d=\"m57.1 115.58l-3.568-4.547c-1.842 1.916-3.08 3.532-3.08 3.532l-3.573-8.79v-.002c-4.156.968-16.09 4.02-22.24 8.406-2.893 1.988-4.793 3.223-7.71 30.11h36.21c.259-11.382 1.208-22.278 3.96-28.706\"></g><path opacity=\".25\" d=\"m64.38 144.29c-.399-10.968-2.091-21.416-4.604-28.707l3.423-4.522c-1.364-1.421-3.061-3.01-4.841-4.232h-.002c-1.77 1.216-3.457 2.793-4.817 4.208l3.568 4.547c-2.752 6.428-3.701 17.324-3.96 28.707h11.233z\"><g fill=\"#fff\"><path opacity=\".45\" d=\"m50.46 114.56c0 0 1.238-1.616 3.08-3.532 1.36-1.414 3.047-2.992 4.817-4.208v-.0001c-5.411-.145-9.917-1.067-9.998-4.496-.0001-.031-.008-.059-.008-.091l-1.465 3.536v.002l3.574 8.79\"><path opacity=\".45\" d=\"m66.2 105.43c-1.844.956-4.688 1.308-7.845 1.393v.0001c1.781 1.223 3.478 2.812 4.842 4.233 1.829 1.906 3.056 3.507 3.056 3.507l3.573-8.79-.0001-.0001-1.465-3.537c0 .032-.007.06-.008.092-.034 1.427-.837 2.42-2.153 3.102\"><path opacity=\".9\" d=\"m215.94 16.997h-115.98c-.866 0-1.568.702-1.568 1.568v14.05c0 .866.702 1.568 1.568 1.568h115.98c.866 0 1.568-.702 1.568-1.568v-14.05c0-.866-.702-1.568-1.568-1.568m-84.76 4.454c0-.299.242-.541.541-.541h31.906c.299 0 .541.242.541.541v.811c0 .299-.242.541-.541.541h-31.906c-.299 0-.541-.242-.541-.541v-.811m-14.86 0c0-.299.242-.541.541-.541h11.02c.299 0 .541.242.541.541v.811c0 .299-.242.541-.541.541h-11.02c-.299 0-.541-.242-.541-.541v-.811m-9.03 9.378c-2.894 0-5.24-2.346-5.24-5.24s2.346-5.24 5.24-5.24 5.24 2.346 5.24 5.24-2.346 5.24-5.24 5.24m47.898-1.09c0 .283-.23.513-.513.513h-37.846c-.283 0-.513-.23-.513-.513v-.116c0-.283.23-.513.513-.513h37.846c.283 0 .513.23.513.513v.116m48.861-3.359c0 .283-.23.513-.513.513h-86.71c-.283 0-.513-.23-.513-.513v-.116c0-.283.23-.513.513-.513h86.71c.283 0 .513.23.513.513v.116\"></g><path opacity=\".1\" d=\"m116.86 22.803h11.02c.299 0 .541-.242.541-.541v-.811c0-.299-.242-.541-.541-.541h-11.02c-.299 0-.541.242-.541.541v.811c0 .299.242.541.541.541\"><path opacity=\".1\" d=\"m131.72 22.803h31.906c.299 0 .541-.242.541-.541v-.811c0-.299-.242-.541-.541-.541h-31.906c-.299 0-.541.242-.541.541v.811c0 .299.242.541.541.541\"><g fill=\"#fff\"><path opacity=\".6\" d=\"m203.54 25.75h-86.71c-.283 0-.513.23-.513.513v.116c0 .283.23.513.513.513h86.71c.283 0 .513-.23.513-.513v-.116c0-.283-.23-.513-.513-.513\"><path opacity=\".6\" d=\"m154.68 29.11h-37.846c-.283 0-.513.23-.513.513v.116c0 .283.23.513.513.513h37.846c.283 0 .513-.23.513-.513v-.116c0-.284-.23-.513-.513-.513\"><circle opacity=\".4\" cx=\"107.29\" cy=\"25.589\" r=\"5.24\"></g><path opacity=\".3\" d=\"m215.94 34.18h-115.98c-.866 0-1.568-.702-1.568-1.568v1.16c0 .866.702 1.568 1.568 1.568h115.98c.866 0 1.568-.702 1.568-1.568v-1.16c0 .866-.702 1.568-1.568 1.568\"><path opacity=\".9\" fill=\"#fff\" d=\"m215.94 41.91h-115.98c-.866 0-1.568.702-1.568 1.568v14.05c0 .866.702 1.568 1.568 1.568h115.98c.866 0 1.568-.702 1.568-1.568v-14.05c0-.867-.702-1.569-1.568-1.569m-84.76 4.454c0-.299.242-.541.541-.541h31.906c.299 0 .541.242.541.541v.811c0 .299-.242.541-.541.541h-31.906c-.299 0-.541-.242-.541-.541v-.811m-14.86 0c0-.299.242-.541.541-.541h11.02c.299 0 .541.242.541.541v.811c0 .299-.242.541-.541.541h-11.02c-.299 0-.541-.242-.541-.541v-.811m-9.03 9.379c-2.894 0-5.24-2.346-5.24-5.24 0-2.894 2.346-5.24 5.24-5.24s5.24 2.346 5.24 5.24c0 2.894-2.346 5.24-5.24 5.24m47.898-1.091c0 .283-.23.513-.513.513h-37.846c-.283 0-.513-.23-.513-.513v-.116c0-.283.23-.513.513-.513h37.846c.283 0 .513.23.513.513v.116m48.861-3.359c0 .283-.23.513-.513.513h-86.71c-.283 0-.513-.23-.513-.513v-.116c0-.283.23-.513.513-.513h86.71c.283 0 .513.23.513.513v.116\"><path opacity=\".1\" d=\"m116.86 47.717h11.02c.299 0 .541-.242.541-.541v-.811c0-.299-.242-.541-.541-.541h-11.02c-.299 0-.541.242-.541.541v.811c0 .299.242.541.541.541\"><path opacity=\".1\" d=\"m131.72 47.717h31.906c.299 0 .541-.242.541-.541v-.811c0-.299-.242-.541-.541-.541h-31.906c-.299 0-.541.242-.541.541v.811c0 .299.242.541.541.541\"><g fill=\"#fff\"><path opacity=\".6\" d=\"m203.54 50.664h-86.71c-.283 0-.513.23-.513.513v.116c0 .283.23.513.513.513h86.71c.283 0 .513-.23.513-.513v-.116c0-.283-.23-.513-.513-.513\"><path opacity=\".6\" d=\"m154.68 54.02h-37.846c-.283 0-.513.23-.513.513v.116c0 .283.23.513.513.513h37.846c.283 0 .513-.23.513-.513v-.116c0-.283-.23-.513-.513-.513\"><circle opacity=\".4\" cx=\"107.29\" cy=\"50.5\" r=\"5.24\"></g><path opacity=\".3\" d=\"m215.94 59.1h-115.98c-.866 0-1.568-.702-1.568-1.568v1.16c0 .866.702 1.568 1.568 1.568h115.98c.866 0 1.568-.702 1.568-1.568v-1.16c0 .866-.702 1.568-1.568 1.568\"><path opacity=\".9\" fill=\"#fff\" d=\"m215.94 66.824h-115.98c-.866 0-1.568.702-1.568 1.568v14.05c0 .866.702 1.568 1.568 1.568h115.98c.866 0 1.568-.702 1.568-1.568v-14.05c0-.866-.702-1.568-1.568-1.568m-84.76 4.454c0-.299.242-.541.541-.541h31.906c.299 0 .541.242.541.541v.811c0 .299-.242.541-.541.541h-31.906c-.299 0-.541-.242-.541-.541v-.811m-14.86 0c0-.299.242-.541.541-.541h11.02c.299 0 .541.242.541.541v.811c0 .299-.242.541-.541.541h-11.02c-.299 0-.541-.242-.541-.541v-.811m-9.03 9.378c-2.894 0-5.24-2.346-5.24-5.24 0-2.894 2.346-5.24 5.24-5.24s5.24 2.346 5.24 5.24c0 2.894-2.346 5.24-5.24 5.24m47.898-1.09c0 .283-.23.513-.513.513h-37.846c-.283 0-.513-.23-.513-.513v-.116c0-.283.23-.513.513-.513h37.846c.283 0 .513.23.513.513v.116m48.861-3.359c0 .283-.23.513-.513.513h-86.71c-.283 0-.513-.23-.513-.513v-.116c0-.283.23-.513.513-.513h86.71c.283 0 .513.23.513.513v.116\"><path opacity=\".1\" d=\"m116.86 72.63h11.02c.299 0 .541-.242.541-.541v-.811c0-.299-.242-.541-.541-.541h-11.02c-.299 0-.541.242-.541.541v.811c0 .299.242.541.541.541\"><path opacity=\".1\" d=\"m131.72 72.63h31.906c.299 0 .541-.242.541-.541v-.811c0-.299-.242-.541-.541-.541h-31.906c-.299 0-.541.242-.541.541v.811c0 .299.242.541.541.541\"><g fill=\"#fff\"><path opacity=\".6\" d=\"m203.54 75.58h-86.71c-.283 0-.513.23-.513.513v.116c0 .283.23.513.513.513h86.71c.283 0 .513-.23.513-.513v-.116c0-.283-.23-.513-.513-.513\"><path opacity=\".6\" d=\"m154.68 78.937h-37.846c-.283 0-.513.23-.513.513v.116c0 .283.23.513.513.513h37.846c.283 0 .513-.23.513-.513v-.116c0-.284-.23-.513-.513-.513\"><circle opacity=\".4\" cx=\"107.29\" cy=\"75.42\" r=\"5.24\"></g><path opacity=\".3\" d=\"m215.94 84.01h-115.98c-.866 0-1.568-.702-1.568-1.568v1.16c0 .866.702 1.568 1.568 1.568h115.98c.866 0 1.568-.702 1.568-1.568v-1.16c0 .866-.702 1.568-1.568 1.568\"><path opacity=\".9\" fill=\"#fff\" d=\"m215.94 91.74h-115.98c-.866 0-1.568.702-1.568 1.568v14.05c0 .866.702 1.568 1.568 1.568h115.98c.866 0 1.568-.702 1.568-1.568v-14.05c0-.867-.702-1.569-1.568-1.569m-84.76 4.454c0-.299.242-.541.541-.541h31.906c.299 0 .541.242.541.541v.811c0 .299-.242.541-.541.541h-31.906c-.299 0-.541-.242-.541-.541v-.811m-14.86 0c0-.299.242-.541.541-.541h11.02c.299 0 .541.242.541.541v.811c0 .299-.242.541-.541.541h-11.02c-.299 0-.541-.242-.541-.541v-.811m-9.03 9.379c-2.894 0-5.24-2.346-5.24-5.24 0-2.894 2.346-5.24 5.24-5.24s5.24 2.346 5.24 5.24c0 2.894-2.346 5.24-5.24 5.24m47.898-1.091c0 .283-.23.513-.513.513h-37.846c-.283 0-.513-.23-.513-.513v-.116c0-.283.23-.513.513-.513h37.846c.283 0 .513.23.513.513v.116m48.861-3.359c0 .283-.23.513-.513.513h-86.71c-.283 0-.513-.23-.513-.513v-.116c0-.283.23-.513.513-.513h86.71c.283 0 .513.23.513.513v.116\"><path opacity=\".1\" d=\"m116.86 97.54h11.02c.299 0 .541-.242.541-.541v-.811c0-.299-.242-.541-.541-.541h-11.02c-.299 0-.541.242-.541.541v.811c0 .299.242.541.541.541\"><path opacity=\".1\" d=\"m131.72 97.54h31.906c.299 0 .541-.242.541-.541v-.811c0-.299-.242-.541-.541-.541h-31.906c-.299 0-.541.242-.541.541v.811c0 .299.242.541.541.541\"><g fill=\"#fff\"><path opacity=\".6\" d=\"m203.54 100.49h-86.71c-.283 0-.513.23-.513.513v.116c0 .283.23.513.513.513h86.71c.283 0 .513-.23.513-.513v-.116c0-.283-.23-.513-.513-.513\"><path opacity=\".6\" d=\"m154.68 103.85h-37.846c-.283 0-.513.23-.513.513v.116c0 .283.23.513.513.513h37.846c.283 0 .513-.23.513-.513v-.116c0-.283-.23-.513-.513-.513\"><circle opacity=\".4\" cx=\"107.29\" cy=\"100.33\" r=\"5.24\"></g><path opacity=\".3\" d=\"m215.94 108.92h-115.98c-.866 0-1.568-.702-1.568-1.568v1.16c0 .866.702 1.568 1.568 1.568h115.98c.866 0 1.568-.702 1.568-1.568v-1.16c0 .866-.702 1.568-1.568 1.568\"><g opacity=\".4\"><g clip-path=\"url(#0)\"><g fill=\"#fff\"><path d=\"m99.75 120.9v-.97c-7.718-.387-10.722-2.398-13.951-6.318v7.288h.0001c0 6.247 13.834 7.618 13.95 0\"><path opacity=\".75\" d=\"m99.75 119.93v-6.733c-2.106 1.753-4.475 2.815-6.981 2.815-2.502 0-4.867-1.058-6.97-2.806v.405c3.229 3.921 6.233 5.932 13.951 6.319\"><path d=\"m77.06 90.36c-.0001.009-.002.019-.002.028.251-.058.512-.095.785-.106-.297-.012-.565.025-.783.078\"><path d=\"m86.49 79.937c-3.087 2.038-5.71 4.861-6.323 8.03-.073.379-.245 1.576-.433 2.932-.32 2.31-.685 5.085-.685 5.085l-1-5.687c-.069-.008-.136-.009-.203-.012-.273.011-.534.048-.785.106-1.537.357-2.615 1.615-2.615 4.236 0 3.156 1.553 7.07 3.603 7.07.143 0 .283-.015.422-.039 1.53 4.605 4.126 8.883 7.336 11.549 2.103 1.747 4.468 2.806 6.97 2.806v-30.936c-3.647-1.545-5.71-3.883-6.283-5.14\"><path opacity=\".9\" d=\"m108.49 90.39c-.0001-.007-.0001-.014-.002-.021-.228-.052-.507-.099-.89-.105l-1.165 5.445c0 0-.249-5.97-.492-7.235-.223-1.701-.688-2.784-1.751-3.074-1.03-.271-3.571-.042-7.213-.865 1.455.683 2.094.89 3.357 1.127-.991.049-2.068.002-3.187-.148 1.73.532 3.488.923 5.08.997 0 .004-.002.008-.002.012-2.328.249-5.519-.099-7.956-.883-.528-.17-1.022-.361-1.496-.562v30.935c2.506 0 4.875-1.062 6.981-2.815 3.205-2.667 5.798-6.94 7.327-11.54.138.024.277.039.419.039 2.05 0 3.603-3.915 3.603-7.07-.0001-2.619-1.078-3.878-2.613-4.236\"><path opacity=\".6\" d=\"m118.02 128.56c-3.795-4.646-18.262-7.657-18.268-7.659-.116 7.618-13.95 6.247-13.95 0h-.0001c-.011.002-11.297 2.349-16.545 6.095-2.02 1.387-3.344 2.249-5.379 21.01h57.786c0 .0001-1.869-17.263-3.643-19.441\"></g><path opacity=\".3\" d=\"m77.84 90.28c.067.003.133.004.203.012l1 5.687c0 0 .365-2.775.685-5.085.188-1.356.36-2.553.433-2.932.613-3.167 3.236-5.991 6.323-8.03.573 1.257 2.636 3.596 6.283 5.141.474.201.968.392 1.496.562 2.437.783 5.628 1.131 7.956.883 0-.004.002-.008.002-.012-1.592-.073-3.35-.464-5.08-.997 1.12.15 2.196.198 3.187.148-1.263-.237-1.901-.444-3.357-1.127 3.642.822 6.184.593 7.213.865 1.064.29 1.528 1.373 1.751 3.074.244 1.265.492 7.235.492 7.235l1.165-5.445c.383.007.662.054.89.105.363.083.559.182.559.182s.697-3.151.584-7.165c-.113-4.01-2.13-9.246-6.938-11.914-2.23-1.237-4.068-1.815-5.737-2.087-.802-.604-2.02-1.017-3.388-1.07-1.283-.05-2.34.229-3.069.707-.211-.056-.442-.106-.713-.14-.855-.107-1.907.143-2.398.443.468-.141 1.063-.187 1.698-.104.103.013.188.048.286.067-1.896.225-3.977.791-6.564 2.226-4.808 2.667-6.769 7.858-6.882 11.871-.113 4.01.584 7.165.584 7.165s.216-.109.549-.19c.218-.05.486-.087.783-.076m16.53-21.375c.77.03 1.483.18 2.109.407-1.289-.171-2.488-.174-3.702-.174-.157 0-.314 0-.472.0001.621-.17 1.316-.263 2.065-.234\"></g></g></svg>"
   );
  }]);
 /*!
@@ -58896,3202 +58941,7 @@ define('superdesk/config/config',['angular'], function(angular) {
     return angular.module('superdesk.config', []).constant('config', config);
 });
 
-//! moment.js
-//! version : 2.10.6
-//! authors : Tim Wood, Iskren Chernev, Moment.js contributors
-//! license : MIT
-//! momentjs.com
-
-(function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-    typeof define === 'function' && define.amd ? define('moment',factory) :
-    global.moment = factory()
-}(this, function () { 'use strict';
-
-    var hookCallback;
-
-    function utils_hooks__hooks () {
-        return hookCallback.apply(null, arguments);
-    }
-
-    // This is done to register the method called with moment()
-    // without creating circular dependencies.
-    function setHookCallback (callback) {
-        hookCallback = callback;
-    }
-
-    function isArray(input) {
-        return Object.prototype.toString.call(input) === '[object Array]';
-    }
-
-    function isDate(input) {
-        return input instanceof Date || Object.prototype.toString.call(input) === '[object Date]';
-    }
-
-    function map(arr, fn) {
-        var res = [], i;
-        for (i = 0; i < arr.length; ++i) {
-            res.push(fn(arr[i], i));
-        }
-        return res;
-    }
-
-    function hasOwnProp(a, b) {
-        return Object.prototype.hasOwnProperty.call(a, b);
-    }
-
-    function extend(a, b) {
-        for (var i in b) {
-            if (hasOwnProp(b, i)) {
-                a[i] = b[i];
-            }
-        }
-
-        if (hasOwnProp(b, 'toString')) {
-            a.toString = b.toString;
-        }
-
-        if (hasOwnProp(b, 'valueOf')) {
-            a.valueOf = b.valueOf;
-        }
-
-        return a;
-    }
-
-    function create_utc__createUTC (input, format, locale, strict) {
-        return createLocalOrUTC(input, format, locale, strict, true).utc();
-    }
-
-    function defaultParsingFlags() {
-        // We need to deep clone this object.
-        return {
-            empty           : false,
-            unusedTokens    : [],
-            unusedInput     : [],
-            overflow        : -2,
-            charsLeftOver   : 0,
-            nullInput       : false,
-            invalidMonth    : null,
-            invalidFormat   : false,
-            userInvalidated : false,
-            iso             : false
-        };
-    }
-
-    function getParsingFlags(m) {
-        if (m._pf == null) {
-            m._pf = defaultParsingFlags();
-        }
-        return m._pf;
-    }
-
-    function valid__isValid(m) {
-        if (m._isValid == null) {
-            var flags = getParsingFlags(m);
-            m._isValid = !isNaN(m._d.getTime()) &&
-                flags.overflow < 0 &&
-                !flags.empty &&
-                !flags.invalidMonth &&
-                !flags.invalidWeekday &&
-                !flags.nullInput &&
-                !flags.invalidFormat &&
-                !flags.userInvalidated;
-
-            if (m._strict) {
-                m._isValid = m._isValid &&
-                    flags.charsLeftOver === 0 &&
-                    flags.unusedTokens.length === 0 &&
-                    flags.bigHour === undefined;
-            }
-        }
-        return m._isValid;
-    }
-
-    function valid__createInvalid (flags) {
-        var m = create_utc__createUTC(NaN);
-        if (flags != null) {
-            extend(getParsingFlags(m), flags);
-        }
-        else {
-            getParsingFlags(m).userInvalidated = true;
-        }
-
-        return m;
-    }
-
-    var momentProperties = utils_hooks__hooks.momentProperties = [];
-
-    function copyConfig(to, from) {
-        var i, prop, val;
-
-        if (typeof from._isAMomentObject !== 'undefined') {
-            to._isAMomentObject = from._isAMomentObject;
-        }
-        if (typeof from._i !== 'undefined') {
-            to._i = from._i;
-        }
-        if (typeof from._f !== 'undefined') {
-            to._f = from._f;
-        }
-        if (typeof from._l !== 'undefined') {
-            to._l = from._l;
-        }
-        if (typeof from._strict !== 'undefined') {
-            to._strict = from._strict;
-        }
-        if (typeof from._tzm !== 'undefined') {
-            to._tzm = from._tzm;
-        }
-        if (typeof from._isUTC !== 'undefined') {
-            to._isUTC = from._isUTC;
-        }
-        if (typeof from._offset !== 'undefined') {
-            to._offset = from._offset;
-        }
-        if (typeof from._pf !== 'undefined') {
-            to._pf = getParsingFlags(from);
-        }
-        if (typeof from._locale !== 'undefined') {
-            to._locale = from._locale;
-        }
-
-        if (momentProperties.length > 0) {
-            for (i in momentProperties) {
-                prop = momentProperties[i];
-                val = from[prop];
-                if (typeof val !== 'undefined') {
-                    to[prop] = val;
-                }
-            }
-        }
-
-        return to;
-    }
-
-    var updateInProgress = false;
-
-    // Moment prototype object
-    function Moment(config) {
-        copyConfig(this, config);
-        this._d = new Date(config._d != null ? config._d.getTime() : NaN);
-        // Prevent infinite loop in case updateOffset creates new moment
-        // objects.
-        if (updateInProgress === false) {
-            updateInProgress = true;
-            utils_hooks__hooks.updateOffset(this);
-            updateInProgress = false;
-        }
-    }
-
-    function isMoment (obj) {
-        return obj instanceof Moment || (obj != null && obj._isAMomentObject != null);
-    }
-
-    function absFloor (number) {
-        if (number < 0) {
-            return Math.ceil(number);
-        } else {
-            return Math.floor(number);
-        }
-    }
-
-    function toInt(argumentForCoercion) {
-        var coercedNumber = +argumentForCoercion,
-            value = 0;
-
-        if (coercedNumber !== 0 && isFinite(coercedNumber)) {
-            value = absFloor(coercedNumber);
-        }
-
-        return value;
-    }
-
-    function compareArrays(array1, array2, dontConvert) {
-        var len = Math.min(array1.length, array2.length),
-            lengthDiff = Math.abs(array1.length - array2.length),
-            diffs = 0,
-            i;
-        for (i = 0; i < len; i++) {
-            if ((dontConvert && array1[i] !== array2[i]) ||
-                (!dontConvert && toInt(array1[i]) !== toInt(array2[i]))) {
-                diffs++;
-            }
-        }
-        return diffs + lengthDiff;
-    }
-
-    function Locale() {
-    }
-
-    var locales = {};
-    var globalLocale;
-
-    function normalizeLocale(key) {
-        return key ? key.toLowerCase().replace('_', '-') : key;
-    }
-
-    // pick the locale from the array
-    // try ['en-au', 'en-gb'] as 'en-au', 'en-gb', 'en', as in move through the list trying each
-    // substring from most specific to least, but move to the next array item if it's a more specific variant than the current root
-    function chooseLocale(names) {
-        var i = 0, j, next, locale, split;
-
-        while (i < names.length) {
-            split = normalizeLocale(names[i]).split('-');
-            j = split.length;
-            next = normalizeLocale(names[i + 1]);
-            next = next ? next.split('-') : null;
-            while (j > 0) {
-                locale = loadLocale(split.slice(0, j).join('-'));
-                if (locale) {
-                    return locale;
-                }
-                if (next && next.length >= j && compareArrays(split, next, true) >= j - 1) {
-                    //the next array item is better than a shallower substring of this one
-                    break;
-                }
-                j--;
-            }
-            i++;
-        }
-        return null;
-    }
-
-    function loadLocale(name) {
-        var oldLocale = null;
-        // TODO: Find a better way to register and load all the locales in Node
-        if (!locales[name] && typeof module !== 'undefined' &&
-                module && module.exports) {
-            try {
-                oldLocale = globalLocale._abbr;
-                require('./locale/' + name);
-                // because defineLocale currently also sets the global locale, we
-                // want to undo that for lazy loaded locales
-                locale_locales__getSetGlobalLocale(oldLocale);
-            } catch (e) { }
-        }
-        return locales[name];
-    }
-
-    // This function will load locale and then set the global locale.  If
-    // no arguments are passed in, it will simply return the current global
-    // locale key.
-    function locale_locales__getSetGlobalLocale (key, values) {
-        var data;
-        if (key) {
-            if (typeof values === 'undefined') {
-                data = locale_locales__getLocale(key);
-            }
-            else {
-                data = defineLocale(key, values);
-            }
-
-            if (data) {
-                // moment.duration._locale = moment._locale = data;
-                globalLocale = data;
-            }
-        }
-
-        return globalLocale._abbr;
-    }
-
-    function defineLocale (name, values) {
-        if (values !== null) {
-            values.abbr = name;
-            locales[name] = locales[name] || new Locale();
-            locales[name].set(values);
-
-            // backwards compat for now: also set the locale
-            locale_locales__getSetGlobalLocale(name);
-
-            return locales[name];
-        } else {
-            // useful for testing
-            delete locales[name];
-            return null;
-        }
-    }
-
-    // returns locale data
-    function locale_locales__getLocale (key) {
-        var locale;
-
-        if (key && key._locale && key._locale._abbr) {
-            key = key._locale._abbr;
-        }
-
-        if (!key) {
-            return globalLocale;
-        }
-
-        if (!isArray(key)) {
-            //short-circuit everything else
-            locale = loadLocale(key);
-            if (locale) {
-                return locale;
-            }
-            key = [key];
-        }
-
-        return chooseLocale(key);
-    }
-
-    var aliases = {};
-
-    function addUnitAlias (unit, shorthand) {
-        var lowerCase = unit.toLowerCase();
-        aliases[lowerCase] = aliases[lowerCase + 's'] = aliases[shorthand] = unit;
-    }
-
-    function normalizeUnits(units) {
-        return typeof units === 'string' ? aliases[units] || aliases[units.toLowerCase()] : undefined;
-    }
-
-    function normalizeObjectUnits(inputObject) {
-        var normalizedInput = {},
-            normalizedProp,
-            prop;
-
-        for (prop in inputObject) {
-            if (hasOwnProp(inputObject, prop)) {
-                normalizedProp = normalizeUnits(prop);
-                if (normalizedProp) {
-                    normalizedInput[normalizedProp] = inputObject[prop];
-                }
-            }
-        }
-
-        return normalizedInput;
-    }
-
-    function makeGetSet (unit, keepTime) {
-        return function (value) {
-            if (value != null) {
-                get_set__set(this, unit, value);
-                utils_hooks__hooks.updateOffset(this, keepTime);
-                return this;
-            } else {
-                return get_set__get(this, unit);
-            }
-        };
-    }
-
-    function get_set__get (mom, unit) {
-        return mom._d['get' + (mom._isUTC ? 'UTC' : '') + unit]();
-    }
-
-    function get_set__set (mom, unit, value) {
-        return mom._d['set' + (mom._isUTC ? 'UTC' : '') + unit](value);
-    }
-
-    // MOMENTS
-
-    function getSet (units, value) {
-        var unit;
-        if (typeof units === 'object') {
-            for (unit in units) {
-                this.set(unit, units[unit]);
-            }
-        } else {
-            units = normalizeUnits(units);
-            if (typeof this[units] === 'function') {
-                return this[units](value);
-            }
-        }
-        return this;
-    }
-
-    function zeroFill(number, targetLength, forceSign) {
-        var absNumber = '' + Math.abs(number),
-            zerosToFill = targetLength - absNumber.length,
-            sign = number >= 0;
-        return (sign ? (forceSign ? '+' : '') : '-') +
-            Math.pow(10, Math.max(0, zerosToFill)).toString().substr(1) + absNumber;
-    }
-
-    var formattingTokens = /(\[[^\[]*\])|(\\)?(Mo|MM?M?M?|Do|DDDo|DD?D?D?|ddd?d?|do?|w[o|w]?|W[o|W]?|Q|YYYYYY|YYYYY|YYYY|YY|gg(ggg?)?|GG(GGG?)?|e|E|a|A|hh?|HH?|mm?|ss?|S{1,9}|x|X|zz?|ZZ?|.)/g;
-
-    var localFormattingTokens = /(\[[^\[]*\])|(\\)?(LTS|LT|LL?L?L?|l{1,4})/g;
-
-    var formatFunctions = {};
-
-    var formatTokenFunctions = {};
-
-    // token:    'M'
-    // padded:   ['MM', 2]
-    // ordinal:  'Mo'
-    // callback: function () { this.month() + 1 }
-    function addFormatToken (token, padded, ordinal, callback) {
-        var func = callback;
-        if (typeof callback === 'string') {
-            func = function () {
-                return this[callback]();
-            };
-        }
-        if (token) {
-            formatTokenFunctions[token] = func;
-        }
-        if (padded) {
-            formatTokenFunctions[padded[0]] = function () {
-                return zeroFill(func.apply(this, arguments), padded[1], padded[2]);
-            };
-        }
-        if (ordinal) {
-            formatTokenFunctions[ordinal] = function () {
-                return this.localeData().ordinal(func.apply(this, arguments), token);
-            };
-        }
-    }
-
-    function removeFormattingTokens(input) {
-        if (input.match(/\[[\s\S]/)) {
-            return input.replace(/^\[|\]$/g, '');
-        }
-        return input.replace(/\\/g, '');
-    }
-
-    function makeFormatFunction(format) {
-        var array = format.match(formattingTokens), i, length;
-
-        for (i = 0, length = array.length; i < length; i++) {
-            if (formatTokenFunctions[array[i]]) {
-                array[i] = formatTokenFunctions[array[i]];
-            } else {
-                array[i] = removeFormattingTokens(array[i]);
-            }
-        }
-
-        return function (mom) {
-            var output = '';
-            for (i = 0; i < length; i++) {
-                output += array[i] instanceof Function ? array[i].call(mom, format) : array[i];
-            }
-            return output;
-        };
-    }
-
-    // format date using native date object
-    function formatMoment(m, format) {
-        if (!m.isValid()) {
-            return m.localeData().invalidDate();
-        }
-
-        format = expandFormat(format, m.localeData());
-        formatFunctions[format] = formatFunctions[format] || makeFormatFunction(format);
-
-        return formatFunctions[format](m);
-    }
-
-    function expandFormat(format, locale) {
-        var i = 5;
-
-        function replaceLongDateFormatTokens(input) {
-            return locale.longDateFormat(input) || input;
-        }
-
-        localFormattingTokens.lastIndex = 0;
-        while (i >= 0 && localFormattingTokens.test(format)) {
-            format = format.replace(localFormattingTokens, replaceLongDateFormatTokens);
-            localFormattingTokens.lastIndex = 0;
-            i -= 1;
-        }
-
-        return format;
-    }
-
-    var match1         = /\d/;            //       0 - 9
-    var match2         = /\d\d/;          //      00 - 99
-    var match3         = /\d{3}/;         //     000 - 999
-    var match4         = /\d{4}/;         //    0000 - 9999
-    var match6         = /[+-]?\d{6}/;    // -999999 - 999999
-    var match1to2      = /\d\d?/;         //       0 - 99
-    var match1to3      = /\d{1,3}/;       //       0 - 999
-    var match1to4      = /\d{1,4}/;       //       0 - 9999
-    var match1to6      = /[+-]?\d{1,6}/;  // -999999 - 999999
-
-    var matchUnsigned  = /\d+/;           //       0 - inf
-    var matchSigned    = /[+-]?\d+/;      //    -inf - inf
-
-    var matchOffset    = /Z|[+-]\d\d:?\d\d/gi; // +00:00 -00:00 +0000 -0000 or Z
-
-    var matchTimestamp = /[+-]?\d+(\.\d{1,3})?/; // 123456789 123456789.123
-
-    // any word (or two) characters or numbers including two/three word month in arabic.
-    var matchWord = /[0-9]*['a-z\u00A0-\u05FF\u0700-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+|[\u0600-\u06FF\/]+(\s*?[\u0600-\u06FF]+){1,2}/i;
-
-    var regexes = {};
-
-    function isFunction (sth) {
-        // https://github.com/moment/moment/issues/2325
-        return typeof sth === 'function' &&
-            Object.prototype.toString.call(sth) === '[object Function]';
-    }
-
-
-    function addRegexToken (token, regex, strictRegex) {
-        regexes[token] = isFunction(regex) ? regex : function (isStrict) {
-            return (isStrict && strictRegex) ? strictRegex : regex;
-        };
-    }
-
-    function getParseRegexForToken (token, config) {
-        if (!hasOwnProp(regexes, token)) {
-            return new RegExp(unescapeFormat(token));
-        }
-
-        return regexes[token](config._strict, config._locale);
-    }
-
-    // Code from http://stackoverflow.com/questions/3561493/is-there-a-regexp-escape-function-in-javascript
-    function unescapeFormat(s) {
-        return s.replace('\\', '').replace(/\\(\[)|\\(\])|\[([^\]\[]*)\]|\\(.)/g, function (matched, p1, p2, p3, p4) {
-            return p1 || p2 || p3 || p4;
-        }).replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-    }
-
-    var tokens = {};
-
-    function addParseToken (token, callback) {
-        var i, func = callback;
-        if (typeof token === 'string') {
-            token = [token];
-        }
-        if (typeof callback === 'number') {
-            func = function (input, array) {
-                array[callback] = toInt(input);
-            };
-        }
-        for (i = 0; i < token.length; i++) {
-            tokens[token[i]] = func;
-        }
-    }
-
-    function addWeekParseToken (token, callback) {
-        addParseToken(token, function (input, array, config, token) {
-            config._w = config._w || {};
-            callback(input, config._w, config, token);
-        });
-    }
-
-    function addTimeToArrayFromToken(token, input, config) {
-        if (input != null && hasOwnProp(tokens, token)) {
-            tokens[token](input, config._a, config, token);
-        }
-    }
-
-    var YEAR = 0;
-    var MONTH = 1;
-    var DATE = 2;
-    var HOUR = 3;
-    var MINUTE = 4;
-    var SECOND = 5;
-    var MILLISECOND = 6;
-
-    function daysInMonth(year, month) {
-        return new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
-    }
-
-    // FORMATTING
-
-    addFormatToken('M', ['MM', 2], 'Mo', function () {
-        return this.month() + 1;
-    });
-
-    addFormatToken('MMM', 0, 0, function (format) {
-        return this.localeData().monthsShort(this, format);
-    });
-
-    addFormatToken('MMMM', 0, 0, function (format) {
-        return this.localeData().months(this, format);
-    });
-
-    // ALIASES
-
-    addUnitAlias('month', 'M');
-
-    // PARSING
-
-    addRegexToken('M',    match1to2);
-    addRegexToken('MM',   match1to2, match2);
-    addRegexToken('MMM',  matchWord);
-    addRegexToken('MMMM', matchWord);
-
-    addParseToken(['M', 'MM'], function (input, array) {
-        array[MONTH] = toInt(input) - 1;
-    });
-
-    addParseToken(['MMM', 'MMMM'], function (input, array, config, token) {
-        var month = config._locale.monthsParse(input, token, config._strict);
-        // if we didn't find a month name, mark the date as invalid.
-        if (month != null) {
-            array[MONTH] = month;
-        } else {
-            getParsingFlags(config).invalidMonth = input;
-        }
-    });
-
-    // LOCALES
-
-    var defaultLocaleMonths = 'January_February_March_April_May_June_July_August_September_October_November_December'.split('_');
-    function localeMonths (m) {
-        return this._months[m.month()];
-    }
-
-    var defaultLocaleMonthsShort = 'Jan_Feb_Mar_Apr_May_Jun_Jul_Aug_Sep_Oct_Nov_Dec'.split('_');
-    function localeMonthsShort (m) {
-        return this._monthsShort[m.month()];
-    }
-
-    function localeMonthsParse (monthName, format, strict) {
-        var i, mom, regex;
-
-        if (!this._monthsParse) {
-            this._monthsParse = [];
-            this._longMonthsParse = [];
-            this._shortMonthsParse = [];
-        }
-
-        for (i = 0; i < 12; i++) {
-            // make the regex if we don't have it already
-            mom = create_utc__createUTC([2000, i]);
-            if (strict && !this._longMonthsParse[i]) {
-                this._longMonthsParse[i] = new RegExp('^' + this.months(mom, '').replace('.', '') + '$', 'i');
-                this._shortMonthsParse[i] = new RegExp('^' + this.monthsShort(mom, '').replace('.', '') + '$', 'i');
-            }
-            if (!strict && !this._monthsParse[i]) {
-                regex = '^' + this.months(mom, '') + '|^' + this.monthsShort(mom, '');
-                this._monthsParse[i] = new RegExp(regex.replace('.', ''), 'i');
-            }
-            // test the regex
-            if (strict && format === 'MMMM' && this._longMonthsParse[i].test(monthName)) {
-                return i;
-            } else if (strict && format === 'MMM' && this._shortMonthsParse[i].test(monthName)) {
-                return i;
-            } else if (!strict && this._monthsParse[i].test(monthName)) {
-                return i;
-            }
-        }
-    }
-
-    // MOMENTS
-
-    function setMonth (mom, value) {
-        var dayOfMonth;
-
-        // TODO: Move this out of here!
-        if (typeof value === 'string') {
-            value = mom.localeData().monthsParse(value);
-            // TODO: Another silent failure?
-            if (typeof value !== 'number') {
-                return mom;
-            }
-        }
-
-        dayOfMonth = Math.min(mom.date(), daysInMonth(mom.year(), value));
-        mom._d['set' + (mom._isUTC ? 'UTC' : '') + 'Month'](value, dayOfMonth);
-        return mom;
-    }
-
-    function getSetMonth (value) {
-        if (value != null) {
-            setMonth(this, value);
-            utils_hooks__hooks.updateOffset(this, true);
-            return this;
-        } else {
-            return get_set__get(this, 'Month');
-        }
-    }
-
-    function getDaysInMonth () {
-        return daysInMonth(this.year(), this.month());
-    }
-
-    function checkOverflow (m) {
-        var overflow;
-        var a = m._a;
-
-        if (a && getParsingFlags(m).overflow === -2) {
-            overflow =
-                a[MONTH]       < 0 || a[MONTH]       > 11  ? MONTH :
-                a[DATE]        < 1 || a[DATE]        > daysInMonth(a[YEAR], a[MONTH]) ? DATE :
-                a[HOUR]        < 0 || a[HOUR]        > 24 || (a[HOUR] === 24 && (a[MINUTE] !== 0 || a[SECOND] !== 0 || a[MILLISECOND] !== 0)) ? HOUR :
-                a[MINUTE]      < 0 || a[MINUTE]      > 59  ? MINUTE :
-                a[SECOND]      < 0 || a[SECOND]      > 59  ? SECOND :
-                a[MILLISECOND] < 0 || a[MILLISECOND] > 999 ? MILLISECOND :
-                -1;
-
-            if (getParsingFlags(m)._overflowDayOfYear && (overflow < YEAR || overflow > DATE)) {
-                overflow = DATE;
-            }
-
-            getParsingFlags(m).overflow = overflow;
-        }
-
-        return m;
-    }
-
-    function warn(msg) {
-        if (utils_hooks__hooks.suppressDeprecationWarnings === false && typeof console !== 'undefined' && console.warn) {
-            console.warn('Deprecation warning: ' + msg);
-        }
-    }
-
-    function deprecate(msg, fn) {
-        var firstTime = true;
-
-        return extend(function () {
-            if (firstTime) {
-                warn(msg + '\n' + (new Error()).stack);
-                firstTime = false;
-            }
-            return fn.apply(this, arguments);
-        }, fn);
-    }
-
-    var deprecations = {};
-
-    function deprecateSimple(name, msg) {
-        if (!deprecations[name]) {
-            warn(msg);
-            deprecations[name] = true;
-        }
-    }
-
-    utils_hooks__hooks.suppressDeprecationWarnings = false;
-
-    var from_string__isoRegex = /^\s*(?:[+-]\d{6}|\d{4})-(?:(\d\d-\d\d)|(W\d\d$)|(W\d\d-\d)|(\d\d\d))((T| )(\d\d(:\d\d(:\d\d(\.\d+)?)?)?)?([\+\-]\d\d(?::?\d\d)?|\s*Z)?)?$/;
-
-    var isoDates = [
-        ['YYYYYY-MM-DD', /[+-]\d{6}-\d{2}-\d{2}/],
-        ['YYYY-MM-DD', /\d{4}-\d{2}-\d{2}/],
-        ['GGGG-[W]WW-E', /\d{4}-W\d{2}-\d/],
-        ['GGGG-[W]WW', /\d{4}-W\d{2}/],
-        ['YYYY-DDD', /\d{4}-\d{3}/]
-    ];
-
-    // iso time formats and regexes
-    var isoTimes = [
-        ['HH:mm:ss.SSSS', /(T| )\d\d:\d\d:\d\d\.\d+/],
-        ['HH:mm:ss', /(T| )\d\d:\d\d:\d\d/],
-        ['HH:mm', /(T| )\d\d:\d\d/],
-        ['HH', /(T| )\d\d/]
-    ];
-
-    var aspNetJsonRegex = /^\/?Date\((\-?\d+)/i;
-
-    // date from iso format
-    function configFromISO(config) {
-        var i, l,
-            string = config._i,
-            match = from_string__isoRegex.exec(string);
-
-        if (match) {
-            getParsingFlags(config).iso = true;
-            for (i = 0, l = isoDates.length; i < l; i++) {
-                if (isoDates[i][1].exec(string)) {
-                    config._f = isoDates[i][0];
-                    break;
-                }
-            }
-            for (i = 0, l = isoTimes.length; i < l; i++) {
-                if (isoTimes[i][1].exec(string)) {
-                    // match[6] should be 'T' or space
-                    config._f += (match[6] || ' ') + isoTimes[i][0];
-                    break;
-                }
-            }
-            if (string.match(matchOffset)) {
-                config._f += 'Z';
-            }
-            configFromStringAndFormat(config);
-        } else {
-            config._isValid = false;
-        }
-    }
-
-    // date from iso format or fallback
-    function configFromString(config) {
-        var matched = aspNetJsonRegex.exec(config._i);
-
-        if (matched !== null) {
-            config._d = new Date(+matched[1]);
-            return;
-        }
-
-        configFromISO(config);
-        if (config._isValid === false) {
-            delete config._isValid;
-            utils_hooks__hooks.createFromInputFallback(config);
-        }
-    }
-
-    utils_hooks__hooks.createFromInputFallback = deprecate(
-        'moment construction falls back to js Date. This is ' +
-        'discouraged and will be removed in upcoming major ' +
-        'release. Please refer to ' +
-        'https://github.com/moment/moment/issues/1407 for more info.',
-        function (config) {
-            config._d = new Date(config._i + (config._useUTC ? ' UTC' : ''));
-        }
-    );
-
-    function createDate (y, m, d, h, M, s, ms) {
-        //can't just apply() to create a date:
-        //http://stackoverflow.com/questions/181348/instantiating-a-javascript-object-by-calling-prototype-constructor-apply
-        var date = new Date(y, m, d, h, M, s, ms);
-
-        //the date constructor doesn't accept years < 1970
-        if (y < 1970) {
-            date.setFullYear(y);
-        }
-        return date;
-    }
-
-    function createUTCDate (y) {
-        var date = new Date(Date.UTC.apply(null, arguments));
-        if (y < 1970) {
-            date.setUTCFullYear(y);
-        }
-        return date;
-    }
-
-    addFormatToken(0, ['YY', 2], 0, function () {
-        return this.year() % 100;
-    });
-
-    addFormatToken(0, ['YYYY',   4],       0, 'year');
-    addFormatToken(0, ['YYYYY',  5],       0, 'year');
-    addFormatToken(0, ['YYYYYY', 6, true], 0, 'year');
-
-    // ALIASES
-
-    addUnitAlias('year', 'y');
-
-    // PARSING
-
-    addRegexToken('Y',      matchSigned);
-    addRegexToken('YY',     match1to2, match2);
-    addRegexToken('YYYY',   match1to4, match4);
-    addRegexToken('YYYYY',  match1to6, match6);
-    addRegexToken('YYYYYY', match1to6, match6);
-
-    addParseToken(['YYYYY', 'YYYYYY'], YEAR);
-    addParseToken('YYYY', function (input, array) {
-        array[YEAR] = input.length === 2 ? utils_hooks__hooks.parseTwoDigitYear(input) : toInt(input);
-    });
-    addParseToken('YY', function (input, array) {
-        array[YEAR] = utils_hooks__hooks.parseTwoDigitYear(input);
-    });
-
-    // HELPERS
-
-    function daysInYear(year) {
-        return isLeapYear(year) ? 366 : 365;
-    }
-
-    function isLeapYear(year) {
-        return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
-    }
-
-    // HOOKS
-
-    utils_hooks__hooks.parseTwoDigitYear = function (input) {
-        return toInt(input) + (toInt(input) > 68 ? 1900 : 2000);
-    };
-
-    // MOMENTS
-
-    var getSetYear = makeGetSet('FullYear', false);
-
-    function getIsLeapYear () {
-        return isLeapYear(this.year());
-    }
-
-    addFormatToken('w', ['ww', 2], 'wo', 'week');
-    addFormatToken('W', ['WW', 2], 'Wo', 'isoWeek');
-
-    // ALIASES
-
-    addUnitAlias('week', 'w');
-    addUnitAlias('isoWeek', 'W');
-
-    // PARSING
-
-    addRegexToken('w',  match1to2);
-    addRegexToken('ww', match1to2, match2);
-    addRegexToken('W',  match1to2);
-    addRegexToken('WW', match1to2, match2);
-
-    addWeekParseToken(['w', 'ww', 'W', 'WW'], function (input, week, config, token) {
-        week[token.substr(0, 1)] = toInt(input);
-    });
-
-    // HELPERS
-
-    // firstDayOfWeek       0 = sun, 6 = sat
-    //                      the day of the week that starts the week
-    //                      (usually sunday or monday)
-    // firstDayOfWeekOfYear 0 = sun, 6 = sat
-    //                      the first week is the week that contains the first
-    //                      of this day of the week
-    //                      (eg. ISO weeks use thursday (4))
-    function weekOfYear(mom, firstDayOfWeek, firstDayOfWeekOfYear) {
-        var end = firstDayOfWeekOfYear - firstDayOfWeek,
-            daysToDayOfWeek = firstDayOfWeekOfYear - mom.day(),
-            adjustedMoment;
-
-
-        if (daysToDayOfWeek > end) {
-            daysToDayOfWeek -= 7;
-        }
-
-        if (daysToDayOfWeek < end - 7) {
-            daysToDayOfWeek += 7;
-        }
-
-        adjustedMoment = local__createLocal(mom).add(daysToDayOfWeek, 'd');
-        return {
-            week: Math.ceil(adjustedMoment.dayOfYear() / 7),
-            year: adjustedMoment.year()
-        };
-    }
-
-    // LOCALES
-
-    function localeWeek (mom) {
-        return weekOfYear(mom, this._week.dow, this._week.doy).week;
-    }
-
-    var defaultLocaleWeek = {
-        dow : 0, // Sunday is the first day of the week.
-        doy : 6  // The week that contains Jan 1st is the first week of the year.
-    };
-
-    function localeFirstDayOfWeek () {
-        return this._week.dow;
-    }
-
-    function localeFirstDayOfYear () {
-        return this._week.doy;
-    }
-
-    // MOMENTS
-
-    function getSetWeek (input) {
-        var week = this.localeData().week(this);
-        return input == null ? week : this.add((input - week) * 7, 'd');
-    }
-
-    function getSetISOWeek (input) {
-        var week = weekOfYear(this, 1, 4).week;
-        return input == null ? week : this.add((input - week) * 7, 'd');
-    }
-
-    addFormatToken('DDD', ['DDDD', 3], 'DDDo', 'dayOfYear');
-
-    // ALIASES
-
-    addUnitAlias('dayOfYear', 'DDD');
-
-    // PARSING
-
-    addRegexToken('DDD',  match1to3);
-    addRegexToken('DDDD', match3);
-    addParseToken(['DDD', 'DDDD'], function (input, array, config) {
-        config._dayOfYear = toInt(input);
-    });
-
-    // HELPERS
-
-    //http://en.wikipedia.org/wiki/ISO_week_date#Calculating_a_date_given_the_year.2C_week_number_and_weekday
-    function dayOfYearFromWeeks(year, week, weekday, firstDayOfWeekOfYear, firstDayOfWeek) {
-        var week1Jan = 6 + firstDayOfWeek - firstDayOfWeekOfYear, janX = createUTCDate(year, 0, 1 + week1Jan), d = janX.getUTCDay(), dayOfYear;
-        if (d < firstDayOfWeek) {
-            d += 7;
-        }
-
-        weekday = weekday != null ? 1 * weekday : firstDayOfWeek;
-
-        dayOfYear = 1 + week1Jan + 7 * (week - 1) - d + weekday;
-
-        return {
-            year: dayOfYear > 0 ? year : year - 1,
-            dayOfYear: dayOfYear > 0 ?  dayOfYear : daysInYear(year - 1) + dayOfYear
-        };
-    }
-
-    // MOMENTS
-
-    function getSetDayOfYear (input) {
-        var dayOfYear = Math.round((this.clone().startOf('day') - this.clone().startOf('year')) / 864e5) + 1;
-        return input == null ? dayOfYear : this.add((input - dayOfYear), 'd');
-    }
-
-    // Pick the first defined of two or three arguments.
-    function defaults(a, b, c) {
-        if (a != null) {
-            return a;
-        }
-        if (b != null) {
-            return b;
-        }
-        return c;
-    }
-
-    function currentDateArray(config) {
-        var now = new Date();
-        if (config._useUTC) {
-            return [now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()];
-        }
-        return [now.getFullYear(), now.getMonth(), now.getDate()];
-    }
-
-    // convert an array to a date.
-    // the array should mirror the parameters below
-    // note: all values past the year are optional and will default to the lowest possible value.
-    // [year, month, day , hour, minute, second, millisecond]
-    function configFromArray (config) {
-        var i, date, input = [], currentDate, yearToUse;
-
-        if (config._d) {
-            return;
-        }
-
-        currentDate = currentDateArray(config);
-
-        //compute day of the year from weeks and weekdays
-        if (config._w && config._a[DATE] == null && config._a[MONTH] == null) {
-            dayOfYearFromWeekInfo(config);
-        }
-
-        //if the day of the year is set, figure out what it is
-        if (config._dayOfYear) {
-            yearToUse = defaults(config._a[YEAR], currentDate[YEAR]);
-
-            if (config._dayOfYear > daysInYear(yearToUse)) {
-                getParsingFlags(config)._overflowDayOfYear = true;
-            }
-
-            date = createUTCDate(yearToUse, 0, config._dayOfYear);
-            config._a[MONTH] = date.getUTCMonth();
-            config._a[DATE] = date.getUTCDate();
-        }
-
-        // Default to current date.
-        // * if no year, month, day of month are given, default to today
-        // * if day of month is given, default month and year
-        // * if month is given, default only year
-        // * if year is given, don't default anything
-        for (i = 0; i < 3 && config._a[i] == null; ++i) {
-            config._a[i] = input[i] = currentDate[i];
-        }
-
-        // Zero out whatever was not defaulted, including time
-        for (; i < 7; i++) {
-            config._a[i] = input[i] = (config._a[i] == null) ? (i === 2 ? 1 : 0) : config._a[i];
-        }
-
-        // Check for 24:00:00.000
-        if (config._a[HOUR] === 24 &&
-                config._a[MINUTE] === 0 &&
-                config._a[SECOND] === 0 &&
-                config._a[MILLISECOND] === 0) {
-            config._nextDay = true;
-            config._a[HOUR] = 0;
-        }
-
-        config._d = (config._useUTC ? createUTCDate : createDate).apply(null, input);
-        // Apply timezone offset from input. The actual utcOffset can be changed
-        // with parseZone.
-        if (config._tzm != null) {
-            config._d.setUTCMinutes(config._d.getUTCMinutes() - config._tzm);
-        }
-
-        if (config._nextDay) {
-            config._a[HOUR] = 24;
-        }
-    }
-
-    function dayOfYearFromWeekInfo(config) {
-        var w, weekYear, week, weekday, dow, doy, temp;
-
-        w = config._w;
-        if (w.GG != null || w.W != null || w.E != null) {
-            dow = 1;
-            doy = 4;
-
-            // TODO: We need to take the current isoWeekYear, but that depends on
-            // how we interpret now (local, utc, fixed offset). So create
-            // a now version of current config (take local/utc/offset flags, and
-            // create now).
-            weekYear = defaults(w.GG, config._a[YEAR], weekOfYear(local__createLocal(), 1, 4).year);
-            week = defaults(w.W, 1);
-            weekday = defaults(w.E, 1);
-        } else {
-            dow = config._locale._week.dow;
-            doy = config._locale._week.doy;
-
-            weekYear = defaults(w.gg, config._a[YEAR], weekOfYear(local__createLocal(), dow, doy).year);
-            week = defaults(w.w, 1);
-
-            if (w.d != null) {
-                // weekday -- low day numbers are considered next week
-                weekday = w.d;
-                if (weekday < dow) {
-                    ++week;
-                }
-            } else if (w.e != null) {
-                // local weekday -- counting starts from begining of week
-                weekday = w.e + dow;
-            } else {
-                // default to begining of week
-                weekday = dow;
-            }
-        }
-        temp = dayOfYearFromWeeks(weekYear, week, weekday, doy, dow);
-
-        config._a[YEAR] = temp.year;
-        config._dayOfYear = temp.dayOfYear;
-    }
-
-    utils_hooks__hooks.ISO_8601 = function () {};
-
-    // date from string and format string
-    function configFromStringAndFormat(config) {
-        // TODO: Move this to another part of the creation flow to prevent circular deps
-        if (config._f === utils_hooks__hooks.ISO_8601) {
-            configFromISO(config);
-            return;
-        }
-
-        config._a = [];
-        getParsingFlags(config).empty = true;
-
-        // This array is used to make a Date, either with `new Date` or `Date.UTC`
-        var string = '' + config._i,
-            i, parsedInput, tokens, token, skipped,
-            stringLength = string.length,
-            totalParsedInputLength = 0;
-
-        tokens = expandFormat(config._f, config._locale).match(formattingTokens) || [];
-
-        for (i = 0; i < tokens.length; i++) {
-            token = tokens[i];
-            parsedInput = (string.match(getParseRegexForToken(token, config)) || [])[0];
-            if (parsedInput) {
-                skipped = string.substr(0, string.indexOf(parsedInput));
-                if (skipped.length > 0) {
-                    getParsingFlags(config).unusedInput.push(skipped);
-                }
-                string = string.slice(string.indexOf(parsedInput) + parsedInput.length);
-                totalParsedInputLength += parsedInput.length;
-            }
-            // don't parse if it's not a known token
-            if (formatTokenFunctions[token]) {
-                if (parsedInput) {
-                    getParsingFlags(config).empty = false;
-                }
-                else {
-                    getParsingFlags(config).unusedTokens.push(token);
-                }
-                addTimeToArrayFromToken(token, parsedInput, config);
-            }
-            else if (config._strict && !parsedInput) {
-                getParsingFlags(config).unusedTokens.push(token);
-            }
-        }
-
-        // add remaining unparsed input length to the string
-        getParsingFlags(config).charsLeftOver = stringLength - totalParsedInputLength;
-        if (string.length > 0) {
-            getParsingFlags(config).unusedInput.push(string);
-        }
-
-        // clear _12h flag if hour is <= 12
-        if (getParsingFlags(config).bigHour === true &&
-                config._a[HOUR] <= 12 &&
-                config._a[HOUR] > 0) {
-            getParsingFlags(config).bigHour = undefined;
-        }
-        // handle meridiem
-        config._a[HOUR] = meridiemFixWrap(config._locale, config._a[HOUR], config._meridiem);
-
-        configFromArray(config);
-        checkOverflow(config);
-    }
-
-
-    function meridiemFixWrap (locale, hour, meridiem) {
-        var isPm;
-
-        if (meridiem == null) {
-            // nothing to do
-            return hour;
-        }
-        if (locale.meridiemHour != null) {
-            return locale.meridiemHour(hour, meridiem);
-        } else if (locale.isPM != null) {
-            // Fallback
-            isPm = locale.isPM(meridiem);
-            if (isPm && hour < 12) {
-                hour += 12;
-            }
-            if (!isPm && hour === 12) {
-                hour = 0;
-            }
-            return hour;
-        } else {
-            // this is not supposed to happen
-            return hour;
-        }
-    }
-
-    function configFromStringAndArray(config) {
-        var tempConfig,
-            bestMoment,
-
-            scoreToBeat,
-            i,
-            currentScore;
-
-        if (config._f.length === 0) {
-            getParsingFlags(config).invalidFormat = true;
-            config._d = new Date(NaN);
-            return;
-        }
-
-        for (i = 0; i < config._f.length; i++) {
-            currentScore = 0;
-            tempConfig = copyConfig({}, config);
-            if (config._useUTC != null) {
-                tempConfig._useUTC = config._useUTC;
-            }
-            tempConfig._f = config._f[i];
-            configFromStringAndFormat(tempConfig);
-
-            if (!valid__isValid(tempConfig)) {
-                continue;
-            }
-
-            // if there is any input that was not parsed add a penalty for that format
-            currentScore += getParsingFlags(tempConfig).charsLeftOver;
-
-            //or tokens
-            currentScore += getParsingFlags(tempConfig).unusedTokens.length * 10;
-
-            getParsingFlags(tempConfig).score = currentScore;
-
-            if (scoreToBeat == null || currentScore < scoreToBeat) {
-                scoreToBeat = currentScore;
-                bestMoment = tempConfig;
-            }
-        }
-
-        extend(config, bestMoment || tempConfig);
-    }
-
-    function configFromObject(config) {
-        if (config._d) {
-            return;
-        }
-
-        var i = normalizeObjectUnits(config._i);
-        config._a = [i.year, i.month, i.day || i.date, i.hour, i.minute, i.second, i.millisecond];
-
-        configFromArray(config);
-    }
-
-    function createFromConfig (config) {
-        var res = new Moment(checkOverflow(prepareConfig(config)));
-        if (res._nextDay) {
-            // Adding is smart enough around DST
-            res.add(1, 'd');
-            res._nextDay = undefined;
-        }
-
-        return res;
-    }
-
-    function prepareConfig (config) {
-        var input = config._i,
-            format = config._f;
-
-        config._locale = config._locale || locale_locales__getLocale(config._l);
-
-        if (input === null || (format === undefined && input === '')) {
-            return valid__createInvalid({nullInput: true});
-        }
-
-        if (typeof input === 'string') {
-            config._i = input = config._locale.preparse(input);
-        }
-
-        if (isMoment(input)) {
-            return new Moment(checkOverflow(input));
-        } else if (isArray(format)) {
-            configFromStringAndArray(config);
-        } else if (format) {
-            configFromStringAndFormat(config);
-        } else if (isDate(input)) {
-            config._d = input;
-        } else {
-            configFromInput(config);
-        }
-
-        return config;
-    }
-
-    function configFromInput(config) {
-        var input = config._i;
-        if (input === undefined) {
-            config._d = new Date();
-        } else if (isDate(input)) {
-            config._d = new Date(+input);
-        } else if (typeof input === 'string') {
-            configFromString(config);
-        } else if (isArray(input)) {
-            config._a = map(input.slice(0), function (obj) {
-                return parseInt(obj, 10);
-            });
-            configFromArray(config);
-        } else if (typeof(input) === 'object') {
-            configFromObject(config);
-        } else if (typeof(input) === 'number') {
-            // from milliseconds
-            config._d = new Date(input);
-        } else {
-            utils_hooks__hooks.createFromInputFallback(config);
-        }
-    }
-
-    function createLocalOrUTC (input, format, locale, strict, isUTC) {
-        var c = {};
-
-        if (typeof(locale) === 'boolean') {
-            strict = locale;
-            locale = undefined;
-        }
-        // object construction must be done this way.
-        // https://github.com/moment/moment/issues/1423
-        c._isAMomentObject = true;
-        c._useUTC = c._isUTC = isUTC;
-        c._l = locale;
-        c._i = input;
-        c._f = format;
-        c._strict = strict;
-
-        return createFromConfig(c);
-    }
-
-    function local__createLocal (input, format, locale, strict) {
-        return createLocalOrUTC(input, format, locale, strict, false);
-    }
-
-    var prototypeMin = deprecate(
-         'moment().min is deprecated, use moment.min instead. https://github.com/moment/moment/issues/1548',
-         function () {
-             var other = local__createLocal.apply(null, arguments);
-             return other < this ? this : other;
-         }
-     );
-
-    var prototypeMax = deprecate(
-        'moment().max is deprecated, use moment.max instead. https://github.com/moment/moment/issues/1548',
-        function () {
-            var other = local__createLocal.apply(null, arguments);
-            return other > this ? this : other;
-        }
-    );
-
-    // Pick a moment m from moments so that m[fn](other) is true for all
-    // other. This relies on the function fn to be transitive.
-    //
-    // moments should either be an array of moment objects or an array, whose
-    // first element is an array of moment objects.
-    function pickBy(fn, moments) {
-        var res, i;
-        if (moments.length === 1 && isArray(moments[0])) {
-            moments = moments[0];
-        }
-        if (!moments.length) {
-            return local__createLocal();
-        }
-        res = moments[0];
-        for (i = 1; i < moments.length; ++i) {
-            if (!moments[i].isValid() || moments[i][fn](res)) {
-                res = moments[i];
-            }
-        }
-        return res;
-    }
-
-    // TODO: Use [].sort instead?
-    function min () {
-        var args = [].slice.call(arguments, 0);
-
-        return pickBy('isBefore', args);
-    }
-
-    function max () {
-        var args = [].slice.call(arguments, 0);
-
-        return pickBy('isAfter', args);
-    }
-
-    function Duration (duration) {
-        var normalizedInput = normalizeObjectUnits(duration),
-            years = normalizedInput.year || 0,
-            quarters = normalizedInput.quarter || 0,
-            months = normalizedInput.month || 0,
-            weeks = normalizedInput.week || 0,
-            days = normalizedInput.day || 0,
-            hours = normalizedInput.hour || 0,
-            minutes = normalizedInput.minute || 0,
-            seconds = normalizedInput.second || 0,
-            milliseconds = normalizedInput.millisecond || 0;
-
-        // representation for dateAddRemove
-        this._milliseconds = +milliseconds +
-            seconds * 1e3 + // 1000
-            minutes * 6e4 + // 1000 * 60
-            hours * 36e5; // 1000 * 60 * 60
-        // Because of dateAddRemove treats 24 hours as different from a
-        // day when working around DST, we need to store them separately
-        this._days = +days +
-            weeks * 7;
-        // It is impossible translate months into days without knowing
-        // which months you are are talking about, so we have to store
-        // it separately.
-        this._months = +months +
-            quarters * 3 +
-            years * 12;
-
-        this._data = {};
-
-        this._locale = locale_locales__getLocale();
-
-        this._bubble();
-    }
-
-    function isDuration (obj) {
-        return obj instanceof Duration;
-    }
-
-    function offset (token, separator) {
-        addFormatToken(token, 0, 0, function () {
-            var offset = this.utcOffset();
-            var sign = '+';
-            if (offset < 0) {
-                offset = -offset;
-                sign = '-';
-            }
-            return sign + zeroFill(~~(offset / 60), 2) + separator + zeroFill(~~(offset) % 60, 2);
-        });
-    }
-
-    offset('Z', ':');
-    offset('ZZ', '');
-
-    // PARSING
-
-    addRegexToken('Z',  matchOffset);
-    addRegexToken('ZZ', matchOffset);
-    addParseToken(['Z', 'ZZ'], function (input, array, config) {
-        config._useUTC = true;
-        config._tzm = offsetFromString(input);
-    });
-
-    // HELPERS
-
-    // timezone chunker
-    // '+10:00' > ['10',  '00']
-    // '-1530'  > ['-15', '30']
-    var chunkOffset = /([\+\-]|\d\d)/gi;
-
-    function offsetFromString(string) {
-        var matches = ((string || '').match(matchOffset) || []);
-        var chunk   = matches[matches.length - 1] || [];
-        var parts   = (chunk + '').match(chunkOffset) || ['-', 0, 0];
-        var minutes = +(parts[1] * 60) + toInt(parts[2]);
-
-        return parts[0] === '+' ? minutes : -minutes;
-    }
-
-    // Return a moment from input, that is local/utc/zone equivalent to model.
-    function cloneWithOffset(input, model) {
-        var res, diff;
-        if (model._isUTC) {
-            res = model.clone();
-            diff = (isMoment(input) || isDate(input) ? +input : +local__createLocal(input)) - (+res);
-            // Use low-level api, because this fn is low-level api.
-            res._d.setTime(+res._d + diff);
-            utils_hooks__hooks.updateOffset(res, false);
-            return res;
-        } else {
-            return local__createLocal(input).local();
-        }
-    }
-
-    function getDateOffset (m) {
-        // On Firefox.24 Date#getTimezoneOffset returns a floating point.
-        // https://github.com/moment/moment/pull/1871
-        return -Math.round(m._d.getTimezoneOffset() / 15) * 15;
-    }
-
-    // HOOKS
-
-    // This function will be called whenever a moment is mutated.
-    // It is intended to keep the offset in sync with the timezone.
-    utils_hooks__hooks.updateOffset = function () {};
-
-    // MOMENTS
-
-    // keepLocalTime = true means only change the timezone, without
-    // affecting the local hour. So 5:31:26 +0300 --[utcOffset(2, true)]-->
-    // 5:31:26 +0200 It is possible that 5:31:26 doesn't exist with offset
-    // +0200, so we adjust the time as needed, to be valid.
-    //
-    // Keeping the time actually adds/subtracts (one hour)
-    // from the actual represented time. That is why we call updateOffset
-    // a second time. In case it wants us to change the offset again
-    // _changeInProgress == true case, then we have to adjust, because
-    // there is no such time in the given timezone.
-    function getSetOffset (input, keepLocalTime) {
-        var offset = this._offset || 0,
-            localAdjust;
-        if (input != null) {
-            if (typeof input === 'string') {
-                input = offsetFromString(input);
-            }
-            if (Math.abs(input) < 16) {
-                input = input * 60;
-            }
-            if (!this._isUTC && keepLocalTime) {
-                localAdjust = getDateOffset(this);
-            }
-            this._offset = input;
-            this._isUTC = true;
-            if (localAdjust != null) {
-                this.add(localAdjust, 'm');
-            }
-            if (offset !== input) {
-                if (!keepLocalTime || this._changeInProgress) {
-                    add_subtract__addSubtract(this, create__createDuration(input - offset, 'm'), 1, false);
-                } else if (!this._changeInProgress) {
-                    this._changeInProgress = true;
-                    utils_hooks__hooks.updateOffset(this, true);
-                    this._changeInProgress = null;
-                }
-            }
-            return this;
-        } else {
-            return this._isUTC ? offset : getDateOffset(this);
-        }
-    }
-
-    function getSetZone (input, keepLocalTime) {
-        if (input != null) {
-            if (typeof input !== 'string') {
-                input = -input;
-            }
-
-            this.utcOffset(input, keepLocalTime);
-
-            return this;
-        } else {
-            return -this.utcOffset();
-        }
-    }
-
-    function setOffsetToUTC (keepLocalTime) {
-        return this.utcOffset(0, keepLocalTime);
-    }
-
-    function setOffsetToLocal (keepLocalTime) {
-        if (this._isUTC) {
-            this.utcOffset(0, keepLocalTime);
-            this._isUTC = false;
-
-            if (keepLocalTime) {
-                this.subtract(getDateOffset(this), 'm');
-            }
-        }
-        return this;
-    }
-
-    function setOffsetToParsedOffset () {
-        if (this._tzm) {
-            this.utcOffset(this._tzm);
-        } else if (typeof this._i === 'string') {
-            this.utcOffset(offsetFromString(this._i));
-        }
-        return this;
-    }
-
-    function hasAlignedHourOffset (input) {
-        input = input ? local__createLocal(input).utcOffset() : 0;
-
-        return (this.utcOffset() - input) % 60 === 0;
-    }
-
-    function isDaylightSavingTime () {
-        return (
-            this.utcOffset() > this.clone().month(0).utcOffset() ||
-            this.utcOffset() > this.clone().month(5).utcOffset()
-        );
-    }
-
-    function isDaylightSavingTimeShifted () {
-        if (typeof this._isDSTShifted !== 'undefined') {
-            return this._isDSTShifted;
-        }
-
-        var c = {};
-
-        copyConfig(c, this);
-        c = prepareConfig(c);
-
-        if (c._a) {
-            var other = c._isUTC ? create_utc__createUTC(c._a) : local__createLocal(c._a);
-            this._isDSTShifted = this.isValid() &&
-                compareArrays(c._a, other.toArray()) > 0;
-        } else {
-            this._isDSTShifted = false;
-        }
-
-        return this._isDSTShifted;
-    }
-
-    function isLocal () {
-        return !this._isUTC;
-    }
-
-    function isUtcOffset () {
-        return this._isUTC;
-    }
-
-    function isUtc () {
-        return this._isUTC && this._offset === 0;
-    }
-
-    var aspNetRegex = /(\-)?(?:(\d*)\.)?(\d+)\:(\d+)(?:\:(\d+)\.?(\d{3})?)?/;
-
-    // from http://docs.closure-library.googlecode.com/git/closure_goog_date_date.js.source.html
-    // somewhat more in line with 4.4.3.2 2004 spec, but allows decimal anywhere
-    var create__isoRegex = /^(-)?P(?:(?:([0-9,.]*)Y)?(?:([0-9,.]*)M)?(?:([0-9,.]*)D)?(?:T(?:([0-9,.]*)H)?(?:([0-9,.]*)M)?(?:([0-9,.]*)S)?)?|([0-9,.]*)W)$/;
-
-    function create__createDuration (input, key) {
-        var duration = input,
-            // matching against regexp is expensive, do it on demand
-            match = null,
-            sign,
-            ret,
-            diffRes;
-
-        if (isDuration(input)) {
-            duration = {
-                ms : input._milliseconds,
-                d  : input._days,
-                M  : input._months
-            };
-        } else if (typeof input === 'number') {
-            duration = {};
-            if (key) {
-                duration[key] = input;
-            } else {
-                duration.milliseconds = input;
-            }
-        } else if (!!(match = aspNetRegex.exec(input))) {
-            sign = (match[1] === '-') ? -1 : 1;
-            duration = {
-                y  : 0,
-                d  : toInt(match[DATE])        * sign,
-                h  : toInt(match[HOUR])        * sign,
-                m  : toInt(match[MINUTE])      * sign,
-                s  : toInt(match[SECOND])      * sign,
-                ms : toInt(match[MILLISECOND]) * sign
-            };
-        } else if (!!(match = create__isoRegex.exec(input))) {
-            sign = (match[1] === '-') ? -1 : 1;
-            duration = {
-                y : parseIso(match[2], sign),
-                M : parseIso(match[3], sign),
-                d : parseIso(match[4], sign),
-                h : parseIso(match[5], sign),
-                m : parseIso(match[6], sign),
-                s : parseIso(match[7], sign),
-                w : parseIso(match[8], sign)
-            };
-        } else if (duration == null) {// checks for null or undefined
-            duration = {};
-        } else if (typeof duration === 'object' && ('from' in duration || 'to' in duration)) {
-            diffRes = momentsDifference(local__createLocal(duration.from), local__createLocal(duration.to));
-
-            duration = {};
-            duration.ms = diffRes.milliseconds;
-            duration.M = diffRes.months;
-        }
-
-        ret = new Duration(duration);
-
-        if (isDuration(input) && hasOwnProp(input, '_locale')) {
-            ret._locale = input._locale;
-        }
-
-        return ret;
-    }
-
-    create__createDuration.fn = Duration.prototype;
-
-    function parseIso (inp, sign) {
-        // We'd normally use ~~inp for this, but unfortunately it also
-        // converts floats to ints.
-        // inp may be undefined, so careful calling replace on it.
-        var res = inp && parseFloat(inp.replace(',', '.'));
-        // apply sign while we're at it
-        return (isNaN(res) ? 0 : res) * sign;
-    }
-
-    function positiveMomentsDifference(base, other) {
-        var res = {milliseconds: 0, months: 0};
-
-        res.months = other.month() - base.month() +
-            (other.year() - base.year()) * 12;
-        if (base.clone().add(res.months, 'M').isAfter(other)) {
-            --res.months;
-        }
-
-        res.milliseconds = +other - +(base.clone().add(res.months, 'M'));
-
-        return res;
-    }
-
-    function momentsDifference(base, other) {
-        var res;
-        other = cloneWithOffset(other, base);
-        if (base.isBefore(other)) {
-            res = positiveMomentsDifference(base, other);
-        } else {
-            res = positiveMomentsDifference(other, base);
-            res.milliseconds = -res.milliseconds;
-            res.months = -res.months;
-        }
-
-        return res;
-    }
-
-    function createAdder(direction, name) {
-        return function (val, period) {
-            var dur, tmp;
-            //invert the arguments, but complain about it
-            if (period !== null && !isNaN(+period)) {
-                deprecateSimple(name, 'moment().' + name  + '(period, number) is deprecated. Please use moment().' + name + '(number, period).');
-                tmp = val; val = period; period = tmp;
-            }
-
-            val = typeof val === 'string' ? +val : val;
-            dur = create__createDuration(val, period);
-            add_subtract__addSubtract(this, dur, direction);
-            return this;
-        };
-    }
-
-    function add_subtract__addSubtract (mom, duration, isAdding, updateOffset) {
-        var milliseconds = duration._milliseconds,
-            days = duration._days,
-            months = duration._months;
-        updateOffset = updateOffset == null ? true : updateOffset;
-
-        if (milliseconds) {
-            mom._d.setTime(+mom._d + milliseconds * isAdding);
-        }
-        if (days) {
-            get_set__set(mom, 'Date', get_set__get(mom, 'Date') + days * isAdding);
-        }
-        if (months) {
-            setMonth(mom, get_set__get(mom, 'Month') + months * isAdding);
-        }
-        if (updateOffset) {
-            utils_hooks__hooks.updateOffset(mom, days || months);
-        }
-    }
-
-    var add_subtract__add      = createAdder(1, 'add');
-    var add_subtract__subtract = createAdder(-1, 'subtract');
-
-    function moment_calendar__calendar (time, formats) {
-        // We want to compare the start of today, vs this.
-        // Getting start-of-today depends on whether we're local/utc/offset or not.
-        var now = time || local__createLocal(),
-            sod = cloneWithOffset(now, this).startOf('day'),
-            diff = this.diff(sod, 'days', true),
-            format = diff < -6 ? 'sameElse' :
-                diff < -1 ? 'lastWeek' :
-                diff < 0 ? 'lastDay' :
-                diff < 1 ? 'sameDay' :
-                diff < 2 ? 'nextDay' :
-                diff < 7 ? 'nextWeek' : 'sameElse';
-        return this.format(formats && formats[format] || this.localeData().calendar(format, this, local__createLocal(now)));
-    }
-
-    function clone () {
-        return new Moment(this);
-    }
-
-    function isAfter (input, units) {
-        var inputMs;
-        units = normalizeUnits(typeof units !== 'undefined' ? units : 'millisecond');
-        if (units === 'millisecond') {
-            input = isMoment(input) ? input : local__createLocal(input);
-            return +this > +input;
-        } else {
-            inputMs = isMoment(input) ? +input : +local__createLocal(input);
-            return inputMs < +this.clone().startOf(units);
-        }
-    }
-
-    function isBefore (input, units) {
-        var inputMs;
-        units = normalizeUnits(typeof units !== 'undefined' ? units : 'millisecond');
-        if (units === 'millisecond') {
-            input = isMoment(input) ? input : local__createLocal(input);
-            return +this < +input;
-        } else {
-            inputMs = isMoment(input) ? +input : +local__createLocal(input);
-            return +this.clone().endOf(units) < inputMs;
-        }
-    }
-
-    function isBetween (from, to, units) {
-        return this.isAfter(from, units) && this.isBefore(to, units);
-    }
-
-    function isSame (input, units) {
-        var inputMs;
-        units = normalizeUnits(units || 'millisecond');
-        if (units === 'millisecond') {
-            input = isMoment(input) ? input : local__createLocal(input);
-            return +this === +input;
-        } else {
-            inputMs = +local__createLocal(input);
-            return +(this.clone().startOf(units)) <= inputMs && inputMs <= +(this.clone().endOf(units));
-        }
-    }
-
-    function diff (input, units, asFloat) {
-        var that = cloneWithOffset(input, this),
-            zoneDelta = (that.utcOffset() - this.utcOffset()) * 6e4,
-            delta, output;
-
-        units = normalizeUnits(units);
-
-        if (units === 'year' || units === 'month' || units === 'quarter') {
-            output = monthDiff(this, that);
-            if (units === 'quarter') {
-                output = output / 3;
-            } else if (units === 'year') {
-                output = output / 12;
-            }
-        } else {
-            delta = this - that;
-            output = units === 'second' ? delta / 1e3 : // 1000
-                units === 'minute' ? delta / 6e4 : // 1000 * 60
-                units === 'hour' ? delta / 36e5 : // 1000 * 60 * 60
-                units === 'day' ? (delta - zoneDelta) / 864e5 : // 1000 * 60 * 60 * 24, negate dst
-                units === 'week' ? (delta - zoneDelta) / 6048e5 : // 1000 * 60 * 60 * 24 * 7, negate dst
-                delta;
-        }
-        return asFloat ? output : absFloor(output);
-    }
-
-    function monthDiff (a, b) {
-        // difference in months
-        var wholeMonthDiff = ((b.year() - a.year()) * 12) + (b.month() - a.month()),
-            // b is in (anchor - 1 month, anchor + 1 month)
-            anchor = a.clone().add(wholeMonthDiff, 'months'),
-            anchor2, adjust;
-
-        if (b - anchor < 0) {
-            anchor2 = a.clone().add(wholeMonthDiff - 1, 'months');
-            // linear across the month
-            adjust = (b - anchor) / (anchor - anchor2);
-        } else {
-            anchor2 = a.clone().add(wholeMonthDiff + 1, 'months');
-            // linear across the month
-            adjust = (b - anchor) / (anchor2 - anchor);
-        }
-
-        return -(wholeMonthDiff + adjust);
-    }
-
-    utils_hooks__hooks.defaultFormat = 'YYYY-MM-DDTHH:mm:ssZ';
-
-    function toString () {
-        return this.clone().locale('en').format('ddd MMM DD YYYY HH:mm:ss [GMT]ZZ');
-    }
-
-    function moment_format__toISOString () {
-        var m = this.clone().utc();
-        if (0 < m.year() && m.year() <= 9999) {
-            if ('function' === typeof Date.prototype.toISOString) {
-                // native implementation is ~50x faster, use it when we can
-                return this.toDate().toISOString();
-            } else {
-                return formatMoment(m, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]');
-            }
-        } else {
-            return formatMoment(m, 'YYYYYY-MM-DD[T]HH:mm:ss.SSS[Z]');
-        }
-    }
-
-    function format (inputString) {
-        var output = formatMoment(this, inputString || utils_hooks__hooks.defaultFormat);
-        return this.localeData().postformat(output);
-    }
-
-    function from (time, withoutSuffix) {
-        if (!this.isValid()) {
-            return this.localeData().invalidDate();
-        }
-        return create__createDuration({to: this, from: time}).locale(this.locale()).humanize(!withoutSuffix);
-    }
-
-    function fromNow (withoutSuffix) {
-        return this.from(local__createLocal(), withoutSuffix);
-    }
-
-    function to (time, withoutSuffix) {
-        if (!this.isValid()) {
-            return this.localeData().invalidDate();
-        }
-        return create__createDuration({from: this, to: time}).locale(this.locale()).humanize(!withoutSuffix);
-    }
-
-    function toNow (withoutSuffix) {
-        return this.to(local__createLocal(), withoutSuffix);
-    }
-
-    function locale (key) {
-        var newLocaleData;
-
-        if (key === undefined) {
-            return this._locale._abbr;
-        } else {
-            newLocaleData = locale_locales__getLocale(key);
-            if (newLocaleData != null) {
-                this._locale = newLocaleData;
-            }
-            return this;
-        }
-    }
-
-    var lang = deprecate(
-        'moment().lang() is deprecated. Instead, use moment().localeData() to get the language configuration. Use moment().locale() to change languages.',
-        function (key) {
-            if (key === undefined) {
-                return this.localeData();
-            } else {
-                return this.locale(key);
-            }
-        }
-    );
-
-    function localeData () {
-        return this._locale;
-    }
-
-    function startOf (units) {
-        units = normalizeUnits(units);
-        // the following switch intentionally omits break keywords
-        // to utilize falling through the cases.
-        switch (units) {
-        case 'year':
-            this.month(0);
-            /* falls through */
-        case 'quarter':
-        case 'month':
-            this.date(1);
-            /* falls through */
-        case 'week':
-        case 'isoWeek':
-        case 'day':
-            this.hours(0);
-            /* falls through */
-        case 'hour':
-            this.minutes(0);
-            /* falls through */
-        case 'minute':
-            this.seconds(0);
-            /* falls through */
-        case 'second':
-            this.milliseconds(0);
-        }
-
-        // weeks are a special case
-        if (units === 'week') {
-            this.weekday(0);
-        }
-        if (units === 'isoWeek') {
-            this.isoWeekday(1);
-        }
-
-        // quarters are also special
-        if (units === 'quarter') {
-            this.month(Math.floor(this.month() / 3) * 3);
-        }
-
-        return this;
-    }
-
-    function endOf (units) {
-        units = normalizeUnits(units);
-        if (units === undefined || units === 'millisecond') {
-            return this;
-        }
-        return this.startOf(units).add(1, (units === 'isoWeek' ? 'week' : units)).subtract(1, 'ms');
-    }
-
-    function to_type__valueOf () {
-        return +this._d - ((this._offset || 0) * 60000);
-    }
-
-    function unix () {
-        return Math.floor(+this / 1000);
-    }
-
-    function toDate () {
-        return this._offset ? new Date(+this) : this._d;
-    }
-
-    function toArray () {
-        var m = this;
-        return [m.year(), m.month(), m.date(), m.hour(), m.minute(), m.second(), m.millisecond()];
-    }
-
-    function toObject () {
-        var m = this;
-        return {
-            years: m.year(),
-            months: m.month(),
-            date: m.date(),
-            hours: m.hours(),
-            minutes: m.minutes(),
-            seconds: m.seconds(),
-            milliseconds: m.milliseconds()
-        };
-    }
-
-    function moment_valid__isValid () {
-        return valid__isValid(this);
-    }
-
-    function parsingFlags () {
-        return extend({}, getParsingFlags(this));
-    }
-
-    function invalidAt () {
-        return getParsingFlags(this).overflow;
-    }
-
-    addFormatToken(0, ['gg', 2], 0, function () {
-        return this.weekYear() % 100;
-    });
-
-    addFormatToken(0, ['GG', 2], 0, function () {
-        return this.isoWeekYear() % 100;
-    });
-
-    function addWeekYearFormatToken (token, getter) {
-        addFormatToken(0, [token, token.length], 0, getter);
-    }
-
-    addWeekYearFormatToken('gggg',     'weekYear');
-    addWeekYearFormatToken('ggggg',    'weekYear');
-    addWeekYearFormatToken('GGGG',  'isoWeekYear');
-    addWeekYearFormatToken('GGGGG', 'isoWeekYear');
-
-    // ALIASES
-
-    addUnitAlias('weekYear', 'gg');
-    addUnitAlias('isoWeekYear', 'GG');
-
-    // PARSING
-
-    addRegexToken('G',      matchSigned);
-    addRegexToken('g',      matchSigned);
-    addRegexToken('GG',     match1to2, match2);
-    addRegexToken('gg',     match1to2, match2);
-    addRegexToken('GGGG',   match1to4, match4);
-    addRegexToken('gggg',   match1to4, match4);
-    addRegexToken('GGGGG',  match1to6, match6);
-    addRegexToken('ggggg',  match1to6, match6);
-
-    addWeekParseToken(['gggg', 'ggggg', 'GGGG', 'GGGGG'], function (input, week, config, token) {
-        week[token.substr(0, 2)] = toInt(input);
-    });
-
-    addWeekParseToken(['gg', 'GG'], function (input, week, config, token) {
-        week[token] = utils_hooks__hooks.parseTwoDigitYear(input);
-    });
-
-    // HELPERS
-
-    function weeksInYear(year, dow, doy) {
-        return weekOfYear(local__createLocal([year, 11, 31 + dow - doy]), dow, doy).week;
-    }
-
-    // MOMENTS
-
-    function getSetWeekYear (input) {
-        var year = weekOfYear(this, this.localeData()._week.dow, this.localeData()._week.doy).year;
-        return input == null ? year : this.add((input - year), 'y');
-    }
-
-    function getSetISOWeekYear (input) {
-        var year = weekOfYear(this, 1, 4).year;
-        return input == null ? year : this.add((input - year), 'y');
-    }
-
-    function getISOWeeksInYear () {
-        return weeksInYear(this.year(), 1, 4);
-    }
-
-    function getWeeksInYear () {
-        var weekInfo = this.localeData()._week;
-        return weeksInYear(this.year(), weekInfo.dow, weekInfo.doy);
-    }
-
-    addFormatToken('Q', 0, 0, 'quarter');
-
-    // ALIASES
-
-    addUnitAlias('quarter', 'Q');
-
-    // PARSING
-
-    addRegexToken('Q', match1);
-    addParseToken('Q', function (input, array) {
-        array[MONTH] = (toInt(input) - 1) * 3;
-    });
-
-    // MOMENTS
-
-    function getSetQuarter (input) {
-        return input == null ? Math.ceil((this.month() + 1) / 3) : this.month((input - 1) * 3 + this.month() % 3);
-    }
-
-    addFormatToken('D', ['DD', 2], 'Do', 'date');
-
-    // ALIASES
-
-    addUnitAlias('date', 'D');
-
-    // PARSING
-
-    addRegexToken('D',  match1to2);
-    addRegexToken('DD', match1to2, match2);
-    addRegexToken('Do', function (isStrict, locale) {
-        return isStrict ? locale._ordinalParse : locale._ordinalParseLenient;
-    });
-
-    addParseToken(['D', 'DD'], DATE);
-    addParseToken('Do', function (input, array) {
-        array[DATE] = toInt(input.match(match1to2)[0], 10);
-    });
-
-    // MOMENTS
-
-    var getSetDayOfMonth = makeGetSet('Date', true);
-
-    addFormatToken('d', 0, 'do', 'day');
-
-    addFormatToken('dd', 0, 0, function (format) {
-        return this.localeData().weekdaysMin(this, format);
-    });
-
-    addFormatToken('ddd', 0, 0, function (format) {
-        return this.localeData().weekdaysShort(this, format);
-    });
-
-    addFormatToken('dddd', 0, 0, function (format) {
-        return this.localeData().weekdays(this, format);
-    });
-
-    addFormatToken('e', 0, 0, 'weekday');
-    addFormatToken('E', 0, 0, 'isoWeekday');
-
-    // ALIASES
-
-    addUnitAlias('day', 'd');
-    addUnitAlias('weekday', 'e');
-    addUnitAlias('isoWeekday', 'E');
-
-    // PARSING
-
-    addRegexToken('d',    match1to2);
-    addRegexToken('e',    match1to2);
-    addRegexToken('E',    match1to2);
-    addRegexToken('dd',   matchWord);
-    addRegexToken('ddd',  matchWord);
-    addRegexToken('dddd', matchWord);
-
-    addWeekParseToken(['dd', 'ddd', 'dddd'], function (input, week, config) {
-        var weekday = config._locale.weekdaysParse(input);
-        // if we didn't get a weekday name, mark the date as invalid
-        if (weekday != null) {
-            week.d = weekday;
-        } else {
-            getParsingFlags(config).invalidWeekday = input;
-        }
-    });
-
-    addWeekParseToken(['d', 'e', 'E'], function (input, week, config, token) {
-        week[token] = toInt(input);
-    });
-
-    // HELPERS
-
-    function parseWeekday(input, locale) {
-        if (typeof input !== 'string') {
-            return input;
-        }
-
-        if (!isNaN(input)) {
-            return parseInt(input, 10);
-        }
-
-        input = locale.weekdaysParse(input);
-        if (typeof input === 'number') {
-            return input;
-        }
-
-        return null;
-    }
-
-    // LOCALES
-
-    var defaultLocaleWeekdays = 'Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday'.split('_');
-    function localeWeekdays (m) {
-        return this._weekdays[m.day()];
-    }
-
-    var defaultLocaleWeekdaysShort = 'Sun_Mon_Tue_Wed_Thu_Fri_Sat'.split('_');
-    function localeWeekdaysShort (m) {
-        return this._weekdaysShort[m.day()];
-    }
-
-    var defaultLocaleWeekdaysMin = 'Su_Mo_Tu_We_Th_Fr_Sa'.split('_');
-    function localeWeekdaysMin (m) {
-        return this._weekdaysMin[m.day()];
-    }
-
-    function localeWeekdaysParse (weekdayName) {
-        var i, mom, regex;
-
-        this._weekdaysParse = this._weekdaysParse || [];
-
-        for (i = 0; i < 7; i++) {
-            // make the regex if we don't have it already
-            if (!this._weekdaysParse[i]) {
-                mom = local__createLocal([2000, 1]).day(i);
-                regex = '^' + this.weekdays(mom, '') + '|^' + this.weekdaysShort(mom, '') + '|^' + this.weekdaysMin(mom, '');
-                this._weekdaysParse[i] = new RegExp(regex.replace('.', ''), 'i');
-            }
-            // test the regex
-            if (this._weekdaysParse[i].test(weekdayName)) {
-                return i;
-            }
-        }
-    }
-
-    // MOMENTS
-
-    function getSetDayOfWeek (input) {
-        var day = this._isUTC ? this._d.getUTCDay() : this._d.getDay();
-        if (input != null) {
-            input = parseWeekday(input, this.localeData());
-            return this.add(input - day, 'd');
-        } else {
-            return day;
-        }
-    }
-
-    function getSetLocaleDayOfWeek (input) {
-        var weekday = (this.day() + 7 - this.localeData()._week.dow) % 7;
-        return input == null ? weekday : this.add(input - weekday, 'd');
-    }
-
-    function getSetISODayOfWeek (input) {
-        // behaves the same as moment#day except
-        // as a getter, returns 7 instead of 0 (1-7 range instead of 0-6)
-        // as a setter, sunday should belong to the previous week.
-        return input == null ? this.day() || 7 : this.day(this.day() % 7 ? input : input - 7);
-    }
-
-    addFormatToken('H', ['HH', 2], 0, 'hour');
-    addFormatToken('h', ['hh', 2], 0, function () {
-        return this.hours() % 12 || 12;
-    });
-
-    function meridiem (token, lowercase) {
-        addFormatToken(token, 0, 0, function () {
-            return this.localeData().meridiem(this.hours(), this.minutes(), lowercase);
-        });
-    }
-
-    meridiem('a', true);
-    meridiem('A', false);
-
-    // ALIASES
-
-    addUnitAlias('hour', 'h');
-
-    // PARSING
-
-    function matchMeridiem (isStrict, locale) {
-        return locale._meridiemParse;
-    }
-
-    addRegexToken('a',  matchMeridiem);
-    addRegexToken('A',  matchMeridiem);
-    addRegexToken('H',  match1to2);
-    addRegexToken('h',  match1to2);
-    addRegexToken('HH', match1to2, match2);
-    addRegexToken('hh', match1to2, match2);
-
-    addParseToken(['H', 'HH'], HOUR);
-    addParseToken(['a', 'A'], function (input, array, config) {
-        config._isPm = config._locale.isPM(input);
-        config._meridiem = input;
-    });
-    addParseToken(['h', 'hh'], function (input, array, config) {
-        array[HOUR] = toInt(input);
-        getParsingFlags(config).bigHour = true;
-    });
-
-    // LOCALES
-
-    function localeIsPM (input) {
-        // IE8 Quirks Mode & IE7 Standards Mode do not allow accessing strings like arrays
-        // Using charAt should be more compatible.
-        return ((input + '').toLowerCase().charAt(0) === 'p');
-    }
-
-    var defaultLocaleMeridiemParse = /[ap]\.?m?\.?/i;
-    function localeMeridiem (hours, minutes, isLower) {
-        if (hours > 11) {
-            return isLower ? 'pm' : 'PM';
-        } else {
-            return isLower ? 'am' : 'AM';
-        }
-    }
-
-
-    // MOMENTS
-
-    // Setting the hour should keep the time, because the user explicitly
-    // specified which hour he wants. So trying to maintain the same hour (in
-    // a new timezone) makes sense. Adding/subtracting hours does not follow
-    // this rule.
-    var getSetHour = makeGetSet('Hours', true);
-
-    addFormatToken('m', ['mm', 2], 0, 'minute');
-
-    // ALIASES
-
-    addUnitAlias('minute', 'm');
-
-    // PARSING
-
-    addRegexToken('m',  match1to2);
-    addRegexToken('mm', match1to2, match2);
-    addParseToken(['m', 'mm'], MINUTE);
-
-    // MOMENTS
-
-    var getSetMinute = makeGetSet('Minutes', false);
-
-    addFormatToken('s', ['ss', 2], 0, 'second');
-
-    // ALIASES
-
-    addUnitAlias('second', 's');
-
-    // PARSING
-
-    addRegexToken('s',  match1to2);
-    addRegexToken('ss', match1to2, match2);
-    addParseToken(['s', 'ss'], SECOND);
-
-    // MOMENTS
-
-    var getSetSecond = makeGetSet('Seconds', false);
-
-    addFormatToken('S', 0, 0, function () {
-        return ~~(this.millisecond() / 100);
-    });
-
-    addFormatToken(0, ['SS', 2], 0, function () {
-        return ~~(this.millisecond() / 10);
-    });
-
-    addFormatToken(0, ['SSS', 3], 0, 'millisecond');
-    addFormatToken(0, ['SSSS', 4], 0, function () {
-        return this.millisecond() * 10;
-    });
-    addFormatToken(0, ['SSSSS', 5], 0, function () {
-        return this.millisecond() * 100;
-    });
-    addFormatToken(0, ['SSSSSS', 6], 0, function () {
-        return this.millisecond() * 1000;
-    });
-    addFormatToken(0, ['SSSSSSS', 7], 0, function () {
-        return this.millisecond() * 10000;
-    });
-    addFormatToken(0, ['SSSSSSSS', 8], 0, function () {
-        return this.millisecond() * 100000;
-    });
-    addFormatToken(0, ['SSSSSSSSS', 9], 0, function () {
-        return this.millisecond() * 1000000;
-    });
-
-
-    // ALIASES
-
-    addUnitAlias('millisecond', 'ms');
-
-    // PARSING
-
-    addRegexToken('S',    match1to3, match1);
-    addRegexToken('SS',   match1to3, match2);
-    addRegexToken('SSS',  match1to3, match3);
-
-    var token;
-    for (token = 'SSSS'; token.length <= 9; token += 'S') {
-        addRegexToken(token, matchUnsigned);
-    }
-
-    function parseMs(input, array) {
-        array[MILLISECOND] = toInt(('0.' + input) * 1000);
-    }
-
-    for (token = 'S'; token.length <= 9; token += 'S') {
-        addParseToken(token, parseMs);
-    }
-    // MOMENTS
-
-    var getSetMillisecond = makeGetSet('Milliseconds', false);
-
-    addFormatToken('z',  0, 0, 'zoneAbbr');
-    addFormatToken('zz', 0, 0, 'zoneName');
-
-    // MOMENTS
-
-    function getZoneAbbr () {
-        return this._isUTC ? 'UTC' : '';
-    }
-
-    function getZoneName () {
-        return this._isUTC ? 'Coordinated Universal Time' : '';
-    }
-
-    var momentPrototype__proto = Moment.prototype;
-
-    momentPrototype__proto.add          = add_subtract__add;
-    momentPrototype__proto.calendar     = moment_calendar__calendar;
-    momentPrototype__proto.clone        = clone;
-    momentPrototype__proto.diff         = diff;
-    momentPrototype__proto.endOf        = endOf;
-    momentPrototype__proto.format       = format;
-    momentPrototype__proto.from         = from;
-    momentPrototype__proto.fromNow      = fromNow;
-    momentPrototype__proto.to           = to;
-    momentPrototype__proto.toNow        = toNow;
-    momentPrototype__proto.get          = getSet;
-    momentPrototype__proto.invalidAt    = invalidAt;
-    momentPrototype__proto.isAfter      = isAfter;
-    momentPrototype__proto.isBefore     = isBefore;
-    momentPrototype__proto.isBetween    = isBetween;
-    momentPrototype__proto.isSame       = isSame;
-    momentPrototype__proto.isValid      = moment_valid__isValid;
-    momentPrototype__proto.lang         = lang;
-    momentPrototype__proto.locale       = locale;
-    momentPrototype__proto.localeData   = localeData;
-    momentPrototype__proto.max          = prototypeMax;
-    momentPrototype__proto.min          = prototypeMin;
-    momentPrototype__proto.parsingFlags = parsingFlags;
-    momentPrototype__proto.set          = getSet;
-    momentPrototype__proto.startOf      = startOf;
-    momentPrototype__proto.subtract     = add_subtract__subtract;
-    momentPrototype__proto.toArray      = toArray;
-    momentPrototype__proto.toObject     = toObject;
-    momentPrototype__proto.toDate       = toDate;
-    momentPrototype__proto.toISOString  = moment_format__toISOString;
-    momentPrototype__proto.toJSON       = moment_format__toISOString;
-    momentPrototype__proto.toString     = toString;
-    momentPrototype__proto.unix         = unix;
-    momentPrototype__proto.valueOf      = to_type__valueOf;
-
-    // Year
-    momentPrototype__proto.year       = getSetYear;
-    momentPrototype__proto.isLeapYear = getIsLeapYear;
-
-    // Week Year
-    momentPrototype__proto.weekYear    = getSetWeekYear;
-    momentPrototype__proto.isoWeekYear = getSetISOWeekYear;
-
-    // Quarter
-    momentPrototype__proto.quarter = momentPrototype__proto.quarters = getSetQuarter;
-
-    // Month
-    momentPrototype__proto.month       = getSetMonth;
-    momentPrototype__proto.daysInMonth = getDaysInMonth;
-
-    // Week
-    momentPrototype__proto.week           = momentPrototype__proto.weeks        = getSetWeek;
-    momentPrototype__proto.isoWeek        = momentPrototype__proto.isoWeeks     = getSetISOWeek;
-    momentPrototype__proto.weeksInYear    = getWeeksInYear;
-    momentPrototype__proto.isoWeeksInYear = getISOWeeksInYear;
-
-    // Day
-    momentPrototype__proto.date       = getSetDayOfMonth;
-    momentPrototype__proto.day        = momentPrototype__proto.days             = getSetDayOfWeek;
-    momentPrototype__proto.weekday    = getSetLocaleDayOfWeek;
-    momentPrototype__proto.isoWeekday = getSetISODayOfWeek;
-    momentPrototype__proto.dayOfYear  = getSetDayOfYear;
-
-    // Hour
-    momentPrototype__proto.hour = momentPrototype__proto.hours = getSetHour;
-
-    // Minute
-    momentPrototype__proto.minute = momentPrototype__proto.minutes = getSetMinute;
-
-    // Second
-    momentPrototype__proto.second = momentPrototype__proto.seconds = getSetSecond;
-
-    // Millisecond
-    momentPrototype__proto.millisecond = momentPrototype__proto.milliseconds = getSetMillisecond;
-
-    // Offset
-    momentPrototype__proto.utcOffset            = getSetOffset;
-    momentPrototype__proto.utc                  = setOffsetToUTC;
-    momentPrototype__proto.local                = setOffsetToLocal;
-    momentPrototype__proto.parseZone            = setOffsetToParsedOffset;
-    momentPrototype__proto.hasAlignedHourOffset = hasAlignedHourOffset;
-    momentPrototype__proto.isDST                = isDaylightSavingTime;
-    momentPrototype__proto.isDSTShifted         = isDaylightSavingTimeShifted;
-    momentPrototype__proto.isLocal              = isLocal;
-    momentPrototype__proto.isUtcOffset          = isUtcOffset;
-    momentPrototype__proto.isUtc                = isUtc;
-    momentPrototype__proto.isUTC                = isUtc;
-
-    // Timezone
-    momentPrototype__proto.zoneAbbr = getZoneAbbr;
-    momentPrototype__proto.zoneName = getZoneName;
-
-    // Deprecations
-    momentPrototype__proto.dates  = deprecate('dates accessor is deprecated. Use date instead.', getSetDayOfMonth);
-    momentPrototype__proto.months = deprecate('months accessor is deprecated. Use month instead', getSetMonth);
-    momentPrototype__proto.years  = deprecate('years accessor is deprecated. Use year instead', getSetYear);
-    momentPrototype__proto.zone   = deprecate('moment().zone is deprecated, use moment().utcOffset instead. https://github.com/moment/moment/issues/1779', getSetZone);
-
-    var momentPrototype = momentPrototype__proto;
-
-    function moment__createUnix (input) {
-        return local__createLocal(input * 1000);
-    }
-
-    function moment__createInZone () {
-        return local__createLocal.apply(null, arguments).parseZone();
-    }
-
-    var defaultCalendar = {
-        sameDay : '[Today at] LT',
-        nextDay : '[Tomorrow at] LT',
-        nextWeek : 'dddd [at] LT',
-        lastDay : '[Yesterday at] LT',
-        lastWeek : '[Last] dddd [at] LT',
-        sameElse : 'L'
-    };
-
-    function locale_calendar__calendar (key, mom, now) {
-        var output = this._calendar[key];
-        return typeof output === 'function' ? output.call(mom, now) : output;
-    }
-
-    var defaultLongDateFormat = {
-        LTS  : 'h:mm:ss A',
-        LT   : 'h:mm A',
-        L    : 'MM/DD/YYYY',
-        LL   : 'MMMM D, YYYY',
-        LLL  : 'MMMM D, YYYY h:mm A',
-        LLLL : 'dddd, MMMM D, YYYY h:mm A'
-    };
-
-    function longDateFormat (key) {
-        var format = this._longDateFormat[key],
-            formatUpper = this._longDateFormat[key.toUpperCase()];
-
-        if (format || !formatUpper) {
-            return format;
-        }
-
-        this._longDateFormat[key] = formatUpper.replace(/MMMM|MM|DD|dddd/g, function (val) {
-            return val.slice(1);
-        });
-
-        return this._longDateFormat[key];
-    }
-
-    var defaultInvalidDate = 'Invalid date';
-
-    function invalidDate () {
-        return this._invalidDate;
-    }
-
-    var defaultOrdinal = '%d';
-    var defaultOrdinalParse = /\d{1,2}/;
-
-    function ordinal (number) {
-        return this._ordinal.replace('%d', number);
-    }
-
-    function preParsePostFormat (string) {
-        return string;
-    }
-
-    var defaultRelativeTime = {
-        future : 'in %s',
-        past   : '%s ago',
-        s  : 'a few seconds',
-        m  : 'a minute',
-        mm : '%d minutes',
-        h  : 'an hour',
-        hh : '%d hours',
-        d  : 'a day',
-        dd : '%d days',
-        M  : 'a month',
-        MM : '%d months',
-        y  : 'a year',
-        yy : '%d years'
-    };
-
-    function relative__relativeTime (number, withoutSuffix, string, isFuture) {
-        var output = this._relativeTime[string];
-        return (typeof output === 'function') ?
-            output(number, withoutSuffix, string, isFuture) :
-            output.replace(/%d/i, number);
-    }
-
-    function pastFuture (diff, output) {
-        var format = this._relativeTime[diff > 0 ? 'future' : 'past'];
-        return typeof format === 'function' ? format(output) : format.replace(/%s/i, output);
-    }
-
-    function locale_set__set (config) {
-        var prop, i;
-        for (i in config) {
-            prop = config[i];
-            if (typeof prop === 'function') {
-                this[i] = prop;
-            } else {
-                this['_' + i] = prop;
-            }
-        }
-        // Lenient ordinal parsing accepts just a number in addition to
-        // number + (possibly) stuff coming from _ordinalParseLenient.
-        this._ordinalParseLenient = new RegExp(this._ordinalParse.source + '|' + (/\d{1,2}/).source);
-    }
-
-    var prototype__proto = Locale.prototype;
-
-    prototype__proto._calendar       = defaultCalendar;
-    prototype__proto.calendar        = locale_calendar__calendar;
-    prototype__proto._longDateFormat = defaultLongDateFormat;
-    prototype__proto.longDateFormat  = longDateFormat;
-    prototype__proto._invalidDate    = defaultInvalidDate;
-    prototype__proto.invalidDate     = invalidDate;
-    prototype__proto._ordinal        = defaultOrdinal;
-    prototype__proto.ordinal         = ordinal;
-    prototype__proto._ordinalParse   = defaultOrdinalParse;
-    prototype__proto.preparse        = preParsePostFormat;
-    prototype__proto.postformat      = preParsePostFormat;
-    prototype__proto._relativeTime   = defaultRelativeTime;
-    prototype__proto.relativeTime    = relative__relativeTime;
-    prototype__proto.pastFuture      = pastFuture;
-    prototype__proto.set             = locale_set__set;
-
-    // Month
-    prototype__proto.months       =        localeMonths;
-    prototype__proto._months      = defaultLocaleMonths;
-    prototype__proto.monthsShort  =        localeMonthsShort;
-    prototype__proto._monthsShort = defaultLocaleMonthsShort;
-    prototype__proto.monthsParse  =        localeMonthsParse;
-
-    // Week
-    prototype__proto.week = localeWeek;
-    prototype__proto._week = defaultLocaleWeek;
-    prototype__proto.firstDayOfYear = localeFirstDayOfYear;
-    prototype__proto.firstDayOfWeek = localeFirstDayOfWeek;
-
-    // Day of Week
-    prototype__proto.weekdays       =        localeWeekdays;
-    prototype__proto._weekdays      = defaultLocaleWeekdays;
-    prototype__proto.weekdaysMin    =        localeWeekdaysMin;
-    prototype__proto._weekdaysMin   = defaultLocaleWeekdaysMin;
-    prototype__proto.weekdaysShort  =        localeWeekdaysShort;
-    prototype__proto._weekdaysShort = defaultLocaleWeekdaysShort;
-    prototype__proto.weekdaysParse  =        localeWeekdaysParse;
-
-    // Hours
-    prototype__proto.isPM = localeIsPM;
-    prototype__proto._meridiemParse = defaultLocaleMeridiemParse;
-    prototype__proto.meridiem = localeMeridiem;
-
-    function lists__get (format, index, field, setter) {
-        var locale = locale_locales__getLocale();
-        var utc = create_utc__createUTC().set(setter, index);
-        return locale[field](utc, format);
-    }
-
-    function list (format, index, field, count, setter) {
-        if (typeof format === 'number') {
-            index = format;
-            format = undefined;
-        }
-
-        format = format || '';
-
-        if (index != null) {
-            return lists__get(format, index, field, setter);
-        }
-
-        var i;
-        var out = [];
-        for (i = 0; i < count; i++) {
-            out[i] = lists__get(format, i, field, setter);
-        }
-        return out;
-    }
-
-    function lists__listMonths (format, index) {
-        return list(format, index, 'months', 12, 'month');
-    }
-
-    function lists__listMonthsShort (format, index) {
-        return list(format, index, 'monthsShort', 12, 'month');
-    }
-
-    function lists__listWeekdays (format, index) {
-        return list(format, index, 'weekdays', 7, 'day');
-    }
-
-    function lists__listWeekdaysShort (format, index) {
-        return list(format, index, 'weekdaysShort', 7, 'day');
-    }
-
-    function lists__listWeekdaysMin (format, index) {
-        return list(format, index, 'weekdaysMin', 7, 'day');
-    }
-
-    locale_locales__getSetGlobalLocale('en', {
-        ordinalParse: /\d{1,2}(th|st|nd|rd)/,
-        ordinal : function (number) {
-            var b = number % 10,
-                output = (toInt(number % 100 / 10) === 1) ? 'th' :
-                (b === 1) ? 'st' :
-                (b === 2) ? 'nd' :
-                (b === 3) ? 'rd' : 'th';
-            return number + output;
-        }
-    });
-
-    // Side effect imports
-    utils_hooks__hooks.lang = deprecate('moment.lang is deprecated. Use moment.locale instead.', locale_locales__getSetGlobalLocale);
-    utils_hooks__hooks.langData = deprecate('moment.langData is deprecated. Use moment.localeData instead.', locale_locales__getLocale);
-
-    var mathAbs = Math.abs;
-
-    function duration_abs__abs () {
-        var data           = this._data;
-
-        this._milliseconds = mathAbs(this._milliseconds);
-        this._days         = mathAbs(this._days);
-        this._months       = mathAbs(this._months);
-
-        data.milliseconds  = mathAbs(data.milliseconds);
-        data.seconds       = mathAbs(data.seconds);
-        data.minutes       = mathAbs(data.minutes);
-        data.hours         = mathAbs(data.hours);
-        data.months        = mathAbs(data.months);
-        data.years         = mathAbs(data.years);
-
-        return this;
-    }
-
-    function duration_add_subtract__addSubtract (duration, input, value, direction) {
-        var other = create__createDuration(input, value);
-
-        duration._milliseconds += direction * other._milliseconds;
-        duration._days         += direction * other._days;
-        duration._months       += direction * other._months;
-
-        return duration._bubble();
-    }
-
-    // supports only 2.0-style add(1, 's') or add(duration)
-    function duration_add_subtract__add (input, value) {
-        return duration_add_subtract__addSubtract(this, input, value, 1);
-    }
-
-    // supports only 2.0-style subtract(1, 's') or subtract(duration)
-    function duration_add_subtract__subtract (input, value) {
-        return duration_add_subtract__addSubtract(this, input, value, -1);
-    }
-
-    function absCeil (number) {
-        if (number < 0) {
-            return Math.floor(number);
-        } else {
-            return Math.ceil(number);
-        }
-    }
-
-    function bubble () {
-        var milliseconds = this._milliseconds;
-        var days         = this._days;
-        var months       = this._months;
-        var data         = this._data;
-        var seconds, minutes, hours, years, monthsFromDays;
-
-        // if we have a mix of positive and negative values, bubble down first
-        // check: https://github.com/moment/moment/issues/2166
-        if (!((milliseconds >= 0 && days >= 0 && months >= 0) ||
-                (milliseconds <= 0 && days <= 0 && months <= 0))) {
-            milliseconds += absCeil(monthsToDays(months) + days) * 864e5;
-            days = 0;
-            months = 0;
-        }
-
-        // The following code bubbles up values, see the tests for
-        // examples of what that means.
-        data.milliseconds = milliseconds % 1000;
-
-        seconds           = absFloor(milliseconds / 1000);
-        data.seconds      = seconds % 60;
-
-        minutes           = absFloor(seconds / 60);
-        data.minutes      = minutes % 60;
-
-        hours             = absFloor(minutes / 60);
-        data.hours        = hours % 24;
-
-        days += absFloor(hours / 24);
-
-        // convert days to months
-        monthsFromDays = absFloor(daysToMonths(days));
-        months += monthsFromDays;
-        days -= absCeil(monthsToDays(monthsFromDays));
-
-        // 12 months -> 1 year
-        years = absFloor(months / 12);
-        months %= 12;
-
-        data.days   = days;
-        data.months = months;
-        data.years  = years;
-
-        return this;
-    }
-
-    function daysToMonths (days) {
-        // 400 years have 146097 days (taking into account leap year rules)
-        // 400 years have 12 months === 4800
-        return days * 4800 / 146097;
-    }
-
-    function monthsToDays (months) {
-        // the reverse of daysToMonths
-        return months * 146097 / 4800;
-    }
-
-    function as (units) {
-        var days;
-        var months;
-        var milliseconds = this._milliseconds;
-
-        units = normalizeUnits(units);
-
-        if (units === 'month' || units === 'year') {
-            days   = this._days   + milliseconds / 864e5;
-            months = this._months + daysToMonths(days);
-            return units === 'month' ? months : months / 12;
-        } else {
-            // handle milliseconds separately because of floating point math errors (issue #1867)
-            days = this._days + Math.round(monthsToDays(this._months));
-            switch (units) {
-                case 'week'   : return days / 7     + milliseconds / 6048e5;
-                case 'day'    : return days         + milliseconds / 864e5;
-                case 'hour'   : return days * 24    + milliseconds / 36e5;
-                case 'minute' : return days * 1440  + milliseconds / 6e4;
-                case 'second' : return days * 86400 + milliseconds / 1000;
-                // Math.floor prevents floating point math errors here
-                case 'millisecond': return Math.floor(days * 864e5) + milliseconds;
-                default: throw new Error('Unknown unit ' + units);
-            }
-        }
-    }
-
-    // TODO: Use this.as('ms')?
-    function duration_as__valueOf () {
-        return (
-            this._milliseconds +
-            this._days * 864e5 +
-            (this._months % 12) * 2592e6 +
-            toInt(this._months / 12) * 31536e6
-        );
-    }
-
-    function makeAs (alias) {
-        return function () {
-            return this.as(alias);
-        };
-    }
-
-    var asMilliseconds = makeAs('ms');
-    var asSeconds      = makeAs('s');
-    var asMinutes      = makeAs('m');
-    var asHours        = makeAs('h');
-    var asDays         = makeAs('d');
-    var asWeeks        = makeAs('w');
-    var asMonths       = makeAs('M');
-    var asYears        = makeAs('y');
-
-    function duration_get__get (units) {
-        units = normalizeUnits(units);
-        return this[units + 's']();
-    }
-
-    function makeGetter(name) {
-        return function () {
-            return this._data[name];
-        };
-    }
-
-    var milliseconds = makeGetter('milliseconds');
-    var seconds      = makeGetter('seconds');
-    var minutes      = makeGetter('minutes');
-    var hours        = makeGetter('hours');
-    var days         = makeGetter('days');
-    var months       = makeGetter('months');
-    var years        = makeGetter('years');
-
-    function weeks () {
-        return absFloor(this.days() / 7);
-    }
-
-    var round = Math.round;
-    var thresholds = {
-        s: 45,  // seconds to minute
-        m: 45,  // minutes to hour
-        h: 22,  // hours to day
-        d: 26,  // days to month
-        M: 11   // months to year
-    };
-
-    // helper function for moment.fn.from, moment.fn.fromNow, and moment.duration.fn.humanize
-    function substituteTimeAgo(string, number, withoutSuffix, isFuture, locale) {
-        return locale.relativeTime(number || 1, !!withoutSuffix, string, isFuture);
-    }
-
-    function duration_humanize__relativeTime (posNegDuration, withoutSuffix, locale) {
-        var duration = create__createDuration(posNegDuration).abs();
-        var seconds  = round(duration.as('s'));
-        var minutes  = round(duration.as('m'));
-        var hours    = round(duration.as('h'));
-        var days     = round(duration.as('d'));
-        var months   = round(duration.as('M'));
-        var years    = round(duration.as('y'));
-
-        var a = seconds < thresholds.s && ['s', seconds]  ||
-                minutes === 1          && ['m']           ||
-                minutes < thresholds.m && ['mm', minutes] ||
-                hours   === 1          && ['h']           ||
-                hours   < thresholds.h && ['hh', hours]   ||
-                days    === 1          && ['d']           ||
-                days    < thresholds.d && ['dd', days]    ||
-                months  === 1          && ['M']           ||
-                months  < thresholds.M && ['MM', months]  ||
-                years   === 1          && ['y']           || ['yy', years];
-
-        a[2] = withoutSuffix;
-        a[3] = +posNegDuration > 0;
-        a[4] = locale;
-        return substituteTimeAgo.apply(null, a);
-    }
-
-    // This function allows you to set a threshold for relative time strings
-    function duration_humanize__getSetRelativeTimeThreshold (threshold, limit) {
-        if (thresholds[threshold] === undefined) {
-            return false;
-        }
-        if (limit === undefined) {
-            return thresholds[threshold];
-        }
-        thresholds[threshold] = limit;
-        return true;
-    }
-
-    function humanize (withSuffix) {
-        var locale = this.localeData();
-        var output = duration_humanize__relativeTime(this, !withSuffix, locale);
-
-        if (withSuffix) {
-            output = locale.pastFuture(+this, output);
-        }
-
-        return locale.postformat(output);
-    }
-
-    var iso_string__abs = Math.abs;
-
-    function iso_string__toISOString() {
-        // for ISO strings we do not use the normal bubbling rules:
-        //  * milliseconds bubble up until they become hours
-        //  * days do not bubble at all
-        //  * months bubble up until they become years
-        // This is because there is no context-free conversion between hours and days
-        // (think of clock changes)
-        // and also not between days and months (28-31 days per month)
-        var seconds = iso_string__abs(this._milliseconds) / 1000;
-        var days         = iso_string__abs(this._days);
-        var months       = iso_string__abs(this._months);
-        var minutes, hours, years;
-
-        // 3600 seconds -> 60 minutes -> 1 hour
-        minutes           = absFloor(seconds / 60);
-        hours             = absFloor(minutes / 60);
-        seconds %= 60;
-        minutes %= 60;
-
-        // 12 months -> 1 year
-        years  = absFloor(months / 12);
-        months %= 12;
-
-
-        // inspired by https://github.com/dordille/moment-isoduration/blob/master/moment.isoduration.js
-        var Y = years;
-        var M = months;
-        var D = days;
-        var h = hours;
-        var m = minutes;
-        var s = seconds;
-        var total = this.asSeconds();
-
-        if (!total) {
-            // this is the same as C#'s (Noda) and python (isodate)...
-            // but not other JS (goog.date)
-            return 'P0D';
-        }
-
-        return (total < 0 ? '-' : '') +
-            'P' +
-            (Y ? Y + 'Y' : '') +
-            (M ? M + 'M' : '') +
-            (D ? D + 'D' : '') +
-            ((h || m || s) ? 'T' : '') +
-            (h ? h + 'H' : '') +
-            (m ? m + 'M' : '') +
-            (s ? s + 'S' : '');
-    }
-
-    var duration_prototype__proto = Duration.prototype;
-
-    duration_prototype__proto.abs            = duration_abs__abs;
-    duration_prototype__proto.add            = duration_add_subtract__add;
-    duration_prototype__proto.subtract       = duration_add_subtract__subtract;
-    duration_prototype__proto.as             = as;
-    duration_prototype__proto.asMilliseconds = asMilliseconds;
-    duration_prototype__proto.asSeconds      = asSeconds;
-    duration_prototype__proto.asMinutes      = asMinutes;
-    duration_prototype__proto.asHours        = asHours;
-    duration_prototype__proto.asDays         = asDays;
-    duration_prototype__proto.asWeeks        = asWeeks;
-    duration_prototype__proto.asMonths       = asMonths;
-    duration_prototype__proto.asYears        = asYears;
-    duration_prototype__proto.valueOf        = duration_as__valueOf;
-    duration_prototype__proto._bubble        = bubble;
-    duration_prototype__proto.get            = duration_get__get;
-    duration_prototype__proto.milliseconds   = milliseconds;
-    duration_prototype__proto.seconds        = seconds;
-    duration_prototype__proto.minutes        = minutes;
-    duration_prototype__proto.hours          = hours;
-    duration_prototype__proto.days           = days;
-    duration_prototype__proto.weeks          = weeks;
-    duration_prototype__proto.months         = months;
-    duration_prototype__proto.years          = years;
-    duration_prototype__proto.humanize       = humanize;
-    duration_prototype__proto.toISOString    = iso_string__toISOString;
-    duration_prototype__proto.toString       = iso_string__toISOString;
-    duration_prototype__proto.toJSON         = iso_string__toISOString;
-    duration_prototype__proto.locale         = locale;
-    duration_prototype__proto.localeData     = localeData;
-
-    // Deprecations
-    duration_prototype__proto.toIsoString = deprecate('toIsoString() is deprecated. Please use toISOString() instead (notice the capitals)', iso_string__toISOString);
-    duration_prototype__proto.lang = lang;
-
-    // Side effect imports
-
-    addFormatToken('X', 0, 0, 'unix');
-    addFormatToken('x', 0, 0, 'valueOf');
-
-    // PARSING
-
-    addRegexToken('x', matchSigned);
-    addRegexToken('X', matchTimestamp);
-    addParseToken('X', function (input, array, config) {
-        config._d = new Date(parseFloat(input, 10) * 1000);
-    });
-    addParseToken('x', function (input, array, config) {
-        config._d = new Date(toInt(input));
-    });
-
-    // Side effect imports
-
-
-    utils_hooks__hooks.version = '2.10.6';
-
-    setHookCallback(local__createLocal);
-
-    utils_hooks__hooks.fn                    = momentPrototype;
-    utils_hooks__hooks.min                   = min;
-    utils_hooks__hooks.max                   = max;
-    utils_hooks__hooks.utc                   = create_utc__createUTC;
-    utils_hooks__hooks.unix                  = moment__createUnix;
-    utils_hooks__hooks.months                = lists__listMonths;
-    utils_hooks__hooks.isDate                = isDate;
-    utils_hooks__hooks.locale                = locale_locales__getSetGlobalLocale;
-    utils_hooks__hooks.invalid               = valid__createInvalid;
-    utils_hooks__hooks.duration              = create__createDuration;
-    utils_hooks__hooks.isMoment              = isMoment;
-    utils_hooks__hooks.weekdays              = lists__listWeekdays;
-    utils_hooks__hooks.parseZone             = moment__createInZone;
-    utils_hooks__hooks.localeData            = locale_locales__getLocale;
-    utils_hooks__hooks.isDuration            = isDuration;
-    utils_hooks__hooks.monthsShort           = lists__listMonthsShort;
-    utils_hooks__hooks.weekdaysMin           = lists__listWeekdaysMin;
-    utils_hooks__hooks.defineLocale          = defineLocale;
-    utils_hooks__hooks.weekdaysShort         = lists__listWeekdaysShort;
-    utils_hooks__hooks.normalizeUnits        = normalizeUnits;
-    utils_hooks__hooks.relativeTimeThreshold = duration_humanize__getSetRelativeTimeThreshold;
-
-    var _moment = utils_hooks__hooks;
-
-    return _moment;
-
-}));
-define('superdesk/datetime/group-dates-directive',['moment'], function(moment) {
+define('superdesk/datetime/group-dates-directive',[], function() {
     'use strict';
 
     /**
@@ -62140,7 +58990,7 @@ define('superdesk/datetime/group-dates-directive',['moment'], function(moment) {
     };
 });
 
-define('superdesk/datetime/reldate-directive',['moment'], function(moment) {
+define('superdesk/datetime/reldate-directive',[], function() {
     'use strict';
 
     /**
@@ -62171,7 +59021,7 @@ define('superdesk/datetime/reldate-directive',['moment'], function(moment) {
     };
 });
 
-define('superdesk/datetime/reldate-directive-complex',['moment'], function(moment) {
+define('superdesk/datetime/reldate-directive-complex',[], function() {
     'use strict';
 
     /**
@@ -62218,7 +59068,7 @@ define('superdesk/datetime/reldate-directive-complex',['moment'], function(momen
     };
 });
 
-define('superdesk/datetime/absdate-directive',['moment'], function(moment) {
+define('superdesk/datetime/absdate-directive',[], function() {
     'use strict';
 
     /**
@@ -62266,13 +59116,12 @@ define('superdesk/datetime/absdate-directive',['moment'], function(moment) {
 
 define('superdesk/datetime/datetime',[
     'angular',
-    'moment',
     'require',
     './group-dates-directive',
     './reldate-directive',
     './reldate-directive-complex',
     './absdate-directive'
-], function(angular, moment, require) {
+], function(angular, require) {
     'use strict';
 
     function DateTimeDirective() {
@@ -66150,8 +62999,10 @@ define('superdesk/upload/crop-directive',[
         return {
             scope: {
                 src: '=',
+                file: '=',
                 cords: '=',
-                progressWidth: '='
+                progressWidth: '=',
+                maxFileSize: '='
             },
             link: function(scope, elem) {
 
@@ -66178,6 +63029,9 @@ define('superdesk/upload/crop-directive',[
 
                 scope.$watch('src', function(src) {
                     elem.empty();
+                    if (scope.maxFileSize && ((scope.file.size / 1048576) > parseInt(scope.maxFileSize, 10))) {
+                        notify.info(gettext('Image is bigger then ' + scope.maxFileSize + 'MB, upload file size may be limited!'));
+                    }
                     if (src) {
                         var img = new Image();
                         img.onload = function() {
@@ -66673,9 +63527,8 @@ define('superdesk/ui/autoheight-directive',[
 define('superdesk/ui/ui',[
     'angular',
     'require',
-    'moment',
     './autoheight-directive'
-], function(angular, require, moment) {
+], function(angular, require) {
     'use strict';
 
     /**
@@ -67772,1028 +64625,10 @@ define('superdesk/ui/ui',[
         ;
 });
 
-//! moment-timezone.js
-//! version : 0.4.0
-//! author : Tim Wood
-//! license : MIT
-//! github.com/moment/moment-timezone
-
-(function (root, factory) {
-	"use strict";
-
-	/*global define*/
-	if (typeof define === 'function' && define.amd) {
-		define('moment-timezone',['moment'], factory);                 // AMD
-	} else if (typeof exports === 'object') {
-		module.exports = factory(require('moment')); // Node
-	} else {
-		factory(root.moment);                        // Browser
-	}
-}(this, function (moment) {
-	"use strict";
-
-	// Do not load moment-timezone a second time.
-	if (moment.tz !== undefined) {
-		logError('Moment Timezone ' + moment.tz.version + ' was already loaded ' + (moment.tz.dataVersion ? 'with data from ' : 'without any data') + moment.tz.dataVersion);
-		return moment;
-	}
-
-	var VERSION = "0.4.0",
-		zones = {},
-		links = {},
-		names = {},
-
-		momentVersion = moment.version.split('.'),
-		major = +momentVersion[0],
-		minor = +momentVersion[1];
-
-	// Moment.js version check
-	if (major < 2 || (major === 2 && minor < 6)) {
-		logError('Moment Timezone requires Moment.js >= 2.6.0. You are using Moment.js ' + moment.version + '. See momentjs.com');
-	}
-
-	/************************************
-		Unpacking
-	************************************/
-
-	function charCodeToInt(charCode) {
-		if (charCode > 96) {
-			return charCode - 87;
-		} else if (charCode > 64) {
-			return charCode - 29;
-		}
-		return charCode - 48;
-	}
-
-	function unpackBase60(string) {
-		var i = 0,
-			parts = string.split('.'),
-			whole = parts[0],
-			fractional = parts[1] || '',
-			multiplier = 1,
-			num,
-			out = 0,
-			sign = 1;
-
-		// handle negative numbers
-		if (string.charCodeAt(0) === 45) {
-			i = 1;
-			sign = -1;
-		}
-
-		// handle digits before the decimal
-		for (i; i < whole.length; i++) {
-			num = charCodeToInt(whole.charCodeAt(i));
-			out = 60 * out + num;
-		}
-
-		// handle digits after the decimal
-		for (i = 0; i < fractional.length; i++) {
-			multiplier = multiplier / 60;
-			num = charCodeToInt(fractional.charCodeAt(i));
-			out += num * multiplier;
-		}
-
-		return out * sign;
-	}
-
-	function arrayToInt (array) {
-		for (var i = 0; i < array.length; i++) {
-			array[i] = unpackBase60(array[i]);
-		}
-	}
-
-	function intToUntil (array, length) {
-		for (var i = 0; i < length; i++) {
-			array[i] = Math.round((array[i - 1] || 0) + (array[i] * 60000)); // minutes to milliseconds
-		}
-
-		array[length - 1] = Infinity;
-	}
-
-	function mapIndices (source, indices) {
-		var out = [], i;
-
-		for (i = 0; i < indices.length; i++) {
-			out[i] = source[indices[i]];
-		}
-
-		return out;
-	}
-
-	function unpack (string) {
-		var data = string.split('|'),
-			offsets = data[2].split(' '),
-			indices = data[3].split(''),
-			untils  = data[4].split(' ');
-
-		arrayToInt(offsets);
-		arrayToInt(indices);
-		arrayToInt(untils);
-
-		intToUntil(untils, indices.length);
-
-		return {
-			name    : data[0],
-			abbrs   : mapIndices(data[1].split(' '), indices),
-			offsets : mapIndices(offsets, indices),
-			untils  : untils
-		};
-	}
-
-	/************************************
-		Zone object
-	************************************/
-
-	function Zone (packedString) {
-		if (packedString) {
-			this._set(unpack(packedString));
-		}
-	}
-
-	Zone.prototype = {
-		_set : function (unpacked) {
-			this.name    = unpacked.name;
-			this.abbrs   = unpacked.abbrs;
-			this.untils  = unpacked.untils;
-			this.offsets = unpacked.offsets;
-		},
-
-		_index : function (timestamp) {
-			var target = +timestamp,
-				untils = this.untils,
-				i;
-
-			for (i = 0; i < untils.length; i++) {
-				if (target < untils[i]) {
-					return i;
-				}
-			}
-		},
-
-		parse : function (timestamp) {
-			var target  = +timestamp,
-				offsets = this.offsets,
-				untils  = this.untils,
-				max     = untils.length - 1,
-				offset, offsetNext, offsetPrev, i;
-
-			for (i = 0; i < max; i++) {
-				offset     = offsets[i];
-				offsetNext = offsets[i + 1];
-				offsetPrev = offsets[i ? i - 1 : i];
-
-				if (offset < offsetNext && tz.moveAmbiguousForward) {
-					offset = offsetNext;
-				} else if (offset > offsetPrev && tz.moveInvalidForward) {
-					offset = offsetPrev;
-				}
-
-				if (target < untils[i] - (offset * 60000)) {
-					return offsets[i];
-				}
-			}
-
-			return offsets[max];
-		},
-
-		abbr : function (mom) {
-			return this.abbrs[this._index(mom)];
-		},
-
-		offset : function (mom) {
-			return this.offsets[this._index(mom)];
-		}
-	};
-
-	/************************************
-		Global Methods
-	************************************/
-
-	function normalizeName (name) {
-		return (name || '').toLowerCase().replace(/\//g, '_');
-	}
-
-	function addZone (packed) {
-		var i, name, normalized;
-
-		if (typeof packed === "string") {
-			packed = [packed];
-		}
-
-		for (i = 0; i < packed.length; i++) {
-			name = packed[i].split('|')[0];
-			normalized = normalizeName(name);
-			zones[normalized] = packed[i];
-			names[normalized] = name;
-		}
-	}
-
-	function getZone (name, caller) {
-		name = normalizeName(name);
-
-		var zone = zones[name];
-		var link;
-		
-		if (zone instanceof Zone) {
-			return zone;
-		}
-
-		if (typeof zone === 'string') {
-			zone = new Zone(zone);
-			zones[name] = zone;
-			return zone;
-		}
-
-		// Pass getZone to prevent recursion more than 1 level deep
-		if (links[name] && caller !== getZone && (link = getZone(links[name], getZone))) {
-			zone = zones[name] = new Zone();
-			zone._set(link);
-			zone.name = names[name];
-			return zone;
-		}
-
-		return null;
-	}
-
-	function getNames () {
-		var i, out = [];
-
-		for (i in names) {
-			if (names.hasOwnProperty(i) && (zones[i] || zones[links[i]]) && names[i]) {
-				out.push(names[i]);
-			}
-		}
-
-		return out.sort();
-	}
-
-	function addLink (aliases) {
-		var i, alias, normal0, normal1;
-
-		if (typeof aliases === "string") {
-			aliases = [aliases];
-		}
-
-		for (i = 0; i < aliases.length; i++) {
-			alias = aliases[i].split('|');
-
-			normal0 = normalizeName(alias[0]);
-			normal1 = normalizeName(alias[1]);
-
-			links[normal0] = normal1;
-			names[normal0] = alias[0];
-
-			links[normal1] = normal0;
-			names[normal1] = alias[1];
-		}
-	}
-
-	function loadData (data) {
-		addZone(data.zones);
-		addLink(data.links);
-		tz.dataVersion = data.version;
-	}
-
-	function zoneExists (name) {
-		if (!zoneExists.didShowError) {
-			zoneExists.didShowError = true;
-				logError("moment.tz.zoneExists('" + name + "') has been deprecated in favor of !moment.tz.zone('" + name + "')");
-		}
-		return !!getZone(name);
-	}
-
-	function needsOffset (m) {
-		return !!(m._a && (m._tzm === undefined));
-	}
-
-	function logError (message) {
-		if (typeof console !== 'undefined' && typeof console.error === 'function') {
-			console.error(message);
-		}
-	}
-
-	/************************************
-		moment.tz namespace
-	************************************/
-
-	function tz (input) {
-		var args = Array.prototype.slice.call(arguments, 0, -1),
-			name = arguments[arguments.length - 1],
-			zone = getZone(name),
-			out  = moment.utc.apply(null, args);
-
-		if (zone && !moment.isMoment(input) && needsOffset(out)) {
-			out.add(zone.parse(out), 'minutes');
-		}
-
-		out.tz(name);
-
-		return out;
-	}
-
-	tz.version      = VERSION;
-	tz.dataVersion  = '';
-	tz._zones       = zones;
-	tz._links       = links;
-	tz._names       = names;
-	tz.add          = addZone;
-	tz.link         = addLink;
-	tz.load         = loadData;
-	tz.zone         = getZone;
-	tz.zoneExists   = zoneExists; // deprecated in 0.1.0
-	tz.names        = getNames;
-	tz.Zone         = Zone;
-	tz.unpack       = unpack;
-	tz.unpackBase60 = unpackBase60;
-	tz.needsOffset  = needsOffset;
-	tz.moveInvalidForward   = true;
-	tz.moveAmbiguousForward = false;
-
-	/************************************
-		Interface with Moment.js
-	************************************/
-
-	var fn = moment.fn;
-
-	moment.tz = tz;
-
-	moment.defaultZone = null;
-
-	moment.updateOffset = function (mom, keepTime) {
-		var zone = moment.defaultZone,
-			offset;
-
-		if (mom._z === undefined) {
-			if (zone && needsOffset(mom) && !mom._isUTC) {
-				mom._d = moment.utc(mom._a)._d;
-				mom.utc().add(zone.parse(mom), 'minutes');
-			}
-			mom._z = zone;
-		}
-		if (mom._z) {
-			offset = mom._z.offset(mom);
-			if (Math.abs(offset) < 16) {
-				offset = offset / 60;
-			}
-			if (mom.utcOffset !== undefined) {
-				mom.utcOffset(-offset, keepTime);
-			} else {
-				mom.zone(offset, keepTime);
-			}
-		}
-	};
-
-	fn.tz = function (name) {
-		if (name) {
-			this._z = getZone(name);
-			if (this._z) {
-				moment.updateOffset(this);
-			} else {
-				logError("Moment Timezone has no data for " + name + ". See http://momentjs.com/timezone/docs/#/data-loading/.");
-			}
-			return this;
-		}
-		if (this._z) { return this._z.name; }
-	};
-
-	function abbrWrap (old) {
-		return function () {
-			if (this._z) { return this._z.abbr(this); }
-			return old.call(this);
-		};
-	}
-
-	function resetZoneWrap (old) {
-		return function () {
-			this._z = null;
-			return old.apply(this, arguments);
-		};
-	}
-
-	fn.zoneName = abbrWrap(fn.zoneName);
-	fn.zoneAbbr = abbrWrap(fn.zoneAbbr);
-	fn.utc      = resetZoneWrap(fn.utc);
-
-	moment.tz.setDefault = function(name) {
-		if (major < 2 || (major === 2 && minor < 9)) {
-			logError('Moment Timezone setDefault() requires Moment.js >= 2.9.0. You are using Moment.js ' + moment.version + '.');
-		}
-		moment.defaultZone = name ? getZone(name) : null;
-		return moment;
-	};
-
-	// Cloning a moment should include the _z property.
-	var momentProperties = moment.momentProperties;
-	if (Object.prototype.toString.call(momentProperties) === '[object Array]') {
-		// moment 2.8.1+
-		momentProperties.push('_z');
-		momentProperties.push('_a');
-	} else if (momentProperties) {
-		// moment 2.7.0
-		momentProperties._z = null;
-	}
-
-	loadData({
-		"version": "2015d",
-		"zones": [
-			"Africa/Abidjan|GMT|0|0|",
-			"Africa/Addis_Ababa|EAT|-30|0|",
-			"Africa/Algiers|CET|-10|0|",
-			"Africa/Bangui|WAT|-10|0|",
-			"Africa/Blantyre|CAT|-20|0|",
-			"Africa/Cairo|EET EEST|-20 -30|010101010|1Cby0 Fb0 c10 8n0 8Nd0 gL0 e10 mn0",
-			"Africa/Casablanca|WET WEST|0 -10|01010101010101010101010101010101010101010|1Cco0 Db0 1zd0 Lz0 1Nf0 wM0 co0 go0 1o00 s00 dA0 vc0 11A0 A00 e00 y00 11A0 uo0 e00 DA0 11A0 rA0 e00 Jc0 WM0 m00 gM0 M00 WM0 jc0 e00 RA0 11A0 dA0 e00 Uo0 11A0 800 gM0 Xc0",
-			"Africa/Ceuta|CET CEST|-10 -20|01010101010101010101010|1BWp0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00",
-			"Africa/Johannesburg|SAST|-20|0|",
-			"Africa/Tripoli|EET CET CEST|-20 -10 -20|0120|1IlA0 TA0 1o00",
-			"Africa/Windhoek|WAST WAT|-20 -10|01010101010101010101010|1C1c0 11B0 1nX0 11B0 1nX0 11B0 1qL0 WN0 1qL0 11B0 1nX0 11B0 1nX0 11B0 1nX0 11B0 1nX0 11B0 1qL0 WN0 1qL0 11B0",
-			"America/Adak|HST HDT|a0 90|01010101010101010101010|1BR00 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0",
-			"America/Anchorage|AKST AKDT|90 80|01010101010101010101010|1BQX0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0",
-			"America/Anguilla|AST|40|0|",
-			"America/Araguaina|BRT BRST|30 20|010|1IdD0 Lz0",
-			"America/Argentina/Buenos_Aires|ART|30|0|",
-			"America/Asuncion|PYST PYT|30 40|01010101010101010101010|1C430 1a10 1fz0 1a10 1fz0 1cN0 17b0 1ip0 17b0 1ip0 17b0 1ip0 19X0 1fB0 19X0 1fB0 19X0 1ip0 17b0 1ip0 17b0 1ip0",
-			"America/Atikokan|EST|50|0|",
-			"America/Bahia|BRT BRST|30 20|010|1FJf0 Rb0",
-			"America/Bahia_Banderas|MST CDT CST|70 50 60|01212121212121212121212|1C1l0 1nW0 11B0 1nX0 11B0 1nX0 14p0 1lb0 14p0 1lb0 14p0 1lb0 14p0 1nX0 11B0 1nX0 11B0 1nX0 14p0 1lb0 14p0 1lb0",
-			"America/Belem|BRT|30|0|",
-			"America/Belize|CST|60|0|",
-			"America/Boa_Vista|AMT|40|0|",
-			"America/Bogota|COT|50|0|",
-			"America/Boise|MST MDT|70 60|01010101010101010101010|1BQV0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0",
-			"America/Campo_Grande|AMST AMT|30 40|01010101010101010101010|1BIr0 1zd0 On0 1zd0 Rb0 1zd0 Lz0 1C10 Lz0 1C10 On0 1zd0 On0 1zd0 On0 1zd0 On0 1C10 Lz0 1C10 Lz0 1C10",
-			"America/Cancun|CST CDT EST|60 50 50|010101010102|1C1k0 1nX0 11B0 1nX0 11B0 1nX0 14p0 1lb0 14p0 1lb0 Dd0",
-			"America/Caracas|VET|4u|0|",
-			"America/Cayenne|GFT|30|0|",
-			"America/Chicago|CST CDT|60 50|01010101010101010101010|1BQU0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0",
-			"America/Chihuahua|MST MDT|70 60|01010101010101010101010|1C1l0 1nX0 11B0 1nX0 11B0 1nX0 14p0 1lb0 14p0 1lb0 14p0 1lb0 14p0 1nX0 11B0 1nX0 11B0 1nX0 14p0 1lb0 14p0 1lb0",
-			"America/Creston|MST|70|0|",
-			"America/Dawson|PST PDT|80 70|01010101010101010101010|1BQW0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0",
-			"America/Detroit|EST EDT|50 40|01010101010101010101010|1BQT0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0",
-			"America/Eirunepe|AMT ACT|40 50|01|1KLE0",
-			"America/Glace_Bay|AST ADT|40 30|01010101010101010101010|1BQS0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0",
-			"America/Godthab|WGT WGST|30 20|01010101010101010101010|1BWp0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00",
-			"America/Goose_Bay|AST ADT|40 30|01010101010101010101010|1BQQ1 1zb0 Op0 1zcX Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0",
-			"America/Grand_Turk|EST EDT AST|50 40 40|0101010101012|1BQT0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0",
-			"America/Guayaquil|ECT|50|0|",
-			"America/Guyana|GYT|40|0|",
-			"America/Havana|CST CDT|50 40|01010101010101010101010|1BQR0 1wo0 U00 1zc0 U00 1qM0 Oo0 1zc0 Oo0 1zc0 Oo0 1zc0 Rc0 1zc0 Oo0 1zc0 Oo0 1zc0 Oo0 1zc0 Oo0 1zc0",
-			"America/La_Paz|BOT|40|0|",
-			"America/Lima|PET|50|0|",
-			"America/Merida|CST CDT|60 50|01010101010101010101010|1C1k0 1nX0 11B0 1nX0 11B0 1nX0 14p0 1lb0 14p0 1lb0 14p0 1lb0 14p0 1nX0 11B0 1nX0 11B0 1nX0 14p0 1lb0 14p0 1lb0",
-			"America/Metlakatla|PST|80|0|",
-			"America/Miquelon|PMST PMDT|30 20|01010101010101010101010|1BQR0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0",
-			"America/Montevideo|UYST UYT|20 30|01010101010101010101010|1BQQ0 1ld0 14n0 1ld0 14n0 1o10 11z0 1o10 11z0 1o10 11z0 1o10 14n0 1ld0 14n0 1ld0 14n0 1o10 11z0 1o10 11z0 1o10",
-			"America/Noronha|FNT|20|0|",
-			"America/North_Dakota/Beulah|MST MDT CST CDT|70 60 60 50|01232323232323232323232|1BQV0 1zb0 Oo0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0",
-			"America/Paramaribo|SRT|30|0|",
-			"America/Port-au-Prince|EST EDT|50 40|0101010101010101010|1GI70 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0",
-			"America/Santa_Isabel|PST PDT|80 70|01010101010101010101010|1C1m0 1nX0 11B0 1nX0 11B0 1nX0 14p0 1lb0 14p0 1lb0 14p0 1lb0 14p0 1nX0 11B0 1nX0 11B0 1nX0 14p0 1lb0 14p0 1lb0",
-			"America/Santiago|CLST CLT CLT|30 40 30|010101010102|1C1f0 1fB0 1nX0 G10 1EL0 Op0 1zb0 Rd0 1wn0 Rd0 1wn0",
-			"America/Sao_Paulo|BRST BRT|20 30|01010101010101010101010|1BIq0 1zd0 On0 1zd0 Rb0 1zd0 Lz0 1C10 Lz0 1C10 On0 1zd0 On0 1zd0 On0 1zd0 On0 1C10 Lz0 1C10 Lz0 1C10",
-			"America/Scoresbysund|EGT EGST|10 0|01010101010101010101010|1BWp0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00",
-			"America/St_Johns|NST NDT|3u 2u|01010101010101010101010|1BQPv 1zb0 Op0 1zcX Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0",
-			"Antarctica/Casey|CAST AWST|-b0 -80|0101|1BN30 40P0 KL0",
-			"Antarctica/Davis|DAVT DAVT|-50 -70|0101|1BPw0 3Wn0 KN0",
-			"Antarctica/DumontDUrville|DDUT|-a0|0|",
-			"Antarctica/Macquarie|AEDT MIST|-b0 -b0|01|1C140",
-			"Antarctica/Mawson|MAWT|-50|0|",
-			"Antarctica/McMurdo|NZDT NZST|-d0 -c0|01010101010101010101010|1C120 1a00 1fA0 1a00 1fA0 1cM0 1fA0 1a00 1fA0 1a00 1fA0 1a00 1fA0 1a00 1fA0 1a00 1fA0 1cM0 1fA0 1a00 1fA0 1a00",
-			"Antarctica/Rothera|ROTT|30|0|",
-			"Antarctica/Syowa|SYOT|-30|0|",
-			"Antarctica/Troll|UTC CEST|0 -20|01010101010101010101010|1BWp0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00",
-			"Antarctica/Vostok|VOST|-60|0|",
-			"Asia/Aden|AST|-30|0|",
-			"Asia/Almaty|ALMT|-60|0|",
-			"Asia/Amman|EET EEST|-20 -30|010101010101010101010|1BVy0 1qM0 11A0 1o00 11A0 4bX0 Dd0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0",
-			"Asia/Anadyr|ANAT ANAST ANAT|-c0 -c0 -b0|0120|1BWe0 1qN0 WM0",
-			"Asia/Aqtau|AQTT|-50|0|",
-			"Asia/Ashgabat|TMT|-50|0|",
-			"Asia/Baku|AZT AZST|-40 -50|01010101010101010101010|1BWo0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00",
-			"Asia/Bangkok|ICT|-70|0|",
-			"Asia/Beirut|EET EEST|-20 -30|01010101010101010101010|1BWm0 1qL0 WN0 1qL0 WN0 1qL0 11B0 1nX0 11B0 1nX0 11B0 1nX0 11B0 1qL0 WN0 1qL0 WN0 1qL0 11B0 1nX0 11B0 1nX0",
-			"Asia/Bishkek|KGT|-60|0|",
-			"Asia/Brunei|BNT|-80|0|",
-			"Asia/Calcutta|IST|-5u|0|",
-			"Asia/Chita|YAKT YAKST YAKT IRKT|-90 -a0 -a0 -80|01023|1BWh0 1qM0 WM0 8Hz0",
-			"Asia/Choibalsan|CHOT CHOST|-80 -90|0101010101010|1O8G0 1cJ0 1cP0 1cJ0 1cP0 1fx0 1cP0 1cJ0 1cP0 1cJ0 1cP0 1cJ0",
-			"Asia/Chongqing|CST|-80|0|",
-			"Asia/Dacca|BDT|-60|0|",
-			"Asia/Damascus|EET EEST|-20 -30|01010101010101010101010|1C0m0 1nX0 11B0 1nX0 11B0 1nX0 11B0 1nX0 11B0 1qL0 WN0 1qL0 WN0 1qL0 11B0 1nX0 11B0 1nX0 11B0 1nX0 11B0 1qL0",
-			"Asia/Dili|TLT|-90|0|",
-			"Asia/Dubai|GST|-40|0|",
-			"Asia/Dushanbe|TJT|-50|0|",
-			"Asia/Gaza|EET EEST|-20 -30|01010101010101010101010|1BVW1 SKX 1xd1 MKX 1AN0 1a00 1fA0 1cL0 1cN0 1nX0 1210 1nz0 1210 1nz0 14N0 1nz0 1210 1nz0 1210 1nz0 1210 1nz0",
-			"Asia/Hebron|EET EEST|-20 -30|0101010101010101010101010|1BVy0 Tb0 1xd1 MKX bB0 cn0 1cN0 1a00 1fA0 1cL0 1cN0 1nX0 1210 1nz0 1210 1nz0 14N0 1nz0 1210 1nz0 1210 1nz0 1210 1nz0",
-			"Asia/Hong_Kong|HKT|-80|0|",
-			"Asia/Hovd|HOVT HOVST|-70 -80|0101010101010|1O8H0 1cJ0 1cP0 1cJ0 1cP0 1fx0 1cP0 1cJ0 1cP0 1cJ0 1cP0 1cJ0",
-			"Asia/Irkutsk|IRKT IRKST IRKT|-80 -90 -90|01020|1BWi0 1qM0 WM0 8Hz0",
-			"Asia/Istanbul|EET EEST|-20 -30|01010101010101010101010|1BWp0 1qM0 Xc0 1qo0 WM0 1qM0 11A0 1o00 1200 1nA0 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00",
-			"Asia/Jakarta|WIB|-70|0|",
-			"Asia/Jayapura|WIT|-90|0|",
-			"Asia/Jerusalem|IST IDT|-20 -30|01010101010101010101010|1BVA0 17X0 1kp0 1dz0 1c10 1aL0 1eN0 1oL0 10N0 1oL0 10N0 1oL0 10N0 1rz0 W10 1rz0 W10 1rz0 10N0 1oL0 10N0 1oL0",
-			"Asia/Kabul|AFT|-4u|0|",
-			"Asia/Kamchatka|PETT PETST PETT|-c0 -c0 -b0|0120|1BWe0 1qN0 WM0",
-			"Asia/Karachi|PKT|-50|0|",
-			"Asia/Kashgar|XJT|-60|0|",
-			"Asia/Kathmandu|NPT|-5J|0|",
-			"Asia/Khandyga|VLAT VLAST VLAT YAKT YAKT|-a0 -b0 -b0 -a0 -90|010234|1BWg0 1qM0 WM0 17V0 7zD0",
-			"Asia/Krasnoyarsk|KRAT KRAST KRAT|-70 -80 -80|01020|1BWj0 1qM0 WM0 8Hz0",
-			"Asia/Kuala_Lumpur|MYT|-80|0|",
-			"Asia/Magadan|MAGT MAGST MAGT MAGT|-b0 -c0 -c0 -a0|01023|1BWf0 1qM0 WM0 8Hz0",
-			"Asia/Makassar|WITA|-80|0|",
-			"Asia/Manila|PHT|-80|0|",
-			"Asia/Nicosia|EET EEST|-20 -30|01010101010101010101010|1BWp0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00",
-			"Asia/Novokuznetsk|KRAT NOVST NOVT NOVT|-70 -70 -60 -70|01230|1BWj0 1qN0 WM0 8Hz0",
-			"Asia/Novosibirsk|NOVT NOVST NOVT|-60 -70 -70|01020|1BWk0 1qM0 WM0 8Hz0",
-			"Asia/Omsk|OMST OMSST OMST|-60 -70 -70|01020|1BWk0 1qM0 WM0 8Hz0",
-			"Asia/Oral|ORAT|-50|0|",
-			"Asia/Pyongyang|KST|-90|0|",
-			"Asia/Qyzylorda|QYZT|-60|0|",
-			"Asia/Rangoon|MMT|-6u|0|",
-			"Asia/Sakhalin|SAKT SAKST SAKT|-a0 -b0 -b0|01020|1BWg0 1qM0 WM0 8Hz0",
-			"Asia/Samarkand|UZT|-50|0|",
-			"Asia/Singapore|SGT|-80|0|",
-			"Asia/Srednekolymsk|MAGT MAGST MAGT SRET|-b0 -c0 -c0 -b0|01023|1BWf0 1qM0 WM0 8Hz0",
-			"Asia/Tbilisi|GET|-40|0|",
-			"Asia/Tehran|IRST IRDT|-3u -4u|01010101010101010101010|1BTUu 1dz0 1cp0 1dz0 1cp0 1dz0 1cN0 1dz0 1cp0 1dz0 1cp0 1dz0 1cp0 1dz0 1cN0 1dz0 1cp0 1dz0 1cp0 1dz0 1cp0 1dz0",
-			"Asia/Thimbu|BTT|-60|0|",
-			"Asia/Tokyo|JST|-90|0|",
-			"Asia/Ulaanbaatar|ULAT ULAST|-80 -90|0101010101010|1O8G0 1cJ0 1cP0 1cJ0 1cP0 1fx0 1cP0 1cJ0 1cP0 1cJ0 1cP0 1cJ0",
-			"Asia/Ust-Nera|MAGT MAGST MAGT VLAT VLAT|-b0 -c0 -c0 -b0 -a0|010234|1BWf0 1qM0 WM0 17V0 7zD0",
-			"Asia/Vladivostok|VLAT VLAST VLAT|-a0 -b0 -b0|01020|1BWg0 1qM0 WM0 8Hz0",
-			"Asia/Yakutsk|YAKT YAKST YAKT|-90 -a0 -a0|01020|1BWh0 1qM0 WM0 8Hz0",
-			"Asia/Yekaterinburg|YEKT YEKST YEKT|-50 -60 -60|01020|1BWl0 1qM0 WM0 8Hz0",
-			"Asia/Yerevan|AMT AMST|-40 -50|01010|1BWm0 1qM0 WM0 1qM0",
-			"Atlantic/Azores|AZOT AZOST|10 0|01010101010101010101010|1BWp0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00",
-			"Atlantic/Canary|WET WEST|0 -10|01010101010101010101010|1BWp0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00",
-			"Atlantic/Cape_Verde|CVT|10|0|",
-			"Atlantic/South_Georgia|GST|20|0|",
-			"Atlantic/Stanley|FKST FKT|30 40|010|1C6R0 U10",
-			"Australia/ACT|AEDT AEST|-b0 -a0|01010101010101010101010|1C140 1cM0 1cM0 1cM0 1cM0 1fA0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1fA0 1cM0 1cM0 1cM0 1cM0",
-			"Australia/Adelaide|ACDT ACST|-au -9u|01010101010101010101010|1C14u 1cM0 1cM0 1cM0 1cM0 1fA0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1fA0 1cM0 1cM0 1cM0 1cM0",
-			"Australia/Brisbane|AEST|-a0|0|",
-			"Australia/Darwin|ACST|-9u|0|",
-			"Australia/Eucla|ACWST|-8J|0|",
-			"Australia/LHI|LHDT LHST|-b0 -au|01010101010101010101010|1C130 1cMu 1cLu 1cMu 1cLu 1fAu 1cLu 1cMu 1cLu 1cMu 1cLu 1cMu 1cLu 1cMu 1cLu 1cMu 1cLu 1fAu 1cLu 1cMu 1cLu 1cMu",
-			"Australia/Perth|AWST|-80|0|",
-			"Chile/EasterIsland|EASST EAST EAST|50 60 50|010101010102|1C1f0 1fB0 1nX0 G10 1EL0 Op0 1zb0 Rd0 1wn0 Rd0 1wn0",
-			"Eire|GMT IST|0 -10|01010101010101010101010|1BWp0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00",
-			"Etc/GMT+1|GMT+1|10|0|",
-			"Etc/GMT+10|GMT+10|a0|0|",
-			"Etc/GMT+11|GMT+11|b0|0|",
-			"Etc/GMT+12|GMT+12|c0|0|",
-			"Etc/GMT+2|GMT+2|20|0|",
-			"Etc/GMT+3|GMT+3|30|0|",
-			"Etc/GMT+4|GMT+4|40|0|",
-			"Etc/GMT+5|GMT+5|50|0|",
-			"Etc/GMT+6|GMT+6|60|0|",
-			"Etc/GMT+7|GMT+7|70|0|",
-			"Etc/GMT+8|GMT+8|80|0|",
-			"Etc/GMT+9|GMT+9|90|0|",
-			"Etc/GMT-1|GMT-1|-10|0|",
-			"Etc/GMT-10|GMT-10|-a0|0|",
-			"Etc/GMT-11|GMT-11|-b0|0|",
-			"Etc/GMT-12|GMT-12|-c0|0|",
-			"Etc/GMT-13|GMT-13|-d0|0|",
-			"Etc/GMT-14|GMT-14|-e0|0|",
-			"Etc/GMT-2|GMT-2|-20|0|",
-			"Etc/GMT-3|GMT-3|-30|0|",
-			"Etc/GMT-4|GMT-4|-40|0|",
-			"Etc/GMT-5|GMT-5|-50|0|",
-			"Etc/GMT-6|GMT-6|-60|0|",
-			"Etc/GMT-7|GMT-7|-70|0|",
-			"Etc/GMT-8|GMT-8|-80|0|",
-			"Etc/GMT-9|GMT-9|-90|0|",
-			"Etc/UCT|UCT|0|0|",
-			"Etc/UTC|UTC|0|0|",
-			"Europe/Belfast|GMT BST|0 -10|01010101010101010101010|1BWp0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00",
-			"Europe/Kaliningrad|EET EEST FET|-20 -30 -30|01020|1BWo0 1qM0 WM0 8Hz0",
-			"Europe/Minsk|EET EEST FET MSK|-20 -30 -30 -30|01023|1BWo0 1qM0 WM0 8Hy0",
-			"Europe/Moscow|MSK MSD MSK|-30 -40 -40|01020|1BWn0 1qM0 WM0 8Hz0",
-			"Europe/Samara|SAMT SAMST SAMT|-40 -40 -30|0120|1BWm0 1qN0 WM0",
-			"Europe/Simferopol|EET EEST MSK MSK|-20 -30 -40 -30|01010101023|1BWp0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11z0 1nW0",
-			"HST|HST|a0|0|",
-			"Indian/Chagos|IOT|-60|0|",
-			"Indian/Christmas|CXT|-70|0|",
-			"Indian/Cocos|CCT|-6u|0|",
-			"Indian/Kerguelen|TFT|-50|0|",
-			"Indian/Mahe|SCT|-40|0|",
-			"Indian/Maldives|MVT|-50|0|",
-			"Indian/Mauritius|MUT|-40|0|",
-			"Indian/Reunion|RET|-40|0|",
-			"Kwajalein|MHT|-c0|0|",
-			"MET|MET MEST|-10 -20|01010101010101010101010|1BWp0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00",
-			"NZ-CHAT|CHADT CHAST|-dJ -cJ|01010101010101010101010|1C120 1a00 1fA0 1a00 1fA0 1cM0 1fA0 1a00 1fA0 1a00 1fA0 1a00 1fA0 1a00 1fA0 1a00 1fA0 1cM0 1fA0 1a00 1fA0 1a00",
-			"Pacific/Apia|SST SDT WSDT WSST|b0 a0 -e0 -d0|01012323232323232323232|1Dbn0 1ff0 1a00 CI0 AQ0 1cM0 1fA0 1a00 1fA0 1a00 1fA0 1a00 1fA0 1a00 1fA0 1a00 1fA0 1cM0 1fA0 1a00 1fA0 1a00",
-			"Pacific/Bougainville|PGT BST|-a0 -b0|01|1NwE0",
-			"Pacific/Chuuk|CHUT|-a0|0|",
-			"Pacific/Efate|VUT|-b0|0|",
-			"Pacific/Enderbury|PHOT|-d0|0|",
-			"Pacific/Fakaofo|TKT TKT|b0 -d0|01|1Gfn0",
-			"Pacific/Fiji|FJST FJT|-d0 -c0|01010101010101010101010|1BWe0 1o00 Rc0 1wo0 Ao0 1Nc0 Ao0 1Q00 xz0 1SN0 uM0 1SM0 xA0 1SM0 uM0 1SM0 uM0 1SM0 uM0 1SM0 uM0 1SM0",
-			"Pacific/Funafuti|TVT|-c0|0|",
-			"Pacific/Galapagos|GALT|60|0|",
-			"Pacific/Gambier|GAMT|90|0|",
-			"Pacific/Guadalcanal|SBT|-b0|0|",
-			"Pacific/Guam|ChST|-a0|0|",
-			"Pacific/Kiritimati|LINT|-e0|0|",
-			"Pacific/Kosrae|KOST|-b0|0|",
-			"Pacific/Marquesas|MART|9u|0|",
-			"Pacific/Midway|SST|b0|0|",
-			"Pacific/Nauru|NRT|-c0|0|",
-			"Pacific/Niue|NUT|b0|0|",
-			"Pacific/Norfolk|NFT|-bu|0|",
-			"Pacific/Noumea|NCT|-b0|0|",
-			"Pacific/Palau|PWT|-90|0|",
-			"Pacific/Pohnpei|PONT|-b0|0|",
-			"Pacific/Port_Moresby|PGT|-a0|0|",
-			"Pacific/Rarotonga|CKT|a0|0|",
-			"Pacific/Tahiti|TAHT|a0|0|",
-			"Pacific/Tarawa|GILT|-c0|0|",
-			"Pacific/Tongatapu|TOT|-d0|0|",
-			"Pacific/Wake|WAKT|-c0|0|",
-			"Pacific/Wallis|WFT|-c0|0|"
-		],
-		"links": [
-			"Africa/Abidjan|Africa/Accra",
-			"Africa/Abidjan|Africa/Bamako",
-			"Africa/Abidjan|Africa/Banjul",
-			"Africa/Abidjan|Africa/Bissau",
-			"Africa/Abidjan|Africa/Conakry",
-			"Africa/Abidjan|Africa/Dakar",
-			"Africa/Abidjan|Africa/Freetown",
-			"Africa/Abidjan|Africa/Lome",
-			"Africa/Abidjan|Africa/Monrovia",
-			"Africa/Abidjan|Africa/Nouakchott",
-			"Africa/Abidjan|Africa/Ouagadougou",
-			"Africa/Abidjan|Africa/Sao_Tome",
-			"Africa/Abidjan|Africa/Timbuktu",
-			"Africa/Abidjan|America/Danmarkshavn",
-			"Africa/Abidjan|Atlantic/Reykjavik",
-			"Africa/Abidjan|Atlantic/St_Helena",
-			"Africa/Abidjan|Etc/GMT",
-			"Africa/Abidjan|Etc/GMT+0",
-			"Africa/Abidjan|Etc/GMT-0",
-			"Africa/Abidjan|Etc/GMT0",
-			"Africa/Abidjan|Etc/Greenwich",
-			"Africa/Abidjan|GMT",
-			"Africa/Abidjan|GMT+0",
-			"Africa/Abidjan|GMT-0",
-			"Africa/Abidjan|GMT0",
-			"Africa/Abidjan|Greenwich",
-			"Africa/Abidjan|Iceland",
-			"Africa/Addis_Ababa|Africa/Asmara",
-			"Africa/Addis_Ababa|Africa/Asmera",
-			"Africa/Addis_Ababa|Africa/Dar_es_Salaam",
-			"Africa/Addis_Ababa|Africa/Djibouti",
-			"Africa/Addis_Ababa|Africa/Juba",
-			"Africa/Addis_Ababa|Africa/Kampala",
-			"Africa/Addis_Ababa|Africa/Khartoum",
-			"Africa/Addis_Ababa|Africa/Mogadishu",
-			"Africa/Addis_Ababa|Africa/Nairobi",
-			"Africa/Addis_Ababa|Indian/Antananarivo",
-			"Africa/Addis_Ababa|Indian/Comoro",
-			"Africa/Addis_Ababa|Indian/Mayotte",
-			"Africa/Algiers|Africa/Tunis",
-			"Africa/Bangui|Africa/Brazzaville",
-			"Africa/Bangui|Africa/Douala",
-			"Africa/Bangui|Africa/Kinshasa",
-			"Africa/Bangui|Africa/Lagos",
-			"Africa/Bangui|Africa/Libreville",
-			"Africa/Bangui|Africa/Luanda",
-			"Africa/Bangui|Africa/Malabo",
-			"Africa/Bangui|Africa/Ndjamena",
-			"Africa/Bangui|Africa/Niamey",
-			"Africa/Bangui|Africa/Porto-Novo",
-			"Africa/Blantyre|Africa/Bujumbura",
-			"Africa/Blantyre|Africa/Gaborone",
-			"Africa/Blantyre|Africa/Harare",
-			"Africa/Blantyre|Africa/Kigali",
-			"Africa/Blantyre|Africa/Lubumbashi",
-			"Africa/Blantyre|Africa/Lusaka",
-			"Africa/Blantyre|Africa/Maputo",
-			"Africa/Cairo|Egypt",
-			"Africa/Casablanca|Africa/El_Aaiun",
-			"Africa/Ceuta|Arctic/Longyearbyen",
-			"Africa/Ceuta|Atlantic/Jan_Mayen",
-			"Africa/Ceuta|CET",
-			"Africa/Ceuta|Europe/Amsterdam",
-			"Africa/Ceuta|Europe/Andorra",
-			"Africa/Ceuta|Europe/Belgrade",
-			"Africa/Ceuta|Europe/Berlin",
-			"Africa/Ceuta|Europe/Bratislava",
-			"Africa/Ceuta|Europe/Brussels",
-			"Africa/Ceuta|Europe/Budapest",
-			"Africa/Ceuta|Europe/Busingen",
-			"Africa/Ceuta|Europe/Copenhagen",
-			"Africa/Ceuta|Europe/Gibraltar",
-			"Africa/Ceuta|Europe/Ljubljana",
-			"Africa/Ceuta|Europe/Luxembourg",
-			"Africa/Ceuta|Europe/Madrid",
-			"Africa/Ceuta|Europe/Malta",
-			"Africa/Ceuta|Europe/Monaco",
-			"Africa/Ceuta|Europe/Oslo",
-			"Africa/Ceuta|Europe/Paris",
-			"Africa/Ceuta|Europe/Podgorica",
-			"Africa/Ceuta|Europe/Prague",
-			"Africa/Ceuta|Europe/Rome",
-			"Africa/Ceuta|Europe/San_Marino",
-			"Africa/Ceuta|Europe/Sarajevo",
-			"Africa/Ceuta|Europe/Skopje",
-			"Africa/Ceuta|Europe/Stockholm",
-			"Africa/Ceuta|Europe/Tirane",
-			"Africa/Ceuta|Europe/Vaduz",
-			"Africa/Ceuta|Europe/Vatican",
-			"Africa/Ceuta|Europe/Vienna",
-			"Africa/Ceuta|Europe/Warsaw",
-			"Africa/Ceuta|Europe/Zagreb",
-			"Africa/Ceuta|Europe/Zurich",
-			"Africa/Ceuta|Poland",
-			"Africa/Johannesburg|Africa/Maseru",
-			"Africa/Johannesburg|Africa/Mbabane",
-			"Africa/Tripoli|Libya",
-			"America/Adak|America/Atka",
-			"America/Adak|US/Aleutian",
-			"America/Anchorage|America/Juneau",
-			"America/Anchorage|America/Nome",
-			"America/Anchorage|America/Sitka",
-			"America/Anchorage|America/Yakutat",
-			"America/Anchorage|US/Alaska",
-			"America/Anguilla|America/Antigua",
-			"America/Anguilla|America/Aruba",
-			"America/Anguilla|America/Barbados",
-			"America/Anguilla|America/Blanc-Sablon",
-			"America/Anguilla|America/Curacao",
-			"America/Anguilla|America/Dominica",
-			"America/Anguilla|America/Grenada",
-			"America/Anguilla|America/Guadeloupe",
-			"America/Anguilla|America/Kralendijk",
-			"America/Anguilla|America/Lower_Princes",
-			"America/Anguilla|America/Marigot",
-			"America/Anguilla|America/Martinique",
-			"America/Anguilla|America/Montserrat",
-			"America/Anguilla|America/Port_of_Spain",
-			"America/Anguilla|America/Puerto_Rico",
-			"America/Anguilla|America/Santo_Domingo",
-			"America/Anguilla|America/St_Barthelemy",
-			"America/Anguilla|America/St_Kitts",
-			"America/Anguilla|America/St_Lucia",
-			"America/Anguilla|America/St_Thomas",
-			"America/Anguilla|America/St_Vincent",
-			"America/Anguilla|America/Tortola",
-			"America/Anguilla|America/Virgin",
-			"America/Argentina/Buenos_Aires|America/Argentina/Catamarca",
-			"America/Argentina/Buenos_Aires|America/Argentina/ComodRivadavia",
-			"America/Argentina/Buenos_Aires|America/Argentina/Cordoba",
-			"America/Argentina/Buenos_Aires|America/Argentina/Jujuy",
-			"America/Argentina/Buenos_Aires|America/Argentina/La_Rioja",
-			"America/Argentina/Buenos_Aires|America/Argentina/Mendoza",
-			"America/Argentina/Buenos_Aires|America/Argentina/Rio_Gallegos",
-			"America/Argentina/Buenos_Aires|America/Argentina/Salta",
-			"America/Argentina/Buenos_Aires|America/Argentina/San_Juan",
-			"America/Argentina/Buenos_Aires|America/Argentina/San_Luis",
-			"America/Argentina/Buenos_Aires|America/Argentina/Tucuman",
-			"America/Argentina/Buenos_Aires|America/Argentina/Ushuaia",
-			"America/Argentina/Buenos_Aires|America/Buenos_Aires",
-			"America/Argentina/Buenos_Aires|America/Catamarca",
-			"America/Argentina/Buenos_Aires|America/Cordoba",
-			"America/Argentina/Buenos_Aires|America/Jujuy",
-			"America/Argentina/Buenos_Aires|America/Mendoza",
-			"America/Argentina/Buenos_Aires|America/Rosario",
-			"America/Atikokan|America/Cayman",
-			"America/Atikokan|America/Coral_Harbour",
-			"America/Atikokan|America/Jamaica",
-			"America/Atikokan|America/Panama",
-			"America/Atikokan|EST",
-			"America/Atikokan|Jamaica",
-			"America/Belem|America/Fortaleza",
-			"America/Belem|America/Maceio",
-			"America/Belem|America/Recife",
-			"America/Belem|America/Santarem",
-			"America/Belize|America/Costa_Rica",
-			"America/Belize|America/El_Salvador",
-			"America/Belize|America/Guatemala",
-			"America/Belize|America/Managua",
-			"America/Belize|America/Regina",
-			"America/Belize|America/Swift_Current",
-			"America/Belize|America/Tegucigalpa",
-			"America/Belize|Canada/East-Saskatchewan",
-			"America/Belize|Canada/Saskatchewan",
-			"America/Boa_Vista|America/Manaus",
-			"America/Boa_Vista|America/Porto_Velho",
-			"America/Boa_Vista|Brazil/West",
-			"America/Boise|America/Cambridge_Bay",
-			"America/Boise|America/Denver",
-			"America/Boise|America/Edmonton",
-			"America/Boise|America/Inuvik",
-			"America/Boise|America/Ojinaga",
-			"America/Boise|America/Shiprock",
-			"America/Boise|America/Yellowknife",
-			"America/Boise|Canada/Mountain",
-			"America/Boise|MST7MDT",
-			"America/Boise|Navajo",
-			"America/Boise|US/Mountain",
-			"America/Campo_Grande|America/Cuiaba",
-			"America/Chicago|America/Indiana/Knox",
-			"America/Chicago|America/Indiana/Tell_City",
-			"America/Chicago|America/Knox_IN",
-			"America/Chicago|America/Matamoros",
-			"America/Chicago|America/Menominee",
-			"America/Chicago|America/North_Dakota/Center",
-			"America/Chicago|America/North_Dakota/New_Salem",
-			"America/Chicago|America/Rainy_River",
-			"America/Chicago|America/Rankin_Inlet",
-			"America/Chicago|America/Resolute",
-			"America/Chicago|America/Winnipeg",
-			"America/Chicago|CST6CDT",
-			"America/Chicago|Canada/Central",
-			"America/Chicago|US/Central",
-			"America/Chicago|US/Indiana-Starke",
-			"America/Chihuahua|America/Mazatlan",
-			"America/Chihuahua|Mexico/BajaSur",
-			"America/Creston|America/Dawson_Creek",
-			"America/Creston|America/Hermosillo",
-			"America/Creston|America/Phoenix",
-			"America/Creston|MST",
-			"America/Creston|US/Arizona",
-			"America/Dawson|America/Ensenada",
-			"America/Dawson|America/Los_Angeles",
-			"America/Dawson|America/Tijuana",
-			"America/Dawson|America/Vancouver",
-			"America/Dawson|America/Whitehorse",
-			"America/Dawson|Canada/Pacific",
-			"America/Dawson|Canada/Yukon",
-			"America/Dawson|Mexico/BajaNorte",
-			"America/Dawson|PST8PDT",
-			"America/Dawson|US/Pacific",
-			"America/Dawson|US/Pacific-New",
-			"America/Detroit|America/Fort_Wayne",
-			"America/Detroit|America/Indiana/Indianapolis",
-			"America/Detroit|America/Indiana/Marengo",
-			"America/Detroit|America/Indiana/Petersburg",
-			"America/Detroit|America/Indiana/Vevay",
-			"America/Detroit|America/Indiana/Vincennes",
-			"America/Detroit|America/Indiana/Winamac",
-			"America/Detroit|America/Indianapolis",
-			"America/Detroit|America/Iqaluit",
-			"America/Detroit|America/Kentucky/Louisville",
-			"America/Detroit|America/Kentucky/Monticello",
-			"America/Detroit|America/Louisville",
-			"America/Detroit|America/Montreal",
-			"America/Detroit|America/Nassau",
-			"America/Detroit|America/New_York",
-			"America/Detroit|America/Nipigon",
-			"America/Detroit|America/Pangnirtung",
-			"America/Detroit|America/Thunder_Bay",
-			"America/Detroit|America/Toronto",
-			"America/Detroit|Canada/Eastern",
-			"America/Detroit|EST5EDT",
-			"America/Detroit|US/East-Indiana",
-			"America/Detroit|US/Eastern",
-			"America/Detroit|US/Michigan",
-			"America/Eirunepe|America/Porto_Acre",
-			"America/Eirunepe|America/Rio_Branco",
-			"America/Eirunepe|Brazil/Acre",
-			"America/Glace_Bay|America/Halifax",
-			"America/Glace_Bay|America/Moncton",
-			"America/Glace_Bay|America/Thule",
-			"America/Glace_Bay|Atlantic/Bermuda",
-			"America/Glace_Bay|Canada/Atlantic",
-			"America/Havana|Cuba",
-			"America/Merida|America/Mexico_City",
-			"America/Merida|America/Monterrey",
-			"America/Merida|Mexico/General",
-			"America/Metlakatla|Pacific/Pitcairn",
-			"America/Noronha|Brazil/DeNoronha",
-			"America/Santiago|Antarctica/Palmer",
-			"America/Santiago|Chile/Continental",
-			"America/Sao_Paulo|Brazil/East",
-			"America/St_Johns|Canada/Newfoundland",
-			"Antarctica/McMurdo|Antarctica/South_Pole",
-			"Antarctica/McMurdo|NZ",
-			"Antarctica/McMurdo|Pacific/Auckland",
-			"Asia/Aden|Asia/Baghdad",
-			"Asia/Aden|Asia/Bahrain",
-			"Asia/Aden|Asia/Kuwait",
-			"Asia/Aden|Asia/Qatar",
-			"Asia/Aden|Asia/Riyadh",
-			"Asia/Aqtau|Asia/Aqtobe",
-			"Asia/Ashgabat|Asia/Ashkhabad",
-			"Asia/Bangkok|Asia/Ho_Chi_Minh",
-			"Asia/Bangkok|Asia/Phnom_Penh",
-			"Asia/Bangkok|Asia/Saigon",
-			"Asia/Bangkok|Asia/Vientiane",
-			"Asia/Calcutta|Asia/Colombo",
-			"Asia/Calcutta|Asia/Kolkata",
-			"Asia/Chongqing|Asia/Chungking",
-			"Asia/Chongqing|Asia/Harbin",
-			"Asia/Chongqing|Asia/Macao",
-			"Asia/Chongqing|Asia/Macau",
-			"Asia/Chongqing|Asia/Shanghai",
-			"Asia/Chongqing|Asia/Taipei",
-			"Asia/Chongqing|PRC",
-			"Asia/Chongqing|ROC",
-			"Asia/Dacca|Asia/Dhaka",
-			"Asia/Dubai|Asia/Muscat",
-			"Asia/Hong_Kong|Hongkong",
-			"Asia/Istanbul|Europe/Istanbul",
-			"Asia/Istanbul|Turkey",
-			"Asia/Jakarta|Asia/Pontianak",
-			"Asia/Jerusalem|Asia/Tel_Aviv",
-			"Asia/Jerusalem|Israel",
-			"Asia/Kashgar|Asia/Urumqi",
-			"Asia/Kathmandu|Asia/Katmandu",
-			"Asia/Kuala_Lumpur|Asia/Kuching",
-			"Asia/Makassar|Asia/Ujung_Pandang",
-			"Asia/Nicosia|EET",
-			"Asia/Nicosia|Europe/Athens",
-			"Asia/Nicosia|Europe/Bucharest",
-			"Asia/Nicosia|Europe/Chisinau",
-			"Asia/Nicosia|Europe/Helsinki",
-			"Asia/Nicosia|Europe/Kiev",
-			"Asia/Nicosia|Europe/Mariehamn",
-			"Asia/Nicosia|Europe/Nicosia",
-			"Asia/Nicosia|Europe/Riga",
-			"Asia/Nicosia|Europe/Sofia",
-			"Asia/Nicosia|Europe/Tallinn",
-			"Asia/Nicosia|Europe/Tiraspol",
-			"Asia/Nicosia|Europe/Uzhgorod",
-			"Asia/Nicosia|Europe/Vilnius",
-			"Asia/Nicosia|Europe/Zaporozhye",
-			"Asia/Pyongyang|Asia/Seoul",
-			"Asia/Pyongyang|ROK",
-			"Asia/Samarkand|Asia/Tashkent",
-			"Asia/Singapore|Singapore",
-			"Asia/Tehran|Iran",
-			"Asia/Thimbu|Asia/Thimphu",
-			"Asia/Tokyo|Japan",
-			"Asia/Ulaanbaatar|Asia/Ulan_Bator",
-			"Atlantic/Canary|Atlantic/Faeroe",
-			"Atlantic/Canary|Atlantic/Faroe",
-			"Atlantic/Canary|Atlantic/Madeira",
-			"Atlantic/Canary|Europe/Lisbon",
-			"Atlantic/Canary|Portugal",
-			"Atlantic/Canary|WET",
-			"Australia/ACT|Australia/Canberra",
-			"Australia/ACT|Australia/Currie",
-			"Australia/ACT|Australia/Hobart",
-			"Australia/ACT|Australia/Melbourne",
-			"Australia/ACT|Australia/NSW",
-			"Australia/ACT|Australia/Sydney",
-			"Australia/ACT|Australia/Tasmania",
-			"Australia/ACT|Australia/Victoria",
-			"Australia/Adelaide|Australia/Broken_Hill",
-			"Australia/Adelaide|Australia/South",
-			"Australia/Adelaide|Australia/Yancowinna",
-			"Australia/Brisbane|Australia/Lindeman",
-			"Australia/Brisbane|Australia/Queensland",
-			"Australia/Darwin|Australia/North",
-			"Australia/LHI|Australia/Lord_Howe",
-			"Australia/Perth|Australia/West",
-			"Chile/EasterIsland|Pacific/Easter",
-			"Eire|Europe/Dublin",
-			"Etc/UCT|UCT",
-			"Etc/UTC|Etc/Universal",
-			"Etc/UTC|Etc/Zulu",
-			"Etc/UTC|UTC",
-			"Etc/UTC|Universal",
-			"Etc/UTC|Zulu",
-			"Europe/Belfast|Europe/Guernsey",
-			"Europe/Belfast|Europe/Isle_of_Man",
-			"Europe/Belfast|Europe/Jersey",
-			"Europe/Belfast|Europe/London",
-			"Europe/Belfast|GB",
-			"Europe/Belfast|GB-Eire",
-			"Europe/Moscow|Europe/Volgograd",
-			"Europe/Moscow|W-SU",
-			"HST|Pacific/Honolulu",
-			"HST|Pacific/Johnston",
-			"HST|US/Hawaii",
-			"Kwajalein|Pacific/Kwajalein",
-			"Kwajalein|Pacific/Majuro",
-			"NZ-CHAT|Pacific/Chatham",
-			"Pacific/Chuuk|Pacific/Truk",
-			"Pacific/Chuuk|Pacific/Yap",
-			"Pacific/Guam|Pacific/Saipan",
-			"Pacific/Midway|Pacific/Pago_Pago",
-			"Pacific/Midway|Pacific/Samoa",
-			"Pacific/Midway|US/Samoa",
-			"Pacific/Pohnpei|Pacific/Ponape"
-		]
-	});
-
-
-	return moment;
-}));
-
 define('superdesk/filters',[
     'angular',
-    'lodash',
-    'moment',
-    'moment-timezone'
-], function(angular, _, moment) {
+    'lodash'
+], function(angular, _) {
     'use strict';
 
     return angular.module('superdesk.filters', []).
@@ -71277,26 +67112,37 @@ define('superdesk/directives/sdUserAvatar',['angular'], function (angular) {
     return angular.module('superdesk.avatar', [])
         .directive('sdUserAvatar', function() {
             return {
-                scope: {src: '=', initials: '='},
+                scope: {user: '='},
                 link: function (scope, element, attrs) {
-
-                    var figure = element.parents('figure');
+                    scope.$watch('user', function (user) {
+                        if (user) {
+                            initAvatar(user);
+                        }
+                    });
 
                     element.on('error', function (e) {
                         element.hide();
                     });
 
-                    scope.$watch('src', initAvatar);
-                    scope.$watch('initials', initAvatar);
+                    function initAvatar(user) {
+                        var figure = element.parents('figure');
 
-                    function initAvatar() {
-                        if (scope.src) {
-                            element.attr('src', scope.src).show();
+                        if (user.picture_url) {
+                            element.attr('src', user.picture_url).show();
                             figure.addClass('no-bg');
-                        } else if (scope.initials) {
-                            var initials = scope.initials.replace(/\W*(\w)\w*/g, '$1').toUpperCase();
-                            element.hide().parent().html(initials);
+
+                        } else if (user.display_name) {
+                            var initials = user.display_name.replace(/\W*(\w)\w*/g, '$1').toUpperCase();
+
+                            element.hide();
                             figure.addClass('initials');
+
+                            if (figure.has('> span').length) {
+                                figure.children('span').text(initials);
+                            } else {
+                                figure.prepend('<span>' + initials + '</span>');
+                            }
+
                         } else {
                             element.hide();
                             figure.removeClass('no-bg');

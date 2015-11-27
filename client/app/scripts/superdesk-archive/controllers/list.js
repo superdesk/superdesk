@@ -1,14 +1,10 @@
-define([
-    'angular',
-    './baseList'
-], function(angular, BaseListController) {
+(function() {
     'use strict';
 
-    ArchiveListController.$inject = [
+    angular.module('superdesk.archive').controller('ArchiveListController', [
         '$scope', '$injector', '$location', '$q', '$timeout', 'superdesk',
-        'session', 'api', 'desks', 'content', 'StagesCtrl', 'notify', 'multi'
-    ];
-    function ArchiveListController($scope, $injector, $location, $q, $timeout, superdesk, session, api, desks, content,
+        'session', 'api', 'desks', 'content', 'StagesCtrl', 'notify', 'multi',
+    function ($scope, $injector, $location, $q, $timeout, superdesk, session, api, desks, content,
         StagesCtrl, notify, multi) {
 
         var resource,
@@ -155,7 +151,6 @@ define([
             }
             oldQuery = query;
         });
-    }
+    }]);
 
-    return ArchiveListController;
-});
+})();

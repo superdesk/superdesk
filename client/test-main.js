@@ -88,13 +88,33 @@ tests.push('superdesk-monitoring/aggregate');
 tests.push('superdesk-monitoring/aggregate-widget/aggregate');
 tests.push('superdesk-workspace/workspace');
 
+tests.push('superdesk-settings/module');
+
+tests.push('superdesk-archive/controllers/baseList');
+tests.push('superdesk-archive/archive-widget/baseWidget');
+tests.push('superdesk-ingest/ingest-widget/ingest');
+tests.push('superdesk-ingest/ingest-stats-widget/stats');
+tests.push('superdesk-ingest/module');
+    
+tests.push('superdesk-archive/module');
+tests.push('superdesk-archive/controllers/list');
+tests.push('superdesk-archive/controllers/upload');
+tests.push('superdesk-archive/archive-widget/archive');
+tests.push('superdesk-archive/related-item-widget/relatedItem');
+tests.push('superdesk-archive/directives');
+
+tests.push('superdesk-dashboard/widgets-provider');
+tests.push('superdesk-dashboard/world-clock/world-clock');
+tests.push('superdesk-dashboard/module');
+tests.push('superdesk-dashboard/sd-widget-directive');
+tests.push('superdesk-dashboard/grid/grid');
+
 // libs
 tests.push('bower_components/ment.io/dist/mentio');
 tests.push('angular-ui');
 tests.push('angular-resource');
 tests.push('angular-route');
 tests.push('angular-file-upload');
-tests.push('moment');
 
 requirejs.config({
     baseUrl: '/base/app/scripts',
@@ -109,16 +129,13 @@ requirejs.config({
         jquery: 'bower_components/jquery/dist/jquery',
         bootstrap: 'bower_components/bootstrap/js',
         angular: 'bower_components/angular/angular',
-        moment: 'bower_components/momentjs/moment',
         lodash: 'bower_components/lodash/lodash',
-        d3: 'bower_components/d3/d3',
         'angular-resource': 'bower_components/angular-resource/angular-resource',
         'angular-gettext': 'bower_components/angular-gettext/dist/angular-gettext',
         'angular-route': 'bower_components/angular-route/angular-route',
         'angular-mocks': 'bower_components/angular-mocks/angular-mocks',
         'angular-ui': 'bower_components/angular-bootstrap/ui-bootstrap-tpls',
         'angular-file-upload': 'bower_components/ng-file-upload/angular-file-upload',
-        'moment-timezone': 'bower_components/moment-timezone/moment-timezone'
     },
 
     shim: {

@@ -1,8 +1,9 @@
-define(['lodash'], function(_) {
+(function() {
     'use strict';
 
-    UploadController.$inject = ['$scope', '$q', 'upload', 'api', 'archiveService', 'session'];
-    function UploadController($scope, $q, upload, api, archiveService, session) {
+    angular.module('superdesk.archive').controller('UploadController', [
+        '$scope', '$q', 'upload', 'api', 'archiveService', 'session',
+    function ($scope, $q, upload, api, archiveService, session) {
 
         $scope.items = [];
         $scope.saving = false;
@@ -138,7 +139,6 @@ define(['lodash'], function(_) {
             }
             checkFail();
         };
-    }
+    }]);
 
-    return UploadController;
-});
+})();

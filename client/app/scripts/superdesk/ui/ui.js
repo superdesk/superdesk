@@ -1,9 +1,8 @@
 define([
     'angular',
     'require',
-    'moment',
     './autoheight-directive'
-], function(angular, require, moment) {
+], function(angular, require) {
     'use strict';
 
     /**

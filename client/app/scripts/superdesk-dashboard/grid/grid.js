@@ -1,9 +1,4 @@
-define([
-    'jquery',
-    'lodash',
-    'angular',
-    'require'
-], function($, _, angular, require) {
+(function() {
     'use strict';
 
     angular.module('superdesk.dashboard.grid', [])
@@ -139,4 +134,4 @@ define([
                 }
             };
         });
-});
+})();

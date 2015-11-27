@@ -2,11 +2,9 @@
 require.config({
     baseUrl: './scripts/',
     paths: {
-        d3: 'bower_components/d3/d3',
         jquery: 'bower_components/jquery/dist/jquery',
         lodash: 'bower_components/lodash/lodash',
         angular: 'bower_components/angular/angular',
-        moment: 'bower_components/momentjs/moment',
         bower_components: 'bower_components/',
 
         'angular-ui': 'bower_components/angular-bootstrap/ui-bootstrap-tpls',
@@ -16,13 +14,11 @@ require.config({
         'angular-mocks': 'bower_components/angular-mocks/angular-mocks',
         'angular-file-upload': 'bower_components/ng-file-upload/angular-file-upload',
         'angular-file-upload-shim': 'bower_components/ng-file-upload/angular-file-upload-shim',
-        'moment-timezone': 'bower_components/moment-timezone/builds/moment-timezone-with-data-2010-2020',
 
         'raven-js': 'bower_components/raven-js/dist/raven'
     },
     shim: {
         jquery: {exports: 'jQuery'},
-        d3: {exports: 'd3'},
 
         angular: {
             deps: ['jquery'],

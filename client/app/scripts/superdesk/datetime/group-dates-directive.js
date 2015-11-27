@@ -1,4 +1,4 @@
-define(['moment'], function(moment) {
+define([], function() {
     'use strict';
 
     /**

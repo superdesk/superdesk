@@ -77,7 +77,6 @@ module.exports = function (grunt) {
         'build',
         'copy:bower',
         'concat:bowerCore',
-        'concat:bowerApps',
         'uglify:bower',
         'clean:bower'
     ]);

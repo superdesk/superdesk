@@ -31,6 +31,12 @@
     <script src="scripts/bower_components/ment.io/dist/mentio.js"></script>
     <script src="scripts/bower_components/rangy/rangy-core.js"></script>
     <script src="scripts/bower_components/rangy/rangy-selectionsaverestore.js"></script>
+    <script src="scripts/bower_components/momentjs/moment.js"></script>
+    <script src="scripts/bower_components/moment-timezone/builds/moment-timezone-with-data-2010-2020.js"></script>
+    <script src="scripts/bower_components/angular-moment/angular-moment.js"></script>
+    <script src="scripts/bower_components/d3/d3.js"></script>
+
+    <!-- this must come after moment -->
     <script src="scripts/bower_components/requirejs/require.js"></script>
     <!-- endbuild -->
 
@@ -94,6 +100,28 @@
     <script src="scripts/superdesk-monitoring/aggregate.js"></script>
     <script src="scripts/superdesk-monitoring/aggregate-widget/aggregate.js"></script>
     <script src="scripts/superdesk-workspace/workspace.js"></script>
+
+    <script src="scripts/superdesk-settings/module.js"></script>
+
+    <script src="scripts/superdesk-archive/controllers/baseList.js"></script>
+    <script src="scripts/superdesk-archive/archive-widget/baseWidget.js"></script>
+    <script src="scripts/superdesk-ingest/ingest-widget/ingest.js"></script>
+    <script src="scripts/superdesk-ingest/ingest-stats-widget/stats.js"></script>
+    <script src="scripts/superdesk-ingest/module.js"></script>
+
+    
+    <script src="scripts/superdesk-archive/module.js"></script>
+    <script src="scripts/superdesk-archive/controllers/list.js"></script>
+    <script src="scripts/superdesk-archive/controllers/upload.js"></script>
+    <script src="scripts/superdesk-archive/archive-widget/archive.js"></script>
+    <script src="scripts/superdesk-archive/related-item-widget/relatedItem.js"></script>
+    <script src="scripts/superdesk-archive/directives.js"></script>
+
+    <script src="scripts/superdesk-dashboard/widgets-provider.js"></script>
+    <script src="scripts/superdesk-dashboard/world-clock/world-clock.js"></script>
+    <script src="scripts/superdesk-dashboard/module.js"></script>
+    <script src="scripts/superdesk-dashboard/sd-widget-directive.js"></script>
+    <script src="scripts/superdesk-dashboard/grid/grid.js"></script>
     <!-- endbuild -->
 
     <!-- build:js scripts/config.js -->
@@ -140,10 +168,6 @@
 
         require([
             'main',
-            'superdesk-settings/module',
-            'superdesk-dashboard/module',
-            'superdesk-archive/module',
-            'superdesk-ingest/module'
             //'superdesk-scratchpad/module',
         ], function(bootstrap) {
             bootstrap(config, modules);

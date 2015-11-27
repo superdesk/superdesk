@@ -35,46 +35,6 @@ module.exports = function(grunt) {
                 include: ['superdesk/superdesk']
             }
         },
-        compileBowerSettings: {
-            options: {
-                name: 'superdesk-settings/module',
-                baseUrl: '<%= appDir %>/scripts/',
-                mainConfigFile: '<%= appDir %>/scripts/config.js',
-                out: '<%= bowerDir %>/scripts/superdesk-settings.js',
-                optimize: 'none',
-                include: ['superdesk-settings/module']
-            }
-        },
-        compileBowerDashboard: {
-            options: {
-                name: 'superdesk-dashboard/module',
-                baseUrl: '<%= appDir %>/scripts/',
-                mainConfigFile: '<%= appDir %>/scripts/config.js',
-                out: '<%= bowerDir %>/scripts/superdesk-dashboard.js',
-                optimize: 'none',
-                include: ['superdesk-dashboard/module']
-            }
-        },
-        compileBowerArchive: {
-            options: {
-                name: 'superdesk-archive/module',
-                baseUrl: '<%= appDir %>/scripts/',
-                mainConfigFile: '<%= appDir %>/scripts/config.js',
-                out: '<%= bowerDir %>/scripts/superdesk-archive.js',
-                optimize: 'none',
-                include: ['superdesk-archive/module']
-            }
-        },
-        compileBowerIngest: {
-            options: {
-                name: 'superdesk-ingest/module',
-                baseUrl: '<%= appDir %>/scripts/',
-                mainConfigFile: '<%= appDir %>/scripts/config.js',
-                out: '<%= bowerDir %>/scripts/superdesk-ingest.js',
-                optimize: 'none',
-                include: ['superdesk-ingest/module']
-            }
-        },
         compileDocs: {
             options: {
                 name: 'superdesk/superdesk-docs',

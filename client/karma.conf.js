@@ -17,6 +17,10 @@ module.exports = function(config) {
         files: [
             'app/scripts/bower_components/jquery/dist/jquery.js',
             'app/scripts/bower_components/angular/angular.js',
+            'app/scripts/bower_components/momentjs/moment.js',
+            'app/scripts/bower_components/moment-timezone/builds/moment-timezone-with-data-2010-2020.js',
+            'app/scripts/bower_components/angular-moment/angular-moment.js',
+            'app/scripts/bower_components/d3/d3.js',
             {pattern: 'app/**/*.js', included: false},
             {pattern: 'app/scripts/superdesk/**/*[sS]pec.js', included: false},
             'app/scripts/superdesk-*/**/*.html',

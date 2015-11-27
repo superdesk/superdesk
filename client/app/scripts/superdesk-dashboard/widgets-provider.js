@@ -1,7 +1,8 @@
-define(['lodash'], function(_) {
+(function() {
     'use strict';
 
-    function WidgetsProvider() {
+    angular.module('superdesk.dashboard.widgets', [])
+    .provider('widgets', function() {
 
         var widgets = {};
 
@@ -12,7 +13,6 @@ define(['lodash'], function(_) {
         this.$get = function() {
             return _.values(widgets);
         };
-    }
+    });
 
-    return WidgetsProvider;
-});
+})();

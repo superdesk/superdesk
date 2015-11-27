@@ -1,13 +1,4 @@
-define([
-    'angular',
-    'require',
-    'moment',
-    './controllers/list',
-    './controllers/upload',
-    './archive-widget/archive',
-    './related-item-widget/relatedItem',
-    './directives'
-], function(angular, require, moment) {
+(function() {
     'use strict';
 
     MultiService.$inject = ['$rootScope'];
@@ -322,7 +313,7 @@ define([
                 .activity('/workspace/content', {
                     label: gettext('Workspace'),
                     priority: 100,
-                    controller: require('./controllers/list'),
+                    controller: 'ArchiveListController',
                     templateUrl: 'scripts/superdesk-archive/views/list.html',
                     topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
                     sideTemplateUrl: 'scripts/superdesk-workspace/views/workspace-sidenav.html',
@@ -335,7 +326,7 @@ define([
                     label: gettext('Upload media'),
                     modal: true,
                     cssClass: 'upload-media modal-responsive',
-                    controller: require('./controllers/upload'),
+                    controller: 'UploadController',
                     templateUrl: 'scripts/superdesk-archive/views/upload.html',
                     filters: [
                         {action: 'upload', type: 'media'}
@@ -542,4 +533,4 @@ define([
                 }
             });
         }]);
-});
+})();

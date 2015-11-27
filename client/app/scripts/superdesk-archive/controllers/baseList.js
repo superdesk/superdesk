@@ -1,4 +1,3 @@
-define(['lodash'], function(_) {
     'use strict';
 
     BaseListController.$inject = ['$scope', '$location', 'superdesk', 'api', 'search', 'desks', 'preferencesService', 'notify'];
@@ -70,6 +69,3 @@ define(['lodash'], function(_) {
             self.fetchItems({source: query});
         };
     }
-
-    return BaseListController;
-});

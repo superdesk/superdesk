@@ -1,11 +1,4 @@
-define([
-    'angular',
-    'require',
-    './sd-widget-directive',
-    './widgets-provider',
-    './grid/grid',
-    './world-clock/world-clock'
-], function(angular, require) {
+(function() {
     'use strict';
 
     DashboardController.$inject = ['$scope', 'desks', 'widgets', 'api', 'session', 'workspaces', 'modal', 'gettext'];
@@ -137,10 +130,6 @@ define([
         };
     }
 
-    // to avoid circular dependency
-    angular.module('superdesk.dashboard.widgets', []).
-        provider('widgets', require('./widgets-provider'));
-
     return angular.module('superdesk.dashboard', [
         'superdesk.activity',
         'superdesk.dashboard.widgets',
@@ -152,7 +141,6 @@ define([
         'superdesk.workspace'
     ])
 
-    .directive('sdWidget', require('./sd-widget-directive'))
     .controller('DashboardController', DashboardController)
 
     .filter('wcodeFilter', function() {
@@ -175,4 +163,4 @@ define([
             category: superdesk.MENU_MAIN
         });
     }]);
-});
+})();

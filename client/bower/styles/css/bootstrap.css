@@ -1789,7 +1789,6 @@ select {
   outline: none !important;
   box-shadow: inset 0 0 0 #000000 !important;
   box-shadow: none !important;
-  -moz-appearance: none !important;
   background: #fff;
 }
 input[type="text"]:focus,
@@ -1823,7 +1822,6 @@ select {
 }
 select {
   padding: 4px;
-  -moz-appearance: button-arrow-down !important;
 }
 .inline-input {
   border: 0;
@@ -2566,6 +2564,12 @@ table {
   content: "\e60e";
 }
 .icon-ascending:before {
+  content: "\e60f";
+}
+.icon-descending {
+  transform: rotate(180deg);
+}
+.icon-descending:before {
   content: "\e60f";
 }
 .icon-th:before {
@@ -3336,24 +3340,26 @@ table {
   background: #eff7fa;
   cursor: default;
 }
-.dropdown.open li > .dropdown .dropdown-menu {
+.dropdown.open li > .dropdown:not(.open) .dropdown-menu {
   display: none;
 }
-.dropdown.open li > .dropdown:hover > .dropdown-menu {
-  display: block;
+.dropdown.open li > .dropdown > .dropdown-menu {
   left: 100%;
   right: auto;
   top: 0;
   min-width: 160px;
 }
-.dropdown.open li > .dropdown:hover > .dropdown-menu.right-submenu {
+.dropdown.open li > .dropdown > .dropdown-menu.right-submenu {
   left: auto;
   right: 100%;
   top: auto;
   bottom: -10px;
 }
-.dropdown.open li > .dropdown:hover > .dropdown-menu button {
+.dropdown.open li > .dropdown > .dropdown-menu button {
   min-width: 160px !important;
+}
+.dropdown.open li > .dropdown:hover > .dropdown-menu {
+  display: block;
 }
 .dropdown.dropdown--dark .dropdown-toggle {
   text-align: left;
@@ -4996,6 +5002,79 @@ body:not(:-moz-handler-blocked) .modal.moz-scroll-fix .modal-dialog {
 .inline-tag-list li .inline-tag button:hover i {
   opacity: 1;
   filter: alpha(opacity=100);
+}
+/*----------------------------------------
+  #Urgency label
+----------------------------------------*/
+.urgency-label {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: inline-block;
+  text-align: center;
+  color: #fff;
+  font-size: 10px;
+  background: #cccccc;
+  box-sizing: border-box;
+  line-height: 17px;
+  vertical-align: top;
+  font-style: normal;
+}
+.urgency-label--0 {
+  background: #cccccc;
+}
+.urgency-label--1 {
+  background: #01405b;
+}
+.urgency-label--2 {
+  background: #005e84;
+}
+.urgency-label--3 {
+  background: #3684a4;
+}
+.urgency-label--4 {
+  background: #64a4bf;
+}
+.urgency-label--5 {
+  background: #a1c6d8;
+}
+/*----------------------------------------
+  #Priority label
+----------------------------------------*/
+.priority-label {
+  width: 16px;
+  height: 16px;
+  border-radius: 2px;
+  display: inline-block;
+  text-align: center;
+  color: #fff;
+  font-size: 10px;
+  background: #cccccc;
+  box-sizing: border-box;
+  line-height: 17px;
+  vertical-align: top;
+  font-style: normal;
+}
+.priority-label--0 {
+  background: #cccccc;
+}
+.priority-label--1 {
+  background: #b82f00;
+}
+.priority-label--2 {
+  background: #de6237;
+}
+.priority-label--3 {
+  background: #e49c56;
+}
+.priority-label--4 {
+  background: #edc175;
+}
+.priority-label--5 {
+  background: #b6c28b;
+}
+.priority-label--6 {
+  background: #c0c9a1;
 }
 @-webkit-keyframes pop-upwards {
   0% {

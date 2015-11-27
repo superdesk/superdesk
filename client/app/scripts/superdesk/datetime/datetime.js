@@ -1,12 +1,11 @@
 define([
     'angular',
-    'moment',
     'require',
     './group-dates-directive',
     './reldate-directive',
     './reldate-directive-complex',
     './absdate-directive'
-], function(angular, moment, require) {
+], function(angular, require) {
     'use strict';
 
     function DateTimeDirective() {
