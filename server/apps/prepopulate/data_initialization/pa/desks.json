@@ -1,0 +1,115 @@
+[
+     {
+         "_id": "1535983d9d114c19acf9945a",
+         "name": "SNAPPA",
+         "spike_expiry": 1440,
+         "incoming_stage": "ffde46d68dd949888ef0f8d1",
+         "description": "The SNAPPA Desk",
+         "desk_type": "production",
+         "members": [{
+             "user": "7f138bb30d964df1988c438e"
+         }, {
+             "user": "a21a621c4c8847b085fe2d78"
+         }]
+     },
+ 
+     {
+        "_id": "2b702ea5de13465696ef44c2",
+        "name": "Sports Desk",
+        "spike_expiry": 1440,
+        "incoming_stage": "a2b0747712fd45c79af2a89f",
+        "description": "The main Sports Desk",
+        "desk_type": "production",
+        "members": [{
+            "user": "2be17602bca44f53825086cf"
+        }, {
+            "user": "1d5f748c79134f35841670c3"
+        }, {
+            "user": "a21a621c4c8847b085fe2d78"
+        }],
+        "monitoring_settings": [{
+            "max_items": 10,
+            "_id": "a2b0747712fd45c79af2a89f",
+            "type": "stage"
+        }, {
+            "max_items": 10,
+            "_id": "5e6ec157371a469390220b1a",
+            "type": "stage"
+        }, {
+            "max_items": 10,
+            "_id": "5641b0ec015149002643921b",
+            "type": "search"
+        }]
+    },
+
+    {
+        "_id": "5640bd4c60fcab002a65f059",
+        "incoming_stage": "5640bd4c60fcab002a65f058",
+        "desk_type": "authoring",
+        "spike_expiry": 0,
+        "name": "test desk by petr"
+    },
+
+    {
+        "_id": "67a7b9bc8a6d44b9b4bc50f6",
+        "name": "News Desk",
+        "spike_expiry": 1440,
+        "incoming_stage": "1e7d899b7b3048d5a5aec30a",
+        "description": "The central News Desk",
+        "desk_type": "production",
+        "members": [{
+            "user": "94f9453b9a5f4eeabeb36769"
+        }, {
+            "user": "b5c91b8150294394af1c44cc"
+        }, {
+            "user": "a21a621c4c8847b085fe2d78"
+        }],
+        "monitoring_settings": [{
+            "max_items": 10,
+            "_id": "personal",
+            "type": "personal"
+        }, {
+            "max_items": 10,
+            "_id": "e8345490fe084f5886b32166",
+            "type": "stage"
+        }, {
+            "max_items": 10,
+            "_id": "98cf9f4310734e46ac5bd7bd",
+            "type": "stage"
+        }, {
+            "max_items": 10,
+            "_id": "ffde46d68dd949888ef0f8d1",
+            "type": "stage"
+        }, {
+            "max_items": 10,
+            "_id": "a2b0747712fd45c79af2a89f",
+            "type": "stage"
+        }, {
+            "max_items": 10,
+            "_id": "5e6ec157371a469390220b1a",
+            "type": "stage"
+        }, {
+            "max_items": 10,
+            "_id": "5641b0ec015149002643921b",
+            "type": "search"
+        }]
+    },
+
+    {
+        "_id": "ab22f45e8dfd4fa2a1fab31d",
+        "name": "Features Desk",
+        "spike_expiry": 1440,
+        "incoming_stage": "e8345490fe084f5886b32166",
+        "description": "The Features Desk",
+        "desk_type": "production",
+        "members": [{
+            "user": "5640a5eef40235008465242b"
+        }, {
+            "user": "270efdd804f94b5fbda27cf0"
+        }, {
+            "user": "45d4565b4985446680b3c500"
+        }, {
+            "user": "a21a621c4c8847b085fe2d78"
+        }]
+    }    
+]
