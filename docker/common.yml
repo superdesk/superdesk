@@ -12,7 +12,7 @@ logstash:
   image: logstash:1.5
   command: logstash -f /usr/share/logstash/logstash.conf
   volumes:
-  - logstash:/usr/share/logstash
+  - ./logstash:/usr/share/logstash
 
 kibana:
   build: kibana
@@ -29,9 +29,8 @@ postfix:
   - maildomain=mail.sourcefabric.org
   - smtp_user=user:pwd
 
-backend:
-  build: ../server
-  command: sh /opt/superdesk/scripts/fig_wrapper.sh honcho start
+superdesk:
+  build: ../
   environment:
    - MONGO_URI=mongodb://mongodb/test
    - PUBLICAPI_MONGO_URI=mongodb://mongodb/test
@@ -56,12 +55,14 @@ backend:
    - MAIL_PASSWORD=pwd
    - SENTRY_DSN
    - SUPERDESK_URL=http://127.0.0.1/api
+   - SUPERDESK_WS_URL=ws://127.0.0.1/ws
    - PUBLICAPI_URL=http://127.0.0.1/pubapi
    - SUPERDESK_CLIENT_URL=http://127.0.0.1
    - SUPERDESK_TESTING=True
   volumes:
    - ../results/server/unit:/opt/superdesk/results-unit/
    - ../results/server/behave:/opt/superdesk/results-behave/
+   - ../results/client/unit:/opt/superdesk/client/unit-test-results
 
 pubapi:
   build: ../superdesk-content-api
@@ -96,11 +97,3 @@ pubapi:
   volumes:
    - ../superdesk-content-api/results/unit:/opt/superdesk-content-api/results-unit/
    - ../superdesk-content-api/results/behave:/opt/superdesk-content-api/results-behave/
-
-frontend:
-  build: ../client
-  command: sh -c "grunt build --server='http://127.0.0.1/api' --ws='ws://127.0.0.1/ws' && nginx"
-  environment:
-   - EMBEDLY_KEY
-  volumes:
-   - ../results/client/unit:/opt/superdesk-client/unit-test-results
