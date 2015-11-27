@@ -455,6 +455,16 @@
         "id_name": "-id content template-"
     },
 
+	{
+        "data": {"template_name": "kill", "template_type": "kill",
+                 "body_html": "This is kill template. Slugged {{item.slugline}}.",
+                 "abstract": "This item is removed.",
+                 "headline": "KILL NOTICE"
+                },
+        "resource": "content_templates",
+        "id_name": "-id content template-"
+    },
+
     {
     	"data": {"name": "Highlight one", "desks": ["-id desk Sports Desks-"], "groups": ["main"], "template": "-id content template-"}, 
     	"resource": "highlights",
@@ -553,7 +563,7 @@
         "username": "admin",
         "data": {
             "headline": "item5",
-            "slugline": "item5 slugline one/two ",
+            "slugline": "item5 slugline one/two",
             "body_html" : "<p>item5 text</p>",
             "type": "text",
             "guid": "item5",

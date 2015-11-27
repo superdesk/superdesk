@@ -238,4 +238,17 @@ describe('authoring', function() {
         authoring.searchRelatedItems('item');
         expect(authoring.getRelatedItems().count()).toBe(7);
     });
+
+    it('Kill Template apply', function() {
+        expect(monitoring.getTextItem(1, 0)).toBe('item5');
+        monitoring.actionOnItem('Edit', 1, 0);
+        authoring.publish();
+        monitoring.filterAction('text');
+        monitoring.actionOnItem('Kill item', 4, 0);
+        expect(authoring.getBodyText()).toBe('This is kill template. Slugged item5 slugline one/two.');
+        expect(authoring.getHeadlineText()).toBe('KILL NOTICE');
+        expect(authoring.getHeadlineText()).toBe('KILL NOTICE');
+        authoring.sendToButton.click();
+        expect(authoring.kill_button.isDisplayed()).toBe(true);
+    });
 });

@@ -2,6 +2,20 @@ Feature: Templates
 
     @auth
     Scenario: Get predifined templates
+    Given "desks"
+    """
+    [
+        {"name": "sports"}
+    ]
+    """
+    When we post to "content_templates"
+    """
+    {"template_name": "kill", "template_type": "kill", "anpa_take_key": "TAKEDOWN", "template_desk": "#desks._id#"}
+    """
+    Then we get error 400
+    """
+    {"_status": "ERR", "_message": "Invalid kill template. schedule, dateline, template_desk, template_stage are not allowed"}
+    """
     When we post to "content_templates"
     """
     {"template_name": "kill", "template_type": "kill", "anpa_take_key": "TAKEDOWN"}
@@ -20,7 +34,7 @@ Feature: Templates
     Scenario: User can create personal template
         When we post to "content_templates"
         """
-        {"template_name": "personla", "template_type": "create", "template_desk": null}
+        {"template_name": "personal", "template_type": "create", "template_desk": null}
         """
         Then we get new resource
         """
@@ -121,3 +135,42 @@ Feature: Templates
 
         }
         """
+
+    @auth
+    Scenario: For kill Template Dateline, Schedule and Desk settings should be null.
+    Given "desks"
+    """
+    [
+        {"name": "sports"}
+    ]
+    """
+    When we post to "content_templates"
+    """
+    {
+     "template_name": "test", "template_type": "create", "anpa_take_key": "TAKEDOWN",
+     "template_desk": "#desks._id#", "template_stage": "#desks.incoming_stage#",
+     "urgency": 1, "priority": 1, "headline": "headline", "dateline": {"text": "Test"},
+     "schedule": {"create_at": "08:00", "day_of_week": ["MON", "TUE"]}
+    }
+    """
+    Then we get new resource
+    """
+    {"_id": "__any_value__",
+     "template_name": "test", "template_type": "create", "anpa_take_key": "TAKEDOWN",
+     "template_desk": "#desks._id#", "template_stage": "#desks.incoming_stage#",
+     "urgency": 1, "priority": 1, "headline": "headline", "dateline": {"text": "Test"},
+     "schedule": {"create_at": "08:00", "day_of_week": ["MON", "TUE"]}
+    }
+    """
+    When we patch latest
+    """
+    {"template_type": "kill", "template_name": "testing"}
+    """
+    Then we get updated response
+    """
+    {"_id": "__any_value__",
+     "template_name": "testing", "template_type": "kill", "anpa_take_key": "TAKEDOWN",
+     "template_desk": null, "template_stage": null, "urgency": 1, "priority": 1,
+     "headline": "headline", "dateline": null, "schedule": null
+    }
+    """

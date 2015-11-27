@@ -309,6 +309,10 @@ function Authoring() {
         return headline.getText();
     };
 
+    this.getAbstractText = function() {
+        return abstract.getText();
+    };
+
     this.closeHeader = function() {
         element(by.className('icon-chevron-up-thin')).click();
     };

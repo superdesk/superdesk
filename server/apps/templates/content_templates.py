@@ -115,11 +115,16 @@ class ContentTemplatesService(Service):
             if doc.get('schedule'):
                 doc['next_run'] = get_next_run(doc.get('schedule'))
 
+            if doc.get('template_type') == TemplateType.KILL.value and \
+                    any(key for key in doc.keys() if key in KILL_TEMPLATE_NOT_REQUIRED_FIELDS):
+                raise SuperdeskApiError.badRequestError(
+                    message="Invalid kill template. "
+                            "{} are not allowed".format(', '.join(KILL_TEMPLATE_NOT_REQUIRED_FIELDS)))
+
     def on_update(self, updates, original):
         if updates.get('template_type') and updates.get('template_type') != original.get('template_type') and \
            updates.get('template_type') == TemplateType.KILL.value:
-            for key in KILL_TEMPLATE_NOT_REQUIRED_FIELDS:
-                updates[key] = None
+            self._process_kill_template(updates)
 
         if updates.get('schedule'):
             updates['next_run'] = get_next_run(updates.get('schedule'))
@@ -141,6 +146,16 @@ class ContentTemplatesService(Service):
         """
         query = {'template_name': re.compile('^{}$'.format(template_name), re.IGNORECASE)}
         return self.find_one(req=None, **query)
+
+    def _process_kill_template(self, doc):
+        """
+        Marks certain field required by the kill as null.
+        """
+        if doc.get('template_type') != TemplateType.KILL.value:
+            return
+
+        for key in KILL_TEMPLATE_NOT_REQUIRED_FIELDS:
+            doc[key] = None
 
 
 class ContentTemplatesApplyResource(Resource):
