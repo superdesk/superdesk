@@ -37,6 +37,20 @@ describe('search', function() {
         expect(element.all(by.repeater('parameter in tags.selectedKeywords')).count()).toBe(1);
     });
 
+    it('can search by search within field with parenthesis and clear by tag', function() {
+        globalSearch.openFilterPanel();
+        expect(globalSearch.getItems().count()).toBe(11);
+
+        var searchTextbox = element(by.id('search_within'));
+        searchTextbox.clear();
+        searchTextbox.sendKeys('(item3)');
+        element(by.id('search_within_button')).click();
+        expect(globalSearch.getItems().count()).toBe(1);
+        expect(element.all(by.repeater('parameter in tags.selectedKeywords')).count()).toBe(1);
+        element(by.css('.icon-close-small')).click();
+        expect(globalSearch.getItems().count()).toBe(11);
+    });
+
     xit('can search by subject codes field', function () {
         workspace.switchToDesk('SPORTS DESK').then(content.setListView);
         expect(element.all(by.repeater('items._items')).count()).toBe(2);
@@ -85,6 +99,20 @@ describe('search', function() {
         bylineTextbox.sendKeys('one/two');
         globalSearch.goButton.click();
         expect(globalSearch.getItems().count()).toBe(1);
+    });
+
+    it('can search by slugline with parenthesis and clear by tag', function () {
+        globalSearch.openFilterPanel();
+        expect(globalSearch.getItems().count()).toBe(11);
+        globalSearch.openParameters();
+        var bylineTextbox = element(by.id('search-slugline'));
+        bylineTextbox.clear();
+        bylineTextbox.sendKeys('(one/two)');
+        globalSearch.goButton.click();
+        expect(globalSearch.getItems().count()).toBe(1);
+        expect(element.all(by.repeater('parameter in tags.selectedParameters')).count()).toBe(1);
+        element(by.css('.icon-close-small')).click();
+        expect(globalSearch.getItems().count()).toBe(11);
     });
 
     it('can search by original creator', function () {
