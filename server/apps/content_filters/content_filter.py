@@ -253,7 +253,6 @@ class ContentFilterService(BaseService):
 
 
 class ContentFilterTestResource(Resource):
-    item_url = 'regex("[\w,.:_-]+")'
     endpoint_name = 'content_filter_tests'
     schema = {
         'filter_id': {'type': 'string'},
@@ -261,8 +260,9 @@ class ContentFilterTestResource(Resource):
         'return_matching': {'type': 'boolean'},
         'filter': {'type': 'dict'}
     }
-    url = 'content_filters/test'.format(item_url)
+    url = 'content_filters/test'
     resource_methods = ['POST']
+    item_methods = []
     resource_title = endpoint_name
     privileges = {'POST': 'content_filters'}
 

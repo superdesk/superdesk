@@ -37,7 +37,9 @@
   <div ng-if="!_editable">{{item.byline}}</div>
 </div>
 
-<div class="field">
+<!--This article-edit view is used by templates as well.
+    ng-if is used to hide dateline for the template create/edit screen.-->
+<div class="field" ng-if="!template || template.template_type !== 'kill'">
     <label translate>Dateline</label>
     <div class="dateline">
         <div sd-meta-locators

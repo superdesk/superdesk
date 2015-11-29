@@ -12,16 +12,30 @@ import re
 import datetime
 import superdesk
 from flask import current_app as app
-from superdesk import Resource, Service
+from superdesk import Resource, Service, config
+from superdesk.utils import SuperdeskBaseEnum
+from superdesk.resource import build_custom_hateoas
 from superdesk.utc import utcnow
 from superdesk.errors import SuperdeskApiError
 from superdesk.metadata.item import metadata_schema, ITEM_STATE, CONTENT_STATE
 from superdesk.celery_app import celery
 from apps.rules.routing_rules import Weekdays, set_time
-from apps.archive.common import ARCHIVE
+from apps.archive.common import ARCHIVE, CUSTOM_HATEOAS, item_schema
+from flask import render_template_string
 
 
 CONTENT_TEMPLATE_PRIVILEGE = 'content_templates'
+TEMPLATE_FIELDS = {'template_name', 'template_type', 'schedule',
+                   'last_run', 'next_run', 'template_desk', 'template_stage',
+                   config.ID_FIELD, config.LAST_UPDATED, config.DATE_CREATED,
+                   config.ETAG, 'task'}
+KILL_TEMPLATE_NOT_REQUIRED_FIELDS = ['schedule', 'dateline', 'template_desk', 'template_stage']
+
+
+class TemplateType(SuperdeskBaseEnum):
+    KILL = 'kill'
+    CREATE = 'create'
+    HIGHLIGHTS = 'highlights'
 
 
 def get_next_run(schedule, now=None):
@@ -66,8 +80,8 @@ class ContentTemplatesResource(Resource):
         'template_type': {
             'type': 'string',
             'required': True,
-            'allowed': ['create', 'kill', 'highlights'],
-            'default': 'create',
+            'allowed': TemplateType.values(),
+            'default': TemplateType.CREATE.value,
         },
         'template_desk': Resource.rel('desks', embeddable=False, nullable=True),
         'template_stage': Resource.rel('stages', embeddable=False, nullable=True),
@@ -94,29 +108,127 @@ class ContentTemplatesResource(Resource):
 
 
 class ContentTemplatesService(Service):
+
     def on_create(self, docs):
         for doc in docs:
             doc['template_name'] = doc['template_name'].lower().strip()
-            self.validate_template_name(doc['template_name'])
             if doc.get('schedule'):
                 doc['next_run'] = get_next_run(doc.get('schedule'))
 
+            if doc.get('template_type') == TemplateType.KILL.value and \
+                    any(key for key in doc.keys() if key in KILL_TEMPLATE_NOT_REQUIRED_FIELDS):
+                raise SuperdeskApiError.badRequestError(
+                    message="Invalid kill template. "
+                            "{} are not allowed".format(', '.join(KILL_TEMPLATE_NOT_REQUIRED_FIELDS)))
+
     def on_update(self, updates, original):
-        if 'template_name' in updates:
-            updates['template_name'] = updates['template_name'].lower().strip()
-            self.validate_template_name(updates['template_name'])
+        if updates.get('template_type') and updates.get('template_type') != original.get('template_type') and \
+           updates.get('template_type') == TemplateType.KILL.value:
+            self._process_kill_template(updates)
+
         if updates.get('schedule'):
             updates['next_run'] = get_next_run(updates.get('schedule'))
 
-    def validate_template_name(self, doc_template_name):
-        query = {'template_name': re.compile('^{}$'.format(doc_template_name), re.IGNORECASE)}
-        if self.find_one(req=None, **query):
-            msg = 'Template name must be unique'
-            raise SuperdeskApiError.preconditionFailedError(message=msg, payload=msg)
-
     def get_scheduled_templates(self, now):
+        """
+        Get the template by schedule
+        :param datetime now:
+        :return MongoCursor:
+        """
         query = {'next_run': {'$lte': now}, 'schedule.is_active': True}
         return self.find(query)
+
+    def get_template_by_name(self, template_name):
+        """
+        Get the template by name
+        :param str template_name: template name
+        :return dict: template
+        """
+        query = {'template_name': re.compile('^{}$'.format(template_name), re.IGNORECASE)}
+        return self.find_one(req=None, **query)
+
+    def _process_kill_template(self, doc):
+        """
+        Marks certain field required by the kill as null.
+        """
+        if doc.get('template_type') != TemplateType.KILL.value:
+            return
+
+        for key in KILL_TEMPLATE_NOT_REQUIRED_FIELDS:
+            doc[key] = None
+
+
+class ContentTemplatesApplyResource(Resource):
+    endpoint_name = 'content_templates_apply'
+    resource_title = endpoint_name
+    schema = {
+        'template_name': {
+            'type': 'string',
+            'required': True
+        },
+        'item': {
+            'type': 'dict',
+            'required': True,
+            'schema': item_schema()
+        }
+    }
+
+    resource_methods = ['POST']
+    item_methods = []
+    privileges = {'POST': ARCHIVE}
+    url = 'content_templates_apply'
+
+
+class ContentTemplatesApplyService(Service):
+
+    def create(self, docs, **kwargs):
+        doc = docs[0] if len(docs) > 0 else {}
+        template_name = doc.get('template_name')
+        item = doc.get('item') or {}
+
+        if not template_name:
+            SuperdeskApiError.badRequestError(message='Invalid Template Name')
+
+        if not item:
+            SuperdeskApiError.badRequestError(message='Invalid Item')
+
+        template = superdesk.get_resource_service('content_templates').get_template_by_name(template_name)
+        if not template:
+            SuperdeskApiError.badRequestError(message='Invalid Template')
+
+        updates = render_content_template(item, template)
+        item.update(updates)
+        docs[0] = item
+        build_custom_hateoas(CUSTOM_HATEOAS, docs[0])
+        return [docs[0].get(config.ID_FIELD)]
+
+
+def render_content_template(item, template):
+    """
+    Render the template.
+    :param dict item: item on which template is applied
+    :param dict template: template
+    :return dict: updates to the item
+    """
+    updates = {}
+    for key, value in template.items():
+        if key in TEMPLATE_FIELDS or template.get(key) is None:
+            continue
+
+        if isinstance(template.get(key), str):
+            updates[key] = render_template_string(template.get(key), item=item)
+        elif (isinstance(template.get(key), dict) or isinstance(template.get(key), list)) and template.get(key):
+            updates[key] = template.get(key)
+        elif not (isinstance(template.get(key), dict) or isinstance(template.get(key), list)):
+            updates[key] = template.get(key)
+
+    if template.get('template_desk'):
+        updates['task'] = {}
+        updates['task']['desk'] = template.get('template_desk')
+        if template.get('template_stage'):
+            updates['task']['stage'] = template.get('template_stage')
+
+    return updates
 
 
 def get_scheduled_templates(now):

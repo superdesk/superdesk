@@ -28,6 +28,7 @@ from apps.archive.archive import SOURCE
 from apps.publish.content.common import ITEM_CORRECT, ITEM_PUBLISH
 from superdesk.utc import utcnow
 
+
 logger = logging.getLogger(__name__)
 # field to be copied from item to broadcast item
 FIELDS_TO_COPY = ['urgency', 'priority', 'anpa_category', 'type',
@@ -355,9 +356,4 @@ class ArchiveBroadcastService(BaseService):
                         item_id, package.get(config.ID_FIELD)
                     ))
 
-            broadcast_updates = {}
-            kill_fields = ['body_html', 'anpa_take_key', 'abstract', 'headline']
-            for field in kill_fields:
-                broadcast_updates[field] = updates.get(field)
-
-            kill_service.patch(item_id, broadcast_updates)
+            kill_service.kill_item(item)
