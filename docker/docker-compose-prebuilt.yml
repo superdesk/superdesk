@@ -35,17 +35,21 @@ postfix:
     file: common.yml
     service: postfix
 
-backend:
+superdesk:
   extends:
     file: common.yml
-    service: backend
+    service: superdesk
+  image: sourcefabric/superdesk:master
   links:
    - mongodb
    - redis
    - elastic
    - logstash
    - postfix
-  image: sourcefabric/superdesk-server:master
+   - pubapi
+  ports:
+   - "443:443"
+   - "80:80"
 
 pubapi:
   extends:
@@ -58,15 +62,3 @@ pubapi:
    - logstash
    - postfix
   image: sourcefabric/superdesk-content-api:master
-
-frontend:
-  extends:
-    file: common.yml
-    service: frontend
-  links:
-   - backend
-   - pubapi
-  ports:
-   - "443:443"
-   - "80:80"
-  image: sourcefabric/superdesk-client:master
