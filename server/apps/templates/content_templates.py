@@ -72,29 +72,38 @@ def get_next_run(schedule, now=None):
 
 class ContentTemplatesResource(Resource):
     schema = {
+        'data': {
+            'type': 'dict',
+            'schema': metadata_schema,
+        },
+
         'template_name': {
             'type': 'string',
             'iunique': True,
             'required': True,
         },
+
         'template_type': {
             'type': 'string',
             'required': True,
             'allowed': TemplateType.values(),
             'default': TemplateType.CREATE.value,
         },
+
         'template_desk': Resource.rel('desks', embeddable=False, nullable=True),
+
         'template_stage': Resource.rel('stages', embeddable=False, nullable=True),
+
         'schedule': {'type': 'dict', 'schema': {
             'is_active': {'type': 'boolean'},
             'create_at': {'type': 'string'},
             'day_of_week': {'type': 'list'},
         }},
+
         'last_run': {'type': 'datetime', 'readonly': True},
         'next_run': {'type': 'datetime', 'readonly': True},
     }
 
-    schema.update(metadata_schema)
     additional_lookup = {
         'url': 'regex("[\w]+")',
         'field': 'template_name'
@@ -155,7 +164,11 @@ class ContentTemplatesService(Service):
             return
 
         for key in KILL_TEMPLATE_NOT_REQUIRED_FIELDS:
-            doc[key] = None
+            if key in metadata_schema:
+                doc.setdefault('data', {})
+                doc['data'][key] = None
+            else:
+                doc[key] = None
 
 
 class ContentTemplatesApplyResource(Resource):
@@ -211,16 +224,17 @@ def render_content_template(item, template):
     :return dict: updates to the item
     """
     updates = {}
-    for key, value in template.items():
-        if key in TEMPLATE_FIELDS or template.get(key) is None:
+    template_data = template.get('data', {})
+    for key, value in template_data.items():
+        if key in TEMPLATE_FIELDS or template_data.get(key) is None:
             continue
 
-        if isinstance(template.get(key), str):
-            updates[key] = render_template_string(template.get(key), item=item)
-        elif (isinstance(template.get(key), dict) or isinstance(template.get(key), list)) and template.get(key):
-            updates[key] = template.get(key)
-        elif not (isinstance(template.get(key), dict) or isinstance(template.get(key), list)):
-            updates[key] = template.get(key)
+        if isinstance(value, str):
+            updates[key] = render_template_string(value, item=item)
+        elif (isinstance(value, dict) or isinstance(value, list)) and value:
+            updates[key] = value
+        elif not (isinstance(value, dict) or isinstance(value, list)):
+            updates[key] = value
 
     if template.get('template_desk'):
         updates['task'] = {}
@@ -259,10 +273,10 @@ def get_item_from_template(template):
 
     :param dict template
     """
-    item = {key: value for key, value in template.items() if key in metadata_schema}
+    item = template.get('data', {})
     item[ITEM_STATE] = CONTENT_STATE.SUBMITTED
     item['task'] = {'desk': template.get('template_desk'), 'stage': template.get('template_stage')}
-    item['template'] = item.pop('_id')
+    item['template'] = template.get('_id')
     item.pop('firstcreated', None)
     item.pop('versioncreated', None)
     return item

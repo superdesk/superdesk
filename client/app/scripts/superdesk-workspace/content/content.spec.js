@@ -57,9 +57,11 @@ describe('superdesk.workspace.content', function() {
             desks.setCurrentDeskId('2');
 
             content.createItemFromTemplate({
-                slugline: 'test_slugline',
-                body_html: 'test_body_html',
-                irrelevantData: 'yes'
+                data: {
+                    slugline: 'test_slugline',
+                    body_html: 'test_body_html',
+                    irrelevantData: 'yes'
+                }
             }).then(done);
 
             $rootScope.$digest();

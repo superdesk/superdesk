@@ -21,8 +21,10 @@ describe('templates', function() {
                 template_name: 'test',
                 template_type: 'create',
                 template_desk: 'news',
-                headline: 'foo',
-                slugline: 'FOO'
+                data: {
+                    headline: 'foo',
+                    slugline: 'FOO'
+                }
             });
         }));
     });

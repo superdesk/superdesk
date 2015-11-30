@@ -50,6 +50,16 @@
             'language'
         ];
 
+        /**
+         * Filter out item data that is not usable for template
+         *
+         * @param {Object} item
+         * @return {Object}
+         */
+        this.pickItemData = function(item) {
+            return _.pick(item, this.TEMPLATE_METADATA);
+        };
+
         this.types = [
             {_id: 'kill', label: gettext('Kill')},
             {_id: 'create', label: gettext('Create')},
@@ -226,8 +236,8 @@
                     $scope.origTemplate = template || {'type': 'text'};
                     $scope.template = _.create($scope.origTemplate);
                     $scope.template.schedule = $scope.origTemplate.schedule || {};
-
-                    $scope.item = $scope.template;
+                    $scope.template.data = $scope.origTemplate.data || {};
+                    $scope.item = $scope.template.data;
                     $scope._editable = true;
                     $scope.updateStages($scope.template.template_desk);
                 };
@@ -291,11 +301,12 @@
         }
 
         function save() {
-            var template = angular.extend({
+            var template = {
                 template_name: vm.name,
                 template_type: vm.type,
-                template_desk: vm.desk
-            }, _.pick(item, templates.TEMPLATE_METADATA));
+                template_desk: vm.desk,
+                data: templates.pickItemData(item)
+            };
 
             return api.save('content_templates', template).then(function(data) {
                 vm._issues = null;
