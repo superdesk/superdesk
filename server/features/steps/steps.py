@@ -1541,7 +1541,7 @@ def check_if_email_sent(context, body):
 
 @then('we get activity')
 def then_we_get_activity(context):
-    url = apply_placeholders(context, '/activity?where={"name": "notify"}')
+    url = apply_placeholders(context, '/activity?where={"name": {"$in": ["notify", "user:mention" , "desk:mention"]}}')
     context.response = context.client.get(get_prefixed_url(context.app, url), headers=context.headers)
     if context.response.status_code == 200:
         expect_json_length(context.response, 1, path='_items')

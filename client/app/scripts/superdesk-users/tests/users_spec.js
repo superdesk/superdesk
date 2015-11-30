@@ -167,7 +167,6 @@ describe('mentio directive', function() {
             {type: 'user', item: {_id: 3, username: 'fast'}},
             {type: 'user', item: {_id: 2, username: 'foo'}},
             {type: 'user', item: {_id: 1, username: 'moo'}}]);
-            
     }));
 });
 

@@ -19,11 +19,17 @@ import superdesk
 
 
 def get_mentions(text):
+    """
+    Returns the names of desks and users from a given text
+    User names starts with '@' and desk names starts with '#'
+    """
     user_pattern = re.compile("(^|\s)\@([a-zA-Z0-9-_.]\w+)")
     desk_pattern = re.compile("(^|\s)\#([a-zA-Z0-9-_.]\w+)")
-    user_names = set(username for match in re.finditer(user_pattern, text) for username in match.groups())
-    desk_names = set(deskname for match in re.finditer(desk_pattern, text) for deskname in match.groups())
-    return list(user_names), list(desk_names)
+    raw_user_names = set(username for match in re.finditer(user_pattern, text) for username in match.groups())
+    raw_desk_names = set(deskname for match in re.finditer(desk_pattern, text) for deskname in match.groups())
+    desk_names = [d.replace('_', ' ') for d in raw_desk_names if d.strip()]
+    user_names = [u for u in raw_user_names if u.strip()]
+    return user_names, desk_names
 
 
 def send_email_to_mentioned_users(doc, mentioned_users, origin):
@@ -57,17 +63,19 @@ def get_desks(desk_names):
 def notify_mentioned_users(docs, origin):
     for doc in docs:
         mentioned_users = doc.get('mentioned_users', {}).values()
-        item = superdesk.get_resource_service('archive').find_one(req=None, _id=doc['item'])
-        add_activity('user:mention', '', resource=None, type='comment', item=item,
-                     comment=doc.get('text'), comment_id=str(doc.get('_id')),
-                     notify=mentioned_users)
-        send_email_to_mentioned_users(doc, mentioned_users, origin)
+        if len(mentioned_users) > 0:
+            item = superdesk.get_resource_service('archive').find_one(req=None, _id=doc['item'])
+            add_activity('user:mention', '', resource=None, type='comment', item=item,
+                         comment=doc.get('text'), comment_id=str(doc.get('_id')),
+                         notify=mentioned_users)
+            send_email_to_mentioned_users(doc, mentioned_users, origin)
 
 
 def notify_mentioned_desks(docs):
     for doc in docs:
         mentioned_desks = doc.get('mentioned_desks', {}).values()
-        item = superdesk.get_resource_service('archive').find_one(req=None, _id=doc['item'])
-        add_activity('desk:mention', '', resource=None, type='comment', item=item,
-                     comment=doc.get('text'), comment_id=str(doc.get('_id')),
-                     notify_desks=mentioned_desks)
+        if len(mentioned_desks) > 0:
+            item = superdesk.get_resource_service('archive').find_one(req=None, _id=doc['item'])
+            add_activity('desk:mention', '', resource=None, type='comment', item=item,
+                         comment=doc.get('text'), comment_id=str(doc.get('_id')),
+                         notify_desks=mentioned_desks)

@@ -1601,7 +1601,8 @@
             };
         }])
 
-        .directive('sdUserMentio', ['userList', 'desks', 'asset', '$q', function(userList, desks, asset, $q) {
+        .directive('sdUserMentio', ['userList', 'desks', 'asset', '$q',
+            function(userList, desks, asset, $q) {
             return {
                 templateUrl: asset.templateUrl('superdesk-users/views/mentions.html'),
                 link: function(scope, elem) {
@@ -1618,14 +1619,14 @@
                         }
                     });
 
-
+                    // Calculates the next page and calls fetchItems for new items
                     scope.fetchNext = function() {
                         var page = scope.users.length / 10 + 1;
                         fetchItems(scope.prefix, page);
                     };
 
+                    // Returns the next set of results
                     function fetchItems(prefix, page) {
-                        console.log('fetcItems entered:', prefix, page);
                         if (!scope.fetching && !_.contains(fetchedPages, page)) {
                             var promises = [];
                             scope.fetching = true;
@@ -1637,7 +1638,6 @@
                                 scope.users = _.sortBy(scope.users, function(item) {
                                     return item.type === 'user' ? item.item.username.toLowerCase() : item.item.name.toLowerCase();
                                 });
-                                console.log('fetcItems sorted:', prefix, page);
 
                                 scope.fetching = false;
                                 fetchedPages.push(page);
@@ -1645,15 +1645,17 @@
                         }
                     }
 
+                    // Returns the next set of users
                     function getFilteredUsers(prefix, list, page) {
                         return userList.get(prefix, page, 10).then(function(result) {
                             var filteredUsers = result._items.slice((page - 1) * 10, page * 10);
                             _.each(filteredUsers, function(user) {
                                 list.push({'type': 'user', 'item': user});
                             });
-                        })
+                        });
                     }
 
+                    // Returns the next set of desks
                     function getFilteredDesks(prefix, list, page) {
                         return desks.initialize().then(function() {
                             var filteredDesks = desks.desks._items;
@@ -1681,8 +1683,8 @@
                         fetchItems(scope.prefix, 1);
                     };
 
-                    scope.selectUser = function(item) {
-                        return  (item.type === 'user' ? '@' + item.item.username : '#' + item.item.name);
+                    scope.select = function(item) {
+                        return (item.type === 'user' ? '@' + item.item.username : '#' + item.item.name.replace(' ', '_'));
                     };
 
                     scope.$watchCollection(

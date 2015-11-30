@@ -108,12 +108,13 @@ function CommentTextDirective($compile) {
                 }
             });
 
+            //map desk mentions
             var mentioned_desks = html.match(/\#([a-zA-Z0-9-_.]\w+)/g);
             _.each(mentioned_desks, function(token) {
                 var deskname = token.substring(1, token.length);
                 if (scope.comment.mentioned_desks && scope.comment.mentioned_desks[deskname]) {
                     html = html.replace(token,
-                    '<a href="#">' + token + '</a>');
+                    '<a href="">' + token + '</a>');
                 }
             });
             //build element
