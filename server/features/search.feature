@@ -13,7 +13,7 @@ Feature: Search Feature
     Scenario: Can search archive
         Given "desks"
         """
-        [{"name": "Sports Desk", "spike_expiry": 60}]
+        [{"name": "Sports Desk", "content_expiry": 60}]
         """
         Given "archive"
             """
@@ -35,7 +35,7 @@ Feature: Search Feature
     Scenario: Can limit search to 1 result per shard
         Given "desks"
         """
-        [{"name": "Sports Desk", "spike_expiry": 60}]
+        [{"name": "Sports Desk", "content_expiry": 60}]
         """
         Given "archive"
         """

@@ -280,20 +280,13 @@ DEFAULT_TIMEZONE = env('DEFAULT_TIMEZONE', 'Europe/Prague')
 # The number of minutes since the last update of the Mongo auth object after which it will be deleted
 SESSION_EXPIRY_MINUTES = int(env('SESSION_EXPIRY_MINUTES', 240))
 
-# The number of minutes before spiked items purged
-SPIKE_EXPIRY_MINUTES = int(env('SPIKE_EXPIRY_MINUTES', 300))
-
 # The number of minutes before content items purged
 # akin.tolga 06/01/2014: using a large value (30 days) for the time being
-CONTENT_EXPIRY_MINUTES = int(env('CONTENT_EXPIRY_MINUTES', 43200))
+CONTENT_EXPIRY_MINUTES = int(env('CONTENT_EXPIRY_MINUTES', 4320))
 
 # The number of minutes before ingest items purged
 # 2880 = 2 days in minutes
 INGEST_EXPIRY_MINUTES = int(env('INGEST_EXPIRY_MINUTES', 2880))
-
-# The number of minutes before published items purged
-# 4320 = 3 days in minutes
-PUBLISHED_ITEMS_EXPIRY_MINUTES = int(env('PUBLISHED_ITEMS_EXPIRY_MINUTES', 4320))
 
 # This setting can be used to apply a limit on the elastic search queries, it is a limit per shard.
 # A value of -1 indicates that no limit will be applied.

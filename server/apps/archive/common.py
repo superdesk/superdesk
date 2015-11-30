@@ -268,48 +268,52 @@ def is_assigned_to_a_desk(doc):
     return doc.get('task') and doc['task'].get('desk')
 
 
-def get_item_expiry(app, stage):
+def get_item_expiry(desk, stage, offset=None):
+    """
+    Calculate expiry date of the item.
+    Order of precedence is:
+    1. Stage Content Expiry
+    2. Desk Content Expiry
+    3. Default Content expiry in Settings ('CONTENT_EXPIRY_MINUTES').
+    :param dict desk: desk where the item is located
+    :param dict stage: stage where the item is located
+    :param datetime offset: datetime passed in case of embargo.
+    :return datetime: expiry datetime
+    """
     expiry_minutes = app.settings['CONTENT_EXPIRY_MINUTES']
-    if stage:
-        expiry_minutes = stage.get('content_expiry', expiry_minutes)
+    if stage and stage.get('content_expiry'):
+        expiry_minutes = stage.get('content_expiry')
+    elif desk and desk.get('content_expiry'):
+        expiry_minutes = desk.get('content_expiry')
 
-    return get_expiry_date(expiry_minutes)
+    return get_expiry_date(expiry_minutes, offset=offset)
 
 
-def get_expiry(desk_id=None, stage_id=None, desk_or_stage_doc=None):
+def get_expiry(desk_id, stage_id, offset=None):
     """
     Calculates the expiry for a content from fetching the expiry duration from one of the below
         1. desk identified by desk_id
-        2. stage identified by stage_id. This will ignore desk_id if specified
-        3. desk doc or stage doc identified by doc_or_stage_doc. This will ignore desk_id and stage_id if specified
-
+        2. stage identified by stage_id
     :param desk_id: desk identifier
     :param stage_id: stage identifier
-    :param desk_or_stage_doc: doc from either desks collection or stages collection
     :return: when the doc will expire
     """
-
     stage = None
+    desk = None
 
-    if desk_or_stage_doc is None and desk_id:
+    if desk_id:
         desk = superdesk.get_resource_service('desks').find_one(req=None, _id=desk_id)
 
         if not desk:
             raise SuperdeskApiError.notFoundError('Invalid desk identifier %s' % desk_id)
 
-        if not stage_id:
-            stage = get_resource_service('stages').find_one(req=None, _id=desk['incoming_stage'])
-
-            if not stage:
-                raise SuperdeskApiError.notFoundError('Invalid stage identifier %s' % stage_id)
-
-    if desk_or_stage_doc is None and stage_id:
+    if stage_id:
         stage = get_resource_service('stages').find_one(req=None, _id=stage_id)
 
         if not stage:
                 raise SuperdeskApiError.notFoundError('Invalid stage identifier %s' % stage_id)
 
-    return get_item_expiry(app=app, stage=desk_or_stage_doc or stage)
+    return get_item_expiry(desk, stage, offset)
 
 
 def set_item_expiry(update, original):

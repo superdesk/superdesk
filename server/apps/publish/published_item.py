@@ -26,10 +26,10 @@ from superdesk.notification import push_notification
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 from superdesk.metadata.item import not_analyzed, ITEM_STATE, CONTENT_STATE, ITEM_TYPE, CONTENT_TYPE, EMBARGO
-from apps.archive.common import handle_existing_data, item_schema, remove_media_files
+from apps.archive.common import handle_existing_data, item_schema, remove_media_files, get_expiry
 from superdesk.metadata.utils import aggregations
 from apps.archive.archive import SOURCE as ARCHIVE
-from superdesk.utc import utcnow, get_expiry_date
+from superdesk.utc import utcnow
 from superdesk import get_resource_service
 
 logger = logging.getLogger(__name__)
@@ -278,15 +278,15 @@ class PublishedItemService(BaseService):
         return item
 
     def __set_published_item_expiry(self, doc):
+        """
+        Set the expiry for the published item
+        :param dict doc: doc on which publishing action is performed
+        """
         desk_id = doc.get('task', {}).get('desk', None)
-        desk = {}
+        stage_id = doc.get('task', {}).get('stage', None)
 
-        if desk_id:
-            desk = get_resource_service('desks').find_one(req=None, _id=desk_id)
-
-        expiry_minutes = desk.get('published_item_expiry', config.PUBLISHED_ITEMS_EXPIRY_MINUTES)
-        doc['expiry'] = get_expiry_date(expiry_minutes, offset=doc[EMBARGO]) if doc.get(EMBARGO) else \
-            get_expiry_date(expiry_minutes)
+        doc['expiry'] = get_expiry(desk_id, stage_id, offset=doc[EMBARGO]) if doc.get(EMBARGO) else \
+            get_expiry(desk_id, stage_id)
 
     def remove_expired(self, doc):
         """

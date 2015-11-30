@@ -8,6 +8,7 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
+from flask import current_app as app
 from superdesk.errors import SuperdeskApiError
 from superdesk.resource import Resource
 from superdesk import config
@@ -48,14 +49,11 @@ desks_schema = {
     },
     'incoming_stage': Resource.rel('stages', True),
     'working_stage': Resource.rel('stages', True),
-    'spike_expiry': {
+    'content_expiry': {
         'type': 'integer'
     },
     'source': {
         'type': 'string'
-    },
-    'published_item_expiry': {
-        'type': 'integer'
     },
     'monitoring_settings': {
         'type': 'list',
@@ -122,6 +120,9 @@ class DesksService(BaseService):
             stages_to_be_linked_with_desk = []
             stage_service = superdesk.get_resource_service('stages')
 
+            if desk.get('content_expiry') == 0:
+                desk['content_expiry'] = app.settings['CONTENT_EXPIRY_MINUTES']
+
             if 'working_stage' not in desk:
                 stages_to_be_linked_with_desk.append('working_stage')
                 stage_id = stage_service.create_working_stage()
@@ -144,6 +145,9 @@ class DesksService(BaseService):
             push_notification(self.notification_key, created=1, desk_id=str(doc.get(config.ID_FIELD)))
 
     def on_update(self, updates, original):
+        if updates.get('content_expiry') == 0:
+            updates['content_expiry'] = None
+
         if updates.get('desk_type') and updates.get('desk_type') != original.get('desk_type', ''):
             archive_versions_query = {
                 '$or': [

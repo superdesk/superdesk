@@ -19,15 +19,13 @@ from superdesk.errors import SuperdeskApiError, InvalidStateTransitionError
 from superdesk.metadata.item import ITEM_STATE
 from superdesk.notification import push_notification
 from superdesk.services import BaseService
-from superdesk.utc import get_expiry_date
 from superdesk.metadata.utils import item_url
-from .common import get_user, is_assigned_to_a_desk, get_expiry
+from .common import get_user, get_expiry, item_operations, ITEM_OPERATION, \
+    is_item_in_package, set_sign_off
 from superdesk.workflow import is_workflow_state_transition_valid
 from apps.archive.archive import ArchiveResource, SOURCE as ARCHIVE
 from apps.packages import PackageService, TakesPackageService
 from apps.archive.archive_rewrite import ArchiveRewriteService
-from apps.archive.common import item_operations, ITEM_OPERATION, \
-    is_item_in_package, set_sign_off
 
 logger = logging.getLogger(__name__)
 
@@ -111,16 +109,10 @@ class ArchiveSpikeService(BaseService):
             raise InvalidStateTransitionError()
 
         user = get_user(required=True)
-
         item = get_resource_service(ARCHIVE).find_one(req=None, _id=id)
-        expiry_minutes = app.settings['SPIKE_EXPIRY_MINUTES']
+        task = item.get('task', {})
 
-        # check if item is in a desk. If it's then use the desks spike_expiry
-        if is_assigned_to_a_desk(item):
-            desk = get_resource_service('desks').find_one(_id=item['task']['desk'], req=None)
-            expiry_minutes = desk.get('spike_expiry', expiry_minutes)
-
-        updates[EXPIRY] = get_expiry_date(expiry_minutes)
+        updates[EXPIRY] = get_expiry(desk_id=task.get('desk'), stage_id=task.get('stage'))
         updates[REVERT_STATE] = item.get(ITEM_STATE, None)
 
         if original.get('rewrite_of'):
@@ -149,15 +141,17 @@ class ArchiveUnspikeService(BaseService):
                    ITEM_OPERATION: ITEM_UNSPIKE}
 
         desk_id = doc.get('task', {}).get('desk')
+        stage_id = None
         if desk_id:
             desk = app.data.find_one('desks', None, _id=desk_id)
+            stage_id = desk['incoming_stage']
             updates['task'] = {
-                'desk': str(desk_id),
-                'stage': str(desk['incoming_stage']) if desk_id else None,
+                'desk': desk_id,
+                'stage': stage_id if desk_id else None,
                 'user': None
             }
 
-        updates['expiry'] = get_expiry(desk_id=desk_id)
+        updates['expiry'] = get_expiry(desk_id=desk_id, stage_id=stage_id)
         return updates
 
     def on_update(self, updates, original):

@@ -1382,11 +1382,6 @@ def get_unspiked_content(context, id):
     # assert_equal(response_data['expiry'], None)
 
 
-@then('we get global spike expiry')
-def get_global_spike_expiry(context):
-    get_desk_spike_expiry(context, context.app.config['SPIKE_EXPIRY_MINUTES'])
-
-
 @then('we get global content expiry')
 def get_global_content_expiry(context):
     get_desk_spike_expiry(context, context.app.config['CONTENT_EXPIRY_MINUTES'])
@@ -1857,12 +1852,12 @@ def validate_published_item_expiry(context, publish_expiry_in_desk):
 
     if response_data.get('_meta') and response_data.get('_items'):
         for item in response_data.get('_items'):
-            assert_expiry(context, item, publish_expiry_in_desk)
+            assert_expiry(item, publish_expiry_in_desk)
     else:
-        assert_expiry(context, response_data, publish_expiry_in_desk)
+        assert_expiry(response_data, publish_expiry_in_desk)
 
 
-def assert_expiry(context, item, publish_expiry_in_desk):
+def assert_expiry(item, publish_expiry_in_desk):
     embargo = item.get('embargo')
     actual = parse_date(item.get('expiry'))
     error_message = 'Published Item Expiry validation fails'
