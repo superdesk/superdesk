@@ -11,6 +11,7 @@
 
 import os
 import time
+import arrow
 from datetime import datetime, timedelta
 from superdesk.io.commands.update_ingest import LAST_ITEM_UPDATE
 import superdesk
@@ -84,6 +85,17 @@ def test_key_is_present(key, context, response):
         '"%s" should be empty or false, but it was "%s" in (%s)' % (key, response[key], response)
 
 
+def assert_is_now(val, key):
+    """Assert that given datetime value is now (with 5s tolerance).
+
+    :param val: datetime
+    :param key: val label - used for error reporting
+    """
+    now = arrow.get()
+    val = arrow.get(val)
+    assert val + timedelta(seconds=3) > now, '%s should be now, it is %s' % (key, val)
+
+
 def json_match(context_data, response_data):
     if isinstance(context_data, dict):
         assert isinstance(response_data, dict), 'response data is not dict, but %s' % type(response_data)
@@ -94,6 +106,9 @@ def json_match(context_data, response_data):
             if context_data[key] == "__any_value__":
                 test_key_is_present(key, context_data, response_data)
                 continue
+            if context_data[key] == "__now__":
+                assert_is_now(response_data[key], key)
+                return True
             if not json_match(context_data[key], response_data[key]):
                 return False
         return True
