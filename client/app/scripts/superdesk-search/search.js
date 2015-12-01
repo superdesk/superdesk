@@ -537,6 +537,7 @@
                     scope.flags = controller.flags;
                     scope.sTab = true;
                     scope.editingSearch = false;
+                    scope.showSaveSearch = false;
 
                     scope.aggregations = {};
                     scope.privileges = privileges.privileges;
@@ -578,6 +579,12 @@
 
                             if (!scope.items || scope.items._aggregations === undefined) {
                                 return;
+                            }
+
+                            if (!_.isEmpty(scope.tags.currentSearch)) {
+                                scope.showSaveSearch = true;
+                            } else {
+                                scope.showSaveSearch = false;
                             }
 
                             if (angular.isDefined(scope.items._aggregations.type)) {
