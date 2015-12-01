@@ -1260,8 +1260,8 @@
          * Open Item dialog
          */
         .directive('sdItemGlobalsearch', ['superdesk', 'session', '$location', 'search', 'api', 'notify',
-            'gettext', 'keyboardManager', 'asset', 'authoringWorkspace',
-            function(superdesk, session, $location, search, api, notify, gettext, keyboardManager, asset, authoringWorkspace) {
+            'gettext', 'keyboardManager', 'asset', 'authoringWorkspace', 'authoring',
+            function(superdesk, session, $location, search, api, notify, gettext, keyboardManager, asset, authoringWorkspace, authoring) {
             return {
                 scope: {repo: '=', context: '='},
                 templateUrl: asset.templateUrl('superdesk-search/views/item-globalsearch.html'),
@@ -1287,7 +1287,11 @@
                         if (items.length > 0) {
                             reset();
                             scope.flags.enabled = false;
-                            authoringWorkspace.edit(items[0]);
+                            if (authoring.itemActions(items[0]).edit) {
+                                authoringWorkspace.edit(items[0]);
+                            } else {
+                                authoringWorkspace.view(items[0]);
+                            }
                         } else {
                             notify.error(gettext('Item not found...'));
                             scope.flags.enabled = true;
