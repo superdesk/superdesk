@@ -1310,7 +1310,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                                     '<blockquote class="twitter-tweet" lang="en">',
                                     '  <p lang="en" dir="ltr">' + data.description + '</p>',
                                     '  — ' + data.title + ' (@' + data.author_name + ')',
-                                    '  <a href="' + data.url + '">' + data.url + '</a>',
+                                    '  <a href="' + url + '">' + url + '</a>',
                                     '</blockquote>',
                                     '<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>'
                                 ].join('');
