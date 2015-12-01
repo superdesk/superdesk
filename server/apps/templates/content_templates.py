@@ -263,6 +263,8 @@ def get_item_from_template(template):
     item[ITEM_STATE] = CONTENT_STATE.SUBMITTED
     item['task'] = {'desk': template.get('template_desk'), 'stage': template.get('template_stage')}
     item['template'] = item.pop('_id')
+    item.pop('firstcreated', None)
+    item.pop('versioncreated', None)
     return item
 
 

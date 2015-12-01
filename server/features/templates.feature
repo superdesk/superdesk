@@ -67,7 +67,7 @@ Feature: Templates
 
         When we post to "content_templates"
         """
-        {"template_name": "test", "template_type": "create", "headline": "test", "type": "text", "slugline": "test",
+        {"template_name": "test", "template_type": "create", "headline": "test", "type": "text", "slugline": "test", "firstcreated": "2015-10-10T10:10:10+0000", "versioncreated": "2015-10-10T10:10:10+0000",
          "schedule": {"day_of_week": ["MON"], "create_at": "0815", "is_active": true},
          "template_desk": "#desks._id#", "template_stage": "#stages._id#"}
         """
@@ -84,6 +84,9 @@ Feature: Templates
         And we run create content task
         And we get "/archive"
         Then we get list with 1 items
+        """
+        {"_items": [{"firstcreated": "__now__", "versioncreated": "__now__"}]}
+        """
 
     @auth
     Scenario: Apply template to an item
