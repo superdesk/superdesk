@@ -47,7 +47,18 @@ class ReutersHTTPFeedingService(HTTPFeedingService):
             last_updated = updated - datetime.timedelta(minutes=ttl_minutes)
 
         self.provider = provider
-        self.URL = provider.get('config', {}).get('url')
+        provider_config = provider.get('config')
+        if not provider_config:
+            provider_config = {}
+            provider['config'] = provider_config
+
+        if 'url' not in provider_config:
+            provider_config['url'] = 'http://rmb.reuters.com/rmd/rest/xml'
+
+        if 'auth_url' not in provider_config:
+            provider_config['auth_url'] = 'https://commerce.reuters.com/rmd/rest/xml/login'
+
+        self.URL = provider_config.get('url')
 
         for channel in self._get_channels():
             for guid in self._get_article_ids(channel, last_updated, updated):

@@ -649,6 +649,16 @@ define([
                     return $scope.provider && $scope.provider.content_types &&
                         $scope.provider.content_types.indexOf(fileType) > -1;
                 };
+
+                /**
+                 * Initializes the configuration for the selected feeding service if the config is not defined.
+                 */
+                $scope.initProviderConfig = function () {
+                    if ($scope.provider.feeding_service === 'reuters_http' && !$scope.provider.config) {
+                        $scope.provider.config = {'url': 'http://rmb.reuters.com/rmd/rest/xml',
+                            'auth_url': 'https://commerce.reuters.com/rmd/rest/xml/login'};
+                    }
+                };
             }
         };
     }
