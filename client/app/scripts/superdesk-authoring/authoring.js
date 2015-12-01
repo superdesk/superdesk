@@ -1239,7 +1239,8 @@
                  * Checks if the item can be unlocked or not.
                  */
                 $scope.can_unlock = function() {
-                    return lock.can_unlock($scope.item);
+                    return $scope.item._locked && !$scope.item.sendTo && lock.can_unlock($scope.item) &&
+                        ($scope.itemActions.save || _.contains(['published', 'scheduled', 'corrected'], $scope.item.state));
                 };
 
                 $scope.save_enabled = function() {
