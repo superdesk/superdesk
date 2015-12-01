@@ -9,7 +9,7 @@
         </ul>
         <div class="doopen" ng-click="flags.facets = false"><i class="icon-backward-thin"></i></div>
     </div>
-    <div class="content" ng-if="sTab">
+    <div class="content" ng-if="sTab" ng-class="{pull: showSaveSearch}">
 
         <div sd-search-within></div>
 
@@ -149,10 +149,10 @@
                 </fieldset>
            </form>
         </div>
-
-        
     </div>
-    <div sd-save-search></div>
+
+    <div sd-save-search ng-show="showSaveSearch"></div>
+
     <div class="content views" ng-if="!sTab">
         <div sd-saved-searches></div>
     </div>
