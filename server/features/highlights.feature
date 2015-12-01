@@ -9,7 +9,7 @@ Feature: Highlights
 		When we post to "content_templates"
         """
         {"template_name": "default highlight", "template_type": "highlights", 
-         "body_html": "{% for item in items %} <h2>{{ item.headline }}</h2> {{ item.body_html }} <p></p> {% endfor %}"
+         "data": {"body_html": "{% for item in items %} <h2>{{ item.headline }}</h2> {{ item.body_html }} <p></p> {% endfor %}"}
         }
         """
         Then we get response code 201
@@ -53,7 +53,7 @@ Feature: Highlights
         When we post to "content_templates"
         """
         {"template_name": "default highlight", "template_type": "highlights", 
-         "body_html": "{% for item in items %} <h2>{{ item.headline }}</h2> {{ item.body_html }} <p></p> {% endfor %}"
+         "data": {"body_html": "{% for item in items %} <h2>{{ item.headline }}</h2> {{ item.body_html }} <p></p> {% endfor %}"}
         }
         """
         Then we get response code 201
@@ -260,7 +260,7 @@ Feature: Highlights
         When we post to "content_templates"
         """
         {"template_name": "default highlight", "template_type": "highlights", 
-         "body_html": "<b>custom highlight template</b>\n{% for item in items %} <h2>{{ item.headline }}</h2> {{ item.first_paragraph_body_html }} <p></p> {% endfor %}"
+         "data": {"body_html": "<b>custom highlight template</b>\n{% for item in items %} <h2>{{ item.headline }}</h2> {{ item.first_paragraph_body_html }} <p></p> {% endfor %}"}
         }
         """
         Then we get response code 201

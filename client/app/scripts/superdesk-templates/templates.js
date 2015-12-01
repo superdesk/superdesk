@@ -66,33 +66,41 @@
             {_id: 'highlights', label: gettext('Highlights')}
         ];
 
-        this.fetchTemplates = function fetchTemplates(page, pageSize, type, desk, keyword) {
-            page = page || 1;
-            pageSize = pageSize || PAGE_SIZE;
+        this.fetchTemplates = function fetchTemplates(page, pageSize, type, desk, user, keyword) {
+            var params = {
+                page: page || 1,
+                max_results: pageSize || PAGE_SIZE
+            };
 
             var criteria = {};
+
             if (type !== undefined) {
                 criteria.template_type = type;
             }
-            if (desk !== undefined) {
-                criteria.template_desk = desk;
-            }
+
             if (keyword) {
                 criteria.template_name = {'$regex': keyword, '$options': '-i'};
             }
-            var params = {
-                max_results: pageSize,
-                page: page
-            };
+
+            if (user || desk) {
+                criteria.$or = [];
+
+                if (user) { // user private templates
+                    criteria.$or.push({user: user, is_private: true});
+                }
+
+                if (desk) { // all non private desk templates
+                    criteria.$or.push({template_desk: desk, is_private: {$ne: true}});
+                }
+            }
+
             if (!_.isEmpty(criteria)) {
                 params.where = JSON.stringify({
                     '$and': [criteria]
                 });
             }
-            return api.content_templates.query(params)
-            .then(function(result) {
-                return result;
-            });
+
+            return api.query('content_templates', params);
         };
 
         this.fetchTemplatesByIds = function(templateIds) {
@@ -106,7 +114,7 @@
                 where: JSON.stringify({_id: {'$in': templateIds}})
             };
 
-            return api.content_templates.query(params)
+            return api.query('content_templates', params)
             .then(function(result) {
                 if (result && result._items) {
                     result._items.sort(function(a, b) {
@@ -215,7 +223,7 @@
                         template = _.omit($scope.template, KILL_TEMPLATE_IGNORE_FIELDS);
                     }
 
-                    api.content_templates.save($scope.origTemplate, template)
+                    api.save('content_templates', $scope.origTemplate, template)
                         .then(
                             function() {
                                 notify.success(gettext('Template saved.'));
@@ -245,7 +253,7 @@
                 $scope.remove = function(template) {
                     modal.confirm(gettext('Are you sure you want to delete the template?'))
                         .then(function() {
-                            return api.content_templates.remove(template);
+                            return api.remove(template);
                         })
                         .then(function(result) {
                             _.remove($scope.templates, template);
@@ -288,6 +296,7 @@
         this.type = 'create';
         this.name = item.slugline || null;
         this.desk = desks.active.desk || null;
+        this.is_private = true;
 
         this.types = templates.types;
         this.save = save;
@@ -304,7 +313,8 @@
             var template = {
                 template_name: vm.name,
                 template_type: vm.type,
-                template_desk: vm.desk,
+                template_desk: vm.is_private ? null : vm.desk,
+                is_private: vm.is_private,
                 data: templates.pickItemData(item)
             };
 
@@ -335,9 +345,80 @@
         }
     }
 
+    TemplateSelectDirective.$inject = ['api', 'desks', 'session', 'templates'];
+    function TemplateSelectDirective(api, desks, session, templates) {
+        var PAGE_SIZE = 200;
+
+        return {
+            templateUrl: 'scripts/superdesk-templates/views/sd-template-select.html',
+            scope: {
+                selectAction: '=',
+                open: '='
+            },
+            link: function(scope) {
+                scope.options = {
+                    keyword: null,
+                };
+
+                scope.close = function() {
+                    scope.open = false;
+                };
+
+                scope.select = function(template) {
+                    scope.selectAction(template);
+                    scope.close();
+                };
+
+                /**
+                 * Fetch templates and assign it to scope but split it into public/private
+                 */
+                function fetchTemplates() {
+                    templates.fetchTemplates(scope.options.page, PAGE_SIZE, 'create',
+                        desks.activeDeskId, session.identity._id, scope.options.keyword)
+                    .then(function(result) {
+                        scope.publicTemplates = [];
+                        scope.privateTemplates = [];
+                        result._items.forEach(function(template) {
+                            if (template.is_private) {
+                                scope.privateTemplates.push(template);
+                            } else {
+                                scope.publicTemplates.push(template);
+                            }
+                        });
+                    });
+                }
+
+                scope.$watch('options.keyword', fetchTemplates);
+            }
+        };
+    }
+
+    function TemplateListDirective() {
+        var ENTER = 13;
+        return {
+            scope: {templates: '=', select: '&'},
+            templateUrl: 'scripts/superdesk-templates/views/template-list.html',
+            link: function(scope) {
+                /**
+                 * Call select on keyboard event if key was enter
+                 *
+                 * @param {Event} $event
+                 * @param {Object} template
+                 */
+                scope.selectOnEnter = function($event, template) {
+                    if ($event.key === ENTER) {
+                        scope.select(template);
+                    }
+                };
+            }
+        };
+    }
+
     angular.module('superdesk.templates', ['superdesk.activity', 'superdesk.authoring', 'superdesk.preferences'])
         .service('templates', TemplatesService)
         .directive('sdTemplates', TemplatesDirective)
+        .directive('sdTemplateSelect', TemplateSelectDirective)
+        .directive('sdTemplateList', TemplateListDirective)
         .controller('CreateTemplateController', CreateTemplateController)
         .controller('TemplateMenu', TemplateMenuController)
         .config(config)
@@ -353,20 +434,6 @@
             privileges: {content_templates: 1},
             priority: 2000,
             beta: true
-        });
-
-        apiProvider.api('templates', {
-            type: 'http',
-            backend: {
-                rel: 'templates'
-            }
-        });
-
-        apiProvider.api('content_templates', {
-            type: 'http',
-            backend: {
-                rel: 'content_templates'
-            }
         });
     }
 })();

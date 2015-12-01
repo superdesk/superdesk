@@ -23,11 +23,18 @@
             </div>
 
             <div class="field">
+                <label for="template-is-private" translate>Private template</label>
+                <div class="control">
+                    <input id="template-is-private"
+                        type="checkbox"
+                        ng-model="template.is_private">
+                </div>
+            </div>
+
+            <div class="field" ng-if="!template.is_private">
                 <label for="template-desk" translate>Desk</label>
                 <div class="control">
-                    <select ng-model="template.desk" ng-options="desk._id as desk.name for desk in template.desks">
-                        <option value="" translate>None</option>
-                    </select>
+                    <select ng-model="template.desk" ng-options="desk._id as desk.name for desk in template.desks"></select>
                 </div>
             </div>
         </fieldset>

@@ -21,6 +21,7 @@ from superdesk.metadata.item import metadata_schema, ITEM_STATE, CONTENT_STATE
 from superdesk.celery_app import celery
 from apps.rules.routing_rules import Weekdays, set_time
 from apps.archive.common import ARCHIVE, CUSTOM_HATEOAS, item_schema
+from apps.auth import get_user
 from flask import render_template_string
 
 
@@ -102,6 +103,9 @@ class ContentTemplatesResource(Resource):
 
         'last_run': {'type': 'datetime', 'readonly': True},
         'next_run': {'type': 'datetime', 'readonly': True},
+
+        'user': Resource.rel('users'),
+        'is_private': {'type': 'boolean', 'default': True},
     }
 
     additional_lookup = {
@@ -129,6 +133,8 @@ class ContentTemplatesService(Service):
                 raise SuperdeskApiError.badRequestError(
                     message="Invalid kill template. "
                             "{} are not allowed".format(', '.join(KILL_TEMPLATE_NOT_REQUIRED_FIELDS)))
+            if get_user():
+                doc.setdefault('user', get_user()[config.ID_FIELD])
 
     def on_update(self, updates, original):
         if updates.get('template_type') and updates.get('template_type') != original.get('template_type') and \

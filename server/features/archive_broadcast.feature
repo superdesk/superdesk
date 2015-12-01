@@ -1356,17 +1356,20 @@ Feature: Archive Broadcast
       """
 
           {
-          "body_html": "<p>Please kill story slugged {{ item.slugline }} ex {{ item.dateline['text'] }}.<\/p>",
-          "type": "text",
-          "abstract": "This article has been removed",
-          "headline": "Kill\/Takedown notice ~~~ Kill\/Takedown notice",
-          "urgency": 1, "priority": 1,
-          "template_name": "kill",
-          "template_type": "kill",
-          "anpa_take_key": "KILL\/TAKEDOWN"
+            "data": {
+              "body_html": "<p>Please kill story slugged {{ item.slugline }} ex {{ item.dateline['text'] }}.<\/p>",
+              "type": "text",
+              "abstract": "This article has been removed",
+              "headline": "Kill\/Takedown notice ~~~ Kill\/Takedown notice",
+              "urgency": 1, "priority": 1,
+              "anpa_take_key": "KILL\/TAKEDOWN"
+            },
+            "template_name": "kill",
+            "template_type": "kill"
           }
       """
-    And we post to "archive"
+    Then we get new resource
+    When we post to "archive"
       """
       [{
           "guid": "123",
@@ -1527,16 +1530,19 @@ Feature: Archive Broadcast
       """
 
           {
-          "body_html": "<p>Please kill story slugged {{ item.slugline }} ex {{ item.dateline['text'] }}.<\/p>",
-          "type": "text",
-          "abstract": "This article has been removed",
-          "headline": "Kill\/Takedown notice ~~~ Kill\/Takedown notice",
-          "urgency": 1, "priority": 1,
-          "template_name": "kill",
-          "template_type": "kill",
-          "anpa_take_key": "KILL\/TAKEDOWN"
+            "data": {
+              "body_html": "<p>Please kill story slugged {{ item.slugline }} ex {{ item.dateline['text'] }}.<\/p>",
+              "type": "text",
+              "abstract": "This article has been removed",
+              "headline": "Kill\/Takedown notice ~~~ Kill\/Takedown notice",
+              "urgency": 1, "priority": 1,
+              "anpa_take_key": "KILL\/TAKEDOWN"
+            },
+            "template_name": "kill",
+            "template_type": "kill"
           }
       """
+    Then we get new resource
     When we post to "archive"
       """
       [{
@@ -1752,19 +1758,20 @@ Feature: Archive Broadcast
       """
     When we post to "content_templates"
       """
-
-          {
-          "body_html": "<p>Please kill story slugged {{ item.slugline }} ex {{ item.dateline['text'] }}.<\/p>",
-          "type": "text",
-          "abstract": "This article has been removed",
-          "headline": "Kill\/Takedown notice ~~~ Kill\/Takedown notice",
-          "urgency": 1, "priority": 1,
+        {
+          "data": {
+            "body_html": "<p>Please kill story slugged {{ item.slugline }} ex {{ item.dateline['text'] }}.<\/p>",
+            "type": "text",
+            "abstract": "This article has been removed",
+            "headline": "Kill\/Takedown notice ~~~ Kill\/Takedown notice",
+            "urgency": 1, "priority": 1,
+            "anpa_take_key": "KILL\/TAKEDOWN"
+          },
           "template_name": "kill",
-          "template_type": "kill",
-          "anpa_take_key": "KILL\/TAKEDOWN"
-          }
+          "template_type": "kill"
+        }
       """
-    Then we get OK response
+    Then we get new resource
     When we post to "archive"
       """
       [{
@@ -1952,19 +1959,21 @@ Feature: Archive Broadcast
       """
     When we post to "content_templates"
       """
-
-          {
-          "body_html": "<p>Please kill story slugged {{ item.slugline }} ex {{ item.dateline['text'] }}.<\/p>",
-          "type": "text",
-          "abstract": "This article has been removed",
-          "headline": "Kill\/Takedown notice ~~~ Kill\/Takedown notice",
-          "urgency": 1, "priority": 1,
+        {
+          "data": {
+            "body_html": "<p>Please kill story slugged {{ item.slugline }} ex {{ item.dateline['text'] }}.<\/p>",
+            "type": "text",
+            "abstract": "This article has been removed",
+            "headline": "Kill\/Takedown notice ~~~ Kill\/Takedown notice",
+            "urgency": 1, "priority": 1,
+            "anpa_take_key": "KILL\/TAKEDOWN"
+          },
           "template_name": "kill",
-          "template_type": "kill",
-          "anpa_take_key": "KILL\/TAKEDOWN"
-          }
+          "template_type": "kill"
+        }
       """
-    And we post to "archive"
+    Then we get new resource
+    When we post to "archive"
       """
       [{
           "guid": "123",

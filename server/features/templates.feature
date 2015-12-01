@@ -1,3 +1,4 @@
+@wip
 Feature: Templates
 
     @auth
@@ -39,7 +40,7 @@ Feature: Templates
         """
         Then we get new resource
         """
-        {"template_desk": null}
+        {"template_desk": null, "user": "#CONTEXT_USER_ID#", "is_private": true}
         """
 
     @auth

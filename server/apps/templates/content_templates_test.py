@@ -39,7 +39,7 @@ class TemplatesTestCase(unittest.TestCase):
         self.assertEqual(delta.days, 1)
 
     def test_get_item_from_template(self):
-        template = {'_id': 'foo', 'name': 'test', 'headline': 'Foo',
+        template = {'_id': 'foo', 'name': 'test', 'data': {'headline': 'Foo'},
                     'template_desk': 'sports', 'template_stage': 'schedule'}
         item = get_item_from_template(template)
         self.assertNotIn('_id', item)
@@ -53,16 +53,19 @@ class RenderTemplateTestCase(SuperdeskTestCase):
 
     def test_render_content_template(self):
         template = {
-            '_id': 'foo', 'template_name': 'test',
-            'headline': 'Foo Template: {{item.headline}}',
+            '_id': 'foo',
+            'template_name': 'test',
             'template_desk': 'sports',
             'template_stage': 'schedule',
-            'body_html': 'This article has slugline: {{item.slugline}} and dateline: {{item.dateline["text"]}} '
-                         'at {{item.versioncreated | format_datetime("Australia/Sydney", "%d %b %Y %H:%S %Z")}}',
-            'more_coming': False, 'urgency': 1, 'priority': 3,
-            'dateline': {},
-            'anpa_take_key': 'this is test',
-            'place': ['Australia']
+            'data': {
+                'headline': 'Foo Template: {{item.headline}}',
+                'body_html': 'This article has slugline: {{item.slugline}} and dateline: {{item.dateline["text"]}} '
+                             'at {{item.versioncreated | format_datetime("Australia/Sydney", "%d %b %Y %H:%S %Z")}}',
+                'more_coming': False, 'urgency': 1, 'priority': 3,
+                'dateline': {},
+                'anpa_take_key': 'this is test',
+                'place': ['Australia']
+            }
         }
 
         item = {
