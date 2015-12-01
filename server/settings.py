@@ -145,6 +145,10 @@ CELERYBEAT_SCHEDULE = {
         'task': 'apps.templates.content_templates.create_scheduled_content',
         'schedule': crontab(minute='*/5'),
     },
+    'legal:import_publish_queue': {
+        'task': 'apps.legal_archive.import_legal_publish_queue',
+        'schedule': timedelta(minutes=5)
+    }
 }
 
 SENTRY_DSN = env('SENTRY_DSN')

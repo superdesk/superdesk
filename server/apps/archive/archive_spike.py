@@ -151,7 +151,7 @@ class ArchiveUnspikeService(BaseService):
                 'user': None
             }
 
-        updates['expiry'] = get_expiry(desk_id=desk_id, stage_id=stage_id)
+        updates[EXPIRY] = get_expiry(desk_id=desk_id, stage_id=stage_id)
         return updates
 
     def on_update(self, updates, original):

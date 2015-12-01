@@ -10,12 +10,9 @@
 
 import logging
 from eve.versioning import versioned_id_field
-
 from flask import g, current_app as app
-
 from eve.utils import config, ParsedRequest
 from .resource import LEGAL_ARCHIVE_NAME
-
 from superdesk import Service, get_resource_privileges
 from superdesk.errors import SuperdeskApiError
 from superdesk.metadata.item import ITEM_TYPE, GUID_FIELD, CONTENT_TYPE
@@ -33,7 +30,7 @@ class LegalService(Service):
     def on_create(self, docs):
         """
         Overriding to replace the location of each item in the package to legal archive instead of archive,
-        if doc is a pacakge.
+        if doc is a package.
         """
 
         super().on_create(docs)
@@ -46,7 +43,7 @@ class LegalService(Service):
     def on_replace(self, document, original):
         """
         Overriding to replace the location of each item in the package to legal archive instead of archive,
-        if doc is a pacakge.
+        if doc is a package.
         """
 
         super().on_replace(document, original)
@@ -142,7 +139,9 @@ class LegalPublishQueueService(LegalService):
 
         ids = []
         for doc in docs:
-            doc_if_exists = self.find_one(req=None, _id=doc['_id'])
+            doc_if_exists = None
+            if doc.get(config.ID_FIELD):
+                doc_if_exists = self.find_one(req=None, _id=doc.get(config.ID_FIELD))
             if doc_if_exists is None:
                 ids.extend(super().create([doc]))
 
