@@ -6,7 +6,10 @@
         <div ng-if="!loading && items.length" class="inline_slugline_item">
             <div ng-repeat="item in items">
                 <div class="place" ng-show="item.name !== '-'">{{::item.name}}</div>
-                <div class="slugline" ng-show="item.slugline !== '-'">{{::item.slugline}}</div>
+                <span ng-show="item.slugline !== '-'">
+                    <time sd-datetime data-date="item.versioncreated" class="pull-right"></time>
+                    <div class="slugline">{{::item.slugline}}</div>
+                </span>
                 <div ng-show="item.old_sluglines.length !== 0">
                     <div class="oldslugline">{{::item.old_sluglines}}</div>
                 </div>
