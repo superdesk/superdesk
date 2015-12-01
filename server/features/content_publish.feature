@@ -1148,3 +1148,68 @@ Feature: Content Publishing
         ]
       }
       """
+
+    @auth
+    Scenario: Save and publish a text item with body text
+      Given the "validators"
+      """
+        [
+        {
+            "schema": {
+              "body_html": {
+              "type": "string",
+              "required": true,
+              "nullable": false,
+              "empty": false}
+            },
+            "type": "text",
+            "act": "publish",
+            "_id": "publish_text"
+        },
+        {
+            "_id": "publish_composite",
+            "act": "publish",
+            "type": "composite",
+            "schema": {
+              "body_html": {
+              "type": "string",
+              "required": true,
+              "nullable": false,
+              "empty": false
+              }
+            }
+        }
+        ]
+      """
+      And "desks"
+      """
+      [{"name": "Sports"}]
+      """
+      And "archive"
+      """
+      [{"guid": "123", "type": "text", "headline": "test", "_current_version": 1, "state": "fetched",
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
+        "subject":[{"qcode": "17004000", "name": "Statistics"}]}]
+      """
+      When we post to "/subscribers" with success
+      """
+      {
+        "name":"Channel 3","media_type":"media", "subscriber_type": "digital", "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
+        "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
+      }
+      """
+      And we publish "#archive._id#" with "publish" type and "published" state
+      """
+      {"body_html": "Test Document body"}
+      """
+      Then we get OK response
+      And we get existing resource
+      """
+      {"_current_version": 2, "state": "published", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
+      """
+      When we get "/published"
+      Then we get existing resource
+      """
+      {"_items" : [{"_id": "123", "guid": "123", "headline": "test", "_current_version": 2, "state": "published",
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]}
+      """
