@@ -17,7 +17,7 @@
             </figure>
             <div class="lock-text">{{ item.lock_user | username }}</div>   
             <button class="btn btn-medium pull-left" 
-                    ng-if="item._locked && !item.sendTo && can_unlock() && itemActions.save" 
+                    ng-if="can_unlock()"
                     ng-click="unlock()" 
                     ng-disabled="unlockClicked" translate>
                 Unlock
