@@ -16,7 +16,7 @@
             <span ng-if="!monitoring.singleGroup && type === 'monitoring'" translate>Monitoring</span>
             <span ng-if="type === 'spike'" translate>Spiked Items</span>
             <span ng-if="type === 'personal'" translate>Personal Items</span>
-            <div ng-if="type === 'highlights'" sd-highlight-label data-highlight="monitoring.queryParam.highlight"></div>
+            <div ng-if="type === 'highlights'" sd-highlight-label data-highlight="monitoring.queryParam.highlight" data-total="monitoring.totalItems"></div>
             <span ng-if="monitoring.singleGroup">
                 {{monitoring.singleGroup.header}} / {{monitoring.singleGroup.subheader}} {{monitoring.singleGroup.type}}
             </span>

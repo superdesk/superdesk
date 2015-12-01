@@ -262,8 +262,8 @@
     HighlightLabelDirective.$inject = ['desks', 'highlightsService'];
     function HighlightLabelDirective(desks, highlightsService) {
         return {
-            scope: {highlight_id: '=highlight'},
-            template: '<span translate>{{ highlightItem.name }}</span>',
+            scope: {highlight_id: '=highlight', totalItems: '=total'},
+            template: '<span translate>{{ highlightItem.name }} ({{ totalItems }} items)</span>',
             link: function(scope) {
                 highlightsService.get(desks.getCurrentDeskId()).then(function(result) {
                     scope.highlightItem =  _.find(result._items, {_id: scope.highlight_id});

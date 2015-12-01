@@ -189,6 +189,8 @@
         this.edit = edit;
         this.editItem = null;
 
+        this.totalItems = '';
+
         this.isDeskChanged = function () {
             return desks.changeDesk;
         };
@@ -473,6 +475,7 @@
                     }
 
                     return apiquery().then(function(items) {
+                        monitoring.totalItems = items._meta.total;
                         scope.total = items._meta.total;
                         scope.$applyAsync(render);
                     })['finally'](function() {
