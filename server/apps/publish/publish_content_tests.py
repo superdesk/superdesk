@@ -96,7 +96,7 @@ class PublishContentTests(SuperdeskTestCase):
                  'original_creator': '553cea4d1d41c85d4d42ff98',
                  'task': {'desk': 1}}]
 
-    desks = [{'_id': 1, 'spike_expiry': 20, 'incoming_stage': 1}]
+    desks = [{'_id': 1, 'content_expiry': 20, 'incoming_stage': 1}]
     stages = [{'_id': 1, 'desk': 1}]
     published = [{'guid': 'tag:localhost:2015:69b961ab-2816-4b8a-a974-xy4532fe33f9',
                   'item_id': '2',

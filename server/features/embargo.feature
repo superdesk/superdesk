@@ -9,7 +9,7 @@ Feature: Embargo Date and Time on an Article (User Story: https://dev.sourcefabr
     """
     And "desks"
     """
-    [{"name": "Sports", "published_item_expiry": "4320"}]
+    [{"name": "Sports", "content_expiry": "4320"}]
     """
     And "subscribers"
     """

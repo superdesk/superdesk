@@ -158,7 +158,7 @@ Feature: Tasks
     Scenario: Filter out tasks for spiked items
         Given "desks"
         """
-        [{"name": "Sports Desk", "spike_expiry": 60}]
+        [{"name": "Sports Desk", "content_expiry": 60}]
         """
         And "archive"
         """

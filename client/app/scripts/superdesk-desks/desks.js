@@ -882,6 +882,9 @@
                         if (item && item[expiryfield] != null) {
                             scope.ContentExpiry.Hours = getExpiryHours(item[expiryfield]);
                             scope.ContentExpiry.Minutes = getExpiryMinutes(item[expiryfield]);
+                        } else {
+                            scope.ContentExpiry.Hours = 0;
+                            scope.ContentExpiry.Minutes = 0;
                         }
                     };
                 }
