@@ -276,12 +276,12 @@
 		float: left;
 		margin: 0 2px;
 		i {
-			opacity: 0.5;
+			color: @grayLight;
 			padding: 2px 8px 1px 8px;
 			.border-radius(2px);
 			.box-sizing(border-box);
-			background: #fff;
-            border: 1px solid #d7d7d7;
+			background: rgba(255,255,255,.5);
+            border: 1px solid rgba(215,215,215,.7);
             height: auto;
 		}
 		&.active{
@@ -303,8 +303,9 @@
 			}
 			&:hover {
 				i {
-					border-color: #505050;
-					opacity: 0.8;	
+					border-color: rgba(80,80,80,.8);
+					background-color: rgba(80,80,80,.8);
+					color: @grayLighter;
 				}
 				a {
 					opacity: 0.8;
@@ -315,8 +316,7 @@
         a {
             border-radius: 2px;
             box-sizing: border-box;
-            padding: 0 10px;
-            font-weight: 500;
+            padding: 0 10px;            
             text-decoration: none;
             text-transform: uppercase;
             font-size: 11px;
@@ -332,11 +332,11 @@
             	border-color: #aaa;
             }
         }
-        &:hover {
-        	
+        &:hover {        	
         	i {
-        		border: 1px solid #aaa;
-        		opacity: 0.8;
+        		background: rgba(255,255,255,.8);
+            	border: 1px solid rgba(170,170,170,1);
+            	color: @gray;       		
         	}
         }
 	}
@@ -499,7 +499,8 @@
         margin-top: -12px;
     }
     .icon-calendar, .icon-time {
-        background-image: url("@{iconWhiteSpritePath}");
+       color: @white;
+       margin-top: 0;
     }
 }
 
@@ -1702,7 +1703,7 @@ header .sortbar {
     // Stylings
     &.toggle-box--dark {
         .toggle-box__chevron {
-            i { background-image: url("@{iconWhiteSpritePath}"); }
+            i { color: @white; vertical-align: middle; }
         }
         .toggle-box__label {
             color: @white;

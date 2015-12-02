@@ -186,7 +186,7 @@
 				margin-top: 3px;
 			}
 			[class*="filetype-icon-"] {
-				.opacity(40);
+				color: @grayLight;
 			}
 			&:hover {
 				cursor: pointer;
@@ -304,7 +304,16 @@
 		.datepicker-input {
 			min-width: initial;
 		}
-		
+		fieldset {
+			.multiple {
+				.field {
+					padding-right: 10px;
+					&:last-child {
+						padding-left: 10px;
+					}
+				}
+			}
+		}
 	}
 
 	.views {
