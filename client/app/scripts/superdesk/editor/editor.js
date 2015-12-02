@@ -556,11 +556,14 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
 
     .directive('sdTextEditor', ['editor', 'spellcheck', '$timeout', function (editor, spellcheck, $timeout) {
 
+        var disableToolbar = window.config.server.disableEditorToolbar || false;
+
         var config = {
             buttons: ['bold', 'italic', 'underline', 'quote', 'anchor'],
             anchorInputPlaceholder: gettext('Paste or type a full link'),
             disablePlaceholders: true,
-            spellcheck: false
+            spellcheck: false,
+            disableToolbar: disableToolbar
         };
 
         return {

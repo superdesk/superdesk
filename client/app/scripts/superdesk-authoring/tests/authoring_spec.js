@@ -401,6 +401,12 @@ describe('cropImage', function() {
         var elem = $compile('<div sd-article-edit></div>')($rootScope.$new());
         var scope = elem.scope();
 
+        window.config = {
+            server: {
+                disableEditorToolbar: false
+            }
+        };
+
         scope.item = {
             type: 'picture',
             renditions: {

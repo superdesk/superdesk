@@ -6,6 +6,7 @@ module.exports = function(grunt) {
 
         var server = grunt.option('server') || process.env.SUPERDESK_URL || url;
         var ws = grunt.option('ws') || process.env.SUPERDESK_WS_URL || 'ws://localhost:5100';
+        var disableEditorToolbar = grunt.option('disableEditorToolbar');
 
         if (forceUrl) {
             server = url;
@@ -13,7 +14,7 @@ module.exports = function(grunt) {
 
         var config = {
             raven: {dsn: process.env.SUPERDESK_RAVEN_DSN || ''},
-            server: {url: server, ws: ws},
+            server: {url: server, ws: ws, disableEditorToolbar: disableEditorToolbar},
             analytics: {
                 piwik: {
                     url: process.env.PIWIK_URL || '',
