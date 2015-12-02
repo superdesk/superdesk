@@ -9,6 +9,7 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import re
+import arrow
 import datetime
 import superdesk
 from flask import current_app as app
@@ -285,6 +286,13 @@ def get_item_from_template(template):
     item['template'] = template.get('_id')
     item.pop('firstcreated', None)
     item.pop('versioncreated', None)
+
+    # handle dateline
+    dateline = item.get('dateline', {})
+    dateline.pop('date', None)
+    tz = dateline.get('located', {}).get('tz')
+    if tz:
+        dateline['date'] = arrow.utcnow().to(tz).datetime
     return item
 
 

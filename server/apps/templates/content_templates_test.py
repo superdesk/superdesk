@@ -1,5 +1,6 @@
 
 import unittest
+import arrow
 from datetime import datetime
 from superdesk.metadata.item import ITEM_STATE, CONTENT_STATE
 from .content_templates import get_next_run, Weekdays, get_item_from_template, render_content_template
@@ -39,14 +40,27 @@ class TemplatesTestCase(unittest.TestCase):
         self.assertEqual(delta.days, 1)
 
     def test_get_item_from_template(self):
-        template = {'_id': 'foo', 'name': 'test', 'data': {'headline': 'Foo'},
-                    'template_desk': 'sports', 'template_stage': 'schedule'}
+        template = {'_id': 'foo', 'name': 'test',
+                    'template_desk': 'sports', 'template_stage': 'schedule',
+                    'data': {
+                        'headline': 'Foo',
+                        'dateline': {
+                            'located': {'city': 'Sydney', 'tz': 'Australia/Sydney'},
+                            'date': '2015-10-10T10:10:10',
+                        }
+                    }}
+        now_in_sydney = arrow.utcnow().to('Australia/Sydney')
         item = get_item_from_template(template)
         self.assertNotIn('_id', item)
         self.assertEqual('foo', item.get('template'))
         self.assertEqual('Foo', item.get('headline'))
         self.assertEqual(CONTENT_STATE.SUBMITTED, item.get(ITEM_STATE))
         self.assertEqual({'desk': 'sports', 'stage': 'schedule'}, item.get('task'))
+        dateline = item.get('dateline')
+        self.assertEqual('Sydney', dateline['located']['city'])
+        date_format = 'YYYY-MM-DD HH:mm'
+        self.assertEqual(now_in_sydney.format(date_format),
+                         arrow.get(dateline.get('date')).format(date_format))
 
 
 class RenderTemplateTestCase(SuperdeskTestCase):
