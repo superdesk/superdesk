@@ -537,6 +537,7 @@
                     scope.flags = controller.flags;
                     scope.sTab = true;
                     scope.editingSearch = false;
+                    scope.showSaveSearch = false;
 
                     scope.aggregations = {};
                     scope.privileges = privileges.privileges;
@@ -675,6 +676,10 @@
 
                         });
                     });
+
+                    scope.$watch('tags.currentSearch', function(currentSearch) {
+                        scope.showSaveSearch = _.isEmpty(currentSearch) ? false : true;
+                    }, true);
 
                     scope.toggleFilter = function(type, key) {
                         if (scope.hasFilter(type, key)) {
