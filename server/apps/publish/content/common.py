@@ -448,7 +448,8 @@ class BasePublishService(BaseService):
         """
 
         takes = self.takes_package_service.get_published_takes(package)
-        body_html = updates_of_take_to_be_published.get('body_html', original_of_take_to_be_published['body_html'])
+        body_html = updates_of_take_to_be_published.get('body_html',
+                                                        original_of_take_to_be_published.get('body_html', ''))
         package_updates = {}
 
         groups = package.get(GROUPS, [])
