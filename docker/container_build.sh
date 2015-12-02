@@ -32,6 +32,7 @@ pip install -q -r $SCRIPT_DIR/requirements.txt || exit 1
 
 
 export COMPOSE_PROJECT_NAME=build_$INSTANCE
+export COMPOSE_HTTP_TIMEOUT=600
 
 
 # {{{
