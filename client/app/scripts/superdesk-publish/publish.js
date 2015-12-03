@@ -138,7 +138,9 @@
         $scope.pageSize = 25;
         $scope.page = 1;
 
-        $scope.$watch('page', $scope.reload);
+        $scope.$watch('page', function() {
+            $scope.reload();
+        });
 
         var promises = [];
 
