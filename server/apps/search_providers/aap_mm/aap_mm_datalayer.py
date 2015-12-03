@@ -1,20 +1,31 @@
-from eve.io.base import DataLayer
-from io import BytesIO
-import urllib3
-import json
+# -*- coding: utf-8; -*-
+#
+# This file is part of Superdesk.
+#
+# Copyright 2013, 2014 Sourcefabric z.u. and contributors.
+#
+# For the full copyright and license information, please see the
+# AUTHORS and LICENSE files distributed with this source code, or
+# at https://www.sourcefabric.org/superdesk/license
+
 import datetime
-from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE
-from superdesk.utc import utc, utcnow
+import json
+import logging
+import urllib
+from io import BytesIO
+
+import urllib3
+from eve.io.base import DataLayer
 from eve_elastic.elastic import ElasticCursor
-from superdesk.media.media_operations import process_file_from_stream, decode_metadata
-from superdesk.media.renditions import generate_renditions, delete_file_on_error
+from flask import url_for
+
+from apps.search_providers.aap_mm import PROVIDER_NAME
 from superdesk.errors import SuperdeskApiError
 from superdesk.io.iptc import subject_codes
-from flask import url_for
-import urllib
-
-import logging
-
+from superdesk.media.media_operations import process_file_from_stream, decode_metadata
+from superdesk.media.renditions import generate_renditions, delete_file_on_error
+from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE
+from superdesk.utc import utc, utcnow
 
 urllib3.disable_warnings()
 
@@ -33,9 +44,12 @@ class AAPMMDatalayer(DataLayer):
 
         self._headers = {'cookie': r.getheader('set-cookie'), 'Content-Type': 'application/json'}
 
-    def set_credentials(self, user, password):
-        if user != self._username and user != '' and password != self._password and password != '':
-            self._username = user
+    def set_credentials(self, provider_config):
+        username = provider_config.get('user')
+        password = provider_config.get('password')
+
+        if username and username != self._username and password and password != self._password:
+            self._username = username
             self._password = password
             self.__set_auth_cookie(self._app)
 
@@ -120,12 +134,8 @@ class AAPMMDatalayer(DataLayer):
         return ElasticCursor(docs=hits['docs'], hits={'hits': hits, 'aggregations': self._parse_aggregations(hits)})
 
     def _parse_doc(self, doc):
-        new_doc = {}
-        new_doc['_id'] = doc['AssetId']
-        new_doc['guid'] = doc['AssetId']
-        new_doc['headline'] = doc['Title']
-        new_doc['description'] = doc['Description']
-        new_doc['source'] = doc['Credit']
+        new_doc = {'_id': doc['AssetId'], 'guid': doc['AssetId'], 'headline': doc['Title'],
+                   'description': doc['Description'], 'source': doc['Credit']}
         if 'Source' in doc:
             new_doc['original_source'] = doc['Credit'] + '/' + str(doc.get('Source', ''))
         else:
@@ -136,7 +146,7 @@ class AAPMMDatalayer(DataLayer):
         # This must match the action
         new_doc['_type'] = 'externalsource'
         # entry that the client can use to identify the fetch endpoint
-        new_doc['fetch_endpoint'] = 'aapmm'
+        new_doc['fetch_endpoint'] = PROVIDER_NAME
         if doc['AssetType'] == 'VIDEO':
             new_doc[ITEM_TYPE] = CONTENT_TYPE.VIDEO
             purl = '{}?assetType=VIDEO&'.format(self._app.config['AAP_MM_CDN_URL'])
@@ -310,22 +320,31 @@ class AAPMMDatalayer(DataLayer):
                        _external=True, _schema=self._app.config['URL_PROTOCOL'])
 
     def find_list_of_ids(self, resource, ids, client_projection=None):
-        raise NotImplementedError
+        raise NotImplementedError()
 
     def insert(self, resource, docs, **kwargs):
-        raise NotImplementedError
+        raise NotImplementedError()
 
     def update(self, resource, id_, updates, original):
-        raise NotImplementedError
+        raise NotImplementedError()
 
     def update_all(self, resource, query, updates):
-        raise NotImplementedError
+        raise NotImplementedError()
 
     def replace(self, resource, id_, document, original):
-        raise NotImplementedError
+        raise NotImplementedError()
 
     def remove(self, resource, lookup=None):
-        raise NotImplementedError
+        raise NotImplementedError()
 
     def is_empty(self, resource):
-        raise NotImplementedError
+        raise NotImplementedError()
+
+    def query_contains_field(self, query, field_name):
+        raise NotImplementedError()
+
+    def get_value_from_query(self, query, field_name):
+        raise NotImplementedError()
+
+    def combine_queries(self, query_a, query_b):
+        raise NotImplementedError()

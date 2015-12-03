@@ -12,8 +12,8 @@
         <span sd-check ng-model="item.selected" ng-change="toggleSelected(item)" ng-show="hover || item.selected"></span>
     </div>
 
-    <div class="list-field urgency">
-        <span class="priority-label priority-label--{{item.priority}}">{{item.priority}}</span>
+    <div class="list-field urgency" ng-if="item.urgency || item.priority">
+        <span ng-if="item.priority" class="priority-label priority-label--{{item.priority}}">{{item.priority}}</span>
         <span ng-if="item.urgency" class="output-item-label label-{{item.urgency}}">{{ item.urgency }}</span>
     </div>
 
@@ -28,7 +28,7 @@
         </div>
         <div class="line">
             <div class="state-label state-{{item.state}}" ng-class="{state_embargo: item.embargo}"
-                 ng-hide="viewType !== undefined && viewType !== null && viewType !== 'deskOutput'">{{item.state}}</div>
+                 ng-hide="!item.state || (viewType !== undefined && viewType !== null && viewType !== 'deskOutput')">{{item.state}}</div>
             <div class="takekey" ng-if="item.anpa_take_key">{{ item.anpa_take_key }}</div>
             <span class="signal" ng-if="item.signal">{{ item.signal }}</span>
             <span class="broadcast-status" tooltip="{{item.broadcast.status}}" ng-if="item.broadcast.status">!</span>
