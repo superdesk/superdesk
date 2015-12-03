@@ -278,8 +278,9 @@ body, html {
 
 		  	input, select, option {
 			  	color: #333 !important;
-                font-size: 16px;
-                font-weight: 300 !important;
+                font-size: 14px;
+                font-weight: 400 !important;
+				padding: 0;
 			}
 
             select {
@@ -288,7 +289,7 @@ body, html {
 
             .dateline-city {
                 display: flex;
-                font-size: 16px;
+                font-size: 14px;
                 line-height: 27px;
                 padding-right: 20px;
             }
@@ -437,8 +438,8 @@ body, html {
 	}
 
 	.text-editor {
-		font-size: 16px;
-		line-height: 150%;
+		//font-size: 16px;
+		//line-height: 150%;
 		p {
 			padding: 0 !important;
 			margin-bottom: 10px !important;
@@ -452,19 +453,23 @@ body, html {
 	}
 
 	.headline {
+		font-size:28px;
+		line-height: 120%;
+		.text-semibold();
 		.text-editor {
 			min-height: 33px;
-			font-size:28px;
-			line-height: 120%;
-			.text-semibold();
 			padding: 6px 0;
 		}
 	}
 
 	.abstract {
+		min-height: 24px;
+		font-style: italic;
+		font-weight: 400;
+		font-size: 16px;
+		line-height: 150%;
 		.text-editor {
 			min-height: 24px;
-			font-style: italic;
 		}
 	}
 
@@ -482,17 +487,19 @@ body, html {
 .large-text {
 	&.main-article {
 		.abstract {
+			font-size: 18px;
 			.text-editor {
 				font-size: 18px;
 			}
 		}
 		.text-editor {
-			font-size: 18px !important;
+			//font-size: 18px !important;
 			p {
 				font-size: 18px !important;
 			}
 		}
 		.headline {
+			font-size:28px;
 		.text-editor {
 			font-size:28px;
 		}

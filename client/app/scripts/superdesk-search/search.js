@@ -1203,22 +1203,24 @@
                 scope: {
                     item: '='
                 },
-                template: '{{item.container}}',
+                template: '<span class="location-desk-label">{{item.label}}</span> {{item.value}}',
                 link: function(scope, elem) {
-
                     if (scope.item._type !== 'ingest') {
                         if (scope.item.task && scope.item.task.desk) {
                             desks.initialize().then(function() {
                                 if (desks.deskLookup[scope.item.task.desk]) {
-                                    scope.item.container = 'desk:' + desks.deskLookup[scope.item.task.desk].name ;
+                                    scope.item.label = 'desk:';
+                                    scope.item.value = desks.deskLookup[scope.item.task.desk].name;
                                 }
                             });
                         } else {
                             if (scope.item._type === 'archive') {
-                                scope.item.container = 'location:workspace';
+                                scope.item.label = 'location:';
+                                scope.item.value = 'workspace';
                             } else {
                                 if (scope.item._type === 'published' && scope.item.allow_post_publish_actions === false) {
-                                    scope.item.container = 'archived';
+                                    scope.item.label = '';
+                                    scope.item.value = 'archived';
                                 }
                             }
                         }

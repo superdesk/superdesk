@@ -27,17 +27,17 @@
             <time sd-datetime data-date="item.versioncreated"></time>
         </div>
         <div class="line">
-            <div class="takekey" ng-if="item.anpa_take_key">{{ item.anpa_take_key }}</div>
-            <span class="signal" ng-if="item.signal">{{ item.signal }}</span>
             <div class="state-label state-{{item.state}}" ng-class="{state_embargo: item.embargo}"
                  ng-hide="viewType !== undefined && viewType !== null && viewType !== 'deskOutput'">{{item.state}}</div>
+            <div class="takekey" ng-if="item.anpa_take_key">{{ item.anpa_take_key }}</div>
+            <span class="signal" ng-if="item.signal">{{ item.signal }}</span>
             <span class="broadcast-status" tooltip="{{item.broadcast.status}}" ng-if="item.broadcast.status">!</span>
             <div ng-if="item.marked_for_not_publication" class="state-label not-for-publication" translate>Not For Publication</div>
             <div class="category" ng-if="item['anpa_category'].name">{{ item['anpa_category'].name }}</div>
             <div class="provider" sd-meta-ingest data-item="item"></div>
             <div class="expires" ng-if="item.is_spiked"><span translate>expires</span> {{ item.expiry | reldate }}</div>
             <div ng-if="item.archived"><div sd-fetched-desks data-item="item"></div></div>
-            <span sd-item-container data-item="item" title="{{ item.container }}" class="container" ng-hide="viewType"></span>
+            <span sd-item-container data-item="item" title="{{ item.label }} {{ item.value }}" class="container" ng-hide="viewType"></span>
         </div>
     </div>
 </div>
