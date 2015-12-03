@@ -4,6 +4,7 @@ describe('text editor', function() {
 
     beforeEach(module('superdesk.editor'));
     beforeEach(module('superdesk.editor.spellcheck'));
+    beforeEach(module('superdesk.templates-cache'));
 
     beforeEach(function() {
         // remove all elements from body
@@ -122,4 +123,35 @@ describe('text editor', function() {
         expect(editor.shouldIgnore({shiftKey: true, ctrlKey: true, keyCode: 65})).toBe(true);
         expect(editor.shouldIgnore({keyCode: 65})).toBe(false);
     }));
+
+    it('can observe and apply disableEditorToolbar configuration option',
+    inject(function($rootScope, $compile, config) {
+        var scope = $rootScope.$new();
+
+        config.editor = {
+            disableEditorToolbar: true
+        };
+
+        scope.item = {
+            body_html: '<p>test</p>',
+            type: 'text'
+        };
+
+        scope.node = document.createElement('p');
+        scope.node.innerHTML = 'test';
+
+        window.MediumEditor = jasmine.createSpy('editor');
+
+        var $elm = $compile('<div sd-text-editor ng-model="item.body_html" data-type="item.type"></div>')(scope);
+        scope.$digest();
+
+        var isoScope = $elm.isolateScope();
+
+        isoScope.$digest();
+
+        expect(window.MediumEditor).toHaveBeenCalled();
+        expect(window.MediumEditor.calls.argsFor(0)[1].disableToolbar).
+            toBe(config.editor.disableEditorToolbar);
+    }));
+
 });

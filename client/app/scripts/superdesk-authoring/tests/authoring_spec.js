@@ -387,7 +387,7 @@ describe('cropImage', function() {
     }));
 
     it('can change button label for apply/edit crop',
-    inject(function($rootScope, $compile, $q, metadata) {
+    inject(function($rootScope, $compile, $q, metadata, config) {
         var metaInit = $q.defer();
 
         metadata.values = {
@@ -400,6 +400,10 @@ describe('cropImage', function() {
 
         var elem = $compile('<div sd-article-edit></div>')($rootScope.$new());
         var scope = elem.scope();
+
+        config.editor = {
+            disableEditorToolbar: true
+        };
 
         scope.item = {
             type: 'picture',
