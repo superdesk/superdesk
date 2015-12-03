@@ -127,10 +127,9 @@
 				}
 				.view {
 					margin-left: 10px;
-					.opacity(70);
-					i { margin-bottom: 3px; }
+					i { margin-bottom: 3px; color: @grayLight; }
 					&:hover {
-						.opacity(100);
+						i { color: @grayDark; }
 						cursor:pointer;
 					}
 				}
@@ -242,11 +241,11 @@
 		.type {
 			float: left;
 			height: 32px;
-			.opacity(50);
 			i {
 				margin: 0 8px;
 				text-align: center;
 				vertical-align: middle;
+				color: @grayLight;
 			}
 		}
 		.urgency {

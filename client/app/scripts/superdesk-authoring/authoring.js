@@ -2292,7 +2292,7 @@
                 .activity('kill.text', {
                     label: gettext('Kill item'),
                     priority: 100,
-                    icon: 'remove-sign',
+                    icon: 'kill',
                     group: 'corrections',
                     controller: ['data', 'authoringWorkspace', function(data, authoringWorkspace) {
                         authoringWorkspace.kill(data.item);
