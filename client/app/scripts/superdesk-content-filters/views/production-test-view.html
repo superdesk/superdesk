@@ -34,7 +34,7 @@
                                 <td><div class="state-label state-{{result_item.state}}">{{ :: result_item.state}}</div></td>
                                 <td>{{ :: result_item.unique_name}}</td>
                                 <td>{{ :: result_item.headline | limitTo: 60}}
-                                    <span sd-item-container data-item="result_item" title="{{ result_item.container }}" 
+                                    <span sd-item-container data-item="result_item" title="{{ result_item.label }} {{ result_item.value }}" 
                                     class="container"></span>
                                 </td>
                                 <td>{{ :: result_item.slugline | limitTo: 40}}</td>
