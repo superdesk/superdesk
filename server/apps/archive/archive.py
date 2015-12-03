@@ -589,7 +589,7 @@ class ArchiveService(BaseService):
             raise SuperdeskApiError.badRequestError("Duplicate category codes are not allowed")
 
         # Ensure that there are no duplicate subjects in the update
-        subject_qcodes  = [q['qcode'] for q in updates.get('subject', []) or []]
+        subject_qcodes = [q['qcode'] for q in updates.get('subject', []) or []]
         if subject_qcodes and len(subject_qcodes) != len(set(subject_qcodes)):
             raise SuperdeskApiError.badRequestError("Duplicate subjects are not allowed")
 

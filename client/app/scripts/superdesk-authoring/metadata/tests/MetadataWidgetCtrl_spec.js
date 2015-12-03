@@ -46,6 +46,8 @@ describe('MetadataWidgetCtrl controller', function () {
         };
 
         // set the 'd' category to be already assigned to the article
+        // it will not be in the available list as it is already assigned to the
+        // item
         scope.item.anpa_category = [{qcode: 'd'}];
 
         metaInit.resolve();
@@ -53,7 +55,7 @@ describe('MetadataWidgetCtrl controller', function () {
         scope.$digest();
 
         expect(scope.availableCategories).toEqual(
-            [{qcode: 'a'}, {qcode: 'c'}, {qcode: 'd'}]
+            [{qcode: 'a'}, {qcode: 'c'}]
         );
     });
 });
