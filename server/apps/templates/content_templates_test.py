@@ -1,7 +1,7 @@
 
 import unittest
-import arrow
 from datetime import datetime
+from superdesk.utc import utcnow
 from superdesk.metadata.item import ITEM_STATE, CONTENT_STATE
 from .content_templates import get_next_run, Weekdays, get_item_from_template, render_content_template
 from test_factory import SuperdeskTestCase
@@ -45,11 +45,15 @@ class TemplatesTestCase(unittest.TestCase):
                     'data': {
                         'headline': 'Foo',
                         'dateline': {
-                            'located': {'city': 'Sydney', 'tz': 'Australia/Sydney'},
+                            'located': {
+                                'city': 'Sydney',
+                                'city_code': 'Sydney',
+                                'tz': 'Australia/Sydney'
+                            },
                             'date': '2015-10-10T10:10:10',
                         }
                     }}
-        now_in_sydney = arrow.utcnow().to('Australia/Sydney')
+        now = utcnow()
         item = get_item_from_template(template)
         self.assertNotIn('_id', item)
         self.assertEqual('foo', item.get('template'))
@@ -58,9 +62,9 @@ class TemplatesTestCase(unittest.TestCase):
         self.assertEqual({'desk': 'sports', 'stage': 'schedule'}, item.get('task'))
         dateline = item.get('dateline')
         self.assertEqual('Sydney', dateline['located']['city'])
-        date_format = 'YYYY-MM-DD HH:mm'
-        self.assertEqual(now_in_sydney.format(date_format),
-                         arrow.get(dateline.get('date')).format(date_format))
+        self.assertEqual(now, dateline.get('date'))
+        self.assertIn('SYDNEY', dateline.get('text'))
+
 
 
 class RenderTemplateTestCase(SuperdeskTestCase):

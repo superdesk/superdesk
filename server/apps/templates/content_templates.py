@@ -21,7 +21,7 @@ from superdesk.errors import SuperdeskApiError
 from superdesk.metadata.item import metadata_schema, ITEM_STATE, CONTENT_STATE
 from superdesk.celery_app import celery
 from apps.rules.routing_rules import Weekdays, set_time
-from apps.archive.common import ARCHIVE, CUSTOM_HATEOAS, item_schema
+from apps.archive.common import ARCHIVE, CUSTOM_HATEOAS, item_schema, format_dateline_to_locmmmddsrc
 from apps.auth import get_user
 from flask import render_template_string
 
@@ -289,10 +289,10 @@ def get_item_from_template(template):
 
     # handle dateline
     dateline = item.get('dateline', {})
-    dateline.pop('date', None)
-    tz = dateline.get('located', {}).get('tz')
-    if tz:
-        dateline['date'] = arrow.utcnow().to(tz).datetime
+    dateline['date'] = utcnow()
+    if dateline.get('located'):
+        dateline['text'] = format_dateline_to_locmmmddsrc(dateline['located'], dateline['date'])
+
     return item
 
 
