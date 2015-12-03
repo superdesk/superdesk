@@ -111,15 +111,37 @@ angular.module('superdesk.itemList', ['superdesk.search'])
             };
         }
 
+
         // Process related items only search
         if (options.related === true && options.keyword) {
-            var slugline = options.keyword.toLowerCase().replace(/-/g, ' ');
-            query.source.query.filtered.query = {
-                prefix: {
-                    'slugline.phrase': slugline
+            var queryRelatedItem = [];
+            var queryWords = [];
+            var sanitizedKeyword = options.keyword.replace(/[\\:]/g, '').replace(/\//g, '\\/');
+            queryWords = sanitizedKeyword.split(' ');
+            var length = queryWords.length;
+
+            if (options.keyword.indexOf(' ') >= 0) {
+                queryRelatedItem.push('slugline' + ':("' + sanitizedKeyword + '")');
+            }
+
+            for (var i = 0; i < length; i++) {
+                if (queryWords[i]) {
+                    queryRelatedItem.push('slugline' + ':(' + queryWords[i] + ')');
                 }
-            };
+            }
+
+
+            if (queryRelatedItem.length) {
+                query.source.query.filtered.query = {
+                    query_string: {
+                        query: queryRelatedItem.join(' '),
+                        lenient: false,
+                        default_operator: 'OR'
+                    }
+                };
+            }
         }
+
 
         // process search
         if (options.search) {
