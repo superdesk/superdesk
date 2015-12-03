@@ -5,7 +5,7 @@
 		translate-n="multi.count"
 		translate-plural="{{ multi.count }} Items selected">{{ multi.count }} Item selected</span>
 
-    <div class="pull-right">
+    <div class="pull-right" ng-if="action.canPackageItems() && state !== 'spiked'">
         <button class="navbtn strict" ng-click="action.createPackage()" title="{{ :: 'Create Package' | translate }}">
             <i class="big-icon-package-create"></i>
         </button>
@@ -13,8 +13,8 @@
             <i class="big-icon-package-add"></i>
         </button>
     </div>
-    
-    <div class="dropdown strict highlights-dropdown pull-right" ng-if="type === 'archive'" title="{{ :: 'Mark item' | translate }}" dropdown>
+
+    <div class="dropdown strict highlights-dropdown pull-right" ng-if="type === 'archive' && state !== 'spiked'" title="{{ :: 'Mark item' | translate }}" dropdown>
          <button class="dropdown-toggle navbtn" dropdown-toggle>
             <i class="big-icon-marked-star"></i>
          </button>
@@ -22,15 +22,15 @@
     </div>
 
 	<div class="pull-right" ng-if="type === 'archive'">
-		<button class="navbtn strict" ng-click="action.multiedit()" title="{{ :: 'Multiedit' | translate }}">
+		<button class="navbtn strict" ng-if="state !== 'spiked'" ng-click="action.multiedit()" title="{{ :: 'Multiedit' | translate }}">
     		<i class="big-icon-multiedit"></i>
         </button>
         <button class="navbtn strict" ng-click="action.spikeItems()" title="{{ :: 'Spike' | translate }}"
-        	ng-if="!publish && action.canSpikeItems()">
+        	ng-if="!spike && !publish && action.canSpikeItems()">
         	<i class="big-icon-spike"></i>
         </button>
         <button class="navbtn strict" ng-click="action.unspikeItems()" title="{{ :: 'Unspike' | translate }}" ng-if="state === 'spiked'">
-        	<i class="big-icon-unspike"></i>
+            <i class="big-icon-unspike"></i>
         </button>
 	</div>
 

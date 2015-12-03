@@ -1872,7 +1872,7 @@
 
                     scope.isOpenItemType = function(type) {
                         var openItem = authoringWorkspace.getItem();
-                        return openItem.type === type;
+                        return openItem && openItem.type === type;
                     };
 
                     /**
@@ -1962,6 +1962,14 @@
                 canSpike = canSpike && authoring.itemActions(item).spike;
             });
             return canSpike;
+        };
+
+        this.canPackageItems = function() {
+            var canPackage = true;
+            multi.getItems().forEach(function(item) {
+                canPackage = canPackage && item.state !== 'killed';
+            });
+            return canPackage;
         };
     }
 })();
