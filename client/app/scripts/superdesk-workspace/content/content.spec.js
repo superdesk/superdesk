@@ -57,6 +57,7 @@ describe('superdesk.workspace.content', function() {
             desks.setCurrentDeskId('2');
 
             content.createItemFromTemplate({
+                _id: 'template1',
                 data: {
                     slugline: 'test_slugline',
                     body_html: 'test_body_html',
@@ -69,7 +70,8 @@ describe('superdesk.workspace.content', function() {
             expect(api.save).toHaveBeenCalledWith('archive', {
                 slugline: 'test_slugline',
                 body_html: 'test_body_html',
-                task: {desk: '2', stage: '4', user: 'user:1'}
+                task: {desk: '2', stage: '4', user: 'user:1'},
+                template: 'template1'
             });
         }));
     });

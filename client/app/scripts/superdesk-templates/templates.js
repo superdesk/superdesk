@@ -304,13 +304,22 @@
         activate();
 
         function activate() {
+            if (item.template) {
+                api.find('content_templates', item.template).then(function(template) {
+                    vm.name = template.template_name;
+                    vm.desk = template.template_desk || null;
+                    vm.is_desk = !template.is_private;
+                    vm.template = template;
+                });
+            }
+
             desks.fetchCurrentUserDesks().then(function(desks) {
                 vm.desks = desks._items;
             });
         }
 
         function save() {
-            var template = {
+            var data = {
                 template_name: vm.name,
                 template_type: vm.type,
                 template_desk: vm.is_desk ? vm.desk : null,
@@ -318,7 +327,11 @@
                 data: templates.pickItemData(item)
             };
 
-            return api.save('content_templates', template).then(function(data) {
+            var template = vm.template ? vm.template : data;
+            var diff = vm.template ? data : null;
+
+            return api.save('content_templates', template, diff)
+            .then(function(data) {
                 vm._issues = null;
                 return data;
             }, function(response) {

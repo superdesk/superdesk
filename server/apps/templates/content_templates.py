@@ -9,7 +9,6 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import re
-import arrow
 import datetime
 import superdesk
 from flask import current_app as app

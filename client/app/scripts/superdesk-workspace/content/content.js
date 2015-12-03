@@ -57,6 +57,7 @@
          */
         this.createItemFromTemplate = function(template) {
             var item = templates.pickItemData(template.data || {});
+            item.template = template._id;
             archiveService.addTaskToArticle(item);
             return save(item).then(function(newItem) {
                 templates.addRecentTemplate(desks.activeDeskId, template._id);

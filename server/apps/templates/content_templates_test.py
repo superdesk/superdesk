@@ -66,7 +66,6 @@ class TemplatesTestCase(unittest.TestCase):
         self.assertIn('SYDNEY', dateline.get('text'))
 
 
-
 class RenderTemplateTestCase(SuperdeskTestCase):
 
     def test_render_content_template(self):
