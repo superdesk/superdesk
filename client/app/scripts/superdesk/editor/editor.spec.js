@@ -125,13 +125,11 @@ describe('text editor', function() {
     }));
 
     it('can observe and apply disableEditorToolbar configuration option',
-    inject(function($rootScope, $compile) {
+    inject(function($rootScope, $compile, config) {
         var scope = $rootScope.$new();
 
-        window.config = {
-            server: {
-                disableEditorToolbar: true
-            }
+        config.editor = {
+            disableEditorToolbar: true
         };
 
         scope.item = {
@@ -153,7 +151,7 @@ describe('text editor', function() {
 
         expect(window.MediumEditor).toHaveBeenCalled();
         expect(window.MediumEditor.calls.argsFor(0)[1].disableToolbar).
-            toBe(window.config.server.disableEditorToolbar);
+            toBe(config.editor.disableEditorToolbar);
     }));
 
 });

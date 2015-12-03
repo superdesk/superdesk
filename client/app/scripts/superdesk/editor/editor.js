@@ -554,11 +554,11 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
 
     .service('editor', EditorService)
 
-    .directive('sdTextEditor', ['editor', 'spellcheck', '$timeout', function (editor, spellcheck, $timeout) {
+    .directive('sdTextEditor', ['editor', 'spellcheck', '$timeout', 'config', function (editor, spellcheck, $timeout, config) {
 
-        var disableToolbar = window.config.server.disableEditorToolbar || false;
+        var disableToolbar = config.editor.disableEditorToolbar || false;
 
-        var config = {
+        var editorConfig = {
             buttons: ['bold', 'italic', 'underline', 'quote', 'anchor'],
             anchorInputPlaceholder: gettext('Paste or type a full link'),
             disablePlaceholders: true,
@@ -585,7 +585,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
 
                 ngModel.$render = function () {
 
-                    var editorConfig = angular.extend({}, config, scope.config || {});
+                    var editorOptions = angular.extend({}, editorConfig, scope.config || {});
 
                     spellcheck.setLanguage(scope.language);
 
@@ -596,7 +596,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
                     scope.node = editorElem[0];
                     scope.model = ngModel;
 
-                    scope.medium = new window.MediumEditor(scope.node, editorConfig);
+                    scope.medium = new window.MediumEditor(scope.node, editorOptions);
 
                     scope.$on('spellcheck:run', render);
                     scope.$on('key:ctrl:shift:d', render);

@@ -14,7 +14,7 @@ module.exports = function(grunt) {
 
         var config = {
             raven: {dsn: process.env.SUPERDESK_RAVEN_DSN || ''},
-            server: {url: server, ws: ws, disableEditorToolbar: disableEditorToolbar},
+            server: {url: server, ws: ws},
             analytics: {
                 piwik: {
                     url: process.env.PIWIK_URL || '',
@@ -23,7 +23,8 @@ module.exports = function(grunt) {
                 ga: {
                     id: process.env.TRACKING_ID || ''
                 }
-            }
+            },
+            editor: {disableEditorToolbar: disableEditorToolbar}
         };
 
         return {data: {config: config}};
