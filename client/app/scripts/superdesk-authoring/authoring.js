@@ -1570,7 +1570,7 @@
                  */
                 function applyTheme(key) {
                     if (scope.key === key) {
-                        elem.closest('.page-content-container')
+                        angular.element('.page-content-container')
                             .children('.theme-container')
                             .attr('class', DEFAULT_CLASS)
                             .addClass(scope[key].cssClass)
@@ -2251,7 +2251,7 @@
         .directive('sdAuthoringTopbar', AuthoringTopbarDirective)
         .directive('sdAuthoringContainer', AuthoringContainerDirective)
         .directive('sdAuthoringEmbedded', AuthoringEmbeddedDirective)
-        .directive('sdHeaderInfo', headerInfoDirective)
+        .directive('sdAuthoringHeader', AuthoringHeaderDirective)
 
         .config(['superdeskProvider', function(superdesk) {
             superdesk
@@ -2413,10 +2413,10 @@
         };
     }
 
-    headerInfoDirective.$inject = ['api', 'familyService', 'authoringWidgets', 'authoring', '$rootScope', 'archiveService'];
-    function headerInfoDirective(api, familyService, authoringWidgets, authoring, $rootScope, archiveService) {
+    AuthoringHeaderDirective.$inject = ['api', 'authoringWidgets', '$rootScope', 'archiveService'];
+    function AuthoringHeaderDirective(api, authoringWidgets, $rootScope, archiveService) {
         return {
-            templateUrl: 'scripts/superdesk-authoring/views/header-info.html',
+            templateUrl: 'scripts/superdesk-authoring/views/authoring-header.html',
             require: '^sdAuthoringWidgets',
             link: function (scope, elem, attrs, WidgetsManagerCtrl) {
                 scope.$watch('item', function (item) {

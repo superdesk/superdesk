@@ -83,12 +83,25 @@ function WidgetsManagerCtrl($scope, $routeParams, authoringWidgets, archiveServi
         }
     });
 }
-
-function AuthoringWidgetsDir() {
+AuthoringWidgetsDir.$inject = ['desks'];
+function AuthoringWidgetsDir(desks) {
     return {
         controller: WidgetsManagerCtrl,
         templateUrl: 'scripts/superdesk-authoring/widgets/views/authoring-widgets.html',
-        transclude: true
+        transclude: true,
+        link: function (scope, elem) {
+            scope.userLookup = desks.userLookup;
+            var editor = elem.find('.page-content-container'),
+                stickyHeader = elem.find('.authoring-sticky');
+
+            editor.on('scroll', function () {
+                if (editor.scrollTop() > 5) {
+                    stickyHeader.addClass('authoring-sticky--fixed');
+                } else {
+                    stickyHeader.removeClass('authoring-sticky--fixed');
+                }
+            });
+        }
     };
 }
 
