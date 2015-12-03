@@ -70,13 +70,13 @@
         </div>
 
         <div class="field">
-            <label for="template-is-private" translate>PRIVATE TEMPLATE</label>
+            <label for="template-is-private" translate>Desk Template</label>
             <div class="control">
-              <span sd-switch ng-model="template.is_private"></span>
+              <span sd-switch ng-model="template.is_public"></span>
             </div>
         </div>
 
-        <div class="field" ng-if="template.template_type !== 'kill' && !template.is_private">
+        <div class="field" ng-if="template.template_type !== 'kill' && template.is_public !== false">
           <label for="template-desk" translate>Desk</label>
           <div class="control">
             <select id="template-desk"
@@ -88,7 +88,7 @@
           </div>
         </div>
 
-        <div class="field" ng-if="template.template_desk && stages && template.template_type !== 'kill' && !template.is_private">
+        <div class="field" ng-if="template.template_desk && stages && template.template_type !== 'kill' && template.is_public !== false">
           <label for="template-stage" translate>Stage</label>
           <div class="control">
             <select id="template-stage"
@@ -98,7 +98,7 @@
           </div>
         </div>
 
-        <div class="field" ng-if="template.template_type !== 'kill' && !template.is_private">
+        <div class="field" ng-if="template.template_type !== 'kill' && template.is_public !== false">
           <label for="schedule-toggle" translate>Automatically create item</label>
           <div class="control">
             <span sd-switch ng-model="template.schedule.is_active"></span>

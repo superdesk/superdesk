@@ -105,7 +105,7 @@ class ContentTemplatesResource(Resource):
         'next_run': {'type': 'datetime', 'readonly': True},
 
         'user': Resource.rel('users'),
-        'is_private': {'type': 'boolean', 'default': True},
+        'is_public': {'type': 'boolean', 'default': False},
     }
 
     additional_lookup = {

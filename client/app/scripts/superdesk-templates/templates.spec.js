@@ -14,7 +14,7 @@ describe('templates', function() {
             spyOn(api, 'find').and.returnValue($q.when(existingTemplate));
         }));
 
-        it('should create a template', inject(function($controller, api, $q, $rootScope) {
+        it('can create template', inject(function($controller, api, $q, $rootScope) {
             var item = _.create({slugline: 'FOO', headline: 'foo'});
             var ctrl = $controller('CreateTemplateController', {item: item});
             expect(ctrl.name).toBe('FOO');
@@ -27,7 +27,7 @@ describe('templates', function() {
                 template_name: 'test',
                 template_type: 'create',
                 template_desk: null,
-                is_private: true,
+                is_public: false,
                 data: {
                     headline: 'foo',
                     slugline: 'FOO'
@@ -35,7 +35,7 @@ describe('templates', function() {
             }, null);
         }));
 
-        it('can update template', inject(function($controller, api, $q, $rootScope) {
+        it('can update template', inject(function($controller, api, $rootScope) {
             var item = _.create({slugline: 'FOO', template: '123'});
             var ctrl = $controller('CreateTemplateController', {item: item});
             $rootScope.$digest();
@@ -44,6 +44,15 @@ describe('templates', function() {
             expect(ctrl.type).toBe('create');
             ctrl.save();
             expect(api.save.calls.argsFor(0)[1]).toBe(existingTemplate);
+        }));
+
+        it('can create new using old template data', inject(function($controller, api, $rootScope) {
+            var item = _.create({slugline: 'foo', template: '123'});
+            var ctrl = $controller('CreateTemplateController', {item: item});
+            $rootScope.$digest();
+            ctrl.name = 'rename it';
+            ctrl.save();
+            expect(api.save.calls.argsFor(0)[1]).not.toBe(existingTemplate);
         }));
     });
 
@@ -78,7 +87,7 @@ describe('templates', function() {
             expect(api.query).toHaveBeenCalledWith('content_templates', {
                 max_results: 10,
                 page: 1,
-                where: '{"$and":[{"$or":[{"template_desk":"desk1","is_private":{"$ne":true}}]}]}'
+                where: '{"$and":[{"$or":[{"template_desk":"desk1","is_public":{"$ne":false}}]}]}'
             });
         }));
         it('can fetch templates using personal desk parameter', inject(function(api, templates) {
@@ -86,7 +95,7 @@ describe('templates', function() {
             expect(api.query).toHaveBeenCalledWith('content_templates', {
                 max_results: 10,
                 page: 1,
-                where: '{"$and":[{"$or":[{"user":"foo","is_private":true}]}]}'
+                where: '{"$and":[{"$or":[{"user":"foo","is_public":false}]}]}'
             });
         }));
         it('can fetch templates using keyword parameter', inject(function(api, templates) {
@@ -141,7 +150,7 @@ describe('templates', function() {
             spyOn(api, 'query').and.returnValue($q.when({_items: [
                 {_id: 'public1'},
                 {_id: 'public2'},
-                {_id: 'private', is_private: true}
+                {_id: 'private', is_public: false}
             ], _meta: {total: 3}}));
             var scope = $rootScope.$new();
             var elem = $compile('<div sd-template-select></div>')(scope);
@@ -152,8 +161,8 @@ describe('templates', function() {
             var where = JSON.parse(args[1].where);
             expect(where.$and.length).toBe(1);
             var $or = where.$and[0].$or;
-            expect($or).toContain({is_private: {$ne: true}, template_desk: 'sports'});
-            expect($or).toContain({is_private: true, user: session.identity._id});
+            expect($or).toContain({is_public: {$ne: false}, template_desk: 'sports'});
+            expect($or).toContain({is_public: false, user: session.identity._id});
             $rootScope.$digest();
             var iscope = elem.isolateScope();
             expect(iscope.publicTemplates.length).toBe(2);

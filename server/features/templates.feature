@@ -40,7 +40,7 @@ Feature: Templates
         """
         Then we get new resource
         """
-        {"template_desk": null, "user": "#CONTEXT_USER_ID#", "is_private": true}
+        {"template_desk": null, "user": "#CONTEXT_USER_ID#", "is_public": false}
         """
 
     @auth

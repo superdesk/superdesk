@@ -86,11 +86,11 @@
                 criteria.$or = [];
 
                 if (user) { // user private templates
-                    criteria.$or.push({user: user, is_private: true});
+                    criteria.$or.push({user: user, is_public: false});
                 }
 
                 if (desk) { // all non private desk templates
-                    criteria.$or.push({template_desk: desk, is_private: {$ne: true}});
+                    criteria.$or.push({template_desk: desk, is_public: {$ne: false}});
                 }
             }
 
@@ -296,7 +296,7 @@
         this.type = 'create';
         this.name = item.slugline || null;
         this.desk = desks.active.desk || null;
-        this.is_desk = false;
+        this.is_public = false;
 
         this.types = templates.types;
         this.save = save;
@@ -308,7 +308,7 @@
                 api.find('content_templates', item.template).then(function(template) {
                     vm.name = template.template_name;
                     vm.desk = template.template_desk || null;
-                    vm.is_desk = !template.is_private;
+                    vm.is_public = template.is_public !== false;
                     vm.template = template;
                 });
             }
@@ -323,12 +323,18 @@
                 template_name: vm.name,
                 template_type: vm.type,
                 template_desk: vm.is_desk ? vm.desk : null,
-                is_private: !vm.is_desk,
+                is_public: vm.is_public,
                 data: templates.pickItemData(item)
             };
 
             var template = vm.template ? vm.template : data;
             var diff = vm.template ? data : null;
+
+            // in case there is old template but user renames it - create a new one
+            if (vm.template && vm.name !== vm.template.template_name) {
+                template = data;
+                diff = null;
+            }
 
             return api.save('content_templates', template, diff)
             .then(function(data) {
@@ -392,10 +398,10 @@
                         scope.publicTemplates = [];
                         scope.privateTemplates = [];
                         result._items.forEach(function(template) {
-                            if (template.is_private) {
-                                scope.privateTemplates.push(template);
-                            } else {
+                            if (template.is_public !== false) {
                                 scope.publicTemplates.push(template);
+                            } else {
+                                scope.privateTemplates.push(template);
                             }
                         });
                     });
