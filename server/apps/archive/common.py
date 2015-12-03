@@ -359,8 +359,21 @@ def handle_existing_data(doc, pub_status_value='usable', doc_type='archive'):
         if 'pubstatus' in doc:
             doc['pubstatus'] = doc.get('pubstatus', pub_status_value).lower()
 
-        if doc_type == 'archive' and 'marked_for_not_publication' not in doc:
-            doc['marked_for_not_publication'] = False
+        if doc_type == 'archive' and not is_flag_in_item(doc, 'marked_for_not_publication'):
+            set_flag(doc, 'marked_for_not_publication', False)
+
+
+def set_flag(doc, flag_name, flag_value):
+    flags = doc.get('flags', [])
+    flags[flag_name] = flag_value
+
+
+def is_flag_in_item(doc, flag_name):
+    return 'flags' in doc and flag_name in doc.get('flags', [])
+
+
+def get_flag(doc, flag_name):
+    return doc.get('flags', {}).get(flag_name, False)
 
 
 def validate_schedule(schedule, package_sequence=1):
@@ -399,9 +412,19 @@ def item_schema(extra=None):
             'type': 'datetime',
             'nullable': True
         },
-        'marked_for_not_publication': {
-            'type': 'boolean',
-            'default': False
+        'flags': {
+            'type': 'dict',
+            'nullable': True,
+            'schema': {
+                'marked_for_not_publication': {
+                    'type': 'boolean',
+                    'default': False
+                },
+                'marked_for_legal': {
+                    'type': 'boolean',
+                    'default': False
+                }
+            }
         },
         ITEM_OPERATION: {
             'type': 'string',

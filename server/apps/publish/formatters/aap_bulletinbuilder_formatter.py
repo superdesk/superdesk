@@ -28,6 +28,7 @@ class AAPBulletinBuilderFormatter(Formatter):
         :return: tuple (int, str) of publish sequence of the subscriber, formatted article as string
         """
         try:
+            article['slugline'] = self.append_legal(article=article, truncate=True)
             pub_seq_num = superdesk.get_resource_service('subscribers').generate_sequence_number(subscriber)
             body_html = self.append_body_footer(article).strip('\r\n')
             soup = BeautifulSoup(body_html, "html.parser")

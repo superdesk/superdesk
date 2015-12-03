@@ -10,6 +10,7 @@
         <p class="title" ng-if="item.headline">{{ item.headline }}</p>
 
         <div class="state-label state-{{item.state}}" ng-class="{state_embargo: item.embargo}">{{item.state}}</div>
+        <div class="state-label legal" ng-if="item.flags.marked_for_legal">Legal</div>
 
         <div class="core-content">
 

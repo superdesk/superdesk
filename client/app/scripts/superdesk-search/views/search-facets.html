@@ -103,6 +103,15 @@
             </ul>
         </div>
 
+        <div sd-toggle-box data-title="{{ 'Flags' | FacetLabels }}" ng-hide="isEmpty('priority')" data-open="true">
+            <ul class="filter-box">
+                <li ng-click="toggleFilter('legal', 'true')">
+                    <span class="sd-checkbox" ng-checked="hasFilter('legal', 'true')"></span>
+                    <span>{{:: 'Legal' | translate}} <i>{{:: aggregations.legal.count }}</i></span>
+                </li>
+            </ul>
+        </div>
+
         <div sd-toggle-box data-title="{{ 'Dates' | translate }}" data-open="true">
 
            <form class="date-filter">

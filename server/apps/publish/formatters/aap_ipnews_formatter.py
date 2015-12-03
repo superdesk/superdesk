@@ -40,7 +40,7 @@ class AAPIpNewsFormatter(Formatter):
                              'category': category.get('qcode'),
                              'headline': article.get('headline', '').replace('\'', '\'\''),
                              'author': article.get('byline', '').replace('\'', '\'\''),
-                             'keyword': article.get('slugline', None).replace('\'', '\'\''),
+                             'keyword': self.append_legal(article=article, truncate=True).replace('\'', '\'\''),
                              'subject_reference': set_subject(category, article)}
 
                 if 'subject_reference' in odbc_item and odbc_item['subject_reference'] is not None \
