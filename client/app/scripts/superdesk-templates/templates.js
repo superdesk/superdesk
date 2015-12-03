@@ -296,7 +296,7 @@
         this.type = 'create';
         this.name = item.slugline || null;
         this.desk = desks.active.desk || null;
-        this.is_private = true;
+        this.is_desk = false;
 
         this.types = templates.types;
         this.save = save;
@@ -313,8 +313,8 @@
             var template = {
                 template_name: vm.name,
                 template_type: vm.type,
-                template_desk: vm.is_private ? null : vm.desk,
-                is_private: vm.is_private,
+                template_desk: vm.is_desk ? vm.desk : null,
+                is_private: !vm.is_desk,
                 data: templates.pickItemData(item)
             };
 

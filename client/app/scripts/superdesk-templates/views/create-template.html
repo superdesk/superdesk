@@ -23,15 +23,15 @@
             </div>
 
             <div class="field">
-                <label for="template-is-private" translate>Private template</label>
+                <label for="template-is-desk" translate>Desk template</label>
                 <div class="control">
-                    <input id="template-is-private"
+                    <input id="template-is-desk"
                         type="checkbox"
-                        ng-model="template.is_private">
+                        ng-model="template.is_desk">
                 </div>
             </div>
 
-            <div class="field" ng-if="!template.is_private">
+            <div class="field" ng-if="template.is_desk">
                 <label for="template-desk" translate>Desk</label>
                 <div class="control">
                     <select ng-model="template.desk" ng-options="desk._id as desk.name for desk in template.desks"></select>

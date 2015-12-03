@@ -13,13 +13,13 @@
                         ng-model-options="{debounce: 300}">
                 </div>
                 <div class="field" ng-if="publicTemplates.length">
-                    <label translate>Templates</label>
+                    <label translate>Desk Templates</label>
                     <ul sd-template-list
                         data-templates="publicTemplates"
                         data-select="select(template)"></ul>
                 </div>
                 <div class="field" ng-if="privateTemplates.length">
-                    <label translate>Private Templates</label>
+                    <label translate>My Templates</label>
                     <ul sd-template-list
                         data-templates="privateTemplates"
                         data-select="select(template)"></ul>
