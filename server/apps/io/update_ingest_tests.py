@@ -7,29 +7,31 @@
 # For the full copyright and license information, please see the
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
-
+import os
 
 import superdesk.io.commands.update_ingest as ingest
 from datetime import timedelta
 from nose.tools import assert_raises
+
+from superdesk import etree
 from superdesk import get_resource_service
 from superdesk.utc import utcnow
 from superdesk.errors import SuperdeskApiError, ProviderError
-from superdesk.io import register_provider
+from superdesk.io import register_feeding_service, registered_feeding_services
 from .tests import setup_providers, teardown_providers
-from superdesk.io.ingest_service import IngestService
+from superdesk.io.feeding_services import FeedingService
 from superdesk.io.commands.remove_expired_content import get_expired_items, RemoveExpiredContent
 from superdesk.celery_task_utils import mark_task_as_not_running, is_task_running
 from test_factory import SuperdeskTestCase
 
 
-class TestProviderService(IngestService):
+class TestProviderService(FeedingService):
 
-    def update(self, provider):
+    def _update(self, provider):
         return []
 
 
-register_provider('test', TestProviderService(), [ProviderError.anpaError(None, None).get_error_description()])
+register_feeding_service('test', TestProviderService(), [ProviderError.anpaError(None, None).get_error_description()])
 
 
 class CeleryTaskRaceTest(SuperdeskTestCase):
@@ -63,7 +65,8 @@ class UpdateIngestTest(SuperdeskTestCase):
         return get_resource_service('ingest_providers').find_one(name=provider_name, req=None)
 
     def _get_provider_service(self, provider):
-        return self.provider_services[provider.get('type')]
+        provider_service = registered_feeding_services[provider['feeding_service']]
+        return provider_service.__class__()
 
     def test_ingest_items(self):
         provider_name = 'reuters'
@@ -71,6 +74,7 @@ class UpdateIngestTest(SuperdeskTestCase):
         provider = self._get_provider(provider_name)
         provider_service = self._get_provider_service(provider)
         provider_service.provider = provider
+        provider_service.URL = provider.get('config', {}).get('url')
         items = provider_service.fetch_ingest(guid)
         items.extend(provider_service.fetch_ingest(guid))
         self.assertEqual(12, len(items))
@@ -82,6 +86,7 @@ class UpdateIngestTest(SuperdeskTestCase):
         provider = self._get_provider(provider_name)
         provider_service = self._get_provider_service(provider)
         provider_service.provider = provider
+        provider_service.URL = provider.get('config', {}).get('url')
         items = provider_service.fetch_ingest(guid)
         self.assertIsNone(items[1].get('expiry'))
         items[1]['versioncreated'] = utcnow()
@@ -94,6 +99,7 @@ class UpdateIngestTest(SuperdeskTestCase):
         provider = self._get_provider(provider_name)
         provider_service = self._get_provider_service(provider)
         provider_service.provider = provider
+        provider_service.URL = provider.get('config', {}).get('url')
         item = provider_service.fetch_ingest(guid)[0]
         # insert in mongo
         ids = self.app.data._backend('ingest').insert('ingest', [item])
@@ -110,9 +116,9 @@ class UpdateIngestTest(SuperdeskTestCase):
     def test_ingest_provider_closed_raises_exception(self):
         provider = {
             'name': 'aap',
-            'type': 'aap',
             'is_closed': True,
             'source': 'aap',
+            'feeding_service': 'file', 'feed_parser': 'nitf',
             'config': {
                 'path': '/'
             }
@@ -163,7 +169,7 @@ class UpdateIngestTest(SuperdeskTestCase):
         }), 'and run eventually')
 
     def test_change_last_updated(self):
-        ingest_provider = {'name': 'test', 'type': 'test', '_etag': 'test'}
+        ingest_provider = {'name': 'test', 'feeding_service': 'file', 'feed_parser': 'nitf', '_etag': 'test'}
         self.app.data.insert('ingest_providers', [ingest_provider])
 
         ingest.update_provider(ingest_provider)
@@ -175,8 +181,9 @@ class UpdateIngestTest(SuperdeskTestCase):
         provider_name = 'reuters'
         guid = 'tag_reuters.com_2014_newsml_KBN0FL0NM'
         provider = get_resource_service('ingest_providers').find_one(name=provider_name, req=None)
-        provider_service = self.provider_services[provider.get('type')]
+        provider_service = self._get_provider_service(provider)
         provider_service.provider = provider
+        provider_service.URL = provider.get('config', {}).get('url')
         items = provider_service.fetch_ingest(guid)
         for item in items[:4]:
             item['expiry'] = utcnow() + timedelta(minutes=11)
@@ -186,8 +193,9 @@ class UpdateIngestTest(SuperdeskTestCase):
         provider_name = 'reuters'
         guid = 'tag_reuters.com_2014_newsml_KBN0FL0NM'
         provider = get_resource_service('ingest_providers').find_one(name=provider_name, req=None)
-        provider_service = self.provider_services[provider.get('type')]
+        provider_service = self._get_provider_service(provider)
         provider_service.provider = provider
+        provider_service.URL = provider.get('config', {}).get('url')
         items = provider_service.fetch_ingest(guid)
         self.assertEqual(0, len(ingest.filter_expired_items(provider, items)))
 
@@ -195,9 +203,9 @@ class UpdateIngestTest(SuperdeskTestCase):
         provider_name = 'reuters'
         guid = 'tag_reuters.com_2014_newsml_KBN0FL0NM'
         provider = get_resource_service('ingest_providers').find_one(name=provider_name, req=None)
-        provider_service = self.provider_services[provider.get('type')]
+        provider_service = self._get_provider_service(provider)
         provider_service.provider = provider
-
+        provider_service.URL = provider.get('config', {}).get('url')
         items = provider_service.fetch_ingest(guid)
         now = utcnow()
         for i, item in enumerate(items):
@@ -217,9 +225,9 @@ class UpdateIngestTest(SuperdeskTestCase):
         provider_name = 'reuters'
         guid = 'tag_reuters.com_2014_newsml_KBN0FL0NM'
         provider = get_resource_service('ingest_providers').find_one(name=provider_name, req=None)
-        provider_service = self.provider_services[provider.get('type')]
+        provider_service = self._get_provider_service(provider)
         provider_service.provider = provider
-
+        provider_service.URL = provider.get('config', {}).get('url')
         items = provider_service.fetch_ingest(guid)
         now = utcnow()
         for i, item in enumerate(items):
@@ -249,9 +257,9 @@ class UpdateIngestTest(SuperdeskTestCase):
         provider_name = 'reuters'
         guid = 'tag_reuters.com_2014_newsml_KBN0FL0NM'
         provider = get_resource_service('ingest_providers').find_one(name=provider_name, req=None)
-        provider_service = self.provider_services[provider.get('type')]
+        provider_service = self._get_provider_service(provider)
         provider_service.provider = provider
-
+        provider_service.URL = provider.get('config', {}).get('url')
         items = provider_service.fetch_ingest(guid)
         for item in items:
             item['ingest_provider'] = provider['_id']
@@ -297,6 +305,7 @@ class UpdateIngestTest(SuperdeskTestCase):
         provider = self._get_provider(provider_name)
         provider_service = self._get_provider_service(provider)
         provider_service.provider = provider
+        provider_service.URL = provider.get('config', {}).get('url')
         item = provider_service.fetch_ingest(guid)[0]
         get_resource_service("ingest").set_ingest_provider_sequence(item, provider)
         self.assertIsNotNone(item['ingest_provider_sequence'])
@@ -326,10 +335,11 @@ class UpdateIngestTest(SuperdeskTestCase):
         provider_name = 'reuters'
         guid = 'tag_reuters.com_2014_newsml_KBN0FL0NM'
         provider = get_resource_service('ingest_providers').find_one(name=provider_name, req=None)
-        provider_service = self.provider_services[provider.get('type')]
+        provider_service = self._get_provider_service(provider)
         provider_service.provider = provider
-
+        provider_service.URL = provider.get('config', {}).get('url')
         items = provider_service.fetch_ingest(guid)
+
         for item in items:
             item['ingest_provider'] = provider['_id']
             item['expiry'] = utcnow() + timedelta(hours=11)
@@ -358,12 +368,11 @@ class UpdateIngestTest(SuperdeskTestCase):
         self.app.data.insert('vocabularies', vocab)
 
         provider_name = 'DPA'
-        guid = 'IPTC7901_odd_charset.txt'
         provider = get_resource_service('ingest_providers').find_one(name=provider_name, req=None)
-        provider_service = self.provider_services[provider.get('type')]
-        provider_service.provider = provider
-
-        items = provider_service.parse_file(guid, provider)
+        file_path = os.path.join(provider.get('config', {}).get('path', ''), 'IPTC7901_odd_charset.txt')
+        provider_service = self._get_provider_service(provider)
+        feeding_parser = provider_service.get_feed_parser(provider)
+        items = [feeding_parser.parse(file_path, provider)]
         service = get_resource_service('ingest')
         service.post(items)
 
@@ -377,12 +386,11 @@ class UpdateIngestTest(SuperdeskTestCase):
         self.app.data.insert('vocabularies', vocab)
 
         provider_name = 'DPA'
-        guid = 'IPTC7901_odd_charset.txt'
         provider = get_resource_service('ingest_providers').find_one(name=provider_name, req=None)
-        provider_service = self.provider_services[provider.get('type')]
-        provider_service.provider = provider
-
-        items = provider_service.parse_file(guid, provider)
+        file_path = os.path.join(provider.get('config', {}).get('path', ''), 'IPTC7901_odd_charset.txt')
+        provider_service = self._get_provider_service(provider)
+        feeding_parser = provider_service.get_feed_parser(provider)
+        items = [feeding_parser.parse(file_path, provider)]
         service = get_resource_service('ingest')
         service.post(items)
 
@@ -399,22 +407,23 @@ class UpdateIngestTest(SuperdeskTestCase):
         self.app.data.insert('vocabularies', vocab)
 
         provider_name = 'AAP'
-        guid = 'nitf-fishing.xml'
         provider = get_resource_service('ingest_providers').find_one(name=provider_name, req=None)
-        provider_service = self.provider_services[provider.get('type')]
-        provider_service.provider = provider
+        file_path = os.path.join(provider.get('config', {}).get('path', ''), 'nitf-fishing.xml')
+        provider_service = self._get_provider_service(provider)
+        feeding_parser = provider_service.get_feed_parser(provider)
+        with open(file_path, 'r') as f:
+            xml_string = etree.etree.fromstring(f.read())
+            items = [feeding_parser.parse(xml_string, provider)]
+            for item in items:
+                item['ingest_provider'] = provider['_id']
+                item['expiry'] = utcnow() + timedelta(hours=11)
 
-        items = provider_service.parse_file(guid, provider)
-        for item in items:
-            item['ingest_provider'] = provider['_id']
-            item['expiry'] = utcnow() + timedelta(hours=11)
+            service = get_resource_service('ingest')
+            service.post(items)
 
-        service = get_resource_service('ingest')
-        service.post(items)
-
-        # ingest the items and check the subject code has been derived
-        self.ingest_items(items, provider)
-        self.assertEqual(items[0]['anpa_category'][0]['qcode'], 'f')
+            # ingest the items and check the subject code has been derived
+            self.ingest_items(items, provider)
+            self.assertEqual(items[0]['anpa_category'][0]['qcode'], 'f')
 
     def test_subject_to_anpa_category_derived_ingest_ignores_inactive_map_entries(self):
         vocab = [{'_id': 'iptc_category_map',
@@ -425,19 +434,20 @@ class UpdateIngestTest(SuperdeskTestCase):
         self.app.data.insert('vocabularies', vocab)
 
         provider_name = 'AAP'
-        guid = 'nitf-fishing.xml'
         provider = get_resource_service('ingest_providers').find_one(name=provider_name, req=None)
-        provider_service = self.provider_services[provider.get('type')]
-        provider_service.provider = provider
+        file_path = os.path.join(provider.get('config', {}).get('path', ''), 'nitf-fishing.xml')
+        provider_service = self._get_provider_service(provider)
+        feeding_parser = provider_service.get_feed_parser(provider)
+        with open(file_path, 'r') as f:
+            xml_string = etree.etree.fromstring(f.read())
+            items = [feeding_parser.parse(xml_string, provider)]
+            for item in items:
+                item['ingest_provider'] = provider['_id']
+                item['expiry'] = utcnow() + timedelta(hours=11)
 
-        items = provider_service.parse_file(guid, provider)
-        for item in items:
-            item['ingest_provider'] = provider['_id']
-            item['expiry'] = utcnow() + timedelta(hours=11)
+            service = get_resource_service('ingest')
+            service.post(items)
 
-        service = get_resource_service('ingest')
-        service.post(items)
-
-        # ingest the items and check the subject code has been derived
-        self.ingest_items(items, provider)
-        self.assertNotIn('anpa_category', items[0])
+            # ingest the items and check the subject code has been derived
+            self.ingest_items(items, provider)
+            self.assertNotIn('anpa_category', items[0])

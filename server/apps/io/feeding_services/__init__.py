@@ -7,3 +7,8 @@
 # For the full copyright and license information, please see the
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
+
+
+import apps.io.feeding_services.afp
+import apps.io.feeding_services.dpa
+import apps.io.feeding_services.reuters  # NOQA

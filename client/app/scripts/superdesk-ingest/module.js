@@ -23,43 +23,46 @@ define([
         'superdesk.ingest.send'
     ]);
 
-    app.value('providerTypes', {
-        aap: {
-            label: 'AAP',
-            templateUrl: 'scripts/superdesk-ingest/views/settings/aapConfig.html'
+    app.value('feedingServices', {
+        file: {
+            label: 'File Feed',
+            templateUrl: 'scripts/superdesk-ingest/views/settings/fileConfig.html'
         },
-        reuters: {
-            label: 'Reuters',
+        dpa_file: {
+            label: 'DPA File Feed',
+            templateUrl: 'scripts/superdesk-ingest/views/settings/fileConfig.html'
+        },
+        afp_file: {
+            label: 'AFP File Feed',
+            templateUrl: 'scripts/superdesk-ingest/views/settings/fileConfig.html'
+        },
+        reuters_http: {
+            label: 'Reuters Feed API',
             templateUrl: 'scripts/superdesk-ingest/views/settings/reutersConfig.html'
         },
         rss: {
             label: 'RSS',
             templateUrl: 'scripts/superdesk-ingest/views/settings/rssConfig.html'
         },
-        afp: {
-            label: 'AFP',
-            templateUrl: 'scripts/superdesk-ingest/views/settings/afpConfig.html'
-        },
         ftp: {
             label: 'FTP',
             templateUrl: 'scripts/superdesk-ingest/views/settings/ftp-config.html'
         },
-        teletype: {
-            label: 'Teletype',
-            templateUrl: 'scripts/superdesk-ingest/views/settings/teletypeConfig.html'
-        },
         email: {
             label: 'Email',
             templateUrl: 'scripts/superdesk-ingest/views/settings/emailConfig.html'
-        },
-        dpa: {
-            label: 'DPA',
-            templateUrl: 'scripts/superdesk-ingest/views/settings/aapConfig.html'
-        },
-        search: {
-            label: 'Search provider',
-            templateUrl: 'scripts/superdesk-ingest/views/settings/searchConfig.html'
         }
+    });
+
+    app.value('feedParsers', {
+        email_rfc822: 'EMail RFC822 Parser',
+        nitf: 'NITF Parser',
+        newsml12: 'News ML 1.2 Parser',
+        newsml2: 'News ML-G2 Parser',
+        wenn: 'WENN Parser',
+        anpa1312: 'ANPA Parser',
+        iptc7901: 'IPTC 7901 Parser',
+        zczc: 'ZCZC Parser'
     });
 
     var PROVIDER_DASHBOARD_DEFAULTS = {
@@ -361,15 +364,18 @@ define([
         };
     }
 
-    IngestSourcesContent.$inject = ['providerTypes', 'gettext', 'notify', 'api', '$location', 'modal', '$filter'];
-    function IngestSourcesContent(providerTypes, gettext, notify, api, $location, modal, $filter) {
+    IngestSourcesContent.$inject = ['feedingServices', 'feedParsers', 'gettext', 'notify', 'api', '$location',
+                                    'modal', '$filter'];
+    function IngestSourcesContent(feedingServices, feedParsers, gettext, notify, api, $location, modal, $filter) {
         return {
             templateUrl: 'scripts/superdesk-ingest/views/settings/ingest-sources-content.html',
             link: function($scope) {
                 $scope.provider = null;
                 $scope.origProvider = null;
 
-                $scope.types = providerTypes;
+                $scope.feedingServices = feedingServices;
+                $scope.feedParsers = feedParsers;
+                $scope.fileTypes = ['text', 'picture', 'composite', 'video', 'audio'];
                 $scope.minutes = [0, 1, 2, 3, 4, 5, 8, 10, 15, 30, 45];
                 $scope.seconds = [0, 5, 10, 15, 30, 45];
                 $scope.hours = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24];
@@ -433,8 +439,8 @@ define([
                 });
 
                 $scope.fetchSourceErrors = function() {
-                    if ($scope.provider && $scope.provider.type) {
-                        return api('io_errors').query({'source_type': $scope.provider.type})
+                    if ($scope.provider && $scope.provider.feeding_service) {
+                        return api('io_errors').query({'source_type': $scope.provider.feeding_service})
                             .then(function (result) {
                                 $scope.provider.source_errors = result._items[0].source_errors;
                                 $scope.provider.all_errors = result._items[0].all_errors;
@@ -613,6 +619,45 @@ define([
 
                 $scope.gotoIngest = function(source) {
                     $location.path('/workspace/ingest').search('source', angular.toJson([source]));
+                };
+
+                /**
+                 * Add or remove the current 'fileType' from the provider.
+                 *
+                 * @param {string} fileType
+                 */
+                $scope.addOrRemoveFileType = function(fileType) {
+                    if (!$scope.provider.content_types) {
+                        $scope.provider.content_types = [];
+                    }
+
+                    var index = $scope.provider.content_types.indexOf(fileType);
+                    if (index > -1) {
+                        $scope.provider.content_types.splice(index, 1);
+                    } else {
+                        $scope.provider.content_types.push(fileType);
+                    }
+                };
+
+                /**
+                 * Return true if the 'fileType' is in provider.content_types list.
+                 *
+                 * @param {string} fileType
+                 * @return boolean
+                 */
+                $scope.hasFileType = function(fileType) {
+                    return $scope.provider && $scope.provider.content_types &&
+                        $scope.provider.content_types.indexOf(fileType) > -1;
+                };
+
+                /**
+                 * Initializes the configuration for the selected feeding service if the config is not defined.
+                 */
+                $scope.initProviderConfig = function () {
+                    if ($scope.provider.feeding_service === 'reuters_http' && !$scope.provider.config) {
+                        $scope.provider.config = {'url': 'http://rmb.reuters.com/rmd/rest/xml',
+                            'auth_url': 'https://commerce.reuters.com/rmd/rest/xml/login'};
+                    }
                 };
             }
         };
