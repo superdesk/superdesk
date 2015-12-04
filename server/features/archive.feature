@@ -467,3 +467,41 @@ Feature: News Items Archive
         """
         {"headline": "test1", "sign_off": "abc/foo"}
         """
+
+	@auth
+	Scenario: Should not allow duplicate anpa category codes
+	    Given the "archive"
+	    """
+        [{"type":"text", "headline": "test1", "_id": "xyz", "original_creator": "abc"}]
+        """
+        When we patch "/archive/xyz"
+        """
+        {"anpa_category": [{"qcode": "a"}, {"qcode": "a"}]}
+        """
+        Then we get error 400
+        """
+        {"_issues": {"validator exception": "400: Duplicate category codes are not allowed"}, "_status": "ERR"}
+        """
+
+	@auth
+	Scenario: Should not allow duplicate subject codes
+	    Given the "archive"
+	    """
+        [{"type":"text", "headline": "test1", "_id": "xyz", "original_creator": "abc"}]
+        """
+        When we patch "/archive/xyz"
+        """
+            { "subject" : [ { "name" : "bullfighting",
+                    "parent" : "01000000",
+                    "qcode" : "01003000"
+                  },
+                  { "name" : "bullfighting",
+                    "parent" : "01000000",
+                    "qcode" : "01003000"
+                  }
+                ] }
+        """
+        Then we get error 400
+        """
+        {"_issues": {"validator exception": "400: Duplicate subjects are not allowed"}, "_status": "ERR"}
+        """

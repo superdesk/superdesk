@@ -35,7 +35,7 @@ describe('MetadataWidgetCtrl controller', function () {
     it('initializes the list of categories to pick from in scope', function () {
         var userPrefs = {
             'categories:preferred': {
-                selected: {'a': true, 'b': false, 'c': true, 'd': false}
+                selected: {'a': true, 'b': false, 'c': true, 'd': true}
             }
         };
 
@@ -46,6 +46,8 @@ describe('MetadataWidgetCtrl controller', function () {
         };
 
         // set the 'd' category to be already assigned to the article
+        // it will not be in the available list as it is already assigned to the
+        // item
         scope.item.anpa_category = [{qcode: 'd'}];
 
         metaInit.resolve();
@@ -53,7 +55,7 @@ describe('MetadataWidgetCtrl controller', function () {
         scope.$digest();
 
         expect(scope.availableCategories).toEqual(
-            [{qcode: 'a'}, {qcode: 'c'}, {qcode: 'd'}]
+            [{qcode: 'a'}, {qcode: 'c'}]
         );
     });
 });
