@@ -3,8 +3,8 @@
 
 describe('superdesk.workspace.content', function() {
 
-    beforeEach(module('superdesk.templates-cache'));
     beforeEach(module('superdesk.mocks'));
+    beforeEach(module('superdesk.templates-cache'));
     beforeEach(module('superdesk.workspace.content'));
 
     describe('content service', function() {
@@ -57,9 +57,12 @@ describe('superdesk.workspace.content', function() {
             desks.setCurrentDeskId('2');
 
             content.createItemFromTemplate({
-                slugline: 'test_slugline',
-                body_html: 'test_body_html',
-                irrelevantData: 'yes'
+                _id: 'template1',
+                data: {
+                    slugline: 'test_slugline',
+                    body_html: 'test_body_html',
+                    irrelevantData: 'yes'
+                }
             }).then(done);
 
             $rootScope.$digest();
@@ -67,7 +70,8 @@ describe('superdesk.workspace.content', function() {
             expect(api.save).toHaveBeenCalledWith('archive', {
                 slugline: 'test_slugline',
                 body_html: 'test_body_html',
-                task: {desk: '2', stage: '4', user: 'user:1'}
+                task: {desk: '2', stage: '4', user: 'user:1'},
+                template: 'template1'
             });
         }));
     });

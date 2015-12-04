@@ -1,6 +1,7 @@
 
 import unittest
 from datetime import datetime
+from superdesk.utc import utcnow
 from superdesk.metadata.item import ITEM_STATE, CONTENT_STATE
 from .content_templates import get_next_run, Weekdays, get_item_from_template, render_content_template
 from test_factory import SuperdeskTestCase
@@ -39,30 +40,49 @@ class TemplatesTestCase(unittest.TestCase):
         self.assertEqual(delta.days, 1)
 
     def test_get_item_from_template(self):
-        template = {'_id': 'foo', 'name': 'test', 'headline': 'Foo',
-                    'template_desk': 'sports', 'template_stage': 'schedule'}
+        template = {'_id': 'foo', 'name': 'test',
+                    'template_desk': 'sports', 'template_stage': 'schedule',
+                    'data': {
+                        'headline': 'Foo',
+                        'dateline': {
+                            'located': {
+                                'city': 'Sydney',
+                                'city_code': 'Sydney',
+                                'tz': 'Australia/Sydney'
+                            },
+                            'date': '2015-10-10T10:10:10',
+                        }
+                    }}
+        now = utcnow()
         item = get_item_from_template(template)
         self.assertNotIn('_id', item)
         self.assertEqual('foo', item.get('template'))
         self.assertEqual('Foo', item.get('headline'))
         self.assertEqual(CONTENT_STATE.SUBMITTED, item.get(ITEM_STATE))
         self.assertEqual({'desk': 'sports', 'stage': 'schedule'}, item.get('task'))
+        dateline = item.get('dateline')
+        self.assertEqual('Sydney', dateline['located']['city'])
+        self.assertEqual(now, dateline.get('date'))
+        self.assertIn('SYDNEY', dateline.get('text'))
 
 
 class RenderTemplateTestCase(SuperdeskTestCase):
 
     def test_render_content_template(self):
         template = {
-            '_id': 'foo', 'template_name': 'test',
-            'headline': 'Foo Template: {{item.headline}}',
+            '_id': 'foo',
+            'template_name': 'test',
             'template_desk': 'sports',
             'template_stage': 'schedule',
-            'body_html': 'This article has slugline: {{item.slugline}} and dateline: {{item.dateline["text"]}} '
-                         'at {{item.versioncreated | format_datetime("Australia/Sydney", "%d %b %Y %H:%S %Z")}}',
-            'more_coming': False, 'urgency': 1, 'priority': 3,
-            'dateline': {},
-            'anpa_take_key': 'this is test',
-            'place': ['Australia']
+            'data': {
+                'headline': 'Foo Template: {{item.headline}}',
+                'body_html': 'This article has slugline: {{item.slugline}} and dateline: {{item.dateline["text"]}} '
+                             'at {{item.versioncreated | format_datetime("Australia/Sydney", "%d %b %Y %H:%S %Z")}}',
+                'more_coming': False, 'urgency': 1, 'priority': 3,
+                'dateline': {},
+                'anpa_take_key': 'this is test',
+                'place': ['Australia']
+            }
         }
 
         item = {

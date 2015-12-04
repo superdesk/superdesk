@@ -26,7 +26,6 @@
     <div class="menu-label" translate>From template</div>
 </li>
 <div ng-show="contentTemplates._items.length">
-    <li translate>From template:</li>
     <li ng-repeat="template in contentTemplates._items">
         <button ng-click="createFromTemplate(template)">
             <i class="icon-plus-small icon-round icon-white"></i> {{ :: template.template_name }}
@@ -39,7 +38,7 @@
 </div>
 
 <li>
-    <button ng-click="displayTemplateSelect = true;" translate>More templates...</button>
+    <button ng-click="flags = {displayTemplateSelect: true}" translate>More templates...</button>
 </li>
 
 <li class="divider" ng-if="openUpload"></li>
@@ -50,4 +49,4 @@
     </button>
 </li>
 
-<div sd-template-select data-select-action="createFromTemplate" data-open="displayTemplateSelect"></div>
+<div ng-if="flags.displayTemplateSelect" sd-template-select data-select-action="createFromTemplate" data-open="flags.displayTemplateSelect"></div>

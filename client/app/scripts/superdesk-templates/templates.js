@@ -50,39 +50,57 @@
             'language'
         ];
 
+        /**
+         * Filter out item data that is not usable for template
+         *
+         * @param {Object} item
+         * @return {Object}
+         */
+        this.pickItemData = function(item) {
+            return _.pick(item, this.TEMPLATE_METADATA);
+        };
+
         this.types = [
             {_id: 'kill', label: gettext('Kill')},
             {_id: 'create', label: gettext('Create')},
             {_id: 'highlights', label: gettext('Highlights')}
         ];
 
-        this.fetchTemplates = function fetchTemplates(page, pageSize, type, desk, keyword) {
-            page = page || 1;
-            pageSize = pageSize || PAGE_SIZE;
+        this.fetchTemplates = function fetchTemplates(page, pageSize, type, desk, user, keyword) {
+            var params = {
+                page: page || 1,
+                max_results: pageSize || PAGE_SIZE
+            };
 
             var criteria = {};
+
             if (type !== undefined) {
                 criteria.template_type = type;
             }
-            if (desk !== undefined) {
-                criteria.template_desk = desk;
-            }
+
             if (keyword) {
                 criteria.template_name = {'$regex': keyword, '$options': '-i'};
             }
-            var params = {
-                max_results: pageSize,
-                page: page
-            };
+
+            if (user || desk) {
+                criteria.$or = [];
+
+                if (user) { // user private templates
+                    criteria.$or.push({user: user, is_public: false});
+                }
+
+                if (desk) { // all non private desk templates
+                    criteria.$or.push({template_desk: desk, is_public: {$ne: false}});
+                }
+            }
+
             if (!_.isEmpty(criteria)) {
                 params.where = JSON.stringify({
                     '$and': [criteria]
                 });
             }
-            return api.content_templates.query(params)
-            .then(function(result) {
-                return result;
-            });
+
+            return api.query('content_templates', params);
         };
 
         this.fetchTemplatesByIds = function(templateIds) {
@@ -96,7 +114,7 @@
                 where: JSON.stringify({_id: {'$in': templateIds}})
             };
 
-            return api.content_templates.query(params)
+            return api.query('content_templates', params)
             .then(function(result) {
                 if (result && result._items) {
                     result._items.sort(function(a, b) {
@@ -205,7 +223,7 @@
                         template = _.omit($scope.template, KILL_TEMPLATE_IGNORE_FIELDS);
                     }
 
-                    api.content_templates.save($scope.origTemplate, template)
+                    api.save('content_templates', $scope.origTemplate, template)
                         .then(
                             function() {
                                 notify.success(gettext('Template saved.'));
@@ -226,8 +244,8 @@
                     $scope.origTemplate = template || {'type': 'text'};
                     $scope.template = _.create($scope.origTemplate);
                     $scope.template.schedule = $scope.origTemplate.schedule || {};
-
-                    $scope.item = $scope.template;
+                    $scope.template.data = $scope.origTemplate.data || {};
+                    $scope.item = $scope.template.data;
                     $scope._editable = true;
                     $scope.updateStages($scope.template.template_desk);
                 };
@@ -235,7 +253,7 @@
                 $scope.remove = function(template) {
                     modal.confirm(gettext('Are you sure you want to delete the template?'))
                         .then(function() {
-                            return api.content_templates.remove(template);
+                            return api.remove(template);
                         })
                         .then(function(result) {
                             _.remove($scope.templates, template);
@@ -278,6 +296,7 @@
         this.type = 'create';
         this.name = item.slugline || null;
         this.desk = desks.active.desk || null;
+        this.is_public = false;
 
         this.types = templates.types;
         this.save = save;
@@ -285,19 +304,40 @@
         activate();
 
         function activate() {
+            if (item.template) {
+                api.find('content_templates', item.template).then(function(template) {
+                    vm.name = template.template_name;
+                    vm.desk = template.template_desk || null;
+                    vm.is_public = template.is_public !== false;
+                    vm.template = template;
+                });
+            }
+
             desks.fetchCurrentUserDesks().then(function(desks) {
                 vm.desks = desks._items;
             });
         }
 
         function save() {
-            var template = angular.extend({
+            var data = {
                 template_name: vm.name,
                 template_type: vm.type,
-                template_desk: vm.desk
-            }, _.pick(item, templates.TEMPLATE_METADATA));
+                template_desk: vm.is_desk ? vm.desk : null,
+                is_public: vm.is_public,
+                data: templates.pickItemData(item)
+            };
 
-            return api.save('content_templates', template).then(function(data) {
+            var template = vm.template ? vm.template : data;
+            var diff = vm.template ? data : null;
+
+            // in case there is old template but user renames it - create a new one
+            if (vm.template && vm.name !== vm.template.template_name) {
+                template = data;
+                diff = null;
+            }
+
+            return api.save('content_templates', template, diff)
+            .then(function(data) {
                 vm._issues = null;
                 return data;
             }, function(response) {
@@ -324,9 +364,80 @@
         }
     }
 
+    TemplateSelectDirective.$inject = ['api', 'desks', 'session', 'templates'];
+    function TemplateSelectDirective(api, desks, session, templates) {
+        var PAGE_SIZE = 200;
+
+        return {
+            templateUrl: 'scripts/superdesk-templates/views/sd-template-select.html',
+            scope: {
+                selectAction: '=',
+                open: '='
+            },
+            link: function(scope) {
+                scope.options = {
+                    keyword: null,
+                };
+
+                scope.close = function() {
+                    scope.open = false;
+                };
+
+                scope.select = function(template) {
+                    scope.selectAction(template);
+                    scope.close();
+                };
+
+                /**
+                 * Fetch templates and assign it to scope but split it into public/private
+                 */
+                function fetchTemplates() {
+                    templates.fetchTemplates(scope.options.page, PAGE_SIZE, 'create',
+                        desks.activeDeskId, session.identity._id, scope.options.keyword)
+                    .then(function(result) {
+                        scope.publicTemplates = [];
+                        scope.privateTemplates = [];
+                        result._items.forEach(function(template) {
+                            if (template.is_public !== false) {
+                                scope.publicTemplates.push(template);
+                            } else {
+                                scope.privateTemplates.push(template);
+                            }
+                        });
+                    });
+                }
+
+                scope.$watch('options.keyword', fetchTemplates);
+            }
+        };
+    }
+
+    function TemplateListDirective() {
+        var ENTER = 13;
+        return {
+            scope: {templates: '=', select: '&'},
+            templateUrl: 'scripts/superdesk-templates/views/template-list.html',
+            link: function(scope) {
+                /**
+                 * Call select on keyboard event if key was enter
+                 *
+                 * @param {Event} $event
+                 * @param {Object} template
+                 */
+                scope.selectOnEnter = function($event, template) {
+                    if ($event.key === ENTER) {
+                        scope.select(template);
+                    }
+                };
+            }
+        };
+    }
+
     angular.module('superdesk.templates', ['superdesk.activity', 'superdesk.authoring', 'superdesk.preferences'])
         .service('templates', TemplatesService)
         .directive('sdTemplates', TemplatesDirective)
+        .directive('sdTemplateSelect', TemplateSelectDirective)
+        .directive('sdTemplateList', TemplateListDirective)
         .controller('CreateTemplateController', CreateTemplateController)
         .controller('TemplateMenu', TemplateMenuController)
         .config(config)
@@ -342,20 +453,6 @@
             privileges: {content_templates: 1},
             priority: 2000,
             beta: true
-        });
-
-        apiProvider.api('templates', {
-            type: 'http',
-            backend: {
-                rel: 'templates'
-            }
-        });
-
-        apiProvider.api('content_templates', {
-            type: 'http',
-            backend: {
-                rel: 'content_templates'
-            }
         });
     }
 })();

@@ -3,6 +3,7 @@
         <span class="icon-close-small"></span></button>
     <h3 class="modal-title" translate>Save as template</h3>
 </div>
+
 <div class="modal-body">
     <form name="templateForm">
         <fieldset>
@@ -12,6 +13,8 @@
                     <input type="text" id="template-name" required ng-model="template.name">
                     <div class="error" ng-show="template._issues.template_name"
                         translate>Sorry, but template name must be unique.</div>
+                    <em class="info" ng-show="template.template && template.template.template_name === template.name" translate>It will update existing template.</em>
+                    <em class="info" ng-show="template.template && template.template.template_name !== template.name" translate>It will create a new template.</em>
                 </div>
             </div>
 
@@ -23,16 +26,24 @@
             </div>
 
             <div class="field">
+                <label for="template-is-public" translate>Desk template</label>
+                <div class="control">
+                    <input id="template-is-public"
+                        type="checkbox"
+                        ng-model="template.is_public">
+                </div>
+            </div>
+
+            <div class="field" ng-if="template.is_public !== false">
                 <label for="template-desk" translate>Desk</label>
                 <div class="control">
-                    <select ng-model="template.desk" ng-options="desk._id as desk.name for desk in template.desks">
-                        <option value="" translate>None</option>
-                    </select>
+                    <select ng-model="template.desk" ng-options="desk._id as desk.name for desk in template.desks"></select>
                 </div>
             </div>
         </fieldset>
     </form>
 </div>
+
 <div class="modal-footer">
     <button type="button" class="btn btn-default"
         ng-click="$dismiss()"
