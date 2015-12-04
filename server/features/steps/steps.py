@@ -26,7 +26,6 @@ from superdesk.io.feed_parsers import XMLFeedParser
 from superdesk.utc import utcnow, get_expiry_date
 from eve.io.mongo import MongoJSONEncoder
 from base64 import b64encode
-
 from wooper.general import fail_and_print_body, apply_path, \
     parse_json_response, WooperAssertionError
 from wooper.expect import (
@@ -1900,3 +1899,10 @@ def assert_expiry(item, publish_expiry_in_desk):
         expected = get_expiry_date(minutes=publish_expiry_in_desk)
         if expected < actual:
             raise WooperAssertionError("{}. Expected: {}, Actual: {}".format(error_message, expected, actual))
+
+
+@when('run import legal publish queue')
+def run_import_legal_publish_queue(context):
+    with context.app.test_request_context(context.app.config['URL_PREFIX']):
+        from apps.legal_archive import ImportLegalPublishQueueCommand
+        ImportLegalPublishQueueCommand().run()

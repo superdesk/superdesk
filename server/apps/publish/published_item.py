@@ -285,7 +285,7 @@ class PublishedItemService(BaseService):
         desk_id = doc.get('task', {}).get('desk', None)
         stage_id = doc.get('task', {}).get('stage', None)
 
-        doc['expiry'] = get_expiry(desk_id, stage_id, offset=doc[EMBARGO]) if doc.get(EMBARGO) else \
+        doc['expiry'] = get_expiry(desk_id, stage_id, offset=doc.get(EMBARGO)) if doc.get(EMBARGO) else \
             get_expiry(desk_id, stage_id)
 
     def remove_expired(self, doc):
@@ -328,7 +328,8 @@ class PublishedItemService(BaseService):
                 can_be_removed = updates.get('can_be_removed', can_be_removed)
 
             # Step 3
-            publish_queue_items = self._upsert_into_legal_archive(doc, version_id_field, log_msg_format, log_msg)
+            # publish_queue_items = self._upsert_into_legal_archive(doc, version_id_field, log_msg_format, log_msg)
+            publish_queue_items = []
             if is_expired:  # Step 4
                 logging.info('Removing the transmission details for expired item ' + log_msg)
                 for publish_queue_item in publish_queue_items:

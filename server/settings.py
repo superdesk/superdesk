@@ -133,10 +133,6 @@ CELERYBEAT_SCHEDULE = {
         'task': 'superdesk.publish.transmit',
         'schedule': timedelta(seconds=10)
     },
-    'publish:remove_expired': {
-        'task': 'apps.publish.content_purge',
-        'schedule': crontab(minute=30)
-    },
     'publish:remove_overdue_scheduled': {
         'task': 'apps.archive.remove_scheduled',
         'schedule': crontab(minute=10)
@@ -145,6 +141,10 @@ CELERYBEAT_SCHEDULE = {
         'task': 'apps.templates.content_templates.create_scheduled_content',
         'schedule': crontab(minute='*/5'),
     },
+    'legal:import_publish_queue': {
+        'task': 'apps.legal_archive.import_legal_publish_queue',
+        'schedule': timedelta(minutes=5)
+    }
 }
 
 SENTRY_DSN = env('SENTRY_DSN')

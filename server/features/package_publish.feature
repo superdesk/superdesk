@@ -77,6 +77,50 @@ Feature: Package Publishing
             ]
         }
 		"""
+        When we get "/legal_archive"
+        Then we get existing resource
+		"""
+		{
+            "_items": [
+                {
+                    "_current_version": 2,
+                    "state": "published"
+                },
+                {
+                    "_current_version": 2,
+                    "groups": [
+                        {
+                            "refs": [
+                                {"itemClass": "icls:text", "location": "legal_archive"},
+                                {"itemClass": "icls:picture", "location": "legal_archive"},
+                                {"itemClass": "icls:picture", "location": "legal_archive"},
+                                {"itemClass": "icls:picture", "location": "legal_archive"}
+                            ]
+                        },
+                        {"refs": [{"itemClass": "icls:text"}]}
+                    ],
+                    "state": "published",
+                    "type": "composite"
+                },
+                {
+                    "_current_version": 2,
+                    "state": "published"
+                },
+                {
+                    "_current_version": 2,
+                    "state": "published"
+                },
+                {
+                    "_current_version": 2,
+                    "state": "published"
+                },
+                {
+                    "_current_version": 2,
+                    "state": "published"
+                }
+            ]
+        }
+		"""
 
     @auth
     @notification
