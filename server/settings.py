@@ -133,10 +133,6 @@ CELERYBEAT_SCHEDULE = {
         'task': 'superdesk.publish.transmit',
         'schedule': timedelta(seconds=10)
     },
-    'publish:remove_expired': {
-        'task': 'apps.publish.content_purge',
-        'schedule': crontab(minute=30)
-    },
     'publish:remove_overdue_scheduled': {
         'task': 'apps.archive.remove_scheduled',
         'schedule': crontab(minute=10)
