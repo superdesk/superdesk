@@ -77,7 +77,7 @@ Feature: User Activity
         """
         When we mention user in comment for "/comments"
         """
-        [{"text": "test comment @no_user with one user mention @joe", "item": "xyz"}]
+        [{"text": "test comment @nouser with one user mention @joe", "item": "xyz"}]
         """
         Then we get activity
         When we patch "/activity/#activity._id#"
@@ -87,16 +87,38 @@ Feature: User Activity
         Then we get error 400
 
     @auth
-    Scenario: Read notification successful :
+    Scenario: Read notification of a desk:
         Given empty "comments"
-        When we mention user in comment for "/comments"
+        When we post to "/users"
         """
-        [{"text": "test comment @no_user with one user mention @test_user", "item": "xyz"}]
+        {"username": "joe", "display_name": "Joe Black", "email": "joe@black.com", "is_active": true, "sign_off": "abc"}
+        """
+        And we post to "/desks"
+        """
+        {"name": "Sports"}
+        """
+        When we post to "/comments"
+        """
+        [{"text": "test comment #Sports", "item": "xyz"}]
         """
         Then we get activity
         When we patch "/activity/#activity._id#"
         """
-        {"read":{"#user._id#":1}}
+        {"recipients":[{"desk_id": "#desks._id#", "read": true, "user_id": "#user._id#"}]}
+        """
+        Then we get error 200
+
+    @auth
+    Scenario: Read notification successful :
+        Given empty "comments"
+        When we mention user in comment for "/comments"
+        """
+        [{"text": "test comment @nouser with one user mention @test_user", "item": "xyz"}]
+        """
+        Then we get activity
+        When we patch "/activity/#activity._id#"
+        """
+        {"recipients":[{"user_id": "#user._id#", "read": true}]}
         """
         Then we get error 200
 
@@ -105,7 +127,7 @@ Feature: User Activity
         Given empty "comments"
         When we mention user in comment for "/comments"
         """
-        [{"text": "test comment @no_user with one user mention @test_user", "item": "xyz"}]
+        [{"text": "test comment @nouser with one user mention @test_user", "item": "xyz"}]
         """
         Then we get activity
         When we patch "/activity/#activity._id#"

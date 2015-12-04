@@ -904,7 +904,8 @@
         "username": "admin",
         "data": {
           "name": "aap",
-          "type": "aap",
+          "feeding_service": "file",
+          "feed_parser": "nitf",
           "config": {"path": "/"},
           "source": "aap",
           "is_closed": true
@@ -915,13 +916,9 @@
         "username": "admin",
         "data": {
           "name": "afp",
-          "type": "ftp",
-          "config": {
-            "host": "ftp.com",
-            "username": "user",
-            "password": "password",
-            "dest_path": "/"
-          },
+          "feeding_service": "afp_file",
+          "feed_parser": "newsml12",
+          "config": {"path": "/"},
           "source": "afp",
           "is_closed": true
         }

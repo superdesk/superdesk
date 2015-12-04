@@ -59,7 +59,7 @@ Feature: Rule Sets Resource
         """
       Given "ingest_providers"
         """
-        [{"name": "test", "type": "reuters", "rule_set": "#rule_sets._id#"}]
+        [{"name": "test", "feeding_service": "reuters_http", "feed_parser": "newsml2", "rule_set": "#rule_sets._id#"}]
         """
 
       When we delete "/rule_sets/#rule_sets._id#"

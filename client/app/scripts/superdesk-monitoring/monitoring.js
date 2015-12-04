@@ -8,6 +8,7 @@
         .directive('sdMonitoringView', MonitoringViewDirective)
         .directive('sdMonitoringGroup', MonitoringGroupDirective)
         .directive('sdMonitoringGroupHeader', MonitoringGroupHeader)
+        .directive('sdDeskNotifications', DeskNotificationsDirective)
         .directive('sdItemActionsMenu', ItemActionsMenu)
         .config(configureMonitoring)
         .config(configureSpikeMonitoring)
@@ -612,6 +613,72 @@
                         clickItem(scope.items[nextIndex], event);
                     });
                 }
+            }
+        };
+    }
+
+    /**
+     * Displays the notifications of the desk of a given stage
+     *
+     */
+    DeskNotificationsDirective.$inject = ['desks', 'deskNotifications', 'authoringWorkspace', '$timeout'];
+    function DeskNotificationsDirective(desks, deskNotifications, authoringWorkspace, $timeout) {
+        return {
+            scope: {stage: '=stage'},
+            templateUrl: 'scripts/superdesk-monitoring/views/desk-notifications.html',
+            link: function(scope) {
+
+                function init() {
+                    scope.desk = desks.stageLookup[scope.stage].desk;
+                    scope.notifications = deskNotifications.getNotifications(scope.desk);
+                    scope.notificationCount = scope.notifications ? scope.notifications.length : 0 ;
+                }
+
+                /**
+                 * Opens the story in the notification
+                 * and updates the notification as read
+                 *
+                 * @param {object} notification The notification to be checked
+                 */
+                scope.open = function(notification) {
+                    authoringWorkspace.view(notification.item);
+                    deskNotifications.markAsRead(notification, scope.desk);
+                };
+
+                function getRecipient(notification) {
+                    return _.find(notification.recipients, {'desk_id': scope.desk});
+                }
+
+                /**
+                 * Checks if the given notification is read
+                 *
+                 * @param {object} notification The notification to be checked
+                 * @return {boolean} True if the notification is read by any user
+                 */
+                scope.isRead = function(notification) {
+                    var recipient = getRecipient(notification);
+                    return recipient && recipient.read;
+                };
+
+                /**
+                 * Returns the name of the user who read the notification
+                 *
+                 * @param {object} notification The notification to be checked
+                 * @return {string} Display name of the user
+                 */
+                scope.readBy = function(notification) {
+                    var recipient = getRecipient(notification);
+                    if (recipient && recipient.read) {
+                        return desks.userLookup[recipient.user_id].display_name;
+                    }
+                };
+
+                init();
+
+                // Update the figures if there's a desk mention message
+                scope.$on('desk:mention', function() {
+                    $timeout(init, 5000);
+                });
             }
         };
     }
