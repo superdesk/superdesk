@@ -238,7 +238,6 @@ Feature: Ingest Provider
 	    """
         Then we get 1 emails
 
-
     @auth
     Scenario: Creating a Ingest Provider with same name fails
         Given empty "ingest_providers"
@@ -265,4 +264,28 @@ Feature: Ingest Provider
         Then we get error 400
         """
         {"_issues": {"name": {"unique": 1}}, "_status": "ERR"}
+        """
+
+    @auth
+    Scenario: Creating a Ingest Provider fails if either feeding service or feed parser hasn't been registered with the application
+        Given empty "ingest_providers"
+        When we post to "ingest_providers"
+	    """
+        [{"name": "reuters 4", "source": "reuters", "feeding_service": "reuters", "feed_parser": "newsml2",
+          "is_closed": false, "content_expiry": 0, "config": {"username": "foo", "password": "bar"}
+        }]
+	    """
+        Then we get error 400
+        """
+        {"_status": "ERR", "_message": "Feeding Service reuters not registered with the application"}
+        """
+        When we post to "ingest_providers"
+	    """
+        [{"name": "reuters 4", "source": "reuters", "feeding_service": "reuters_http", "feed_parser": "newsml",
+          "is_closed": false, "content_expiry": 0, "config": {"username": "foo", "password": "bar"}
+        }]
+	    """
+        Then we get error 400
+        """
+        {"_status": "ERR", "_message": "Feed Parser newsml not registered with the application"}
         """
