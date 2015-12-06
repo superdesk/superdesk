@@ -222,7 +222,6 @@ INSTALLED_APPS.extend([
     'apps.dictionaries',
     'apps.duplication',
     'apps.aap.import_text_archive',
-    'apps.aap_mm',
     'apps.spellcheck',
     'apps.templates',
     'apps.archived',
@@ -230,7 +229,9 @@ INSTALLED_APPS.extend([
     'apps.validate',
     'apps.workspace',
     'apps.macros',
-    'apps.archive_broadcast'
+    'apps.archive_broadcast',
+    'apps.search_providers',
+    'apps.search_providers.aap_mm'
 ])
 
 RESOURCE_METHODS = ['GET', 'POST']
