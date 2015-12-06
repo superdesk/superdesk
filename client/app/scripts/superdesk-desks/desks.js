@@ -152,6 +152,8 @@
                     }
                 });
 
+                scope.$on('content:expired', queryItems);
+
                 scope.$on('item:lock', function(_e, data) {
                     _.each(scope.items, function(item) {
                         if (item._id === data.item) {

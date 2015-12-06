@@ -30,13 +30,15 @@ class SearchServiceTestCase(SuperdeskTestCase):
         super().setUp()
         with self.app.app_context():
             self.app.data.insert('ingest', [{}])
-            self.app.data.insert('archive', [{'_id': '456', 'task': {'desk': 1}, ITEM_STATE: CONTENT_STATE.PROGRESS}])
-            self.app.data.insert('archive', [{'_id': '123', 'task': {'desk': 1}, ITEM_STATE: CONTENT_STATE.PUBLISHED}])
-            self.app.data.insert('published', [{'item_id': '123', 'task': {'desk': 1},
-                                                ITEM_STATE: CONTENT_STATE.PUBLISHED,
-                                                'allow_post_publish_actions': True}])
-            self.app.data.insert('published', [{'item_id': '123', 'task': {'desk': 1}, ITEM_STATE: CONTENT_STATE.KILLED,
-                                                'allow_post_publish_actions': True}])
+            self.app.data.insert('archive', [{'_id': '456', 'task': {'desk': 1}, ITEM_STATE: CONTENT_STATE.PROGRESS},
+                                             {'_id': '911', 'task': {'desk': None, 'user': 'test'},
+                                              ITEM_STATE: CONTENT_STATE.PROGRESS},
+                                             {'_id': '123', 'task': {'desk': 1}, ITEM_STATE: CONTENT_STATE.PUBLISHED},
+                                             {'_id': '786', 'task': {'desk': 1}, ITEM_STATE: CONTENT_STATE.PUBLISHED}])
+            self.app.data.insert('published', [{'item_id': '786', 'task': {'desk': 1},
+                                                ITEM_STATE: CONTENT_STATE.PUBLISHED}])
+            self.app.data.insert('archived', [{'item_id': '123', 'task': {'desk': 1},
+                                               ITEM_STATE: CONTENT_STATE.PUBLISHED}])
             init_app(self.app)
             self.app.on_fetched_resource += resource_listener
             self.app.on_fetched_resource_ingest += ingest_listener

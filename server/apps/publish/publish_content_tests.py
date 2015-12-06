@@ -116,7 +116,6 @@ class PublishContentTests(SuperdeskTestCase):
                              {'qcode': '04001002', 'name': 'Weather'}],
                   'expiry': utcnow() + timedelta(minutes=20),
                   'publish_schedule': "2016-05-30T10:00:00+0000",
-                  'allow_post_publish_actions': True,
                   'state': 'scheduled'}]
 
     def setUp(self):

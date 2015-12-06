@@ -883,6 +883,7 @@
                     scope.$on('item:spike', queryItems);
                     scope.$on('item:unspike', queryItems);
                     scope.$on('item:duplicate', queryItems);
+                    scope.$on('content:expired', queryItems);
                     scope.$on('broadcast:preview', function(event, args) {
                         scope.previewingBroadcast = true;
                         scope.preview(args.item);
@@ -1469,7 +1470,8 @@
                             if (!scope.repo) {
                                 scope.repo = {'search': 'local'};
                             } else {
-                                if (!scope.repo.archive && !scope.repo.ingest && !scope.repo.published && !scope.repo.archived) {
+                                if (!scope.repo.archive && !scope.repo.ingest &&
+                                    !scope.repo.published && !scope.repo.archived) {
                                     scope.repo.search = params.repo;
                                 } else {
                                     scope.repo.search = 'local';

@@ -193,8 +193,8 @@
          * @param {string} repo - repository where an item whose identifier is _id can be found.
          */
         this.open = function openAuthoring(_id, read_only, repo) {
-            if (repo === 'legal_archive') {
-                return api.find('legal_archive', _id).then(function(item) {
+            if (_.contains(['legal_archive', 'archived'], repo)) {
+                return api.find(repo, _id).then(function(item) {
                     item._editable = false;
                     return item;
                 });
@@ -484,7 +484,8 @@
             // killed item and item that have last publish action are readonly
             if ((angular.isUndefined(current_item) || angular.isUndefined(user_privileges)) ||
                 (current_item.state === 'killed') ||
-                (angular.isDefined(current_item.takes) && current_item.takes.state === 'killed')) {
+                (angular.isDefined(current_item.takes) && current_item.takes.state === 'killed') ||
+                (current_item._type && current_item._type === 'archived')) {
                 return action;
             }
 
@@ -2348,6 +2349,7 @@
                     }],
                     filters: [
                         {action: 'list', type: 'archive'},
+                        {action: 'list', type: 'archived'},
                         {action: 'list', type: 'legal_archive'},
                         {action: 'view', type: 'item'}
                     ],

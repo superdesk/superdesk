@@ -10,10 +10,12 @@
 
 
 from bson import ObjectId
+
+from superdesk import get_resource_service
 from test_factory import SuperdeskTestCase
 from eve.utils import date_to_str
 from superdesk.utc import get_expiry_date, utcnow
-from apps.archive.commands import RemoveExpiredSpikeContent, get_overdue_scheduled_items
+from apps.archive.commands import get_overdue_scheduled_items
 from apps.archive.archive import SOURCE as ARCHIVE
 from superdesk.errors import SuperdeskApiError
 from datetime import timedelta, datetime
@@ -172,47 +174,44 @@ class RemoveSpikedContentTestCase(SuperdeskTestCase):
         super().setUp()
 
     def test_query_getting_expired_content(self):
-        with self.app.app_context():
-            self.app.data.insert(ARCHIVE, [{'expiry': get_expiry_date(-10), 'state': 'spiked'}])
-            self.app.data.insert(ARCHIVE, [{'expiry': get_expiry_date(0), 'state': 'spiked'}])
-            self.app.data.insert(ARCHIVE, [{'expiry': get_expiry_date(10), 'state': 'spiked'}])
-            self.app.data.insert(ARCHIVE, [{'expiry': get_expiry_date(20), 'state': 'spiked'}])
-            self.app.data.insert(ARCHIVE, [{'expiry': get_expiry_date(30), 'state': 'spiked'}])
-            self.app.data.insert(ARCHIVE, [{'expiry': None, 'state': 'spiked'}])
-            self.app.data.insert(ARCHIVE, [{'unique_id': 97, 'state': 'spiked'}])
+        self.app.data.insert(ARCHIVE, [{'expiry': get_expiry_date(-10), 'state': 'spiked'}])
+        self.app.data.insert(ARCHIVE, [{'expiry': get_expiry_date(0), 'state': 'spiked'}])
+        self.app.data.insert(ARCHIVE, [{'expiry': get_expiry_date(10), 'state': 'spiked'}])
+        self.app.data.insert(ARCHIVE, [{'expiry': get_expiry_date(20), 'state': 'spiked'}])
+        self.app.data.insert(ARCHIVE, [{'expiry': get_expiry_date(30), 'state': 'spiked'}])
+        self.app.data.insert(ARCHIVE, [{'expiry': None, 'state': 'spiked'}])
+        self.app.data.insert(ARCHIVE, [{'unique_id': 97, 'state': 'spiked'}])
 
-            now = date_to_str(utcnow())
-            expired_items = RemoveExpiredSpikeContent().get_expired_items(now)
-            self.assertEquals(2, expired_items.count())
+        now = utcnow()
+        expired_items = get_resource_service(ARCHIVE).get_expired_items(now)
+        self.assertEquals(2, expired_items.count())
 
     def test_query_removing_media_files_keeps(self):
-        with self.app.app_context():
-            self.app.data.insert(ARCHIVE, [{'state': 'spiked',
-                                            'expiry': get_expiry_date(-10),
-                                            'type': 'picture',
-                                            'renditions': self.media}])
+        self.app.data.insert(ARCHIVE, [{'state': 'spiked',
+                                        'expiry': get_expiry_date(-10),
+                                        'type': 'picture',
+                                        'renditions': self.media}])
 
-            self.app.data.insert('ingest', [{'type': 'picture', 'renditions': self.media}])
-            self.app.data.insert('archive_versions', [{'type': 'picture', 'renditions': self.media}])
-            self.app.data.insert('legal_archive', [{'_id': 1, 'type': 'picture', 'renditions': self.media}])
-            self.app.data.insert('legal_archive_versions', [{'_id': 1, 'type': 'picture', 'renditions': self.media}])
+        self.app.data.insert('ingest', [{'type': 'picture', 'renditions': self.media}])
+        self.app.data.insert('archive_versions', [{'type': 'picture', 'renditions': self.media}])
+        self.app.data.insert('legal_archive', [{'_id': 1, 'type': 'picture', 'renditions': self.media}])
+        self.app.data.insert('legal_archive_versions', [{'_id': 1, 'type': 'picture', 'renditions': self.media}])
 
-            archive_items = self.app.data.find_all('archive', None)
-            self.assertEqual(archive_items.count(), 1)
-            deleted = remove_media_files(archive_items[0])
-            self.assertFalse(deleted)
+        archive_items = self.app.data.find_all('archive', None)
+        self.assertEqual(archive_items.count(), 1)
+        deleted = remove_media_files(archive_items[0])
+        self.assertFalse(deleted)
 
     def test_query_getting_overdue_scheduled_content(self):
-        with self.app.app_context():
-            self.app.data.insert(ARCHIVE, [{'publish_schedule': get_expiry_date(-10), 'state': 'published'}])
-            self.app.data.insert(ARCHIVE, [{'publish_schedule': get_expiry_date(-10), 'state': 'scheduled'}])
-            self.app.data.insert(ARCHIVE, [{'publish_schedule': get_expiry_date(0), 'state': 'spiked'}])
-            self.app.data.insert(ARCHIVE, [{'publish_schedule': get_expiry_date(10), 'state': 'scheduled'}])
-            self.app.data.insert(ARCHIVE, [{'unique_id': 97, 'state': 'spiked'}])
+        self.app.data.insert(ARCHIVE, [{'publish_schedule': get_expiry_date(-10), 'state': 'published'}])
+        self.app.data.insert(ARCHIVE, [{'publish_schedule': get_expiry_date(-10), 'state': 'scheduled'}])
+        self.app.data.insert(ARCHIVE, [{'publish_schedule': get_expiry_date(0), 'state': 'spiked'}])
+        self.app.data.insert(ARCHIVE, [{'publish_schedule': get_expiry_date(10), 'state': 'scheduled'}])
+        self.app.data.insert(ARCHIVE, [{'unique_id': 97, 'state': 'spiked'}])
 
-            now = date_to_str(utcnow())
-            overdueItems = get_overdue_scheduled_items(now, 'archive')
-            self.assertEquals(1, overdueItems.count())
+        now = date_to_str(utcnow())
+        overdueItems = get_overdue_scheduled_items(now, 'archive')
+        self.assertEquals(1, overdueItems.count())
 
 
 class ArchiveTestCase(SuperdeskTestCase):

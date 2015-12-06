@@ -86,7 +86,7 @@
         </div>
 
         <div id="authoring-extra-dropdown"
-             ng-if="item._type !== 'legal_archive'"
+             ng-if="item._type !== 'legal_archive' && item._type !== 'archived'"
              class="navbtn dropdown pull-left strict" dropdown>
             <button class="dropdown-toggle" title="{{ :: 'More actions' | translate }}" dropdown-toggle>
                 <i class="icon-dots-vertical"></i>

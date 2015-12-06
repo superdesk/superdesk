@@ -9,23 +9,25 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 from eve.utils import config
-
-from apps.publish.published_item import PublishedItemResource, PublishedItemService
+import logging
+from apps.publish.published_item import published_item_fields
+from apps.packages import PackageService
 from superdesk.metadata.utils import aggregations
+from superdesk.metadata.item import CONTENT_TYPE, ITEM_TYPE, not_analyzed
+from superdesk.metadata.packages import PACKAGE_TYPE, TAKES_PACKAGE, RESIDREF, SEQUENCE
 from superdesk.notification import push_notification
-from apps.archive.common import get_user
+from apps.archive.common import get_user, item_schema
 import superdesk
-from superdesk.utc import utcnow
+from superdesk.services import BaseService
+from superdesk.resource import Resource
 
-query_filters = [{'allow_post_publish_actions': False}, {'can_be_removed': False}]
+logger = logging.getLogger(__name__)
 
 
-class ArchivedResource(PublishedItemResource):
+class ArchivedResource(Resource):
     datasource = {
-        'source': 'published',
         'search_backend': 'elastic',
         'aggregations': aggregations,
-        'elastic_filter': {'and': [{'term': query_filters[0]}, {'term': query_filters[1]}]},
         'default_sort': [('_updated', -1)],
         'projection': {
             'old_version': 0,
@@ -33,38 +35,58 @@ class ArchivedResource(PublishedItemResource):
         }
     }
 
+    mongo_prefix = 'ARCHIVED'
+
+    extra_fields = published_item_fields.copy()
+    # item_id + _current_version will be used fetch archived item.
+    extra_fields['archived_id'] = {
+        'type': 'string',
+        'mapping': not_analyzed
+    }
+
+    schema = item_schema(extra_fields)
     resource_methods = ['GET']
     item_methods = ['GET', 'DELETE']
-
     privileges = {'DELETE': 'archived'}
 
+    additional_lookup = {
+        'url': 'regex("[\w,.:-]+")',
+        'field': 'archived_id'
+    }
 
-class ArchivedService(PublishedItemService):
 
-    def find_by_item_ids(self, item_ids):
-        """
-        Fetches items whose item_id is passed in item_ids
+class ArchivedService(BaseService):
 
-        :param item_ids: list of item_id
-        :return: items from archived collection
-        """
+    def on_create(self, docs):
+        package_service = PackageService()
 
-        query = {'$and': [{'item_id': {'$in': item_ids}}, query_filters[0], query_filters[1]]}
-        return super().get_from_mongo(req=None, lookup=query)
+        for doc in docs:
+            doc.pop('lock_user', None)
+            doc.pop('lock_time', None)
+            doc.pop('lock_session', None)
+            doc['archived_id'] = self._get_archived_id(doc.get('item_id'), doc.get(config.VERSION))
 
-    def on_delete(self, doc):
-        """
-        This method throws exception when invoked on PublishedItemService. Overriding to avoid that.
-        """
+            if doc.get(ITEM_TYPE) == CONTENT_TYPE.COMPOSITE:
+                is_takes_package = doc.get(PACKAGE_TYPE) == TAKES_PACKAGE
+                for ref in package_service.get_item_refs(doc):
+                    ref['location'] = 'archived'
 
-        pass
+                    if is_takes_package and not ref.get('is_published'):
+                        # if take is not published
+                        package_service.remove_ref_from_inmem_package(doc, ref.get(RESIDREF))
 
-    def delete(self, lookup):
-        super().patch(lookup[config.ID_FIELD], {'can_be_removed': True, '_updated': utcnow()})
+                if is_takes_package:
+                    doc[SEQUENCE] = len(package_service.get_item_refs(doc))
 
     def on_deleted(self, doc):
         user = get_user()
         push_notification('item:deleted:archived', item=str(doc[config.ID_FIELD]), user=str(user.get(config.ID_FIELD)))
+
+    def on_fetched_item(self, doc):
+        doc['_type'] = 'archived'
+
+    def _get_archived_id(self, item_id, version):
+        return '{}:{}'.format(item_id, version)
 
 
 superdesk.privilege(name='archived', label='Archived Management', description='User can remove items from the archived')

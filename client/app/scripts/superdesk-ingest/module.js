@@ -1483,7 +1483,7 @@ define([
                 icon: 'remove',
                 monitor: true,
                 controller: ['api', 'data', function(api, data) {
-                    var itemToDelete = {'_id': data.item.item_id, '_etag': data.item._etag};
+                    var itemToDelete = {'_id': data.item._id, '_etag': data.item._etag};
                     api
                         .remove(itemToDelete, {}, 'archived')
                         .then(

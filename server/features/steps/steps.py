@@ -1906,3 +1906,17 @@ def run_import_legal_publish_queue(context):
     with context.app.test_request_context(context.app.config['URL_PREFIX']):
         from apps.legal_archive import ImportLegalPublishQueueCommand
         ImportLegalPublishQueueCommand().run()
+
+
+@when('we expire items')
+def expire_content(context):
+    with context.app.test_request_context(context.app.config['URL_PREFIX']):
+        ids = json.loads(apply_placeholders(context, context.text))
+        expiry = utcnow() - timedelta(minutes=5)
+        for item_id in ids:
+            original = get_resource_service('archive').find_one(req=None, _id=item_id)
+            get_resource_service('archive').system_update(item_id, {'expiry': expiry}, original)
+            get_resource_service('published').update_published_items(item_id, 'expiry', expiry)
+
+        from apps.archive.commands import RemoveExpiredContent
+        RemoveExpiredContent().run()

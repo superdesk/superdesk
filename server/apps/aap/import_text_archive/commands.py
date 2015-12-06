@@ -240,9 +240,8 @@ class AppImportTextArchiveCommand(superdesk.Command):
                     pass
 
             item['pubstatus'] = 'usable'
-            item['allow_post_publish_actions'] = False
 
-            res = superdesk.get_resource_service('published')
+            res = superdesk.get_resource_service('archived')
             original = res.find_one(req=None, guid=item['guid'])
             if not original:
                 item['_id'] = item['guid']
