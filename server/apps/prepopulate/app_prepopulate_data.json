@@ -244,7 +244,13 @@
 		            "type" : "integer",
 		            "required": true,
 		            "allowed": [1, 2, 3, 4, 5]
-		        }
+		        },
+                "body_html": {
+                    "type": "string",
+                    "required": true,
+                    "nullable": false,
+                    "empty": false
+                }
 		    }
 		},
 		"resource": "validators",

@@ -70,9 +70,7 @@
             if (angular.isDefined(item[key])) {
                 var elem = document.createElement('div');
                 elem.innerHTML = item[key];
-                if (elem.textContent !== '') {
-                    item[key] = elem.textContent;
-                }
+                item[key] = elem.textContent;
             }
         });
     }
@@ -295,6 +293,16 @@
             }
 
             stripHtml(updates);
+
+            // If the text equivalent of the body_html is empty then set the body empty
+            if (angular.isDefined(updates.body_html)) {
+                var elem = document.createElement('div');
+                elem.innerHTML = updates.body_html;
+                if (elem.textContent === '') {
+                    updates.body_html = '';
+                }
+            }
+
         };
 
         this.publish = function publish(orig, diff, action) {

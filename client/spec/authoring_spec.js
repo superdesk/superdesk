@@ -3,7 +3,8 @@
 var monitoring = require('./helpers/monitoring'),
     authoring = require('./helpers/authoring'),
     ctrlKey = require('./helpers/utils').ctrlKey,
-    ctrlShiftKey = require('./helpers/utils').ctrlShiftKey;
+    ctrlShiftKey = require('./helpers/utils').ctrlShiftKey,
+    assertToastMsg = require('./helpers/utils').assertToastMsg;
 
 describe('authoring', function() {
 
@@ -250,5 +251,16 @@ describe('authoring', function() {
         expect(authoring.getHeadlineText()).toBe('KILL NOTICE');
         authoring.sendToButton.click();
         expect(authoring.kill_button.isDisplayed()).toBe(true);
+    });
+
+    it('Emptied body text fails to validate', function() {
+        expect(monitoring.getTextItem(1, 0)).toBe('item5');
+        monitoring.actionOnItem('Edit', 1, 0);
+        authoring.writeText('');
+        ctrlShiftKey(protractor.Key.END);
+        ctrlKey('x');
+        authoring.save();
+        authoring.publish();
+        assertToastMsg('error', 'BODY_HTML empty values not allowed');
     });
 });
