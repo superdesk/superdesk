@@ -1135,6 +1135,8 @@
                     scope.saveas = function() {
                         scope.edit = _.clone(scope.editingSearch) || {};
                         delete scope.edit._id;
+                        scope.edit.name = '';
+                        scope.edit.description = '';
                     };
 
                     scope.cancel = function() {
