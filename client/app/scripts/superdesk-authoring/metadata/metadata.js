@@ -575,7 +575,7 @@ angular.module('superdesk.authoring.metadata', ['superdesk.authoring.widgets'])
                 template: 'scripts/superdesk-authoring/metadata/views/metadata-widget.html',
                 order: 1,
                 side: 'right',
-                display: {authoring: true, packages: true, legalArchive: true}
+                display: {authoring: true, packages: true, killedItem: true, legalArchive: true}
             });
     }])
 

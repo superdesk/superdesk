@@ -1,13 +1,13 @@
 <div class="dropdown" ng-class="{'dropright': icon, 'dropdown-noarrow': !icon}" dropdown sd-dropdown-focus sd-dropdown-position>
-    <button class="dropdown-toggle line-input" dropdown-toggle ng-if="(field !== 'place' && field !== 'genre') && !icon">
+    <button ng-disabled="disabled" class="dropdown-toggle line-input" dropdown-toggle ng-if="(field !== 'place' && field !== 'genre') && !icon">
         {{ item[field].name || item[field] ? item[field].name || item[field] : "none" | translate }}
         <b class="caret"></b>
     </button>
-    <button class="dropdown-toggle line-input" dropdown-toggle ng-if="(field === 'place' || field === 'genre') && !icon">
+    <button ng-disabled="disabled" class="dropdown-toggle line-input" dropdown-toggle ng-if="(field === 'place' || field === 'genre') && !icon">
         {{ item[field].length > 0 ? item[field][0].name : "none" | translate }}
         <b class="caret"></b>
     </button>
-    <button class="dropdown-toggle line-input" dropdown-toggle ng-if="icon">
+    <button ng-disabled="disabled" class="dropdown-toggle line-input" dropdown-toggle ng-if="icon">
         <span class="{{icon}}-{{item[field]}}">{{item[field] ? item[field] : 0}}</span>
          <b class="caret"></b>
     </button>

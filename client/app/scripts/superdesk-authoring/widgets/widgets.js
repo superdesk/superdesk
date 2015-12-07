@@ -31,7 +31,7 @@ function WidgetsManagerCtrl($scope, $routeParams, authoringWidgets, archiveServi
         if (archiveService.isLegal(item)) {
             display = 'legalArchive';
         } else {
-            display = item.type === 'composite' ? 'packages' : 'authoring';
+            display = item.type === 'composite' ? 'packages' : item.state === 'killed' ? 'killedItem' : 'authoring';
         }
 
         $scope.widgets = authoringWidgets.filter(function(widget) {
