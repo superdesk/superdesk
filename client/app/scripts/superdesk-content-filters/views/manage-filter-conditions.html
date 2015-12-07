@@ -7,7 +7,7 @@
         </button>
     </div>
 
-    <div class="content">
+    <div class="content" ng-if="loadedFilters">
         <ul class="pills-list provider-list">
             <li ng-repeat="filterCondition in filterConditions track by filterCondition._id" class="clearfix">
                 <div class="header">
@@ -41,7 +41,7 @@
 
                 <div class="field">
                     <label translate>Field</label>
-                    <select class="input" required ng-model="filterCondition.field" >
+                    <select class="input" required ng-model="filterCondition.field" ng-change="clearConditionValues()">
                         <option value="{{parameter.field}}" ng-selected="parameter.field === filterCondition.field" ng-repeat="parameter in filterConditionParameters">{{:: parameter.field}}</option>
                     </select>
                 </div>
