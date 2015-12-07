@@ -68,14 +68,16 @@ describe('templates', function() {
             templates.fetchTemplates();
             expect(api.query).toHaveBeenCalledWith('content_templates', {
                 max_results: 10,
-                page: 1
+                page: 1,
+                where: '{"$and":[{"is_public":{"$ne":false}}]}'
             });
         }));
         it('can fetch templates using page parameters', inject(function(api, templates) {
             templates.fetchTemplates(2, 25);
             expect(api.query).toHaveBeenCalledWith('content_templates', {
                 max_results: 25,
-                page: 2
+                page: 2,
+                where: '{"$and":[{"is_public":{"$ne":false}}]}'
             });
         }));
         it('can fetch templates using type parameter', inject(function(api, templates) {
@@ -83,7 +85,7 @@ describe('templates', function() {
             expect(api.query).toHaveBeenCalledWith('content_templates', {
                 max_results: 10,
                 page: 1,
-                where: '{"$and":[{"template_type":"create"}]}'
+                where: '{"$and":[{"template_type":"create","is_public":{"$ne":false}}]}'
             });
         }));
         it('can fetch templates using desk parameter', inject(function(api, templates) {
@@ -107,7 +109,7 @@ describe('templates', function() {
             expect(api.query).toHaveBeenCalledWith('content_templates', {
                 max_results: 10,
                 page: 1,
-                where: '{"$and":[{"template_name":{"$regex":"keyword","$options":"-i"}}]}'
+                where: '{"$and":[{"template_name":{"$regex":"keyword","$options":"-i"},"is_public":{"$ne":false}}]}'
             });
         }));
         it('can fetch templates by id', inject(function(api, templates) {

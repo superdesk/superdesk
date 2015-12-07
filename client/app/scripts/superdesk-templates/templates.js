@@ -92,6 +92,9 @@
                 if (desk) { // all non private desk templates
                     criteria.$or.push({template_desk: desk, is_public: {$ne: false}});
                 }
+            } else {
+                // only show public templates
+                criteria.is_public = {$ne: false};
             }
 
             if (!_.isEmpty(criteria)) {
@@ -241,10 +244,11 @@
                 };
 
                 $scope.edit = function(template) {
-                    $scope.origTemplate = template || {'type': 'text'};
+                    $scope.origTemplate = template || {type: 'text', is_public: true};
                     $scope.template = _.create($scope.origTemplate);
                     $scope.template.schedule = $scope.origTemplate.schedule || {};
                     $scope.template.data = $scope.origTemplate.data || {};
+                    $scope.template.is_public = $scope.template.is_public !== false;
                     $scope.item = $scope.template.data;
                     $scope._editable = true;
                     $scope.updateStages($scope.template.template_desk);
@@ -451,8 +455,7 @@
             controller: TemplatesSettingsController,
             category: superdesk.MENU_SETTINGS,
             privileges: {content_templates: 1},
-            priority: 2000,
-            beta: true
+            priority: 2000
         });
     }
 })();
