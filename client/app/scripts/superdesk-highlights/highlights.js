@@ -160,6 +160,16 @@
         };
     }
 
+    HighlightsInfoDirective.$inject = [];
+    function HighlightsInfoDirective() {
+        return {
+            scope: {
+                item: '=item'
+            },
+            templateUrl: 'scripts/superdesk-highlights/views/highlights_info_directive.html'
+        };
+    }
+
     HighlightsTitleDirective.$inject = ['highlightsService', '$timeout'];
     function HighlightsTitleDirective(highlightsService, $timeout) {
         return {
@@ -455,6 +465,7 @@
     .directive('sdMarkHighlightsDropdown', MarkHighlightsDropdownDirective)
     .directive('sdMultiMarkHighlightsDropdown', MultiMarkHighlightsDropdownDirective)
     .directive('sdPackageHighlightsDropdown', PackageHighlightsDropdownDirective)
+    .directive('sdHighlightsInfo', HighlightsInfoDirective)
     .directive('sdHighlightsTitle', HighlightsTitleDirective)
     .directive('sdSearchHighlights', SearchHighlightsDirective)
     .directive('sdHighlightsConfig', function() {
