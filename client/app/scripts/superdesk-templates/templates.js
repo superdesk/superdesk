@@ -322,7 +322,7 @@
             var data = {
                 template_name: vm.name,
                 template_type: vm.type,
-                template_desk: vm.is_desk ? vm.desk : null,
+                template_desk: vm.is_public ? vm.desk : null,
                 is_public: vm.is_public,
                 data: templates.pickItemData(item)
             };

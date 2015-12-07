@@ -6,7 +6,7 @@ describe('templates', function() {
 
     describe('templates widget', function() {
 
-        var existingTemplate = {template_name: 'template1'};
+        var existingTemplate = {template_name: 'template1', template_desk: 'sports'};
 
         beforeEach(inject(function(desks, api, $q) {
             spyOn(desks, 'fetchCurrentUserDesks').and.returnValue($q.when({_items: []}));
@@ -42,6 +42,7 @@ describe('templates', function() {
             expect(api.find).toHaveBeenCalledWith('content_templates', '123');
             expect(ctrl.name).toBe(existingTemplate.template_name);
             expect(ctrl.type).toBe('create');
+            expect(ctrl.desk).toBe('sports');
             ctrl.save();
             expect(api.save.calls.argsFor(0)[1]).toBe(existingTemplate);
         }));
@@ -51,8 +52,11 @@ describe('templates', function() {
             var ctrl = $controller('CreateTemplateController', {item: item});
             $rootScope.$digest();
             ctrl.name = 'rename it';
+            ctrl.is_public = true;
             ctrl.save();
             expect(api.save.calls.argsFor(0)[1]).not.toBe(existingTemplate);
+            expect(api.save.calls.argsFor(0)[1].is_public).toBe(true);
+            expect(api.save.calls.argsFor(0)[1].template_desk).toBe('sports');
         }));
     });
 
