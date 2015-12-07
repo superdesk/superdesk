@@ -134,19 +134,23 @@
         $scope.valueFieldLookup = {};
 
         $scope.edit = function(fc) {
-            contentFilters.getFilterConditionParameters().then(function(params) {
-                $scope.filterConditionParameters = params;
-                _.each(params, function(param) {
-                    $scope.operatorLookup[param.field] = param.operators;
-                    $scope.valueLookup[param.field] = param.values;
-                    $scope.valueFieldLookup[param.field] = param.value_field;
-                });
+            $scope.origFilterCondition = fc || {};
+            $scope.filterCondition = _.create($scope.origFilterCondition);
+            $scope.filterCondition.values = [];
 
-                $scope.origFilterCondition = fc || {};
-                $scope.filterCondition = _.create($scope.origFilterCondition);
-                $scope.filterCondition.values = [];
-                setFilterValues();
-            });
+            if ($scope.isListValue()) {
+                var values = $scope.filterCondition.value.split(',');
+                var all_values = $scope.valueLookup[$scope.filterCondition.field];
+                var value_field = $scope.valueFieldLookup[$scope.filterCondition.field];
+
+                _.each(values, function(value) {
+                    var v = _.find(all_values, function(val) {
+                        return val[value_field].toString() === value;
+                    });
+
+                    $scope.filterCondition.values.push(v);
+                });
+            }
         };
 
         $scope.isListValue = function() {
@@ -211,23 +215,16 @@
             }
         };
 
-        var setFilterValues = function() {
-            if ($scope.isListValue()) {
-                var values = $scope.filterCondition.value.split(',');
-                var all_values = $scope.valueLookup[$scope.filterCondition.field];
-                var value_field = $scope.valueFieldLookup[$scope.filterCondition.field];
-
-                _.each(values, function(value) {
-                    var v = _.find(all_values, function(val) {
-                        return val[value_field].toString() === value;
-                    });
-
-                    $scope.filterCondition.values.push(v);
-                });
-            }
-        };
-
         var fetchFilterConditions = function() {
+            contentFilters.getFilterConditionParameters().then(function(params) {
+                $scope.filterConditionParameters = params;
+                _.each(params, function(param) {
+                    $scope.operatorLookup[param.field] = param.operators;
+                    $scope.valueLookup[param.field] = param.values;
+                    $scope.valueFieldLookup[param.field] = param.value_field;
+                });
+            });
+
             contentFilters.getAllFilterConditions().then(function(_filterConditions) {
                 $scope.filterConditions = $filter('sortByName')(_filterConditions);
             });

@@ -13,7 +13,7 @@
                 <div class="header">
                 	<div>
 	                    <h6>{{ filterCondition.name }}</h6>
-	                    <span class="pull-right-20">({{filterCondition.field + ' ' + filterCondition.operator + ' ' + filterCondition.value}})</span>
+	                    <span class="pull-right-20">{{filterCondition | formatFilterCondition:valueLookup[filterCondition.field]}}</span>
                 	</div>
 
                     <div class="actions">
