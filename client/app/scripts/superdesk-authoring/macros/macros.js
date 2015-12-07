@@ -84,7 +84,7 @@ angular.module('superdesk.authoring.macros', [])
                 order: 6,
                 needEditable: true,
                 side: 'right',
-                display: {authoring: true, packages: true, legalArchive: false}
+                display: {authoring: true, packages: true, killedItem: false, legalArchive: false}
             });
     }]);
 })();

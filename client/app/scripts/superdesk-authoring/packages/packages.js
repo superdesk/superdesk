@@ -39,7 +39,7 @@
             template: 'scripts/superdesk-authoring/packages/views/packages-widget.html',
             order: 5,
             side: 'right',
-            display: {authoring: true, packages: true, legalArchive: false}
+            display: {authoring: true, packages: true, killedItem: true, legalArchive: false}
         });
     }])
     .controller('PackagesWidgetCtrl', PackagesCtrl);

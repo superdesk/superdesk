@@ -17,7 +17,7 @@ define([
                 template: require.toUrl('./widget-relatedItem.html'),
                 order: 7,
                 side: 'right',
-                display: {authoring: true, packages: false, legalArchive: false}
+                display: {authoring: true, packages: false, killedItem: true, legalArchive: false}
             });
         }])
         .controller('relatedItemController',
