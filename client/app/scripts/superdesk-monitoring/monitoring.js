@@ -131,7 +131,11 @@
                 break;
 
             default:
-                query.filter({term: {'task.stage': card._id}});
+                if (card.singleViewType != null && card.singleViewType === 'desk') {
+                    query.filter({term: {'task.desk': card.deskId}});
+                } else {
+                    query.filter({term: {'task.stage': card._id}});
+                }
                 break;
             }
 
@@ -169,6 +173,7 @@
                 return true;
             }
         }
+
     }
 
     MonitoringController.$inject = ['$location', 'desks'];
@@ -184,6 +189,7 @@
 
         this.singleGroup = null;
         this.viewSingleGroup = viewSingleGroup;
+        this.viewMonitoringHome = viewMonitoringHome;
 
         this.queryParam = $location.search();
 
@@ -218,8 +224,14 @@
             vm.state['with-authoring'] = !!item;
         }
 
-        function viewSingleGroup(group) {
+        function viewSingleGroup(group, type) {
+            group.singleViewType = type;
             vm.singleGroup = group;
+        }
+
+        function viewMonitoringHome() {
+            vm.singleGroup.singleViewType = null;
+            vm.singleGroup = null;
         }
 
     }
@@ -333,12 +345,30 @@
                 });
 
                 /*
-                 * Change between simple and group by keyboard
+                 * Change between single stage view and grouped view by keyboard
                  * Keyboard shortcut: Ctrl + g
                  */
                 keyboardManager.bind('ctrl+g', function () {
                     if (scope.selected) {
-                        monitoring.viewSingleGroup(monitoring.singleGroup ? null : monitoring.selectedGroup);
+                        if (monitoring.singleGroup == null) {
+                            monitoring.viewSingleGroup(monitoring.selectedGroup, 'stage');
+                        } else {
+                            monitoring.viewMonitoringHome();
+                        }
+                    }
+                }, {inputDisabled: false});
+
+                /*
+                 * Change between single desk view and grouped view by keyboard
+                 * Keyboard shortcut: Ctrl + g
+                 */
+                keyboardManager.bind('ctrl+alt+g', function () {
+                    if (scope.selected) {
+                        if (monitoring.singleGroup == null) {
+                            monitoring.viewSingleGroup(monitoring.selectedGroup, 'desk');
+                        } else {
+                            monitoring.viewMonitoringHome();
+                        }
                     }
                 }, {inputDisabled: false});
 
@@ -540,8 +570,8 @@
                     render();
                 }
 
-                function viewSingleGroup(group) {
-                    monitoring.viewSingleGroup(group);
+                function viewSingleGroup(group, type) {
+                    monitoring.viewSingleGroup(group, type);
                 }
 
                 function merge(newItems) {

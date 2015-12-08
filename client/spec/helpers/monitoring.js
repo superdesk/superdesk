@@ -63,6 +63,16 @@ function Monitoring() {
         return this.getGroup(group).all(by.repeater('item in items'));
     };
 
+    this.actionOnDeskSingleView = function() {
+        var elem = element.all(by.className('stage-name'));
+        var header = elem.all(by.css('[ng-click="viewSingleGroup(group, \'desk\')"]')).first();
+        header.click();
+    };
+
+    this.getSingleViewItemCount = function() {
+        return element.all(by.repeater('item in items track by generateTrackByIdentifier(item)')).count();
+    };
+
     this.getSpikedItems = function() {
         return element.all(by.repeater('item in items'));
     };

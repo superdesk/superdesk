@@ -269,6 +269,7 @@
                 if (card.type === 'stage') {
                     var stage = self.stageLookup[card._id];
                     var desk = self.deskLookup[stage.desk];
+                    card.deskId = stage.desk;
                     card.header = desk.name;
                     card.subheader = stage.name;
                 } else if (card.type === 'deskOutput') {
