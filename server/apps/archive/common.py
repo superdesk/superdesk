@@ -8,6 +8,7 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 from bson import ObjectId
+from uuid import uuid1
 
 import flask
 from eve.utils import config
@@ -18,7 +19,6 @@ from pytz import timezone
 
 import superdesk
 from superdesk.users.services import get_sign_off
-from superdesk.celery_app import update_key
 from superdesk.utc import utcnow, get_expiry_date
 from settings import ORGANIZATION_NAME_ABBREVIATION
 from superdesk import get_resource_service
@@ -169,16 +169,9 @@ def generate_unique_id_and_name(item, repo_type=ARCHIVE):
     """
 
     try:
-        key_name = 'TEST_{}_SEQ'.format(repo_type.upper()) if superdesk.app.config.get('SUPERDESK_TESTING', False) \
-            else '{}_SEQ'.format(repo_type.upper())
-
-        unique_id = update_key(key_name, flag=True)
-
-        if unique_id:
-            item['unique_id'] = unique_id
-            item['unique_name'] = "#" + str(unique_id)
-        else:
-            raise IdentifierGenerationError()
+        unique_id = str(uuid1())
+        item['unique_id'] = unique_id
+        item['unique_name'] = "#" + unique_id
     except Exception as e:
         raise IdentifierGenerationError() from e
 
