@@ -471,8 +471,13 @@ def item_schema(extra=None):
             'type': 'string',
             'nullable': True,
             'mapping': not_analyzed
+        },
+        'company_codes': {
+            'type': 'list',
+            'mapping': not_analyzed
         }
     }
+
     schema.update(metadata_schema)
     if extra:
         schema.update(extra)

@@ -66,7 +66,8 @@ class NewsMLG2FormatterTest(SuperdeskTestCase):
         'place': [{'qcode': 'Australia', 'name': 'Australia',
                    'state': '', 'country': 'Australia',
                    'world_region': 'Oceania'}],
-        'embargo': embargo_ts
+        'embargo': embargo_ts,
+        'company_codes': [{'name': 'YANCOAL AUSTRALIA LIMITED', 'qcode': 'YAL', 'security_exchange': 'ASX'}]
     }
 
     package = {
@@ -634,7 +635,7 @@ class NewsMLG2FormatterTest(SuperdeskTestCase):
         self.app.data.insert('vocabularies', self.vocab)
         self.app.data.insert('archive', self.packaged_articles)
 
-    def testFomatter(self):
+    def test_formatter(self):
         seq, doc = self.formatter.format(self.article, {'name': 'Test Subscriber'})[0]
         xml = etree.fromstring(doc)
         self.assertEqual(xml.find(
@@ -692,6 +693,20 @@ class NewsMLG2FormatterTest(SuperdeskTestCase):
             '{http://iptc.org/std/nar/2006-10-01/}itemSet/{http://iptc.org/std/nar/2006-10-01/}newsItem/' +
             '{http://iptc.org/std/nar/2006-10-01/}itemMeta/{http://iptc.org/std/nar/2006-10-01/}embargoed').text,
             self.embargo_ts.isoformat())
+
+        company_details = xml.find(
+            '{http://iptc.org/std/nar/2006-10-01/}itemSet/{http://iptc.org/std/nar/2006-10-01/}newsItem/' +
+            '{http://iptc.org/std/nar/2006-10-01/}assert/{http://iptc.org/std/nar/2006-10-01/}organisationDetails/' +
+            '{http://iptc.org/std/nar/2006-10-01/}hasInstrument[@symbol]')
+        self.assertEqual(company_details.attrib.get('symbol', ''), 'YAL')
+        self.assertEqual(company_details.attrib.get('marketlabel', ''), 'ASX')
+
+        company_details = xml.find(
+            '{http://iptc.org/std/nar/2006-10-01/}itemSet/{http://iptc.org/std/nar/2006-10-01/}newsItem/' +
+            '{http://iptc.org/std/nar/2006-10-01/}contentMeta/' +
+            '{http://iptc.org/std/nar/2006-10-01/}subject[@type="cpnat:organisation"]/' +
+            '{http://iptc.org/std/nar/2006-10-01/}name')
+        self.assertEqual(company_details.text, 'YANCOAL AUSTRALIA LIMITED')
 
     def testPreformattedFomatter(self):
         article = dict(self.article)
