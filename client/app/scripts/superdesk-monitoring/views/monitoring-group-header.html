@@ -1,7 +1,24 @@
 <div class="stage-header clearfix">
-    <span class="stage-name">
+    <span class="stage-name" ng-if="group.subheader && group.singleViewType == null">
+        <a href="" ng-click="viewSingleGroup(group, 'desk')">{{ :: group.header }}</a>
+        <span>/</span>
+        <a href="" ng-click="viewSingleGroup(group, 'stage')">
+        	<span>{{ :: group.subheader }} </span> {{ :: group.type}}
+        </a>
+    </span>
+    <span class="stage-name" ng-if="group.singleViewType === 'desk'">
+        <a href="">
+            {{ :: group.header }} {{ :: group.singleViewType}}
+        </a>
+    </span>
+    <span class="stage-name" ng-if="group.singleViewType === 'stage'">
+        <a href="">
+            {{ :: group.header }} <span ng-show="group.subheader">/ {{ :: group.subheader }} </span> {{ :: group.singleViewType}}
+        </a>
+    </span>
+    <span class="stage-name" ng-if="!group.subheader">
         <a href="" ng-click="viewSingleGroup(group)">
-            {{ :: group.header }} <span ng-show="group.subheader">/ {{ :: group.subheader }} </span> {{ :: group.type}}
+            {{ :: group.header }} {{ :: group.type}}
         </a>
     </span>
     <span class="label label-total">{{ total }}</span>

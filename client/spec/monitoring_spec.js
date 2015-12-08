@@ -452,4 +452,23 @@ describe('monitoring', function() {
         expect(authoring.save_button.isDisplayed()).toBe(true);
     });
 
+    it('can display desk content in desk single view', function() {
+        expect(monitoring.getGroups().count()).toBe(6);
+        //exclude deskOutput
+        monitoring.showMonitoringSettings();
+        monitoring.toggleDeskOutput(0);
+        monitoring.saveSettings();
+        expect(monitoring.getGroups().count()).toBe(5);
+
+        //ensure each stage items counts
+        expect(monitoring.getGroupItems(0).count()).toBe(0);
+        expect(monitoring.getGroupItems(1).count()).toBe(0);
+        expect(monitoring.getGroupItems(2).count()).toBe(4);
+        expect(monitoring.getGroupItems(3).count()).toBe(4);
+        expect(monitoring.getGroupItems(4).count()).toBe(0);
+
+        //view all items in desk single view
+        monitoring.actionOnDeskSingleView();
+        expect(monitoring.getSingleViewItemCount()).toBe(8);
+    });
 });
