@@ -132,6 +132,7 @@
         $scope.operatorLookup = {};
         $scope.valueLookup = {};
         $scope.valueFieldLookup = {};
+        $scope.loadedFilters = false;
 
         $scope.edit = function(fc) {
             $scope.origFilterCondition = fc || {};
@@ -216,6 +217,10 @@
         };
 
         var fetchFilterConditions = function() {
+            contentFilters.getAllFilterConditions().then(function(_filterConditions) {
+                $scope.filterConditions = $filter('sortByName')(_filterConditions);
+            });
+
             contentFilters.getFilterConditionParameters().then(function(params) {
                 $scope.filterConditionParameters = params;
                 _.each(params, function(param) {
@@ -223,15 +228,24 @@
                     $scope.valueLookup[param.field] = param.values;
                     $scope.valueFieldLookup[param.field] = param.value_field;
                 });
-            });
-
-            contentFilters.getAllFilterConditions().then(function(_filterConditions) {
-                $scope.filterConditions = $filter('sortByName')(_filterConditions);
+                $scope.loadedFilters = true;
             });
         };
 
-        fetchFilterConditions();
+        /**
+         * Triggered when the value of Field property changes and clears the existing values from the condition.
+         */
+        $scope.clearConditionValues = function() {
+            if ($scope.filterCondition.value) {
+                $scope.filterCondition.value = null;
+            }
 
+            if ($scope.filterCondition.values && $scope.filterCondition.values.length > 0) {
+                $scope.filterCondition.values.length = 0;
+            }
+        };
+
+        fetchFilterConditions();
     }
 
     /**
