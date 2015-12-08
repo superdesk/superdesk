@@ -152,6 +152,22 @@
                     }
                 });
 
+                scope.$on('item:lock', function(_e, data) {
+                    _.each(scope.items, function(item) {
+                        if (item._id === data.item) {
+                            item.lock_user = data.user;
+                        }
+                    });
+                });
+
+                scope.$on('item:unlock', function(_e, data) {
+                    _.each(scope.items, function(item) {
+                        if (item._id === data.item) {
+                            item.lock_user = null;
+                        }
+                    });
+                });
+
                 var container = elem[0];
                 var offsetY = 0;
                 elem.bind('scroll', function() {
