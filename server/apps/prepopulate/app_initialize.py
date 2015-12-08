@@ -23,6 +23,9 @@ For example:
 - index on username field.
 Alternatively index param can be specified as
 [[("first_name", pymongo.ASCENDING), ("last_name", pymongo.ASCENDING)], [("username", pymongo.ASCENDING)]]
+Options can be sent to index creation and in this case the last element in the list is the options
+dictionary:
+[[("first_name", pymongo.ASCENDING), ("last_name", pymongo.ASCENDING)], {'sparse': True}]]
 """
 __entities__ = {
     'roles': ('roles.json', ['name'], False),
@@ -35,8 +38,42 @@ __entities__ = {
     'vocabularies': ('vocabularies.json', '', True),
     'validators': ('validators.json', '', True),
     'content_templates': ('content_templates.json', ['template_name'], False),
-    'published': (None, [[('item_id', pymongo.ASCENDING),
-                         ('state', pymongo.ASCENDING)]], False)
+    'published': (None, [[('can_be_removed', pymongo.ASCENDING)],
+                         [('expiry', pymongo.ASCENDING),
+                          ('state', pymongo.ASCENDING),
+                          ('allow_post_publish_actions', pymongo.ASCENDING),
+                          ('_created', pymongo.ASCENDING)],
+                         [('item_id', pymongo.ASCENDING),
+                          ('state', pymongo.ASCENDING)],
+                         [('publish_schedule', pymongo.ASCENDING),
+                          ('state', pymongo.ASCENDING)]], False),
+    'activity': (None, [[('_created', pymongo.DESCENDING),
+                         {'expireAfterSeconds': 86400}],
+                        [('item', pymongo.ASCENDING),
+                         ('read', pymongo.ASCENDING),
+                         ('user', pymongo.ASCENDING)],
+                        [('resource', pymongo.ASCENDING),
+                         ('data.provider_id', pymongo.ASCENDING)]], False),
+    'archive': (None, [[('_updated', pymongo.ASCENDING)],
+                       [('expiry', pymongo.ASCENDING),
+                        ('state', pymongo.ASCENDING)],
+                       [('groups.refs.guid', pymongo.ASCENDING), {'sparse': True}],
+                       [('publish_schedule', pymongo.ASCENDING),
+                        ('state', pymongo.ASCENDING)],
+                       [('unique_name', pymongo.ASCENDING)]], False),
+    'archive_versions': (None, [[('_id_document', pymongo.ASCENDING),
+                                 ('_current_version', pymongo.ASCENDING)]], False),
+    'ingest': (None, [[('expiry', pymongo.ASCENDING),
+                       ('ingest_provider', pymongo.ASCENDING)],
+                      [('guid', pymongo.ASCENDING)]], False),
+    'publish_queue': (None, [[('_created', pymongo.DESCENDING),
+                              ('state', pymongo.ASCENDING),
+                              ('destination.delivery_type', pymongo.ASCENDING)],
+                             [('item_id', pymongo.ASCENDING),
+                              ('item_version', pymongo.ASCENDING)],
+                             [('state', pymongo.ASCENDING),
+                              ('destination.delivery_type', pymongo.ASCENDING)],
+                             [('subscriber_id', pymongo.ASCENDING)]], False)
 }
 
 
@@ -123,7 +160,10 @@ class AppInitializeWithDataCommand(superdesk.Command):
 
         if index_params:
             for index in index_params:
-                index_name = app.data.mongo.pymongo(resource=entity_name).db[entity_name].create_index(index)
+                crt_index = list(index) if isinstance(index, list) else index
+                options = crt_index.pop() if isinstance(crt_index[-1], dict) and isinstance(index, list) else {}
+                collection = app.data.mongo.pymongo(resource=entity_name).db[entity_name]
+                index_name = collection.create_index(crt_index, cache_for=300, **options)
                 self.logger.info('Index: {} for collection {} created successfully.'.format(index_name, entity_name))
 
 
