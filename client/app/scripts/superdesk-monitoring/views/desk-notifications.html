@@ -1,4 +1,4 @@
-<div ng-if="notifications" id="deskNotifications" title="{{ :: 'Notifications' | translate }}"> 
+<div ng-if="notifications && default_incoming" id="deskNotifications" title="{{ :: 'Notifications' | translate }}"> 
     <button class="notification-label" dropdown-toggle>
         <span class="notification-count">{{ notificationCount }}</span>
     </button>
@@ -10,6 +10,11 @@
                     <span class="slugline" title="{{:: n.item.slugline }}" ng-if="n.item.slugline">{{:: n.item.slugline | limitTo: 40}}</span>
                     <span class="headline" id="title" title="{{:: item.headline }}">{{:: n.item.headline | limitTo: 90 || item.type }}</span>
                 </a>
+                <a ng-if="!isRead(n)" class="acknowledge" href="" ng-click="acknowledge(n)" title="{{ :: 'Acknowledge' | translate }}"class="open-item"><i class="icon-external"></i></a>
+            </div>
+            <div class="location">
+                <span class="desk" id="title" title="{{:: deskLookup[n.item.task.desk].name }}">{{:: deskLookup[n.item.task.desk].name }}</span> / 
+                <span class="stage" id="title" title="{{:: stageLookup[n.item.task.stage].name }}">{{:: stageLookup[n.item.task.stage].name }}</span> 
             </div>
             <div class="sender">
                  <span>{{:: n.user.display_name }}:</span><blockquote>{{:: n.data.comment }}</blockquote>
