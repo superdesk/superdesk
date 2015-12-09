@@ -48,44 +48,60 @@ a:hover {
 	overflow: hidden;
 	.transition(all 0.3s ease);
 
-	&.menu {
-		left: @sf-main-menu-width;
-	}
+    &.menu {
+        left: @sf-main-menu-width;
+    }
 
-        &.authoring {
-            #workspace-container {
-                box-shadow: 2px 0 10px 0 rgba(0,0,0,0.3);
-                right: 44%;
-                z-index:100;
-                .transition(all .5s);
-                @media only screen and (max-width : 1430px) {
-                    right: 54%;
+    &.authoring {
+        #workspace-container {
+            box-shadow: 2px 0 10px 0 rgba(0,0,0,0.3);
+            right: 44%;
+            z-index:100;
+            .transition(all .5s);
+            @media only screen and (max-width : 1430px) {
+                right: 54%;
+            }
+            &.ui-responsive-medium {
+                .flat-searchbar {
+                    position: absolute;
+                }
+                .page-nav-title {
+                    margin-left: 50px;
                 }
             }
-
-            #authoring-container {
-                width: 44%;
-                .transition(width .5s);
-                @media only screen and (max-width : 1430px) {
-                    width: 54%;
-                }
-                .content-item-preview {
-                    display: block;
-                }
+            &.ui-resizable-resizing {
+                .transition(none);
+                + #authoring-container { .transition(none); }
             }
         }
-        &.hideMonitoring {
-            #workspace-container {
-                right: 100%;
-                margin-left: -44%;
-            }
-            #authoring-container {
-                width: calc(~'100% - '@sidebar-width);
-            }
+
+        #authoring-container {
+            width: 44%;
+            .transition(width .5s);
             .content-item-preview {
-            	display: none;
+                display: block;
+            }
+            @media only screen and (max-width : 1430px) {
+                width: 54%;
             }
         }
+    }
+    &:not(.authoring) {
+        #workspace-container { width: auto !important; }
+        #authoring-container { width: auto !important; }
+    }
+    &.hideMonitoring {
+        #workspace-container {
+            right: 100%;
+            margin-left: -100%;
+        }
+        #authoring-container {
+            width: calc(~'100% - '@sidebar-width) !important;
+        }
+        .content-item-preview {
+            display: none;
+        }
+    }
 }
 
 // authoring sidebar container

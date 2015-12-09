@@ -5,7 +5,7 @@
 <div class="loading" ng-if="loading"></div>
 
 <div id="main-container" ng-class="superdesk.flags" ng-if="superdesk.flags.workspace === true">
-    <div id="workspace-container" ng-view></div>
+    <div id="workspace-container" ng-view sd-splitter-widget></div>
     <div id="authoring-container" ng-if="superdesk.flags.workspace" sd-authoring-container></div>
     <div id="superdesk-workqueue" ng-if="superdesk.flags.workspace" sd-workqueue></div>
     <div sd-item-preview-container></div>
