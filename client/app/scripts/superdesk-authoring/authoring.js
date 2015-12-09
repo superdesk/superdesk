@@ -1314,12 +1314,17 @@
 
                 $scope.$on('item:unlock', function(_e, data) {
                     if ($scope.item._id === data.item && !_closing &&
-                        session.sessionId !== data.lock_session) {
-                        authoring.unlock($scope.item, data.user);
-                        $scope._editable = $scope.item._editable = false;
-                        $scope.origItem._locked = $scope.item._locked = false;
-                        $scope.origItem.lock_session = $scope.item.lock_session = null;
-                        $scope.origItem.lock_user = $scope.item.lock_user = null;
+                        (session.sessionId !== data.lock_session || lock.previewUnlock)) {
+                        if (lock.previewUnlock) {
+                            $scope.unlock();
+                            lock.previewUnlock = false;
+                        } else {
+                            authoring.unlock($scope.item, data.user);
+                            $scope._editable = $scope.item._editable = false;
+                            $scope.origItem._locked = $scope.item._locked = false;
+                            $scope.origItem.lock_session = $scope.item.lock_session = null;
+                            $scope.origItem.lock_user = $scope.item.lock_user = null;
+                        }
                     }
                 });
 
