@@ -232,4 +232,35 @@ function Desks() {
     this.getNewDeskButton = function() {
         return element(by.id('add-new-desk'));
     };
+
+    /**
+     * Get the Desk Content Expiry Hours.
+     * @returns {ElementFinder} Content Expiry Hours input element
+     */
+    this.getDeskContentExpiryHours = function() {
+        return element(by.model('ContentExpiry.Hours'));
+    };
+
+    /**
+     * Get the Desk Content Expiry Minutes.
+     * @returns {ElementFinder} Content Expiry Minutes input element
+     */
+    this.getDeskContentExpiryMinutes = function() {
+        return element(by.model('ContentExpiry.Minutes'));
+    };
+
+    /**
+     * Set the Desk Content Expiry.
+     * @param {int} hours
+     * @param {int} minutes
+     */
+    this.setDeskContentExpiry = function(hours, minutes) {
+        var hoursElm = this.getDeskContentExpiryHours(),
+            minutesElm = this.getDeskContentExpiryMinutes();
+
+        hoursElm.clear();
+        hoursElm.sendKeys(hours);
+        minutesElm.clear();
+        minutesElm.sendKeys(minutes);
+    };
 }

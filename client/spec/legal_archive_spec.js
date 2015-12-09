@@ -25,7 +25,17 @@ describe('legal_archive', function() {
         expect(menuItems.count()).toBe(1);
     });
 
-    it('can preview text item in a Legal Archive', function () {
+    it('on open item close preview in a Legal Archive', function () {
+        legalArchive.open();
+
+        content.previewItem('item1 in legal archive');
+        expect(element(by.id('item-preview')).isDisplayed()).toBe(true);
+
+        content.actionOnItem('Open', 'item1 in legal archive');
+        expect(element(by.id('item-preview')).isDisplayed()).toBe(false);
+    });
+
+    it('can open text item in a Legal Archive', function () {
         legalArchive.open();
 
         content.actionOnItem('Open', 'item1 in legal archive');
@@ -35,7 +45,7 @@ describe('legal_archive', function() {
         assertAuthoringTopbarAndItemState();
     });
 
-    it('can preview package in a Legal Archive', function () {
+    it('can open package in a Legal Archive', function () {
         legalArchive.open();
 
         content.actionOnItem('Open', 'package1 in legal archive');

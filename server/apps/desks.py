@@ -8,6 +8,7 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
+from flask import current_app as app
 from superdesk.errors import SuperdeskApiError
 from superdesk.resource import Resource
 from superdesk import config
@@ -48,14 +49,11 @@ desks_schema = {
     },
     'incoming_stage': Resource.rel('stages', True),
     'working_stage': Resource.rel('stages', True),
-    'spike_expiry': {
+    'content_expiry': {
         'type': 'integer'
     },
     'source': {
         'type': 'string'
-    },
-    'published_item_expiry': {
-        'type': 'integer'
     },
     'monitoring_settings': {
         'type': 'list',
@@ -122,6 +120,9 @@ class DesksService(BaseService):
             stages_to_be_linked_with_desk = []
             stage_service = superdesk.get_resource_service('stages')
 
+            if desk.get('content_expiry') == 0:
+                desk['content_expiry'] = app.settings['CONTENT_EXPIRY_MINUTES']
+
             if 'working_stage' not in desk:
                 stages_to_be_linked_with_desk.append('working_stage')
                 stage_id = stage_service.create_working_stage()
@@ -144,6 +145,9 @@ class DesksService(BaseService):
             push_notification(self.notification_key, created=1, desk_id=str(doc.get(config.ID_FIELD)))
 
     def on_update(self, updates, original):
+        if updates.get('content_expiry') == 0:
+            updates['content_expiry'] = None
+
         if updates.get('desk_type') and updates.get('desk_type') != original.get('desk_type', ''):
             archive_versions_query = {
                 '$or': [
@@ -267,7 +271,7 @@ class SluglineDesksResource(Resource):
     url = 'desks/<regex("[a-f0-9]{24}"):desk_id>/sluglines'
     datasource = {'source': 'published',
                   'search_backend': 'elastic',
-                  'default_sort': [('place.name', 1), ('slugline', 1)],
+                  'default_sort': [('slugline.phrase', 1), ("versioncreated", 0)],
                   'elastic_filter': {"and": [{"range": {"versioncreated": {"gte": "now-24H"}}},
                                              {"term": {"last_published_version": True}},
                                              {"term": {"type": "text"}}
@@ -279,43 +283,58 @@ class SluglineDesksResource(Resource):
 class SluglineDeskService(BaseService):
     SLUGLINE = 'slugline'
     OLD_SLUGLINES = 'old_sluglines'
+    VERSION_CREATED = 'versioncreated'
     HEADLINE = 'headline'
     NAME = 'name'
     PLACE = 'place'
+    GROUP = 'group'
 
     def get(self, req, lookup):
         """
-        Given the desk the function will return a summary of the different places, sluglines and headlines published
-        from that desk in the last 24 hours.
+        Given the desk the function will return a summary of the sluglines and headlines published from that
+        desk in the last 24 hours. Domestic items are grouped together, rest of the world items are group
+        by their place names.
         :param req:
         :param lookup:
         :return:
         """
         lookup['task.desk'] = lookup['desk_id']
         lookup.pop('desk_id')
+        req.max_results = 1000
         desk_items = super().get(req, lookup)
 
+        # domestic docs
         docs = []
+        # rest of the world docs
+        row_docs = []
         for item in desk_items:
             slugline = item.get(self.SLUGLINE)
             headline = item.get(self.HEADLINE)
-            placename = 'NA'
+            versioncreated = item.get(self.VERSION_CREATED)
+            placename = 'Domestic'
+            # Determine if the item is either domestic or rest of the world
+            if self.PLACE in item and len(item[self.PLACE]) > 0 and self.GROUP in item.get(self.PLACE)[0] \
+                    and item.get(self.PLACE)[0][self.GROUP] == 'Rest Of World':
+                row = True
+                placename = item.get(self.PLACE)[0].get(self.NAME, 'Domestic')
+            else:
+                row = False
             # Find if there are other sluglines in this items family
             newer, older_slugline = self._find_other_sluglines(item.get(FAMILY_ID), slugline,
-                                                               item.get('versioncreated'))
-
+                                                               item.get(self.VERSION_CREATED))
             # there are no newer sluglines than the current one
             if not newer:
-                if item.get(self.PLACE):
-                    for place in item.get(self.PLACE):
-                        placename = place.get(self.NAME, 'NA')
-                        self._add_slugline_to_places(docs, placename, slugline, headline, older_slugline)
+                if row:
+                    self._add_slugline_to_places(row_docs, placename, slugline, headline, older_slugline,
+                                                 versioncreated)
                 else:
-                    self._add_slugline_to_places(docs, placename, slugline, headline, older_slugline)
+                    self._add_slugline_to_places(docs, placename, slugline, headline, older_slugline, versioncreated)
+
+        docs.extend(row_docs)
         desk_items.docs = docs
         return desk_items
 
-    def _add_slugline_to_places(self, places, placename, slugline, headline, old_sluglines):
+    def _add_slugline_to_places(self, places, placename, slugline, headline, old_sluglines, versioncreated):
         """
         Append a dictionary to the list, with place holders for the place name and slugline if they are already
         present
@@ -324,12 +343,14 @@ class SluglineDeskService(BaseService):
         :param slugline:
         :param headline:
         :param old_sluglines:
+        :param versioncreated:
         :return:
         """
         places.append({self.NAME: placename if not any(p[self.NAME] == placename for p in places) else '-',
-                       self.SLUGLINE: slugline if not any(p[self.SLUGLINE] == slugline and
-                                                          p[self.NAME] == placename for p in places) else '-',
-                       self.HEADLINE: headline, self.OLD_SLUGLINES: old_sluglines})
+                       self.SLUGLINE: slugline if not any(p[self.SLUGLINE].lower() == slugline.lower()
+                                                          for p in places) else '-',
+                       self.HEADLINE: headline, self.OLD_SLUGLINES: old_sluglines,
+                       self.VERSION_CREATED: versioncreated})
 
     def _find_other_sluglines(self, family_id, slugline, versioncreated):
         """
@@ -346,9 +367,10 @@ class SluglineDeskService(BaseService):
         lookup = {'family_id': family_id}
         family = superdesk.get_resource_service('published').get_from_mongo(req=req, lookup=lookup)
         for member in family:
-            if member.get('slugline', '') != slugline:
+            if member.get('slugline', '').lower() != slugline.lower():
                 if member.get('versioncreated') < versioncreated:
-                    older_sluglines.append(member.get('slugline', ''))
+                    if not member.get('slugline', '') in older_sluglines:
+                        older_sluglines.append(member.get('slugline', ''))
                 else:
                     return (True, [])
         return (False, older_sluglines)

@@ -8,11 +8,8 @@
 // -------------------------------------
 
 @roles-border: 1px solid #f0f0f0;
-
 .user-roles-settings {
-
 	// ROLES TAB
-
 	.new-role-modal {
 		width: 299px;
 		position: absolute;
@@ -39,81 +36,58 @@
 }
 
 // PRIVILEGES SETTINGS
-
 .privileges-settings {
-	.horizontal {
-		padding-top:5px;
-		overflow: auto;
-	}
-	.roles-list {
-		.action-line {
-			display: table-row;
-			&:hover {
-				background: #f8f8f8;
-			}
-		}
-		.td {
-			display: table-cell;
-    		min-width:80px;
-			padding: 10px 16px;
-			border-bottom: @roles-border;
-			text-align: center;
-			border-left: @roles-border;
-			word-wrap: break-word;
-			.user-select(none);
-			.label {
-				font-size: 80%;
-			}
-		}
-		.name {
-			border-left: 0;
-			text-align: left;
-			padding: 10px 40px 10px 10px;
-			text-transform: uppercase;
-			.text-semibold();
-			font-size: 11px;
-			white-space: nowrap;
-			color: #666;
-		}
-		.blank {
-			width: 100%;
-			border-bottom: @roles-border;
-			text-align: left;
-		}
-
-		.initial {
-			background: #f2f2f2;
-			.label {
-				position: absolute;
-				top: -6px;
-				left: 17%;
-				text-transform: uppercase;
-				font-weight: normal;
-				font-size: 9px;
-				line-height: 11px;
-				height: 13px;
-				letter-spacing: 0.1em;
-				box-sizing:border-box;
-			}
-			&:hover {
-				background: #eaeaea;
-			}
-			.td {
-				font-size: 13px;
-				width: 100px;
-				word-wrap: break-word;
-				border-top: @roles-border;
-				border-color: #e5e5e5 !important;
-				padding: 10px 16px;
-				position: relative;
-			}
-			.create-role {
-				padding: 10px;
-				position: absolute;
-				background: none;
-				border: 0;
-			}
-		}
-
-	}
+    overflow: auto !important;    
+    thead tr {
+        background: #f2f2f2;
+        .label {
+            position: absolute;
+            top: -6px;
+            left: 17%;
+            text-transform: uppercase;
+            font-weight: normal;
+            font-size: 9px;
+            line-height: 10px;
+            height: 13px;
+            letter-spacing: 0.1em;
+            box-sizing:border-box;
+        }
+        th {
+            position: relative;
+            font-size: 13px;
+            font-weight: normal;
+            word-wrap: break-word;
+            text-align: center;
+            border: @roles-border !important;
+            border-right: 0 !important;
+            border-color: #e5e5e5 !important;
+            padding: 10px 16px;
+        }
+        .name {
+            min-width: 250px;
+        }
+    }
+    td {
+        padding: 10px 16px;
+        border-bottom: @roles-border;
+        border-left: @roles-border;
+        border-top: 0;
+        text-align: center;
+        word-wrap: break-word;
+        .user-select(none);
+        .label {
+            font-size: 80%;
+        }
+    }
+    .name {
+        min-width: 250px;
+        font-size: 11px;
+        text-align: left;
+        border-left: 0 !important;
+        padding: 10px;
+        text-transform: uppercase;
+        .text-semibold();
+        white-space: nowrap;
+        color: #666;
+    }
 }

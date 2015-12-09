@@ -70,9 +70,7 @@
             if (angular.isDefined(item[key])) {
                 var elem = document.createElement('div');
                 elem.innerHTML = item[key];
-                if (elem.textContent !== '') {
-                    item[key] = elem.textContent;
-                }
+                item[key] = elem.textContent;
             }
         });
     }
@@ -295,6 +293,16 @@
             }
 
             stripHtml(updates);
+
+            // If the text equivalent of the body_html is empty then set the body empty
+            if (angular.isDefined(updates.body_html)) {
+                var elem = document.createElement('div');
+                elem.innerHTML = updates.body_html;
+                if (elem.textContent === '') {
+                    updates.body_html = '';
+                }
+            }
+
         };
 
         this.publish = function publish(orig, diff, action) {
@@ -908,32 +916,21 @@
                 $scope.origItem.sign_off = $scope.origItem.sign_off || $scope.origItem.version_creator;
 
                 if ($scope.action === 'kill') {
-                    api('content_templates').getById('kill').then(function(template) {
-                        template = _.pick(template, _.keys(CONTENT_FIELDS_DEFAULTS));
-                        var body = template.body_html;
-                        if (body) {
-                            // get the placeholders out of the template
-                            var placeholders = _.words(body, /\${([\s\S]+?)}/g);
-                            placeholders = _.map(placeholders, function(placeholder) {
-                                return _.trim(placeholder, '${} ');
-                            });
+                    // kill template is applied on the item.
+                    var fields = _.union(_.keys(CONTENT_FIELDS_DEFAULTS), ['_id', 'versioncreated']);
+                    var item = {
+                        template_name: 'kill', item: _.pick($scope.origItem, fields)
+                    };
 
-                            var compiled = _.template(body);
-                            var args = {};
-
-                            _.each(placeholders, function(placeholder) {
-                                args[placeholder] = (placeholder !== 'dateline') ? $scope.origItem[placeholder] :
-                                    $scope.origItem[placeholder].text.toUpperCase();
-                            });
-                            $scope.origItem.body_html = compiled(args);
-                        }
-                        _.each(template, function(value, key) {
+                    api.save('content_templates_apply', {}, item, {}).then(function(result) {
+                        item = _.pick(result, _.keys(CONTENT_FIELDS_DEFAULTS));
+                        _.each(item, function(value, key) {
                             if (!_.isEmpty(value)) {
-                                if (key !== 'body_html') {
-                                    $scope.origItem[key] = value;
-                                }
+                                $scope.origItem[key] = value;
                             }
                         });
+                    }, function(err) {
+                        notify.error(gettext('Failed to apply kill template to the item.'));
                     });
                 }
 
@@ -1250,7 +1247,8 @@
                  * Checks if the item can be unlocked or not.
                  */
                 $scope.can_unlock = function() {
-                    return lock.can_unlock($scope.item);
+                    return $scope.item._locked && !$scope.item.sendTo && lock.can_unlock($scope.item) &&
+                        ($scope.itemActions.save || _.contains(['published', 'scheduled', 'corrected'], $scope.item.state));
                 };
 
                 $scope.save_enabled = function() {
@@ -1580,7 +1578,7 @@
                  */
                 function applyTheme(key) {
                     if (scope.key === key) {
-                        elem.closest('.page-content-container')
+                        angular.element('.page-content-container')
                             .children('.theme-container')
                             .attr('class', DEFAULT_CLASS)
                             .addClass(scope[key].cssClass)
@@ -1599,9 +1597,9 @@
         };
     }
     SendItem.$inject = ['$q', 'api', 'desks', 'notify', 'authoringWorkspace', 'superdeskFlags',
-        '$location', 'macros', '$rootScope', 'authoring', 'send', 'spellcheck', 'confirm', 'archiveService'];
+        '$location', 'macros', '$rootScope', 'authoring', 'send', 'spellcheck', 'confirm', 'archiveService', 'preferencesService'];
     function SendItem($q, api, desks, notify, authoringWorkspace, superdeskFlags,
-        $location, macros, $rootScope, authoring, send, spellcheck, confirm, archiveService) {
+        $location, macros, $rootScope, authoring, send, spellcheck, confirm, archiveService, preferencesService) {
         return {
             scope: {
                 item: '=',
@@ -1623,6 +1621,8 @@
                 scope.selectedStage = null;
                 scope.selectedMacro = null;
                 scope.beforeSend = scope._beforeSend || $q.when;
+                scope.destination_last = null;
+                var PREFERENCE_KEY = 'destination:active';
 
                 scope.$watch('item', activateItem);
                 scope.$watch(send.getConfig, activateConfig);
@@ -1654,6 +1654,12 @@
                             .then(initializeItemActions);
                     }
                 }
+
+                scope.getLastDestination = function() {
+                    return preferencesService.get(PREFERENCE_KEY).then(function(prefs) {
+                        return prefs;
+                    });
+                };
 
                 scope.close = function() {
                     if (scope.mode === 'monitoring') {
@@ -1890,6 +1896,15 @@
                         })
                         .then(function(value) {
                             notify.success(gettext('Item sent.'));
+
+                            // Remember last destination desk and stage
+                            if (scope.destination_last &&
+                                    (scope.destination_last.desk !== deskId && scope.destination_last.stage !== stageId)) {
+                                updateLastDestination(deskId, stageId);
+                            } else {
+                                updateLastDestination(deskId, stageId);
+                            }
+
                             if (sendAndContinue) {
                                 return deferred.resolve();
                             } else {
@@ -1915,6 +1930,12 @@
                     if (sendAndContinue) {
                         return deferred.promise;
                     }
+                }
+
+                function updateLastDestination(deskId, stageId) {
+                    var updates = {};
+                    updates[PREFERENCE_KEY] = {desk: deskId, stage: stageId};
+                    preferencesService.update(updates, PREFERENCE_KEY);
                 }
 
                 function sendContent(deskId, stageId, macro, open) {
@@ -1967,20 +1988,34 @@
                     .then(function() {
                         scope.desks = desks.desks;
                     });
-                    if (scope.mode === 'ingest') {
-                        p = p.then(function() {
-                            scope.selectDesk(desks.getCurrentDesk());
-                        });
-                    } else {
-                        p = p.then(function() {
-                            var itemDesk = desks.getItemDesk(scope.item);
-                            if (itemDesk) {
-                                scope.selectDesk(itemDesk);
-                            } else {
+
+                    scope.getLastDestination().then(function(result) {
+                        if (result) {
+                            scope.destination_last = {
+                                desk: result.desk,
+                                stage: result.stage
+                            };
+                        }
+
+                        if (scope.mode === 'ingest') {
+                            p = p.then(function() {
                                 scope.selectDesk(desks.getCurrentDesk());
-                            }
-                        });
-                    }
+                            });
+                        } else {
+                            p = p.then(function() {
+                                var itemDesk = desks.getItemDesk(scope.item);
+                                if (itemDesk) {
+                                    if (scope.destination_last) {
+                                        scope.selectDesk(desks.deskLookup[scope.destination_last.desk]);
+                                    } else {
+                                        scope.selectDesk(itemDesk);
+                                    }
+                                } else {
+                                    scope.selectDesk(desks.getCurrentDesk());
+                                }
+                            });
+                        }
+                    });
 
                     return p;
 
@@ -1992,8 +2027,12 @@
 
                         var stage = null;
 
-                        if (scope.item.task && scope.item.task.stage) {
-                            stage = _.find(scope.stages, {_id: scope.item.task.stage});
+                        if (scope.destination_last) {
+                            stage = _.find(scope.stages, {_id: scope.destination_last.stage});
+                        } else {
+                            if (scope.item.task && scope.item.task.stage) {
+                                stage = _.find(scope.stages, {_id: scope.item.task.stage});
+                            }
                         }
 
                         if (!stage) {
@@ -2220,7 +2259,7 @@
         .directive('sdAuthoringTopbar', AuthoringTopbarDirective)
         .directive('sdAuthoringContainer', AuthoringContainerDirective)
         .directive('sdAuthoringEmbedded', AuthoringEmbeddedDirective)
-        .directive('sdHeaderInfo', headerInfoDirective)
+        .directive('sdAuthoringHeader', AuthoringHeaderDirective)
 
         .config(['superdeskProvider', function(superdesk) {
             superdesk
@@ -2261,7 +2300,7 @@
                 .activity('kill.text', {
                     label: gettext('Kill item'),
                     priority: 100,
-                    icon: 'remove-sign',
+                    icon: 'kill',
                     group: 'corrections',
                     controller: ['data', 'authoringWorkspace', function(data, authoringWorkspace) {
                         authoringWorkspace.kill(data.item);
@@ -2319,6 +2358,14 @@
                     rel: 'move'
                 }
             });
+        }])
+        .config(['apiProvider', function(apiProvider) {
+            apiProvider.api('content_templates_apply', {
+                type: 'http',
+                backend: {
+                    rel: 'content_templates_apply'
+                }
+            });
         }]);
 
     AuthoringContainerDirective.$inject = ['authoring', 'authoringWorkspace'];
@@ -2374,10 +2421,10 @@
         };
     }
 
-    headerInfoDirective.$inject = ['api', 'familyService', 'authoringWidgets', 'authoring', '$rootScope', 'archiveService'];
-    function headerInfoDirective(api, familyService, authoringWidgets, authoring, $rootScope, archiveService) {
+    AuthoringHeaderDirective.$inject = ['api', 'authoringWidgets', '$rootScope', 'archiveService'];
+    function AuthoringHeaderDirective(api, authoringWidgets, $rootScope, archiveService) {
         return {
-            templateUrl: 'scripts/superdesk-authoring/views/header-info.html',
+            templateUrl: 'scripts/superdesk-authoring/views/authoring-header.html',
             require: '^sdAuthoringWidgets',
             link: function (scope, elem, attrs, WidgetsManagerCtrl) {
                 scope.$watch('item', function (item) {

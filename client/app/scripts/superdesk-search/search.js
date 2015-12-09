@@ -371,9 +371,18 @@
 
         function initSelectedKeywords (keywords) {
             tags.selectedKeywords = [];
-            while (keywords.indexOf('(') >= 0) {
-                var parenthesisIndex = keywords.indexOf('(');
-                var keyword = keywords.substring(parenthesisIndex, keywords.indexOf(')', parenthesisIndex) + 1);
+            while (keywords.indexOf('(') >= 0 && keywords.indexOf(')') > 0) {
+                var closeIndex = keywords.indexOf('(');
+                var counter = 1;
+                while (counter > 0 && closeIndex < keywords.length) {
+                    var c = keywords[++closeIndex];
+                    if (c === '(') {
+                        counter++;
+                    } else if (c === ')') {
+                        counter--;
+                    }
+                }
+                var keyword = keywords.substring(keywords.indexOf('('), closeIndex + 1);
                 tags.selectedKeywords.push(keyword);
                 keywords = keywords.replace(keyword, '');
             }
@@ -528,6 +537,7 @@
                     scope.flags = controller.flags;
                     scope.sTab = true;
                     scope.editingSearch = false;
+                    scope.showSaveSearch = false;
 
                     scope.aggregations = {};
                     scope.privileges = privileges.privileges;
@@ -666,6 +676,10 @@
 
                         });
                     });
+
+                    scope.$watch('tags.currentSearch', function(currentSearch) {
+                        scope.showSaveSearch = _.isEmpty(currentSearch) ? false : true;
+                    }, true);
 
                     scope.toggleFilter = function(type, key) {
                         if (scope.hasFilter(type, key)) {
@@ -1121,6 +1135,8 @@
                     scope.saveas = function() {
                         scope.edit = _.clone(scope.editingSearch) || {};
                         delete scope.edit._id;
+                        scope.edit.name = '';
+                        scope.edit.description = '';
                     };
 
                     scope.cancel = function() {
@@ -1189,22 +1205,24 @@
                 scope: {
                     item: '='
                 },
-                template: '{{item.container}}',
+                template: '<span class="location-desk-label">{{item.label}}</span> {{item.value}}',
                 link: function(scope, elem) {
-
                     if (scope.item._type !== 'ingest') {
                         if (scope.item.task && scope.item.task.desk) {
                             desks.initialize().then(function() {
                                 if (desks.deskLookup[scope.item.task.desk]) {
-                                    scope.item.container = 'desk:' + desks.deskLookup[scope.item.task.desk].name ;
+                                    scope.item.label = 'desk:';
+                                    scope.item.value = desks.deskLookup[scope.item.task.desk].name;
                                 }
                             });
                         } else {
                             if (scope.item._type === 'archive') {
-                                scope.item.container = 'location:workspace';
+                                scope.item.label = 'location:';
+                                scope.item.value = 'workspace';
                             } else {
                                 if (scope.item._type === 'published' && scope.item.allow_post_publish_actions === false) {
-                                    scope.item.container = 'archived';
+                                    scope.item.label = '';
+                                    scope.item.value = 'archived';
                                 }
                             }
                         }
@@ -1251,8 +1269,8 @@
          * Open Item dialog
          */
         .directive('sdItemGlobalsearch', ['superdesk', 'session', '$location', 'search', 'api', 'notify',
-            'gettext', 'keyboardManager', 'asset', 'authoringWorkspace',
-            function(superdesk, session, $location, search, api, notify, gettext, keyboardManager, asset, authoringWorkspace) {
+            'gettext', 'keyboardManager', 'asset', 'authoringWorkspace', 'authoring',
+            function(superdesk, session, $location, search, api, notify, gettext, keyboardManager, asset, authoringWorkspace, authoring) {
             return {
                 scope: {repo: '=', context: '='},
                 templateUrl: asset.templateUrl('superdesk-search/views/item-globalsearch.html'),
@@ -1278,7 +1296,11 @@
                         if (items.length > 0) {
                             reset();
                             scope.flags.enabled = false;
-                            authoringWorkspace.edit(items[0]);
+                            if (authoring.itemActions(items[0]).edit) {
+                                authoringWorkspace.edit(items[0]);
+                            } else {
+                                authoringWorkspace.view(items[0]);
+                            }
                         } else {
                             notify.error(gettext('Item not found...'));
                             scope.flags.enabled = true;
@@ -1396,300 +1418,305 @@
             };
         }])
 
-        .directive('sdItemSearch', ['$location', '$timeout', 'asset', 'api', 'tags', 'search', 'metadata', 'desks', 'userList',
-            function($location, $timeout, asset, api, tags, search, metadata, desks, userList) {
-            return {
-                scope: {
-                    repo: '=',
-                    context: '='
-                },
-                templateUrl: asset.templateUrl('superdesk-search/views/item-search.html'),
-                link: function(scope, elem) {
+        .directive('sdItemSearch', ['$location', '$timeout', 'asset', 'api', 'tags', 'search', 'metadata',
+            'desks', 'userList', 'searchProviderService', '$filter',
+            function($location, $timeout, asset, api, tags, search, metadata, desks,
+                     userList, searchProviderService, $filter) {
+                return {
+                    scope: {
+                        repo: '=',
+                        context: '='
+                    },
+                    templateUrl: asset.templateUrl('superdesk-search/views/item-search.html'),
+                    link: function(scope, elem) {
 
-                    var input = elem.find('#search-input');
+                        var input = elem.find('#search-input');
 
-                    /*
-                     * init function to setup the directive initial state and called by $locationChangeSuccess event
-                     * @param {boolean} load_data.
-                     */
-                    function init(load_data) {
-                        var params = $location.search();
-                        scope.query = params.q;
-                        scope.flags = false;
-                        scope.meta = {};
-                        scope.fields = {};
+                        /*
+                         * init function to setup the directive initial state and called by $locationChangeSuccess event
+                         * @param {boolean} load_data.
+                         */
+                        function init(load_data) {
+                            var params = $location.search();
+                            scope.query = params.q;
+                            scope.flags = false;
+                            scope.meta = {};
+                            scope.fields = {};
+                            scope.searchProviderTypes = searchProviderService.getProviderTypes();
 
-                        if (params.repo) {
-                            var param_list = params.repo.split(',');
-                            scope.repo.archive = param_list.indexOf('archive') >= 0;
-                            scope.repo.ingest = param_list.indexOf('ingest') >= 0;
-                            scope.repo.published = param_list.indexOf('published') >= 0;
-                            scope.repo.archived = param_list.indexOf('archived') >= 0;
-                        }
+                            if (params.repo) {
+                                var param_list = params.repo.split(',');
+                                scope.repo.archive = param_list.indexOf('archive') >= 0;
+                                scope.repo.ingest = param_list.indexOf('ingest') >= 0;
+                                scope.repo.published = param_list.indexOf('published') >= 0;
+                                scope.repo.archived = param_list.indexOf('archived') >= 0;
+                            }
 
-                        if (!scope.repo) {
-                            scope.repo = {'search': 'local'};
-                        } else {
-                            if (!scope.repo.archive && !scope.repo.ingest && !scope.repo.published && !scope.repo.archived) {
-                                scope.repo.search = params.repo;
+                            if (!scope.repo) {
+                                scope.repo = {'search': 'local'};
                             } else {
-                                scope.repo.search = 'local';
+                                if (!scope.repo.archive && !scope.repo.ingest && !scope.repo.published && !scope.repo.archived) {
+                                    scope.repo.search = params.repo;
+                                } else {
+                                    scope.repo.search = 'local';
+                                }
                             }
-                        }
 
-                        if ($location.search().unique_name) {
-                            scope.fields.unique_name = $location.search().unique_name;
-                        }
-
-                        if (load_data) {
-                            fetchProviders();
-                            fetchUsers();
-                            fetchDesks();
-                        } else {
-                            initializeDesksDropDown();
-                        }
-                    }
-
-                    init(true);
-
-                    /*
-                     * Initialize the creator drop down selection.
-                     */
-                    function fetchUsers() {
-                        userList.getAll()
-                        .then(function(result) {
-                            scope.userList = {};
-                            _.each(result, function(user) {
-                                scope.userList[user._id] = user;
-                            });
-
-                            if ($location.search().original_creator) {
-                                scope.fields.original_creator = $location.search().original_creator;
+                            if ($location.search().unique_name) {
+                                scope.fields.unique_name = $location.search().unique_name;
                             }
-                        });
-                    }
 
-                    /*
-                     * Initialize the search providers
-                     */
-                    function fetchProviders() {
-                        return api.ingestProviders.query({max_results: 200})
-                            .then(function(result) {
-                                scope.providers = result._items;
-                            });
-                    }
-
-                    /*
-                     * Initialize the desk drop down
-                     */
-                    function fetchDesks() {
-                        scope.desks = [];
-                        desks.initialize()
-                            .then(function() {
-                                scope.desks = desks.desks;
+                            if (load_data) {
+                                fetchProviders();
+                                fetchUsers();
+                                fetchDesks();
+                            } else {
                                 initializeDesksDropDown();
-                            });
-                    }
-
-                    /*
-                     *  Initialize Desks DropDown
-                     */
-                    function initializeDesksDropDown() {
-                        if (scope.desks && scope.desks._items) {
-                            initFromToDesk($location.search().from_desk, 'from_desk');
-                            initFromToDesk($location.search().to_desk, 'to_desk');
-                        }
-                    }
-
-                    /*
-                     * initialize the desk drop down selection.
-                     * @param {string} query string parameter from_desk or to_desk
-                     * @param {field} scope field to be updated.
-                     */
-                    function initFromToDesk(param, field) {
-                        if (param) {
-                            var deskParams = param.split('-');
-                            if (deskParams.length === 2) {
-                                scope.fields[field] = deskParams[0];
                             }
                         }
-                    }
 
-                    scope.$on('$locationChangeSuccess', function() {
-                        if (scope.query !== $location.search().q ||
-                            scope.fields.from_desk !== $location.search().from_desk ||
-                            scope.fields.to_desk !== $location.search().to_desk ||
-                            scope.fields.unique_name !== $location.search().unique_name ||
-                            scope.fields.original_creator !== $location.search().original_creator) {
-                            init();
-                        }
-                    });
+                        init(true);
 
-                    function getActiveRepos() {
-                        var repos = [];
+                        /*
+                         * Initialize the creator drop down selection.
+                         */
+                        function fetchUsers() {
+                            userList.getAll()
+                            .then(function(result) {
+                                scope.userList = {};
+                                _.each(result, function(user) {
+                                    scope.userList[user._id] = user;
+                                });
 
-                        if (scope.repo.search === 'local') {
-                            angular.forEach(scope.repo, function(val, key) {
-                                if (val && val !== 'local') {
-                                    repos.push(key);
+                                if ($location.search().original_creator) {
+                                    scope.fields.original_creator = $location.search().original_creator;
                                 }
                             });
-
-                            return repos.length ? repos.join(',') : null;
-
-                        } else {
-                            return scope.repo.search;
                         }
-                    }
 
-                    function getFirstKey(data) {
-                        for (var prop in data) {
-                            if (data.hasOwnProperty(prop)) {
-                                return prop;
+                        /*
+                         * Initialize the search providers
+                         */
+                        function fetchProviders() {
+                            return api.search_providers.query({max_results: 200})
+                                .then(function(result) {
+                                    scope.providers = $filter('sortByName')(result._items, 'search_provider');
+                                });
+                        }
+
+                        /*
+                         * Initialize the desk drop down
+                         */
+                        function fetchDesks() {
+                            scope.desks = [];
+                            desks.initialize()
+                                .then(function() {
+                                    scope.desks = desks.desks;
+                                    initializeDesksDropDown();
+                                });
+                        }
+
+                        /*
+                         *  Initialize Desks DropDown
+                         */
+                        function initializeDesksDropDown() {
+                            if (scope.desks && scope.desks._items) {
+                                initFromToDesk($location.search().from_desk, 'from_desk');
+                                initFromToDesk($location.search().to_desk, 'to_desk');
                             }
                         }
-                    }
 
-                    /*
-                     * Get Query function build the query string
-                     */
-                    function getQuery() {
-                        var metas = [];
-                        angular.forEach(scope.meta, function(val, key) {
-                            if (key === '_all') {
-                                metas.push(val.join(' '));
+                        /*
+                         * initialize the desk drop down selection.
+                         * @param {string} query string parameter from_desk or to_desk
+                         * @param {field} scope field to be updated.
+                         */
+                        function initFromToDesk(param, field) {
+                            if (param) {
+                                var deskParams = param.split('-');
+                                if (deskParams.length === 2) {
+                                    scope.fields[field] = deskParams[0];
+                                }
+                            }
+                        }
+
+                        scope.$on('$locationChangeSuccess', function() {
+                            if (scope.query !== $location.search().q ||
+                                scope.fields.from_desk !== $location.search().from_desk ||
+                                scope.fields.to_desk !== $location.search().to_desk ||
+                                scope.fields.unique_name !== $location.search().unique_name ||
+                                scope.fields.original_creator !== $location.search().original_creator) {
+                                init();
+                            }
+                        });
+
+                        function getActiveRepos() {
+                            var repos = [];
+
+                            if (scope.repo.search === 'local') {
+                                angular.forEach(scope.repo, function(val, key) {
+                                    if (val && val !== 'local') {
+                                        repos.push(key);
+                                    }
+                                });
+
+                                return repos.length ? repos.join(',') : null;
+
                             } else {
-                                if (val) {
-                                    if (typeof(val) === 'string'){
-                                        if (val) {
-                                            metas.push(key + ':(' + val + ')');
-                                        }
-                                    } else {
-                                        var subkey = getFirstKey(val);
-                                        if (val[subkey]) {
-                                            metas.push(key + '.' + subkey + ':(' + val[subkey] + ')');
+                                return scope.repo.search;
+                            }
+                        }
+
+                        function getFirstKey(data) {
+                            for (var prop in data) {
+                                if (data.hasOwnProperty(prop)) {
+                                    return prop;
+                                }
+                            }
+                        }
+
+                        /*
+                         * Get Query function build the query string
+                         */
+                        function getQuery() {
+                            var metas = [];
+                            angular.forEach(scope.meta, function(val, key) {
+                                val = val.replace(/[()]/g, '');
+                                if (key === '_all') {
+                                    metas.push(val.join(' '));
+                                } else {
+                                    if (val) {
+                                        if (typeof(val) === 'string'){
+                                            if (val) {
+                                                metas.push(key + ':(' + val + ')');
+                                            }
+                                        } else {
+                                            var subkey = getFirstKey(val);
+                                            if (val[subkey]) {
+                                                metas.push(key + '.' + subkey + ':(' + val[subkey] + ')');
+                                            }
                                         }
                                     }
                                 }
-                            }
-                        });
+                            });
 
-                        angular.forEach(scope.fields, function(val, key) {
-                            if (key === 'from_desk') {
-                                $location.search('from_desk', getDeskParam('from_desk'));
-                            } else if (key === 'to_desk') {
-                                $location.search('to_desk', getDeskParam('to_desk'));
-                            } else {
-                                $location.search(key, val);
-                            }
-                        });
+                            angular.forEach(scope.fields, function(val, key) {
+                                if (key === 'from_desk') {
+                                    $location.search('from_desk', getDeskParam('from_desk'));
+                                } else if (key === 'to_desk') {
+                                    $location.search('to_desk', getDeskParam('to_desk'));
+                                } else {
+                                    $location.search(key, val);
+                                }
+                            });
 
-                        if (metas.length) {
-                            if (scope.query) {
-                                return scope.query + ' ' + metas.join(' ');
+                            if (metas.length) {
+                                if (scope.query) {
+                                    return scope.query + ' ' + metas.join(' ');
+                                } else {
+                                    return metas.join(' ');
+                                }
                             } else {
-                                return metas.join(' ');
+                                return scope.query || null;
                             }
-                        } else {
-                            return scope.query || null;
+
                         }
 
-                    }
+                        /**
+                         * Function which dictates whether the Go button should be enabled or disabled.
+                         *
+                         * @return {boolean} true if Go button in parameters section should be enabled. false otherwise.
+                         */
+                        scope.isSearchEnabled = function() {
+                            return scope.repo.search && (scope.repo.search !== 'local' ||
+                                (scope.repo.ingest || scope.repo.archive || scope.repo.published || scope.repo.archived));
+                        };
 
-                    /**
-                     * Function which dictates whether the Go button should be enabled or disabled.
-                     *
-                     * @return {boolean} true if Go button in parameters section should be enabled. false otherwise.
-                     */
-                    scope.isSearchEnabled = function() {
-                        return scope.repo.search && (scope.repo.search !== 'local' ||
-                            (scope.repo.ingest || scope.repo.archive || scope.repo.published || scope.repo.archived));
-                    };
-
-                    function updateParam() {
-                        scope.query = $location.search().q;
-                        $location.search('q', getQuery() || null);
-                        $location.search('repo', getActiveRepos());
-                        scope.meta = {};
-                    }
-
-                    scope.search = function() {
-                        updateParam();
-                    };
-
-                    scope.$on('key:s', function openSearch() {
-                        scope.$apply(function() {
-                            scope.flags = {extended: true};
-                            $timeout(function() { // call focus when input will be visible
-                                input.focus();
-                            }, 0, false);
-                        });
-                    });
-
-                    /*
-                     * Converting to object and adding pre-selected subject codes to list in left sidebar
-                     */
-                    metadata
-                        .fetchSubjectcodes()
-                        .then(function () {
-                            scope.subjectcodes = metadata.values.subjectcodes;
-                            return tags.initSelectedFacets();
-                        })
-                        .then(function (currentTags) {
-                            scope.subjectitems = {
-                                subject: search.getSubjectCodes(currentTags, scope.subjectcodes)
-                            };
-                        });
-
-                    /*
-                     * Get the Desk Type
-                     * @param {string} field from or to
-                     * @returns {string} desk querystring parameter
-                     */
-                    function getDeskParam(field) {
-                        var deskId = '';
-                        if (scope.fields[field]) {
-                            deskId = scope.fields[field];
-                            var desk_type = _.result(_.find(scope.desks._items, function (item) {
-                                return item._id === deskId;
-                            }), 'desk_type');
-
-                            return deskId + '-' + desk_type;
+                        function updateParam() {
+                            scope.query = $location.search().q;
+                            $location.search('q', getQuery() || null);
+                            $location.search('repo', getActiveRepos());
+                            scope.meta = {};
                         }
 
-                        return null;
-                    }
+                        scope.search = function() {
+                            updateParam();
+                        };
 
-                    /*
-                     * Filter content by subject search
-                     */
-                    scope.subjectSearch = function (item) {
-                        tags.initSelectedFacets().then(function (currentTags) {
-                            var subjectCodes = search.getSubjectCodes(currentTags, scope.subjectcodes);
-                            if (item.subject.length > subjectCodes.length) {
-                                /* Adding subject codes to filter */
-                                var addItemSubjectName = 'subject.qcode:(' + item.subject[item.subject.length - 1].qcode + ')',
-                                    q = (scope.query ? scope.query + ' ' + addItemSubjectName : addItemSubjectName);
+                        scope.$on('key:s', function openSearch() {
+                            scope.$apply(function() {
+                                scope.flags = {extended: true};
+                                $timeout(function() { // call focus when input will be visible
+                                    input.focus();
+                                }, 0, false);
+                            });
+                        });
 
-                                $location.search('q', q);
-                            } else {
-                                /* Removing subject codes from filter */
-                                var params = $location.search();
-                                if (params.q) {
-                                    for (var j = 0; j < subjectCodes.length; j++) {
-                                        if (item.subject.indexOf(subjectCodes[j]) === -1) {
-                                            var removeItemSubjectName = 'subject.qcode:(' + subjectCodes[j].qcode + ')';
-                                            params.q = params.q.replace(removeItemSubjectName, '').trim();
-                                            $location.search('q', params.q || null);
+                        /*
+                         * Converting to object and adding pre-selected subject codes to list in left sidebar
+                         */
+                        metadata
+                            .fetchSubjectcodes()
+                            .then(function () {
+                                scope.subjectcodes = metadata.values.subjectcodes;
+                                return tags.initSelectedFacets();
+                            })
+                            .then(function (currentTags) {
+                                scope.subjectitems = {
+                                    subject: search.getSubjectCodes(currentTags, scope.subjectcodes)
+                                };
+                            });
+
+                        /*
+                         * Get the Desk Type
+                         * @param {string} field from or to
+                         * @returns {string} desk querystring parameter
+                         */
+                        function getDeskParam(field) {
+                            var deskId = '';
+                            if (scope.fields[field]) {
+                                deskId = scope.fields[field];
+                                var desk_type = _.result(_.find(scope.desks._items, function (item) {
+                                    return item._id === deskId;
+                                }), 'desk_type');
+
+                                return deskId + '-' + desk_type;
+                            }
+
+                            return null;
+                        }
+
+                        /*
+                         * Filter content by subject search
+                         */
+                        scope.subjectSearch = function (item) {
+                            tags.initSelectedFacets().then(function (currentTags) {
+                                var subjectCodes = search.getSubjectCodes(currentTags, scope.subjectcodes);
+                                if (item.subject.length > subjectCodes.length) {
+                                    /* Adding subject codes to filter */
+                                    var addItemSubjectName = 'subject.qcode:(' + item.subject[item.subject.length - 1].qcode + ')',
+                                        q = (scope.query ? scope.query + ' ' + addItemSubjectName : addItemSubjectName);
+
+                                    $location.search('q', q);
+                                } else {
+                                    /* Removing subject codes from filter */
+                                    var params = $location.search();
+                                    if (params.q) {
+                                        for (var j = 0; j < subjectCodes.length; j++) {
+                                            if (item.subject.indexOf(subjectCodes[j]) === -1) {
+                                                var removeItemSubjectName = 'subject.qcode:(' + subjectCodes[j].qcode + ')';
+                                                params.q = params.q.replace(removeItemSubjectName, '').trim();
+                                                $location.search('q', params.q || null);
+                                            }
                                         }
                                     }
                                 }
-                            }
-                        });
-                    };
-                }
-            };
-        }])
+                            });
+                        };
+                    }
+                };
+            }
+        ])
 
         /**
          * Item sort component
@@ -1853,7 +1880,7 @@
 
                     scope.isOpenItemType = function(type) {
                         var openItem = authoringWorkspace.getItem();
-                        return openItem.type === type;
+                        return openItem && openItem.type === type;
                     };
 
                     /**
@@ -1943,6 +1970,14 @@
                 canSpike = canSpike && authoring.itemActions(item).spike;
             });
             return canSpike;
+        };
+
+        this.canPackageItems = function() {
+            var canPackage = true;
+            multi.getItems().forEach(function(item) {
+                canPackage = canPackage && item.state !== 'killed';
+            });
+            return canPackage;
         };
     }
 })();

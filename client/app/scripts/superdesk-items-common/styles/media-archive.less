@@ -45,24 +45,24 @@
 /* ====================================== */
   // item(news) status labels  (exmpl. canceled)
 
-	.status-label {
-		.box-sizing(border-box);
-		height: 15px;
-		padding: 4px 7px;
-		background: #1f6681;
-		.border-radius(2px);
-		display: inline-block;
-		font-size: 10px;
-		color: #fff;
-		line-height: 7px;
-		margin: 0 5px 0 0;
-		text-transform: uppercase;
-		&.label-canceled {
-			background:#1c1c1c;
-			color: #ff5353;
-		}
-	}
 
+.status-label {
+	.box-sizing(border-box);
+	height: 15px;
+	padding: 4px 7px;
+	background: #1f6681;
+	.border-radius(2px);
+	display: inline-block;
+	font-size: 10px;
+	color: #fff;
+	line-height: 7px;
+	margin: 0 5px 0 0;
+	text-transform: uppercase;
+	&.label-canceled {
+		background:#1c1c1c;
+		color: #ff5353;
+	}
+}
 
 .archive-content {
 	position:absolute;
@@ -77,10 +77,10 @@
 	.filter-trigger {
 		width: 48px;
 		height: 48px;
-		line-height: 48px;
+		line-height: 54px;
 		text-align: center;
 		background: @archive-sidebar-bg;
-		border-right: 1px solid #e0e0e0;
+		//border-right: 1px solid #e0e0e0;
 		.transition(all ease 0.1s);
 		overflow: hidden;
 		i {
@@ -389,9 +389,11 @@
 			position: absolute;
 			bottom: 4px;
 			left: 0px;
-			.opacity(50);
 			width: 32px;
 			text-align: center;
+			i {
+				color: @grayLight;
+			}
 		}
 
 		.source {
@@ -610,14 +612,13 @@
 		}
 
 		.type-icon {
-			text-align: center;
 			width: 36px;
 			height: 56px;
-			padding: 10px 5px;
+			padding: 10px;
 			.box-sizing(border-box);
 
 			i {
-				.opacity(50);
+				color: @grayLight;
 				width: 24px;
 				padding-left: 0;
 				margin-left: 0;
@@ -668,18 +669,20 @@
 				}
 				dt, dd {
 					display: inline-block;
+					margin-left: 0px;
 					&.dropdown:hover .dropdown-menu {
 					    display: block;  
-					    min-width: 100%;  
+					    min-width: 100%; 
 					}
+					.dropdown-toggle {
+							padding: 0;
+							margin: 0 0 0 5px;
+						}
 				}
 			}
 			.state-label {
 				margin-top: 2px;
-				line-height: 14px;
-				.border-radius(2px);
 				margin-right: 10px;
-				.text-semibold();
 			}
 			.signal {
 				display: inline-block;
@@ -737,6 +740,11 @@
 					white-space: nowrap;
 					margin: 0;
 				}
+			}
+			.location-desk-label {
+				font-style: italic;
+				color: #666;
+				font-weight: 300;
 			}
 			.container {
 				.text-semibold();

@@ -10,7 +10,7 @@ Feature: Ingest Errors
 
     @auth
     Scenario: Get list of all errors for reuters
-        When we get "/io_errors?source_type=reuters"
+        When we get "/io_errors?source_type=reuters_http"
         Then we get list with 1 items
             """
             {"_items":[{"all_errors":{"1001":"Message could not be parsed","1002":"Ingest file could not be parsed"},"source_errors":{"4000":"Unknown API ingest error","4001":"API ingest connection has timed out.","4002":"API ingest has too many redirects","4003":"API ingest has request error","4004":"API ingest Unicode Encode Error","4005":"API ingest xml parse error"}}]}

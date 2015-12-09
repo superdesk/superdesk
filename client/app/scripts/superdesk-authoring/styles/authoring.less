@@ -37,23 +37,24 @@
 		}
 	}
 
-	.page-content-container {
-		left:0;
-		right:50px;
-	}
+    .page-content-container {
+        left:0;
+        right:50px; 
+        top: 27px;
+    }
 
-	.widget-wrapper {
-		&.active-right {
-			&.right-extended {
-				.page-content-container {
-				right: 50px;
-				}
-			}
-			.page-content-container {
-				right: 50px;
-			}
-		}
-	}
+    .widget-wrapper {
+        &.active-right {
+            &.right-extended {
+                .page-content-container {
+                    right: 50px;
+                }
+            }
+            .page-content-container {
+                right: 50px;
+            }
+        }
+    }
 }
 
 .lock-avatar {
@@ -428,13 +429,58 @@
 
 // Authoring Header
 // ---------------------
+.authoring-sticky {
+    position: absolute;
+    left: 0; right: 58px;
+    max-width: 818px;
+    margin: 0 auto;
+    padding: 10px 40px;
+    border: 1px solid #cacaca;
+    border-top: 0;
+    border-bottom: 0;
+    background-color: @white;
+    .transition(all .5s);
+    
+    .authoring-sticky__detailed {
+        display: inline-block;
+        > div {
+            display: inline-block;
+            margin-left: 15px;
+            padding-left: 10px;
+            border-left: 1px solid #f5f5f5;
+        }
+        label, time, b {
+            display: inline-block;
+            vertical-align: top;
+            font-size: 12px;
+            color: silver;
+            padding-right: .3em;
+            margin: 0;
+        }
+        b {
+            max-width: 45%;
+            color: #575656;
+            font-weight: 400;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+    }
+    &.authoring-sticky--fixed {
+        z-index: 3;
+        .box-shadow(0px 2px 4px -1px rgba(0,0,0,0.2));
+    }
+}
+
 .authoring-header {
     position: relative;
     max-width: 900px;
     margin: 0 auto;
     font-size: 0;
-    padding: 12px 40px;
+    padding: 5px 40px 12px 40px;
     border: 1px solid #cacaca;
+    border-top: 0;
+    border-bottom: 0;
     background-color: @white;
     z-index: 2;
     .box-sizing(border-box);
@@ -442,7 +488,7 @@
     .transition(all .5s);
 
     > .authoring-header__holder {
-        height: 19px;
+        height: 0px;
         overflow: hidden;
     }
 
@@ -453,7 +499,7 @@
         }
     }
 
-    > button {
+    .authoring-header__toggle {
         position: absolute;
         width: 23px;
         height: 23px;
@@ -484,35 +530,9 @@
         &:nth-of-type(2n+2) { margin-left: 10%; }
     }
     
-    .authoring-header__short {
-        > div {
-            margin-left: 15px;
-            padding-left: 10px;
-            border-left: 1px solid #f5f5f5;
-        }
-        label, time {
-            padding-right: .3em;
-            margin: 0;
-        }
-        * {
-            display: inline-block;
-            vertical-align: top;
-            font-size: 12px;
-            color: silver;
-        }
-        b {
-            max-width: 45%;
-            color: #575656;
-            font-weight: 400;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            overflow: hidden;
-        }
-    }
-
     .authoring-header__general-info {
         display: block;
-        margin: 15px 0 10px 0;
+        margin: 10px 0;
         > div { 
             display: inline-block;
             vertical-align: top;
@@ -554,12 +574,12 @@
         }
         [class^="filetype-icon-"], 
         [class*="filetype-icon-"] { 
-            height: 13px; 
-            padding-left: 16px;
-            .opacity(50);
+            height: 13px;
+            color: @grayLight;
         }
         .dropdown-toggle {
             line-height: 13px;
+            height: auto;
         }
     }
 
@@ -593,13 +613,9 @@
             width: 100%;
             line-height: 0;
             .dropdown-toggle {
-                position: relative;
-                padding: 0 15px 0 5px;
-                line-height: 24px;
-                text-align: left;
-                min-height: 25px;
                 .box-sizing(border-box);
                 .transition(all .3s);
+                padding: 0;
                 .caret {
                     position: absolute;
                     top: 50%;

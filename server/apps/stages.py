@@ -20,9 +20,6 @@ from superdesk.errors import SuperdeskApiError
 from superdesk import get_resource_service
 from eve.utils import ParsedRequest
 from apps.tasks import task_statuses
-from superdesk.utc import get_expiry_date
-from apps.common.models.utils import get_model
-from apps.item_lock.models.item import ItemModel
 from superdesk.metadata.item import CONTENT_STATE, ITEM_STATE
 from apps.archive.archive import SOURCE as ARCHIVE
 
@@ -104,8 +101,9 @@ class StagesService(BaseService):
             req.max_results = 1
             prev_stage = self.get(req=req, lookup={'desk': doc['desk']})
 
-            if doc.get('content_expiry', 0) == 0:
-                doc['content_expiry'] = app.settings['CONTENT_EXPIRY_MINUTES']
+            if doc.get('content_expiry') == 0:
+                doc['content_expiry'] = None
+
             if prev_stage.count() == 0:
                 doc['desk_order'] = 1
             else:
@@ -175,16 +173,9 @@ class StagesService(BaseService):
 
     def on_update(self, updates, original):
         if updates.get('content_expiry') == 0:
-            updates['content_expiry'] = app.settings['CONTENT_EXPIRY_MINUTES']
+            updates['content_expiry'] = None
 
         super().on_update(updates, original)
-
-        if updates.get('content_expiry', None):
-            docs = self.get_stage_documents(str(original[config.ID_FIELD]))
-            for doc in docs:
-                expiry = get_expiry_date(updates['content_expiry'], doc['versioncreated'])
-                item_model = get_model(ItemModel)
-                item_model.update({'_id': doc[config.ID_FIELD]}, {'expiry': expiry})
 
         if updates.get('working_stage', False):
             if not original.get('working_stage'):
@@ -283,8 +274,7 @@ class StagesService(BaseService):
         :return: identifier of Working Stage
         """
 
-        stage = {'name': 'Working Stage', 'working_stage': True, 'desk_order': 1,
-                 'content_expiry': app.settings['CONTENT_EXPIRY_MINUTES']}
+        stage = {'name': 'Working Stage', 'working_stage': True, 'desk_order': 1, 'content_expiry': None}
         resolve_default_values(stage, app.config['DOMAIN'][self.datasource]['defaults'])
         return self.create([stage])
 
@@ -293,7 +283,6 @@ class StagesService(BaseService):
         Creates a Incoming stage and returns it's identifier
         :return: identifier of Incoming Stage
         """
-        stage = {'name': 'Incoming Stage', 'default_incoming': True, 'desk_order': 2,
-                 'content_expiry': app.settings['CONTENT_EXPIRY_MINUTES']}
+        stage = {'name': 'Incoming Stage', 'default_incoming': True, 'desk_order': 2, 'content_expiry': None}
         resolve_default_values(stage, app.config['DOMAIN'][self.datasource]['defaults'])
         return self.create([stage])

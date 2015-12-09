@@ -14,7 +14,7 @@ from copy import copy
 from eve.utils import ParsedRequest
 from eve.versioning import resolve_document_version
 
-from apps.archive.common import get_expiry, item_operations, ITEM_OPERATION, update_version
+from apps.archive.common import get_item_expiry, item_operations, ITEM_OPERATION, update_version
 from apps.archive.common import insert_into_versions, is_assigned_to_a_desk, convert_task_attributes_to_objectId
 
 from superdesk.resource import Resource
@@ -68,28 +68,27 @@ def send_to(doc, update=None, desk_id=None, stage_id=None, user_id=None):
     current_stage = None
     if original_task.get('stage'):
         current_stage = get_resource_service('stages').find_one(req=None, _id=original_task.get('stage'))
-    destination_stage = calculate_expiry_from = None
+    desk = destination_stage = None
     task = {'desk': desk_id, 'stage': stage_id, 'user': original_task.get('user') if user_id is None else user_id}
 
     if current_stage:
         apply_stage_rule(doc, update, current_stage, is_incoming=False)
 
-    if desk_id and not stage_id:
+    if desk_id:
         desk = superdesk.get_resource_service('desks').find_one(req=None, _id=desk_id)
         if not desk:
             raise SuperdeskApiError.notFoundError('Invalid desk identifier %s' % desk_id)
 
-        calculate_expiry_from = desk
         task['desk'] = desk_id
-        task['stage'] = desk.get('incoming_stage')
-        destination_stage = get_resource_service('stages').find_one(req=None, _id=desk.get('incoming_stage'))
+        if not stage_id:
+            task['stage'] = desk.get('incoming_stage')
+            destination_stage = get_resource_service('stages').find_one(req=None, _id=desk.get('incoming_stage'))
 
     if stage_id:
         destination_stage = get_resource_service('stages').find_one(req=None, _id=stage_id)
         if not destination_stage:
             raise SuperdeskApiError.notFoundError('Invalid stage identifier %s' % stage_id)
 
-        calculate_expiry_from = destination_stage
         task['desk'] = destination_stage['desk']
         task['stage'] = stage_id
 
@@ -101,10 +100,10 @@ def send_to(doc, update=None, desk_id=None, stage_id=None, user_id=None):
     if update:
         update.setdefault('task', {})
         update['task'].update(task)
-        update['expiry'] = get_expiry(desk_or_stage_doc=calculate_expiry_from)
+        update['expiry'] = get_item_expiry(desk=desk, stage=destination_stage)
     else:
         doc['task'].update(task)
-        doc['expiry'] = get_expiry(desk_or_stage_doc=calculate_expiry_from)
+        doc['expiry'] = get_item_expiry(desk=desk, stage=destination_stage)
 
 
 def apply_stage_rule(doc, update, stage, is_incoming):

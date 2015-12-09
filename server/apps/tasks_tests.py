@@ -10,7 +10,6 @@
 
 from test_factory import SuperdeskTestCase
 from apps.archive.common import get_item_expiry
-from app import get_app
 from superdesk.utc import get_expiry_date
 from apps.tasks import apply_stage_rule, compare_dictionaries
 from nose.tools import assert_raises
@@ -19,26 +18,22 @@ from superdesk.errors import SuperdeskApiError
 
 class TasksTestCase(SuperdeskTestCase):
 
-    app = None
-
-    def setUp(self):
-        app_config = self.get_test_settings()
-        self.app = get_app(app_config)
-
-    def get_test_settings(self):
-        test_settings = {}
-        test_settings['CONTENT_EXPIRY_MINUTES'] = 99
-        return test_settings
-
     def test_get_global_content_expiry(self):
-        calculated_minutes = get_item_expiry(self.app, None)
-        reference_minutes = get_expiry_date(99)
+        calculated_minutes = get_item_expiry(desk=None, stage=None)
+        reference_minutes = get_expiry_date(self.ctx.app.config['CONTENT_EXPIRY_MINUTES'])
+        self.assertEquals(calculated_minutes.hour, reference_minutes.hour)
+        self.assertEquals(calculated_minutes.minute, reference_minutes.minute)
+
+    def test_get_desk_content_expiry(self):
+        desk = {"content_expiry": 10}
+        calculated_minutes = get_item_expiry(desk=desk, stage=None)
+        reference_minutes = get_expiry_date(10)
         self.assertEquals(calculated_minutes.hour, reference_minutes.hour)
         self.assertEquals(calculated_minutes.minute, reference_minutes.minute)
 
     def test_get_stage_content_expiry(self):
         stage = {"content_expiry": 10}
-        calculated_minutes = get_item_expiry(self.app, stage)
+        calculated_minutes = get_item_expiry(desk=None, stage=stage)
         reference_minutes = get_expiry_date(10)
         self.assertEquals(calculated_minutes.hour, reference_minutes.hour)
         self.assertEquals(calculated_minutes.minute, reference_minutes.minute)

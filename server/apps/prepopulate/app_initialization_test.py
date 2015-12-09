@@ -53,3 +53,6 @@ class AppInitializeWithDataCommandTestCase(SuperdeskTestCase):
         result = app.data.mongo.pymongo(resource='users').db['users'].index_information()
         self.assertTrue('username_1' in result)
         self.assertTrue('first_name_1_last_name_-1' in result)
+        result = app.data.mongo.pymongo(resource='archive').db['archive'].index_information()
+        self.assertTrue('groups.refs.guid_1' in result)
+        self.assertTrue(result['groups.refs.guid_1']['sparse'])

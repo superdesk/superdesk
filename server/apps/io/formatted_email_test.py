@@ -9,13 +9,14 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 
-from test_factory import SuperdeskTestCase
 import os
-from superdesk.io.rfc822 import rfc822Parser
+
 from superdesk.errors import IngestEmailError
+from superdesk.io.feed_parsers.rfc822 import EMailRFC822FeedParser
+from test_factory import SuperdeskTestCase
 
 
-class rfc822JsonFormatter(SuperdeskTestCase):
+class RFC822JsonFormatter(SuperdeskTestCase):
 
     vocab = [{'_id': 'categories', 'items': [{'is_active': True, 'name': 'Domestic Sport', 'qcode': 's'}]}]
     desk = [{'_id': 1, 'name': 'Brisbane'}]
@@ -35,8 +36,8 @@ class rfc822JsonFormatter(SuperdeskTestCase):
         fixture = os.path.join(dirname, 'fixtures', filename)
         with open(fixture, mode='rb') as f:
             bytes = f.read()
-        parser = rfc822Parser()
-        self.items = parser.parse_email([(1, bytes)], self.provider)
+        parser = EMailRFC822FeedParser()
+        self.items = parser.parse([(1, bytes)], self.provider)
 
         self.assertEqual(self.items[0]['priority'], 5)
         self.assertEqual(self.items[0]['sign_off'], 'TA')
@@ -59,11 +60,11 @@ class rfc822JsonFormatter(SuperdeskTestCase):
         fixture = os.path.join(dirname, 'fixtures', filename)
         with open(fixture, mode='rb') as f:
             bytes = f.read()
-        parser = rfc822Parser()
+        parser = EMailRFC822FeedParser()
 
         try:
             with self.assertRaises(IngestEmailError) as exc_context:
-                self.items = parser.parse_email([(1, bytes)], self.provider)
+                self.items = parser.parse([(1, bytes)], self.provider)
         except:
             self.fail('Expected exception type was not raised.')
 

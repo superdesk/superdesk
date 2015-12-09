@@ -37,7 +37,7 @@ Feature: News Items Archive Comments
         Then we get list with 2 items
 
         When we get "/activity"
-        Then we get list with 2 items
+        Then we get list with 0 items
 
 
     @auth

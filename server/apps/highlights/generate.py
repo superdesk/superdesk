@@ -6,7 +6,7 @@ from flask import render_template
 from jinja2 import Template
 
 
-def getTemplate(highlightId):
+def get_template(highlightId):
     """Return the string template associated with highlightId or none """
     if not highlightId:
         return None
@@ -17,9 +17,9 @@ def getTemplate(highlightId):
 
     templateService = superdesk.get_resource_service('content_templates')
     template = templateService.find_one(req=None, _id=highlight.get('template'))
-    if not template or 'body_html' not in template:
+    if not template or 'body_html' not in template.get('data', {}):
         return None
-    return template.get('body_html')
+    return template['data']['body_html']
 
 
 class GenerateHighlightsService(superdesk.Service):
@@ -34,7 +34,7 @@ class GenerateHighlightsService(superdesk.Service):
             package = service.find_one(req=None, _id=doc['package'])
             if not package:
                 superdesk.abort(404)
-            stringTemplate = getTemplate(package.get('highlight'))
+            stringTemplate = get_template(package.get('highlight'))
 
             doc.clear()
             doc[ITEM_TYPE] = CONTENT_TYPE.TEXT

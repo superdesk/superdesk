@@ -133,10 +133,6 @@ CELERYBEAT_SCHEDULE = {
         'task': 'superdesk.publish.transmit',
         'schedule': timedelta(seconds=10)
     },
-    'publish:remove_expired': {
-        'task': 'apps.publish.content_purge',
-        'schedule': crontab(minute=30)
-    },
     'publish:remove_overdue_scheduled': {
         'task': 'apps.archive.remove_scheduled',
         'schedule': crontab(minute=10)
@@ -145,6 +141,10 @@ CELERYBEAT_SCHEDULE = {
         'task': 'apps.templates.content_templates.create_scheduled_content',
         'schedule': crontab(minute='*/5'),
     },
+    'legal:import_publish_queue': {
+        'task': 'apps.legal_archive.import_legal_publish_queue',
+        'schedule': timedelta(minutes=5)
+    }
 }
 
 SENTRY_DSN = env('SENTRY_DSN')
@@ -189,11 +189,12 @@ INSTALLED_APPS.extend([
     'apps.comments',
 
     'superdesk.io',
+    'superdesk.io.feeding_services',
+    'superdesk.io.feed_parsers',
     'superdesk.io.subjectcodes',
     'superdesk.io.iptc',
     'apps.io',
-    'superdesk.io.ftp',
-    'superdesk.io.rss',
+    'apps.io.feeding_services',
     'superdesk.publish',
     'superdesk.commands',
     'superdesk.locators.locators',
@@ -221,7 +222,6 @@ INSTALLED_APPS.extend([
     'apps.dictionaries',
     'apps.duplication',
     'apps.aap.import_text_archive',
-    'apps.aap_mm',
     'apps.spellcheck',
     'apps.templates',
     'apps.archived',
@@ -229,7 +229,9 @@ INSTALLED_APPS.extend([
     'apps.validate',
     'apps.workspace',
     'apps.macros',
-    'apps.archive_broadcast'
+    'apps.archive_broadcast',
+    'apps.search_providers',
+    'apps.search_providers.aap_mm'
 ])
 
 RESOURCE_METHODS = ['GET', 'POST']
@@ -274,23 +276,19 @@ MAIL_PASSWORD = env('MAIL_PASSWORD', '')
 ADMINS = [MAIL_USERNAME]
 SUPERDESK_TESTING = (env('SUPERDESK_TESTING', 'false').lower() == 'true')
 
+# Default TimeZone
+DEFAULT_TIMEZONE = env('DEFAULT_TIMEZONE', 'Europe/Prague')
+
 # The number of minutes since the last update of the Mongo auth object after which it will be deleted
 SESSION_EXPIRY_MINUTES = int(env('SESSION_EXPIRY_MINUTES', 240))
 
-# The number of minutes before spiked items purged
-SPIKE_EXPIRY_MINUTES = int(env('SPIKE_EXPIRY_MINUTES', 300))
-
 # The number of minutes before content items purged
 # akin.tolga 06/01/2014: using a large value (30 days) for the time being
-CONTENT_EXPIRY_MINUTES = int(env('CONTENT_EXPIRY_MINUTES', 43200))
+CONTENT_EXPIRY_MINUTES = int(env('CONTENT_EXPIRY_MINUTES', 4320))
 
 # The number of minutes before ingest items purged
 # 2880 = 2 days in minutes
 INGEST_EXPIRY_MINUTES = int(env('INGEST_EXPIRY_MINUTES', 2880))
-
-# The number of minutes before published items purged
-# 4320 = 3 days in minutes
-PUBLISHED_ITEMS_EXPIRY_MINUTES = int(env('PUBLISHED_ITEMS_EXPIRY_MINUTES', 4320))
 
 # This setting can be used to apply a limit on the elastic search queries, it is a limit per shard.
 # A value of -1 indicates that no limit will be applied.

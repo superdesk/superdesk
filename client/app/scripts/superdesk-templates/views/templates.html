@@ -70,6 +70,13 @@
         </div>
 
         <div class="field">
+            <label for="template-is-private" translate>Desk Template</label>
+            <div class="control">
+              <span sd-switch ng-model="template.is_public"></span>
+            </div>
+        </div>
+
+        <div class="field" ng-if="template.template_type !== 'kill' && template.is_public">
           <label for="template-desk" translate>Desk</label>
           <div class="control">
             <select id="template-desk"
@@ -81,7 +88,7 @@
           </div>
         </div>
 
-        <div class="field" ng-if="template.template_desk && stages">
+        <div class="field" ng-if="template.template_desk && stages && template.template_type !== 'kill' && template.is_public">
           <label for="template-stage" translate>Stage</label>
           <div class="control">
             <select id="template-stage"
@@ -91,24 +98,24 @@
           </div>
         </div>
 
-        <div class="field">
+        <div class="field" ng-if="template.template_type !== 'kill' && template.is_public">
           <label for="schedule-toggle" translate>Automatically create item</label>
           <div class="control">
             <span sd-switch ng-model="template.schedule.is_active"></span>
           </div>
         </div>
 
-        <div class="field" ng-if="template.schedule.is_active">
+        <div class="field" ng-if="template.schedule.is_active && template.template_type !== 'kill'">
           <label translate>On</label>
           <div class="day-filter-box clearfix" sd-weekday-picker data-model="template.schedule.day_of_week"></div>
         </div>
 
-        <div class="field" ng-if="template.schedule.is_active">
+        <div class="field" ng-if="template.schedule.is_active && template.template_type !== 'kill'">
           <label translate>At</label>
           <span sd-timepicker-alt data-model="template.schedule.create_at"></span>
         </div>
-
       </div>
+      
       <div class="fieldset" sd-article-edit></div>
     </div>
     </form>

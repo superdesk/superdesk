@@ -530,14 +530,16 @@ class ArchiveService(BaseService):
             8.  Does article has valid crops if the article type is a picture?
             9.  Is article a valid package if the article type is a package?
             10. Does article has a valid Embargo?
+            11. Make sure that there are no duplicate anpa_category codes in the article.
+            12. Make sure there are no duplicate subjects in the upadte
 
         :raises:
             SuperdeskApiError.forbiddenError()
                 - if state of the article is killed or user is not authorized to update unique name or if article is
                   locked by another user
             SuperdeskApiError.badRequestError()
-                - if Public Service Announcements are being added to a package or genre is being updated for a broadcast
-                  or is invalid for scheduling
+                - if Public Service Announcements are being added to a package or genre is being updated for a
+                broadcast, is invalid for scheduling, the updates contain duplicate anpa_category or subject codes
         """
 
         lock_user = original.get('lock_user', None)
@@ -580,6 +582,16 @@ class ArchiveService(BaseService):
         updated = original.copy()
         updated.update(updates)
         self.validate_embargo(updated)
+
+        # Ensure that there are no duplicate categories in the update
+        category_qcodes = [q['qcode'] for q in updates.get('anpa_category', []) or []]
+        if category_qcodes and len(category_qcodes) != len(set(category_qcodes)):
+            raise SuperdeskApiError.badRequestError("Duplicate category codes are not allowed")
+
+        # Ensure that there are no duplicate subjects in the update
+        subject_qcodes = [q['qcode'] for q in updates.get('subject', []) or []]
+        if subject_qcodes and len(subject_qcodes) != len(set(subject_qcodes)):
+            raise SuperdeskApiError.badRequestError("Duplicate subjects are not allowed")
 
     def _add_system_updates(self, original, updates, user):
         """

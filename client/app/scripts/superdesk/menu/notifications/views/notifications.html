@@ -17,17 +17,21 @@
             <header class="title" translate>Notifications</header>
             <div class="notification-list">
                 <ul>
-                    <li ng-repeat="notification in notifications._items" ng-class="{unread: notification._unread}" sd-mark-as-read>
+                    <li ng-repeat="notification in notifications._items track by notification._id" ng-class="{unread: notification._unread}" sd-mark-as-read>
                         <figure class="avatar">
                             <img sd-user-avatar data-user="notification.user">
                         </figure>
                         <div class="content" ng-if="notification.name == 'notify'">
                             <time sd-datetime data-date="notification._created"></time>
-                            <p class="text"><b>{{ notification.user.display_name || notification.user.username }}</b> <span translate>commented on</span> <i><a ng-href="#/authoring/{{ notification.item.guid }}?_id={{ notification.item.guid }}&comments={{ notification.data.comment_id }}" title="{{ notification.item.headline }}">{{ notification.item.slugline || notification.item.headline }}</a></i>:<br>{{ notification.data.comment }}</p>
+                            <p class="text"><b>{{:: notification.user.display_name || notification.user.username }}</b> <span translate>commented on</span> <i><a ng-href="#/authoring/{{ notification.item.guid }}?_id={{ notification.item.guid }}&comments={{ notification.data.comment_id }}" title="{{ notification.item.headline }}">{{ :: notification.item.slugline || notification.item.headline }}</a></i>:<br>{{:: notification.data.comment }}</p>
                         </div>
-                        <div class="content" ng-if="notification.name != 'notify'">
+                        <div class="content" ng-if="notification.name == 'user:mention'">
                             <time sd-datetime data-date="notification._created"></time>
-                            <p class="text"><b>{{ notification.user.display_name || notification.user.username || "System" }}</b>: <span sd-activity-message data-activity="notification"></span></p>
+                            <p class="text"><b>{{:: notification.user.display_name || notification.user.username }}</b> <span translate>mentioned you</span> <i><a ng-href="#/authoring/{{ notification.item.guid }}?_id={{ notification.item.guid }}&comments={{ notification.data.comment_id }}" title="{{ notification.item.headline }}">{{:: notification.item.slugline || notification.item.headline }}</a></i>:<br>{{:: notification.data.comment }}</p>
+                        </div>
+                        <div class="content" ng-if="notification.name != 'notify' && notification.name != 'user:mention'">
+                            <time sd-datetime data-date="notification._created"></time>
+                            <p class="text"><b>{{:: notification.user.display_name || notification.user.username || "System" }}</b>: <span sd-activity-message data-activity="notification"></span></p>
                         </div>                        
                     </li>
                     <div class="info" ng-show="notifications._items.length === 0" translate>All good so far.</div>

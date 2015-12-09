@@ -85,10 +85,10 @@ function MetadataCtrl(
         });
 
         filtered = _.filter(all, function (cat) {
-            return userPrefs[cat.qcode] || assigned[cat.qcode];
+            return userPrefs[cat.qcode] && !assigned[cat.qcode];
         });
 
-        $scope.availableCategories = filtered;
+        $scope.availableCategories = _.sortBy(filtered, 'name');
     }
 
     $scope.$watch('item.publish_schedule_date', function(newValue, oldValue) {
@@ -371,17 +371,22 @@ function MetadataListEditingDirective(metadata) {
             scope.selectTerm = function(term) {
                 if (term) {
 
-                    //instead of simple push, extend the item[field] in order to trigger dirty $watch
-                    var t = _.clone(scope.item[scope.field]) || [];
-                    t.push(term);
+                    // Only select terms that are not already selected
+                    if (!_.find(scope.item[scope.field], function(i) {return i.qcode === term.qcode;})) {
+                        //instead of simple push, extend the item[field] in order to trigger dirty $watch
+                        var t = _.clone(scope.item[scope.field]) || [];
+                        t.push(term);
 
-                    //build object
-                    var o = {};
-                    o[scope.field] = t;
-                    _.extend(scope.item, o);
+                        //build object
+                        var o = {};
+                        o[scope.field] = t;
+                        _.extend(scope.item, o);
+                    }
 
                     scope.selectedTerm = '';
 
+                    // Remove the selected term from the terms
+                    scope.terms = _.without(scope.terms, term);
                     scope.postprocessing();
                     scope.change({item: scope.item});
                 }
@@ -398,6 +403,9 @@ function MetadataListEditingDirective(metadata) {
 
                 tempItem[scope.field] = filteredArray;
                 _.extend(scope.item, tempItem);
+                // Push the term back onto the terms list
+                scope.terms.push(term);
+                scope.terms = _.sortBy(scope.terms, 'name');
                 scope.change({item: scope.item});
             };
         }
@@ -567,7 +575,7 @@ angular.module('superdesk.authoring.metadata', ['superdesk.authoring.widgets'])
                 template: 'scripts/superdesk-authoring/metadata/views/metadata-widget.html',
                 order: 1,
                 side: 'right',
-                display: {authoring: true, packages: true, legalArchive: true}
+                display: {authoring: true, packages: true, killedItem: true, legalArchive: true}
             });
     }])
 

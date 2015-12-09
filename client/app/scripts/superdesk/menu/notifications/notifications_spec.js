@@ -1,11 +1,11 @@
 'use strict';
 
-describe('notifications', function() {
+describe('user notifications', function() {
 
     var notifications = {_items: [
-        {read: {foo: 0, bar: 1}},
-        {read: {foo: 1, bar: 1}},
-        {read: {foo: 1, bar: 0}}
+        {recipients: [{'user_id': 'foo', 'read': 0}, {'user_id': 'bar', 'read': 1}]},
+        {recipients: [{'user_id': 'foo', 'read': 1}, {'user_id': 'bar', 'read': 1}]},
+        {recipients: [{'user_id': 'foo', 'read': 1}, {'user_id': 'bar', 'read': 0}]}
     ]};
 
     beforeEach(module('superdesk.api'));
@@ -19,7 +19,7 @@ describe('notifications', function() {
         spyOn(session, 'getIdentity').and.returnValue($q.reject());
     }));
 
-    it('can fetch content notifications', inject(function(userNotifications, session, api, $rootScope) {
+    it('can fetch user notifications', inject(function(userNotifications, session, api, $rootScope) {
         session.identity = {_id: 'foo', user_type: 'user'};
 
         expect(userNotifications._items).toBe(null);
@@ -50,5 +50,39 @@ describe('notifications', function() {
         var query = args[1].where;
         expect(query.user).toBeUndefined();
         expect(query.item).toBeUndefined();
+    }));
+});
+
+describe('desk notifications', function() {
+
+    var notifications = {_items: [
+        {recipients: [{'desk_id': 'desk1', 'read': 0}, {'desk_id': 'desk2', 'read': 1}]},
+        {recipients: [{'desk_id': 'desk1', 'read': 1}, {'desk_id': 'desk2', 'read': 0}]},
+        {recipients: [{'desk_id': 'desk1', 'read': 1}, {'desk_id': 'desk2', 'read': 0}]}
+    ]};
+
+    beforeEach(module('superdesk.api'));
+    beforeEach(module('superdesk.menu.notifications'));
+
+    beforeEach(inject(function(api, $q) {
+        spyOn(api, 'query').and.returnValue($q.when(notifications));
+    }));
+
+    it('can fetch desk notifications', inject(function(deskNotifications, session, api, $rootScope) {
+        session.identity = {_id: 'foo', user_type: 'user'};
+
+        expect(deskNotifications._items).toEqual({});
+        expect(deskNotifications.getUnreadCount('desk1')).toBe(0);
+
+        deskNotifications.reload();
+        $rootScope.$digest();
+
+        expect(deskNotifications._items.desk1.length).toBe(3);
+        expect(deskNotifications.unread).toEqual({desk1: 1, desk2: 2});
+
+        expect(api.query).toHaveBeenCalled();
+
+        var args = api.query.calls.argsFor(0);
+        expect(args[0]).toBe('activity');
     }));
 });

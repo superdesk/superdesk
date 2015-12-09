@@ -64,7 +64,7 @@
             {"user": "54ed94da10245479ccc38410"}
         ],
         "name": "National",
-        "spike_expiry": 1440,
+        "content_expiry": 1440,
         "desk_type": "production"
     },
     {
@@ -126,7 +126,7 @@
             {"user": "54ed955910245479d505d296"}
         ],
         "name": "World news",
-        "spike_expiry": 1440,
+        "content_expiry": 1440,
         "desk_type": "production"
     },
     {
@@ -188,7 +188,7 @@
             {"user": "54ed955910245479d505d2a3"}
         ],
         "name": "Finance",
-        "spike_expiry": 1440,
+        "content_expiry": 1440,
         "desk_type": "production"
     },
     {
@@ -221,7 +221,7 @@
             {"user": "54ed952410245479ccc38447"}
         ],
         "name": "New Zealand",
-        "spike_expiry": 1440,
+        "content_expiry": 1440,
         "desk_type": "production"
     },
     {
@@ -300,7 +300,7 @@
             {"user": "54ed952410245479ccc3846c"}
         ],
         "name": "Sport",
-        "spike_expiry": 1440,
+        "content_expiry": 1440,
         "desk_type": "production"
     },
     {
@@ -327,7 +327,7 @@
             {"user": "54ed955910245479d505d295"}
         ],
         "name": "Features",
-        "spike_expiry": 1440,
+        "content_expiry": 1440,
         "desk_type": "production"
     },
     {
@@ -348,7 +348,7 @@
             {"user": "54ed952410245479ccc38477"}
         ],
         "name": "Special",
-        "spike_expiry": 1440,
+        "content_expiry": 1440,
         "desk_type": "production"
     },
     {
@@ -366,7 +366,7 @@
             {"user": "54ed955910245479d505d2a2"}
         ],
         "name": "Perth",
-        "spike_expiry": 4320,
+        "content_expiry": 4320,
         "desk_type": "authoring"
     },
     {
@@ -384,7 +384,7 @@
             {"user": "54ed955910245479d505d2a1"}
         ],
         "name": "Melbourne",
-        "spike_expiry": 4320,
+        "content_expiry": 4320,
         "desk_type": "authoring"
     },
     {
@@ -402,7 +402,7 @@
             {"user": "54ed955910245479d505d292"}
         ],
         "name": "Darwin",
-        "spike_expiry": 43200,
+        "content_expiry": 4320,
         "desk_type": "authoring"
     },
     {
@@ -419,7 +419,7 @@
             {"user": "54ed955910245479d505d299"}
         ],
         "name": "Adelaide",
-        "spike_expiry": 4320,
+        "content_expiry": 4320,
         "desk_type": "authoring"
     },
     {
@@ -437,7 +437,7 @@
             {"user": "54ed955910245479d505d29f"}
         ],
         "name": "Canberra",
-        "spike_expiry": 4320,
+        "content_expiry": 4320,
         "desk_type": "authoring"
     },
     {
@@ -455,7 +455,7 @@
             {"user": "54ed955910245479d505d29e"}
         ],
         "name": "Hobart",
-        "spike_expiry": 4320,
+        "content_expiry": 4320,
         "desk_type": "authoring"
     },
     {
@@ -472,7 +472,7 @@
             {"user": "54ed955910245479d505d29c"}
         ],
         "name": "Brisbane",
-        "spike_expiry": 4320,
+        "content_expiry": null,
         "desk_type": "authoring"
     },
     {
@@ -488,7 +488,7 @@
             {"user": "54ed946e10245479ccc38398"}
         ],
         "name": "Sydney",
-        "spike_expiry": 4320,
+        "content_expiry": null,
         "desk_type": "authoring"
     },
     {
@@ -506,7 +506,7 @@
             {"user": "54ed955910245479d505d28e"}
         ],
         "name": "Jakarta",
-        "spike_expiry": 4320,
+        "content_expiry": 4320,
         "desk_type": "authoring"
     },
     {
@@ -524,7 +524,7 @@
             {"user": "54ed955910245479d505d296"}
         ],
         "name": "London",
-        "spike_expiry": 4320,
+        "content_expiry": 4320,
         "desk_type": "authoring"
     },
     {
@@ -540,7 +540,7 @@
             {"user": "54ed94da10245479ccc383e2"}
         ],
         "name": "Broadcast",
-        "spike_expiry": 1440,
+        "content_expiry": 1440,
         "desk_type": "production"
     }
 ]

@@ -23,7 +23,7 @@ function UserPrefs() {
     // the Privileges tab
     this.privlTab = element.all(by.css('.nav-tabs button')).get(2);
 
-    this.privlCheckboxes = $$('.roles-list input[type="checkbox"]');
+    this.privlCheckboxes = $$('table input[type="checkbox"]');
 
     this.navigateTo = function () {
         return openUrl('/#/profile');

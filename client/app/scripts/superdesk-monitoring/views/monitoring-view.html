@@ -1,7 +1,7 @@
 <div class="monitoring" ng-controller="AggregateCtrl as aggregate">
     <div class="subnav">
         <span class="flat-searchbar monitoring-backlink" ng-if="monitoring.singleGroup">
-            <button tooltip="{{ :: 'Back to original view' | translate }}" tooltip-placement="right" class="backlink" ng-click="monitoring.viewSingleGroup(null)"></button>
+            <button tooltip="{{ :: 'Back to original view' | translate }}" tooltip-placement="right" class="backlink" ng-click="monitoring.viewMonitoringHome()"></button>
             <div class="separator-handler"></div>
         </span>
         <div class="flat-searchbar monitoring-flat-searchbar" ng-class="{extended: aggregate.monitoringSearch}">
@@ -16,7 +16,7 @@
             <span ng-if="!monitoring.singleGroup && type === 'monitoring'" translate>Monitoring</span>
             <span ng-if="type === 'spike'" translate>Spiked Items</span>
             <span ng-if="type === 'personal'" translate>Personal Items</span>
-            <div ng-if="type === 'highlights'" sd-highlight-label data-highlight="monitoring.queryParam.highlight"></div>
+            <div ng-if="type === 'highlights'" sd-highlight-label data-highlight="monitoring.queryParam.highlight" data-total="monitoring.totalItems"></div>
             <span ng-if="monitoring.singleGroup">
                 {{monitoring.singleGroup.header}} / {{monitoring.singleGroup.subheader}} {{monitoring.singleGroup.type}}
             </span>
@@ -77,6 +77,7 @@
                     <div sd-monitoring-group data-group="{'type': 'highlights', 'query': query, 'fileType': aggregate.getSelectedFileTypes()}"
                     data-view-type="'highlights'"></div>
                 </div>
+
             </div>
 
             <div sd-item-preview

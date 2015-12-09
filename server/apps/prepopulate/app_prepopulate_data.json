@@ -244,7 +244,13 @@
 		            "type" : "integer",
 		            "required": true,
 		            "allowed": [1, 2, 3, 4, 5]
-		        }
+		        },
+                "body_html": {
+                    "type": "string",
+                    "required": true,
+                    "nullable": false,
+                    "empty": false
+                }
 		    }
 		},
 		"resource": "validators",
@@ -448,9 +454,25 @@
     },
 	
 	{
-        "data": {"template_name": "custom_highlight", "template_type": "highlights", 
-                 "body_html": "<b>custom highlight template</b>\n{% for item in items %} <h2>{{ item.headline }}</h2> {{ item.body_html }} <p></p> {% endfor %}"
-                }, 
+        "data": {
+            "template_name": "custom_highlight", "template_type": "highlights", 
+            "data": {
+                "body_html": "<b>custom highlight template</b>\n{% for item in items %} <h2>{{ item.headline }}</h2> {{ item.body_html }} <p></p> {% endfor %}"
+            }
+        }, 
+        "resource": "content_templates",
+        "id_name": "-id content template-"
+    },
+
+	{
+        "data": {
+            "template_name": "kill", "template_type": "kill",
+            "data": {
+                "body_html": "This is kill template. Slugged {{item.slugline}}.",
+                "abstract": "This item is removed.",
+                "headline": "KILL NOTICE"
+            }
+        },
         "resource": "content_templates",
         "id_name": "-id content template-"
     },
@@ -553,7 +575,7 @@
         "username": "admin",
         "data": {
             "headline": "item5",
-            "slugline": "item5 slugline one/two ",
+            "slugline": "item5 slugline one/two",
             "body_html" : "<p>item5 text</p>",
             "type": "text",
             "guid": "item5",
@@ -894,7 +916,8 @@
         "username": "admin",
         "data": {
           "name": "aap",
-          "type": "aap",
+          "feeding_service": "file",
+          "feed_parser": "nitf",
           "config": {"path": "/"},
           "source": "aap",
           "is_closed": true
@@ -905,13 +928,9 @@
         "username": "admin",
         "data": {
           "name": "afp",
-          "type": "ftp",
-          "config": {
-            "host": "ftp.com",
-            "username": "user",
-            "password": "password",
-            "dest_path": "/"
-          },
+          "feeding_service": "afp_file",
+          "feed_parser": "newsml12",
+          "config": {"path": "/"},
           "source": "afp",
           "is_closed": true
         }

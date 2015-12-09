@@ -8,11 +8,12 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
+import datetime
 import os
 import unittest
-from superdesk.io.newsml_1_2 import NewsMLOneParser
+
 from superdesk.etree import etree
-import datetime
+from superdesk.io.feed_parsers.newsml_1_2 import NewsMLOneFeedParser
 
 
 class TestCase(unittest.TestCase):
@@ -21,7 +22,7 @@ class TestCase(unittest.TestCase):
         fixture = os.path.join(dirname, 'fixtures', 'afp.xml')
         provider = {'name': 'Test'}
         with open(fixture) as f:
-            self.item = NewsMLOneParser().parse_message(etree.fromstring(f.read()), provider)
+            self.item = NewsMLOneFeedParser().parse(etree.fromstring(f.read()), provider)
 
     def test_headline(self):
         self.assertEquals(self.item.get('headline'), 'Sweden court accepts receivership for Saab carmaker')

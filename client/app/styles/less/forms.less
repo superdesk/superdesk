@@ -897,6 +897,8 @@ input, textarea, .dropdown-toggle {
         border: 0 !important;
         border-bottom: 1px solid rgba(0,0,0,0.15)!important;
         background-color: transparent;
+        padding: 0;
+        height:24px;
         &:hover {
             border-color: rgba(0,0,0,0.3) !important;
             background-color: transparent !important;
@@ -908,3 +910,50 @@ input, textarea, .dropdown-toggle {
         }
     }
 }
+
+input, textarea, .dropdown-toggle {
+    &.line-input {
+        width: 100%;
+        border-radius: 0 !important;
+        border: 0 !important;
+        border-bottom: 1px solid rgba(0,0,0,0.15)!important;
+        background-color: transparent;
+        padding: 0;
+        height:24px;
+        &:hover {
+            border-color: rgba(0,0,0,0.3) !important;
+            background-color: transparent !important;
+        }
+        &:focus {
+            box-shadow: 0 1px 0 0 @sd-blue !important;
+            border-color: @sd-blue !important;
+            background-color: transparent !important;
+        }
+    }
+}
+textarea {
+    &.line-input {
+      padding-top: 3px;
+    }
+}
+
+.dropdown-toggle {
+  &.line-input {
+      position: relative;
+      padding: 0 15px 0 0 !important;
+      line-height: 24px;
+      text-align: left;
+      //min-height: 25px;
+  }
+}
+
+.label--inline {
+  text-transform: none;
+  color: #333;
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 400;
+  margin-bottom: 0;
+  vertical-align: top;
+}
+

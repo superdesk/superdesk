@@ -32,6 +32,7 @@ pip install -q -r $SCRIPT_DIR/requirements.txt || exit 1
 
 
 export COMPOSE_PROJECT_NAME=build_$INSTANCE
+export COMPOSE_HTTP_TIMEOUT=600
 
 
 # {{{
@@ -91,20 +92,20 @@ docker-compose up -d
 set +e
 
 if [[ $RUN_BACKEND_UNIT = 1 ]] ; then
-	docker-compose run backend ./scripts/fig_wrapper.sh nosetests --with-xunit --xunit-file=./results-unit/unit.xml --logging-level ERROR ;
+	docker-compose run superdesk ./scripts/fig_wrapper.sh nosetests --with-xunit --xunit-file=./results-unit/unit.xml --logging-level ERROR ;
 fi
 
 if [[ $RUN_BACKEND_BEHAVE = 1 ]] ; then
-	docker-compose run backend ./scripts/fig_wrapper.sh behave --junit --junit-directory ./results-behave/  --format progress2 --logging-level ERROR ;
+	docker-compose run superdesk ./scripts/fig_wrapper.sh behave --junit --junit-directory ./results-behave/  --format progress2 --logging-level ERROR ;
 fi
 
 if [[ $RUN_FRONTEND_UNIT = 1 ]] ; then
-	docker-compose run frontend bash -c "grunt bamboo && mv test-results.xml ./unit-test-results/" ;
+	docker-compose run superdesk bash -c "cd client && grunt bamboo && mv test-results.xml ./unit-test-results/" ;
 fi
 
 if [[ $RUN_E2E = 1 ]] ; then
 	# create admin user:
-	docker-compose run backend ./scripts/fig_wrapper.sh python3 manage.py users:create -u admin -p admin -e 'admin@example.com' --admin=true &&
+	docker-compose run superdesk ./scripts/fig_wrapper.sh python3 manage.py users:create -u admin -p admin -e 'admin@example.com' --admin=true &&
 	echo "+++ new user has been created" &&
 
 	# run e2e tests:

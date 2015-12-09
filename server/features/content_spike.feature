@@ -15,7 +15,7 @@ Feature: Content Spiking
         Then we get OK response
         And we get spiked content "item-1"
         And we get version 2
-        And we get global spike expiry
+        And we get global content expiry
         When we get "/archive/item-1"
         Then we get existing resource
         """
@@ -29,7 +29,7 @@ Feature: Content Spiking
         Given empty "stages"
         Given "desks"
         """
-        [{"name": "Sports Desk", "spike_expiry": 60}]
+        [{"name": "Sports Desk", "content_expiry": 60}]
         """
         Given "archive"
         """
@@ -90,7 +90,7 @@ Feature: Content Spiking
         Given empty "stages"
         Given "desks"
         """
-        [{"name": "Sports Desk", "spike_expiry": 60}]
+        [{"name": "Sports Desk", "content_expiry": 60}]
         """
         Given "archive"
         """
@@ -100,13 +100,13 @@ Feature: Content Spiking
         And we unspike "item-1"
         Then we get unspiked content "item-1"
         And we get version 3
-        And we get global content expiry
+        And we get desk spike expiry after "60"
 
     @auth
     Scenario: Sign Off changes when content is spiked or unspiked
         Given "desks"
         """
-        [{"name": "Sports Desk", "spike_expiry": 60}]
+        [{"name": "Sports Desk", "content_expiry": 60}]
         """
         When we post to "/archive" with success
         """

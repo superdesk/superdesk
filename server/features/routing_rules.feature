@@ -655,11 +655,10 @@ Feature: Routing Scheme and Routing Rules
     @auth
     Scenario: Delete routing scheme when in use
       Given empty "desks"
-
       When we post to "/desks"
-        """
-        {"name": "Sports"}
-        """
+      """
+      {"name": "Sports"}
+      """
       And we post to "/routing_schemes"
         """
         [
@@ -678,9 +677,9 @@ Feature: Routing Scheme and Routing Rules
         ]
         """
       And we post to "ingest_providers"
-        """
-        [{"name": "test", "type": "reuters", "source": "reuters", "routing_scheme": "#routing_schemes._id#"}]
-        """
+      """
+      [{"name": "test", "source": "reuters", "feeding_service": "reuters_http", "feed_parser": "newsml2", "routing_scheme": "#routing_schemes._id#"}]
+      """
       When we delete "/routing_schemes/#routing_schemes._id#"
       Then we get response code 403
 

@@ -129,6 +129,10 @@ function Authoring() {
         return element(by.id('Versioning')).click();
     };
 
+    this.showComments = function() {
+        return element(by.id('Comments')).click();
+    };
+
     this.showHistory = function() {
         this.showVersions();
         return element(by.css('[ng-click="tab = \'history\'"]')).click();
@@ -294,6 +298,11 @@ function Authoring() {
         abstract.sendKeys(text);
     };
 
+    this.writeTextToComment = function(text) {
+        element(by.id('mentio-users')).sendKeys(text);
+        element(by.id('comment-post')).click();
+    };
+
     this.writeTextToPackageSlugline = function (text) {
         browser.wait(function() {
             return packageSlugline.isDisplayed();
@@ -307,6 +316,10 @@ function Authoring() {
 
     this.getHeadlineText = function() {
         return headline.getText();
+    };
+
+    this.getAbstractText = function() {
+        return abstract.getText();
     };
 
     this.closeHeader = function() {

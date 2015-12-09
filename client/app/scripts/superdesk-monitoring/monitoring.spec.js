@@ -204,4 +204,35 @@ describe('monitoring', function() {
             expect(authoringWorkspace.edit).toHaveBeenCalled();
         }));
     });
+
+    describe('desk notification directive', function() {
+
+        beforeEach(module('superdesk.templates-cache'));
+
+        beforeEach(inject(function(desks, api, $q) {
+            desks.stageLookup = {'1': {'desk': 'desk1'}};
+            desks.userLookup = {'1': {'display_name': 'user1'}};
+            spyOn(api, 'activity').and.returnValue($q.when({_items: []}));
+
+        }));
+
+        it('can initiate the desk notifications',
+            inject(function($rootScope, $compile, deskNotifications) {
+            var scope = $rootScope.$new();
+
+            var notifications = [{
+                name: 'desk:mention',
+                recipients: [{desk_id: 'desk1', read: false}],
+                data: {comment: 'abc', comment_id: 1}}];
+
+            spyOn(deskNotifications, 'getNotifications').and.returnValue(notifications);
+
+            var elem = $compile('<div sd-desk-notifications data-stage="1"></div>')(scope);
+            scope.$digest();
+            expect(deskNotifications.getNotifications).toHaveBeenCalled();
+
+            var iScope = elem.isolateScope();
+            expect(iScope.notificationCount).toBe(1);
+        }));
+    });
 });

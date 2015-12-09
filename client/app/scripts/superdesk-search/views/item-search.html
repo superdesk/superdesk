@@ -4,7 +4,7 @@
             <input type="radio" value="local" ng-model="repo.search"> 
             In Superdesk
         </label>
-        <div ng-show="repo.search == 'local'">
+        <div class="superdeskRepos" ng-show="repo.search == 'local'">
             <div class="field">
                 <label for="ingest-collection">
                     {{:: 'Ingest' | translate}}
@@ -30,12 +30,10 @@
                 </label>
             </div>
         </div>
-    </fieldset>
-    <fieldset ng-if="context">
         <div ng-repeat="provider in providers">
-            <label ng-if="provider.type == 'search'"> 
-                <input type="radio" ng-value="provider.source" ng-model="repo.search"> 
-                {{:: provider.name}}
+            <label>
+                <input type="radio" ng-value="provider.search_provider" ng-model="repo.search">
+                {{:: searchProviderTypes[provider.search_provider]}}
             </label>
         </div>
     </fieldset>

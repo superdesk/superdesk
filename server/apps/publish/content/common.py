@@ -40,6 +40,8 @@ from apps.archive.common import get_user, insert_into_versions, item_operations
 from apps.packages import TakesPackageService
 from apps.packages.package_service import PackageService
 from apps.publish.published_item import LAST_PUBLISHED_VERSION
+from apps.legal_archive.commands import import_into_legal_archive
+
 
 logger = logging.getLogger(__name__)
 
@@ -149,6 +151,7 @@ class BasePublishService(BaseService):
 
         get_resource_service('archive_broadcast').reset_broadcast_status(updates, original)
         push_notification('item:updated', item=str(original[config.ID_FIELD]), user=str(user.get(config.ID_FIELD)))
+        self._import_into_legal_archive(updates)
 
     def update(self, id, updates, original):
         """
@@ -235,7 +238,6 @@ class BasePublishService(BaseService):
         self._set_updates(package, package_updates, last_updated)
         package_updates.setdefault(ITEM_OPERATION, updates.get(ITEM_OPERATION, ITEM_PUBLISH))
         self._update_archive(package, package_updates)
-
         '''
         When embargo is lapsed and the article should go to Digital Subscribers the BasePublishService creates a
         Takes Package whose state is draft. In this case, we can't initiate post-publish actions on the Takes Package as
@@ -253,7 +255,20 @@ class BasePublishService(BaseService):
                                                                              target_media_type=SUBSCRIBER_TYPES.DIGITAL)
 
         self.update_published_collection(published_item_id=package[config.ID_FIELD])
+        self._import_into_legal_archive(package)
         return queued_digital
+
+    def _import_into_legal_archive(self, doc):
+        """
+        Import into legal archive async
+        :param {dict} doc: document to be imported
+        """
+
+        if doc.get(ITEM_STATE) != CONTENT_STATE.SCHEDULED:
+            kwargs = {
+                'doc': doc
+            }
+            import_into_legal_archive.apply_async(kwargs=kwargs)
 
     def _publish_package_items(self, package, updates):
         """
@@ -448,7 +463,8 @@ class BasePublishService(BaseService):
         """
 
         takes = self.takes_package_service.get_published_takes(package)
-        body_html = updates_of_take_to_be_published.get('body_html', original_of_take_to_be_published['body_html'])
+        body_html = updates_of_take_to_be_published.get('body_html',
+                                                        original_of_take_to_be_published.get('body_html', ''))
         package_updates = {}
 
         groups = package.get(GROUPS, [])

@@ -21,6 +21,7 @@ describe('desks', function() {
         desks.deskDescriptionElement().sendKeys('New Description');
         desks.deskSourceElement().sendKeys('Test');
         desks.setDeskType('production');
+        desks.setDeskContentExpiry(1, 10);
         desks.actionSaveAndContinueOnGeneralTab();
         desks.showTab('macros');
         desks.save();
@@ -28,6 +29,8 @@ describe('desks', function() {
         expect(desks.deskDescriptionElement().getAttribute('value')).toEqual('New Description');
         expect(desks.deskSourceElement().getAttribute('value')).toEqual('Test');
         expect(desks.getDeskType().getAttribute('value')).toEqual('string:production');
+        expect(desks.getDeskContentExpiryHours().getAttribute('value')).toEqual('1');
+        expect(desks.getDeskContentExpiryMinutes().getAttribute('value')).toEqual('10');
     });
 
     it('add desk', function() {
@@ -36,6 +39,7 @@ describe('desks', function() {
         desks.deskDescriptionElement().sendKeys('Test Description');
         desks.deskSourceElement().sendKeys('Test Source');
         desks.setDeskType('authoring');
+        desks.setDeskContentExpiry(10, 1);
         desks.actionSaveAndContinueOnGeneralTab();
         desks.showTab('macros');
         desks.save();
@@ -44,6 +48,8 @@ describe('desks', function() {
         expect(desks.deskDescriptionElement().getAttribute('value')).toEqual('Test Description');
         expect(desks.deskSourceElement().getAttribute('value')).toEqual('Test Source');
         expect(desks.getDeskType().getAttribute('value')).toEqual('string:authoring');
+        expect(desks.getDeskContentExpiryHours().getAttribute('value')).toEqual('10');
+        expect(desks.getDeskContentExpiryMinutes().getAttribute('value')).toEqual('1');
     });
 
     it('add desk with Done action', function() {
@@ -52,12 +58,15 @@ describe('desks', function() {
         desks.deskDescriptionElement().sendKeys('Test Description');
         desks.deskSourceElement().sendKeys('Test Source');
         desks.setDeskType('authoring');
+        desks.setDeskContentExpiry(10, 1);
         desks.actionDoneOnGeneralTab();
         desks.edit('Test Desk');
         expect(desks.deskNameElement().getAttribute('value')).toEqual('Test Desk');
         expect(desks.deskDescriptionElement().getAttribute('value')).toEqual('Test Description');
         expect(desks.deskSourceElement().getAttribute('value')).toEqual('Test Source');
         expect(desks.getDeskType().getAttribute('value')).toEqual('string:authoring');
+        expect(desks.getDeskContentExpiryHours().getAttribute('value')).toEqual('10');
+        expect(desks.getDeskContentExpiryMinutes().getAttribute('value')).toEqual('1');
     });
 
     it('add desk reflects default stage count', function() {

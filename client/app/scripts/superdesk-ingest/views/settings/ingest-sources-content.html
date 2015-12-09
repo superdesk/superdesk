@@ -15,7 +15,7 @@
                         <span translate>Last updated</span> {{ provider.last_updated | reldate }}
                     </div>
                     <div class="actions">
-                        <button ng-click="gotoIngest(provider.source)" title="{{:: 'Go to items' | translate }}"><i class="icon-external"></i></a>
+                        <button ng-click="gotoIngest(provider.source)" title="{{:: 'Go to items' | translate }}"><i class="icon-external"></i></button>
                         <button ng-click="edit(provider)" title="{{:: 'Edit source' | translate }}"><i class="icon-pencil"></i></button>
                         <button ng-click="remove(provider)" ng-show="!provider.last_item_update" title="{{:: 'Remove source' | translate }}"><i class="icon-trash"></i></button>
                     </div>
@@ -43,10 +43,6 @@
                                 </span>
                             </label>
                         </div>
-                        <div class="field">
-                            <label for="provider-type" translate>Source Type</label>
-                            <select id="provider-type" required ng-model="provider.type" ng-options="key as val.label for (key, val) in types"></select>
-                        </div>
 
                         <div class="field">
                             <label for="provider-name" translate>Provider Name</label>
@@ -59,6 +55,25 @@
                         </div>
 
                         <div class="field">
+                            <label for="provider-feeding-service" translate>Feeding Service</label>
+                            <select id="provider-feeding-service" ng-change="initProviderConfig()" required ng-model="provider.feeding_service" ng-options="key as val.label for (key, val) in feedingServices"></select>
+                        </div>
+
+                        <div class="field" ng-if="provider.feeding_service != 'rss'">
+                            <label for="provider-feed-parser" translate>Feed Parser</label>
+                            <select id="provider-feed-parser" required ng-model="provider.feed_parser" ng-options="key as val for (key, val) in feedParsers"></select>
+                        </div>
+
+                        <div class="field article-type">
+                            <label for="provider-content-types" translate>Article Type(s)</label>
+                            <ul class="filtertype-icon-list">
+                                <li ng-repeat="fileType in fileTypes" title="{{fileType}}" ng-click="addOrRemoveFileType(fileType)" ng-class="{active: hasFileType(fileType)}">
+                                    <i class="filetype-icon-{{fileType}}"></i>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="field clear">
                                 <label for="schedule-minutes" translate>Update every</label>
                                 <select id="schedule-minutes" class="input-mini"
                                     ng-model="provider.update_schedule.minutes"
@@ -85,7 +100,7 @@
                         <div sd-content-expiry data-item="provider" data-preview="false" data-expiryfield="content_expiry" data-header="Content Expiry"></div>
 
                         <div class="field credentials">
-                            <div ng-include="types[provider.type].templateUrl"></div>
+                            <div ng-include="feedingServices[provider.feeding_service].templateUrl"></div>
                         </div>
 
                         <div class="field">
@@ -129,7 +144,7 @@
                         </div>
                     </tab>
 
-                     <tab heading="Critical Errors" class="TabContent" ng-show="provider.type" ng-click="fetchSourceErrors()">
+                     <tab heading="Critical Errors" class="TabContent" ng-show="provider.feeding_service" ng-click="fetchSourceErrors()">
                         <div class="content privileges-settings">
                             <div class="horizontal">
                                 <div class="roles-list">

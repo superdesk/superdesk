@@ -387,7 +387,7 @@ describe('cropImage', function() {
     }));
 
     it('can change button label for apply/edit crop',
-    inject(function($rootScope, $compile, $q, metadata) {
+    inject(function($rootScope, $compile, $q, metadata, config) {
         var metaInit = $q.defer();
 
         metadata.values = {
@@ -400,6 +400,10 @@ describe('cropImage', function() {
 
         var elem = $compile('<div sd-article-edit></div>')($rootScope.$new());
         var scope = elem.scope();
+
+        config.editor = {
+            disableEditorToolbar: true
+        };
 
         scope.item = {
             type: 'picture',
@@ -1650,6 +1654,7 @@ describe('authoring themes', function () {
 });
 
 describe('send item directive', function() {
+    beforeEach(module('superdesk.preferences'));
     beforeEach(module('superdesk.authoring'));
     beforeEach(module('superdesk.templates-cache'));
 
@@ -1758,5 +1763,42 @@ describe('send item directive', function() {
             iscope = elem.isolateScope();
             expect(iscope.showPublishSchedule()).toBe(true);
             expect(iscope.showEmbargo()).toBe(false);
+        }));
+
+    it('can get last destination desk and stage',
+        inject(function($compile, $rootScope, preferencesService, $q) {
+
+            var scope, elem, iscope;
+            scope = $rootScope.$new();
+            scope.item = {
+                _id: '123456',
+                type: 'text'
+            };
+
+            var destination = {'destination:active': ['desk:123', 'stage:456']};
+            spyOn(preferencesService, 'get').and.returnValue($q.when(destination));
+
+            scope.action = 'edit';
+            elem = $compile('<div sd-send-item data-item="item" data-mode="authoring" ' +
+                'data-action="action"></div>')(scope);
+
+            scope.$digest();
+
+            iscope = elem.isolateScope();
+            iscope.destination_last = null;
+
+            spyOn(iscope, 'getLastDestination').and.returnValue($q.when({desk: '123', stage: '456'}));
+
+            iscope.getLastDestination().then(function(prefs) {
+                iscope.destination_last = {
+                    desk: prefs.desk,
+                    stage: prefs.stage
+                };
+            });
+
+            iscope.$digest();
+
+            expect(iscope.destination_last.desk).toEqual('123');
+            expect(iscope.destination_last.stage).toEqual('456');
         }));
 });

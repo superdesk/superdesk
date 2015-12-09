@@ -1,13 +1,4 @@
 <div class="authoring-header__holder" ng-controller="MetadataWidgetCtrl" ng-if="loaded">
-    <div class="authoring-header__short">
-        <label translate>Created</label><time sd-datetime data-date="item.firstcreated"></time>
-        <label ng-if="userLookup[item.original_creator]" translate>by</label><b>{{userLookup[item.original_creator].display_name}}</b>
-        <div ng-if="item.versioncreated">
-            <label translate>Modified</label>
-            <time sd-datetime data-date="item.versioncreated"></time>
-        </div>
-    </div>
-
     <div class="authoring-header__general-info">
         <div>
             <i class="filetype-icon-{{ :: item.type }}" title="{{ :: 'Article Type' | translate }}"></i>
@@ -145,4 +136,4 @@
 
     </div>
 </div>
-<button ng-class="{active: toggleHeader}" ng-click="toggleHeader = !toggleHeader" tabindex="-1"><i class="icon-chevron-up-thin"></i></button>
+<button class="authoring-header__toggle" ng-class="{active: toggleHeader}" ng-click="toggleHeader = !toggleHeader" tabindex="-1"><i class="icon-chevron-up-thin"></i></button>

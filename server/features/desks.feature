@@ -251,11 +251,11 @@ Feature: Desks
         When we get "/desks/#SPORTS_DESK_ID#/sluglines"
         Then we get existing resource
         """
-            {"_items": [{"headline": "one", "slugline": "slugline1", "name": "FED", "old_sluglines": []},
+            {"_items": [{"headline": "one", "slugline": "slugline1", "name": "Domestic", "old_sluglines": []},
             {"headline": "two", "slugline": "slugline2", "name": "-", "old_sluglines": []}]}
         """
 
-      @auth
+    @auth
     @notification
     Scenario: Simple change of slugline in same family
         Given we have "desks" with "SPORTS_DESK_ID" and success
@@ -279,5 +279,5 @@ Feature: Desks
         When we get "/desks/#SPORTS_DESK_ID#/sluglines"
         Then we get existing resource
         """
-            {"_items": [{"name": "FED", "old_sluglines": ["slugline1"], "slugline": "slugline2", "headline": "one"}]}
+            {"_items": [{"name": "Domestic", "old_sluglines": ["slugline1"], "slugline": "slugline2", "headline": "one"}]}
         """

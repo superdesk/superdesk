@@ -1,3 +1,14 @@
+# -*- coding: utf-8; -*-
+#
+# This file is part of Superdesk.
+#
+# Copyright 2013, 2014 Sourcefabric z.u. and contributors.
+#
+# For the full copyright and license information, please see the
+# AUTHORS and LICENSE files distributed with this source code, or
+# at https://www.sourcefabric.org/superdesk/license
+
+from eve.versioning import resolve_document_version
 from .common import BasePublishService, BasePublishResource, ITEM_KILL
 from eve.utils import config
 from superdesk.metadata.item import CONTENT_STATE, GUID_FIELD, PUB_STATUS
@@ -8,7 +19,8 @@ import logging
 from copy import copy
 from superdesk.emails import send_article_killed_email
 from superdesk.errors import SuperdeskApiError
-from apps.archive.common import is_item_in_package, ITEM_OPERATION
+from apps.archive.common import is_item_in_package, ITEM_OPERATION, ARCHIVE, insert_into_versions
+from apps.templates.content_templates import render_content_template
 
 logger = logging.getLogger(__name__)
 
@@ -103,3 +115,22 @@ class KillPublishService(BasePublishService):
         subscribers = self._get_subscribers_for_previously_sent_items(query)
 
         return subscribers, subscribers_yet_to_receive
+
+    def kill_item(self, item):
+        """
+        Kill the item after applying the template.
+        :param dict item: Item
+        """
+        # get the kill template
+        template = get_resource_service('content_templates').get_template_by_name('kill')
+        if not template:
+            SuperdeskApiError.badRequestError(message="Kill Template missing.")
+
+        # apply the kill template
+        updates = render_content_template(item, template)
+        # resolve the document version
+        resolve_document_version(document=updates, resource=ARCHIVE, method='PATCH', latest_doc=item)
+        # kill the item
+        self.patch(item.get(config.ID_FIELD), updates)
+        # insert into versions
+        insert_into_versions(id_=item[config.ID_FIELD])

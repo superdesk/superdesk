@@ -8,6 +8,7 @@
         .directive('sdMonitoringView', MonitoringViewDirective)
         .directive('sdMonitoringGroup', MonitoringGroupDirective)
         .directive('sdMonitoringGroupHeader', MonitoringGroupHeader)
+        .directive('sdDeskNotifications', DeskNotificationsDirective)
         .directive('sdItemActionsMenu', ItemActionsMenu)
         .config(configureMonitoring)
         .config(configureSpikeMonitoring)
@@ -130,7 +131,11 @@
                 break;
 
             default:
-                query.filter({term: {'task.stage': card._id}});
+                if (card.singleViewType != null && card.singleViewType === 'desk') {
+                    query.filter({term: {'task.desk': card.deskId}});
+                } else {
+                    query.filter({term: {'task.stage': card._id}});
+                }
                 break;
             }
 
@@ -168,6 +173,7 @@
                 return true;
             }
         }
+
     }
 
     MonitoringController.$inject = ['$location', 'desks'];
@@ -183,11 +189,14 @@
 
         this.singleGroup = null;
         this.viewSingleGroup = viewSingleGroup;
+        this.viewMonitoringHome = viewMonitoringHome;
 
         this.queryParam = $location.search();
 
         this.edit = edit;
         this.editItem = null;
+
+        this.totalItems = '';
 
         this.isDeskChanged = function () {
             return desks.changeDesk;
@@ -215,8 +224,14 @@
             vm.state['with-authoring'] = !!item;
         }
 
-        function viewSingleGroup(group) {
+        function viewSingleGroup(group, type) {
+            group.singleViewType = type;
             vm.singleGroup = group;
+        }
+
+        function viewMonitoringHome() {
+            vm.singleGroup.singleViewType = null;
+            vm.singleGroup = null;
         }
 
     }
@@ -330,12 +345,30 @@
                 });
 
                 /*
-                 * Change between simple and group by keyboard
+                 * Change between single stage view and grouped view by keyboard
                  * Keyboard shortcut: Ctrl + g
                  */
                 keyboardManager.bind('ctrl+g', function () {
                     if (scope.selected) {
-                        monitoring.viewSingleGroup(monitoring.singleGroup ? null : monitoring.selectedGroup);
+                        if (monitoring.singleGroup == null) {
+                            monitoring.viewSingleGroup(monitoring.selectedGroup, 'stage');
+                        } else {
+                            monitoring.viewMonitoringHome();
+                        }
+                    }
+                }, {inputDisabled: false});
+
+                /*
+                 * Change between single desk view and grouped view by keyboard
+                 * Keyboard shortcut: Ctrl + g
+                 */
+                keyboardManager.bind('ctrl+alt+g', function () {
+                    if (scope.selected) {
+                        if (monitoring.singleGroup == null) {
+                            monitoring.viewSingleGroup(monitoring.selectedGroup, 'desk');
+                        } else {
+                            monitoring.viewMonitoringHome();
+                        }
                     }
                 }, {inputDisabled: false});
 
@@ -438,6 +471,9 @@
                         } else if (item.type === 'composite' && item.package_type === 'takes') {
                             authoringWorkspace.view(item);
                             monitoring.preview(null);
+                        } else if (item.state === 'killed') {
+                            authoringWorkspace.view(item);
+                            monitoring.preview(null);
                         } else {
                             authoringWorkspace.edit(item, !lock);
                             monitoring.preview(null);
@@ -473,6 +509,7 @@
                     }
 
                     return apiquery().then(function(items) {
+                        monitoring.totalItems = items._meta.total;
                         scope.total = items._meta.total;
                         scope.$applyAsync(render);
                     })['finally'](function() {
@@ -533,8 +570,8 @@
                     render();
                 }
 
-                function viewSingleGroup(group) {
-                    monitoring.viewSingleGroup(group);
+                function viewSingleGroup(group, type) {
+                    monitoring.viewSingleGroup(group, type);
                 }
 
                 function merge(newItems) {
@@ -609,6 +646,72 @@
                         clickItem(scope.items[nextIndex], event);
                     });
                 }
+            }
+        };
+    }
+
+    /**
+     * Displays the notifications of the desk of a given stage
+     *
+     */
+    DeskNotificationsDirective.$inject = ['desks', 'deskNotifications', 'authoringWorkspace', '$timeout'];
+    function DeskNotificationsDirective(desks, deskNotifications, authoringWorkspace, $timeout) {
+        return {
+            scope: {stage: '=stage'},
+            templateUrl: 'scripts/superdesk-monitoring/views/desk-notifications.html',
+            link: function(scope) {
+
+                function init() {
+                    scope.desk = desks.stageLookup[scope.stage].desk;
+                    scope.notifications = deskNotifications.getNotifications(scope.desk);
+                    scope.notificationCount = scope.notifications ? scope.notifications.length : 0 ;
+                }
+
+                /**
+                 * Opens the story in the notification
+                 * and updates the notification as read
+                 *
+                 * @param {object} notification The notification to be checked
+                 */
+                scope.open = function(notification) {
+                    authoringWorkspace.view(notification.item);
+                    deskNotifications.markAsRead(notification, scope.desk);
+                };
+
+                function getRecipient(notification) {
+                    return _.find(notification.recipients, {'desk_id': scope.desk});
+                }
+
+                /**
+                 * Checks if the given notification is read
+                 *
+                 * @param {object} notification The notification to be checked
+                 * @return {boolean} True if the notification is read by any user
+                 */
+                scope.isRead = function(notification) {
+                    var recipient = getRecipient(notification);
+                    return recipient && recipient.read;
+                };
+
+                /**
+                 * Returns the name of the user who read the notification
+                 *
+                 * @param {object} notification The notification to be checked
+                 * @return {string} Display name of the user
+                 */
+                scope.readBy = function(notification) {
+                    var recipient = getRecipient(notification);
+                    if (recipient && recipient.read) {
+                        return desks.userLookup[recipient.user_id].display_name;
+                    }
+                };
+
+                init();
+
+                // Update the figures if there's a desk mention message
+                scope.$on('desk:mention', function() {
+                    $timeout(init, 5000);
+                });
             }
         };
     }

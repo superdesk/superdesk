@@ -205,5 +205,24 @@ define([
 
                 return _collection;
             };
+        })
+        .filter('formatFilterCondition', function() {
+            return function (filterCondition, valueLookup) {
+                var labels = [];
+
+                if (filterCondition.field === 'anpa_category' || filterCondition.field === 'subject') {
+                    var values = filterCondition.value.split(',');
+                    _.each(values, function(value) {
+                        var v = _.find(valueLookup, function(val) {
+                            return val.qcode.toString() === value;
+                        });
+
+                        labels.push(v.name);
+                    });
+                }
+
+                var conditionValue = labels.length > 0 ? labels.join(', ') : filterCondition.value;
+                return '(' + filterCondition.field + ' ' + filterCondition.operator + ' ' + conditionValue + ')';
+            };
         });
 });

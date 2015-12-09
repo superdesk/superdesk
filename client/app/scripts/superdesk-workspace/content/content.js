@@ -9,7 +9,6 @@
     ])
         .service('content', ContentService)
         .directive('sdContentCreate', ContentCreateDirective)
-        .directive('sdTemplateSelect', TemplateSelectDirective)
         ;
 
     ContentService.$inject = ['api', 'superdesk', 'templates', 'desks', 'packages', 'archiveService'];
@@ -57,7 +56,8 @@
          * @return {Promise}
          */
         this.createItemFromTemplate = function(template) {
-            var item = _.pick(template, templates.TEMPLATE_METADATA);
+            var item = templates.pickItemData(template.data || {});
+            item.template = template._id;
             archiveService.addTaskToArticle(item);
             return save(item).then(function(newItem) {
                 templates.addRecentTemplate(desks.activeDeskId, template._id);
@@ -132,49 +132,6 @@
                     }
                     scope.create();
                 });
-            }
-        };
-    }
-
-    TemplateSelectDirective.$inject = ['api', 'desks', 'templates'];
-    function TemplateSelectDirective(api, desks, templates) {
-        var PAGE_SIZE = 10;
-
-        return {
-            templateUrl: 'scripts/superdesk-workspace/content/views/sd-template-select.html',
-            scope: {
-                selectAction: '=',
-                open: '='
-            },
-            link: function(scope) {
-                scope.maxPage = 1;
-                scope.options = {
-                    keyword: null,
-                    page: 1
-                };
-                scope.templates = null;
-
-                scope.close = function() {
-                    scope.open = false;
-                };
-
-                scope.select = function(template) {
-                    scope.selectAction(template);
-                    scope.close();
-                };
-
-                var fetchTemplates = function() {
-                    templates.fetchTemplates(scope.options.page, PAGE_SIZE, 'create', desks.activeDeskId, scope.options.keyword)
-                    .then(function(result) {
-                        scope.maxPage = Math.ceil(result._meta.total / PAGE_SIZE);
-                        scope.templates = result;
-                    });
-                };
-
-                scope.$watchCollection('options', fetchTemplates);
-                scope.$watch(function() {
-                    return desks.activeDeskId;
-                }, fetchTemplates);
             }
         };
     }

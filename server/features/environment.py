@@ -41,6 +41,9 @@ def before_all(context):
 
 
 def before_feature(context, feature):
+    if 'tobefixed' in feature.tags:
+        feature.mark_skipped()
+
     if 'dbauth' in feature.tags and LDAP_SERVER:
         feature.mark_skipped()
 

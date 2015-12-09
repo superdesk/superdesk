@@ -8,17 +8,14 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-
 import superdesk
-import logging
 from superdesk.resource import Resource
+from superdesk.utils import required_string
 
-logger = logging.getLogger(__name__)
 
-
-class AapMMResource(superdesk.Resource):
+class AAPMMResource(superdesk.Resource):
     resource_methods = ['GET', 'POST']
     schema = {
-        'guid': {'type': 'string', 'required': True},
+        'guid': required_string,
         'desk': Resource.rel('desks', False, nullable=True)
     }

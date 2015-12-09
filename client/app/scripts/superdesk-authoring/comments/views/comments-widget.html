@@ -19,7 +19,7 @@
             <textarea class="new-comment" sd-auto-height ng-model="text" mentio id="mentio-users" ng-keyup="saveOnEnter($event)"></textarea>
             <div class="actions">
                 <div class="pull-left post"><input type="checkbox" ng-model="saveEnterFlag"> <span translate>Post on 'Enter'</span></div>
-                <button class="btn btn-info pull-right" ng-click="save()" ng-show="!saveEnterFlag" translate>Post</button>
+                <button id="comment-post" class="btn btn-info pull-right" ng-click="save()" ng-show="!saveEnterFlag" translate>Post</button>
                 <button class="btn pull-right" ng-click="cancel()" ng-show="!saveEnterFlag" translate>Cancel</button>
             </div>
         </form>

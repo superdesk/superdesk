@@ -12,7 +12,7 @@
                 template: 'scripts/superdesk-archive/related-item-widget/widget-relatedItem.html',
                 order: 7,
                 side: 'right',
-                display: {authoring: true, packages: false, legalArchive: false}
+                display: {authoring: true, packages: false, killedItem: true, legalArchive: false}
             });
         }])
         .controller('relatedItemController',

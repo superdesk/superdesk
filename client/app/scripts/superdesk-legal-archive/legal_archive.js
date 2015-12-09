@@ -139,11 +139,11 @@
 
         $scope.search = function () {
             legal.updateSearchQuery($scope.criteria);
-            refresh();
         };
 
         function refresh () {
             $scope.loading = true;
+            $scope.preview(null);
             legal.query().then(function(items) {
                 $scope.loading = false;
                 $scope.items = items;

@@ -1,0 +1,30 @@
+<div sd-modal data-model="open" class="output-channel-modal">
+    <div class="modal-header"> <a href="" class="close" ng-click="close()"><i class="icon-close-small"></i></a>
+        <h3 translate>Select template</h3>
+    </div>
+    <div class="modal-body">
+        <form>
+            <fieldset>
+                <div class="field">
+                    <label for="keyword" translate>Keyword</label>
+                    <input type="text" id="keyword"
+                        autofocus
+                        ng-model="options.keyword"
+                        ng-model-options="{debounce: 300}">
+                </div>
+                <div class="field" ng-if="publicTemplates.length">
+                    <label translate>Desk Templates</label>
+                    <ul sd-template-list
+                        data-templates="publicTemplates"
+                        data-select="select(template)"></ul>
+                </div>
+                <div class="field" ng-if="privateTemplates.length">
+                    <label translate>My Templates</label>
+                    <ul sd-template-list
+                        data-templates="privateTemplates"
+                        data-select="select(template)"></ul>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</div>

@@ -16,7 +16,9 @@
                             <span class="pull-right" sd-character-count data-item="desk.edit.name" data-limit="limits.desk"></span>
                             <div class="field">
                                 <label translate>Desk name</label>
-                                <input type="text" class="fullwidth-input" ng-model="desk.edit.name" ng-keyup="handleEdit($event);" required>
+                                <input type="text" class="fullwidth-input"
+                                       ng-model="desk.edit.name"
+                                       ng-keyup="handleEdit($event);" required>
                             </div>
                             <div class="field">
                                 <label translate>Desk description</label>
@@ -24,24 +26,17 @@
                             </div>
                             <div class="field">
                                 <label translate>Source for User Created Articles</label>
-                                <input type="text" class="fullwidth-input" ng-model="desk.edit.source" ng-keyup="handleEdit($event);" required>
+                                <input type="text" class="fullwidth-input"
+                                       ng-model="desk.edit.source"
+                                       ng-keyup="handleEdit($event);" required>
                             </div>
-                            <ul class="expiry">
-                                <li>
-                                    <div sd-content-expiry
-                                         data-item="desk.edit"
-                                         data-preview="false"
-                                         data-expiryfield="spike_expiry"
-                                         data-header="Spike Expiry"></div>
-                                </li>
-                                <li>
-                                    <div sd-content-expiry
-                                         data-item="desk.edit"
-                                         data-preview="false"
-                                         data-expiryfield="published_item_expiry"
-                                         data-header="Published Item Expiry"></div>
-                                </li>
-                            </ul>
+                            <div class="field">
+                                <div sd-content-expiry
+                                     data-item="desk.edit"
+                                     data-preview="false"
+                                     data-expiryfield="content_expiry"
+                                     data-header="Content Expiry"></div>
+                            </div>
                             <div class="field desk-type">
                                 <label translate>Desk Type</label>
                                 <select id="deskType" ng-model="desk.edit.desk_type"

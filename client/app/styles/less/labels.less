@@ -192,3 +192,67 @@
 .priority-label--6 {
   background: @priority-label-color-6;
 }
+
+/*----------------------------------------
+  #State labels
+----------------------------------------*/
+
+.state-color(@color:@state-color-default) {
+  border-color:  @color;
+  color: @color;
+}
+.state-label {
+	display: inline-block;
+	line-height: 14px;
+	font-size: 9px;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	.border-radius(2px);
+	padding: 0 5px;
+	margin-right: 10px;
+  box-sizing: border-box;
+  border: 1px solid;
+  .state-color();
+	.text-semibold();
+
+  &.state_embargo {
+	  .state-color(@state-color-embargo) !important;
+	}
+	&.state-draft {
+		.state-color(@state-color-default);
+	}
+	&.state-ingested, 
+  &.state-routed, 
+  &.state-fetched {
+		.state-color(@state-color-blue);
+	}
+	&.state-submitted, 
+  &.state-in_progress, 
+  &.state-subbed {
+		.state-color(@state-color-yellow);
+	}
+	&.state-published {
+		.state-color(@state-color-green);
+	}
+	&.state-spiked, 
+  &.state-killed {
+		.state-color(@state-color-red);
+	}
+  &.state-killed {
+		.state-color(@state-color-red);
+    background-color: lighten(@state-color-red, 58%);
+	}
+	&.state-on_hold, 
+  &.state-scheduled {
+		.state-color(@state-color-orange);
+	}
+	&.state-corrected {
+		.state-color(@state-color-navy);
+	}
+	&.not-for-publication {
+		.state-color(@state-color-red);	
+	}
+	&.for-publication {
+		.state-color(@state-color-green);
+	}
+}

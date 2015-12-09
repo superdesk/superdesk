@@ -113,17 +113,22 @@
                     });
                 };
 
+                function getProvider() {
+                    var provider = 'archive';
+
+                    if (scope.stage.type && (scope.stage.type === 'deskOutput' || scope.stage.type === 'search')) {
+                        provider = 'search';
+                    }
+
+                    return provider;
+                }
+
                 function queryItems(queryString) {
                     criteria = cards.criteria(scope.stage, queryString);
                     scope.loading = true;
                     scope.items = scope.total = null;
-                    var provider = 'archive';
 
-                    if (scope.stage.type && scope.stage.type === 'deskOutput') {
-                        provider = 'search';
-                    }
-
-                    api(provider).query(criteria).then(function(items) {
+                    api(getProvider()).query(criteria).then(function(items) {
                         scope.items = items._items;
                         scope.total = items._meta.total;
 
@@ -145,6 +150,22 @@
                     if (cards.shouldUpdate(scope.stage, data)) {
                         queryItems();
                     }
+                });
+
+                scope.$on('item:lock', function(_e, data) {
+                    _.each(scope.items, function(item) {
+                        if (item._id === data.item) {
+                            item.lock_user = data.user;
+                        }
+                    });
+                });
+
+                scope.$on('item:unlock', function(_e, data) {
+                    _.each(scope.items, function(item) {
+                        if (item._id === data.item) {
+                            item.lock_user = null;
+                        }
+                    });
                 });
 
                 var container = elem[0];
@@ -181,7 +202,7 @@
                                 }
                             }, 100);
 
-                            api('archive').query(criteria)
+                            api(getProvider()).query(criteria)
                             .then(function(items) {
                                 scope.cacheNextItems = items._items;
                                 scope.fetching = false;
@@ -220,7 +241,7 @@
                             }
                         }, 100);
 
-                        api('archive').query(criteria)
+                        api(getProvider()).query(criteria)
                         .then(function(items) {
                             scope.cachePreviousItems = items._items;
                             scope.fetching = false;
@@ -234,7 +255,7 @@
                 };
                 function setNextItems(criteria) {
                     criteria.source.from = scope.page * criteria.source.size;
-                    return api('archive').query(criteria)
+                    return api(getProvider()).query(criteria)
                         .then(function(items) {
                             scope.cacheNextItems = items._items;
                         });
@@ -877,6 +898,9 @@
                         if (item && item[expiryfield] != null) {
                             scope.ContentExpiry.Hours = getExpiryHours(item[expiryfield]);
                             scope.ContentExpiry.Minutes = getExpiryMinutes(item[expiryfield]);
+                        } else {
+                            scope.ContentExpiry.Hours = 0;
+                            scope.ContentExpiry.Minutes = 0;
                         }
                     };
                 }

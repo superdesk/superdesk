@@ -120,7 +120,7 @@ body:not(:-moz-handler-blocked) .modal{
 	padding: 9px 15px;
 	border-bottom: 1px solid #e4e4e4;
 	.box-sizing(border-box);
-	height: @modal-header-height !important;
+	min-height: @modal-header-height;
 	.border-radius(@modal-border-radius @modal-border-radius 0 0);
 	// Close icon
 	.close {

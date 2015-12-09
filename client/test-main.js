@@ -79,6 +79,7 @@ tests.push('superdesk-archive/directives');
 
 tests.push('superdesk-dictionaries/dictionaries');
 tests.push('superdesk-vocabularies/vocabularies');
+tests.push('superdesk-search-providers/module');
 tests.push('superdesk-publish/publish');
 tests.push('superdesk/editor/spellcheck/spellcheck');
 tests.push('superdesk-templates/templates');

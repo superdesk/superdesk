@@ -233,4 +233,20 @@ describe('publish queue', function() {
         $scope.scheduleToSend($scope.publish_queue[0]);
         expect($scope.publish_queue.length).toBe(4);
     }));
+
+    it('can observe pagination and load page data', inject(function($rootScope, api, $q) {
+        $scope.pageSize = 1;
+        $scope.page = 2;
+
+        var pagedPublishQueue = {'_items': [publishQueue._items[1]], '_meta': {total: 3}};
+        api.publish_queue.query = jasmine.createSpy().and.returnValue($q.when(pagedPublishQueue));
+
+        $scope.reload = jasmine.createSpy('reload');
+
+        $scope.$digest();
+
+        expect($scope.reload).toHaveBeenCalled();
+        expect($scope.maxPage).toEqual(3);
+        expect($scope.publish_queue[0]._id).toEqual(publishQueue._items[1]._id);
+    }));
 });

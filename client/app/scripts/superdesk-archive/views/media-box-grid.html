@@ -41,14 +41,14 @@
 
         <div ng-if="item.archived" class="fetched-desk"><div sd-fetched-desks data-item="item"></div></div>
         
-        <div class="highlights-box" ng-if="item.highlights" sd-highlights-title data-item="item"></div>
+        <div sd-highlights-info data-item="item"></div>
     </div>
 
     <span class="type-icon"><i class="filetype-icon-{{item.type}}"></i></span>
-    <span class="priority-label priority-label--{{item.priority}}">{{item.priority}}</span>
-    <span class="urgency-label urgency-label--{{item.urgency}}">{{ item.urgency }}</span>
+    <span ng-if="item.priority" class="priority-label priority-label--{{item.priority}}">{{item.priority}}</span>
+    <span ng-if="item.urgency" class="urgency-label urgency-label--{{item.urgency}}">{{ item.urgency }}</span>
     <span class="broadcast-status" tooltip="{{item.broadcast.status}}" ng-if="item.broadcast.status">!</span>
-    <div class="state-label state-{{item.state}}" ng-class="{state_embargo: item.embargo}">{{item.state}}</div>
+    <div class="state-label state-{{item.state}}" ng-show="item.state" ng-class="{state_embargo: item.embargo}">{{item.state}}</div>
     
     <div class="item-right toolbox" sd-item-actions-menu data-item="item" data-active="focused"></div>
 </div>

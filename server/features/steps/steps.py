@@ -11,18 +11,21 @@
 
 import os
 import time
+import arrow
 from datetime import datetime, timedelta
+
+from superdesk.io import registered_feeding_services
 from superdesk.io.commands.update_ingest import LAST_ITEM_UPDATE
 import superdesk
 import superdesk.tests as tests
 from behave import given, when, then  # @UnresolvedImport
 from flask import json
 from eve.methods.common import parse
-from superdesk import default_user_preferences, get_resource_service, utc
+from superdesk import default_user_preferences, get_resource_service, utc, etree
+from superdesk.io.feed_parsers import XMLFeedParser
 from superdesk.utc import utcnow, get_expiry_date
 from eve.io.mongo import MongoJSONEncoder
 from base64 import b64encode
-
 from wooper.general import fail_and_print_body, apply_path, \
     parse_json_response, WooperAssertionError
 from wooper.expect import (
@@ -84,6 +87,17 @@ def test_key_is_present(key, context, response):
         '"%s" should be empty or false, but it was "%s" in (%s)' % (key, response[key], response)
 
 
+def assert_is_now(val, key):
+    """Assert that given datetime value is now (with 5s tolerance).
+
+    :param val: datetime
+    :param key: val label - used for error reporting
+    """
+    now = arrow.get()
+    val = arrow.get(val)
+    assert val + timedelta(seconds=3) > now, '%s should be now, it is %s' % (key, val)
+
+
 def json_match(context_data, response_data):
     if isinstance(context_data, dict):
         assert isinstance(response_data, dict), 'response data is not dict, but %s' % type(response_data)
@@ -94,6 +108,9 @@ def json_match(context_data, response_data):
             if context_data[key] == "__any_value__":
                 test_key_is_present(key, context_data, response_data)
                 continue
+            if context_data[key] == "__now__":
+                assert_is_now(response_data[key], key)
+                return True
             if not json_match(context_data[key], response_data[key]):
                 return False
         return True
@@ -381,12 +398,22 @@ def fetch_from_provider(context, provider_name, guid, routing_scheme=None, desk_
     ingest_provider_service = get_resource_service('ingest_providers')
     provider = ingest_provider_service.find_one(name=provider_name, req=None)
     provider['routing_scheme'] = routing_scheme
-    provider_service = context.provider_services[provider.get('type')]
-    provider_service.provider = provider
 
-    if provider.get('type') in ('aap', 'teletype', 'dpa'):
-        items = provider_service.parse_file(guid, provider)
+    provider_service = registered_feeding_services[provider['feeding_service']]
+    provider_service = provider_service.__class__()
+
+    if provider.get('name', '').lower() in ('aap', 'teletype', 'dpa'):
+        file_path = os.path.join(provider.get('config', {}).get('path', ''), guid)
+        feeding_parser = provider_service.get_feed_parser(provider)
+        if isinstance(feeding_parser, XMLFeedParser):
+            with open(file_path, 'r') as f:
+                xml_string = etree.etree.fromstring(f.read())
+                items = [feeding_parser.parse(xml_string, provider)]
+        else:
+            items = [feeding_parser.parse(file_path, provider)]
     else:
+        provider_service.provider = provider
+        provider_service.URL = provider.get('config', {}).get('url')
         items = provider_service.fetch_ingest(guid)
 
     for item in items:
@@ -1382,11 +1409,6 @@ def get_unspiked_content(context, id):
     # assert_equal(response_data['expiry'], None)
 
 
-@then('we get global spike expiry')
-def get_global_spike_expiry(context):
-    get_desk_spike_expiry(context, context.app.config['SPIKE_EXPIRY_MINUTES'])
-
-
 @then('we get global content expiry')
 def get_global_content_expiry(context):
     get_desk_spike_expiry(context, context.app.config['CONTENT_EXPIRY_MINUTES'])
@@ -1518,7 +1540,7 @@ def check_if_email_sent(context, body):
 
 @then('we get activity')
 def then_we_get_activity(context):
-    url = apply_placeholders(context, '/activity?where={"name": "notify"}')
+    url = apply_placeholders(context, '/activity?where={"name": {"$in": ["notify", "user:mention" , "desk:mention"]}}')
     context.response = context.client.get(get_prefixed_url(context.app, url), headers=context.headers)
     if context.response.status_code == 200:
         expect_json_length(context.response, 1, path='_items')
@@ -1857,12 +1879,12 @@ def validate_published_item_expiry(context, publish_expiry_in_desk):
 
     if response_data.get('_meta') and response_data.get('_items'):
         for item in response_data.get('_items'):
-            assert_expiry(context, item, publish_expiry_in_desk)
+            assert_expiry(item, publish_expiry_in_desk)
     else:
-        assert_expiry(context, response_data, publish_expiry_in_desk)
+        assert_expiry(response_data, publish_expiry_in_desk)
 
 
-def assert_expiry(context, item, publish_expiry_in_desk):
+def assert_expiry(item, publish_expiry_in_desk):
     embargo = item.get('embargo')
     actual = parse_date(item.get('expiry'))
     error_message = 'Published Item Expiry validation fails'
@@ -1877,3 +1899,10 @@ def assert_expiry(context, item, publish_expiry_in_desk):
         expected = get_expiry_date(minutes=publish_expiry_in_desk)
         if expected < actual:
             raise WooperAssertionError("{}. Expected: {}, Actual: {}".format(error_message, expected, actual))
+
+
+@when('run import legal publish queue')
+def run_import_legal_publish_queue(context):
+    with context.app.test_request_context(context.app.config['URL_PREFIX']):
+        from apps.legal_archive import ImportLegalPublishQueueCommand
+        ImportLegalPublishQueueCommand().run()

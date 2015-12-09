@@ -1,23 +1,23 @@
 <div class="save-search" ng-hide="editSearch || edit">
-	<button id="clear_filters" class="btn btn-info" ng-click="clear()" translate>Reset</button>
-	<button id="save_search_init" class="btn btn-info" ng-click="editItem()" translate>Save</button>
+	<button id="clear_filters" class="btn" ng-click="clear()" translate>Reset</button>
+	<button id="save_search_init" class="btn btn-info" ng-click="editItem()" translate>Save Search</button>
 	<button id="saveas_search_init" class="btn btn-info" ng-click="saveas()" translate ng-if="editingSearch">Save As</button>
 </div>   
 
 <div class="save-search-panel" ng-if="edit">
-	<div class="title" translate>Save search</div>
+	<div class="save-search-panel__title" translate>Save search</div>
 	<div class="search-content">
 		<form name="viewsForm">
 			<fieldset>
 				<div class="field">
-                    <input id="search_name" type="text" class="fullwidth-input" ng-model="edit.name" placeholder="{{:: 'Name' | translate}}"required>
+                    <input id="search_name" type="text" class="fullwidth-input line-input" ng-model="edit.name" placeholder="{{:: 'Name' | translate}}" required>
 				</div>
 				<div class="field">
-					<textarea id="search_description" sd-auto-height ng-model="edit.description" placeholder="{{:: 'Description' | translate}}"></textarea>
+					<textarea id="search_description" class="line-input" sd-auto-height ng-model="edit.description" placeholder="{{:: 'Description' | translate}}"></textarea>
 				</div>
 				<div class="field">
-                    <label translate>Global</label>
                     <span id="search_global" sd-switch ng-model="edit.is_global"></span>
+                    <label class="label--inline" translate>Make global</label>
                 </div>
 			</fieldset>
 		</form>

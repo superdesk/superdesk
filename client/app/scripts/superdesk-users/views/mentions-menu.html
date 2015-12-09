@@ -1,8 +1,14 @@
 <ul class="users-list-embed">
     <li mentio-menu-item="user" ng-repeat="user in items">
-        <figure class="avatar small">
-            <img sd-user-avatar data-user="user" alt="user.display_name">
-        </figure>
-        <span class="name" >{{ user.display_name }}</span>
+        <div ng-if="user.type == 'user'">
+        	<figure class="avatar small">
+            	<img sd-user-avatar data-user="user" alt="user.item.display_name">
+        	</figure>
+        <span class="name" >{{:: user.item.display_name }}</span>
+        </div>
+        <div ng-if="user.type == 'desk'">
+        	<i class="icon-desk-task" title="Desk"></i>
+	        <span class="name" >{{:: user.item.name }}</span>
+        </div>
     </li>
 </ul>
