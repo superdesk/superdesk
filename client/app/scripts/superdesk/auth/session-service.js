@@ -1,11 +1,15 @@
-define(['lodash'], function(_) {
+(function() {
     'use strict';
 
     /**
      * Session Service stores current user data
      */
-    SessionService.$inject = ['$q', '$rootScope', 'storage', 'SESSION_EVENTS'];
-    function SessionService($q, $rootScope, storage, SESSION_EVENTS) {
+    angular.module('superdesk.session').service('session', [
+    '$q',
+    '$rootScope',
+    'storage',
+    'SESSION_EVENTS', 
+    function ($q, $rootScope, storage, SESSION_EVENTS) {
 
         var TOKEN_KEY = 'sess:token';
         var TOKEN_HREF = 'sess:href';
@@ -170,7 +174,6 @@ define(['lodash'], function(_) {
         function getToken() {
             return localStorage.getItem(TOKEN_KEY) || null;
         }
-    }
+    }]);
 
-    return SessionService;
-});
+})();

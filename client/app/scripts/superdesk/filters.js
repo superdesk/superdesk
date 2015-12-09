@@ -1,7 +1,4 @@
-define([
-    'angular',
-    'lodash'
-], function(angular, _) {
+(function() {
     'use strict';
 
     return angular.module('superdesk.filters', []).
@@ -225,4 +222,4 @@ define([
                 return '(' + filterCondition.field + ' ' + filterCondition.operator + ' ' + conditionValue + ')';
             };
         });
-});
+})();

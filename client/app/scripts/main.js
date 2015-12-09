@@ -24,7 +24,7 @@
         // apps.unshift(superdesk.name);
         angular.module('superdesk')
         .constant('config', config)
-        .constant('lodash', _)
+        //.constant('lodash', _)
 
         // setup default route for superdesk - set it here to avoid it being used in unit tests
         .config(['$routeProvider', function($routeProvider) {
