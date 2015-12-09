@@ -1,4 +1,4 @@
-define(['angular'], function(angular) {
+(function() {
     'use strict';
 
     /**
@@ -100,4 +100,4 @@ define(['angular'], function(angular) {
             };
 
         }]);
-});
+})();

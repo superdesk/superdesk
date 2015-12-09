@@ -1,8 +1,4 @@
-define([
-    'angular',
-    'translations',
-    'angular-gettext'
-], function(angular) {
+(function() {
     'use strict';
 
     /**
@@ -33,4 +29,4 @@ define([
                 return gettextCatalog.getString(input);
             };
         }]);
-});
+})();

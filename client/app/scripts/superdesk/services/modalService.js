@@ -1,4 +1,4 @@
-define(['angular'], function(angular) {
+(function() {
     'use strict';
 
     return angular.module('superdesk.services.modal', ['ui.bootstrap', 'superdesk.asset'])
@@ -93,4 +93,4 @@ define(['angular'], function(angular) {
                 }
             };
         }]);
-});
+})();

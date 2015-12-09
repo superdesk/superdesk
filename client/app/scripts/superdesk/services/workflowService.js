@@ -1,8 +1,4 @@
-define([
-    'lodash',
-    'angular',
-    './preferencesService'
-], function(_, angular) {
+(function() {
     'use strict';
 
     return angular.module('superdesk.workflow', [])
@@ -37,4 +33,4 @@ define([
             $rootScope.isActionAllowed = angular.bind(this, this.isActionAllowed);
 
         }]);
-});
+})();

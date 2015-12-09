@@ -1,4 +1,4 @@
-define(['angular'], function(angular) {
+(function() {
     'use strict';
 
     return angular.module('superdesk.services.storage', [])
@@ -45,4 +45,4 @@ define(['angular'], function(angular) {
                 localStorage.clear();
             };
         });
-});
+})();
