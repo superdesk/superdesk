@@ -87,7 +87,6 @@ module.exports = function (grunt) {
         'ngtemplates',
         'useminPrepare',
         'concat',
-        'requirejs', // must go after concat
         'uglify',
         'cssmin',
         'copy:assets',

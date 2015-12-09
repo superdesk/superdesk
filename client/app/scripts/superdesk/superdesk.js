@@ -1,31 +1,5 @@
 (function() {
     'use strict';
-// define([
-//     'angular',
-//     'require',
-//
-//     'angular-ui',
-//     'angular-route',
-//     'angular-resource',
-//     'angular-file-upload',
-//
-//     './activity/activity',
-//     './analytics/analytics',
-//     './api/api',
-//     './auth/auth',
-//     './beta/beta',
-//     './config/config',
-//     './datetime/datetime',
-//     './elastic/elastic',
-//     './error/error',
-//     './notify/notify',
-//     './upload/upload',
-//     './ui/ui',
-//
-//     './filters',
-//     './services/all',
-//     './directives/all'
-// ], function(angular, require) {
 
     var modules = [
         'ngRoute',

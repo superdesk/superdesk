@@ -1,6 +1,4 @@
-define([
-    'angular'
-], function(angular) {
+(function() {
     'use strict';
 
     var coverageTypes = ['story', 'photo', 'video', 'graphics', 'live-blogging'];
@@ -307,4 +305,4 @@ define([
                     privileges: {planning: 1}
                 });
         }]);
-});
+})();

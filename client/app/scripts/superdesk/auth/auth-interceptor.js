@@ -1,4 +1,4 @@
-define(['lodash'], function(_) {
+(function() {
     'use strict';
 
     /**
@@ -40,4 +40,4 @@ define(['lodash'], function(_) {
     }
 
     return AuthExpiredInterceptor;
-});
+})();

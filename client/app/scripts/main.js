@@ -12,7 +12,7 @@
 
     window.bootstrapSuperdesk = function bootstrap(config, apps) {
 
-        // make sure there is a templates-cache module define
+        // make sure there is a templates-cache module defined
         try {
             angular.modules('superdesk.templates-cache');
         } catch (e) {
@@ -21,11 +21,8 @@
             apps.push('superdesk.templates-cache');
         }
 
-        // apps.unshift(superdesk.name);
         angular.module('superdesk')
         .constant('config', config)
-        //.constant('lodash', _)
-
         // setup default route for superdesk - set it here to avoid it being used in unit tests
         .config(['$routeProvider', function($routeProvider) {
             $routeProvider.when('/', {redirectTo: '/workspace'});
