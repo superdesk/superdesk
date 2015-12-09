@@ -108,12 +108,13 @@ define(['lodash'], function(_) {
          * @param {string} id
          * @returns {Promise}
          */
-        HttpEndpoint.prototype.getById = function(id, cache) {
+        HttpEndpoint.prototype.getById = function(id, params, cache) {
             return getUrl(this).then(_.bind(function(resourceUrl) {
                 var url = resourceUrl.replace(/\/+$/, '') + '/' + id;
                 return http({
                     method: 'GET',
                     url: url,
+                    params: params,
                     cache: cache
                 }).then(function(response) {
                     return response.data;
