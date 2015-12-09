@@ -11,8 +11,7 @@
      * https://github.com/monospaced/angular-elastic/blob/master/elastic.js
      *
      */
-    angular.module('superdesk.ui', ['superdesk.dashboard.world-clock'])
-    .directive('sdAutoHeight', ['$window', function($window) {  
+    angular.module('superdesk.ui').directive('sdAutoHeight', ['$window', function($window) {  
         return {
             require: 'ngModel',
             restrict: 'A, C',

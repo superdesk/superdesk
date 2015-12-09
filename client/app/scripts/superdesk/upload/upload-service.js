@@ -1,8 +1,7 @@
-define([], function() {
+(function() {
     'use strict';
 
-    UploadService.$inject = ['$q', '$upload'];
-    function UploadService($q, $upload) {
+    angular.module('superdesk.upload').service('upload', ['$q', '$upload', function ($q, $upload) {
         /**
          * Start upload
          *
@@ -33,7 +32,6 @@ define([], function() {
         this.isUpload = function(config) {
             return config.isUpload || false;
         };
-    }
+    }]);
 
-    return UploadService;
-});
+})();

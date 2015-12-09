@@ -1,7 +1,7 @@
-define(['angular'], function(angular) {
+(function() {
     'use strict';
 
-    return function() {
+    angular.module('superdesk.upload').directive('sdVideoCapture', [ function() {
 
         var URL = window.URL || window.webkitURL;
 
@@ -63,5 +63,5 @@ define(['angular'], function(angular) {
                 });
             }
         };
-    };
-});
+    }]);
+})();
