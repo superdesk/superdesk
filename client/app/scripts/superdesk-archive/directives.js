@@ -32,6 +32,7 @@
                     }
 
                     scope.unlock = function() {
+                        lock.previewUnlock = true;
                         lock.unlock(scope.item).then(function() {
                             scope.item.lock_user = null;
                             scope.item.lock_session = null;
