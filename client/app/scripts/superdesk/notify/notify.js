@@ -1,4 +1,4 @@
-define(['angular', 'require'], function(angular, require) {
+(function() {
     'use strict';
 
     return angular.module('superdesk.notify', ['superdesk.translate'])
@@ -59,4 +59,4 @@ define(['angular', 'require'], function(angular, require) {
                 }
             };
         }]);
-});
+})();
