@@ -1,6 +1,4 @@
-define([
-    'angular'
-], function(angular) {
+(function() {
     'use strict';
 
     return angular.module('superdesk.links', [])
@@ -27,4 +25,4 @@ define([
                 }
             };
         }]);
-});
+})();

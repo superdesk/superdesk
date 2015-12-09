@@ -289,7 +289,7 @@
         'superdesk.privileges',
         'superdesk.keyboard'
     ])
-
+    .constant('lodash', window._)
     .provider('superdesk', SuperdeskProvider)
 
     .service('activityService', ['$location', '$injector', '$q', '$timeout', 'gettext', 'modal', 'lodash',

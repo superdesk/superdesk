@@ -22,6 +22,7 @@
 
     <!-- build:js scripts/vendor.js -->
     <script src="scripts/bower_components/jquery/dist/jquery.js"></script>
+    <script src="scripts/bower_components/lodash/lodash.js"></script>
     <script src="scripts/bower_components/jquery-ui/jquery-ui.js"></script>
     <script src="scripts/bower_components/bootstrap/dist/js/bootstrap.js"></script>
 
@@ -51,6 +52,8 @@
     <!-- endbuild -->
 
     <!-- build:js scripts/superdesk-core.js -->
+    <script src="scripts/gettext.js"></script>
+
     <script src="scripts/superdesk/activity/activity.js"></script>
     <script src="scripts/superdesk/activity/activity-chooser-directive.js"></script>
     <script src="scripts/superdesk/activity/activity-list-directive.js"></script>
@@ -58,6 +61,11 @@
     <script src="scripts/superdesk/analytics/analytics.js"></script>
 
     <script src="scripts/superdesk/api/api.js"></script>
+    <script src="scripts/superdesk/api/api-service.js"></script>
+    <script src="scripts/superdesk/api/http-endpoint-factory.js"></script>
+    <script src="scripts/superdesk/api/request-service.js"></script>
+    <script src="scripts/superdesk/api/timeout-interceptor.js"></script>
+    <script src="scripts/superdesk/api/url-resolver-service.js"></script>
 
     <script src="scripts/superdesk/auth/auth.js"></script>
     <script src="scripts/superdesk/auth/auth-service.js"></script> 
@@ -67,12 +75,47 @@
 
     <script src="scripts/superdesk/beta/beta.js"></script>
     <!-- <script src="scripts/superdesk/config/config.js"></script> -->
+
     <script src="scripts/superdesk/datetime/datetime.js"></script>
+    <script src="scripts/superdesk/datetime/group-dates-directive.js"></script>
+    <script src="scripts/superdesk/datetime/reldate-directive.js"></script>
+    <script src="scripts/superdesk/datetime/reldate-directive-complex.js"></script>
+    <script src="scripts/superdesk/datetime/absdate-directive.js"></script>
+
     <script src="scripts/superdesk/error/error.js"></script>
 
+    <script src="scripts/superdesk/elastic/elastic.js"></script>
+    <script src="scripts/superdesk/elastic/es.js"></script>
+
     <script src="scripts/superdesk/filters.js"></script>
+    <script src="scripts/superdesk/config/config.js"></script>
     <!-- TODO: add all service includes -->
+    <script src="scripts/superdesk/services/translate.js"></script>
+    <script src="scripts/superdesk/services/preferencesService.js"></script>
+    <script src="scripts/superdesk/services/permissionsService.js"></script>
+    <script src="scripts/superdesk/services/data.js"></script>
+    <script src="scripts/superdesk/services/entity.js"></script>
+    <script src="scripts/superdesk/services/server.js"></script>
+    <script src="scripts/superdesk/services/storage.js"></script>
+    <script src="scripts/superdesk/services/dragDropService.js"></script>
+    <script src="scripts/superdesk/services/modalService.js"></script>
+    <script src="scripts/superdesk/services/workflowService.js"></script>
+
     <!-- TODO: add all directives includes -->
+    <script src="scripts/superdesk/directives/sdAutofocus.js"></script>
+    <script src="scripts/superdesk/directives/sdCheck.js"></script>
+    <script src="scripts/superdesk/directives/sdConfirm.js"></script>
+    <script src="scripts/superdesk/directives/sdDebounceThrottle.js"></script>
+    <script src="scripts/superdesk/directives/sdDragDrop.js"></script>
+    <script src="scripts/superdesk/directives/sdPermissions.js"></script>
+    <script src="scripts/superdesk/directives/sdSearch.js"></script>
+    <script src="scripts/superdesk/directives/sdSearchList.js"></script>
+    <script src="scripts/superdesk/directives/sdSelect.js"></script>
+    <script src="scripts/superdesk/directives/sdSlider.js"></script>
+    <script src="scripts/superdesk/directives/sdSort.js"></script>
+    <script src="scripts/superdesk/directives/sdTypeahead.js"></script>
+    <script src="scripts/superdesk/directives/sdUserAvatar.js"></script>
+    <script src="scripts/superdesk/directives/sdWithParams.js"></script>
 
     <script src="scripts/superdesk/editor/editor.js"></script>
     <script src="scripts/superdesk/features/features.js"></script>
@@ -169,10 +212,12 @@
     <script src="scripts/superdesk-dashboard/module.js"></script>
     <script src="scripts/superdesk-dashboard/sd-widget-directive.js"></script>
     <script src="scripts/superdesk-dashboard/grid/grid.js"></script>
+
+    <script src="scripts/superdesk-search-providers/module.js"></script>
     <!-- endbuild -->
 
     <!-- build:js scripts/config.js -->
-    <script src="scripts/config.js"></script>
+    <!-- <script src="scripts/config.js"></script> -->
     <!-- endbuild -->
 
     <!-- build:js scripts/main.js -->

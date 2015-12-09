@@ -1,6 +1,4 @@
-define([
-    'angular'
-], function(angular) {
+(function() {
     'use strict';
 
     return angular.module('superdesk.directives.sort', ['superdesk.asset'])
@@ -50,4 +48,4 @@ define([
                 }
             };
         }]);
-});
+})();

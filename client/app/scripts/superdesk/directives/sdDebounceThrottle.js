@@ -1,7 +1,4 @@
-define([
-    'jquery',
-    'angular'
-], function($, angular) {
+(function() {
     'use strict';
 
     var wrapper = function(methodName) {
@@ -52,4 +49,4 @@ define([
         .directive('sdThrottle', function() {
             return wrapper('throttle');
         });
-});
+})();

@@ -1,4 +1,4 @@
-define(['angular'], function(angular) {
+(function() {
     'use strict';
 
     return angular.module('superdesk.select.directives', ['superdesk.asset'])
@@ -259,4 +259,4 @@ define(['angular'], function(angular) {
             }
         };
     }]);
-});
+})();

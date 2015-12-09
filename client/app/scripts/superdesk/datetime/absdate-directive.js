@@ -1,4 +1,4 @@
-define([], function() {
+(function() {
     'use strict';
 
     /**
@@ -10,7 +10,7 @@ define([], function() {
      * Params:
      * @param {object} ngModel - datetime string in utc
      */
-    return function() {
+    angular.module('superdesk.datetime').directive('sdAbsdate', [ function() {
         var COMPARE_FORMAT = 'YYYY-M-D';
         var DISPLAY_DATE_FORMAT = 'D. MMMM YYYY HH:mm';
         var DISPLAY_CDATE_FORMAT = 'D. MMMM HH:mm';
@@ -41,5 +41,5 @@ define([], function() {
                 };
             }
         };
-    };
-});
+    }]);
+})();

@@ -1,4 +1,4 @@
-define(['angular'], function(angular) {
+(function() {
     'use strict';
 
     return angular.module('superdesk.permissions.directives', [])
@@ -50,4 +50,4 @@ define(['angular'], function(angular) {
                 }
             };
         }]);
-});
+})();

@@ -1,4 +1,4 @@
-define([], function() {
+(function() {
     'use strict';
 
     /**
@@ -10,7 +10,7 @@ define([], function() {
      * Params:
      * @param {object} ngModel - datetime string in utc
      */
-    return function() {
+    angular.module('superdesk.datetime').directive('sdReldate', [ function() {
         return {
             require: 'ngModel',
             template: '<time datetime="{{ datetime }}" title="{{ title }}">{{ reldate }}</time>',
@@ -26,5 +26,5 @@ define([], function() {
                 };
             }
         };
-    };
-});
+    }]);
+})();

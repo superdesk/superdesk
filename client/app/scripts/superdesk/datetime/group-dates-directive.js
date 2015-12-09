@@ -1,5 +1,6 @@
-define([], function() {
+(function() {
     'use strict';
+
 
     /**
      * sdGroupDates directive will group list items by a date provided as a param.
@@ -11,7 +12,7 @@ define([], function() {
      * @scope {object} ngModel
      * @scope {string} sdGroupDates - model field to group by
      */
-    return function() {
+    angular.module('superdesk.datetime').directive('sdGroupDates', [ function() {
         var lastDate = null;
         var COMPARE_FORMAT = 'YYYY-M-D';
         var DISPLAY_DATE_FORMAT = 'D. MMMM YYYY';
@@ -44,5 +45,5 @@ define([], function() {
                 };
             }
         };
-    };
-});
+    }]);
+})();

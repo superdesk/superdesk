@@ -1,4 +1,4 @@
-define(['angular'], function (angular) {
+(function () {
     'use strict';
 
     return angular.module('superdesk.slider.directives', []).
@@ -85,4 +85,4 @@ define(['angular'], function (angular) {
                 }
             };
         });
-});
+})();

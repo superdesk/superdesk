@@ -1,4 +1,4 @@
-define([], function() {
+(function() {
     'use strict';
 
     /**
@@ -18,4 +18,4 @@ define([], function() {
 
     /* exported gettext */
     window.gettext = gettext;
-});
+})();
