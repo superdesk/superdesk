@@ -150,7 +150,7 @@ module.exports = function(config) {
             // 'app/scripts/superdesk/api/url-resolver_spec.js',
             // 'app/scripts/superdesk/auth/auth-interceptor_spec.js',
             // 'app/scripts/superdesk/auth/auth-service_spec.js',
-            // 'app/scripts/superdesk/auth/basic-auth-adapter_spec.js',
+             'app/scripts/superdesk/auth/basic-auth-adapter_spec.js',
             // 'app/scripts/superdesk/auth/session-service_spec.js',
             'app/scripts/superdesk/auth/tests/auth_spec.js',
             'app/scripts/superdesk/beta/beta_spec.js',
