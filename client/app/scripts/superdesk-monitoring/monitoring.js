@@ -247,9 +247,9 @@
     }
 
     MonitoringGroupDirective.$inject = ['cards', 'api', 'authoringWorkspace', '$timeout', 'superdesk',
-        'activityService', 'workflowService', 'keyboardManager', 'desks', 'search'];
+        'activityService', 'workflowService', 'keyboardManager', 'desks', 'search', 'multi'];
     function MonitoringGroupDirective(cards, api, authoringWorkspace, $timeout, superdesk, activityService,
-            workflowService, keyboardManager, desks, search) {
+            workflowService, keyboardManager, desks, search, multi) {
 
         var ITEM_HEIGHT = 57,
             ITEMS_COUNT = 5,
@@ -472,6 +472,7 @@
                     if (desks.changeDesk) {
                         desks.changeDesk = false;
                         monitoring.singleGroup = null;
+                        multi.reset();
                     }
 
                     return apiquery().then(function(items) {
