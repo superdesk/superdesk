@@ -103,8 +103,9 @@
         'superdesk.session',
         'superdesk.asset'
         ])
+        .service('AuthExpiredInterceptor', AuthExpiredInterceptor)
         .config(['$httpProvider', 'superdeskProvider', 'assetProvider', function($httpProvider, superdesk, asset) {
-            $httpProvider.interceptors.push(AuthExpiredInterceptor);
+            $httpProvider.interceptors.push('AuthExpiredInterceptor');
 
             superdesk
                 .activity('/reset-password/', {

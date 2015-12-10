@@ -1,7 +1,4 @@
-define([
-    'superdesk/api/url-resolver-service',
-    './basic-auth-adapter'
-], function(UrlResolverService, BasicAuthAdapter) {
+(function() {
     'use strict';
 
     /* jshint maxlen:false */
@@ -15,8 +12,6 @@ define([
         beforeEach(function() {
             module(function($provide) {
                 $provide.constant('config', {server: {url: SERVER_URL}});
-                $provide.service('authAdapter', BasicAuthAdapter);
-                $provide.service('urls', UrlResolverService);
             });
         });
 
@@ -59,4 +54,4 @@ define([
         }));
 
     });
-});
+})();

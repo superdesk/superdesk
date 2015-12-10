@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    return angular.module('superdesk.services.storage', [])
+    angular.module('superdesk.services.storage', [])
         /**
          * LocalStorage wrapper
          *

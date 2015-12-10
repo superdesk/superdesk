@@ -1,7 +1,4 @@
-define([
-    'superdesk/auth/session-service',
-    'superdesk/services/storage'
-], function (SessionService, StorageService) {
+(function() {
     'use strict';
 
     var SESSION = {
@@ -15,10 +12,7 @@ define([
 
         beforeEach(function() {
             localStorage.clear();
-            module(StorageService.name);
-            module(function ($provide) {
-                $provide.service('session', SessionService);
-            });
+            module('superdesk.services.storage');
         });
 
         it('has identity and token property', inject(function (session) {
@@ -62,7 +56,7 @@ define([
         it('can store state for future requests', inject(function (session, $injector, $rootScope) {
             session.start(SESSION, {name: 'bar'});
 
-            var nextSession = $injector.instantiate(SessionService);
+            var nextSession = $injector.instantiate(session);
 
             $rootScope.$apply();
 
@@ -108,7 +102,7 @@ define([
             session.updateIdentity({name: 'baz'});
             expect(session.identity.name).toBe('baz');
 
-            var nextSession = $injector.instantiate(SessionService);
+            var nextSession = $injector.instantiate(session);
             $rootScope.$apply();
             expect(nextSession.identity.name).toBe('baz');
         }));
@@ -138,4 +132,4 @@ define([
             expect(success).not.toHaveBeenCalled();
         }));
     });
-});
+})();

@@ -1,3 +1,4 @@
+(function() {
 'use strict';
 
 describe('widgets provider', function() {
@@ -11,21 +12,21 @@ describe('widgets provider', function() {
         provider.widget('id', {label: 'second'});
     }));
     */
-
-    beforeEach(inject(function (_widgets_) { 
+    var widgets;
+    beforeEach(inject(function (_widgets_) {
         widgets = _widgets_;
         widgets.widget('id', {label: 'first'});
         widgets.widget('id', {label: 'second'});
-    } 
+    }));
 
     it('is defined', function() {
         expect(WidgetsProvider).not.toBe(undefined);
     });
 
-    //it('can register widgets', inject(function(widgets) {
-    it('can register widgets', function() {
+    it('can register widgets', inject(function(widgets) {
         expect(widgets.length).toBe(1);
         expect(widgets[0]._id).toBe('id');
         expect(widgets[0].label).toBe('second');
     }));
 });
+})();

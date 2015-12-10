@@ -1,19 +1,15 @@
-define([
-    './auth-interceptor',
-    'superdesk/api/request-service'
-], function(AuthInterceptor, RequestService) {
+(function() {
+
     'use strict';
 
     describe('auth interceptor', function() {
 
-        beforeEach(module(function($provide) {
-            $provide.service('request', RequestService);
-        }));
+        beforeEach(module('superdesk.api'));
 
         it('should intercept 401 response, run auth and resend request',
-        inject(function($injector, $q, $rootScope, session, request) {
+        inject(function($injector, $q, $rootScope, session, request, AuthExpiredInterceptor) {
 
-            var interceptor = $injector.invoke(AuthInterceptor),
+            var interceptor = AuthExpiredInterceptor,
                 config = {method: 'GET', url: 'http://localhost:5000/test', headers: {}},
                 response = {status: 401, config: config};
 
@@ -29,9 +25,9 @@ define([
         }));
 
         it('should intercept 401 response and reject the request if payload has credentials 1',
-        inject(function($injector, $q, $rootScope, session, request) {
+        inject(function($injector, $q, $rootScope, session, request, AuthExpiredInterceptor) {
 
-            var interceptor = $injector.invoke(AuthInterceptor),
+            var interceptor = AuthExpiredInterceptor,
                 config = {method: 'POST', url: 'http://localhost:5000/auth', headers: {}},
                 response = {status: 401, config: config, data: {_issues: {credentials: 1}}};
 
@@ -52,4 +48,4 @@ define([
             expect(request.resend).not.toHaveBeenCalled();
         }));
     });
-});
+})();

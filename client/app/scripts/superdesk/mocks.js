@@ -6,6 +6,7 @@ beforeEach(module(function($provide) {
 }));
 
 beforeEach(module('superdesk.mocks'));
+beforeEach(module('superdesk.services.storage'));
 
 /**
  * Mock services that call server on init and thus would require mocking all the time

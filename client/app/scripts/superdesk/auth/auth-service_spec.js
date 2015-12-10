@@ -1,8 +1,5 @@
-define([
-    'superdesk/services/storage',
-    'superdesk/auth/auth-service',
-    'superdesk/auth/session-service'
-], function(StorageService, AuthService, SessionService) {
+(function() {
+
     'use strict';
 
     var USER_HREF = 'http://user/1',
@@ -12,7 +9,9 @@ define([
     beforeEach(module('superdesk.preferences'));
 
     beforeEach(function() {
-        module(StorageService.name);
+        module('superdesk.services.storage');
+        module('superdesk.auth');
+        module('superdesk.session');
         module(function($provide) {
             $provide.service('api', function($q) {
                 this.users = {
@@ -21,9 +20,6 @@ define([
                     }
                 };
             });
-            $provide.service('auth', AuthService);
-            $provide.service('session', SessionService);
-            $provide.service('authAdapter', AuthAdapterMock);
         });
     });
 
@@ -99,4 +95,4 @@ define([
             return defer.promise;
         };
     }
-});
+})();
