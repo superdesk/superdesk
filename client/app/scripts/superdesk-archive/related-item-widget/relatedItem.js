@@ -21,8 +21,8 @@ define([
             });
         }])
         .controller('relatedItemController',
-        ['$scope', 'api', 'BaseWidgetController', '$location', 'notify', 'superdesk',
-        function ($scope, api, BaseWidgetController, $location, notify, superdesk) {
+        ['$scope', 'api', 'BaseWidgetController', '$location', 'notify', 'superdesk', '$q',
+        function ($scope, api, BaseWidgetController, $location, notify, superdesk, $q) {
             $scope.type = 'archiveWidget';
             $scope.itemListOptions = {
                 endpoint: 'search',
@@ -71,7 +71,9 @@ define([
                 open: {
                     title: 'Open',
                     method: function(item) {
-                        superdesk.intent('edit', 'item', item);
+                        $q.when(superdesk.intent('edit', 'item', item)).then(null, function(value) {
+                            superdesk.intent('view', 'item', item);
+                        });
                     },
                     'class': 'open',
                     icon: 'icon-external'

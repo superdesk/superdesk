@@ -240,6 +240,26 @@ describe('authoring', function() {
         expect(authoring.getRelatedItems().count()).toBe(7);
     });
 
+    it('related item widget can open published item', function() {
+        expect(monitoring.getGroups().count()).toBe(5);
+        expect(monitoring.getTextItem(1, 1)).toBe('item9');
+        expect(monitoring.getTextItemBySlugline(1, 1)).toBe('ITEM9 SLUGLINE');
+        monitoring.actionOnItem('Edit', 1, 1);
+        authoring.publish(); // item9 published
+        browser.sleep(200);
+
+        monitoring.actionOnItem('Duplicate', 4, 1); // duplicate item9 text published item
+        expect(monitoring.getGroupItems(0).count()).toBe(1);
+        monitoring.actionOnItem('Edit', 0, 0);
+
+        authoring.openRelatedItem(); // opens related item widget
+        expect(authoring.getRelatedItemBySlugline(0).getText()).toBe('item9 slugline');        
+        authoring.getRelatedItemBySlugline(0).click();
+
+        authoring.actionOpenRelatedItem(); // Open item
+        expect(authoring.getHeaderSluglineText()).toBe('item9 slugline');
+    });
+
     it('Kill Template apply', function() {
         expect(monitoring.getTextItem(1, 0)).toBe('item5');
         monitoring.actionOnItem('Edit', 1, 0);
