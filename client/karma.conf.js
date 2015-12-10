@@ -28,17 +28,17 @@ module.exports = function(config) {
             'app/scripts/bower_components/moment-timezone/builds/moment-timezone-with-data-2010-2020.js',
             'app/scripts/bower_components/angular-moment/angular-moment.js',
             'app/scripts/bower_components/d3/d3.js',
-            'app/scripts/superdesk/mocks.js',
+            //'app/scripts/superdesk/mocks.js',
             'app/scripts/superdesk-*/**/*.html',
             'app/scripts/superdesk/**/*.html',
 
             // activity
             // FIXME: not working
             // 'app/scripts/superdesk/activity/activity.js',
-            // 'app/scripts/superdesk/activity/activity-chooser-directive.js',
-            // 'app/scripts/superdesk/activity/activity-list-directive.js',
-            // 'app/scripts/superdesk/activity/activity-modal-directive.js',
-            // 'app/scripts/superdesk/activity/superdesk-service_spec.js',
+            //'app/scripts/superdesk/activity/activity-chooser-directive.js',
+            //'app/scripts/superdesk/activity/activity-list-directive.js',
+            //'app/scripts/superdesk/activity/activity-modal-directive.js',
+            //'app/scripts/superdesk/activity/superdesk-service_spec.js',
             // analytics
             // NOTE: working! was easy...
             'app/scripts/superdesk/analytics/analytics.js',

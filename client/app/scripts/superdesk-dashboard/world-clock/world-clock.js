@@ -234,7 +234,7 @@
                 sizey: 1,
                 thumbnail: 'scripts/superdesk-dashboard/world-clock/thumbnail.svg',
                 template: 'scripts/superdesk-dashboard/world-clock/widget-worldclock.html',
-                configurationTemplate: 'scripts/superdesk-dashboard/world-clock//configuration.html',
+                configurationTemplate: 'scripts/superdesk-dashboard/world-clock/configuration.html',
                 configuration: {zones: ['Europe/London', 'Asia/Tokyo', 'Europe/Moscow']},
                 description: gettext('World clock widget')
             });
