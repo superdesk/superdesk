@@ -116,6 +116,7 @@ module.exports = function(config) {
             'app/scripts/superdesk-templates/templates.js',
 
             // specs files
+            // NOTE: uncommented are passing
             // 'app/scripts/superdesk-archive/controllers/upload_spec.js',
             // 'app/scripts/superdesk-archive/family_spec.js',
             // 'app/scripts/superdesk-archive/tests/archive_spec.js',
