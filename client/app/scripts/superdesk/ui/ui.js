@@ -1137,8 +1137,83 @@
         };
     }
 
-    return angular.module('superdesk.ui', ['superdesk.dashboard.world-clock'])
+    /*
+     * Splitter widget, allows user to dinamicaly
+     * resize monitoring and authoring screen
+     *
+     */
+    splitterWidget.$inject = ['superdesk', '$timeout'];
+    function splitterWidget(superdesk, $timeout) {
+        return {
+            link: function(scope, element) {
+                var workspace = element,
+                    authoring = element.next('#authoring-container');
 
+                /*
+                 * If custom sizes are defined, preload them
+                 */
+                if (superdesk.monitoringWidth && superdesk.authoringWidth) {
+                    workspace.width(superdesk.monitoringWidth);
+                    authoring.width(superdesk.authoringWidth);
+                }
+
+                /*
+                 * If authoring is not initialized,
+                 * wait, and initialize it again
+                 *
+                 * This issue is observed when you are
+                 * switching from settings back to monitoring
+                 */
+                if (!authoring.length) {
+                    $timeout(function () {
+                        authoring = element.next('#authoring-container');
+                        authoring.width(superdesk.authoringWidth);
+                    });
+                }
+
+                workspace.resizable({
+                    autoHide: true,
+                    handles: 'e',
+                    minWidth: 400,
+                    start: function(e, ui) {
+                        var container = ui.element.parent();
+                        workspace.resizable({maxWidth: container.width() - 588});
+                    },
+                    resize: function (e, ui) {
+                        var container = ui.element.parent(),
+                            remainingSpace = container.width() - workspace.outerWidth() - 48,
+                            authoringWidth = remainingSpace - (authoring.outerWidth() - authoring.width());
+
+                        if (workspace.outerWidth() < 655) {
+                            workspace.addClass('ui-responsive-medium');
+                        } else {
+                            workspace.removeClass('ui-responsive-medium');
+                        }
+
+                        if (workspace.outerWidth() < 460) {
+                            workspace.addClass('ui-responsive-small');
+                        } else {
+                            workspace.removeClass('ui-responsive-small');
+                        }
+
+                        authoring.width(authoringWidth / container.width() * 100 + '%');
+                    },
+                    stop: function (e, ui) {
+                        var container = ui.element.parent();
+
+                        superdesk.monitoringWidth = workspace.outerWidth() / container.width() * 100 + '%';
+                        superdesk.authoringWidth = authoring.outerWidth() / container.width() * 100 + '%';
+
+                        ui.element.css({
+                            width: superdesk.monitoringWidth
+                        });
+                    }
+                });
+            }
+        };
+    }
+
+    angular.module('superdesk.ui', ['superdesk.dashboard.world-clock'])
         .directive('sdShadow', ShadowDirective)
         .directive('sdToggleBox', ToggleBoxDirective)
         .filter('nl2el', NewlineToElement)
@@ -1162,5 +1237,5 @@
         .directive('sdDropdownPositionRight', DropdownPositionRightDirective)
         .directive('sdDropdownFocus', DropdownFocus)
         .directive('sdWeekdayPicker', WeekdayPickerDirective)
-        ;
+        .directive('sdSplitterWidget', splitterWidget);
 })();
