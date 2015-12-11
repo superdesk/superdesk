@@ -30,6 +30,7 @@ import superdesk
 from apps.archive.archive import SOURCE as ARCHIVE
 from superdesk.metadata.item import TAKES_PACKAGE, PACKAGE_TYPE, ITEM_STATE, CONTENT_STATE, ITEM_TYPE, CONTENT_TYPE
 from apps.publish.published_item import LAST_PUBLISHED_VERSION
+from unittest import mock
 
 ARCHIVE_PUBLISH = 'archive_publish'
 ARCHIVE_CORRECT = 'archive_correct'
@@ -39,6 +40,7 @@ PUBLISH_QUEUE = 'publish_queue'
 PUBLISHED = 'published'
 
 
+@mock.patch('superdesk.publish.subscribers.SubscribersService.generate_sequence_number', lambda self, subscriber: 1)
 class ArchivePublishTestCase(SuperdeskTestCase):
     def init_data(self):
         self.users = [{'_id': '1', 'username': 'admin'}]
@@ -106,12 +108,14 @@ class ArchivePublishTestCase(SuperdeskTestCase):
                           'task': {'user': '1', 'desk': '123456789ABCDEF123456789'},
                           ITEM_STATE: CONTENT_STATE.PUBLISHED,
                           'expiry': utcnow() + timedelta(minutes=20),
+                          'slugline': 'story slugline',
                           'unique_name': '#1'},
                          {'guid': 'tag:localhost:2015:69b961ab-2816-4b8a-a974-xy4532fe33f9',
                           '_id': '2',
                           'last_version': 3,
                           config.VERSION: 4,
                           'body_html': 'Test body of the second article',
+                          'slugline': 'story slugline',
                           'urgency': 4,
                           'anpa_category': [{'qcode': 'A', 'name': 'Sport'}],
                           'headline': 'Another two students missing',
@@ -134,6 +138,7 @@ class ArchivePublishTestCase(SuperdeskTestCase):
                           'last_version': 3,
                           config.VERSION: 4,
                           'body_html': 'Test body',
+                          'slugline': 'story slugline',
                           'urgency': 4,
                           'anpa_category': [{'qcode': 'A', 'name': 'Sport'}],
                           'headline': 'Two students missing killed',

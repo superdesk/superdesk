@@ -364,7 +364,7 @@ def handle_existing_data(doc, pub_status_value='usable', doc_type='archive'):
 
 
 def set_flag(doc, flag_name, flag_value):
-    flags = doc.get('flags', [])
+    flags = doc.get('flags', {})
     flags[flag_name] = flag_value
 
 
@@ -414,7 +414,6 @@ def item_schema(extra=None):
         },
         'flags': {
             'type': 'dict',
-            'nullable': True,
             'schema': {
                 'marked_for_not_publication': {
                     'type': 'boolean',

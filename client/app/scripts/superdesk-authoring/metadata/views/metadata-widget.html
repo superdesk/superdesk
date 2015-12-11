@@ -23,7 +23,7 @@
 			<li ng-if="_isInProductionStates">
 				<label ng-if="_editable" translate>Legal</label>
 				<span ng-if="_editable">
-					<span ng-if="_editable" sd-switch ng-model="item.flags.marked_for_legal"></span>
+					<span sd-switch ng-model="item.flags.marked_for_legal"></span>
 				</span>
 				<label ng-if="!_editable" translate>
 					<span class="state-label legal" ng-show="item.flags.marked_for_legal" translate>Legal</span>

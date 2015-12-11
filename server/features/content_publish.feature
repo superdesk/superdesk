@@ -28,6 +28,7 @@ Feature: Content Publishing
       [{"guid": "123", "type": "text", "headline": "test", "state": "fetched",
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
         "subject":[{"qcode": "17004000", "name": "Statistics"}],
+        "slugline": "test",
         "body_html": "Test Document body"}]
       """
       Then we get OK response
@@ -67,10 +68,12 @@ Feature: Content Publishing
       {"_items" : [
         {"_id": "123", "guid": "123", "headline": "test", "_current_version": 2, "state": "published",
          "task": {"desk": "Sports", "stage": "Incoming Stage", "user": "test_user"},
+         "slugline": "test",
          "body_html": "Test Document body", "subject":[{"qcode": "17004000", "name": "Statistics"}]},
         {"headline": "test", "_current_version": 2, "state": "published", "type": "composite",
          "package_type": "takes", "task": {"desk": "Sports", "stage": "Incoming Stage", "user": "test_user"},
          "sequence": 1,
+         "slugline": "test",
          "groups" : [
             {
                 "id" : "root",
@@ -89,7 +92,7 @@ Feature: Content Publishing
                         "renditions" : {},
                         "type" : "text",
                         "location" : "legal_archive",
-                        "slugline" : null,
+                        "slugline" : "test",
                         "itemClass" : "icls:text",
                         "residRef" : "123",
                         "headline" : "test",
@@ -182,6 +185,7 @@ Feature: Content Publishing
       [{"guid": "123", "type": "text", "headline": "test", "_current_version": 1, "state": "fetched",
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
         "subject":[{"qcode": "17004000", "name": "Statistics"}],
+        "slugline": "test",
         "body_html": "Test Document body"}]
       """
       Given empty "filter_conditions"
@@ -237,6 +241,7 @@ Feature: Content Publishing
       [{"guid": "123", "type": "text", "headline": "test", "_current_version": 1, "state": "fetched",
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
         "subject":[{"qcode": "17004000", "name": "Statistics"}],
+        "slugline": "test",
         "body_html": "Test Document body"}]
       """
 
@@ -284,6 +289,7 @@ Feature: Content Publishing
       [{"guid": "123", "type": "text", "headline": "test", "_current_version": 1, "state": "fetched",
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
         "subject":[{"qcode": "17004000", "name": "Statistics"}],
+        "slugline": "test",
         "body_html": "Test Document body"}]
       """
 
@@ -331,6 +337,7 @@ Feature: Content Publishing
       [{"guid": "123", "type": "text", "headline": "test", "_current_version": 1, "state": "fetched",
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
         "subject":[{"qcode": "17004000", "name": "Statistics"}],
+        "slugline": "test",
         "body_html": "Test Document body"}]
       """
 
@@ -390,6 +397,7 @@ Feature: Content Publishing
       """
       [{"guid": "123", "_current_version": 1, "state": "fetched",
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
+        "slugline": "test",
         "body_html": "Test Document body"}]
       """
       When we publish "#archive._id#" with "publish" type and "published" state
@@ -412,6 +420,7 @@ Feature: Content Publishing
       """
       [{"guid": "123", "type": "image", "headline": "test", "_current_version": 1, "state": "fetched",
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
+        "slugline": "test",
         "body_html": "Test Document body"}]
       """
       When we post to "/subscribers" with success
@@ -444,6 +453,7 @@ Feature: Content Publishing
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
         "publish_schedule":"2016-05-30T10:00:00+00:00",
         "subject":[{"qcode": "17004000", "name": "Statistics"}],
+        "slugline": "test",
         "body_html": "Test Document body"}]
       """
       When we post to "/subscribers" with success
@@ -491,6 +501,7 @@ Feature: Content Publishing
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
         "publish_schedule":"2016-05-30T10:00:00+00:00",
         "subject":[{"qcode": "17004000", "name": "Statistics"}],
+        "slugline": "test",
         "body_html": "Test Document body"}]
       """
       When we post to "/subscribers" with success
@@ -563,6 +574,7 @@ Feature: Content Publishing
       """
       [{"guid": "123", "headline": "test", "_current_version": 1, "state": "fetched",
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
+        "slugline": "test",
         "body_html": "Test Document body"}]
       """
       When we post to "/subscribers" with success
@@ -593,6 +605,7 @@ Feature: Content Publishing
       [{"guid": "123", "headline": "test", "_current_version": 1, "state": "fetched",
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
         "subject":[{"qcode": "17004000", "name": "Statistics"}],
+        "slugline": "test",
         "body_html": "Test Document body"}]
       """
       When we post to "/subscribers" with success
@@ -624,6 +637,7 @@ Feature: Content Publishing
       [{"guid": "123", "headline": "test", "_current_version": 1, "state": "fetched",
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
         "subject":[{"qcode": "17004000", "name": "Statistics"}],
+        "slugline": "test",
         "body_html": "Test Document body"}]
       """
       When we post to "/subscribers" with success
@@ -663,6 +677,7 @@ Feature: Content Publishing
       [{"guid": "123", "headline": "test", "_current_version": 0, "state": "fetched",
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
         "subject":[{"qcode": "17004000", "name": "Statistics"}],
+        "slugline": "test",
         "body_html": "Test Document body"}]
       """
       When we post to "/subscribers" with success
@@ -708,6 +723,7 @@ Feature: Content Publishing
       [{"guid": "123", "headline": "test", "_current_version": 0, "state": "fetched",
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
         "subject":[{"qcode": "17004000", "name": "Statistics"}],
+        "slugline": "test",
         "body_html": "Test Document body"}]
       """
       When we post to "/subscribers" with success
@@ -753,6 +769,7 @@ Feature: Content Publishing
       [{"guid": "123", "headline": "test", "state": "fetched",
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
         "subject":[{"qcode": "17004000", "name": "Statistics"}],
+        "slugline": "test",
         "body_html": "Test Document body"}]
       """
       And we post to "/subscribers" with success
@@ -897,6 +914,7 @@ Feature: Content Publishing
       [{"guid": "123", "headline": "test", "_current_version": 1, "state": "fetched",
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
         "subject":[{"qcode": "17004000", "name": "Statistics"}],
+        "slugline": "test",
         "body_html": "Test Document body"}]
       """
       When we post to "/subscribers" with success
@@ -938,6 +956,7 @@ Feature: Content Publishing
       [{"guid": "123", "headline": "test", "_current_version": 1, "state": "fetched",
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
         "subject":[{"qcode": "17004000", "name": "Statistics"}],
+        "slugline": "test",
         "body_html": "Test Document body"}]
       """
       When we post to "/subscribers" with success
@@ -1029,6 +1048,7 @@ Feature: Content Publishing
       [{"guid": "123", "headline": "test", "_current_version": 1, "state": "fetched",
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
         "subject":[{"qcode": "17004000", "name": "Statistics"}],
+        "slugline": "test",
         "body_html": "Test Document body"}]
       """
       When we post to "/subscribers" with success
@@ -1048,7 +1068,6 @@ Feature: Content Publishing
 
 
 
-
     @auth
     Scenario: As a user I shouldn't be able to publish an item which is marked as not for publication
       Given "desks"
@@ -1057,8 +1076,11 @@ Feature: Content Publishing
       """
       When we post to "/archive" with success
       """
-      [{"guid": "123", "headline": "test", "body_html": "body", "state": "fetched",
-        "marked_for_not_publication": true, "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
+      [{"guid": "123", "headline": "test",
+        "body_html": "body", "state": "fetched",
+        "slugline": "test",
+        "flags": {"marked_for_not_publication": true},
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
       """
       And we publish "#archive._id#" with "publish" type and "published" state
       Then we get error 400
@@ -1078,7 +1100,9 @@ Feature: Content Publishing
       """
       And "archive"
       """
-      [{"guid": "123", "headline": "test", "body_html": "body", "_current_version": 1, "state": "fetched",
+      [{"guid": "123", "headline": "test",
+        "body_html": "body", "_current_version": 1, "state": "fetched",
+        "slugline": "test",
         "subject":[{"qcode": "17004000", "name": "Statistics"}],
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
       """
@@ -1128,10 +1152,12 @@ Feature: Content Publishing
       [{"guid": "122", "type": "text", "headline": "test", "_current_version": 1, "state": "fetched",
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
         "subject":[{"qcode": "17004000", "name": "Statistics"}],
+        "slugline": "test",
         "body_html": "Test Document body"},
         {"guid": "123", "type": "text", "headline": "test", "_current_version": 1, "state": "fetched",
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
         "subject":[{"qcode": "17004000", "name": "Statistics"}],
+        "slugline": "test",
         "body_html": "Test Document body"}]
       """
       When we post to "/subscribers" with success
@@ -1206,7 +1232,9 @@ Feature: Content Publishing
       """
       When we post to "/archive" with success
       """
-      [{"guid": "123", "type": "text", "headline": "test", "state": "fetched", "subject":[{"qcode": "17004000", "name": "Statistics"}],
+      [{"guid": "123", "type": "text", "headline": "test", "state": "fetched",
+        "subject":[{"qcode": "17004000", "name": "Statistics"}],
+        "slugline": "test",
         "body_html": "Test Document body", "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
       """
       And we post to "/subscribers" with success
@@ -1267,6 +1295,7 @@ Feature: Content Publishing
       [{"guid": "123", "type": "text", "headline": "test", "_current_version": 1, "state": "fetched",
         "task": {"desk": "#desks._id#", "stage": "#desks.working_stage#", "user": "#CONTEXT_USER_ID#"},
         "subject":[{"qcode": "17004000", "name": "Statistics"}],
+        "slugline": "test",
         "body_html": "Test Document body"}]
       """
       When we post to "/subscribers" with "DigitalSubscriber" and success
@@ -1391,7 +1420,10 @@ Feature: Content Publishing
       """
       And "archive"
       """
-      [{"guid": "123", "type": "text", "headline": "test", "_current_version": 1, "state": "fetched",
+      [{"guid": "123", "type": "text", "headline":
+        "test", "_current_version": 1,
+        "slugline": "test",
+        "state": "fetched",
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
         "subject":[{"qcode": "17004000", "name": "Statistics"}]}]
       """

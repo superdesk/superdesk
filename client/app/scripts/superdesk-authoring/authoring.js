@@ -926,7 +926,7 @@
                         item = _.pick(result, _.keys(CONTENT_FIELDS_DEFAULTS));
                         _.each(item, function(value, key) {
                             if (!_.isEmpty(value)) {
-                                $scope.origItem[key] = value;
+                                $scope.item[key] = value;
                             }
                         });
                     }, function(err) {
