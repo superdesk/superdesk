@@ -385,8 +385,8 @@ function Authoring() {
     };
 
     this.getHeaderSluglineText = function() {
-        var header_details = element(by.className('authoring-header__detailed'));
-        return header_details.all(by.model('item.slugline')).get(0).getAttribute('value');
+        var headerDetails = element(by.className('authoring-header__detailed'));
+        return headerDetails.all(by.model('item.slugline')).get(0).getAttribute('value');
     };
 
 }

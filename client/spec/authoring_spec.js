@@ -253,7 +253,7 @@ describe('authoring', function() {
         monitoring.actionOnItem('Edit', 0, 0);
 
         authoring.openRelatedItem(); // opens related item widget
-        expect(authoring.getRelatedItemBySlugline(0).getText()).toBe('item9 slugline');        
+        expect(authoring.getRelatedItemBySlugline(0).getText()).toBe('item9 slugline');
         authoring.getRelatedItemBySlugline(0).click();
 
         authoring.actionOpenRelatedItem(); // Open item
