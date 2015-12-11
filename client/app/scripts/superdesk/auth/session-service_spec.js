@@ -13,6 +13,7 @@
         beforeEach(function() {
             localStorage.clear();
             module('superdesk.services.storage');
+            module('superdesk.session');
         });
 
         it('has identity and token property', inject(function (session) {
