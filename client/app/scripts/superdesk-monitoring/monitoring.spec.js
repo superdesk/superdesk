@@ -210,7 +210,7 @@ describe('monitoring', function() {
         beforeEach(module('superdesk.templates-cache'));
 
         beforeEach(inject(function(desks, api, $q) {
-            desks.stageLookup = {'1': {'desk': 'desk1'}};
+            desks.stageLookup = {'1': {'desk': 'desk1', 'default_incoming': true}};
             desks.userLookup = {'1': {'display_name': 'user1'}};
             spyOn(api, 'activity').and.returnValue($q.when({_items: []}));
 
@@ -226,6 +226,7 @@ describe('monitoring', function() {
                 data: {comment: 'abc', comment_id: 1}}];
 
             spyOn(deskNotifications, 'getNotifications').and.returnValue(notifications);
+            spyOn(deskNotifications, 'getUnreadCount').and.returnValue(1);
 
             var elem = $compile('<div sd-desk-notifications data-stage="1"></div>')(scope);
             scope.$digest();
