@@ -374,4 +374,19 @@ function Authoring() {
     this.getRelatedItems = function() {
         return element.all(by.repeater('item in processedItems'));
     };
+
+    this.getRelatedItemBySlugline = function(item) {
+        var relItems = element.all(by.repeater('item in processedItems')).get(item);
+        return relItems.element(by.binding('item.slugline')).getText();
+    };
+
+    this.actionOpenRelatedItem = function(item) {
+        element.all(by.css('[ng-click="actions.open.method(selected)"]')).get(1).click();
+    };
+
+    this.getHeaderSluglineText = function() {
+        var headerDetails = element(by.className('authoring-header__detailed'));
+        return headerDetails.all(by.model('item.slugline')).get(0).getAttribute('value');
+    };
+
 }

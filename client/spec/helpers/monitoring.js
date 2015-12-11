@@ -109,6 +109,10 @@ function Monitoring() {
         return this.getItem(group, item).element(by.id('title')).getText();
     };
 
+    this.getTextItemBySlugline = function(group, item) {
+        return this.getItem(group, item).element(by.binding('item.slugline')).getText();
+    };
+
     this.searchAction = function(search) {
         element(by.css('.flat-searchbar')).click();
         element(by.model('query')).sendKeys(search);
