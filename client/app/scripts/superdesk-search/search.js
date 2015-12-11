@@ -898,12 +898,7 @@
 
                     scope.$watch('view', function(newValue, oldValue) {
                         if (newValue !== oldValue) {
-                            var items = scope.items;
-                            if (newValue === 'mgrid') {
-                                listComponent.setItems(items);
-                            } else {
-                                listComponent.setItems([]);
-                            }
+                            listComponent.setState({view: newValue});
                         }
                     });
 
@@ -1005,8 +1000,12 @@
                      * @param {items}
                      */
                     function render(items, next) {
-                        var parameters = sourceParam();
-                        if (!items && !next) {
+                        if (items) {
+                            setScopeItems(items);
+                        } else if (next) {
+                            criteria.source.from = (criteria.source.from || 0) + criteria.source.size;
+                            api.query(getProvider(criteria), criteria).then(setScopeItems);
+                        } else {
                             var query = _.omit($location.search(), '_id');
 
                             if (!_.isEqual(_.omit(query, 'page'), _.omit(oldQuery, 'page'))) {
@@ -1014,15 +1013,10 @@
                             }
 
                             criteria = search.query($location.search()).getCriteria(true);
-                            criteria.source.from = parameters.from;
-                            criteria.source.size = parameters.to - parameters.from;
+                            criteria.source.from = 0;
+                            criteria.source.size = 50;
                             api.query(getProvider(criteria), criteria).then(setScopeItems);
                             oldQuery = query;
-                        } else if (!items && next) {
-                            criteria.source.from = (criteria.source.from || 0) + criteria.source.size;
-                            api.query(getProvider(criteria), criteria).then(setScopeItems);
-                        } else {
-                            setScopeItems(items);
                         }
 
                         function setScopeItems(items) {
@@ -1065,21 +1059,16 @@
                                     'img',
                                     {src: this.props.item.renditions.thumbnail.href}
                                 );
-                            } else {
-                                preview = React.createElement(
-                                    'i',
-                                    {className: 'filetype-icon-large-' + this.props.item.type}
-                                );
                             }
 
                             return React.createElement(
                                 'div',
                                 {className: 'media multi'},
-                                React.createElement(
+                                preview ? React.createElement(
                                     'figure',
                                     null,
                                     preview
-                                ),
+                                ) : null,
                                 React.createElement(
                                     'span',
                                     {className: 'text'},
@@ -1099,13 +1088,20 @@
                     var MediaInfo = React.createClass({
                         render: function() {
                             var item = this.props.item;
-                            console.time('meta');
-                            var meta = [
-                                React.createElement('dt', {key: 1}, gettext('source')),
-                                React.createElement('dd', {key: 2, className: 'provider'}, item.ingest_provider),
+                            var meta = [];
+                            var ingestProvider = this.props.ingestProviders[item.ingest_provider] || null;
+
+                            if (ingestProvider) {
+                                meta.push(
+                                    React.createElement('dt', {key: 1}, gettext('source')),
+                                    React.createElement('dd', {key: 2, className: 'provider'}, ingestProvider.name)
+                                );
+                            }
+
+                            meta.push(
                                 React.createElement('dt', {key: 3}, gettext('updated')),
                                 React.createElement('dd', {key: 4}, moment(item.versioncreated).fromNow())
-                            ];
+                            );
 
                             if (item.is_spiked) {
                                 meta.push(React.createElement('dt', {key: 5}, gettext('expires')));
@@ -1150,74 +1146,61 @@
                     /**
                      * Type icon component
                      */
-                    var TypeIcon = React.createClass({
-                        render: function() {
-                            return React.createElement(
-                                'span',
-                                {className: 'type-icon'},
-                                React.createElement(
-                                    'i',
-                                    {className: 'filetype-icon-' + this.props.type}
-                                )
-                            );
-                        }
-                    });
+                    var TypeIcon = function(props) {
+                        return React.createElement(
+                            'span',
+                            {className: 'type-icon'},
+                            React.createElement(
+                                'i',
+                                {className: 'filetype-icon-' + props.type}
+                            )
+                        );
+                    };
 
-                    var ItemPriority = React.createClass({
-                        render: function() {
-                            var priority = this.props.priority || 3;
-                            return React.createElement(
-                                'span',
-                                {className: 'priority-label priority-label--' + priority},
-                                priority
-                            );
-                        }
-                    });
+                    var ItemPriority = function(props) {
+                        var priority = props.priority || 3;
+                        return React.createElement(
+                            'span',
+                            {className: 'priority-label priority-label--' + priority},
+                            priority
+                        );
+                    };
 
-                    var ItemUrgency = React.createClass({
-                        render: function() {
-                            var urgency = this.props.urgency || 3;
-                            return React.createElement(
-                                'span',
-                                {className: 'urgency-label urgency-label--' + urgency},
-                                urgency
-                            );
-                        }
-                    });
+                    var ItemUrgency = function(props) {
+                        var urgency = props.urgency || 3;
+                        return React.createElement(
+                            'span',
+                            {className: 'urgency-label urgency-label--' + urgency},
+                            urgency
+                        );
+                    };
 
-                    var BroadcastStatus = React.createClass({
-                        render: function() {
-                            var broadcast = this.props.broadcast || {};
-                            return React.createElement(
-                                'span',
-                                {className: 'broadcast-status', tooltip: broadcast.status},
-                                '!'
-                            );
-                        }
-                    });
+                    var BroadcastStatus = function(props) {
+                        var broadcast = props.broadcast || {};
+                        return React.createElement(
+                            'span',
+                            {className: 'broadcast-status', tooltip: broadcast.status},
+                            '!'
+                        );
+                    };
 
-                    var StateLabel = React.createClass({
-                        render: function() {
-                            var item = this.props.item;
-                            var classes = [
-                                'state-label',
-                                'state-' + item.state,
-                                item.embargo ? 'state_embargo' : ''
-                            ];
-                            return React.createElement(
-                                'div',
-                                {className: classes.join(' ')},
-                                item.state
-                            );
-                        }
-                    });
+                    var StateLabel = function(props) {
+                        var item = props.item;
+                        var className = classNames(
+                            'state-label',
+                            'state-' + item.state,
+                            {'state_embargo': item.embargo}
+                        );
+                        return React.createElement(
+                            'div',
+                            {className: className},
+                            item.state
+                        );
+                    };
 
                     var ActionsMenu = React.createClass({
                         toggle: function(event) {
-                            console.time('actions');
-                            this.setState({open: !this.state.open}, function() {
-                                console.timeEnd('actions');
-                            });
+                            this.setState({open: !this.state.open});
                             this.stopEvent(event);
                         },
 
@@ -1248,26 +1231,42 @@
                             return archiveService.getType(this.props.item);
                         },
 
+                        groups: [
+                            {_id: 'default', label: gettext('Actions')},
+                            {_id: 'packaging', label: gettext('Packaging')},
+                            {_id: 'highlights', label: gettext('Highlights')},
+                            {_id: 'corrections', label: gettext('Corrections')}
+                        ],
+
                         render: function() {
                             var menu = [];
                             var item = this.props.item;
-                            if (this.state.open) {
-                                var groups = this.getActions();
-                                menu.push(
-                                    React.createElement(ActionsMenu.Label, {label: gettext('Actions')}),
-                                    React.createElement(ActionsMenu.Divider)
-                                );
-                                menu.push.apply(menu, groups.default.map(function(activity) {
-                                    return React.createElement(ActionsMenu.Item, {activity: activity, item: item});
-                                }));
 
-                                menu.push(
-                                    React.createElement(ActionsMenu.Label, {label: gettext('Packaging')}),
-                                    React.createElement(ActionsMenu.Divider),
-                                    React.createElement(ActionsMenu.Label, {label: gettext('Highlights')}),
-                                    React.createElement(ActionsMenu.Divider),
-                                    React.createElement(ActionsMenu.Label, {label: gettext('Corrections')})
-                                );
+                            var createAction = function(activity) {
+                                return React.createElement(ActionsMenu.Item, {
+                                    item: item,
+                                    activity: activity,
+                                    key: activity._id
+                                });
+                            }.bind(this);
+
+                            if (this.state.open) {
+                                var actions = this.getActions();
+                                this.groups.map(function(group) {
+                                    if (actions[group._id]) {
+                                        menu.push(
+                                            React.createElement(ActionsMenu.Label, {
+                                                label: group.label,
+                                                key: 'group-label-' + group._id
+                                            }),
+                                            React.createElement(ActionsMenu.Divider, {
+                                                key: 'group-divider-' + group._id
+                                            })
+                                        );
+
+                                        menu.push.apply(menu, actions[group._id].map(createAction));
+                                    }
+                                });
                             }
 
                             return React.createElement(
@@ -1275,7 +1274,7 @@
                                 {className: 'item-right toolbox'},
                                 React.createElement(
                                     'div',
-                                    {className: 'item-actions-menu more-activity-dropdown dropdown-big'},
+                                    {className: 'item-actions-menu more-activity-dropdown dropdown-big open'},
                                     React.createElement(
                                         'button',
                                         {
@@ -1298,25 +1297,17 @@
                         }
                     });
 
-                    ActionsMenu.Label = React.createClass({
-                        render: function() {
-                            return React.createElement(
-                                'li',
-                                null,
-                                React.createElement(
-                                    'div',
-                                    {className: 'menu-label'},
-                                    this.props.label
-                                )
-                            );
-                        }
-                    });
+                    ActionsMenu.Label = function() {
+                        return React.createElement(
+                            'li',
+                            null,
+                            React.createElement('div', {className: 'menu-label'}, this.props.label)
+                        );
+                    };
 
-                    ActionsMenu.Divider = React.createClass({
-                        render: function() {
-                            return React.createElement('li', {className: 'divider'});
-                        }
-                    });
+                    ActionsMenu.Divider = function() {
+                        return React.createElement('li', {className: 'divider'});
+                    };
 
                     ActionsMenu.Item = React.createClass({
                         run: function(event) {
@@ -1332,7 +1323,7 @@
                                     'a',
                                     {title: gettext(activity.label), onClick: this.run},
                                     React.createElement('i', {className: 'icon-' + activity.icon}),
-                                    React.createElement('span', {style: {display: 'block'}}, gettext(activity.label))
+                                    React.createElement('span', {style: {display: 'inline'}}, gettext(activity.label))
                                 )
                             );
                         }
@@ -1366,24 +1357,32 @@
 
                         render: function() {
                             var item = this.props.item;
-                            var locked = this.props.flags.locked ? ' locked' : '';
-                            var selected = this.props.flags.selected ? ' active' : '';
                             var broadcast = item.broadcast || {};
                             return React.createElement(
                                 'li',
                                 {
                                     id: item._id,
                                     key: item._id,
-                                    className: 'list-item-view' + selected,
+                                    className: classNames('list-item-view', {active: this.props.flags.selected}),
                                     onMouseEnter: this.setHoverState,
                                     onMouseLeave: this.unsetHoverState,
                                     onClick: this.select
                                 },
                                 React.createElement(
                                     'div',
-                                    {className: 'media-box media-' + item.type},
+                                    {
+                                        className: classNames(
+                                            'media-box',
+                                            'media-' + item.type,
+                                            {
+                                                locked: this.props.flags.locked,
+                                                selected: this.props.flags.selected,
+                                                archived: item.archived || item.created
+                                            }
+                                        )
+                                    },
                                     React.createElement(MediaPreview, {item: item}),
-                                    React.createElement(MediaInfo, {item: item}),
+                                    React.createElement(MediaInfo, {item: item, ingestProviders: this.props.ingestProviders}),
                                     React.createElement(TypeIcon, {type: item.type}),
                                     item.priority ? React.createElement(ItemPriority, {priority: item.priority}) : null,
                                     item.urgency ? React.createElement(ItemUrgency, {urgency: item.urgency}) : null,
@@ -1394,12 +1393,18 @@
                         }
                     });
 
+                    var Keys = Object.freeze({
+                        right: 39,
+                        left: 37,
+                        enter: 13
+                    });
+
                     /**
                      * Item list component
                      */
                     var ItemList = React.createClass({
                         getInitialState: function() {
-                            return {items: [], selected: null};
+                            return {items: [], selected: null, view: 'mgrid'};
                         },
 
                         setItems: function(items) {
@@ -1408,21 +1413,41 @@
 
                         select: function(item) {
                             console.time('select');
-                            scope.preview(item);
+                            $timeout.cancel(this.updateTimeout);
+                            this.updateTimeout = $timeout(function() {
+                                scope.$apply(function() {
+                                    scope.preview(item);
+                                });
+                            }, 100, false);
                             this.setState({
                                 selected: item._id
                             }, function() {
                                 console.timeEnd('select');
+                            });
+                        },
 
+                        getSelectedItem: function() {
+                            var selected = this.state.selected;
+                            return this.state.items.find(function(item) {
+                                return item._id === selected;
                             });
                         },
 
                         handleKey: function(event) {
                             var diff;
-                            if (event.keyCode === 39) {
+                            if (event.keyCode === Keys.right) {
                                 diff = 1;
-                            } else if (event.keyCode === 37) {
+                            } else if (event.keyCode === Keys.left) {
                                 diff = -1;
+                            }
+
+                            if (event.keyCode === Keys.enter) {
+                                if (this.state.selected) {
+                                    this.select(this.getSelectedItem());
+                                }
+
+                                event.stopPropagation();
+                                return;
                             }
 
                             if (diff != null) {
@@ -1451,15 +1476,16 @@
                                     key: item._id,
                                     item: item,
                                     flags: {selected: this.state.selected === item._id},
-                                    onSelect: this.select
+                                    onSelect: this.select,
+                                    ingestProviders: this.props.ingestProviders
                                 });
                             }.bind(this);
 
                             return React.createElement(
                                 'ul',
                                 {
-                                    className: 'mgrid-view list-view',
-                                    onKeyUp: this.handleKey,
+                                    className: this.state.view + '-view list-view',
+                                    onKeyDown: this.handleKey,
                                     tabIndex: '0'
                                 },
                                 this.state.items.map(createItem)
@@ -1472,8 +1498,11 @@
                      */
                     var listComponent;
                     scope.$applyAsync(function() {
-                        var itemList = React.createElement(ItemList, null);
                         var list = elem.find('.shadow-list-holder')[0];
+                        var itemList = React.createElement(ItemList, {
+                            ingestProviders: scope.ingestProviders
+                        });
+
                         listComponent = ReactDOM.render(itemList, list);
                     });
 
@@ -1499,33 +1528,6 @@
                                 dest.push(item);
                             }
                         }
-                    }
-
-                    /*
-                     * Function for calculating number of fetched items
-                     *
-                     * @returns {Object} Returns object with criteria values
-                     */
-                    function sourceParam() {
-                        var top, start, from, itemsCount, to, padding;
-
-                        if (scope.view === 'mgrid') {
-                            itemParameters[scope.view].ITEMS_ROW = Math.floor(scrollElem.width() / itemParameters[scope.view].ITEM_WIDTH);
-                            itemParameters[scope.view].BUFFER = itemParameters[scope.view].ITEMS_ROW * 3;
-                        }
-
-                        top = scrollElem[0].scrollTop;
-                        start = scope.view === 'mgrid' ?
-                                Math.floor(top / itemParameters[scope.view].ITEM_HEIGHT) * itemParameters[scope.view].ITEMS_ROW :
-                                Math.floor(top / itemParameters[scope.view].ITEM_HEIGHT);
-                        from = Math.max(0, start - itemParameters[scope.view].BUFFER);
-                        itemsCount = itemParameters[scope.view].ITEMS_COUNT;
-                        to = Math.min(scope.total, start + itemsCount + itemParameters[scope.view].BUFFER);
-                        padding = scope.view === 'mgrid' ?
-                                (from * itemParameters[scope.view].ITEM_HEIGHT) / itemParameters[scope.view].ITEMS_ROW + 'px' :
-                                (from * itemParameters[scope.view].ITEM_HEIGHT) + 'px';
-
-                        return {from: from, to: to, padding: padding};
                     }
 
                     /*
@@ -2443,7 +2445,17 @@
                 priority: 200,
                 label: gettext('Search'),
                 templateUrl: asset.templateUrl('superdesk-search/views/search.html'),
-                sideTemplateUrl: 'scripts/superdesk-workspace/views/workspace-sidenav.html'
+                sideTemplateUrl: 'scripts/superdesk-workspace/views/workspace-sidenav.html',
+                controller: ['$scope', 'ingestProviders', function($scope, ingestProviders) {
+                    $scope.ingestProviders = ingestProviders;
+                }],
+                resolve: {
+                    ingestProviders: ['ingestSources', function(ingestSources) {
+                        return ingestSources.initialize().then(function() {
+                            return ingestSources.providersLookup;
+                        });
+                    }]
+                }
             });
         }]);
 
