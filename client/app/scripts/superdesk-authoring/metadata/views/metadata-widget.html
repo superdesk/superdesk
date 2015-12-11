@@ -12,11 +12,21 @@
 			<li ng-if="_isInProductionStates">
 				<label ng-if="_editable" translate>Not For Publication</label>
 				<span ng-if="_editable">
-					<span ng-if="_editable" sd-switch ng-model="item.marked_for_not_publication"></span>
+					<span ng-if="_editable" sd-switch ng-model="item.flags.marked_for_not_publication"></span>
 				</span>
 				<label ng-if="!_editable" translate>
-					<span class="state-label not-for-publication" ng-show="item.marked_for_not_publication" translate>Not For Publication</span>
-					<span class="state-label for-publication" ng-show="!item.marked_for_not_publication" translate>For Publication</span>
+					<span class="state-label not-for-publication" ng-show="item.flags.marked_for_not_publication" translate>Not For Publication</span>
+					<span class="state-label for-publication" ng-show="!item.flags.marked_for_not_publication" translate>For Publication</span>
+				</label>
+			</li>
+			
+			<li ng-if="_isInProductionStates">
+				<label ng-if="_editable" translate>Legal</label>
+				<span ng-if="_editable">
+					<span sd-switch ng-model="item.flags.marked_for_legal"></span>
+				</span>
+				<label ng-if="!_editable" translate>
+					<span class="state-label legal" ng-show="item.flags.marked_for_legal" translate>Legal</span>
 				</label>
 			</li>
 			<li>

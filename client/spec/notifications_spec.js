@@ -49,8 +49,8 @@ describe('notifications', function() {
 
         monitoring.actionOnItem('Edit', 1, 0);
         authoring.showComments();
-        authoring.writeTextToComment('#Sports_Desk hello');
-        browser.sleep(500);
+        authoring.writeTextToComment('#Politic_Desk hello');
+        browser.sleep(1000);
         expect(element(by.id('deskNotifications')).getText()).toBe('1');
 
     });

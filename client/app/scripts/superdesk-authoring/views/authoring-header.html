@@ -28,6 +28,9 @@
                  data-change="autosave(item)">
             </div>
         </div>
+        <div>
+            <span class="state-label legal" ng-if="item.flags.marked_for_legal" translate>Legal</span>
+        </div>
         <div ng-if="item.broadcast.master_id">
             <label translate ng-class="{'broadcast-status': item.broadcast.status !== ''}" tooltip="{{item.broadcast.status}}">MASTER<b ng-if="item.broadcast.status"> !</b></label>
             <div class="data"><a id="preview-master" ng-click="previewMasterStory()" title="{{ :: 'Preview master story' | translate }}"

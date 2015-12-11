@@ -576,7 +576,7 @@ describe('authoring actions', function() {
             var item = {
                 '_id': 'test',
                 'state': 'draft',
-                'marked_for_not_publication': false,
+                'flags': {'marked_for_not_publication': false},
                 'type': 'text'
             };
 
@@ -600,7 +600,7 @@ describe('authoring actions', function() {
             var item = {
                 '_id': 'test',
                 'state': 'submitted',
-                'marked_for_not_publication': false,
+                'flags': {'marked_for_not_publication': false},
                 'type': 'text',
                 'task': {
                     'desk': 'desk1'
@@ -624,12 +624,41 @@ describe('authoring actions', function() {
                     'mark_item', 'package_item', 'multi_edit', 'publish']);
         }));
 
+    it('cannot perform publish if the item is marked for not publication',
+        inject(function(privileges, desks, authoring, $q, $rootScope) {
+            var item = {
+                '_id': 'test',
+                'state': 'submitted',
+                'flags': {'marked_for_not_publication': true},
+                'type': 'text',
+                'task': {
+                    'desk': 'desk1'
+                }
+            };
+
+            var userPrivileges = {
+                'duplicate': true,
+                'mark_item': false,
+                'spike': true,
+                'unspike': true,
+                'mark_for_highlights': true,
+                'unlock': true,
+                'publish': true
+            };
+
+            privileges.setUserPrivileges(userPrivileges);
+            $rootScope.$digest();
+            var itemActions = authoring.itemActions(item);
+            allowedActions(itemActions, ['new_take', 'save', 'edit', 'duplicate', 'spike',
+                    'mark_item', 'package_item', 'multi_edit']);
+        }));
+
     it('cannot publish if user does not have publish privileges on the desk',
         inject(function(privileges, desks, authoring, $q, $rootScope) {
             var item = {
                 '_id': 'test',
                 'state': 'submitted',
-                'marked_for_not_publication': false,
+                'flags': {'marked_for_not_publication': false},
                 'type': 'text',
                 'task': {
                     'desk': 'desk1'
@@ -658,7 +687,7 @@ describe('authoring actions', function() {
             var item = {
                 '_id': 'test',
                 'state': 'submitted',
-                'marked_for_not_publication': false,
+                'flags': {'marked_for_not_publication': false},
                 'type': 'text',
                 'task': {
                     'desk': 'desk3'
@@ -685,7 +714,7 @@ describe('authoring actions', function() {
             var item = {
                 '_id': 'test',
                 'state': 'killed',
-                'marked_for_not_publication': false,
+                'flags': {'marked_for_not_publication': false},
                 'type': 'text',
                 'task': {
                     'desk': 'desk1'
@@ -736,7 +765,7 @@ describe('authoring actions', function() {
             var item = {
                 '_id': 'test',
                 'state': 'spiked',
-                'marked_for_not_publication': false,
+                'flags': {'marked_for_not_publication': false},
                 'type': 'text',
                 'task': {
                     'desk': 'desk1'
@@ -763,7 +792,7 @@ describe('authoring actions', function() {
             var item = {
                 '_id': 'test',
                 'state': 'in_progress',
-                'marked_for_not_publication': false,
+                'flags': {'marked_for_not_publication': false},
                 'type': 'text',
                 'task': {
                     'desk': 'desk1'
@@ -790,7 +819,7 @@ describe('authoring actions', function() {
             item = {
                 '_id': 'test',
                 'state': 'in_progress',
-                'marked_for_not_publication': false,
+                'flags': {'marked_for_not_publication': false},
                 'type': 'text',
                 'task': {
                     'desk': 'desk1'
@@ -810,7 +839,7 @@ describe('authoring actions', function() {
             var item = {
                 '_id': 'test',
                 'state': 'in_progress',
-                'marked_for_not_publication': false,
+                'flags': {'marked_for_not_publication': false},
                 'type': 'text',
                 'task': {
                     'desk': 'desk1'
@@ -847,7 +876,7 @@ describe('authoring actions', function() {
                 'archive_item': {
                     '_id': 'test',
                     'state': 'published',
-                    'marked_for_not_publication': false,
+                    'flags': {'marked_for_not_publication': false},
                     'type': 'text',
                     'task': {
                         'desk': 'desk1'
@@ -868,7 +897,7 @@ describe('authoring actions', function() {
             var item = {
                 '_id': 'test',
                 'state': 'published',
-                'marked_for_not_publication': false,
+                'flags': {'marked_for_not_publication': false},
                 'type': 'text',
                 'task': {
                     'desk': 'desk1'
@@ -912,7 +941,7 @@ describe('authoring actions', function() {
             var item = {
                 '_id': 'test',
                 'state': 'published',
-                'marked_for_not_publication': false,
+                'flags': {'marked_for_not_publication': false},
                 'type': 'text',
                 'task': {
                     'desk': 'desk1'
@@ -922,7 +951,7 @@ describe('authoring actions', function() {
                 'archive_item': {
                     '_id': 'test',
                     'state': 'published',
-                    'marked_for_not_publication': false,
+                    'flags': {'marked_for_not_publication': false},
                     'type': 'text',
                     'task': {
                         'desk': 'desk1'
@@ -956,7 +985,7 @@ describe('authoring actions', function() {
             var item = {
                 '_id': 'test',
                 'state': 'published',
-                'marked_for_not_publication': false,
+                'flags': {'marked_for_not_publication': false},
                 'type': 'text',
                 'task': {
                     'desk': 'desk1'
@@ -966,7 +995,7 @@ describe('authoring actions', function() {
                 'archive_item': {
                     '_id': 'test',
                     'state': 'published',
-                    'marked_for_not_publication': false,
+                    'flags': {'marked_for_not_publication': false},
                     'type': 'text',
                     'task': {
                         'desk': 'desk1'
@@ -999,7 +1028,7 @@ describe('authoring actions', function() {
             var item = {
                 '_id': 'test',
                 'state': 'scheduled',
-                'marked_for_not_publication': false,
+                'flags': {'marked_for_not_publication': false},
                 'type': 'text',
                 'task': {
                     'desk': 'desk1'
@@ -1009,7 +1038,7 @@ describe('authoring actions', function() {
                 'archive_item': {
                     '_id': 'test',
                     'state': 'scheduled',
-                    'marked_for_not_publication': false,
+                    'flags': {'marked_for_not_publication': false},
                     'type': 'text',
                     'task': {
                         'desk': 'desk1'
@@ -1042,7 +1071,7 @@ describe('authoring actions', function() {
             var item = {
                 '_id': 'test',
                 'state': 'published',
-                'marked_for_not_publication': false,
+                'flags': {'marked_for_not_publication': false},
                 'type': 'text',
                 'task': {
                     'desk': 'desk1'
@@ -1052,7 +1081,7 @@ describe('authoring actions', function() {
                 'archive_item': {
                     '_id': 'test',
                     'state': 'published',
-                    'marked_for_not_publication': false,
+                    'flags': {'marked_for_not_publication': false},
                     'type': 'text',
                     'task': {
                         'desk': 'desk1'
@@ -1087,7 +1116,7 @@ describe('authoring actions', function() {
             var item = {
                 '_id': 'test',
                 'state': 'in_progress',
-                'marked_for_not_publication': false,
+                'flags': {'marked_for_not_publication': false},
                 'type': 'text',
                 'task': {
                     'desk': 'desk1'
@@ -1122,7 +1151,7 @@ describe('authoring actions', function() {
             var item = {
                 '_id': 'test',
                 'state': 'in_progress',
-                'marked_for_not_publication': false,
+                'flags': {'marked_for_not_publication': false},
                 'type': 'text',
                 'task': {
                     'desk': 'desk1'
@@ -1157,7 +1186,7 @@ describe('authoring actions', function() {
             var item = {
                 '_id': 'test',
                 'state': 'in_progress',
-                'marked_for_not_publication': false,
+                'flags': {'marked_for_not_publication': false},
                 'type': 'text',
                 'task': {
                     'desk': 'desk1'
@@ -1192,7 +1221,7 @@ describe('authoring actions', function() {
             var item = {
                 '_id': 'test',
                 'state': 'in_progress',
-                'marked_for_not_publication': false,
+                'flags': {'marked_for_not_publication': false},
                 'type': 'text',
                 'task': {
                     'desk': 'desk1'
@@ -1228,7 +1257,7 @@ describe('authoring actions', function() {
             var item = {
                 '_id': 'test',
                 'state': 'in_progress',
-                'marked_for_not_publication': false,
+                'flags': {'marked_for_not_publication': false},
                 'type': 'text',
                 'task': {
                     'desk': 'desk1'
@@ -1264,7 +1293,7 @@ describe('authoring actions', function() {
             var item = {
                 '_id': 'test',
                 'state': 'published',
-                'marked_for_not_publication': false,
+                'flags': {'marked_for_not_publication': false},
                 'type': 'text',
                 'task': {
                     'desk': 'desk1'
@@ -1275,7 +1304,7 @@ describe('authoring actions', function() {
                 'archive_item': {
                     '_id': 'test',
                     'state': 'published',
-                    'marked_for_not_publication': false,
+                    'flags': {'marked_for_not_publication': false},
                     'type': 'text',
                     'task': {
                         'desk': 'desk1'
@@ -1311,7 +1340,7 @@ describe('authoring actions', function() {
             var item = {
                 '_id': 'test',
                 'state': 'published',
-                'marked_for_not_publication': false,
+                'flags': {'marked_for_not_publication': false},
                 'type': 'text',
                 'task': {
                     'desk': 'desk1'
@@ -1322,7 +1351,7 @@ describe('authoring actions', function() {
                 'archive_item': {
                     '_id': 'test',
                     'state': 'published',
-                    'marked_for_not_publication': false,
+                    'flags': {'marked_for_not_publication': false},
                     'type': 'text',
                     'task': {
                         'desk': 'desk1'
@@ -1358,7 +1387,7 @@ describe('authoring actions', function() {
             var item = {
                 '_id': 'test',
                 'state': 'published',
-                'marked_for_not_publication': false,
+                'flags': {'marked_for_not_publication': false},
                 'type': 'text',
                 'task': {
                     'desk': 'desk1'
@@ -1372,7 +1401,7 @@ describe('authoring actions', function() {
                 'archive_item': {
                     '_id': 'test',
                     'state': 'published',
-                    'marked_for_not_publication': false,
+                    'flags': {'marked_for_not_publication': false},
                     'type': 'text',
                     'task': {
                         'desk': 'desk1'
@@ -1411,7 +1440,7 @@ describe('authoring actions', function() {
             var item = {
                 '_id': 'test',
                 'state': 'published',
-                'marked_for_not_publication': false,
+                'flags': {'marked_for_not_publication': false},
                 'type': 'text',
                 'task': {
                     'desk': 'desk1'
@@ -1425,7 +1454,7 @@ describe('authoring actions', function() {
                 'archive_item': {
                     '_id': 'test',
                     'state': 'published',
-                    'marked_for_not_publication': false,
+                    'flags': {'marked_for_not_publication': false},
                     'type': 'text',
                     'task': {
                         'desk': 'desk1'

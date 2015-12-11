@@ -25,7 +25,7 @@
         description: null,
         sign_off: null,
         publish_schedule: null,
-        marked_for_not_publication: false,
+        flags: null,
         pubstatus: null,
         more_coming: false,
         targeted_for: [],
@@ -533,7 +533,7 @@
                 }
 
                 action.save = current_item.state !== 'spiked';
-                action.publish = !current_item.marked_for_not_publication &&
+                action.publish = (!current_item.flags || !current_item.flags.marked_for_not_publication) &&
                         current_item.task && current_item.task.desk &&
                         user_privileges.publish && current_item.state !== 'draft';
 
@@ -926,7 +926,7 @@
                         item = _.pick(result, _.keys(CONTENT_FIELDS_DEFAULTS));
                         _.each(item, function(value, key) {
                             if (!_.isEmpty(value)) {
-                                $scope.origItem[key] = value;
+                                $scope.item[key] = value;
                             }
                         });
                     }, function(err) {
@@ -934,14 +934,14 @@
                     });
                 }
 
-                $scope.$watch('item.marked_for_not_publication', function(newValue, oldValue) {
+                $scope.$watch('item.flags', function(newValue, oldValue) {
                     if (newValue !== oldValue) {
-                        var item = _.create($scope.origItem);
+                        $scope.item.flags = _.clone($scope.origItem.flags);
+                        $scope.item.flags = newValue;
+                        $scope.origItem.flags = oldValue;
                         $scope.dirty = true;
-                        item.marked_for_not_publication = newValue;
-                        $scope.itemActions = authoring.itemActions(item);
                     }
-                });
+                }, true);
 
                 $scope.proofread = false;
                 $scope.referrerUrl = referrer.getReferrerUrl();
@@ -1238,7 +1238,7 @@
                  * Close preview and start working again
                  */
                 $scope.closePreview = function() {
-                    $scope.item = _.create($scope.origItem);
+                    $scope.item = _.create(_.cloneDeep($scope.origItem));
                     extendItem($scope.item, $scope.item._autosave || {});
                     $scope._editable = $scope.action !== 'view' && authoring.isEditable($scope.origItem);
                 };

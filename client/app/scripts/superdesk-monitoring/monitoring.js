@@ -260,9 +260,9 @@
     }
 
     MonitoringGroupDirective.$inject = ['cards', 'api', 'authoringWorkspace', '$timeout', 'superdesk',
-        'activityService', 'workflowService', 'keyboardManager', 'desks', 'search'];
+        'activityService', 'workflowService', 'keyboardManager', 'desks', 'search', 'multi'];
     function MonitoringGroupDirective(cards, api, authoringWorkspace, $timeout, superdesk, activityService,
-            workflowService, keyboardManager, desks, search) {
+            workflowService, keyboardManager, desks, search, multi) {
 
         var ITEM_HEIGHT = 57,
             ITEMS_COUNT = 5,
@@ -506,6 +506,7 @@
                     if (desks.changeDesk) {
                         desks.changeDesk = false;
                         monitoring.singleGroup = null;
+                        multi.reset();
                     }
 
                     return apiquery().then(function(items) {
@@ -664,7 +665,17 @@
                 function init() {
                     scope.desk = desks.stageLookup[scope.stage].desk;
                     scope.notifications = deskNotifications.getNotifications(scope.desk);
-                    scope.notificationCount = scope.notifications ? scope.notifications.length : 0 ;
+                    scope.default_incoming = desks.stageLookup[scope.stage].default_incoming;
+                    scope.notificationCount = deskNotifications.getUnreadCount(scope.desk) || 0;
+                    scope.deskLookup = desks.deskLookup;
+                    scope.stageLookup = desks.stageLookup;
+
+                    // Update the figures if there's a desk mention message
+                    if (scope.default_incoming) {
+                        scope.$on('desk:mention', function() {
+                            $timeout(init, 5000);
+                        });
+                    }
                 }
 
                 /**
@@ -675,7 +686,16 @@
                  */
                 scope.open = function(notification) {
                     authoringWorkspace.view(notification.item);
+                };
+
+                /**
+                 * Updates the notification as read
+                 *
+                 * @param {object} notification The notification to be checked
+                 */
+                scope.acknowledge = function(notification) {
                     deskNotifications.markAsRead(notification, scope.desk);
+                    $timeout(init, 5000);
                 };
 
                 function getRecipient(notification) {
@@ -707,11 +727,6 @@
                 };
 
                 init();
-
-                // Update the figures if there's a desk mention message
-                scope.$on('desk:mention', function() {
-                    $timeout(init, 5000);
-                });
             }
         };
     }

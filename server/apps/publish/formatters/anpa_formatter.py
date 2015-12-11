@@ -61,7 +61,7 @@ class AAPAnpaFormatter(Formatter):
                 anpa.append(b'\x20')
 
                 # keyword
-                keyword = 'bc-{}'.format(article.get('slugline', '')).replace(' ', '-')
+                keyword = 'bc-{}'.format(self.append_legal(article=article, truncate=True)).replace(' ', '-')
                 keyword = keyword[:24] if len(keyword) > 24 else keyword
                 anpa.append(keyword.encode('ascii'))
                 anpa.append(b'\x20')
@@ -85,7 +85,7 @@ class AAPAnpaFormatter(Formatter):
 
                 self._process_headline(anpa, article, category['qcode'].encode('ascii'))
 
-                keyword = article.get('slugline', '').encode('ascii', 'ignore')
+                keyword = self.append_legal(article=article, truncate=True).encode('ascii', 'ignore')
                 anpa.append(keyword)
                 take_key = article.get('anpa_take_key', '').encode('ascii', 'ignore')
                 anpa.append((b'\x20' + take_key) if len(take_key) > 0 else b'')
