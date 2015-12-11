@@ -14,7 +14,7 @@
      */
     var gettext = function (input) {
         return input;
-    }
+    };
 
     /* exported gettext */
     window.gettext = gettext;
