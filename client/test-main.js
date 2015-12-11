@@ -1,6 +1,7 @@
 var tests = [];
 var APP_SPEC_REG_EXP = /^\/base\/app\/scripts\/(.*)\.js$/;
 
+
 for (var file in window.__karma__.files) {
     if (window.__karma__.files.hasOwnProperty(file)) {
         if (/[sS]pec\.js$/.test(file)) {
@@ -116,9 +117,10 @@ tests.push('angular-ui');
 tests.push('angular-resource');
 tests.push('angular-route');
 tests.push('angular-file-upload');
-//tests.push('moment');
-//tests.push('lodash');
+tests.push('moment');
+tests.push('lodash');
 
+/*
 requirejs.config({
     baseUrl: '/base/app/scripts',
     deps: ['angular-mocks', 'angular-gettext', 'gettext', 'angular'],
@@ -159,3 +161,4 @@ requirejs.config({
         'angular-file-upload': ['angular']
     }
 });
+*/

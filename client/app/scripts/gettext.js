@@ -12,7 +12,7 @@
      * @param {string} input
      * @return {string} unmodified input
      */
-    function gettext(input) {
+    var gettext = function (input) {
         return input;
     }
 

@@ -16,8 +16,7 @@ describe('widgets provider', function() {
     }));
     */
     var widgets;
-    beforeEach(inject(function (_widgets_) {
-        widgets = _widgets_;
+    beforeEach(inject(function (widgets) {
         widgets.widget('id', {label: 'first'});
         widgets.widget('id', {label: 'second'});
     }));
