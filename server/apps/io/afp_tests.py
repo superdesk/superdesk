@@ -11,9 +11,10 @@
 import datetime
 import os
 import unittest
+from pytz import utc
 
 from superdesk.etree import etree
-from superdesk.io.feed_parsers.newsml_1_2 import NewsMLOneFeedParser
+from superdesk.io.feed_parsers.afp_newsml_1_2 import AFPNewsMLOneFeedParser
 
 
 class TestCase(unittest.TestCase):
@@ -22,7 +23,7 @@ class TestCase(unittest.TestCase):
         fixture = os.path.join(dirname, 'fixtures', 'afp.xml')
         provider = {'name': 'Test'}
         with open(fixture) as f:
-            self.item = NewsMLOneFeedParser().parse(etree.fromstring(f.read()), provider)
+            self.item = AFPNewsMLOneFeedParser().parse(etree.fromstring(f.read()), provider)
 
     def test_headline(self):
         self.assertEquals(self.item.get('headline'), 'Sweden court accepts receivership for Saab carmaker')
@@ -46,8 +47,8 @@ class TestCase(unittest.TestCase):
         self.assertEquals(self.item.get('type'), 'text')
         self.assertEquals(self.item.get('urgency'), 4)
         self.assertEquals(self.item.get('version'), '1')
-        self.assertEquals(self.item.get('versioncreated'), datetime.datetime(2014, 8, 29, 13, 49, 51))
-        self.assertEquals(self.item.get('firstcreated'), datetime.datetime(2014, 8, 29, 13, 49, 51))
+        self.assertEquals(self.item.get('versioncreated'), utc.localize(datetime.datetime(2014, 8, 29, 13, 49, 51)))
+        self.assertEquals(self.item.get('firstcreated'), utc.localize(datetime.datetime(2014, 8, 29, 13, 49, 51)))
         self.assertEquals(self.item.get('pubstatus'), 'usable')
 
     def test_subjects(self):
