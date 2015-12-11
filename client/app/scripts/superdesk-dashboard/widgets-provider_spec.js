@@ -1,7 +1,10 @@
 (function() {
 'use strict';
 
+
 describe('widgets provider', function() {
+
+    var WidgetsProvider = window.WidgetsProvider;
 
     beforeEach(module('superdesk.dashboard.widgets'));
 

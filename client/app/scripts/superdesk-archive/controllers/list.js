@@ -1,6 +1,8 @@
 (function() {
     'use strict';
 
+    var BaseListController = window.BaseListController;
+
     angular.module('superdesk.archive').controller('ArchiveListController', [
         '$scope', '$injector', '$location', '$q', '$timeout', 'superdesk',
         'session', 'api', 'desks', 'content', 'StagesCtrl', 'notify', 'multi',

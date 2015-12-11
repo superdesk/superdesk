@@ -69,30 +69,4 @@
         }));
     });
 
-    /**
-     * Mock auth adapter which will authenticate admin:admin and fail otherwise
-     *
-     * @param {object} $q
-     */
-    function AuthAdapterMock($q) {
-
-        /**
-         * Mock auth - authenticate with admin:admin
-         *
-         * @param {string} username
-         * @param {string} password
-         * @returns {Promise}
-         */
-        this.authenticate = function(username, password) {
-            var defer = $q.defer();
-
-            if (username === 'admin' && password === 'admin') {
-                defer.resolve({token: SESSION, user: '1', _links: {self: {href: 'delete_session_url'}}});
-            } else {
-                defer.reject();
-            }
-
-            return defer.promise;
-        };
-    }
 })();

@@ -1,6 +1,8 @@
 (function() {
     'use strict';
 
+    var BaseListController = window.BaseListController;
+
     angular.module('superdesk.ingest.send', [
         'superdesk.api',
         'superdesk.desks'

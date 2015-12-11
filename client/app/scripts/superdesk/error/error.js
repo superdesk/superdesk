@@ -1,6 +1,8 @@
 (function() {
     'use strict';
 
+    var Raven = window.Raven;
+
     ErrorHttpInterceptorFactory.$inject = ['$q'];
     function ErrorHttpInterceptorFactory($q) {
         return {
@@ -17,15 +19,15 @@
                 return $q.reject(rejection);
             }
         };
-    };
+    }
 
     angular.module('superdesk.error', [])
-    .config(['config', '$httpProvider', function(config, $httpProvider) {
+    .config(['config', '$httpProvider', '$provide', function(config, $httpProvider, $provide) {
         if (config.raven && config.raven.dsn) {
             Raven.config(config.raven.dsn, {logger: 'javascript-client'}).install();
             $httpProvider.interceptors.push(ErrorHttpInterceptorFactory);
 
-            app.factory('$exceptionHandler', function () {
+            $provide.factory('$exceptionHandler', function () {
                 return function errorCatcherHandler(exception, cause) {
                     Raven.captureException(exception, {tags: {component: 'ui'}, extra: exception});
                     throw exception;
