@@ -183,6 +183,7 @@ else:
 
 INSTALLED_APPS.extend([
     'superdesk.upload',
+    'superdesk.sequences',
     'superdesk.notification',
     'superdesk.activity',
     'superdesk.vocabularies',

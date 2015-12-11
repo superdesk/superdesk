@@ -14,8 +14,10 @@ from apps.publish.formatters.newsml_g2_formatter import NewsMLG2Formatter
 import xml.etree.ElementTree as etree
 import datetime
 from apps.publish import init_app
+from unittest import mock
 
 
+@mock.patch('superdesk.publish.subscribers.SubscribersService.generate_sequence_number', lambda self, subscriber: 1)
 class NewsMLG2FormatterTest(SuperdeskTestCase):
     embargo_ts = (utcnow() + datetime.timedelta(days=2))
     article = {
@@ -100,7 +102,7 @@ class NewsMLG2FormatterTest(SuperdeskTestCase):
         ],
         'pubstatus': 'usable',
         'state': 'published',
-        'marked_for_not_publication': False,
+        'flags': {'marked_for_not_publication': False},
         'guid': 'urn:newsml:localhost:2015-08-12T11:59:58.457029:7e90d257-92f6-406d-9186-95653b211701',
         'dateline': {
             'located': {
@@ -209,7 +211,7 @@ class NewsMLG2FormatterTest(SuperdeskTestCase):
             'date': '2015-08-13T04:07:59.000Z',
             'source': 'AAP'
         },
-        'marked_for_not_publication': False,
+        'flags': {'marked_for_not_publication': False},
         'sign_off': 'mar',
     }
 
@@ -503,7 +505,7 @@ class NewsMLG2FormatterTest(SuperdeskTestCase):
             'date': '2015-08-13T04:07:59.000Z',
             'source': 'AAP'
         },
-        'marked_for_not_publication': False,
+        'flags': {'marked_for_not_publication': False},
         'sign_off': 'mar',
     }
 
@@ -595,7 +597,7 @@ class NewsMLG2FormatterTest(SuperdeskTestCase):
             'date': '2015-08-13T04:07:59.000Z',
             'source': 'AAP'
         },
-        'marked_for_not_publication': False,
+        'flags': {'marked_for_not_publication': False},
         'sign_off': 'mar',
     }
 

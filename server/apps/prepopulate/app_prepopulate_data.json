@@ -471,7 +471,8 @@
                 "body_html": "This is kill template. Slugged {{item.slugline}}.",
                 "abstract": "This item is removed.",
                 "headline": "KILL NOTICE"
-            }
+            },
+            "is_public": true
         },
         "resource": "content_templates",
         "id_name": "-id content template-"

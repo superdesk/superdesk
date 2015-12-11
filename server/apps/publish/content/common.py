@@ -87,7 +87,7 @@ class BasePublishService(BaseService):
     package_service = PackageService()
 
     def raise_if_not_marked_for_publication(self, original):
-        if original.get('marked_for_not_publication', False):
+        if original.get('flags', {}).get('marked_for_not_publication', False):
             raise SuperdeskApiError.badRequestError('Cannot publish an item which is marked as Not for Publication')
 
     def raise_if_invalid_state_transition(self, original):

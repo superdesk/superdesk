@@ -194,6 +194,10 @@
                 if (params.stage) {
                     query.post_filter({terms: {'task.stage': JSON.parse(params.stage)}});
                 }
+
+                if (params.legal) {
+                    query.post_filter({terms: {'flags.marked_for_legal': JSON.parse(params.legal)}});
+                }
             }
 
             /**
@@ -334,8 +338,9 @@
             'week': 1,
             'month': 1,
             'desk': 1,
-            'stage':1,
-            'genre': 1
+            'stage': 1,
+            'genre': 1,
+            'legal': 1
         };
 
         metadata
@@ -566,7 +571,8 @@
                             'category': {},
                             'urgency': {},
                             'priority': {},
-                            'genre': {}
+                            'genre': {},
+                            'legal': {}
                         };
                     };
 
@@ -674,6 +680,14 @@
                                 });
                             }
 
+                            if (angular.isDefined(scope.items._aggregations.legal)) {
+                                _.forEach(scope.items._aggregations.legal.buckets, function(l) {
+                                    if (l.key === 'T' && l.doc_count > 0) {
+                                        scope.aggregations.legal = {count: l.doc_count};
+                                    }
+                                });
+                            }
+
                         });
                     });
 
@@ -742,7 +756,7 @@
                             scope.tags.selectedFacets[type].indexOf(desks.deskLookup[key].name) >= 0;
                         }
 
-                        return scope.tags.selectedFacets[type] && scope.tags.selectedFacets[type].indexOf(key) >= 0;
+                        return scope.tags && scope.tags.selectedFacets[type] && scope.tags.selectedFacets[type].indexOf(key) >= 0;
                     };
                 }
             };
