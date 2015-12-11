@@ -222,7 +222,7 @@ module.exports = function(config) {
             'app/scripts/superdesk/elastic/es_spec.js',
             'app/scripts/superdesk/itemList/itemList_spec.js',
             'app/scripts/superdesk/list/list_spec.js',
-            //'app/scripts/superdesk/list/list-directives_spec.js',
+            'app/scripts/superdesk/list/list-directives_spec.js',
             'app/scripts/superdesk/menu/notifications/notifications_spec.js',
             'app/scripts/superdesk/notification/tests/notification_spec.js',
             'app/scripts/superdesk/privileges/tests/privileges_spec.js',

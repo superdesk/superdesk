@@ -3,6 +3,15 @@
 describe('list directives', function() {
     beforeEach(module('superdesk.list'));
     beforeEach(module('superdesk.templates-cache'));
+    beforeEach(module(function($provide) {
+        $provide.provider('translateFilter', function() {
+            this.$get = function() {
+                return function(text) {
+                    return text;
+                };
+            };
+        });
+    }));
 
     it('renders list', inject(function($compile, $rootScope) {
         var scope = $rootScope.$new(true);
