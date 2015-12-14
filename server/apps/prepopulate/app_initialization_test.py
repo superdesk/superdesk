@@ -1,8 +1,11 @@
+import settings
 from flask import current_app as app
 from test_factory import SuperdeskTestCase
 from .app_initialize import AppInitializeWithDataCommand
 from .app_scaffold_data import AppScaffoldDataCommand
 from superdesk import get_resource_service
+from apps.prepopulate.app_initialize import fillEnvironmentVariables
+from unittest.mock import MagicMock
 
 
 class AppInitializeWithDataCommandTestCase(SuperdeskTestCase):
@@ -56,3 +59,26 @@ class AppInitializeWithDataCommandTestCase(SuperdeskTestCase):
         result = app.data.mongo.pymongo(resource='archive').db['archive'].index_information()
         self.assertTrue('groups.refs.guid_1' in result)
         self.assertTrue(result['groups.refs.guid_1']['sparse'])
+
+    def test_app_initialization_set_env_variables(self):
+        def mock_env(variable, default):
+            config = {'REUTERS_USERNAME': 'r_username', 'REUTERS_PASSWORD': 'r_password'}
+            return config.get(variable, default)
+
+        settings.env = MagicMock(side_effect=mock_env)
+
+        item = {'username': '#ENV_REUTERS_USERNAME#', 'password': '#ENV_REUTERS_PASSWORD#'}
+        crt_item = fillEnvironmentVariables(item)
+        self.assertTrue(crt_item['username'] == 'r_username')
+        self.assertTrue(crt_item['password'] == 'r_password')
+
+    def test_app_initialization_notset_env_variables(self):
+        def mock_env(variable, default):
+            config = {'REUTERS_PASSWORD': 'r_password'}
+            return config.get(variable, default)
+
+        settings.env = MagicMock(side_effect=mock_env)
+
+        item = {'username': '#ENV_REUTERS_USERNAME#', 'password': '#ENV_REUTERS_PASSWORD#'}
+        crt_item = fillEnvironmentVariables(item)
+        self.assertTrue(not crt_item)

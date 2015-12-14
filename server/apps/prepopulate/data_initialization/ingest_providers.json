@@ -1,0 +1,61 @@
+[
+    {
+        "_id": "566e9e4ab6114067b3fc22e5",
+        "config": {
+            "username": "#ENV_REUTERS_USERNAME#",
+            "password": "#ENV_REUTERS_PASSWORD#",
+            "auth_url": "https://commerce.reuters.com/rmd/rest/xml/login",
+            "field_aliases": [],
+            "url": "http://rmb.reuters.com/rmd/rest/xml"
+        },
+        "feeding_service": "reuters_http",
+        "content_expiry": 2880,
+        "name": "Reuters",
+        "feed_parser": "newsml2",
+        "source": "Reuters",
+        "is_closed": false,
+        "update_schedule": {
+            "minutes": 5,
+            "seconds": 0
+        }
+    },
+
+    {
+        "_id": "566ea626b611406b0de30e74",
+        "source": "Forbes",
+        "config": {
+            "field_aliases": [],
+            "url": "http://www.forbes.com/real-time/feed2/"
+        },
+        "content_expiry": 2880,
+        "feeding_service": "rss",
+        "name": "Forbes RSS feed",
+        "update_schedule": {
+            "seconds": 0,
+            "minutes": 5
+        }
+    },
+
+    {
+        "_id": "566ea774b611406b0de30e77",
+        "source": "WENN",
+        "config": {
+            "host": "liveftp.aap.com.au",
+            "dest_path": "/var/ingest/wenn",
+            "field_aliases": [],
+            "password": "#ENV_AAP_PASSWORD#",
+            "passive": false,
+            "path": "/wenn",
+            "username": "#ENV_AAP_USERNAME#"
+        },
+        "content_expiry": 2880,
+        "feeding_service": "ftp",
+        "feed_parser": "wenn",
+        "name": "AAP WENN",
+        "update_schedule": {
+            "seconds": 0,
+            "minutes": 5
+        },
+        "is_closed": false
+    }
+]
