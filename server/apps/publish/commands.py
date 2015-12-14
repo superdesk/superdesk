@@ -9,13 +9,15 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import logging
-
-from eve.utils import date_to_str, config
 import superdesk
 from superdesk.celery_task_utils import is_task_running, mark_task_as_not_running
-from superdesk.utc import utcnow
 from superdesk.metadata.item import ITEM_STATE, CONTENT_STATE
+from superdesk.utc import utcnow
+
+from eve.utils import date_to_str, config
+
 from apps.archive.commands import get_overdue_scheduled_items
+
 
 logger = logging.getLogger(__name__)
 

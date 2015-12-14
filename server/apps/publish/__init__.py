@@ -13,7 +13,6 @@ from superdesk import get_backend
 import superdesk
 from superdesk.celery_app import celery
 
-from apps.publish.commands import RemoveExpiredPublishContent  # noqa
 from apps.publish.content import ArchivePublishResource, ArchivePublishService, \
     KillPublishResource, KillPublishService, CorrectPublishResource, CorrectPublishService
 from apps.publish.enqueue.enqueue_task import EnqueueContent

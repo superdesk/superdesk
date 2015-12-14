@@ -11,24 +11,32 @@
 from collections import namedtuple
 import json
 import logging
-from eve.utils import ParsedRequest, config
-from bson.objectid import ObjectId
-from flask import current_app as app
+from eve.utils import date_to_str
+from superdesk import get_resource_service
 import superdesk
 from superdesk.celery_app import update_key
-from apps.packages import TakesPackageService
 from superdesk.errors import SuperdeskApiError
-from superdesk.metadata.packages import GROUPS, REFS, RESIDREF
+from superdesk.metadata.item import not_analyzed, ITEM_STATE, PUBLISH_STATES, EMBARGO
+from superdesk.metadata.utils import aggregations
 from superdesk.resource import Resource
 from superdesk.services import BaseService
-from superdesk.metadata.item import not_analyzed, ITEM_STATE, PUBLISH_STATES, EMBARGO
-from apps.archive.common import handle_existing_data, item_schema, remove_media_files, get_expiry
-from superdesk.metadata.utils import aggregations
-from apps.archive.archive import SOURCE as ARCHIVE
 from superdesk.utc import utcnow
-from superdesk import get_resource_service
+
+from bson.objectid import ObjectId
+from eve.utils import ParsedRequest, config
+from flask import current_app as app
+
+from apps.archive.archive import SOURCE as ARCHIVE
+from apps.archive.common import handle_existing_data, item_schema, remove_media_files, get_expiry
+from apps.packages import TakesPackageService
+
 
 logger = logging.getLogger(__name__)
+
+PUBLISHED = 'published'
+QUEUE_STATE = 'queue_state'
+queue_states = ['pending', 'in_progress', 'queued']
+PUBLISH_STATE = namedtuple('PUBLISH_STATE', ['PENDING', 'IN_PROGRESS', 'QUEUED'])(*queue_states)
 
 PUBLISHED = 'published'
 LAST_PUBLISHED_VERSION = 'last_published_version'

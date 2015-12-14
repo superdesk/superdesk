@@ -30,6 +30,12 @@ from eve.utils import config
 from eve.validation import ValidationError
 from eve.versioning import resolve_document_version
 
+from apps.archive.common import get_user, insert_into_versions, item_operations
+
+from eve.utils import config
+from eve.validation import ValidationError
+from eve.versioning import resolve_document_version
+
 from apps.archive.archive import ArchiveResource, SOURCE as ARCHIVE
 from apps.archive.common import get_user, insert_into_versions, item_operations
 from apps.archive.common import validate_schedule, ITEM_OPERATION, convert_task_attributes_to_objectId, is_genre, \
@@ -216,7 +222,6 @@ class BasePublishService(BaseService):
             # we raise error if correction is done on a empty package. Kill is fine.
             if len(removed_items) == len(items) and len(added_items) == 0 and self.publish_type == ITEM_CORRECT:
                 raise SuperdeskApiError.badRequestError("Corrected package cannot be empty!")
-
         for guid in items:
             package_item = super().find_one(req=None, _id=guid)
             if not package_item:
@@ -248,16 +253,17 @@ class BasePublishService(BaseService):
                 return package_item[config.ID_FIELD]
             return package_item_takes_package_id
 
-    def _process_publish_updates(self, doc, updates):
+    def _process_publish_updates(self, original, updates):
         """ Common updates for published items """
         desk = None
-        if doc.get('task', {}).get('desk'):
-            desk = get_resource_service('desks').find_one(req=None, _id=doc['task']['desk'])
-        if not doc.get('ingest_provider'):
+        if original.get('task', {}).get('desk'):
+            desk = get_resource_service('desks').find_one(req=None, _id=original['task']['desk'])
+        if not original.get('ingest_provider'):
             updates['source'] = desk['source'] if desk and desk.get('source', '') \
                 else DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES
         updates['pubstatus'] = PUB_STATUS.CANCELED if self.publish_type == 'kill' else PUB_STATUS.USABLE
         self._set_item_expiry(updates, original)
+
     def _set_item_expiry(self, updates, original):
         """
         Set the expiry for the item
@@ -267,9 +273,7 @@ class BasePublishService(BaseService):
         stage_id = original.get('task', {}).get('stage')
         offset = updates.get(EMBARGO, original.get(EMBARGO)) or \
             updates.get('publish_schedule', original.get('publish_schedule'))
-
         updates['expiry'] = get_expiry(desk_id, stage_id, offset=offset)
-
 
     def _is_take_item(self, item):
         """ Returns True if the item was a take
@@ -428,11 +432,11 @@ class BasePublishService(BaseService):
         :param dict updates: updates related to the original document
         :param datetime last_updated: datetime of the updates.
         """
-
         self.set_state(original, updates)
         updates.setdefault(config.LAST_UPDATED, last_updated)
 
         if original[config.VERSION] == updates.get(config.VERSION, original[config.VERSION]):
+            resolve_document_version(document=updates, resource=ARCHIVE, method='PATCH', latest_doc=original)
             resolve_document_version(document=updates, resource=ARCHIVE, method='PATCH', latest_doc=original)
 
         if updates.get(EMBARGO, original.get(EMBARGO)) \
