@@ -33,7 +33,9 @@ define([
             if (item.selected) {
                 items = _.union(items, [item]);
             } else {
-                items = _.without(items, item);
+                items = _.filter(items, function(obj) {
+                    return obj._id !== item._id;
+                });
             }
             this.count = items.length;
         };
@@ -59,7 +61,7 @@ define([
             _.each(items, function(item) {
                 item.selected = false;
             });
-
+            $rootScope.$broadcast('multi:reset', items);
             items = [];
             this.count = 0;
         };
