@@ -335,19 +335,6 @@
             });
         };
 
-        /**
-         * Reset on all groups the search set by user
-         */
-        this.resetSearch = function() {
-            this.searchQuery = null;
-            _.each(this.groups, function(item) {
-                item.query = null;
-            });
-            _.each(this.spikeGroups, function(item) {
-                item.query = null;
-            });
-        };
-
         this.state = storage.getItem('agg:state') || {};
         this.state.expanded = this.state.expanded || {};
 
