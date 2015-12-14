@@ -488,7 +488,7 @@
         .activity('mark.item', {
             label: gettext('Mark for highlight'),
             priority: 30,
-            icon: 'list-plus',
+            icon: 'star',
             dropdown: true,
             keyboardShortcut: 'ctrl+shift+d',
             templateUrl: 'scripts/superdesk-highlights/views/mark_highlights_dropdown.html',
