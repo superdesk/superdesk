@@ -194,7 +194,11 @@ CELERYBEAT_SCHEDULE = {
     'legal:import_publish_queue': {
         'task': 'apps.legal_archive.import_legal_publish_queue',
         'schedule': timedelta(minutes=5)
-    }
+    },
+    'publish:enqueue': {
+        'task': 'apps.publish.enqueue_content',
+        'schedule': timedelta(seconds=5)
+    },
 }
 
 SENTRY_DSN = env('SENTRY_DSN')
