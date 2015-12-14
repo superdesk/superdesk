@@ -618,7 +618,7 @@ define([
                 };
 
                 $scope.gotoIngest = function(source) {
-                    $location.path('/workspace/ingest').search('source', angular.toJson([source]));
+                    $location.path('/search').search({'repo': 'ingest', 'source': angular.toJson([source])});
                 };
 
                 /**
