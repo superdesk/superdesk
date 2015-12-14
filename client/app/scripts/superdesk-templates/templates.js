@@ -397,7 +397,7 @@
                  */
                 function fetchTemplates() {
                     templates.fetchTemplates(scope.options.page, PAGE_SIZE, 'create',
-                        desks.activeDeskId, session.identity._id, scope.options.keyword)
+                        desks.getCurrentDeskId(), session.identity._id, scope.options.keyword)
                     .then(function(result) {
                         scope.publicTemplates = [];
                         scope.privateTemplates = [];
