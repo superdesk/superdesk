@@ -53,6 +53,8 @@ class PublishedItemResource(Resource):
     datasource = {
         'search_backend': 'elastic',
         'aggregations': aggregations,
+        'elastic_filter': {'and': [{'terms': {ITEM_STATE: [CONTENT_STATE.SCHEDULED, CONTENT_STATE.PUBLISHED,
+                                                           CONTENT_STATE.KILLED, CONTENT_STATE.CORRECTED]}}]},
         'default_sort': [('_updated', -1)],
         'projection': {
             'old_version': 0,
@@ -243,13 +245,13 @@ class PublishedItemService(BaseService):
                 # This part is used in unit testing
                 super().system_update(item[config.ID_FIELD], {field: state}, item)
 
-    def delete_by_article_id(self, _id):
-        lookup = {'item_id': _id}
-        docs = list(self.get_from_mongo(req=None, lookup=lookup))
-        self.delete(lookup=lookup)
+    def delete_by_article_id(self, _id, doc=None):
+        if doc is None:
+            doc = self.find_one(req=None, item_id=_id)
+
+        self.delete(lookup={config.ID_FIELD: doc[config.ID_FIELD]})
         get_resource_service('publish_queue').delete_by_article_id(_id)
-        for doc in docs:
-            remove_media_files(doc)
+        remove_media_files(doc)
 
     def find_one(self, req, **lookup):
         item = super().find_one(req, **lookup)
@@ -266,3 +268,10 @@ class PublishedItemService(BaseService):
         stage_id = doc.get('task', {}).get('stage', None)
 
         doc['expiry'] = get_expiry(desk_id, stage_id, offset=doc.get(EMBARGO))
+
+    def move_to_archived(self, _id):
+        published_items = list(self.get_from_mongo(req=None, lookup={'item_id': _id}))
+        if not published_items:
+            return
+        get_resource_service('archived').post(published_items)
+        self.delete_by_article_id(_id)
