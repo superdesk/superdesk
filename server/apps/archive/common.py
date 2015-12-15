@@ -369,7 +369,7 @@ def set_flag(doc, flag_name, flag_value):
 
 
 def is_flag_in_item(doc, flag_name):
-    return 'flags' in doc and flag_name in doc.get('flags', [])
+    return 'flags' in doc and flag_name in doc.get('flags', {})
 
 
 def get_flag(doc, flag_name):
