@@ -69,8 +69,30 @@ function Monitoring() {
         header.click();
     };
 
+    this.getDeskSingleViewTitle = function() {
+        return element.all(by.css('[ng-if="monitoring.singleGroup.singleViewType === \'desk\'"]')).get(0).getText();
+    };
+
+    this.actionOnStageSingleView = function() {
+        var elem = element.all(by.className('stage-name'));
+        var subheader = elem.all(by.css('[ng-click="viewSingleGroup(group, \'stage\')"]')).first();
+        subheader.click();
+    };
+
+    this.getStageSingleViewTitle = function() {
+        return element.all(by.css('[ng-if="monitoring.singleGroup.singleViewType === \'stage\'"]')).get(0).getText();
+    };
+
     this.getSingleViewItemCount = function() {
         return element.all(by.repeater('item in items track by generateTrackByIdentifier(item)')).count();
+    };
+
+    this.actionMonitoringHome = function() {
+        return element.all(by.css('[ng-click="monitoring.viewMonitoringHome()"]')).click();
+    };
+
+    this.getMonitoringHomeTitle = function() {
+        return element.all(by.css('[ng-if="!monitoring.singleGroup && type === \'monitoring\'"]')).get(0).getText();
     };
 
     this.getSpikedItems = function() {
