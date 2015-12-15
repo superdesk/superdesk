@@ -57,8 +57,8 @@ class AppInitializeWithDataCommandTestCase(SuperdeskTestCase):
         self.assertTrue('username_1' in result)
         self.assertTrue('first_name_1_last_name_-1' in result)
         result = app.data.mongo.pymongo(resource='archive').db['archive'].index_information()
-        self.assertTrue('groups.refs.guid_1' in result)
-        self.assertTrue(result['groups.refs.guid_1']['sparse'])
+        self.assertTrue('groups.refs.residRef_1' in result)
+        self.assertTrue(result['groups.refs.residRef_1']['sparse'])
 
     def test_app_initialization_set_env_variables(self):
         def mock_env(variable, default):
