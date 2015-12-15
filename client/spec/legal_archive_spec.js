@@ -89,10 +89,6 @@ describe('legal_archive', function() {
         expect(authoring.multieditOption.isPresent()).toBe(false);
 
         authoring.showInfo();
-
-        element(by.className('state-label')).getText().then(function(state) {
-            var isPublished = (['published', 'corrected', 'killed'].indexOf(state.toLowerCase()) !== -1);
-            expect(isPublished).toBe(true);
-        });
+        expect(authoring.isPublishedState()).toBe(true);
     }
 });

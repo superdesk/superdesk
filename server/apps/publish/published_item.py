@@ -285,7 +285,7 @@ class PublishedItemService(BaseService):
         desk_id = doc.get('task', {}).get('desk', None)
         stage_id = doc.get('task', {}).get('stage', None)
 
-        doc['expiry'] = get_expiry(desk_id, stage_id, offset=doc.get(EMBARGO))
+        doc['expiry'] = get_expiry(desk_id, stage_id, offset=doc.get(EMBARGO, doc.get('publish_schedule')))
 
     def move_to_archived(self, _id):
         published_items = list(self.get_from_mongo(req=None, lookup={'item_id': _id}))

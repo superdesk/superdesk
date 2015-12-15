@@ -235,7 +235,10 @@ def apply_placeholders(context, text):
                     break
                 resource = resource.get(name, None)
             if resource:
-                value = str(resource)
+                if isinstance(resource, datetime):
+                    value = resource.strftime("%Y-%m-%dT%H:%M:%S%z")
+                else:
+                    value = str(resource)
             else:
                 continue
         else:
@@ -1411,20 +1414,30 @@ def get_unspiked_content(context, id):
 
 @then('we get global content expiry')
 def get_global_content_expiry(context):
-    get_desk_spike_expiry(context, context.app.config['CONTENT_EXPIRY_MINUTES'])
+    validate_expired_content(context, context.app.config['CONTENT_EXPIRY_MINUTES'], utcnow())
 
 
 @then('we get content expiry {minutes}')
 def get_content_expiry(context, minutes):
-    get_desk_spike_expiry(context, int(minutes))
+    validate_expired_content(context, minutes, utcnow())
+
+
+@then('we get expiry for schedule and embargo content {minutes} minutes after "{future_date}"')
+def get_content_expiry(context, minutes, future_date):
+    future_date = parse_date(apply_placeholders(context, future_date))
+    validate_expired_content(context, minutes, future_date)
 
 
 @then('we get desk spike expiry after "{test_minutes}"')
 def get_desk_spike_expiry(context, test_minutes):
+    validate_expired_content(context, test_minutes, utcnow())
+
+
+def validate_expired_content(context, minutes, start_datetime):
     response_data = json.loads(context.response.get_data())
     assert response_data['expiry']
     response_expiry = parse_date(response_data['expiry'])
-    expiry = utc.utcnow() + timedelta(minutes=int(test_minutes))
+    expiry = start_datetime + timedelta(minutes=int(minutes))
     assert response_expiry <= expiry
 
 
