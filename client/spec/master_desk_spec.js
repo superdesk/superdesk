@@ -51,10 +51,14 @@ describe('master_desk', function() {
 
     it('show tasks view', function() {
         masterDesks.switchToTab('tasks');
-        expect(masterDesks.getTask(1, 0, 0).element(by.className('content-item__text')).getText()).toContain('item3 slugline');
-        expect(masterDesks.getTask(1, 2, 0).element(by.className('content-item__text')).getText()).toContain('item4 slugline');
-        expect(masterDesks.getTask(0, 0, 0).element(by.className('content-item__text')).getText()).toContain('item5 slugline');
-        expect(masterDesks.getTask(0, 1, 2).element(by.className('content-item__text')).getText()).toContain('item6 slugline');
+        expect(masterDesks.getTask(1, 0, 0).element(by.className('content-item__text')).getText())
+                .toContain('item3 slugline');
+        expect(masterDesks.getTask(1, 2, 0).element(by.className('content-item__text')).getText())
+                .toContain('item4 slugline');
+        expect(masterDesks.getTask(0, 0, 0).element(by.className('content-item__text')).getText())
+                .toContain('item5 slugline');
+        expect(masterDesks.getTask(0, 1, 2).element(by.className('content-item__text')).getText())
+                .toContain('item6 slugline');
     });
 
     it('tasks view - show desk', function() {
