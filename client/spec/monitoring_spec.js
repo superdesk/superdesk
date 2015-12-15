@@ -471,4 +471,50 @@ describe('monitoring', function() {
         monitoring.actionOnDeskSingleView();
         expect(monitoring.getSingleViewItemCount()).toBe(8);
     });
+
+    it('can remember multi selection even after scrolling and can reset multi-selection', function() {
+        //Initial steps to setup global saved search group as a test group for this case
+        monitoring.turnOffWorkingStage(0, false);
+        monitoring.toggleStage(0, 1);
+        monitoring.toggleStage(0, 2);
+        monitoring.toggleStage(0, 4);
+        monitoring.toggleDeskOutput(0);
+        monitoring.nextStages();
+        monitoring.toggleGlobalSearch(0);
+        monitoring.nextSearches();
+        // bring global search group in first place in monitoring view
+        monitoring.moveOrderItem(0, 1);
+        monitoring.nextReorder();
+
+        //limit the size of group for the sake of scroll bar
+        monitoring.setMaxItems(0, 3);
+        monitoring.saveSettings();
+        expect(monitoring.getGroupItems(0).count()).toBe(9);
+
+        //select first item
+        monitoring.selectItem(0, 0);
+        expect(monitoring.getItem(0, 0).element(by.model('item.selected')).getAttribute('checked')).toBeTruthy();
+
+        //scroll down and select last item
+        browser.executeScript('window.scrollTo(0,250);').then(function () {
+            monitoring.selectItem(0, 8);
+            expect(monitoring.getItem(0, 8).element(by.model('item.selected')).getAttribute('checked')).toBeTruthy();
+        });
+
+        //scroll up to top again to see if selection to first item is remembered?
+        browser.executeScript('window.scrollTo(0,0);').then(function () {
+            expect(monitoring.getItem(0, 0).element(by.model('item.selected')).getAttribute('checked')).toBeTruthy();
+        });
+
+        //scroll down again to see if selection to last item is remembered?
+        browser.executeScript('window.scrollTo(0,250);').then(function () {
+            expect(monitoring.getItem(0, 8).element(by.model('item.selected')).getAttribute('checked')).toBeTruthy();
+        });
+
+        expect(monitoring.getMultiSelectCount()).toBe('2 Items selected');
+        //Now reset multi-selection
+        monitoring.clickOnCancelButton();
+        expect(monitoring.getItem(0, 0).element(by.model('item.selected')).getAttribute('checked')).toBeFalsy();
+        expect(monitoring.getItem(0, 8).element(by.model('item.selected')).getAttribute('checked')).toBeFalsy();
+    });
 });
