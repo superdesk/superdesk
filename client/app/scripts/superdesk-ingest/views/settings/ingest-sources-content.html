@@ -59,9 +59,11 @@
                             <select id="provider-feeding-service" ng-change="initProviderConfig()" required ng-model="provider.feeding_service" ng-options="key as val.label for (key, val) in feedingServices"></select>
                         </div>
 
-                        <div class="field" ng-if="provider.feeding_service != 'rss'">
+                        <div class="field">
                             <label for="provider-feed-parser" translate>Feed Parser</label>
-                            <select id="provider-feed-parser" required ng-model="provider.feed_parser" ng-options="key as val for (key, val) in feedParsers"></select>
+                            <select id="provider-feed-parser" ng-model="provider.feed_parser" ng-options="key as val for (key, val) in feedParsers">
+                                <option value=""></option>
+                            </select>
                         </div>
 
                         <div class="field article-type">
