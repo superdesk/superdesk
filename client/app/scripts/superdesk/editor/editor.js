@@ -633,6 +633,11 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
                         updateTimeout = $timeout(updateModel, 800, false);
                     });
 
+                    editorElem.on('blur', function(event) {
+                        cancelTimeout(event);
+                        updateModel();
+                    });
+
                     editorElem.on('contextmenu', function(event) {
                         if (editor.isErrorNode(event.target)) {
                             event.preventDefault();
