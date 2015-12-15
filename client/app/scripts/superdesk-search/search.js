@@ -898,7 +898,10 @@
 
                     scope.$watch('view', function(newValue, oldValue) {
                         if (newValue !== oldValue) {
-                            listComponent.setState({view: newValue});
+                            console.time('view');
+                            listComponent.setState({view: newValue}, function() {
+                                console.timeEnd('view');
+                            });
                         }
                     });
 
@@ -1029,7 +1032,10 @@
                             }
 
                             console.time('render');
-                            listComponent.setItems(scope.items._items);
+                            listComponent.setState({
+                                items: scope.items._items,
+                                view: scope.view
+                            });
                             console.timeEnd('render');
                             console.log('items:', scope.items._items.length);
                             scope.rendering = false;
@@ -1048,112 +1054,117 @@
                     /**
                      * Media Preview - renders item thumbnail
                      */
-                    var MediaPreview = React.createClass({
-                        render: function() {
-                            var item = this.props.item;
-                            var headline = item.headline || item.slugline || item.type;
-                            var preview;
+                    var MediaPreview = function(props) {
+                        var item = props.item;
+                        var headline = item.headline || item.slugline || item.type;
+                        var preview;
 
-                            if (hasThumbnail(this.props.item)) {
-                                preview = React.createElement(
-                                    'img',
-                                    {src: this.props.item.renditions.thumbnail.href}
-                                );
-                            }
-
-                            return React.createElement(
-                                'div',
-                                {className: 'media multi'},
-                                preview ? React.createElement(
-                                    'figure',
-                                    null,
-                                    preview
-                                ) : null,
-                                React.createElement(
-                                    'span',
-                                    {className: 'text'},
-                                    React.createElement(
-                                        'small',
-                                        {title: headline},
-                                        headline.substr(0, 90)
-                                    )
-                                )
+                        if (hasThumbnail(props.item)) {
+                            preview = React.createElement(
+                                'img',
+                                {src: props.item.renditions.thumbnail.href}
                             );
                         }
-                    });
+
+                        return React.createElement(
+                            'div',
+                            {className: 'media multi'},
+                            preview ? React.createElement(
+                                'figure',
+                                null,
+                                preview
+                            ) : null,
+                            React.createElement(
+                                'span',
+                                {className: 'text'},
+                                React.createElement(
+                                    'small',
+                                    {title: headline},
+                                    headline.substr(0, 120)
+                                )
+                            )
+                        );
+                    };
 
                     /**
                      * Media Info - renders item metadata
                      */
-                    var MediaInfo = React.createClass({
-                        render: function() {
-                            var item = this.props.item;
-                            var meta = [];
-                            var ingestProvider = this.props.ingestProviders[item.ingest_provider] || null;
+                    var MediaInfo = function(props) {
+                        var item = props.item;
+                        var meta = [];
+                        var ingestProvider = props.ingestProviders[item.ingest_provider] || null;
 
-                            if (ingestProvider) {
-                                meta.push(
-                                    React.createElement('dt', {key: 1}, gettext('source')),
-                                    React.createElement('dd', {key: 2, className: 'provider'}, ingestProvider.name)
-                                );
-                            }
-
+                        if (ingestProvider) {
                             meta.push(
-                                React.createElement('dt', {key: 3}, gettext('updated')),
-                                React.createElement('dd', {key: 4}, moment(item.versioncreated).fromNow())
+                                React.createElement('dt', {key: 1}, gettext('source')),
+                                React.createElement('dd', {key: 2, className: 'provider'}, ingestProvider.name)
                             );
-
-                            if (item.is_spiked) {
-                                meta.push(React.createElement('dt', {key: 5}, gettext('expires')));
-                                meta.push(React.createElement('dd', {key: 6}, moment(item.expiry).fromNow()));
-                            }
-
-                            var info = [];
-                            var flags = item.flags || {};
-
-                            info.push(React.createElement(
-                                'h5',
-                                {key: 1},
-                                item.slugline || item.type
-                            ));
-
-                            info.push(React.createElement(
-                                'dl',
-                                {key: 2},
-                                meta
-                            ));
-
-                            if (flags.marked_for_not_publication) {
-                                info.push(React.createElement(
-                                    'div',
-                                    {key: 3, className: 'state-label not-for-publication'},
-                                    gettext('Not for publication')
-                                ));
-                            }
-
-                            if (flags.marked_for_legal) {
-                                info.push(React.createElement(
-                                    'div',
-                                    {key: 4, className: 'state-label legal'},
-                                    gettext('Legal')
-                                ));
-                            }
-
-                            return React.createElement('div', {className: 'media-info'}, info);
                         }
-                    });
+
+                        meta.push(
+                            React.createElement('dt', {key: 3}, gettext('updated')),
+                            React.createElement('dd', {key: 4}, moment(item.versioncreated).fromNow())
+                        );
+
+                        if (item.is_spiked) {
+                            meta.push(React.createElement('dt', {key: 5}, gettext('expires')));
+                            meta.push(React.createElement('dd', {key: 6}, moment(item.expiry).fromNow()));
+                        }
+
+                        var info = [];
+                        var flags = item.flags || {};
+
+                        info.push(React.createElement(
+                            'h5',
+                            {key: 1},
+                            item.slugline || item.type
+                        ));
+
+                        info.push(React.createElement(
+                            'dl',
+                            {key: 2},
+                            meta
+                        ));
+
+                        if (flags.marked_for_not_publication) {
+                            info.push(React.createElement(
+                                'div',
+                                {key: 3, className: 'state-label not-for-publication'},
+                                gettext('Not for publication')
+                            ));
+                        }
+
+                        if (flags.marked_for_legal) {
+                            info.push(React.createElement(
+                                'div',
+                                {key: 4, className: 'state-label legal'},
+                                gettext('Legal')
+                            ));
+                        }
+
+                        return React.createElement('div', {className: 'media-info'}, info);
+                    };
 
                     /**
                      * Type icon component
                      */
                     var TypeIcon = function(props) {
+                        return React.createElement('i', {className: 'filetype-icon-' + props.type});
+                    };
+
+                    var GridTypeIcon = function(props) {
                         return React.createElement(
                             'span',
                             {className: 'type-icon'},
-                            React.createElement(
-                                'i',
-                                {className: 'filetype-icon-' + props.type}
-                            )
+                            React.createElement(TypeIcon, {type: props.item.type})
+                        );
+                    };
+
+                    var ListTypeIcon = function(props) {
+                        return React.createElement(
+                            'div',
+                            {className: 'list-field type-icon'},
+                            React.createElement(TypeIcon, {type: props.item.type})
                         );
                     };
 
@@ -1163,6 +1174,54 @@
                             'span',
                             {className: 'priority-label priority-label--' + priority},
                             priority
+                        );
+                    };
+
+                    var ListPriority = function(props) {
+                        var item = props.item;
+                        return React.createElement(
+                            'div',
+                            {className: 'list-field urgency'},
+                            item.priority ?
+                                React.createElement(
+                                    'span',
+                                    {className: 'priority-label priority-label--' + item.priority},
+                                    item.priority
+                                ) :
+                                React.createElement(
+                                    'span',
+                                    {className: 'output-item-label label-' + item.urgency},
+                                    item.urgency
+                                )
+                        );
+                    };
+
+                    var ListItemInfo = function(props) {
+                        var item = props.item;
+                        var flags = item.flags || {};
+                        var anpa = item.anpa_category || {};
+                        var broadcast = item.broadcast || {};
+                        var provider = props.ingestProviders[item.ingest_provider] || {name: null};
+                        return React.createElement(
+                            'div',
+                            {className: 'item-info'},
+                            React.createElement('div', {className: 'line'}, 
+                                React.createElement('span', {className: 'word-count'}, item.word_count),
+                                item.slugline ? React.createElement('span', {className: 'keyword'}, item.slugline.substr(0, 40)) : null,
+                                React.createElement('span', {className: 'item-heading'}, item.headline ? item.headline.substr(0, 90) : item.type),
+                                React.createElement('time', {}, moment(item.versioncreated).fromNow())
+                            ),
+                            React.createElement('div', {className: 'line'},
+                                React.createElement('div', {className: 'state-label state-' + item.state}, item.state),
+                                item.anpa_take_key ? React.createElement('div', {className: 'takekey'}, item.anpa_take_key) : null,
+                                item.signal ? React.createElement('span', {className: 'signal'}, item.signal) : null,
+                                broadcast.status ? React.createElement('span', {className: 'broadcast-status', tooltip: broadcast.status}, '!') : null,
+                                flags.marked_for_not_publication ? React.createElement('div', {className: 'state-label not-for-publication'}, gettext('Not for Publication')) : null,
+                                flags.marked_for_legal ? React.createElement('div', {className: 'state-label legal'}, gettext('Legal')) : null,
+                                anpa.name ? React.createElement('div', {className: 'category'}, anpa.name) : null,
+                                React.createElement('div', null, provider.name),
+                                item.is_spiked ? React.createElement('div', {className: 'expires'}, gettext('expires') + ' ' + moment(item.expiry).fromNow()) : null
+                            )
                         );
                     };
 
@@ -1297,11 +1356,11 @@
                         }
                     });
 
-                    ActionsMenu.Label = function() {
+                    ActionsMenu.Label = function(props) {
                         return React.createElement(
                             'li',
                             null,
-                            React.createElement('div', {className: 'menu-label'}, this.props.label)
+                            React.createElement('div', {className: 'menu-label'}, props.label)
                         );
                     };
 
@@ -1335,6 +1394,7 @@
                     var Item = React.createClass({
                         shouldComponentUpdate: function(nextProps, nextState) {
                             return nextProps.item._etag !== this.props.item._etag ||
+                                nextProps.view !== this.props.view ||
                                 nextProps.flags.selected !== this.props.flags.selected ||
                                 nextState !== this.state;
                         },
@@ -1358,6 +1418,42 @@
                         render: function() {
                             var item = this.props.item;
                             var broadcast = item.broadcast || {};
+                            var contents = [
+                                'div',
+                                {
+                                    className: classNames(
+                                        'media-box',
+                                        'media-' + item.type,
+                                        {
+                                            locked: this.props.flags.locked,
+                                            selected: this.props.flags.selected,
+                                            archived: item.archived || item.created
+                                        }
+                                    )
+
+                                }
+                            ];
+
+                            if (this.props.view === 'mgrid') {
+                                contents.push(
+                                    React.createElement(MediaPreview, {item: item}),
+                                    React.createElement(MediaInfo, {item: item, ingestProviders: this.props.ingestProviders}),
+                                    React.createElement(GridTypeIcon, {item: item}),
+                                    item.priority ? React.createElement(ItemPriority, {priority: item.priority}) : null,
+                                    item.urgency ? React.createElement(ItemUrgency, {urgency: item.urgency}) : null,
+                                    broadcast.status ? React.createElement(BroadcastStatus, {broadcast: broadcast}) : null,
+                                    this.state.hover ? React.createElement(ActionsMenu, {item: item}) : null
+                                );
+                            } else {
+                                contents.push(
+                                    React.createElement('span', {className: 'state-border'}),
+                                    React.createElement(ListTypeIcon, {item: item}),
+                                    React.createElement(ListPriority, {item: item}),
+                                    React.createElement(ListItemInfo, {item: item, ingestProviders: this.props.ingestProviders}),
+                                    this.state.hover ? React.createElement(ActionsMenu, {item: item}) : null
+                                );
+                            }
+
                             return React.createElement(
                                 'li',
                                 {
@@ -1368,27 +1464,7 @@
                                     onMouseLeave: this.unsetHoverState,
                                     onClick: this.select
                                 },
-                                React.createElement(
-                                    'div',
-                                    {
-                                        className: classNames(
-                                            'media-box',
-                                            'media-' + item.type,
-                                            {
-                                                locked: this.props.flags.locked,
-                                                selected: this.props.flags.selected,
-                                                archived: item.archived || item.created
-                                            }
-                                        )
-                                    },
-                                    React.createElement(MediaPreview, {item: item}),
-                                    React.createElement(MediaInfo, {item: item, ingestProviders: this.props.ingestProviders}),
-                                    React.createElement(TypeIcon, {type: item.type}),
-                                    item.priority ? React.createElement(ItemPriority, {priority: item.priority}) : null,
-                                    item.urgency ? React.createElement(ItemUrgency, {urgency: item.urgency}) : null,
-                                    broadcast.status ? React.createElement(BroadcastStatus, {broadcast: broadcast}) : null,
-                                    this.state.hover ? React.createElement(ActionsMenu, {item: item}) : null
-                                )
+                                React.createElement.apply(null, contents)
                             );
                         }
                     });
@@ -1475,6 +1551,7 @@
                                 return React.createElement(Item, {
                                     key: item._id,
                                     item: item,
+                                    view: this.state.view,
                                     flags: {selected: this.state.selected === item._id},
                                     onSelect: this.select,
                                     ingestProviders: this.props.ingestProviders

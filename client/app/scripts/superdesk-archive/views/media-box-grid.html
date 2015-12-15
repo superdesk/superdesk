@@ -61,9 +61,9 @@
     <span class="broadcast-status" tooltip="{{item.broadcast.status}}" ng-if="item.broadcast.status">!</span>
 
     <div class="state-label state-{{ item.state }}" ng-if="item.state" ng-class="{state_embargo: item.embargo}">{{ item.state }}</div>
-    
-    <div ng-if="focused" class="item-right toolbox"
-        sd-item-actions-menu data-item="item" data-active="focused"></div>
 </div>
+
+<div ng-if="focused" class="item-right toolbox"
+    sd-item-actions-menu data-item="item" data-active="focused"></div>
 
 </div>
