@@ -437,6 +437,15 @@ function Monitoring() {
         return element(by.css('[ng-click="send()"]')).click();
     };
 
+    //Cancel button resets the multi selection
+    this.clickOnCancelButton = function() {
+        return element(by.css('[ng-click="multi.reset()"]')).click();
+    };
+
+    this.getMultiSelectCount = function() {
+        return element(by.id('multi-select-count')).getText();
+    };
+
     this.fetchAs = function(group, item) {
         this.openFetchAsOptions(group, item);
         return this.clickOnFetchButton();
