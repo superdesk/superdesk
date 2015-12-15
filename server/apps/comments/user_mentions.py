@@ -42,7 +42,7 @@ def send_email_to_mentioned_users(doc, mentioned_users, origin):
             recipients.append(user_doc['email'])
     if recipients:
         username = g.user.get('display_name') or g.user.get('username')
-        url = '{}/#/authoring/{}?comments={}'.format(origin, doc['item'], doc['_id'])
+        url = '{}/#/workspace?item={}&action=edit&comments={}'.format(origin, doc['item'], doc['_id'])
         send_user_mentioned_email(recipients, username, doc, url)
 
 

@@ -16,8 +16,8 @@ function AuthoringWidgetsProvider() {
     };
 }
 
-WidgetsManagerCtrl.$inject = ['$scope', '$routeParams', 'authoringWidgets', 'archiveService', 'keyboardManager'];
-function WidgetsManagerCtrl($scope, $routeParams, authoringWidgets, archiveService, keyboardManager) {
+WidgetsManagerCtrl.$inject = ['$scope', '$routeParams', 'authoringWidgets', 'archiveService', 'keyboardManager', '$location'];
+function WidgetsManagerCtrl($scope, $routeParams, authoringWidgets, archiveService, keyboardManager, $location) {
     $scope.active = null;
 
     $scope.$watch('item', function(item) {
@@ -46,6 +46,9 @@ function WidgetsManagerCtrl($scope, $routeParams, authoringWidgets, archiveServi
             keyboardManager.bind('ctrl+' + (index + 1), function () {
                 $scope.activate(widget);
             }, {inputDisabled: false});
+            if ($location.search()[widget._id]) {
+                $scope.activate(widget);
+            }
         });
     });
 
