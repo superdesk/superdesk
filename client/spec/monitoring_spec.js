@@ -471,4 +471,20 @@ describe('monitoring', function() {
         monitoring.actionOnDeskSingleView();
         expect(monitoring.getSingleViewItemCount()).toBe(8);
     });
+
+    it('can display respective single view title', function() {
+        expect(monitoring.getGroups().count()).toBe(6);
+
+        //Desk single view
+        monitoring.actionOnDeskSingleView();
+        expect(monitoring.getDeskSingleViewTitle()).toBe('Politic Desk desk');
+
+        //Monitoring Home
+        monitoring.actionMonitoringHome();
+        expect(monitoring.getMonitoringHomeTitle()).toBe('Monitoring');
+
+        //Stage single view
+        monitoring.actionOnStageSingleView();
+        expect(monitoring.getStageSingleViewTitle()).toBe('Politic Desk / Working Stage stage');
+    });
 });
