@@ -130,6 +130,7 @@ class NewsMLG2Formatter(Formatter):
         self._format_headline(article, content_meta)
         self._format_place(article, content_meta)
         self._format_category(article, content_meta)
+        self._format_company_codes(article, content_meta, item)
 
         if article[ITEM_TYPE] in {CONTENT_TYPE.PICTURE, CONTENT_TYPE.AUDIO, CONTENT_TYPE.VIDEO}:
             self._format_description(article, content_meta)
@@ -445,6 +446,30 @@ class NewsMLG2Formatter(Formatter):
             if rendition == 'original' and 'filemeta' in article and 'length' in article['filemeta']:
                 attrib['size'] = str(article.get('filemeta').get('length'))
             SubElement(content_set, 'remoteContent', attrib=attrib)
+
+    def _format_company_codes(self, article, content_meta, item):
+        """
+        For each company in the article, appends the subject element to the contentMeta element
+        and assert element to item
+
+        :param article: object having published article details
+        :type article: dict
+        :param content_meta: object representing <contentMeta> in the XML tree
+        :type content_meta: xml.etree.ElementTree.Element
+        :param item: object representing <newsItem> in the XML tree
+        :type item: xml.etree.ElementTree.Element
+        """
+
+        for company in article.get('company_codes', []):
+            literal_name = company['qcode']
+            subject = SubElement(content_meta, 'subject',
+                                 attrib={'type': 'cpnat:organisation', 'literal': literal_name})
+            SubElement(subject, 'name').text = company.get('name', '')
+
+            assert_element = SubElement(item, 'assert', attrib={'literal': literal_name})
+            org_details_element = SubElement(assert_element, 'organisationDetails')
+            SubElement(org_details_element, 'hasInstrument',
+                       attrib={'symbol': company.get('qcode', ''), 'marketlabel': company.get('security_exchange', '')})
 
     def can_format(self, format_type, article):
         """

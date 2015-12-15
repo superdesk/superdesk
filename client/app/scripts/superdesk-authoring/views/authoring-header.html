@@ -132,6 +132,20 @@
             </div>
         </div>
 
+        <div class="item-wrapper" ng-if="shouldDisplayCompanyCodes()">
+            <label translate>COMPANY</label>
+            <div sd-meta-terms
+                 class="data"
+                 data-item="item"
+                 data-field="company_codes"
+                 data-unique="qcode"
+                 data-list="metadata.company_codes"
+                 ng-disabled="!_editable"
+                 data-header="true"
+                 data-change="autosave(item)">
+            </div>
+        </div>
+
         <div class="item-wrapper">
             <label translate>ED. NOTE</label>
             <textarea class="line-input ed-note" ng-model="item.ednote" ng-disabled="!_editable" ng-change="autosave(item)"></textarea>
