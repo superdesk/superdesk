@@ -1080,7 +1080,7 @@
                                 React.createElement(
                                     'small',
                                     {title: headline},
-                                    headline.substr(0, 120)
+                                    headline.substr(0, 90)
                                 )
                             )
                         );
@@ -1333,7 +1333,7 @@
                                 {className: 'item-right toolbox'},
                                 React.createElement(
                                     'div',
-                                    {className: 'item-actions-menu more-activity-dropdown dropdown-big open'},
+                                    {className: 'item-actions-menu dropdown-big open'},
                                     React.createElement(
                                         'button',
                                         {
@@ -1347,7 +1347,7 @@
                                         'ul',
                                         {
                                             className: 'dropdown dropdown-menu more-activity-menu open',
-                                            style: {top: 10, right: 10, display: this.state.open ? 'block' : 'none', minWidth: 200}
+                                            style: {top: '66%', left: -160, display: this.state.open ? 'block' : 'none', minWidth: 200}
                                         },
                                         menu
                                     )
@@ -1393,7 +1393,7 @@
                      */
                     var Item = React.createClass({
                         shouldComponentUpdate: function(nextProps, nextState) {
-                            return nextProps.item._etag !== this.props.item._etag ||
+                            return nextProps.item !== this.props.item ||
                                 nextProps.view !== this.props.view ||
                                 nextProps.flags.selected !== this.props.flags.selected ||
                                 nextState !== this.state;
