@@ -16,9 +16,10 @@ from bson.objectid import ObjectId
 from flask import current_app as app
 import superdesk
 from apps.packages import TakesPackageService
+from superdesk.errors import SuperdeskApiError
 from superdesk.resource import Resource
 from superdesk.services import BaseService
-from superdesk.metadata.item import not_analyzed, ITEM_STATE, CONTENT_STATE, EMBARGO
+from superdesk.metadata.item import not_analyzed, ITEM_STATE, PUBLISH_STATES, EMBARGO
 from apps.archive.common import handle_existing_data, item_schema, remove_media_files, get_expiry
 from superdesk.metadata.utils import aggregations
 from apps.archive.archive import SOURCE as ARCHIVE
@@ -53,8 +54,6 @@ class PublishedItemResource(Resource):
     datasource = {
         'search_backend': 'elastic',
         'aggregations': aggregations,
-        'elastic_filter': {'and': [{'terms': {ITEM_STATE: [CONTENT_STATE.SCHEDULED, CONTENT_STATE.PUBLISHED,
-                                                           CONTENT_STATE.KILLED, CONTENT_STATE.CORRECTED]}}]},
         'default_sort': [('_updated', -1)],
         'projection': {
             'old_version': 0,
@@ -74,6 +73,15 @@ class PublishedItemResource(Resource):
 
 
 class PublishedItemService(BaseService):
+
+    def raise_if_not_marked_for_publication(self, doc):
+        """
+        Item should be one of the PUBLISH_STATES. If not raise error.
+        """
+        if doc.get(ITEM_STATE) not in PUBLISH_STATES:
+            raise SuperdeskApiError.badRequestError('Invalid state ({}) for the Published item.'
+                                                    .format(doc.get(ITEM_STATE)))
+
     """
     PublishedItemService class is the base class for ArchivedService.
     """
@@ -98,8 +106,13 @@ class PublishedItemService(BaseService):
         """
 
         for doc in docs:
+            self.raise_if_not_marked_for_publication(doc)
             doc[config.LAST_UPDATED] = doc[config.DATE_CREATED] = utcnow()
             self.set_defaults(doc)
+
+    def on_update(self, updates, original):
+        if ITEM_STATE in updates:
+            self.raise_if_not_marked_for_publication(updates)
 
     def set_defaults(self, doc):
         doc['item_id'] = doc[config.ID_FIELD]
@@ -245,13 +258,18 @@ class PublishedItemService(BaseService):
                 # This part is used in unit testing
                 super().system_update(item[config.ID_FIELD], {field: state}, item)
 
-    def delete_by_article_id(self, _id, doc=None):
-        if doc is None:
-            doc = self.find_one(req=None, item_id=_id)
-
-        self.delete(lookup={config.ID_FIELD: doc[config.ID_FIELD]})
+    def delete_by_article_id(self, _id):
+        """
+        Removes the article from the published collection.
+        Removes published queue entries and media files.
+        :param str _id: id of the document to be deleted. In mongo, it is the item_id
+        """
+        lookup = {'item_id': _id}
+        docs = list(self.get_from_mongo(req=None, lookup=lookup))
+        self.delete(lookup=lookup)
         get_resource_service('publish_queue').delete_by_article_id(_id)
-        remove_media_files(doc)
+        for doc in docs:
+            remove_media_files(doc)
 
     def find_one(self, req, **lookup):
         item = super().find_one(req, **lookup)

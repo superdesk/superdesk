@@ -33,7 +33,7 @@ class AppInitializeWithDataCommandTestCase(SuperdeskTestCase):
             'abstract': 'test abstract {}'.format(x),
             'headline': 'test headline {}'.format(x),
             'body_html': 'test long story body {}'.format(x),
-            'allow_post_publish_actions': True
+            'state': 'published'
         } for x in range(0, 40)]
         get_resource_service('published').post(docs)
 
