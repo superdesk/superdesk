@@ -75,7 +75,8 @@ __entities__ = {
                               ('item_version', pymongo.ASCENDING)],
                              [('state', pymongo.ASCENDING),
                               ('destination.delivery_type', pymongo.ASCENDING)],
-                             [('subscriber_id', pymongo.ASCENDING)]], False)
+                             [('subscriber_id', pymongo.ASCENDING)]], False),
+    'archived': (None, [[('archived_id', pymongo.ASCENDING), {'unique': True}]], False)
 }
 
 
