@@ -469,7 +469,7 @@ Feature: Content Publishing
       """
       {"_current_version": 2, "state": "scheduled", "operation": "publish"}
       """
-      And we get expiry for schedule and embargo content 60 minutes after "#DATE+2#"
+      And we get expiry for schedule and embargo content 60 minutes after "#archive_publish.publish_schedule#"
       When we get "/publish_queue"
       Then we get list with 1 items
       """

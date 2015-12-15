@@ -518,9 +518,9 @@
                     var endpoint = '';
 
                     if (_.contains(['archive', 'legal_archive'], scope.item.location)) {
-                        url = 'archive/' + scope.item.residRef;
+                        url = scope.item.location + '/' + scope.item.residRef;
                         url += scope.item._current_version ? '?version=' + scope.item._current_version: '';
-                        endpoint = 'archive';
+                        endpoint = scope.item.location;
                     } else {
                         url = scope.item.location + '/' + scope.item.residRef + ':' + scope.item._current_version;
                         endpoint = 'archived';

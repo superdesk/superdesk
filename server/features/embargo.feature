@@ -56,7 +56,7 @@ Feature: Embargo Date and Time on an Article (User Story: https://dev.sourcefabr
     """
     {"_current_version": 3, "state": "published"}
     """
-    And we get expiry for schedule and embargo content 4320 minutes after "#DATE+2#"
+    And we get expiry for schedule and embargo content 4320 minutes after "#archive_publish.embargo#"
     And we check if article has Embargo and Ed. Note of the article has embargo indication
     When we get "/published"
     Then we check if article has Embargo and Ed. Note of the article has embargo indication
@@ -101,7 +101,7 @@ Feature: Embargo Date and Time on an Article (User Story: https://dev.sourcefabr
     """
     {"_current_version": 3, "state": "published", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
     """
-    And we get expiry for schedule and embargo content 4320 minutes after "#DATE+2#"
+    And we get expiry for schedule and embargo content 4320 minutes after "#archive_publish.embargo#"
     And we check if article has Embargo and Ed. Note of the article has embargo indication
     When we get "/published"
     Then we get existing resource

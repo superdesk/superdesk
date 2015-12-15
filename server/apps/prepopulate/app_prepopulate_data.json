@@ -902,7 +902,7 @@
                                    "itemClass" : "icls:text", "_current_version" : 2, "location" : "legal_archive"},
 	   		                      {"renditions" : {}, "type" : "text", "slugline" : "item3 slugline", "headline" : "item3 in legal archive",
                                    "guid" : "item3-in-legal-archive", "residRef" : "item3-in-legal-archive",
-                                   "itemClass" : "icls:text",  "_current_version" : 2, "location" : "archive"
+                                   "itemClass" : "icls:text",  "_current_version" : 2, "location" : "legal_archive"
                                   }], "id" : "main", "role" : "grpRole:main"}],
             "task" : {
 		        "desk" : "Sports Desk",
