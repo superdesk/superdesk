@@ -324,11 +324,7 @@
                     preview(args.item);
                 });
 
-                scope.$on('item:highlight', function(event, data) {
-                    if (scope.group.type === 'highlights') {
-                        queryItems();
-                    }
-                });
+                scope.$on('item:highlight', queryItems);
 
                 scope.$on('content:update', function(event, data) {
                     if (cards.shouldUpdate(scope.group, data)) {
