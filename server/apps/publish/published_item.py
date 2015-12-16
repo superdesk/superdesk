@@ -73,15 +73,6 @@ class PublishedItemResource(Resource):
 
 
 class PublishedItemService(BaseService):
-
-    def raise_if_not_marked_for_publication(self, doc):
-        """
-        Item should be one of the PUBLISH_STATES. If not raise error.
-        """
-        if doc.get(ITEM_STATE) not in PUBLISH_STATES:
-            raise SuperdeskApiError.badRequestError('Invalid state ({}) for the Published item.'
-                                                    .format(doc.get(ITEM_STATE)))
-
     """
     PublishedItemService class is the base class for ArchivedService.
     """
@@ -113,6 +104,14 @@ class PublishedItemService(BaseService):
     def on_update(self, updates, original):
         if ITEM_STATE in updates:
             self.raise_if_not_marked_for_publication(updates)
+
+    def raise_if_not_marked_for_publication(self, doc):
+        """
+        Item should be one of the PUBLISH_STATES. If not raise error.
+        """
+        if doc.get(ITEM_STATE) not in PUBLISH_STATES:
+            raise SuperdeskApiError.badRequestError('Invalid state ({}) for the Published item.'
+                                                    .format(doc.get(ITEM_STATE)))
 
     def set_defaults(self, doc):
         doc['item_id'] = doc[config.ID_FIELD]
