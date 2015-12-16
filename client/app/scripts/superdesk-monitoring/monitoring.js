@@ -260,9 +260,9 @@
     }
 
     MonitoringGroupDirective.$inject = ['cards', 'api', 'authoringWorkspace', '$timeout', 'superdesk',
-        'activityService', 'workflowService', 'keyboardManager', 'desks', 'search', 'multi'];
+        'activityService', 'workflowService', 'keyboardManager', 'desks', 'search', 'multi', 'archiveService'];
     function MonitoringGroupDirective(cards, api, authoringWorkspace, $timeout, superdesk, activityService,
-            workflowService, keyboardManager, desks, search, multi) {
+            workflowService, keyboardManager, desks, search, multi, archiveService) {
 
         var ITEM_HEIGHT = 57,
             ITEMS_COUNT = 5,
@@ -467,7 +467,7 @@
                         } else if (item.type === 'composite' && item.package_type === 'takes') {
                             authoringWorkspace.view(item);
                             monitoring.preview(null);
-                        } else if (item.state === 'killed') {
+                        } else if (archiveService.isPublished(item)) {
                             authoringWorkspace.view(item);
                             monitoring.preview(null);
                         } else {

@@ -1491,12 +1491,13 @@ describe('authoring actions', function() {
 
 describe('authoring workspace', function() {
 
-    var item = {_id: 'foo'};
+    var item = {_id: 'foo'},
+        lockedItem = {_id: item._id, _editable: true};
 
     beforeEach(module('superdesk.authoring'));
 
     beforeEach(inject(function($q, authoring) {
-        spyOn(authoring, 'open').and.returnValue($q.when(item));
+        spyOn(authoring, 'open').and.returnValue($q.when(lockedItem));
     }));
 
     it('can edit item', inject(function(superdeskFlags, authoringWorkspace, $rootScope) {
@@ -1506,9 +1507,9 @@ describe('authoring workspace', function() {
         authoringWorkspace.edit(item);
         $rootScope.$apply();
 
-        expect(authoringWorkspace.item).toBe(item);
+        expect(authoringWorkspace.item).toBe(lockedItem);
         expect(authoringWorkspace.action).toBe('edit');
-        expect(authoringWorkspace.getItem()).toBe(item);
+        expect(authoringWorkspace.getItem()).toBe(lockedItem);
         expect(authoringWorkspace.getAction()).toBe('edit');
         expect(superdeskFlags.flags.authoring).toBeTruthy();
 
@@ -1518,25 +1519,28 @@ describe('authoring workspace', function() {
         expect(superdeskFlags.flags.authoring).toBeFalsy();
     }));
 
-    it('can open item in readonly mode', inject(function(superdeskFlags, authoringWorkspace, $rootScope) {
+    it('can open item in readonly mode', inject(function(superdeskFlags, authoringWorkspace, $rootScope,
+                                                         authoring, $q) {
+        lockedItem._editable = false;
         authoringWorkspace.view(item);
         $rootScope.$apply();
-        expect(authoringWorkspace.item).toBe(item);
+        expect(authoringWorkspace.item).toBe(lockedItem);
         expect(authoringWorkspace.action).toBe('view');
         expect(superdeskFlags.flags.authoring).toBe(true);
+        lockedItem._editable = true;
     }));
 
     it('can kill an item', inject(function(authoringWorkspace, $rootScope) {
         authoringWorkspace.kill(item);
         $rootScope.$apply();
-        expect(authoringWorkspace.item).toBe(item);
+        expect(authoringWorkspace.item).toBe(lockedItem);
         expect(authoringWorkspace.action).toBe('kill');
     }));
 
     it('can handle edit.item activity', inject(function(superdesk, authoringWorkspace, $rootScope) {
         superdesk.intent('edit', 'item', item);
         $rootScope.$digest();
-        expect(authoringWorkspace.item).toBe(item);
+        expect(authoringWorkspace.item).toBe(lockedItem);
         expect(authoringWorkspace.action).toBe('edit');
     }));
 
@@ -1549,7 +1553,7 @@ describe('authoring workspace', function() {
             var authoringWorkspace = $injector.get('authoringWorkspace');
             $rootScope.$digest();
 
-            expect(authoringWorkspace.item).toBe(item);
+            expect(authoringWorkspace.item).toBe(lockedItem);
             expect(authoringWorkspace.action).toBe('edit');
         }));
 
@@ -1559,7 +1563,7 @@ describe('authoring workspace', function() {
             $rootScope.$digest();
             var authoringWorkspace = $injector.get('authoringWorkspace');
             $rootScope.$digest();
-            expect(authoringWorkspace.item).toBe(item);
+            expect(authoringWorkspace.item).toBe(lockedItem);
             expect(authoringWorkspace.action).toBe('view');
         }));
     });
@@ -1575,11 +1579,12 @@ describe('authoring container directive', function() {
         $templateCache.put('scripts/superdesk-authoring/views/authoring-container.html', '<div></div>');
     }));
 
-    var item, scope, elem, iscope;
+    var item, lockedItem, scope, elem, iscope;
 
     beforeEach(inject(function($compile, $rootScope, $q, authoring) {
         item = {_id: 'foo'};
-        spyOn(authoring, 'open').and.returnValue($q.when(item));
+        lockedItem = {_id: item._id, _editable: true};
+        spyOn(authoring, 'open').and.returnValue($q.when(lockedItem));
 
         scope = $rootScope.$new();
         elem = $compile('<div sd-authoring-container></div>')(scope);
@@ -1591,12 +1596,12 @@ describe('authoring container directive', function() {
         authoringWorkspace.edit(item);
         $rootScope.$digest();
 
-        // testing reset in first cyclte between
+        // testing reset in first cycle between
         expect(iscope.authoring.item).toBe(null);
 
         $rootScope.$digest();
 
-        expect(iscope.authoring.item).toBe(item);
+        expect(iscope.authoring.item).toBe(lockedItem);
         expect(iscope.authoring.action).toBe('edit');
         expect(iscope.authoring.state.opened).toBe(true);
 
@@ -1607,19 +1612,21 @@ describe('authoring container directive', function() {
     }));
 
     it('handles view', inject(function(authoringWorkspace, $rootScope) {
+        lockedItem._editable = false;
         authoringWorkspace.view(item);
         $rootScope.$digest();
         $rootScope.$digest();
-        expect(iscope.authoring.item).toBe(item);
+        expect(iscope.authoring.item).toBe(lockedItem);
         expect(iscope.authoring.action).toBe('view');
         expect(iscope.authoring.state.opened).toBe(true);
+        lockedItem._editable = true;
     }));
 
     it('handles kill', inject(function(authoringWorkspace, $rootScope) {
         authoringWorkspace.kill(item);
         $rootScope.$digest();
         $rootScope.$digest();
-        expect(iscope.authoring.item).toBe(item);
+        expect(iscope.authoring.item).toBe(lockedItem);
         expect(iscope.authoring.action).toBe('kill');
     }));
 
@@ -1627,7 +1634,7 @@ describe('authoring container directive', function() {
         authoringWorkspace.correct(item);
         $rootScope.$digest();
         $rootScope.$digest();
-        expect(iscope.authoring.item).toBe(item);
+        expect(iscope.authoring.item).toBe(lockedItem);
         expect(iscope.authoring.action).toBe('correct');
     }));
 });

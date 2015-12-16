@@ -17,6 +17,7 @@ from eve.versioning import resolve_document_version
 from eve.utils import config, ParsedRequest
 from eve.validation import ValidationError
 
+from apps.content import push_content_notification
 from superdesk.metadata.item import PUB_STATUS, CONTENT_TYPE, ITEM_TYPE, GUID_FIELD, ITEM_STATE, CONTENT_STATE, \
     PUBLISH_STATES, EMBARGO
 from superdesk.metadata.packages import SEQUENCE, LINKED_IN_PACKAGES, GROUPS, PACKAGE
@@ -143,14 +144,13 @@ class BasePublishService(BaseService):
         self.update_published_collection(published_item_id=original[config.ID_FIELD])
         original = get_resource_service(ARCHIVE).find_one(req=None, _id=original[config.ID_FIELD])
         updates.update(original)
-        user = get_user()
 
         if updates[ITEM_OPERATION] != ITEM_KILL and \
                 original.get(ITEM_TYPE) in [CONTENT_TYPE.TEXT, CONTENT_TYPE.PREFORMATTED]:
             get_resource_service('archive_broadcast').on_broadcast_master_updated(updates[ITEM_OPERATION], original)
 
         get_resource_service('archive_broadcast').reset_broadcast_status(updates, original)
-        push_notification('item:updated', item=str(original[config.ID_FIELD]), user=str(user.get(config.ID_FIELD)))
+        push_content_notification([updates])
         self._import_into_legal_archive(updates)
 
     def update(self, id, updates, original):
