@@ -501,7 +501,8 @@ class BasePublishService(BaseService):
                 metadata_from = takes[-1]
 
             for metadata in metadata_tobe_copied:
-                package_updates[metadata] = metadata_from.get(metadata)
+                if metadata in metadata_from:
+                    package_updates[metadata] = metadata_from.get(metadata)
 
             package_updates[GROUPS] = groups
             self.package_service.update_field_in_package(package_updates,

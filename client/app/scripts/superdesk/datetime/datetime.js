@@ -30,6 +30,13 @@
             };
         })
 
+        // format datetime obj to time string
+        .filter('time', function timeFilterFactory() {
+            return function timeFilter(date) {
+                return moment(date).format('h:mm');
+            };
+        })
+
         .constant('moment', moment)
 
         .factory('weekdays', ['gettext', function(gettext) {

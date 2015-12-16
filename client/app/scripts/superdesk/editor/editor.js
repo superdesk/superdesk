@@ -146,6 +146,7 @@ function EditorService(spellcheck, $rootScope, $timeout) {
     });
 
     this.META = Object.freeze({
+        9: 1, // tab
         16: 1, // shift
         17: 1, // ctrl
         18: 1, // alt
@@ -631,6 +632,11 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
                         }
 
                         updateTimeout = $timeout(updateModel, 800, false);
+                    });
+
+                    editorElem.on('blur', function(event) {
+                        cancelTimeout(event);
+                        updateModel();
                     });
 
                     editorElem.on('contextmenu', function(event) {

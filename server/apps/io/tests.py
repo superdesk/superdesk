@@ -42,7 +42,7 @@ def setup_providers(context):
              'is_closed': False, 'critical_errors': {'2005': True}, 'config': {'path': path_to_fixtures}},
             {'name': 'teletype', 'source': 'AAP Teletype', 'feeding_service': 'file', 'feed_parser': 'zczc',
              'is_closed': False, 'config': {'path': path_to_fixtures}},
-            {'name': 'DPA', 'source': 'DPA', 'feeding_service': 'dpa_file', 'feed_parser': 'iptc7901',
+            {'name': 'DPA', 'source': 'DPA', 'feeding_service': 'file', 'feed_parser': 'dpa_iptc7901',
              'is_closed': False, 'config': {'path': path_to_fixtures}}
         ]
 

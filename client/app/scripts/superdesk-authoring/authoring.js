@@ -31,7 +31,8 @@
         targeted_for: [],
         embargo: null,
         renditions: null,
-        body_footer: null
+        body_footer: null,
+        company_codes: []
     });
 
     var DEFAULT_ACTIONS = Object.freeze({
@@ -2426,12 +2427,42 @@
         };
     }
 
-    AuthoringHeaderDirective.$inject = ['api', 'authoringWidgets', '$rootScope', 'archiveService'];
-    function AuthoringHeaderDirective(api, authoringWidgets, $rootScope, archiveService) {
+    AuthoringHeaderDirective.$inject = ['api', 'authoringWidgets', '$rootScope', 'archiveService', 'metadata'];
+    function AuthoringHeaderDirective(api, authoringWidgets, $rootScope, archiveService, metadata) {
         return {
             templateUrl: 'scripts/superdesk-authoring/views/authoring-header.html',
             require: '^sdAuthoringWidgets',
             link: function (scope, elem, attrs, WidgetsManagerCtrl) {
+
+                /**
+                 * Returns true if the Company Codes field should be displayed, false otherwise.
+                 * Company Codes field is displayed only if either Subject or Category has finance category.
+                 */
+                scope.shouldDisplayCompanyCodes = function() {
+                    if (!metadata.values.company_codes) {
+                        return false;
+                    }
+
+                    var display = scope.item.company_codes && scope.item.company_codes.length > 0;
+                    var financeCategory;
+
+                    if (!display && scope.item.anpa_category) {
+                        financeCategory = _.find(scope.item.anpa_category, {'qcode': 'f'});
+                        display = !_.isUndefined(financeCategory) && !_.isNull(financeCategory);
+                    }
+
+                    if (!display && scope.item.subject) {
+                        financeCategory = _.find(scope.item.subject, function (category) {
+                            if (category.qcode === '04000000' || category.qcode === '04006018' || category.qcode === '04019000') {
+                                return category;
+                            }
+                        });
+                        display = !_.isUndefined(financeCategory) && !_.isNull(financeCategory);
+                    }
+
+                    return display;
+                };
+
                 scope.$watch('item', function (item) {
                     if (!item) {
                         return;

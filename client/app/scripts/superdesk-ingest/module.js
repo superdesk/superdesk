@@ -23,14 +23,6 @@
             label: 'File Feed',
             templateUrl: 'scripts/superdesk-ingest/views/settings/fileConfig.html'
         },
-        dpa_file: {
-            label: 'DPA File Feed',
-            templateUrl: 'scripts/superdesk-ingest/views/settings/fileConfig.html'
-        },
-        afp_file: {
-            label: 'AFP File Feed',
-            templateUrl: 'scripts/superdesk-ingest/views/settings/fileConfig.html'
-        },
         reuters_http: {
             label: 'Reuters Feed API',
             templateUrl: 'scripts/superdesk-ingest/views/settings/reutersConfig.html'
@@ -53,10 +45,12 @@
         email_rfc822: 'EMail RFC822 Parser',
         nitf: 'NITF Parser',
         newsml12: 'News ML 1.2 Parser',
+        afpnewsml12: 'AFP News ML 1.2 Parser',
         newsml2: 'News ML-G2 Parser',
         wenn: 'WENN Parser',
         anpa1312: 'ANPA Parser',
         iptc7901: 'IPTC 7901 Parser',
+        dpa_iptc7901: 'DPA IPTC 7901 Parser',
         zczc: 'ZCZC Parser'
     });
 
@@ -613,7 +607,7 @@
                 };
 
                 $scope.gotoIngest = function(source) {
-                    $location.path('/workspace/ingest').search('source', angular.toJson([source]));
+                    $location.path('/search').search({'repo': 'ingest', 'source': angular.toJson([source])});
                 };
 
                 /**

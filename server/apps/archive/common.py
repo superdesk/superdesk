@@ -18,7 +18,6 @@ from pytz import timezone
 
 import superdesk
 from superdesk.users.services import get_sign_off
-from superdesk.celery_app import update_key
 from superdesk.utc import utcnow, get_expiry_date
 from settings import ORGANIZATION_NAME_ABBREVIATION
 from superdesk import get_resource_service
@@ -169,16 +168,11 @@ def generate_unique_id_and_name(item, repo_type=ARCHIVE):
     """
 
     try:
-        key_name = 'TEST_{}_SEQ'.format(repo_type.upper()) if superdesk.app.config.get('SUPERDESK_TESTING', False) \
-            else '{}_SEQ'.format(repo_type.upper())
-
-        unique_id = update_key(key_name, flag=True)
-
-        if unique_id:
-            item['unique_id'] = unique_id
-            item['unique_name'] = "#" + str(unique_id)
-        else:
-            raise IdentifierGenerationError()
+        unique_id = get_resource_service('sequences').get_next_sequence_number(
+            key_name='{}_SEQ'.format(repo_type.upper())
+        )
+        item['unique_id'] = unique_id
+        item['unique_name'] = "#" + str(unique_id)
     except Exception as e:
         raise IdentifierGenerationError() from e
 
@@ -369,7 +363,7 @@ def set_flag(doc, flag_name, flag_value):
 
 
 def is_flag_in_item(doc, flag_name):
-    return 'flags' in doc and flag_name in doc.get('flags', [])
+    return 'flags' in doc and flag_name in doc.get('flags', {})
 
 
 def get_flag(doc, flag_name):
@@ -471,8 +465,13 @@ def item_schema(extra=None):
             'type': 'string',
             'nullable': True,
             'mapping': not_analyzed
+        },
+        'company_codes': {
+            'type': 'list',
+            'mapping': not_analyzed
         }
     }
+
     schema.update(metadata_schema)
     if extra:
         schema.update(extra)

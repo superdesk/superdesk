@@ -23,7 +23,7 @@
                 endpoint: 'search',
                 repo: ['archive', 'published'],
                 notStates: ['spiked'],
-                types: ['text', 'picture', 'audio', 'video'],
+                types: ['text', 'picture', 'audio', 'video', 'composite', 'preformatted'],
                 page: 1,
                 modificationDateAfter: 'now-1d'
             };

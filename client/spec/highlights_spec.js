@@ -173,11 +173,11 @@ describe('highlights', function() {
             monitoring.checkMarkedForHighlight('Highlight two', 2, 0);
 
             //multi mark for highlights, in case of partial mark for selected items
-            monitoring.selectItem(2, 0);
             monitoring.selectItem(2, 1);
+            monitoring.selectItem(2, 2);
             highlights.multiMarkHighlight('Highlight two');
-            monitoring.checkMarkedForHighlight('Highlight two', 2, 0);
             monitoring.checkMarkedForHighlight('Highlight two', 2, 1);
+            monitoring.checkMarkedForHighlight('Highlight two', 2, 2);
 
             //create the highlight and add a item to it
             highlights.createHighlightsPackage('Highlight two');
@@ -186,7 +186,7 @@ describe('highlights', function() {
 
             //from monitoring add an item to highlight package
             workspace.showList('Monitoring');
-            monitoring.actionOnItemSubmenu('Add to current', 'story', 2, 2);
+            monitoring.actionOnItemSubmenu('Add to current', 'story', 2, 3);
             expect(authoring.getGroupItems('story').count()).toBe(1);
 
             //change desk on highlights

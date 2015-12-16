@@ -289,6 +289,18 @@ class SluglineDeskService(BaseService):
     PLACE = 'place'
     GROUP = 'group'
 
+    def _get_slugline_with_legal(self, article):
+        """
+        If the article is set to be legal adds 'Legal:' prefix for slugline
+        :param article:
+        :return:
+        """
+        is_legal = article.get('flags', {}).get('marked_for_legal', False)
+        if is_legal:
+            return '{}: {}'.format('Legal', article.get(self.SLUGLINE, ''))
+        else:
+            return article.get(self.SLUGLINE, '')
+
     def get(self, req, lookup):
         """
         Given the desk the function will return a summary of the sluglines and headlines published from that
@@ -308,7 +320,7 @@ class SluglineDeskService(BaseService):
         # rest of the world docs
         row_docs = []
         for item in desk_items:
-            slugline = item.get(self.SLUGLINE)
+            slugline = self._get_slugline_with_legal(item)
             headline = item.get(self.HEADLINE)
             versioncreated = item.get(self.VERSION_CREATED)
             placename = 'Domestic'
@@ -342,14 +354,16 @@ class SluglineDeskService(BaseService):
         :param placename:
         :param slugline:
         :param headline:
+        :param is_legal:
         :param old_sluglines:
         :param versioncreated:
         :return:
         """
         places.append({self.NAME: placename if not any(p[self.NAME] == placename for p in places) else '-',
-                       self.SLUGLINE: slugline if not any(p[self.SLUGLINE].lower() == slugline.lower()
+                       self.SLUGLINE: slugline if not any(self._get_slugline_with_legal(p).lower() == slugline.lower()
                                                           for p in places) else '-',
-                       self.HEADLINE: headline, self.OLD_SLUGLINES: old_sluglines,
+                       self.HEADLINE: headline,
+                       self.OLD_SLUGLINES: old_sluglines,
                        self.VERSION_CREATED: versioncreated})
 
     def _find_other_sluglines(self, family_id, slugline, versioncreated):
@@ -367,10 +381,11 @@ class SluglineDeskService(BaseService):
         lookup = {'family_id': family_id}
         family = superdesk.get_resource_service('published').get_from_mongo(req=req, lookup=lookup)
         for member in family:
-            if member.get('slugline', '').lower() != slugline.lower():
+            member_slugline = self._get_slugline_with_legal(member)
+            if member_slugline.lower() != slugline.lower():
                 if member.get('versioncreated') < versioncreated:
-                    if not member.get('slugline', '') in older_sluglines:
-                        older_sluglines.append(member.get('slugline', ''))
+                    if member_slugline not in older_sluglines:
+                        older_sluglines.append(member_slugline)
                 else:
                     return (True, [])
         return (False, older_sluglines)

@@ -324,11 +324,7 @@
                     preview(args.item);
                 });
 
-                scope.$on('item:highlight', function(event, data) {
-                    if (scope.group.type === 'highlights') {
-                        queryItems();
-                    }
-                });
+                scope.$on('item:highlight', queryItems);
 
                 scope.$on('content:update', function(event, data) {
                     if (cards.shouldUpdate(scope.group, data)) {
@@ -499,10 +495,6 @@
                     scope.loading = true;
                     scope.total = null;
 
-                    if (!scope.previewingBroadcast) {
-                        monitoring.preview(null);
-                    }
-
                     if (desks.changeDesk) {
                         desks.changeDesk = false;
                         monitoring.singleGroup = null;
@@ -531,7 +523,14 @@
 
                     criteria.source.from = from;
                     criteria.source.size = to - from;
+
+                    var lookup = multi.getIds();    //Ids of selected items
                     return apiquery().then(function(items) {
+                        scope.$on('multi:reset', function(event, args) {
+                            lookup = null;
+                            _.merge(items._items, args);
+                        });
+
                         scope.$applyAsync(function() {
                             if (scope.total !== items._meta.total) {
                                 scope.total = items._meta.total;
@@ -540,6 +539,17 @@
 
                             list.style.paddingTop = (from * ITEM_HEIGHT) + 'px';
                             scope.items = merge(items._items);
+
+                            if (lookup != null) {
+                                _.filter(items._items, function(item) {
+                                    _.find(lookup, function(selectedId) {
+                                        if (selectedId === item._id) {
+                                            item.selected = true;
+                                        }
+                                        return selectedId === item._id;
+                                    });
+                                });
+                            }
                         });
                     });
                 }
