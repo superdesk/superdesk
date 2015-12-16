@@ -9,15 +9,20 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 
-from ..models.item import ItemModel
-from eve.utils import config
+import superdesk
 from superdesk.errors import SuperdeskApiError
-from superdesk.utc import utcnow
 from superdesk.notification import push_notification
+from superdesk.users.services import current_user_has_privilege
+from superdesk.utc import utcnow
+
+from eve.utils import config
+
 from apps.common.components.base_component import BaseComponent
 from apps.common.models.utils import get_model
-from superdesk.users.services import current_user_has_privilege
-import superdesk
+from apps.content import push_content_notification
+
+from ..models.item import ItemModel
+
 
 LOCK_USER = 'lock_user'
 LOCK_SESSION = 'lock_session'
@@ -83,6 +88,7 @@ class ItemLock(BaseComponent):
             # version 0 created on lock item
             if item.get(config.VERSION, 0) == 0 and item['state'] == 'draft':
                 superdesk.get_resource_service('archive').delete(lookup={'_id': item['_id']})
+                push_content_notification([item])
                 return
 
             updates = {LOCK_USER: None, LOCK_SESSION: None, 'lock_time': None, 'force_unlock': True}
