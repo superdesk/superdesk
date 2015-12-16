@@ -247,9 +247,14 @@
                     $scope.origTemplate = template || {type: 'text', is_public: true};
                     $scope.template = _.create($scope.origTemplate);
                     $scope.template.schedule = $scope.origTemplate.schedule || {};
-                    $scope.template.data = $scope.origTemplate.data || {};
+                    $scope.template.data = $scope.origTemplate.data || {
+                        headline: '',
+                        abstract: '',
+                        byline: '',
+                        body_html: ''
+                    };
                     $scope.template.is_public = $scope.template.is_public !== false;
-                    $scope.item = $scope.template.data;
+                    $scope.item = $scope.template.data || {};
                     $scope._editable = true;
                     $scope.updateStages($scope.template.template_desk);
                 };
@@ -397,7 +402,7 @@
                  */
                 function fetchTemplates() {
                     templates.fetchTemplates(scope.options.page, PAGE_SIZE, 'create',
-                        desks.activeDeskId, session.identity._id, scope.options.keyword)
+                        desks.getCurrentDeskId(), session.identity._id, scope.options.keyword)
                     .then(function(result) {
                         scope.publicTemplates = [];
                         scope.privateTemplates = [];

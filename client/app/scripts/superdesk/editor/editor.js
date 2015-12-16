@@ -146,6 +146,7 @@ function EditorService(spellcheck, $rootScope, $timeout) {
     });
 
     this.META = Object.freeze({
+        9: 1, // tab
         16: 1, // shift
         17: 1, // ctrl
         18: 1, // alt

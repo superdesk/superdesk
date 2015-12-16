@@ -152,7 +152,7 @@ describe('templates', function() {
         inject(function(api, session, desks, $rootScope, $compile, $q) {
             $rootScope.$digest(); // let it reset identity in auth
             session.identity = {_id: 'foo'};
-            desks.activeDeskId = 'sports';
+            spyOn(desks, 'getCurrentDeskId').and.returnValue('sports');
             spyOn(api, 'query').and.returnValue($q.when({_items: [
                 {_id: 'public1'},
                 {_id: 'public2'},
