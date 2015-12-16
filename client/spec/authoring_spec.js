@@ -235,9 +235,9 @@ describe('authoring', function() {
     it('related item widget', function() {
         monitoring.actionOnItem('Edit', 1, 1);
         authoring.openRelatedItem();
+        expect(authoring.getRelatedItems().count()).toBe(8);
+        authoring.searchRelatedItems('item3');
         expect(authoring.getRelatedItems().count()).toBe(1);
-        authoring.searchRelatedItems('item');
-        expect(authoring.getRelatedItems().count()).toBe(7);
     });
 
     it('related item widget can open published item', function() {
