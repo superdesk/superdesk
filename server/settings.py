@@ -130,7 +130,7 @@ CELERYBEAT_SCHEDULE = {
     },
     'content:gc': {
         'task': 'apps.archive.content_expiry',
-        'schedule': crontab(minute=30)
+        'schedule': crontab(minute='*/30')
     },
     'publish:transmit': {
         'task': 'superdesk.publish.transmit',
