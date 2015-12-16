@@ -1063,7 +1063,7 @@
                                 itemsById: scope.itemsById
                             });
                             console.timeEnd('render');
-                            console.log('items:', scope.items._items.length);
+                            console.log('items:', scope.itemsList.length);
                             scope.rendering = false;
                         }
                     }
@@ -1302,6 +1302,36 @@
                         );
                     };
 
+                    var HighlightsInfo = React.createClass({
+                        render: function() {
+                            var highlights = this.props.item.highlights || [];
+                            return React.createElement(
+                                'div',
+                                {className: 'highlights-box'},
+                                highlights.length ? 
+                                    React.createElement(
+                                        'div',
+                                        {className: 'highlights-list dropdown'},
+                                        React.createElement(
+                                            'button',
+                                            {className: 'dropdown-toggle'},
+                                            React.createElement('i', {
+                                                className: classNames({
+                                                    'icon-star red': highlights.length === 1,
+                                                    'icon-multi-star red': highlights.length > 1
+                                                })
+                                            })
+                                        )
+
+                                    ) : null
+                            );
+                        }
+                    });
+
+                    var FetchedDesksInfo = function(props) {
+                        return React.createElement('div');
+                    };
+
                     var ListItemInfo = function(props) {
                         var item = props.item;
                         var flags = item.flags || {};
@@ -1314,6 +1344,7 @@
                             React.createElement('div', {className: 'line'}, 
                                 React.createElement('span', {className: 'word-count'}, item.word_count),
                                 item.slugline ? React.createElement('span', {className: 'keyword'}, item.slugline.substr(0, 40)) : null,
+                                React.createElement(HighlightsInfo, {item: item}),
                                 React.createElement('span', {className: 'item-heading'}, item.headline ? item.headline.substr(0, 90) : item.type),
                                 React.createElement('time', {}, moment(item.versioncreated).fromNow())
                             ),
@@ -1327,6 +1358,7 @@
                                 anpa.name ? React.createElement('div', {className: 'category'}, anpa.name) : null,
                                 React.createElement('span', {className: 'provider'}, provider.name),
                                 item.is_spiked ? React.createElement('div', {className: 'expires'}, gettext('expires') + ' ' + moment(item.expiry).fromNow()) : null,
+                                item.archived ? React.createElement(FetchedDesksInfo, {item: item}) : null,
                                 React.createElement(ItemContainer, {item: item, desk: props.desk})
                             )
                         );
@@ -1704,7 +1736,8 @@
                         var list = elem.find('.shadow-list-holder')[0];
                         var itemList = React.createElement(ItemList, {
                             ingestProvidersById: scope.ingestProvidersById,
-                            desksById: scope.desksById
+                            desksById: scope.desksById,
+                            highlightsById: scope.highlightsById
                         });
 
                         listComponent = ReactDOM.render(itemList, list);
@@ -2642,9 +2675,10 @@
                 label: gettext('Search'),
                 templateUrl: asset.templateUrl('superdesk-search/views/search.html'),
                 sideTemplateUrl: 'scripts/superdesk-workspace/views/workspace-sidenav.html',
-                controller: ['$scope', 'ingestProvidersById', 'desksById', function($scope, ingestProvidersById, desksById) {
+                controller: ['$scope', 'ingestProvidersById', 'desksById', 'highlightsById', function($scope, ingestProvidersById, desksById, highlightsById) {
                     $scope.ingestProvidersById = ingestProvidersById;
                     $scope.desksById = desksById
+                    $scope.highlightsById = highlightsById
                 }],
                 resolve: {
                     ingestProvidersById: ['ingestSources', function(ingestSources) {
@@ -2656,6 +2690,16 @@
                         return desks.initialize().then(function() {
                             return desks.deskLookup;
                         });
+                    }],
+                    highlightsById: ['highlightsService', function(highlightsService) {
+                        return highlightsService.get().then(function(result) {
+                            var highlights = {};
+                            result._items.forEach(function(item) {
+                                highlights[item._id] = item;
+                            });
+                            return highlights;
+                        })
+
                     }]
                 }
             });
