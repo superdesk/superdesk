@@ -2,9 +2,9 @@
 
 describe('familyService', function() {
     var items = [
-        {_id: 'z', family_id: 'family1', task: {desk: 'desk1'}},
-        {_id: 'x', family_id: 'family1', task: {desk: 'desk2'}},
-        {_id: 'c', family_id: 'family2', task: {desk: 'desk3'}}
+        {unique_id: 1, _id: 'z', family_id: 'family1', task: {desk: 'desk1'}},
+        {unique_id: 2, _id: 'x', family_id: 'family1', task: {desk: 'desk2'}},
+        {unique_id: 3, _id: 'c', family_id: 'family2', task: {desk: 'desk3'}}
     ];
     var deskList = {
         desk1: {title: 'desk1'},
@@ -31,7 +31,9 @@ describe('familyService', function() {
                         var members = _.filter(items, {family_id: familyId});
 
                         if (params.source.query.filtered.filter.and[2]) {
-                            _.remove(members, {_id: params.source.query.filtered.filter.and[2].not.term._id});
+                            _.remove(members,
+                                {unique_id: params.source.query.filtered.filter.and[2].not.term.unique_id}
+                            );
                         }
 
                         return $q.when({_items: members});
@@ -59,7 +61,7 @@ describe('familyService', function() {
 
     it('can fetch members of a family with exclusion', inject(function($rootScope, familyService, api) {
         var members = null;
-        familyService.fetchItems('family1', {_id: 'z'})
+        familyService.fetchItems('family1', {unique_id: 1, _id: 'z'})
         .then(function(result) {
             members = result;
         });
@@ -92,7 +94,7 @@ describe('familyService', function() {
     it('can fetch desks of members of a family with exclusion',
     inject(function($rootScope, familyService, api, desks) {
         var memberDesks = null;
-        familyService.fetchDesks({_id: 'z', family_id: 'family1'}, true)
+        familyService.fetchDesks({unique_id: 1, _id: 'z', family_id: 'family1'}, true)
         .then(function(result) {
             memberDesks = result;
         });

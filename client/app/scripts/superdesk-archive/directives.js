@@ -664,22 +664,19 @@
         .service('familyService', ['api', 'desks', function(api, desks) {
 
             this.fetchItems = function(familyId, excludeItem) {
-                var repo = 'archive';
-
-                if (excludeItem && excludeItem._type === 'published') {
-                    repo = 'published';
-                }
+                var repo = 'archive,published';
 
                 var filter = [
                     {not: {term: {state: 'spiked'}}},
                     {term: {family_id: familyId}}
                 ];
 
-                if (excludeItem && excludeItem._type !== 'published') {
-                    filter.push({not: {term: {_id: excludeItem._id}}});
+                if (excludeItem) {
+                    filter.push({not: {term: {unique_id: excludeItem.unique_id}}});
                 }
 
-                return api(repo).query({
+                return api('search').query({
+                    repo: repo,
                     source: {
                         query: {filtered: {filter: {
                             and: filter
