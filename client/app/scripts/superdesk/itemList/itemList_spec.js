@@ -242,7 +242,7 @@ describe('itemListService', function() {
         });
     }));
 
-    it('related items query without hypen', inject(function($rootScope, itemListService, api) {
+    it('related items query without backslash and colon', inject(function($rootScope, itemListService, api) {
         var queryParams = null;
 
         itemListService.fetch({
@@ -253,27 +253,75 @@ describe('itemListService', function() {
             queryParams = params;
         });
         $rootScope.$digest();
+
         expect(queryParams.source.query.filtered.query).toEqual({
-            prefix: {
-                'slugline.phrase': 'kilo'
+            query_string: {
+                query: 'slugline:(kilo)',
+                lenient: false,
+                default_operator: 'OR'
             }
         });
     }));
 
-    it('related items query with hypen', inject(function($rootScope, itemListService, api) {
+    it('related items query with colon', inject(function($rootScope, itemListService, api) {
         var queryParams = null;
 
         itemListService.fetch({
-            keyword: 'kilo-gram',
+            keyword: 'kilo: gram:',
             related: true
         })
         .then(function(params) {
             queryParams = params;
         });
         $rootScope.$digest();
+
         expect(queryParams.source.query.filtered.query).toEqual({
-            prefix: {
-                'slugline.phrase': 'kilo gram'
+            query_string: {
+                query: 'slugline:("kilo gram") slugline:(kilo) slugline:(gram)',
+                lenient: false,
+                default_operator: 'OR'
+            }
+        });
+    }));
+
+    it('related items query with forwardslash', inject(function($rootScope, itemListService, api) {
+        var queryParams = null;
+
+        itemListService.fetch({
+            keyword: 'kilo/ gram/',
+            related: true
+        })
+        .then(function(params) {
+            queryParams = params;
+        });
+        $rootScope.$digest();
+
+        expect(queryParams.source.query.filtered.query).toEqual({
+            query_string: {
+                query: 'slugline:("kilo\\/ gram\\/") slugline:(kilo\\/) slugline:(gram\\/)',
+                lenient: false,
+                default_operator: 'OR'
+            }
+        });
+    }));
+
+    it('related items query with backwardslash', inject(function($rootScope, itemListService, api) {
+        var queryParams = null;
+
+        itemListService.fetch({
+            keyword: 'kilo\\ gram\\',
+            related: true
+        })
+        .then(function(params) {
+            queryParams = params;
+        });
+        $rootScope.$digest();
+
+        expect(queryParams.source.query.filtered.query).toEqual({
+            query_string: {
+                query: 'slugline:("kilo gram") slugline:(kilo) slugline:(gram)',
+                lenient: false,
+                default_operator: 'OR'
             }
         });
     }));
