@@ -1,6 +1,8 @@
 (function() {
     'use strict';
 
+    var uploadProvider;
+
     describe('request service', function() {
         beforeEach(module('superdesk.mocks'));
         beforeEach(module('superdesk.api'));
@@ -11,6 +13,7 @@
                 };
             }]);
         }));
+        beforeEach(module('superdesk.upload'));
 
         it('can resend $http request', inject(function(request, $httpBackend) {
             var config = {url: 'test', method: 'GET'};

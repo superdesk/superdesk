@@ -177,9 +177,14 @@ describe('user edit form', function() {
     beforeEach(module('superdesk.templates-cache'));
 
     beforeEach(module(function($provide) {
-        $provide.service('session', function() {
+        $provide.service('session', function($q) {
             return {
-                identity: {_id: 1}
+                identity: {_id: 1},
+                getIdentity: function () {
+                    return $q.when(
+                        {'who': 'cares', 'this': 'is', 'totaly': 'fake'}
+                    );
+                }
             };
         });
     }));
@@ -187,7 +192,6 @@ describe('user edit form', function() {
     it('check if first_name, last_name, phone and email are readonly',
         inject(function($rootScope, $compile, $q, userList) {
         var scope = $rootScope.$new(true);
-
         var user = {
             _id: 1,
             _readonly: {'first_name': true, 'last_name': true, 'phone': true, 'email': true},

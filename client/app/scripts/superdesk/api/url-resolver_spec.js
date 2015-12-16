@@ -7,6 +7,8 @@
             USERS_URL = '/users',
             RESOURCES = {_links: {child: [{title: 'users', href: USERS_URL}]}};
 
+        beforeEach(module('superdesk.api'));
+
         beforeEach(module(function($provide) {
             // $provide.service('urls', URLResolver);
             $provide.constant('config', {server: {url: SERVER_URL}});
