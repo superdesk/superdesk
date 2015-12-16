@@ -7,7 +7,7 @@
         'superdesk.ingest',
         'superdesk.workflow'
     ])
-        .directive('sdItemLock', ['api', 'lock', 'privileges', function(api, lock, privileges) {
+        .directive('sdItemLock', ['api', 'lock', 'privileges', 'desks', function(api, lock, privileges, desks) {
             return {
                 templateUrl: 'scripts/superdesk-archive/views/item-lock.html',
                 scope: {item: '='},
@@ -42,7 +42,15 @@
                     };
 
                     scope.can_unlock = function() {
-                        return lock.can_unlock(scope.item);
+                        if (lock.can_unlock(scope.item)) {
+                            if (scope.item.task && scope.item.task.desk && desks.userDesks) {
+                                return _.find(desks.userDesks._items, {_id: scope.item.task.desk});
+                            }
+
+                            return true;
+                        }
+
+                        return false;
                     };
 
                     scope.$on('item:lock', function(_e, data) {
