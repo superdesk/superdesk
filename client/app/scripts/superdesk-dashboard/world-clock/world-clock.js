@@ -223,8 +223,8 @@
                 }
             };
         })
-        .config(['widgetsProvider', function(widgetsProvider) {
-            widgetsProvider.widget('world-clock', {
+        .config(['dashboardWidgetsProvider', function(dashboardWidgets) {
+            dashboardWidgets.addWidget('world-clock', {
                 label: gettext('World Clock'),
                 multiple: true,
                 icon: 'time',

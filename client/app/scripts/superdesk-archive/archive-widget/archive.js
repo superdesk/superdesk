@@ -5,8 +5,8 @@
         'superdesk.widgets.base',
         'superdesk.authoring.widgets'
     ])
-        .config(['widgetsProvider', function(widgets) {
-            widgets.widget('archive', {
+        .config(['dashboardWidgetsProvider', function(dashboardWidgets) {
+            dashboardWidgets.addWidget('archive', {
                 label: 'Content',
                 multiple: true,
                 icon: 'archive',

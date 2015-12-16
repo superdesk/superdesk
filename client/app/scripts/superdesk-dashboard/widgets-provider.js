@@ -2,16 +2,16 @@
     'use strict';
 
     angular.module('superdesk.dashboard.widgets', [])
-    .provider('widgets', function() {
+    .provider('dashboardWidgets', function() {
 
-        var widgets = {};
+        var privateWidgets = {};
 
-        this.widget = function(id, widget) {
-            widgets[id] = _.extend({_id: id}, widget);
+        this.addWidget = function(id, widget, debug) {
+            privateWidgets[id] = _.extend({_id: id}, widget);
         };
 
         this.$get = function() {
-            return _.values(widgets);
+            return _.values(privateWidgets);
         };
     });
 

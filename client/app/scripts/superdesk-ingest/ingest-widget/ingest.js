@@ -5,8 +5,8 @@
         'superdesk.widgets.base',
         'superdesk.authoring.widgets'
     ])
-        .config(['widgetsProvider', function(widgets) {
-            widgets.widget('ingest', {
+        .config(['dashboardWidgetsProvider', function(dashboardWidgets) {
+            dashboardWidgets.addWidget('ingest', {
                 label: 'Ingest',
                 multiple: true,
                 icon: 'ingest',

@@ -1,8 +1,8 @@
 (function() {
     'use strict';
 
-    DashboardController.$inject = ['$scope', 'desks', 'widgets', 'api', 'session', 'workspaces', 'modal', 'gettext'];
-    function DashboardController($scope, desks, widgets, api, session, workspaces, modal, gettext) {
+    DashboardController.$inject = ['$scope', 'desks', 'dashboardWidgets', 'api', 'session', 'workspaces', 'modal', 'gettext'];
+    function DashboardController($scope, desks, dashboardWidgets, api, session, workspaces, modal, gettext) {
         var vm = this;
 
         $scope.edited = null;
@@ -17,7 +17,7 @@
                 $scope.$applyAsync(function() {
                     vm.current = workspace;
                     vm.widgets = extendWidgets(workspace.widgets || []);
-                    vm.availableWidgets = widgets;
+                    vm.availableWidgets = dashboardWidgets;
                 });
             }
         }
@@ -29,7 +29,7 @@
          * @return {promise} list of widgets
          */
         function getAvailableWidgets(userWidgets) {
-            return _.filter(widgets, function(widget) {
+            return _.filter(dashboardWidgets, function(widget) {
                 return widget.multiple || _.find(userWidgets, {_id: widget._id}) == null;
             });
         }
@@ -76,7 +76,7 @@
 
         function extendWidgets(currentWidgets) {
             return _.map(currentWidgets, function(widget) {
-                var original = _.find(widgets, {_id: widget._id});
+                var original = _.find(dashboardWidgets, {_id: widget._id});
                 return angular.extend({}, original, widget);
             });
         }

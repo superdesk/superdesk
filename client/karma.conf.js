@@ -179,6 +179,9 @@ module.exports = function(config) {
 
             'app/scripts/superdesk-search-providers/module.js',
 
+            // must be loaded after app includes, but before spec includes
+            //'app/scripts/superdesk/mocks.js', // fuck this thing
+
             // specs files
             // NOTE: uncommented are passing
             'app/scripts/superdesk-archive/controllers/upload_spec.js',
@@ -192,7 +195,7 @@ module.exports = function(config) {
             'app/scripts/superdesk-authoring/workqueue/tests/workqueue_spec.js',
             'app/scripts/superdesk-content-filters/tests/ContentFiltersConfigCtrl_spec.js',
             'app/scripts/superdesk-content-filters/tests/filters_spec.js',
-            //'app/scripts/superdesk-dashboard/widgets-provider_spec.js',
+            'app/scripts/superdesk-dashboard/widgets-provider_spec.js',
             'app/scripts/superdesk-dashboard/workspace-tasks/tests/tasks_spec.js',
             'app/scripts/superdesk-dashboard/world-clock/tests/tzdata_spec.js',
             'app/scripts/superdesk-dashboard/world-clock/tests/WorldClockConfigController_spec.js',

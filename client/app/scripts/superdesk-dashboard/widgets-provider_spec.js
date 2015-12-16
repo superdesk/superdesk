@@ -1,33 +1,35 @@
 (function() {
-'use strict';
+    'use strict';
 
+    describe('widgets provider', function() {
+        var dashboardWidgetsProvider, widgets;
 
-describe('widgets provider', function() {
+        beforeEach(function() {
 
-    var WidgetsProvider = window.WidgetsProvider;
+            angular.module('superdesk.dashboard.widgets.tests', [])
+            .config(['dashboardWidgetsProvider', function(_dashboardWidgetsProvider_) {
+                dashboardWidgetsProvider = _dashboardWidgetsProvider_;
+            }]);
 
-    beforeEach(module('superdesk.dashboard.widgets'));
+            module('superdesk.dashboard.widgets', 'superdesk.dashboard.widgets.tests');
 
-    /*
-    beforeEach(module(function($provide) {
-        var provider = $provide.provider('widgets', WidgetsProvider);
-        provider.widget('id', {label: 'first'});
-        provider.widget('id', {label: 'second'});
-    }));
-    */
-    beforeEach(inject(function (widgets) {
-        widgets.widget('id', {label: 'first'});
-        widgets.widget('id', {label: 'second'});
-    }));
+            // init the tests module to get the actual provider
+            inject(function(){});
+        });
 
-    it('is defined', function() {
-        expect(WidgetsProvider).not.toBe(undefined);
+        beforeEach(function() {
+            dashboardWidgetsProvider.addWidget('id', {label: 'first'}, 'true');
+            dashboardWidgetsProvider.addWidget('id', {label: 'second'}, 'true');
+        });
+
+        it('is defined', inject(function(dashboardWidgets) {
+            expect(dashboardWidgets).not.toBe(undefined);
+        }));
+
+        it('can register widgets', inject(function(dashboardWidgets) {
+            expect(dashboardWidgets.length).toBe(1);
+            expect(dashboardWidgets[0]._id).toBe('id');
+            expect(dashboardWidgets[0].label).toBe('second');
+        }));
     });
-
-    it('can register widgets', inject(function(widgets) {
-        expect(widgets.length).toBe(1);
-        expect(widgets[0]._id).toBe('id');
-        expect(widgets[0].label).toBe('second');
-    }));
-});
 })();

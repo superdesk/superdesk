@@ -2,8 +2,8 @@
     'use strict';
 
     angular.module('superdesk.users.activity', ['superdesk.users', 'superdesk.dashboard.widgets', 'superdesk.asset'])
-        .config(['widgetsProvider', 'assetProvider', function(widgets, asset) {
-            widgets.widget('activity', {
+        .config(['dashboardWidgetsProvider', 'assetProvider', function(dashboardWidgets, asset) {
+            dashboardWidgets.addWidget('activity', {
                 label: 'Activity Stream',
                 multiple: true,
                 max_sizex: 2,
