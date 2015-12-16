@@ -499,10 +499,6 @@
                     scope.loading = true;
                     scope.total = null;
 
-                    if (!scope.previewingBroadcast) {
-                        monitoring.preview(null);
-                    }
-
                     if (desks.changeDesk) {
                         desks.changeDesk = false;
                         monitoring.singleGroup = null;
