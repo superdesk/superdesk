@@ -183,7 +183,7 @@ module.exports = function(config) {
             // NOTE: uncommented are passing
             'app/scripts/superdesk-archive/controllers/upload_spec.js',
             'app/scripts/superdesk-archive/family_spec.js',
-            'app/scripts/superdesk-archive/tests/archive_spec.js', // JUST ADDED THIS FUCKER ---------------------------------------------------------
+            'app/scripts/superdesk-archive/tests/archive_spec.js',
             'app/scripts/superdesk-authoring/comments/comments_spec.js',
             'app/scripts/superdesk-authoring/metadata/tests/MetadataWidgetCtrl_spec.js',
             'app/scripts/superdesk-authoring/multiedit/tests/multiedit_spec.js',
