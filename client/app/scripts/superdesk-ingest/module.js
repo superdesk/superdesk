@@ -1524,8 +1524,8 @@ define([
         });
     }]);
 
-    SendService.$inject = ['desks', 'api', '$q', 'notify', 'authoringWorkspace'];
-    function SendService(desks, api, $q, notify, authoringWorkspace) {
+    SendService.$inject = ['desks', 'api', '$q', 'notify', 'authoringWorkspace', 'multi'];
+    function SendService(desks, api, $q, notify, authoringWorkspace, multi) {
         this.one = sendOne;
         this.all = sendAll;
 
@@ -1587,13 +1587,19 @@ define([
          */
         function sendOneAs(item, config) {
             var data = getData(config);
-            return api.save('fetch', {}, data, item).then(function(archived) {
-                item.archived = archived._created;
-                if (config.open) {
-                    authoringWorkspace.edit(archived);
-                }
-                return archived;
-            });
+            if (item._type === 'ingest') {
+                return api.save('fetch', {}, data, item).then(function (archived) {
+                    item.archived = archived._created;
+                    if (config.open) {
+                        authoringWorkspace.edit(archived);
+                    }
+                    return archived;
+                });
+            } else if (!item.lock_user) {
+                return api.save('move', {}, {task: data}, item).then(function (item) {
+                    return item;
+                });
+            }
 
             function getData(config) {
                 var data = {
@@ -1626,6 +1632,7 @@ define([
             vm.config = $q.defer();
             return vm.config.promise.then(function(config) {
                 vm.config = null;
+                multi.reset();
                 return $q.all(items.map(function(item) {
                     return sendOneAs(item, config);
                 }));

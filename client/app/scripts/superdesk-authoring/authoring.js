@@ -1602,10 +1602,10 @@
             }
         };
     }
-    SendItem.$inject = ['$q', 'api', 'desks', 'notify', 'authoringWorkspace', 'superdeskFlags',
-        '$location', 'macros', '$rootScope', 'authoring', 'send', 'spellcheck', 'confirm', 'archiveService', 'preferencesService'];
-    function SendItem($q, api, desks, notify, authoringWorkspace, superdeskFlags,
-        $location, macros, $rootScope, authoring, send, spellcheck, confirm, archiveService, preferencesService) {
+    SendItem.$inject = ['$q', 'api', 'desks', 'notify', 'authoringWorkspace', 'superdeskFlags', '$location', 'macros',
+        '$rootScope', 'authoring', 'send', 'spellcheck', 'confirm', 'archiveService', 'preferencesService', 'multi'];
+    function SendItem($q, api, desks, notify, authoringWorkspace, superdeskFlags, $location, macros,
+            $rootScope, authoring, send, spellcheck, confirm, archiveService, preferencesService, multi) {
         return {
             scope: {
                 item: '=',
@@ -1637,6 +1637,7 @@
                     if (config !== oldConfig) {
                         scope.isActive = !!config;
                         scope.item = scope.isActive ? {} : null;
+                        scope.multiItems = multi.count ? multi.getItems() : null;
                         scope.config = config;
                         activate();
                     }
@@ -1843,6 +1844,23 @@
                     } else {
                         return runSendAndContinue();
                     }
+                };
+
+                /*
+                 * Returns true if 'send' action is allowed, otherwise false
+                 * @returns {Boolean}
+                 */
+                scope.canSendItem = function () {
+                    var itemType = [], typesList;
+                    if (scope.multiItems) {
+                        angular.forEach(scope.multiItems, function (item) {
+                            itemType[item._type] = 1;
+                        });
+                        typesList = Object.keys(itemType);
+                        itemType = typesList.length === 1 ? typesList[0] : null;
+                    }
+
+                    return scope.mode === 'authoring' || itemType === 'archive';
                 };
 
                 /**
