@@ -6,10 +6,15 @@
 <div class="modal-body split-popup">
     <aside class="sidebar">
         <ul>
-            <li ng-repeat="method in methods" ng-click="activate(method)" ng-class="{active: active == this}">
+            <li ng-repeat="method in methods" ng-click="activate(method)" ng-class="{active: active === method}">
                 <i class="avatar-icon-{{ method.id }}"></i> {{ method.label }}
             </li>
         </ul>
+        <div class="remove-avatar">
+            <i class="avatar-icon-remove"></i><span class="ng-scope">No image</span>
+            <span class="sd-checkbox ng-valid" sd-check="" ng-model="" ng-disabled=""></span>                        
+            <label>shows your initials instead</label>
+        </div>
     </aside>
 
     <section class="main" sd-image-preview="preview.url" data-file="preview.img" data-progress-width="progress.width">
