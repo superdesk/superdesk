@@ -143,7 +143,7 @@
             </div>
         </div>
 
-        <button id="send-to-btn" ng-show="_editable"
+        <button id="send-to-btn" ng-show="_editable && item.state !== 'published'"
             class="navbtn navbtn-hover" title="{{ :: 'Send to / Publish' | translate }}"
             ng-click="views.send = !views.send">
             <i class="svg-icon-sendto"></i>

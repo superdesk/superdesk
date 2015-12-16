@@ -2515,8 +2515,9 @@
          * @param {string} action
          */
         this.edit = function(item, action) {
+            action = action || (item.state === 'published') ? 'view' : 'edit';
             if (item) {
-                authoringOpen(item._id, action || 'edit', item._type || null);
+                authoringOpen(item._id, action, item._type || null);
             } else {
                 self.close();
             }
