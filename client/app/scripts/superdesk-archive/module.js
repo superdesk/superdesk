@@ -21,14 +21,18 @@
          * @param {Object} item
          */
         this.toggle = function(item) {
+            items = _.without(items, items.find(identity));
             if (item.selected) {
                 items = _.union(items, [item]);
-            } else {
-                _.remove(items, function(obj) {
                     return (obj._id === item._id && obj._current_version === item._current_version);
                 });
             }
+
             this.count = items.length;
+
+            function identity(_item) {
+                return _item._id === item._id && _item._current_version === item._current_version;
+            }
         };
 
         /**

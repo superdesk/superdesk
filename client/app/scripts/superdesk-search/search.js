@@ -821,9 +821,9 @@
          * Item list with sidebar preview
          */
         .directive('sdSearchResults', ['$location', 'preferencesService', 'packages', 'asset', '$timeout', 'api', 'search', 'session',
-        'moment', 'gettext', 'superdesk', 'workflowService', 'archiveService', 'activityService',
+        'moment', 'gettext', 'superdesk', 'workflowService', 'archiveService', 'activityService', 'multi',
         function($location, preferencesService, packages, asset, $timeout, api, search, session,
-        moment, gettext, superdesk, workflowService, archiveService, activityService) {
+        moment, gettext, superdesk, workflowService, archiveService, activityService, multi) {
             var update = {
                 'archive:view': {
                     'allowed': [
@@ -1110,8 +1110,69 @@
                                     'small',
                                     {title: headline},
                                     headline.substr(0, 90)
+                                ),
+                                React.createElement(ItemContainer, {item: item, desk: props.desk})
+                            ),
+                            React.createElement(SelectBox, {item: item, onMultiSelect: props.onMultiSelect})
+                        );
+                    };
+
+                    var SelectBox = React.createClass({
+                        getInitialState: function() {
+                            return {selected: !!this.props.item.selected};
+                        },
+
+                        toggle: function(event) {
+                            event.stopPropagation();
+                            var selected = !this.state.selected;
+                            this.setState({selected: selected});
+                            this.props.onMultiSelect(this.props.item, selected);
+                        },
+
+                        render: function() {
+                            var item = this.props.item;
+                            return React.createElement(
+                                'div',
+                                {className: 'selectbox', onClick: this.toggle},
+                                React.createElement(
+                                    'span',
+                                    {className: 'sd-checkbox' + (this.state.selected ? ' checked' : '')}
                                 )
-                            )
+                            );
+                        }
+                    });
+
+                    var ItemContainer = function(props) {
+                        var item = props.item;
+                        var desk = props.desk || null;
+                        var label, value;
+
+                        if (item._type !== 'ingest') {
+                            if (desk) {
+                                label = gettext('desk:');
+                                value = desk.name;
+                            } else {
+                                if (item._type === 'archive') {
+                                    label = gettext('location:');
+                                    value = gettext('workspace');
+                                } else {
+                                    if (item._type === 'published' && item.allow_post_publish_actions === false) {
+                                        label = '';
+                                        value = gettext('archived');
+                                    }
+                                }
+                            }
+                        }
+
+                        return React.createElement(
+                            'span',
+                            {className: 'container', title: value ? label + ' ' + value : null},
+                            React.createElement(
+                                'span',
+                                {className: 'location-desk-label'},
+                                label
+                            ),
+                            value
                         );
                     };
 
@@ -1121,12 +1182,11 @@
                     var MediaInfo = function(props) {
                         var item = props.item;
                         var meta = [];
-                        var ingestProvider = props.ingestProviders[item.ingest_provider] || null;
 
-                        if (ingestProvider) {
+                        if (props.ingestProvider) {
                             meta.push(
                                 React.createElement('dt', {key: 1}, gettext('source')),
-                                React.createElement('dd', {key: 2, className: 'provider'}, ingestProvider.name)
+                                React.createElement('dd', {key: 2, className: 'provider'}, props.ingestProvider.name)
                             );
                         }
 
@@ -1189,13 +1249,30 @@
                         );
                     };
 
-                    var ListTypeIcon = function(props) {
-                        return React.createElement(
-                            'div',
-                            {className: 'list-field type-icon'},
-                            React.createElement(TypeIcon, {type: props.item.type})
-                        );
-                    };
+                    var ListTypeIcon = React.createClass({
+                        getInitialState: function() {
+                            return {hover: false};
+                        },
+
+                        setHover: function() {
+                            this.setState({hover: true});
+                        },
+
+                        unsetHover: function() {
+                            this.setState({hover: false});
+                        },
+
+                        render: function() {
+                            var showSelect = this.state.hover || this.props.item.selected;
+                            return React.createElement(
+                                'div',
+                                {className: 'list-field type-icon', onMouseEnter: this.setHover, onMouseLeave: this.unsetHover},
+                                showSelect ?
+                                    React.createElement(SelectBox, {item: this.props.item, onMultiSelect: this.props.onMultiSelect}) :
+                                    React.createElement(TypeIcon, {type: this.props.item.type})
+                            );
+                        }
+                    });
 
                     var ItemPriority = function(props) {
                         var priority = props.priority || 3;
@@ -1230,7 +1307,7 @@
                         var flags = item.flags || {};
                         var anpa = item.anpa_category || {};
                         var broadcast = item.broadcast || {};
-                        var provider = props.ingestProviders[item.ingest_provider] || {name: null};
+                        var provider = props.ingestProvider || {name: null};
                         return React.createElement(
                             'div',
                             {className: 'item-info'},
@@ -1248,8 +1325,9 @@
                                 flags.marked_for_not_publication ? React.createElement('div', {className: 'state-label not-for-publication'}, gettext('Not for Publication')) : null,
                                 flags.marked_for_legal ? React.createElement('div', {className: 'state-label legal'}, gettext('Legal')) : null,
                                 anpa.name ? React.createElement('div', {className: 'category'}, anpa.name) : null,
-                                React.createElement('div', null, provider.name),
-                                item.is_spiked ? React.createElement('div', {className: 'expires'}, gettext('expires') + ' ' + moment(item.expiry).fromNow()) : null
+                                React.createElement('span', {className: 'provider'}, provider.name),
+                                item.is_spiked ? React.createElement('div', {className: 'expires'}, gettext('expires') + ' ' + moment(item.expiry).fromNow()) : null,
+                                React.createElement(ItemContainer, {item: item, desk: props.desk})
                             )
                         );
                     };
@@ -1417,6 +1495,17 @@
                         }
                     });
 
+                    var ProgressBar = function(props) {
+                        return React.createElement('div', {className: 'archiving-progress', style: {width: props.completed + '%'}});
+                    };
+
+                    var ErrorBox = function(props) {
+                        return React.createElement('div', {className: 'error-box'},
+                            React.createElement('p', {className: 'message'}, gettext('There was an error archiving this item')),
+                            React.createElement('div', {className: 'buttons'})
+                        );
+                    };
+
                     /**
                      * Item component
                      */
@@ -1454,7 +1543,7 @@
                                         'media-box',
                                         'media-' + item.type,
                                         {
-                                            locked: this.props.flags.locked,
+                                            locked: item.lock_user && item.lock_session,
                                             selected: this.props.flags.selected,
                                             archived: item.archived || item.created
                                         }
@@ -1463,10 +1552,15 @@
                                 }
                             ];
 
+                            if (item._progress) {
+                                contents.push(React.createElement(ProgressBar, {completed: item._progress}));
+                            }
+
                             if (this.props.view === 'mgrid') {
                                 contents.push(
-                                    React.createElement(MediaPreview, {item: item}),
-                                    React.createElement(MediaInfo, {item: item, ingestProviders: this.props.ingestProviders}),
+                                    item.archiveError ? React.createElement(ErrorBox) : null,
+                                    React.createElement(MediaPreview, {item: item, desk: this.props.desk, onMultiSelect: this.props.onMultiSelect}),
+                                    React.createElement(MediaInfo, {item: item, ingestProvider: this.props.ingestProvider}),
                                     React.createElement(GridTypeIcon, {item: item}),
                                     item.priority ? React.createElement(ItemPriority, {priority: item.priority}) : null,
                                     item.urgency ? React.createElement(ItemUrgency, {urgency: item.urgency}) : null,
@@ -1476,9 +1570,9 @@
                             } else {
                                 contents.push(
                                     React.createElement('span', {className: 'state-border'}),
-                                    React.createElement(ListTypeIcon, {item: item}),
+                                    React.createElement(ListTypeIcon, {item: item, onMultiSelect: this.props.onMultiSelect}),
                                     React.createElement(ListPriority, {item: item}),
-                                    React.createElement(ListItemInfo, {item: item, ingestProviders: this.props.ingestProviders}),
+                                    React.createElement(ListItemInfo, {item: item, ingestProvider: this.props.ingestProvider, desk: this.props.desk}),
                                     this.state.hover ? React.createElement(ActionsMenu, {item: item}) : null
                                 );
                             }
@@ -1512,6 +1606,11 @@
                             return {itemsList: [], itemsById: {}, selected: null, view: 'mgrid'};
                         },
 
+                        multiSelect: function(item, selected) {
+                            item.selected = selected;
+                            multi.toggle(item);
+                        },
+
                         select: function(item) {
                             console.time('select');
                             $timeout.cancel(this.updateTimeout);
@@ -1529,9 +1628,7 @@
 
                         getSelectedItem: function() {
                             var selected = this.state.selected;
-                            return this.state.items.find(function(item) {
-                                return item._id === selected;
-                            });
+                            return this.state.itemsById[selected];
                         },
 
                         handleKey: function(event) {
@@ -1554,15 +1651,15 @@
                             if (diff != null) {
                                 event.stopPropagation();
                                 if (this.state.selected) {
-                                    for (var i = 0; i < this.state.items.length; i++) {
-                                        if (this.state.items[i]._id === this.state.selected) {
-                                            var next = Math.min(this.state.items.length - 1, Math.max(0, i + diff));
-                                            this.select(this.state.items[next]);
+                                    for (var i = 0; i < this.state.itemsList.length; i++) {
+                                        if (this.state.itemsList[i] === this.state.selected) {
+                                            var next = Math.min(this.state.itemsList.length - 1, Math.max(0, i + diff));
+                                            this.select(this.state.itemsById[this.state.itemsList[next]]);
                                             return;
                                         }
                                     }
                                 } else {
-                                    this.select(this.state.items[0]);
+                                    this.select(this.state.itemsById[this.state.itemsList[0]]);
                                 }
                             }
                         },
@@ -1574,13 +1671,16 @@
                         render: function render() {
                             var createItem = function createItem(itemId) {
                                 var item = this.state.itemsById[itemId];
+                                var task = item.task || {desk: null};
                                 return React.createElement(Item, {
                                     key: item._id,
                                     item: item,
                                     view: this.state.view,
                                     flags: {selected: this.state.selected === item._id},
                                     onSelect: this.select,
-                                    ingestProviders: this.props.ingestProviders
+                                    onMultiSelect: this.multiSelect,
+                                    ingestProvider: this.props.ingestProvidersById[item.ingest_provider] || null,
+                                    desk: this.props.desksById[task.desk] || null
                                 });
                             }.bind(this);
 
@@ -1603,56 +1703,49 @@
                     scope.$applyAsync(function() {
                         var list = elem.find('.shadow-list-holder')[0];
                         var itemList = React.createElement(ItemList, {
-                            ingestProviders: scope.ingestProviders
+                            ingestProvidersById: scope.ingestProvidersById,
+                            desksById: scope.desksById
                         });
 
                         listComponent = ReactDOM.render(itemList, list);
                     });
 
-                    /**
-                     * Add items from src into dest array
-                     *
-                     * @param {Array} dest
-                     * @param {Array} src
-                     */
-                    function concat(dest, src) {
-                        var ids = {};
-                        var i, l;
-
-                        // populate ids
-                        for (i = 0, l = dest.length; i < l; i++) {
-                            ids[dest[i].guid] = true;
+                    scope.$on('item:lock', function(_e, data) {
+                        if (scope.itemsById[data.item]) {
+                            scope.itemsById[data.item] = angular.extend({}, scope.itemsById[data.item], {
+                                lock_user: data.user,
+                                lock_session: data.lock_session,
+                                lock_time: data.lock_time
+                            });
+                            listComponent.setState({itemsById: scope.itemsById});
                         }
+                    });
 
-                        // add only what's missing
-                        for (i = 0, l = src.length; i < l; i++) {
-                            var item = src[i];
-                            if (!ids[item.guid]) {
-                                dest.push(item);
-                            }
+                    scope.$on('item:unlock', function(_e, data) {
+                        if (scope.itemsById[data.item]) {
+                            scope.itemsById[data.item] = angular.extend({}, scope.itemsById[data.item], {
+                                lock_user: null,
+                                lock_session: null,
+                                lock_time: null
+                            });
+                            listComponent.setState({itemsById: scope.itemsById});
                         }
-                    }
+                    });
 
-                    /*
-                     * Function for filtering and merging new and old items
-                     *
-                     * @param {type} newItems New items fetched from the database
-                     * @returns {Array} Filtered array with old and new data together
-                     */
-                    function merge(newItems) {
-                        var next = [],
-                            olditems = scope.items._items || [];
-
-                        angular.forEach(newItems, function (item) {
-                            var predicate = (item.state === 'ingested') ? {_id: item._id} :
-                                {_id: item._id, _current_version: item._current_version};
-
-                            var old = _.find(olditems, predicate);
-                            next.push(old ? angular.extend(old, item) : item);
+                    scope.$on('task:progress', function(_e, data) {
+                        console.log('progress', data);
+                        var itemId = scope.itemsList.find(function(itemId) {
+                            return data.task === scope.itemsById[itemId].task_id;
                         });
 
-                        return next;
-                    }
+                        if (itemId) {
+                            var item = scope.itemsById[itemId];
+                            scope.itemsById[itemId] = angular.extend({}, item, {
+                                _progress: Math.max(10, Math.min(100, Math.round(100.0 * data.progress.current / data.progress.total)))
+                            });
+                            listComponent.setState({itemsById: itemsById});
+                        }
+                    });
 
                     /*
                      * Function for updating list after item has been deleted
@@ -2549,13 +2642,19 @@
                 label: gettext('Search'),
                 templateUrl: asset.templateUrl('superdesk-search/views/search.html'),
                 sideTemplateUrl: 'scripts/superdesk-workspace/views/workspace-sidenav.html',
-                controller: ['$scope', 'ingestProviders', function($scope, ingestProviders) {
-                    $scope.ingestProviders = ingestProviders;
+                controller: ['$scope', 'ingestProvidersById', 'desksById', function($scope, ingestProvidersById, desksById) {
+                    $scope.ingestProvidersById = ingestProvidersById;
+                    $scope.desksById = desksById
                 }],
                 resolve: {
-                    ingestProviders: ['ingestSources', function(ingestSources) {
+                    ingestProvidersById: ['ingestSources', function(ingestSources) {
                         return ingestSources.initialize().then(function() {
                             return ingestSources.providersLookup;
+                        });
+                    }],
+                    desksById: ['desks', function(desks) {
+                        return desks.initialize().then(function() {
+                            return desks.deskLookup;
                         });
                     }]
                 }
