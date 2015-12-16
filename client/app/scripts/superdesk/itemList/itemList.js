@@ -111,7 +111,6 @@ angular.module('superdesk.itemList', ['superdesk.search'])
             };
         }
 
-
         // Process related items only search
         if (options.related === true && options.keyword) {
             var queryRelatedItem = [];
@@ -130,7 +129,6 @@ angular.module('superdesk.itemList', ['superdesk.search'])
                 }
             }
 
-
             if (queryRelatedItem.length) {
                 query.source.query.filtered.query = {
                     query_string: {
@@ -141,7 +139,6 @@ angular.module('superdesk.itemList', ['superdesk.search'])
                 };
             }
         }
-
 
         // process search
         if (options.search) {
