@@ -1023,24 +1023,53 @@
                         }
 
                         function setScopeItems(items) {
-                            if (!scope.items) {
-                                scope.items = items;
-                            } else if (next) {
-                                concat(scope.items._items, items._items);
-                            } else {
-                                scope.items = merge(items._items);
+                            if (!scope.items) { // initial set of items
+                                scope.itemsById = {};
+                                scope.itemsList = [];
+                                items._items.forEach(function(item) {
+                                    scope.itemsById[item._id] = item;
+                                    scope.itemsList.push(item._id);
+                                });
+                            } else if (next) { // adding new items to list
+                                items._items.forEach(function(item) {
+                                    if (!scope.itemsById[item._id]) {
+                                        scope.itemsById[item._id] = item;
+                                        scope.itemsList.push(item._id);
+                                    } else if (scope.itemsById[item._id]._etag !== item._etag) {
+                                        scope.itemsById[item._id] = item;
+                                    }
+                                });
+                            } else { // replacing items with new ones, but keep old objects if not changed
+                                var oldItems = scope.itemsById;
+                                scope.itemsList = [];
+                                scope.itemsById = {};
+                                items._items.forEach(function(item) {
+                                    scope.itemsList.push(item._id);
+                                    if (oldItems[item._id] && oldItems[item._id]._etag === item._etag) {
+                                        scope.itemsById = oldItems[item._id];
+                                    } else {
+                                        scope.itemsById = item;
+                                    }
+                                });
                             }
+
+                            // set for aggregations
+                            scope.items = items;
 
                             console.time('render');
                             listComponent.setState({
-                                items: scope.items._items,
-                                view: scope.view
+                                view: scope.view,
+                                itemsList: scope.itemsList,
+                                itemsById: scope.itemsById
                             });
                             console.timeEnd('render');
                             console.log('items:', scope.items._items.length);
                             scope.rendering = false;
                         }
                     }
+
+                    scope.itemsList = [];
+                    scope.itemsById = {};
 
                     /**
                      * Test if an item has thumbnail
@@ -1480,11 +1509,7 @@
                      */
                     var ItemList = React.createClass({
                         getInitialState: function() {
-                            return {items: [], selected: null, view: 'mgrid'};
-                        },
-
-                        setItems: function(items) {
-                            this.setState({items: items});
+                            return {itemsList: [], itemsById: {}, selected: null, view: 'mgrid'};
                         },
 
                         select: function(item) {
@@ -1547,7 +1572,8 @@
                         },
 
                         render: function render() {
-                            var createItem = function createItem(item) {
+                            var createItem = function createItem(itemId) {
+                                var item = this.state.itemsById[itemId];
                                 return React.createElement(Item, {
                                     key: item._id,
                                     item: item,
@@ -1565,7 +1591,7 @@
                                     onKeyDown: this.handleKey,
                                     tabIndex: '0'
                                 },
-                                this.state.items.map(createItem)
+                                this.state.itemsList.map(createItem)
                             );
                         }
                     });
