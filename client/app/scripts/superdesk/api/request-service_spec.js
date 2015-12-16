@@ -1,8 +1,6 @@
 (function() {
     'use strict';
 
-    var uploadProvider;
-
     describe('request service', function() {
         beforeEach(module('superdesk.mocks'));
         beforeEach(module('superdesk.api'));

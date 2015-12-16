@@ -40,7 +40,7 @@
 
     function doConfig($provide) {
         $provide.constant('config', {server: {url: SERVER_URL}});
-    };
+    }
 
     function doTestModule() {
             angular.module('superdesk.api.tests', [])
@@ -49,7 +49,7 @@
             }]); 
             module('superdesk.api', 'superdesk.api.tests');
             inject(function() {});
-    };
+    }
 
     describe('API Provider', function() {
         beforeEach(module(doConfig));

@@ -2,7 +2,7 @@
     'use strict';
 
     describe('widgets provider', function() {
-        var dashboardWidgetsProvider, widgets;
+        var dashboardWidgetsProvider;
 
         beforeEach(function() {
 
