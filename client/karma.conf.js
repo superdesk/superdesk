@@ -181,9 +181,9 @@ module.exports = function(config) {
 
             // specs files
             // NOTE: uncommented are passing
-            //'app/scripts/superdesk-archive/controllers/upload_spec.js',
+            'app/scripts/superdesk-archive/controllers/upload_spec.js',
             'app/scripts/superdesk-archive/family_spec.js',
-            //'app/scripts/superdesk-archive/tests/archive_spec.js',
+            'app/scripts/superdesk-archive/tests/archive_spec.js', // JUST ADDED THIS FUCKER ---------------------------------------------------------
             'app/scripts/superdesk-authoring/comments/comments_spec.js',
             'app/scripts/superdesk-authoring/metadata/tests/MetadataWidgetCtrl_spec.js',
             'app/scripts/superdesk-authoring/multiedit/tests/multiedit_spec.js',
@@ -206,7 +206,7 @@ module.exports = function(config) {
             'app/scripts/superdesk-users/tests/sdUserPreferences_spec.js',
             'app/scripts/superdesk-users/tests/sdUserPrivileges_spec.js',
             //'app/scripts/superdesk-users/tests/users_spec.js',
-            //'app/scripts/superdesk/activity/superdesk-service_spec.js',
+            'app/scripts/superdesk/activity/superdesk-service_spec.js',
             'app/scripts/superdesk/analytics/analytics_spec.js',
             //'app/scripts/superdesk/api/api-service_spec.js',
             //'app/scripts/superdesk/api/request-service_spec.js',

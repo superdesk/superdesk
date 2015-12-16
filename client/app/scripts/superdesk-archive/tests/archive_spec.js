@@ -30,8 +30,13 @@ describe('content', function() {
             item = {'_id': '123'};
         }));
 
-        it('can add an item to user\'s active desk', inject(function(archiveService) {
+        it('can add an item to user\'s active desk', inject(function(archiveService, preferencesService, $q) {
+
+            PreferencesService.update = $q.when();
+
             archiveService.addTaskToArticle(item);
+
+            $rootScope.$digest();
 
             expect(item.task.desk).toBe('2');
             expect(item.task.stage).toBe('4');
