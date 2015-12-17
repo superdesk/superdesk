@@ -240,7 +240,7 @@ describe('authoring', function() {
         expect(authoring.getRelatedItems().count()).toBe(1);
     });
 
-    fit('related item widget can open published item', function() {
+    it('related item widget can open published item', function() {
         expect(monitoring.getGroups().count()).toBe(5);
         expect(monitoring.getTextItem(1, 1)).toBe('item9');
         expect(monitoring.getTextItemBySlugline(1, 1)).toBe('ITEM9 SLUGLINE');
