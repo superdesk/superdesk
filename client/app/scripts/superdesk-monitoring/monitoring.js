@@ -71,7 +71,7 @@
             var params = {};
 
             if (card.type === 'search' && card.search && card.search.filter.query) {
-                params = card.search.filter.query;
+                angular.copy(card.search.filter.query, params);
                 if (card.query) {
                     if (card.search.filter.query.q) {
                         params.q = '(' + card.query + ') ' + card.search.filter.query.q;

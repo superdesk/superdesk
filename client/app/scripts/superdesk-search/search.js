@@ -1981,7 +1981,7 @@
         this.canSpikeItems = function() {
             var canSpike = true;
             multi.getItems().forEach(function(item) {
-                canSpike = canSpike && authoring.itemActions(item).spike;
+                canSpike = canSpike && authoring.itemActions(item).spike && !item.lock_user;
             });
             return canSpike;
         };
