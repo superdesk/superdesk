@@ -527,4 +527,22 @@ describe('monitoring', function() {
         expect(monitoring.getItem(0, 0).element(by.model('item.selected')).getAttribute('checked')).toBeFalsy();
         expect(monitoring.getItem(0, 8).element(by.model('item.selected')).getAttribute('checked')).toBeFalsy();
     });
+
+    it('can view published duplicated item in duplicate tab of non-published original item', function() {
+        monitoring.turnOffWorkingStage(0);
+        expect(monitoring.getGroupItems(0).count()).toBe(0);
+        expect(monitoring.getGroupItems(1).count()).toBe(4);
+        expect(monitoring.getTextItem(1, 0)).toBe('item5'); // original item
+        monitoring.actionOnItem('Duplicate', 1, 0);
+        monitoring.filterAction('text');
+        expect(monitoring.getGroupItems(0).count()).toBe(1);
+        expect(monitoring.getTextItem(0, 0)).toBe('item5'); // duplicated item
+        //publish this duplicated item
+        monitoring.actionOnItem('Edit', 0, 0);
+        authoring.publish();
+        //now preview original item's duplicate tab for duplicated published item
+        monitoring.previewAction(1, 0);
+        monitoring.tabAction('related');
+        expect(authoring.getDuplicatedItemState(0)).toBe('PUBLISHED');
+    });
 });
