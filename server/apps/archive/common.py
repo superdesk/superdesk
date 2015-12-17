@@ -468,7 +468,14 @@ def item_schema(extra=None):
         },
         'company_codes': {
             'type': 'list',
-            'mapping': not_analyzed
+            'mapping': {
+                'type': 'object',
+                'properties': {
+                    'qcode': not_analyzed,
+                    'name': not_analyzed,
+                    'security_exchange': not_analyzed
+                }
+            }
         }
     }
 
