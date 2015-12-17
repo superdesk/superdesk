@@ -757,7 +757,7 @@ describe('authoring actions', function() {
             privileges.setUserPrivileges(userPrivileges);
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
-            allowedActions(itemActions, ['view', 'package_item', 'multi_edit', 'create_broadcast']);
+            allowedActions(itemActions, ['view', 'package_item', 'multi_edit']);
         }));
 
     it('can only view item if the item is spiked',
@@ -889,7 +889,7 @@ describe('authoring actions', function() {
 
             itemActions = authoring.itemActions(item);
             allowedActions(itemActions, ['new_take', 'duplicate', 'view',
-                'mark_item', 'package_item', 'multi_edit', 'correct', 'kill', 're_write', 'create_broadcast']);
+                'mark_item', 'package_item', 'multi_edit', 'correct', 'kill', 're_write']);
         }));
 
     it('Can perform correction or kill on published item',
@@ -926,7 +926,8 @@ describe('authoring actions', function() {
                 'unlock': true,
                 'publish': true,
                 'correct': true,
-                'kill': true
+                'kill': true,
+                'archive_broadcast': true
             };
 
             privileges.setUserPrivileges(userPrivileges);
@@ -977,7 +978,7 @@ describe('authoring actions', function() {
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
             allowedActions(itemActions, ['new_take', 'duplicate', 'view',
-                'mark_item', 'package_item', 'multi_edit', 're_write', 'create_broadcast']);
+                'mark_item', 'package_item', 'multi_edit', 're_write']);
         }));
 
     it('Can only view if the item is not the current version',
@@ -1108,7 +1109,7 @@ describe('authoring actions', function() {
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
             allowedActions(itemActions, ['correct', 'kill', 'new_take', 're_write',
-                'mark_item', 'duplicate', 'view', 'package_item', 'multi_edit', 'create_broadcast']);
+                'mark_item', 'duplicate', 'view', 'package_item', 'multi_edit']);
         }));
 
     it('Cannot send item if the version is zero',
@@ -1325,7 +1326,7 @@ describe('authoring actions', function() {
                 'publish': true,
                 'correct': true,
                 'kill': true,
-                'create_broadcast': true
+                'archive_broadcast': true
             };
 
             privileges.setUserPrivileges(userPrivileges);
@@ -1372,7 +1373,7 @@ describe('authoring actions', function() {
                 'publish': true,
                 'correct': true,
                 'kill': true,
-                'create_broadcast': true
+                'archive_broadcast': true
             };
 
             privileges.setUserPrivileges(userPrivileges);
@@ -1425,7 +1426,7 @@ describe('authoring actions', function() {
                 'publish': true,
                 'correct': true,
                 'kill': true,
-                'create_broadcast': true
+                'archive_broadcast': true
             };
 
             privileges.setUserPrivileges(userPrivileges);
@@ -1478,7 +1479,7 @@ describe('authoring actions', function() {
                 'publish': true,
                 'correct': true,
                 'kill': true,
-                'create_broadcast': true
+                'archive_broadcast': true
             };
 
             privileges.setUserPrivileges(userPrivileges);
