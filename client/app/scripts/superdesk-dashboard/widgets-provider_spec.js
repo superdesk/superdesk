@@ -14,7 +14,7 @@
             module('superdesk.dashboard.widgets', 'superdesk.dashboard.widgets.tests');
 
             // init the tests module to get the actual provider
-            inject(function(){});
+            inject(function() {});
         });
 
         beforeEach(function() {

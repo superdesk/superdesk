@@ -9,7 +9,7 @@
      *
      * Params:
      * @param {object} ngModel - datetime string in utc
-     */ 
+     */
     angular.module('superdesk.datetime').directive('sdReldateComplex', [ function() {
         var COMPARE_FORMAT = 'YYYY-M-D';
         var DISPLAY_DATE_FORMAT = 'D. MMMM YYYY [at] HH:mm';

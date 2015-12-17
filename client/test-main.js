@@ -1,7 +1,6 @@
 var tests = [];
 var APP_SPEC_REG_EXP = /^\/base\/app\/scripts\/(.*)\.js$/;
 
-
 for (var file in window.__karma__.files) {
     if (window.__karma__.files.hasOwnProperty(file)) {
         if (/[sS]pec\.js$/.test(file)) {
@@ -97,7 +96,7 @@ tests.push('superdesk-archive/archive-widget/baseWidget');
 tests.push('superdesk-ingest/ingest-widget/ingest');
 tests.push('superdesk-ingest/ingest-stats-widget/stats');
 tests.push('superdesk-ingest/module');
-    
+
 tests.push('superdesk-archive/module');
 tests.push('superdesk-archive/controllers/list');
 tests.push('superdesk-archive/controllers/upload');
