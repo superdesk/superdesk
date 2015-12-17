@@ -33,8 +33,8 @@ define([
             if (item.selected) {
                 items = _.union(items, [item]);
             } else {
-                items = _.filter(items, function(obj) {
-                    return obj._id !== item._id;
+                _.remove(items, function(obj) {
+                    return (obj._id === item._id && obj._current_version === item._current_version);
                 });
             }
             this.count = items.length;
