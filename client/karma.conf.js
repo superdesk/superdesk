@@ -236,7 +236,7 @@ module.exports = function(config) {
             'app/scripts/superdesk/services/workflow_spec.js',
             'app/scripts/superdesk/tests/filters_spec.js',
             'app/scripts/superdesk/ui/tests/ui_spec.js',
-            'app/scripts/superdesk/upload/upload-service_spec.js',
+            'app/scripts/superdesk/upload/upload-service_spec.js'
         ],
 
         // list of files to exclude

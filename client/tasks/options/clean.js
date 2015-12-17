@@ -16,7 +16,7 @@ module.exports = {
         files: [{
             src: [
                 '<%= bowerDir %>/scripts/templates-cache.js',
-                '<%= bowerDir %>/scripts/superdesk.js',
+                '<%= bowerDir %>/scripts/superdesk.js'
             ]
         }]
     }
