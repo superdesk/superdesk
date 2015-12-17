@@ -766,6 +766,16 @@
                     }
                 };
 
+                /*
+                 * If the item gets locked by another user when the activity menu is open then close the menu
+                 * as the actions for locked and unlocked are different.
+                 */
+                scope.$on('item:lock', function(_e, data) {
+                    if (scope.open && scope.item && scope.item._id === data.item) {
+                        scope.open = false;
+                    }
+                });
+
                 /**
                  * Stope event propagation so that click on dropdown menu
                  * won't select that item for preview/authoring.
