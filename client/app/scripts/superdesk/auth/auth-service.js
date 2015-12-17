@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    angular.module('superdesk.auth').service('auth', ['$q', 'api', 'session', 'authAdapter', 
+    angular.module('superdesk.auth').service('auth', ['$q', 'api', 'session', 'authAdapter',
     function ($q, api, session, authAdapter) {
 
         /**

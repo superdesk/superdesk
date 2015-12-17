@@ -1,7 +1,6 @@
 (function() {
     'use strict';
 
-
     /**
      * sdGroupDates directive will group list items by a date provided as a param.
      *

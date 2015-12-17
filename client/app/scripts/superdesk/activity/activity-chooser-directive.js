@@ -2,7 +2,7 @@
     'use strict';
 
     angular.module('superdesk.activity')
-    .directive('sdActivityChooser', ['activityChooser', 'keyboardManager', 'asset', 'lodash', 
+    .directive('sdActivityChooser', ['activityChooser', 'keyboardManager', 'asset', 'lodash',
     function(activityChooser, keyboardManager, asset, _) {
         return {
             scope: {},

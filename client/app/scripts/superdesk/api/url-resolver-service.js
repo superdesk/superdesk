@@ -73,7 +73,6 @@
         }
     }
 
-
     angular.module('superdesk.api')
     .service('urls', URLResolver);
 

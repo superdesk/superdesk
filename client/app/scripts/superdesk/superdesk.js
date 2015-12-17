@@ -47,7 +47,6 @@
         'superdesk.directives.searchList'
     ];
 
-
     angular.module('superdesk.loading', [])
 
         // prevent routing before there is auth token

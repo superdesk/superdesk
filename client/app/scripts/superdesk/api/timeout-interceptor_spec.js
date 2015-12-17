@@ -1,8 +1,8 @@
 (function() {
-//
-//     './timeout-interceptor',
-//     './request-service'
-// ], function(TimeoutHttpInterceptor, RequestService) {
+    //
+    //     './timeout-interceptor',
+    //     './request-service'
+    // ], function(TimeoutHttpInterceptor, RequestService) {
     'use strict';
 
     var RequestService = window.RequestService;

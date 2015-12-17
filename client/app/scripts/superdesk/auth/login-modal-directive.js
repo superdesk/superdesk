@@ -9,7 +9,7 @@
     'auth',
     'features',
     'asset',
-    '$route', 
+    '$route',
     function (session, auth, features, asset, $route) {
         return {
             replace: true,

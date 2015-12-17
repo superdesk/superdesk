@@ -111,8 +111,7 @@
             expect(list.length).toBe(1);
         }));
 
-
-     it('can get main menu and filter out based on features/permissions',
+        it('can get main menu and filter out based on features/permissions',
         inject(function(superdesk, $rootScope, privileges, $q) {
             privileges.loaded = $q.when();
 

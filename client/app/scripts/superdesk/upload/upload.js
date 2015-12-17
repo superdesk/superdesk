@@ -59,8 +59,8 @@
         };
     }
 
-   angular.module('superdesk.upload', ['angularFileUpload', 'superdesk.imageFactory'])
-   .directive('sdSources', SourcesDirective)
-   .directive('sdFileTypeValidator', FileValidatorDirective);
+    angular.module('superdesk.upload', ['angularFileUpload', 'superdesk.imageFactory'])
+    .directive('sdSources', SourcesDirective)
+    .directive('sdFileTypeValidator', FileValidatorDirective);
 
 })();

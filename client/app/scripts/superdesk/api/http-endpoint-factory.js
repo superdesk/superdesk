@@ -253,7 +253,6 @@
         return HttpEndpoint;
     }
 
-
     angular.module('superdesk.api')
     .factory('HttpEndpointFactory', HttpEndpointFactory);
 

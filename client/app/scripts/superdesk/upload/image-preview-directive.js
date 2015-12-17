@@ -1,7 +1,6 @@
 (function() {
     'use strict';
 
-
     angular.module('superdesk.upload').directive('sdImagePreview', [ function() {
         var IS_IMG_REGEXP = /^image\//;
         return {

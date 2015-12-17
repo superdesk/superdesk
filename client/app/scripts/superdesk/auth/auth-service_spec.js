@@ -23,34 +23,34 @@
             spyOn(preferencesService, 'get').and.returnValue($q.when({}));
         }));
 
-/* THIS FAILS
-        it('can login', inject(function(auth, session, $httpBackend, $rootScope) {
+        /* THIS FAILS
+                it('can login', inject(function(auth, session, $httpBackend, $rootScope) {
 
-            expect(session.identity).toBe(null);
-            expect(session.token).toBe(null);
+                    expect(session.identity).toBe(null);
+                    expect(session.token).toBe(null);
 
-            var resolved = {};
+                    var resolved = {};
 
-            $httpBackend.expectGET('http://user/1').respond({username: 'foo'});
+                    $httpBackend.expectGET('http://user/1').respond({username: 'foo'});
 
-            session.getIdentity().then(function() {
-// NONE OF THIS EVER EXECUTES
-                resolved.identity = true;
-            });
+                    session.getIdentity().then(function() {
+        // NONE OF THIS EVER EXECUTES
+                        resolved.identity = true;
+                    });
 
-            auth.login('admin', 'admin').then(function(identity) {
-// NONE OF THIS EVER EXECUTES
-                expect(session.identity.username).toBe('foo');
-                expect(session.token).toBe('sess');
-                resolved.login = true;
-            });
+                    auth.login('admin', 'admin').then(function(identity) {
+        // NONE OF THIS EVER EXECUTES
+                        expect(session.identity.username).toBe('foo');
+                        expect(session.token).toBe('sess');
+                        resolved.login = true;
+                    });
 
-            $rootScope.$apply();
+                    $rootScope.$apply();
 
-// SO THESE NEVER GET SET
-            expect(resolved.login).toBe(true);
-            expect(resolved.identity).toBe(true);
-        }));
+        // SO THESE NEVER GET SET
+                    expect(resolved.login).toBe(true);
+                    expect(resolved.identity).toBe(true);
+                }));
 */
 
         it('checks credentials', inject(function(auth, $rootScope) {

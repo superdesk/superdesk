@@ -21,7 +21,7 @@
      * Params:
      * @scope {Object} widget
      */
-    angular.module('superdesk.dashboard').directive('sdWidget', [ 
+    angular.module('superdesk.dashboard').directive('sdWidget', [
         '$modal', 'asset', function($modal, asset) {
         return {
             templateUrl: asset.templateUrl('superdesk-dashboard/views/widget.html'),
