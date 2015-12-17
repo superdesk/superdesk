@@ -43,12 +43,12 @@
     }
 
     function doTestModule() {
-            angular.module('superdesk.api.tests', [])
-            .config(['apiProvider', function(_apiProvider_) {
-                apiProvider = _apiProvider_;
-            }]); 
-            module('superdesk.api', 'superdesk.api.tests');
-            inject(function() {});
+        angular.module('superdesk.api.tests', [])
+        .config(['apiProvider', function(_apiProvider_) {
+            apiProvider = _apiProvider_;
+        }]);
+        module('superdesk.api', 'superdesk.api.tests');
+        inject(function() {});
     }
 
     describe('API Provider', function() {
@@ -472,7 +472,5 @@
                 $httpBackend.flush();
             }));
         });
-
-    
     });
 })();

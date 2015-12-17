@@ -115,11 +115,10 @@
             var nextInjector = angular.injector(['superdesk.session', 'superdesk.services.storage', 'ng']);
             var nextSession = nextInjector.get('session');
             nextInjector.get('$rootScope').$digest();
-            $rootScope.$apply();
 
+            $rootScope.$apply();
             expect(nextSession.identity.name).toBe('baz');
         }));
-
 
         it('can return identity after session start', inject(function(session, $rootScope) {
             session.start(SESSION, {name: 'bar'});
