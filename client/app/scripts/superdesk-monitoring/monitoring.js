@@ -71,7 +71,7 @@
             var params = {};
 
             if (card.type === 'search' && card.search && card.search.filter.query) {
-                params = card.search.filter.query;
+                angular.copy(card.search.filter.query, params);
                 if (card.query) {
                     if (card.search.filter.query.q) {
                         params.q = '(' + card.query + ') ' + card.search.filter.query.q;
@@ -260,9 +260,9 @@
     }
 
     MonitoringGroupDirective.$inject = ['cards', 'api', 'authoringWorkspace', '$timeout', 'superdesk',
-        'activityService', 'workflowService', 'keyboardManager', 'desks', 'search', 'multi'];
+        'activityService', 'workflowService', 'keyboardManager', 'desks', 'search', 'multi', 'archiveService'];
     function MonitoringGroupDirective(cards, api, authoringWorkspace, $timeout, superdesk, activityService,
-            workflowService, keyboardManager, desks, search, multi) {
+            workflowService, keyboardManager, desks, search, multi, archiveService) {
 
         var ITEM_HEIGHT = 57,
             ITEMS_COUNT = 5,
@@ -467,7 +467,7 @@
                         } else if (item.type === 'composite' && item.package_type === 'takes') {
                             authoringWorkspace.view(item);
                             monitoring.preview(null);
-                        } else if (item.state === 'killed') {
+                        } else if (archiveService.isPublished(item)) {
                             authoringWorkspace.view(item);
                             monitoring.preview(null);
                         } else {
@@ -765,6 +765,16 @@
                         angular.element('.dropdown-noarrow.open').removeClass('open');
                     }
                 };
+
+                /*
+                 * If the item gets locked by another user when the activity menu is open then close the menu
+                 * as the actions for locked and unlocked are different.
+                 */
+                scope.$on('item:lock', function(_e, data) {
+                    if (scope.open && scope.item && scope.item._id === data.item) {
+                        scope.open = false;
+                    }
+                });
 
                 /**
                  * Stope event propagation so that click on dropdown menu

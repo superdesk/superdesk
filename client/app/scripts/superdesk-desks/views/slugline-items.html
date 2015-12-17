@@ -1,19 +1,23 @@
-<div class="slugline-content">
-	<div ng-if="loading" class="loading"></div>
-        <div ng-if="!loading && !items.length" class="no-items" translate>{{:: 'No items with this published' |
-            translate }}
-        </div>
-        <div ng-if="!loading && items.length" class="inline_slugline_item">
-            <div ng-repeat="item in items">
-                <div class="place" ng-show="item.name !== '-'">{{::item.name}}</div>
-                <span ng-show="item.slugline !== '-'">
-                    <time sd-datetime data-date="item.versioncreated" class="pull-right"></time>
-                    <div class="slugline">{{::item.slugline}}</div>
-                </span>
-                <div ng-show="item.old_sluglines.length !== 0">
-                    <div class="oldslugline">{{::item.old_sluglines}}</div>
+<div class="item-group">
+        <div class="item-group__content item-group__content--full-height">
+                <div ng-if="loading" class="item-group__loading"></div>
+                <div ng-if="!loading && !items.length" class="item-group__no-items" translate>{{:: 'No items with this published' |
+                translate }}
                 </div>
-                <div class="headline">{{::item.headline}}</div>
-            </div>
+                <div ng-if="!loading && items.length" class="inline-content-items">
+                        <div ng-repeat="item in items" class="slugline-item">
+                                <div class="place" ng-show="item.name !== '-'">{{::item.name}}</div>
+                                <div ng-show="item.slugline !== '-'" class="slugline-item__row slugline-item__row--main">
+                                        <time sd-datetime data-date="item.versioncreated" class="pull-right"></time>
+                                        <span class="slugline">{{::item.slugline}}</span>
+                                </div>
+                                <div ng-show="item.old_sluglines.length !== 0" class="slugline-item__row">
+                                        <span class="oldslugline">{{::item.old_sluglines}}</span>
+                                </div>
+                                <div class="slugline-item__row">
+                                        <span class="headline">{{::item.headline}}</span>
+                                </div>
+                        </div>
+                </div>
         </div>
 </div>

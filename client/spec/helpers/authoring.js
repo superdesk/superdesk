@@ -389,4 +389,9 @@ function Authoring() {
         return headerDetails.all(by.model('item.slugline')).get(0).getAttribute('value');
     };
 
+    this.getDuplicatedItemState = function(item) {
+        var duplicatedItem = element.all(by.repeater('relatedItem in relatedItems._items')).get(item);
+        return duplicatedItem.element(by.className('state-label')).getText();
+    };
+
 }

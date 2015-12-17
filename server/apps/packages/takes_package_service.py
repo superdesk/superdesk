@@ -149,8 +149,17 @@ class TakesPackageService():
         if not takes_package:
             # setting the sequence to 1 for target.
             updates = {SEQUENCE: 1}
-            resolve_document_version(updates, ARCHIVE, 'PATCH', target)
-            archive_service.patch(target.get(config.ID_FIELD), updates)
+            if target[ITEM_STATE] in [CONTENT_STATE.SPIKED,
+                                      CONTENT_STATE.KILLED,
+                                      CONTENT_STATE.SCHEDULED,
+                                      CONTENT_STATE.INGESTED]:
+                raise SuperdeskApiError.forbiddenError("Item isn't in a valid state for creating takes.")
+            elif target[ITEM_STATE] in [CONTENT_STATE.PUBLISHED,
+                                        CONTENT_STATE.CORRECTED]:
+                archive_service.system_update(target.get(config.ID_FIELD), updates, target)
+            else:
+                resolve_document_version(updates, ARCHIVE, 'PATCH', target)
+                archive_service.patch(target.get(config.ID_FIELD), updates)
 
         if not link.get(config.ID_FIELD):
             self.__copy_metadata__(target, link, takes_package)

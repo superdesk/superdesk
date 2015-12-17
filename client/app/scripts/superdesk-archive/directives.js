@@ -7,7 +7,7 @@
         'superdesk.ingest',
         'superdesk.workflow'
     ])
-        .directive('sdItemLock', ['api', 'lock', 'privileges', function(api, lock, privileges) {
+        .directive('sdItemLock', ['api', 'lock', 'privileges', 'desks', function(api, lock, privileges, desks) {
             return {
                 templateUrl: 'scripts/superdesk-archive/views/item-lock.html',
                 scope: {item: '='},
@@ -42,7 +42,15 @@
                     };
 
                     scope.can_unlock = function() {
-                        return lock.can_unlock(scope.item);
+                        if (lock.can_unlock(scope.item)) {
+                            if (scope.item.task && scope.item.task.desk && desks.userDesks) {
+                                return _.find(desks.userDesks._items, {_id: scope.item.task.desk});
+                            }
+
+                            return true;
+                        }
+
+                        return false;
                     };
 
                     scope.$on('item:lock', function(_e, data) {
@@ -656,22 +664,19 @@
         .service('familyService', ['api', 'desks', function(api, desks) {
 
             this.fetchItems = function(familyId, excludeItem) {
-                var repo = 'archive';
-
-                if (excludeItem && excludeItem._type === 'published') {
-                    repo = 'published';
-                }
+                var repo = 'archive,published';
 
                 var filter = [
                     {not: {term: {state: 'spiked'}}},
                     {term: {family_id: familyId}}
                 ];
 
-                if (excludeItem && excludeItem._type !== 'published') {
-                    filter.push({not: {term: {_id: excludeItem._id}}});
+                if (excludeItem) {
+                    filter.push({not: {term: {unique_id: excludeItem.unique_id}}});
                 }
 
-                return api(repo).query({
+                return api('search').query({
+                    repo: repo,
                     source: {
                         query: {filtered: {filter: {
                             and: filter

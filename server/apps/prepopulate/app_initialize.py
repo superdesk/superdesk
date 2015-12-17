@@ -2,9 +2,11 @@ import os
 import json
 import superdesk
 import pymongo
+import settings
 
 from superdesk import get_resource_service
 from flask import current_app as app
+from re import findall
 
 
 """
@@ -38,6 +40,7 @@ __entities__ = {
     'vocabularies': ('vocabularies.json', '', True),
     'validators': ('validators.json', '', True),
     'content_templates': ('content_templates.json', ['template_name'], False),
+    'ingest_providers': ('ingest_providers.json', '', True),
     'published': (None, [[('can_be_removed', pymongo.ASCENDING)],
                          [('expiry', pymongo.ASCENDING),
                           ('state', pymongo.ASCENDING),
@@ -130,9 +133,10 @@ class AppInitializeWithDataCommand(superdesk.Command):
                                      file_name)
             print('Got file path: ', file_path)
             with open(file_path, 'rt') as app_prepopulation:
-                json_data = json.loads(app_prepopulation.read())
                 service = get_resource_service(entity_name)
-                data = [app.data.mongo._mongotize(item, service.datasource) for item in json_data]
+                json_data = json.loads(app_prepopulation.read())
+                data = [fillEnvironmentVariables(item) for item in json_data]
+                data = [app.data.mongo._mongotize(item, service.datasource) for item in data if item]
                 existing_data = []
                 existing = service.get_from_mongo(None, {})
                 update_data = True
@@ -152,6 +156,7 @@ class AppInitializeWithDataCommand(superdesk.Command):
 
                     if data:
                         service.post(data)
+
                     if existing_data and do_patch:
                         for item in existing_data:
                             service.patch(item['_id'], item)
@@ -165,6 +170,23 @@ class AppInitializeWithDataCommand(superdesk.Command):
                 collection = app.data.mongo.pymongo(resource=entity_name).db[entity_name]
                 index_name = collection.create_index(crt_index, cache_for=300, **options)
                 self.logger.info('Index: {} for collection {} created successfully.'.format(index_name, entity_name))
+
+
+def fillEnvironmentVariables(item):
+    variables = {}
+    text = json.dumps(item)
+
+    for variable in findall('#ENV_([^#"]+)#', text):
+        value = settings.env(variable, None)
+        if not value:
+            return None
+        else:
+            variables[variable] = value
+
+    for name in variables:
+        text = text.replace('#ENV_%s#' % name, variables[name])
+
+    return json.loads(text)
 
 
 superdesk.command('app:initialize_data', AppInitializeWithDataCommand())

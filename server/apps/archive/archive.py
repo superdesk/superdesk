@@ -14,7 +14,7 @@ from superdesk.metadata.utils import extra_response_fields, item_url, aggregatio
 from .common import remove_unwanted, update_state, set_item_expiry, remove_media_files, \
     on_create_item, on_duplicate_item, get_user, update_version, set_sign_off, \
     handle_existing_data, item_schema, validate_schedule, is_item_in_package, \
-    ITEM_DUPLICATE, ITEM_OPERATION, ITEM_RESTORE, ITEM_UPDATE, ITEM_DESCHEDULE, ARCHIVE as SOURCE, \
+    ITEM_OPERATION, ITEM_RESTORE, ITEM_UPDATE, ITEM_DESCHEDULE, ARCHIVE as SOURCE, \
     LAST_PRODUCTION_DESK, LAST_AUTHORING_DESK, convert_task_attributes_to_objectId, BROADCAST_GENRE
 from superdesk.media.crop import CropService
 from flask import current_app as app
@@ -352,16 +352,14 @@ class ArchiveService(BaseService):
 
         new_doc = original_doc.copy()
         self._remove_after_copy(new_doc)
-
-        new_doc[ITEM_OPERATION] = ITEM_DUPLICATE
-        item_model = get_model(ItemModel)
-
         on_duplicate_item(new_doc)
         resolve_document_version(new_doc, SOURCE, 'PATCH', new_doc)
+
         if original_doc.get('task', {}).get('desk') is not None and new_doc.get('state') != 'submitted':
             new_doc[ITEM_STATE] = CONTENT_STATE.SUBMITTED
+
         convert_task_attributes_to_objectId(new_doc)
-        item_model.create([new_doc])
+        get_model(ItemModel).create([new_doc])
         self._duplicate_versions(original_doc['guid'], new_doc)
 
         return new_doc['guid']
@@ -376,6 +374,10 @@ class ArchiveService(BaseService):
         copied_item.pop(LINKED_IN_PACKAGES, None)
         copied_item.pop(EMBARGO, None)
         copied_item.pop('publish_schedule', None)
+        copied_item.pop('lock_time', None)
+        copied_item.pop('lock_session', None)
+        copied_item.pop('lock_user', None)
+
         task = copied_item.get('task', {})
         task.pop(LAST_PRODUCTION_DESK, None)
         task.pop(LAST_AUTHORING_DESK, None)

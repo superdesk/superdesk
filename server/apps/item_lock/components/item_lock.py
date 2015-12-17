@@ -7,8 +7,7 @@
 # For the full copyright and license information, please see the
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
-
-
+from superdesk.metadata.item import ITEM_STATE, CONTENT_STATE
 import superdesk
 from superdesk.errors import SuperdeskApiError
 from superdesk.notification import push_notification
@@ -86,14 +85,14 @@ class ItemLock(BaseComponent):
 
             # delete the item if nothing is saved so far
             # version 0 created on lock item
-            if item.get(config.VERSION, 0) == 0 and item['state'] == 'draft':
+            if item.get(config.VERSION, 0) == 0 and item[ITEM_STATE] == CONTENT_STATE.DRAFT:
                 superdesk.get_resource_service('archive').delete(lookup={'_id': item['_id']})
                 push_content_notification([item])
-                return
+            else:
+                updates = {LOCK_USER: None, LOCK_SESSION: None, 'lock_time': None, 'force_unlock': True}
+                item_model.update(item_filter, updates)
+                self.app.on_item_unlocked(item, user_id)
 
-            updates = {LOCK_USER: None, LOCK_SESSION: None, 'lock_time': None, 'force_unlock': True}
-            item_model.update(item_filter, updates)
-            self.app.on_item_unlocked(item, user_id)
             push_notification('item:unlock', item=str(item_filter.get(config.ID_FIELD)), user=str(user_id),
                               lock_session=str(session_id))
         else:

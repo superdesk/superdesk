@@ -201,9 +201,16 @@
             } else {
                 return api.find('archive', _id, {embedded: {lock_user: 1}})
                 .then(function _lock(item) {
-                    item._editable = !read_only;
-                    return lock.lock(item);
-                }).then(function _autosave(item) {
+                    if (!read_only && lock.isLocked(item)) {  // Check if item is still editable
+                        item._locked = true;
+                        item._editable = false;
+                        return $q.when(item);
+                    } else {
+                        item._editable = !read_only;
+                        return lock.lock(item);
+                    }
+                })
+                .then(function _autosave(item) {
                     return autosave.open(item);
                 });
             }
@@ -619,7 +626,7 @@
                     return item;
                 }, function(err) {
                     notify.error(gettext('Failed to get a lock on the item!'));
-                    item._locked = true;
+                    item._locked = false;
                     item._editable = false;
                     return item;
                 });
@@ -2500,8 +2507,8 @@
         };
     }
 
-    AuthoringWorkspaceService.$inject = ['$location', 'superdeskFlags', 'authoring'];
-    function AuthoringWorkspaceService($location, superdeskFlags, authoring) {
+    AuthoringWorkspaceService.$inject = ['$location', 'superdeskFlags', 'authoring', 'lock'];
+    function AuthoringWorkspaceService($location, superdeskFlags, authoring, lock) {
         this.item = null;
         this.action = null;
         this.state = null;
@@ -2619,7 +2626,7 @@
             return authoring.open(itemId, action === 'view', repo)
                 .then(function(item) {
                     self.item = item;
-                    self.action = action;
+                    self.action = (action !== 'view' && item._editable) ? action : 'view';
                 })
                 .then(saveState);
         }

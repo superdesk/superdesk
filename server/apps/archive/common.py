@@ -7,6 +7,7 @@
 # For the full copyright and license information, please see the
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
+
 from bson import ObjectId
 
 import flask
@@ -119,6 +120,8 @@ def on_duplicate_item(doc):
     generate_unique_id_and_name(doc)
     doc.setdefault('_id', doc[GUID_FIELD])
     set_sign_off(doc)
+    doc['force_unlock'] = True
+    doc[ITEM_OPERATION] = ITEM_DUPLICATE
 
 
 def update_dates_for(doc):
@@ -468,7 +471,14 @@ def item_schema(extra=None):
         },
         'company_codes': {
             'type': 'list',
-            'mapping': not_analyzed
+            'mapping': {
+                'type': 'object',
+                'properties': {
+                    'qcode': not_analyzed,
+                    'name': not_analyzed,
+                    'security_exchange': not_analyzed
+                }
+            }
         }
     }
 
