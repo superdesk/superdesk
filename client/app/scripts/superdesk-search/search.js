@@ -1118,14 +1118,9 @@
                     };
 
                     var SelectBox = React.createClass({
-                        getInitialState: function() {
-                            return {selected: !!this.props.item.selected};
-                        },
-
                         toggle: function(event) {
                             event.stopPropagation();
-                            var selected = !this.state.selected;
-                            this.setState({selected: selected});
+                            var selected = !this.props.item.selected;
                             this.props.onMultiSelect(this.props.item, selected);
                         },
 
@@ -1136,7 +1131,7 @@
                                 {className: 'selectbox', onClick: this.toggle},
                                 React.createElement(
                                     'span',
-                                    {className: 'sd-checkbox' + (this.state.selected ? ' checked' : '')}
+                                    {className: 'sd-checkbox' + (this.props.item.selected ? ' checked' : '')}
                                 )
                             );
                         }
@@ -1639,8 +1634,10 @@
                         },
 
                         multiSelect: function(item, selected) {
-                            item.selected = selected;
-                            multi.toggle(item);
+                            var itemsById = angular.extend({}, this.state.itemsById);
+                            itemsById[item._id] = angular.extend({}, item, {selected: selected});
+                            this.setState({itemsById: itemsById});
+                            multi.toggle(itemsById[item._id]);
                         },
 
                         select: function(item) {
@@ -1763,6 +1760,17 @@
                             });
                             listComponent.setState({itemsById: scope.itemsById});
                         }
+                    });
+
+                    scope.$on('multi:reset', function(e, data) {
+                        var itemsById = angular.extend({}, listComponent.state.itemsById);
+                        data.ids.forEach(function(id) {
+                            itemsById[id] = angular.extend({}, itemsById[id], {
+                                selected: false
+                            });
+                        });
+
+                        listComponent.setState({itemsById: itemsById});
                     });
 
                     scope.$on('task:progress', function(_e, data) {
