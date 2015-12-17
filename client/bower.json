@@ -21,7 +21,8 @@
     "medium-editor": "4.9.0",
     "ment.io": "0.9.22",
     "angular-moment": "~0.10.3",
-    "classnames": "~2.2.0"
+    "classnames": "~2.2.0",
+    "react": "~0.14.3"
   },
   "ignore": [
     "**/.*",

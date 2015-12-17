@@ -836,6 +836,7 @@
             'archiveService',
             'activityService',
             'multi',
+            'desks',
             'familyService',
         function(
             $location,
@@ -853,6 +854,7 @@
             archiveService,
             activityService,
             multi,
+            desks,
             familyService
         ) { // uff - should it use injector instead?
             var update = {
@@ -866,21 +868,6 @@
                     'default': 'mgrid',
                     'label': 'Users archive view format',
                     'type': 'string'
-                }
-            };
-
-            var itemParameters = {
-                compact: {
-                    ITEM_HEIGHT: 57,
-                    ITEMS_COUNT: 25,
-                    BUFFER: 8
-                },
-                mgrid: {
-                    ITEM_HEIGHT: 239,
-                    ITEM_WIDTH: 190,
-                    ITEMS_COUNT: 27,
-                    ITEMS_ROW: 9,
-                    BUFFER: 18
                 }
             };
 
@@ -1156,7 +1143,6 @@
                         },
 
                         render: function() {
-                            var item = this.props.item;
                             return React.createElement(
                                 'div',
                                 {className: 'selectbox', onClick: this.toggle},
@@ -1342,7 +1328,7 @@
                             return React.createElement(
                                 'div',
                                 {className: 'highlights-box'},
-                                highlights.length ? 
+                                highlights.length ?
                                     React.createElement(
                                         'div',
                                         {className: 'highlights-list dropdown'},
@@ -1362,6 +1348,46 @@
                         }
                     });
 
+                    var DesksDropdown = React.createClass({
+                        getInitialState: function() {
+                            return {open: false};
+                        },
+
+                        toggle: function(event) {
+                            event.stopPropagation();
+                            this.setState({open: !this.state.open});
+                        },
+
+                        render: function() {
+                            var desks = this.props.desks.map(function(desk, index) {
+                                return React.createElement(
+                                    'li',
+                                    {key: 'desk' + index},
+                                    React.createElement(
+                                        'a',
+                                        {disabled: !desk.isUserDeskMember, onClick: this.props.openDesk(desk)},
+                                        desk.desk.name + ' (' + desk.count + ')'
+                                    )
+                                );
+                            }.bind(this));
+
+                            return React.createElement(
+                                'dd',
+                                {className: 'dropdown dropup more-actions'},
+                                React.createElement(
+                                    'button',
+                                    {className: 'dropdown-toggle', onClick: this.toggle},
+                                    React.createElement('i', {className: 'icon-dots'})
+                                ),
+                                React.createElement(
+                                    'div',
+                                    {className: 'dropdown-menu'},
+                                    React.createElement('ul', {}, desks)
+                                )
+                            );
+                        }
+                    });
+
                     var FetchedDesksInfo = React.createClass({
                         getInitialState: function() {
                             return {desks: []};
@@ -1374,16 +1400,45 @@
                                 }.bind(this));
                         },
 
+                        formatDeskName: function(name) {
+                            return name.substr(0, 10) + (name.length > 10 ? '...' : '');
+                        },
+
+                        openDesk: function(desk) {
+                            return function(event) {
+                                event.stopPropagation();
+                                if (desk.isUserDeskMember) {
+                                    desks.setCurrentDeskId(desk.desk._id);
+                                    $location.url('/workspace/monitoring');
+                                    if (desk.count === 1) {
+                                        superdesk.intent('edit', 'item', desk.item);
+                                    }
+                                }
+                            };
+                        },
+
                         render: function() {
-
                             var items = [];
-                            items.push(React.createElement('dt', {key: 1}, gettext('fetched in')));
+                            items.push(React.createElement('dt', {key: 'dt'}, gettext('fetched in')));
 
-                            items = items.concat(this.state.desks.map(function(desk) {
-                                return React.createElement('dd', {}, desk.desk.name);
-                            }));
+                            if (this.state.desks.length) {
+                                var desk = this.state.desks[0];
+                                var name = this.formatDeskName(desk.desk.name);
+                                items.push(React.createElement('dd', {key: 'dd1'}, desk.isUserDeskMember ?
+                                    React.createElement('a', {onClick: this.openDesk(desk)}, name) :
+                                    React.createElement('span', {className: 'container'}, name)
+                                ));
 
-                            return React.createElement('div', {}, 
+                                if (this.state.desks.length > 1) {
+                                    items.push(React.createElement(DesksDropdown, {
+                                        key: 'dd2',
+                                        desks: this.state.desks,
+                                        openDesk: this.openDesk
+                                    }));
+                                }
+                            }
+
+                            return React.createElement('div', {},
                                 React.createElement(
                                     'dl',
                                     {},
@@ -1402,23 +1457,41 @@
                         return React.createElement(
                             'div',
                             {className: 'item-info'},
-                            React.createElement('div', {className: 'line'}, 
+                            React.createElement('div', {className: 'line'},
                                 React.createElement('span', {className: 'word-count'}, item.word_count),
                                 item.slugline ? React.createElement('span', {className: 'keyword'}, item.slugline.substr(0, 40)) : null,
                                 React.createElement(HighlightsInfo, {item: item}),
-                                React.createElement('span', {className: 'item-heading'}, item.headline ? item.headline.substr(0, 90) : item.type),
+                                React.createElement('span', {className: 'item-heading'}, item.headline ?
+                                    item.headline.substr(0, 90) :
+                                    item.type),
                                 React.createElement('time', {}, moment(item.versioncreated).fromNow())
                             ),
                             React.createElement('div', {className: 'line'},
                                 React.createElement('div', {className: 'state-label state-' + item.state}, item.state),
-                                item.anpa_take_key ? React.createElement('div', {className: 'takekey'}, item.anpa_take_key) : null,
-                                item.signal ? React.createElement('span', {className: 'signal'}, item.signal) : null,
-                                broadcast.status ? React.createElement('span', {className: 'broadcast-status', tooltip: broadcast.status}, '!') : null,
-                                flags.marked_for_not_publication ? React.createElement('div', {className: 'state-label not-for-publication'}, gettext('Not for Publication')) : null,
-                                flags.marked_for_legal ? React.createElement('div', {className: 'state-label legal'}, gettext('Legal')) : null,
-                                anpa.name ? React.createElement('div', {className: 'category'}, anpa.name) : null,
+                                item.anpa_take_key ?
+                                    React.createElement('div', {className: 'takekey'}, item.anpa_take_key) :
+                                    null,
+                                item.signal ?
+                                    React.createElement('span', {className: 'signal'}, item.signal) :
+                                    null,
+                                broadcast.status ?
+                                    React.createElement('span', {className: 'broadcast-status', tooltip: broadcast.status}, '!') :
+                                    null,
+                                flags.marked_for_not_publication ?
+                                    React.createElement('div', {className: 'state-label not-for-publication'},
+                                        gettext('Not for Publication')) :
+                                    null,
+                                flags.marked_for_legal ?
+                                    React.createElement('div', {className: 'state-label legal'}, gettext('Legal')) :
+                                    null,
+                                anpa.name ?
+                                    React.createElement('div', {className: 'category'}, anpa.name) :
+                                    null,
                                 React.createElement('span', {className: 'provider'}, provider.name),
-                                item.is_spiked ? React.createElement('div', {className: 'expires'}, gettext('expires') + ' ' + moment(item.expiry).fromNow()) : null,
+                                item.is_spiked ?
+                                    React.createElement('div', {className: 'expires'},
+                                        gettext('expires') + ' ' + moment(item.expiry).fromNow()) :
+                                    null,
                                 item.archived ? React.createElement(FetchedDesksInfo, {item: item}) : null,
                                 React.createElement(ItemContainer, {item: item, desk: props.desk})
                             )
@@ -1440,20 +1513,6 @@
                             'span',
                             {className: 'broadcast-status', tooltip: broadcast.status},
                             '!'
-                        );
-                    };
-
-                    var StateLabel = function(props) {
-                        var item = props.item;
-                        var className = classNames(
-                            'state-label',
-                            'state-' + item.state,
-                            {'state_embargo': item.embargo}
-                        );
-                        return React.createElement(
-                            'div',
-                            {className: className},
-                            item.state
                         );
                     };
 
@@ -1652,7 +1711,11 @@
                             if (this.props.view === 'mgrid') {
                                 contents.push(
                                     item.archiveError ? React.createElement(ErrorBox) : null,
-                                    React.createElement(MediaPreview, {item: item, desk: this.props.desk, onMultiSelect: this.props.onMultiSelect}),
+                                    React.createElement(MediaPreview, {
+                                        item: item,
+                                        desk: this.props.desk,
+                                        onMultiSelect: this.props.onMultiSelect
+                                    }),
                                     React.createElement(MediaInfo, {item: item, ingestProvider: this.props.ingestProvider}),
                                     React.createElement(GridTypeIcon, {item: item}),
                                     item.priority ? React.createElement(ItemPriority, {priority: item.priority}) : null,
@@ -1663,9 +1726,16 @@
                             } else {
                                 contents.push(
                                     React.createElement('span', {className: 'state-border'}),
-                                    React.createElement(ListTypeIcon, {item: item, onMultiSelect: this.props.onMultiSelect}),
+                                    React.createElement(ListTypeIcon, {
+                                        item: item,
+                                        onMultiSelect: this.props.onMultiSelect
+                                    }),
                                     React.createElement(ListPriority, {item: item}),
-                                    React.createElement(ListItemInfo, {item: item, ingestProvider: this.props.ingestProvider, desk: this.props.desk}),
+                                    React.createElement(ListItemInfo, {
+                                        item: item,
+                                        desk: this.props.desk,
+                                        ingestProvider: this.props.ingestProvider
+                                    }),
                                     this.state.hover ? React.createElement(ActionsMenu, {item: item}) : null
                                 );
                             }
@@ -1719,6 +1789,15 @@
                             }, function() {
                                 console.timeEnd('select');
                             });
+                        },
+
+                        updateItem: function(itemId, changes) {
+                            var item = this.state.itemsById[itemId] || null;
+                            if (item) {
+                                var itemsById = angular.extend({}, this.state.itemsById);
+                                itemsById[itemId] = angular.extend({}, item, changes);
+                                this.setState({itemsById: itemsById});
+                            }
                         },
 
                         getSelectedItem: function() {
@@ -1807,51 +1886,31 @@
                     });
 
                     scope.$on('item:lock', function(_e, data) {
-                        if (scope.itemsById[data.item]) {
-                            scope.itemsById[data.item] = angular.extend({}, scope.itemsById[data.item], {
-                                lock_user: data.user,
-                                lock_session: data.lock_session,
-                                lock_time: data.lock_time
-                            });
-                            listComponent.setState({itemsById: scope.itemsById});
-                        }
+                        listComponent.updateItem(data.item, {
+                            lock_user: data.user,
+                            lock_session: data.lock_session,
+                            lock_time: data.lock_time
+                        });
                     });
 
                     scope.$on('item:unlock', function(_e, data) {
-                        if (scope.itemsById[data.item]) {
-                            scope.itemsById[data.item] = angular.extend({}, scope.itemsById[data.item], {
-                                lock_user: null,
-                                lock_session: null,
-                                lock_time: null
-                            });
-                            listComponent.setState({itemsById: scope.itemsById});
-                        }
+                        listComponent.updateItem(data.item, {
+                            lock_user: null,
+                            lock_session: null,
+                            lock_time: null
+                        });
                     });
 
                     scope.$on('multi:reset', function(e, data) {
                         var itemsById = angular.extend({}, listComponent.state.itemsById);
-                        data.ids.forEach(function(id) {
+                        var ids = data.ids || [];
+                        ids.forEach(function(id) {
                             itemsById[id] = angular.extend({}, itemsById[id], {
                                 selected: false
                             });
                         });
 
                         listComponent.setState({itemsById: itemsById});
-                    });
-
-                    scope.$on('task:progress', function(_e, data) {
-                        console.log('progress', data);
-                        var itemId = scope.itemsList.find(function(itemId) {
-                            return data.task === scope.itemsById[itemId].task_id;
-                        });
-
-                        if (itemId) {
-                            var item = scope.itemsById[itemId];
-                            scope.itemsById[itemId] = angular.extend({}, item, {
-                                _progress: Math.max(10, Math.min(100, Math.round(100.0 * data.progress.current / data.progress.total)))
-                            });
-                            listComponent.setState({itemsById: itemsById});
-                        }
                     });
 
                     /*
@@ -2749,10 +2808,11 @@
                 label: gettext('Search'),
                 templateUrl: asset.templateUrl('superdesk-search/views/search.html'),
                 sideTemplateUrl: 'scripts/superdesk-workspace/views/workspace-sidenav.html',
-                controller: ['$scope', 'ingestProvidersById', 'desksById', 'highlightsById', function($scope, ingestProvidersById, desksById, highlightsById) {
+                controller: ['$scope', 'ingestProvidersById', 'desksById', 'highlightsById',
+                function($scope, ingestProvidersById, desksById, highlightsById) {
                     $scope.ingestProvidersById = ingestProvidersById;
-                    $scope.desksById = desksById
-                    $scope.highlightsById = highlightsById
+                    $scope.desksById = desksById;
+                    $scope.highlightsById = highlightsById;
                 }],
                 resolve: {
                     ingestProvidersById: ['ingestSources', function(ingestSources) {
@@ -2772,8 +2832,7 @@
                                 highlights[item._id] = item;
                             });
                             return highlights;
-                        })
-
+                        });
                     }]
                 }
             });

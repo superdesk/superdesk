@@ -21,7 +21,7 @@
          * @param {Object} item
          */
         this.toggle = function(item) {
-            items = _.without(items, items.find(identity));
+            items = _.without(items, _.find(items, identity));
             if (item.selected) {
                 items = _.union(items, [item]);
                     return (obj._id === item._id && obj._current_version === item._current_version);
