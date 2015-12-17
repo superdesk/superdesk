@@ -69,7 +69,7 @@ function MasterDesks() {
     };
 
     this.editUser = function(desk, role, user) {
-        this.getUser(desk, role, user).element(by.className('icon-dots-vertical')).click();
+        this.getUser(desk, role, user).click();
         this.getUser(desk, role, user).element(by.className('icon-pencil')).click();
     };
 }

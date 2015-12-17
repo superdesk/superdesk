@@ -1,19 +1,17 @@
 <ul ng-if="!loading && items.length" class="inline-content-items content-tasks" >
-	<li ng-repeat="item in items track by item._id" class="item" ng-if="!online || isLoggedIn(item)">
+	<li ng-repeat="item in items track by item._id" class="content-item content-item--no-border shifted" ng-if="!online || isLoggedIn(item)">
 		<figure class="avatar avatar-with-info small" title="{{item.display_name}}" ng-class="{'user-logged': isLoggedIn(item)}">
 			<div class="logged-info"></div>
 			<div class="user-image">
 				<img sd-user-avatar data-user="item">
 			</div>
 		</figure>
-		<div class="text pull-left">
+		<div class="content-item__text">
 			{{item.display_name}}
 		</div>
-		<div class="pull-right dropdown" dropdown ng-if="privilege">
-	        <button class="dropdown-toggle animate-icon" dropdown-toggle><i class="icon-dots-vertical"></i></button>
-	        <ul class="dropdown-menu">
-	            <li><button ng-click="openEditUser(item)"><i class="icon-pencil"></i> {{ :: 'Edit user' | translate }}</button></li>
-	        </ul>
+        
+        <div class="content-item__action" ng-if="privilege">
+            <button ng-click="openEditUser(item)" title="{{ :: 'Edit user' | translate }}"><i class="icon-pencil"></i></button>
         </div>
 	</li>
 </ul>
