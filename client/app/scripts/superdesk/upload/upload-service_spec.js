@@ -2,8 +2,6 @@
 
 describe('upload service', function() {
 
-    var upload;
-
     beforeEach(module('superdesk.upload'));
 
     beforeEach(module(function($provide) {
@@ -14,10 +12,6 @@ describe('upload service', function() {
             };
             this.http = function() {};
         }]);
-    }));
-
-    beforeEach(inject(function (_upload_) {
-        upload = _upload_;
     }));
 
     it('can start uploading', inject(function(upload, $upload) {
