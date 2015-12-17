@@ -127,7 +127,7 @@ a:hover {
 .main-section {
 	position:absolute;
 	top: @subnav-height+@topspace;
-	bottom:0; left:0; right:0; 
+	bottom:0; left:0; right:0;
 	margin:0;
 	padding:0;
 	z-index:1;
@@ -149,7 +149,7 @@ a:hover {
 }
 .main-section.filter {
 	top: @subnav-height+@topspace;
-	bottom:0; left:0; right:0; 
+	bottom:0; left:0; right:0;
 	margin:0;
 	padding:0;
 	z-index:1;
@@ -173,7 +173,11 @@ a:hover {
 .main-section.search {
 	top: @topspace;
 }
-
+.main-section.search {
+	.archive-sidebar {
+		top:48px;
+	}
+}
 
 // Preview layout
 // ------------------------------------
@@ -209,7 +213,7 @@ a:hover {
 		}
 		> .content {
 			position: absolute;
-			top: @nav-height + 1;
+			top: @nav-height;
 			left: 0;
 			bottom: 0;
 			right: 0;
@@ -240,7 +244,7 @@ a:hover {
 	}
 	.preview-pane {
 		position: absolute;
-		width: @sidepreview-width; 
+		width: @sidepreview-width;
 		top: 48px;
 		right: 0; bottom: 0;
 		background: #fff;
@@ -300,6 +304,16 @@ a:hover {
         }
     }
 }
+.ingest-container {
+	.list-pane {
+		top:-@nav-height;
+	}
+}
+.archive-container {
+	.archive-sidebar {
+		top:@nav-height;
+	}
+}
 
 .authoring {
     .preview-layout {
@@ -348,9 +362,9 @@ a:hover {
     z-index: @zindexSlidePane;
     .border-box();
 
-    &.slide-pane--inset { 
-        top: @nav-height * 2; 
-        bottom: 30px; 
+    &.slide-pane--inset {
+        top: @nav-height * 2;
+        bottom: 30px;
     }
     &.open { right: 0; }
 
@@ -401,7 +415,7 @@ a:hover {
             margin-bottom: 15px;
             padding: 12px 15px;
         }
-        
+
         .btn-list li { padding-bottom: 0; }
     }
 
@@ -506,7 +520,7 @@ a:hover {
 					background: #b8b8b8;
 				}
 			}
-		}	
+		}
 	}
 }
 .tabpane {
@@ -556,8 +570,8 @@ a:hover {
 
 .notification-pane {
 	position: fixed;
-	top: @nav-height; 
-	bottom: 0; 
+	top: @nav-height;
+	bottom: 0;
 	right: -@notification-pane-width;
 	width: @notification-pane-width;
 	.box-sizing(border-box);
@@ -657,7 +671,7 @@ a:hover {
     position: relative;
     .border-radius(2px);
     box-shadow: 0 1px 4px 0 rgba(0,0,0,0.2);
-    background-color: white;	
+    background-color: white;
     font-size: 13px;
     color: #333;
     .card-box__header {
@@ -832,7 +846,7 @@ a:hover {
     overflow-x: auto;
 	.flex-item {
 		.box-sizing(border-box);
-		position: relative;		
+		position: relative;
 
 	}
     &.wrap-items {
@@ -845,7 +859,7 @@ a:hover {
 		.header {
 			min-height: 72px;
 		}
-	}	
+	}
 	&.box {
 		.flex-item {
 			margin: @flex-grid-gap;
@@ -859,7 +873,7 @@ a:hover {
 			.flex-item {
 				.flex(0, 0, calc(~'16.6666% -' @flex-grid-gap*2));
 			}
-		}		
+		}
 		&-5 {
 			.flex-item {
 				.flex(0, 0, calc(~'20% -' @flex-grid-gap*2));
@@ -891,7 +905,7 @@ a:hover {
 			.flex-item {
 				.flex(0, 0, 16.6666%);
 			}
-		}		
+		}
 		&-5 {
 			.flex-item {
 				.flex(0, 0, 20%);
@@ -928,7 +942,7 @@ a:hover {
 				.flex-item {
 					.flex(0, 0, calc(~'16.6666% -' @flex-grid-gap*2));
 				}
-			}			
+			}
 			&-5 {
 				.flex-item {
 					.flex(0, 0, calc(~'20% -' @flex-grid-gap*2));
@@ -960,7 +974,7 @@ a:hover {
 				.flex-item {
 					.flex(0, 0, 16.6666%);
 				}
-			}			
+			}
 			&-5 {
 				.flex-item {
 					.flex(0, 0, 20%);
@@ -997,12 +1011,12 @@ a:hover {
 				.flex-item {
 					.flex(0, 0, calc(~'16.6666% -' @flex-grid-gap*2));
 				}
-			}			
+			}
 			&-5 {
 				.flex-item {
 					.flex(0, 0, calc(~'20% -' @flex-grid-gap*2));
 				}
-			}		
+			}
 			&-4 {
 				.flex-item {
 					.flex(0, 0, calc(~'25% -' @flex-grid-gap*2));
@@ -1029,12 +1043,12 @@ a:hover {
 				.flex-item {
 					.flex(0, 0, 16.6666%);
 				}
-			}			
+			}
 			&-5 {
 				.flex-item {
 					.flex(0, 0, 20%);
 				}
-			}		
+			}
 			&-4 {
 				.flex-item {
 					.flex(0, 0, 25%);

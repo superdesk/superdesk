@@ -1,4 +1,4 @@
-<div class="sortbar pull-left" ng-show="canSort()">
+<div class="sortbar" ng-show="canSort()">
 	<span class="lab pull-left" translate>Sort:</span>
 	<div class="dropdown pull-left" dropdown>
 	    <button id="order_button" class="dropdown-toggle" dropdown-toggle>{{ active.label }} <b class="caret"></b>
@@ -14,4 +14,3 @@
     	<i class="icon-descending" ng-if="active.dir === 'desc'"></i>
     </button>
 </div>
-
