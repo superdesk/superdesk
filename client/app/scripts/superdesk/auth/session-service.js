@@ -8,7 +8,7 @@
     '$q',
     '$rootScope',
     'storage',
-    'SESSION_EVENTS', 
+    'SESSION_EVENTS',
     function ($q, $rootScope, storage, SESSION_EVENTS) {
 
         var TOKEN_KEY = 'sess:token';
