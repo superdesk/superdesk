@@ -820,10 +820,41 @@
         /**
          * Item list with sidebar preview
          */
-        .directive('sdSearchResults', ['$location', 'preferencesService', 'packages', 'asset', '$timeout', 'api', 'search', 'session',
-        'moment', 'gettext', 'superdesk', 'workflowService', 'archiveService', 'activityService', 'multi',
-        function($location, preferencesService, packages, asset, $timeout, api, search, session,
-        moment, gettext, superdesk, workflowService, archiveService, activityService, multi) {
+        .directive('sdSearchResults', [
+            '$location',
+            'preferencesService',
+            'packages',
+            'asset',
+            '$timeout',
+            'api',
+            'search',
+            'session',
+            'moment',
+            'gettext',
+            'superdesk',
+            'workflowService',
+            'archiveService',
+            'activityService',
+            'multi',
+            'familyService',
+        function(
+            $location,
+            preferencesService,
+            packages,
+            asset,
+            $timeout,
+            api,
+            search,
+            session,
+            moment,
+            gettext,
+            superdesk,
+            workflowService,
+            archiveService,
+            activityService,
+            multi,
+            familyService
+        ) { // uff - should it use injector instead?
             var update = {
                 'archive:view': {
                     'allowed': [
@@ -1226,6 +1257,14 @@
                             ));
                         }
 
+                        if (item.archived) {
+                            info.push(React.createElement(
+                                'div',
+                                {className: 'fetched-desk', key: 5},
+                                React.createElement(FetchedDesksInfo, {item: item})
+                            ));
+                        }
+
                         return React.createElement('div', {className: 'media-info'}, info);
                     };
 
@@ -1323,9 +1362,36 @@
                         }
                     });
 
-                    var FetchedDesksInfo = function(props) {
-                        return React.createElement('div');
-                    };
+                    var FetchedDesksInfo = React.createClass({
+                        getInitialState: function() {
+                            return {desks: []};
+                        },
+
+                        componentDidMount: function() {
+                            familyService.fetchDesks(this.props.item, false)
+                                .then(function(fetchedDesks) {
+                                    this.setState({desks: fetchedDesks});
+                                }.bind(this));
+                        },
+
+                        render: function() {
+
+                            var items = [];
+                            items.push(React.createElement('dt', {key: 1}, gettext('fetched in')));
+
+                            items = items.concat(this.state.desks.map(function(desk) {
+                                return React.createElement('dd', {}, desk.desk.name);
+                            }));
+
+                            return React.createElement('div', {}, 
+                                React.createElement(
+                                    'dl',
+                                    {},
+                                    items
+                                )
+                            );
+                        }
+                    });
 
                     var ListItemInfo = function(props) {
                         var item = props.item;
