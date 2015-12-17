@@ -94,7 +94,8 @@
     angular.module('superdesk.session', [])
         .constant('SESSION_EVENTS', {
             LOGIN: 'login',
-            LOGOUT: 'logout'
+            LOGOUT: 'logout',
+            IDENTITY_LOADED: 'identity_loaded'
         });
 
     return angular.module('superdesk.auth', [
@@ -130,8 +131,8 @@
         }])
 
         // watch session token, identity
-        .run(['$rootScope', '$http', '$window', 'session', 'api', 'superdeskFlags', 'authoringWorkspace', 'modal', 'gettext',
-        function($rootScope, $http, $window, session, api, superdeskFlags, authoringWorkspace, modal, gettext) {
+        .run(['$rootScope', '$http', '$window', 'session', 'api', 'superdeskFlags', 'authoringWorkspace', 'modal', 'gettext', 'SESSION_EVENTS',
+        function($rootScope, $http, $window, session, api, superdeskFlags, authoringWorkspace, modal, gettext, SESSION_EVENTS) {
             $rootScope.logout = function() {
 
                 function replace() {
@@ -162,6 +163,7 @@
                 return session.identity;
             }, function (identity) {
                 $rootScope.currentUser = session.identity;
+                $rootScope.$broadcast(SESSION_EVENTS.IDENTITY_LOADED);
             });
 
             // set auth header

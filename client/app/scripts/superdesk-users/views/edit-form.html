@@ -105,6 +105,11 @@
                   <div ng-show="userForm.email.$error.unique || error.email.unique" sd-valid-error translate>sorry, a user with this email already exists</div>
                 </div>
 
+                <div sd-info-item class="user_role">
+                  <label for="user_language" translate>Language</label>
+                  <select ng-focus="focused()" ng-model="user.language" name="user_language" id="user_language" ng-options="lang as lang for lang in languages"></select>
+                </div>
+
                 <div sd-info-item class="user_type" ng-if="privileges.users">
                   <label for="user_type" translate>administrator</label>
                   <input type="checkbox" ng-true-value="'administrator'" ng-false-value="'user'" ng-model="user.user_type" name="user_type" id="user_type">

@@ -927,9 +927,9 @@
         }])
 
         .directive('sdUserEdit', ['api', 'gettext', 'notify', 'usersService', 'userList', 'session', 'lodash',
-            '$location', '$route', 'superdesk', 'features', 'asset', 'privileges', 'desks', 'keyboardManager',
+            '$location', '$route', 'superdesk', 'features', 'asset', 'privileges', 'desks', 'keyboardManager', 'gettextCatalog',
         function(api, gettext, notify, usersService, userList, session, _, $location, $route, superdesk, features,
-                 asset, privileges, desks, keyboardManager) {
+                 asset, privileges, desks, keyboardManager, gettextCatalog) {
 
             return {
                 templateUrl: asset.templateUrl('superdesk-users/views/edit-form.html'),
@@ -971,6 +971,11 @@
                     api('roles').query().then(function(result) {
                         scope.roles = result._items;
                     });
+                    //get available translation languages
+                    scope.languages = _.map(gettextCatalog.strings, function(translation, lang) {
+                        return lang;
+                    });
+                    scope.languages.unshift(gettextCatalog.baseLanguage);
 
                     scope.cancel = function() {
                         resetUser(scope.origUser);
@@ -992,7 +997,6 @@
                     scope.save = function() {
                         scope.error = null;
                         notify.info(gettext('saving..'));
-
                         return usersService.save(scope.origUser, scope.user)
                         .then(function(response) {
                             scope.origUser = response;
