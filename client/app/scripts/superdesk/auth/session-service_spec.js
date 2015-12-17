@@ -54,17 +54,19 @@
             expect(identity.name).toBe('foo');
         }));
 
-        it('can store state for future requests', inject(function (session, $injector, $rootScope) {
+        it('can store state for future requests', inject(function (session, $rootScope) {
             session.start(SESSION, {name: 'bar'});
 
-            var nextSession = $injector.get('session');
-            $rootScope.$apply();
+            var nextInjector = angular.injector(['superdesk.session', 'superdesk.services.storage', 'ng']);
+            var nextSession = nextInjector.get('session');
+            nextInjector.get('$rootScope').$digest();
+            $rootScope.$digest();
 
             expect(nextSession.token).toBe(SESSION.token);
             expect(nextSession.identity.name).toBe('bar');
 
             nextSession.expire();
-            $rootScope.$apply();
+            $rootScope.$digest();
 
             expect(session.token).toBe(null);
             expect(session.identity.name).toBe('bar');
@@ -105,13 +107,16 @@
             expect(session.getSessionHref()).toBe(SESSION._links.self.href);
         }));
 
-        it('can update identity', inject(function (session, $injector, $rootScope) {
+        it('can update identity', inject(function (session, $rootScope) {
             session.start(SESSION, {name: 'bar'});
             session.updateIdentity({name: 'baz'});
             expect(session.identity.name).toBe('baz');
 
-            var nextSession = $injector.get('session');
+            var nextInjector = angular.injector(['superdesk.session', 'superdesk.services.storage', 'ng']);
+            var nextSession = nextInjector.get('session');
+            nextInjector.get('$rootScope').$digest();
             $rootScope.$apply();
+
             expect(nextSession.identity.name).toBe('baz');
         }));
 
