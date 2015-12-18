@@ -21,6 +21,7 @@
 		height: @nav-height + 1;
 		border-bottom: 1px solid #ddd;
 		background-color: #f4f4f4;
+		position: relative;
 		.border-box();
 		.icon {
 			width: 48px;
@@ -81,26 +82,11 @@
 	.edit-search {
 		font-weight: 500;
 			font-size: 15px;
-			margin: -20px -20px 15px;
-			//padding: 5px;
-			//border-bottom: 1px solid rgba(0,0,0,0.2);
-			//box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+			margin: 10px -20px 15px;
 			fieldset {
 				padding: 0 20px;
 			}
 	}
-
-	.edit-search__top-bar {
-		padding: 14px 20px 6px;
-		//	border-bottom:1px solid rgba(0,0,0,0.1);
-		margin-bottom: 20px;
-		box-shadow: 0 1px 2px rgba(0,0,0,0.2);
-		animation: dropOut .2s cubic-bezier(0.695, 0.105, 0.285, 1.275) 1;
-		.backlink {
-			animation: appearFromRight 0.4s ease-out 1;
-		}
-	}
-
 	.toggle-box {
             .toggle-box__label {
                 font-size: 12px;
@@ -414,6 +400,22 @@
 		}
 	}
 }
+
+.backlink-toolbar {
+	padding: 16px 20px 0;
+	margin-bottom: 20px;
+	.border-box();
+	height: @nav-height;
+	background: white;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+	position: relative;
+	z-index: 2;
+	animation: dropOut .2s cubic-bezier(0.695, 0.105, 0.285, 1.275) 1;
+	.backlink {
+		animation: appearFromRight 0.4s ease-out 1;
+	}
+}
+
 .saved-searches {
 
 }

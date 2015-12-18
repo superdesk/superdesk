@@ -1695,6 +1695,39 @@ header .sortbar {
 	}
 }
 
+
+// DEFAULT TOGGLE BUTTON
+// ---------------------------------------------
+
+.toggle-button {
+	border-radius: 2px;
+	box-sizing: border-box;
+	padding: 0 10px;            
+	text-decoration: none;
+	font-size: 12px;
+	background: #fff;
+	color: @grayLight;
+	border: 1px solid #d7d7d7;
+	height: 24px;
+	margin-bottom: 4px;
+	//transition: all 0.3s ease-out;
+	&:hover {
+		color: @grayDark;
+		border-color: #aaa;
+	}
+	&--active {
+		color: @white;
+		background: #5e5e5e;
+		border-color: #5e5e5e;			    
+		.box-shadow(inset 0 1px 2px rgba(0,0,0,0.5));
+			&:hover {
+			color: @white;
+			border-color: #5e5e5e;
+		}
+	}
+}
+
+
 // DRAG & DROP
 // ---------------------------------------------
 .draggable-list {

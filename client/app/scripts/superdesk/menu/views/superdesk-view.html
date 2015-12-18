@@ -5,8 +5,7 @@
 <div class="loading" ng-if="loading"></div>
 
 <div id="main-container" ng-class="superdesk.flags" ng-if="superdesk.flags.workspace === true">
-    <!-- ng-class for workspace-container can be deleted once ingest and content are removed from SD -->
-    <div id="workspace-container" ng-view sd-splitter-widget ng-class="{'ingest-container': currentRoute.href === '/workspace/ingest'}"></div>
+    <div id="workspace-container" ng-view sd-splitter-widget></div>
     <div id="authoring-container" ng-if="superdesk.flags.workspace" sd-authoring-container></div>
     <div id="superdesk-workqueue" ng-if="superdesk.flags.workspace" sd-workqueue></div>
     <div sd-item-preview-container></div>

@@ -126,26 +126,18 @@
 
 	.search-cancel {
 		position: absolute;
-		top: 16px; right: 55px;
-		background: rgba(0, 0, 0, 0.3);
-		.border-radius(50%);
+		top: 12px; right: 55px;
+		background: transparent;
 		border: 0;
 		padding: 0;
-  		//zoom: 0.8;
-  		height: 15px;
-  		width: 15px;
+  		opacity: 0.4;
+  		height: 24px;
+  		width: 24px;
+		padding:4px;
   		cursor: pointer;
-		i {
-			margin: 0;
-			font-size: 12px;
-			width:11px;
-			height:11px;
-			position: absolute;
-			top:0px;
-			left:1px;
-		}
+		transition: all 300ms ease;
 		&:hover {
-			background: rgba(0, 0, 0, 0.6)
+			opacity: 0.8;
 		}
 	}
 
@@ -268,8 +260,3 @@
 	}
 }
 
-#search-parameters {
-	.superdeskRepos {
-		padding-left: 30px;
-	}
-}
