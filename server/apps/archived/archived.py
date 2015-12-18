@@ -34,8 +34,8 @@ class ArchivedResource(Resource):
             'last_version': 0
         }
     }
-
-    mongo_prefix = 'ARCHIVED'
+    # TODO: Add the prefix back when the deployment issue is fixed
+    # mongo_prefix = 'ARCHIVED'
 
     extra_fields = published_item_fields.copy()
     # item_id + _current_version will be used fetch archived item.
