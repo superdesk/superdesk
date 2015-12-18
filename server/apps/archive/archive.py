@@ -22,11 +22,12 @@ from superdesk import get_resource_service
 from superdesk.errors import SuperdeskApiError
 from eve.versioning import resolve_document_version, versioned_id_field
 from superdesk.activity import add_activity, ACTIVITY_CREATE, ACTIVITY_UPDATE, ACTIVITY_DELETE
-from eve.utils import parse_request, config
+from eve.utils import parse_request, config, date_to_str, ParsedRequest
 from superdesk.services import BaseService
 from superdesk.users.services import current_user_has_privilege, is_admin
-from superdesk.metadata.item import ITEM_STATE, CONTENT_STATE, CONTENT_TYPE, ITEM_TYPE, EMBARGO, LINKED_IN_PACKAGES, \
+from superdesk.metadata.item import ITEM_STATE, CONTENT_STATE, CONTENT_TYPE, ITEM_TYPE, EMBARGO, \
     PUBLISH_STATES
+from superdesk.metadata.packages import LINKED_IN_PACKAGES, RESIDREF, SEQUENCE
 from apps.common.components.utils import get_component
 from apps.item_autosave.components.item_autosave import ItemAutosave
 from apps.common.models.base_model import InvalidEtag
@@ -44,7 +45,6 @@ import datetime
 from settings import DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES, VERSION, \
     DEFAULT_PRIORITY_VALUE_FOR_MANUAL_ARTICLES, \
     DEFAULT_URGENCY_VALUE_FOR_MANUAL_ARTICLES
-from superdesk.metadata.packages import RESIDREF, SEQUENCE
 
 
 logger = logging.getLogger(__name__)
@@ -422,8 +422,6 @@ class ArchiveService(BaseService):
         updates['state'] = 'in_progress'
         updates['publish_schedule'] = None
         updates[ITEM_OPERATION] = ITEM_DESCHEDULE
-        # delete entries from publish queue
-        get_resource_service('publish_queue').delete_by_article_id(doc['_id'])
         # delete entry from published repo
         get_resource_service('published').delete_by_article_id(doc['_id'])
 
@@ -459,18 +457,14 @@ class ArchiveService(BaseService):
 
         return True, ''
 
-    def remove_expired(self, doc):
+    def delete_by_article_ids(self, ids):
         """
-        Removes the article from production if the state is spiked
+        remove the content
+        :param list ids: list of ids to be removed
         """
-
-        assert doc[ITEM_STATE] == CONTENT_STATE.SPIKED, \
-            "Article state is %s. Only Spiked Articles can be removed" % doc[ITEM_STATE]
-
-        doc_id = str(doc[config.ID_FIELD])
-        resource_def = app.config['DOMAIN']['archive_versions']
-        get_resource_service('archive_versions').delete(lookup={versioned_id_field(resource_def): doc_id})
-        super().delete_action({config.ID_FIELD: doc_id})
+        version_field = versioned_id_field(app.config['DOMAIN']['archive_versions'])
+        get_resource_service('archive_versions').delete(lookup={version_field: {'$in': ids}})
+        super().delete_action({config.ID_FIELD: {'$in': ids}})
 
     def __is_req_for_save(self, doc):
         """
@@ -622,6 +616,29 @@ class ArchiveService(BaseService):
 
         if updates.get('force_unlock', False):
             del updates['force_unlock']
+
+    def get_expired_items(self, expiry_datetime):
+        """
+        Get the expired items where content state is not scheduled
+        and
+        :param datetime expiry_datetime: expiry datetime
+        :return pymongo.cursor: expired non published items.
+        """
+        query = {
+            '$and': [
+                {'expiry': {'$lte': date_to_str(expiry_datetime)}},
+                {ITEM_STATE: {'$ne': CONTENT_STATE.SCHEDULED}},
+                {'$or': [
+                    {'task.desk': {'$ne': None}},
+                    {ITEM_STATE: CONTENT_STATE.SPIKED, 'task.desk': None}
+                ]}
+            ]
+        }
+
+        req = ParsedRequest()
+        req.max_results = config.MAX_EXPIRY_QUERY_LIMIT
+        req.sort = 'expiry,_created'
+        return self.get_from_mongo(req=None, lookup=query)
 
 
 class AutoSaveResource(Resource):

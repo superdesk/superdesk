@@ -514,12 +514,19 @@
                 scope.error = null;
 
                 if (scope.item.location) {
-                    var version = '';
-                    if (scope.item._current_version) {
-                        version = '?version=' + scope.item._current_version;
+                    var url = '';
+                    var endpoint = '';
+
+                    if (_.contains(['archive', 'legal_archive'], scope.item.location)) {
+                        url = scope.item.location + '/' + scope.item.residRef;
+                        url += scope.item._current_version ? '?version=' + scope.item._current_version: '';
+                        endpoint = scope.item.location;
+                    } else {
+                        url = scope.item.location + '/' + scope.item.residRef + ':' + scope.item._current_version;
+                        endpoint = 'archived';
                     }
 
-                    api[scope.item.location].getByUrl(scope.item.location + '/' + scope.item.residRef + version)
+                    api[endpoint].getByUrl(url)
                     .then(function(result) {
                         scope.data = result;
                         scope.isLocked = lock.isLocked(scope.data);
@@ -777,6 +784,12 @@
             backend: {rel: 'archive'}
         });
     }])
+    .config(['apiProvider', function(apiProvider) {
+        apiProvider.api('archived', {
+            type: 'http',
+            backend: {rel: 'archived'}
+        });
+    }])
     .config(['authoringWidgetsProvider', function(authoringWidgetsProvider) {
         authoringWidgetsProvider
             .widget('search', {
@@ -786,7 +799,7 @@
                 order: 4,
                 side: 'left',
                 extended: true,
-                display: {authoring: false, packages: true, legalArchive: false}
+                display: {authoring: false, packages: true, legalArchive: false, archive: false}
             });
     }])
     .controller('SearchWidgetCtrl', SearchWidgetCtrl);

@@ -18,7 +18,7 @@ from superdesk.celery_app import celery
 
 from .archive import ArchiveResource, ArchiveService, ArchiveVersionsResource, AutoSaveResource, \
     ArchiveSaveService
-from .commands import RemoveExpiredSpikeContent, UpdateOverdueScheduledContent
+from .commands import UpdateOverdueScheduledContent, RemoveExpiredContent
 from apps.publish.commands import UpdateOverdueScheduledPublishedContent
 from .ingest import IngestResource, AppIngestService
 from .item_comments import ItemCommentsResource, ItemCommentsSubResource, ItemCommentsService, ItemCommentsSubService
@@ -114,11 +114,11 @@ def init_app(app):
 
 
 @celery.task
-def content_purge():
-    RemoveExpiredSpikeContent().run()
-
-
-@celery.task
 def remove_scheduled():
     UpdateOverdueScheduledContent().run()
     UpdateOverdueScheduledPublishedContent().run()
+
+
+@celery.task()
+def content_expiry():
+    RemoveExpiredContent().run()

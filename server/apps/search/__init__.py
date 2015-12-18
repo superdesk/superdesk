@@ -35,14 +35,11 @@ class SearchService(superdesk.Service):
                                                                        CONTENT_STATE.ROUTED, CONTENT_STATE.PROGRESS,
                                                                        CONTENT_STATE.SUBMITTED]}}]},
                                      published={'and': [{'term': {'_type': 'published'}},
-                                                        {'term': {'allow_post_publish_actions': True}},
                                                         {'terms': {ITEM_STATE: [CONTENT_STATE.SCHEDULED,
                                                                                 CONTENT_STATE.PUBLISHED,
                                                                                 CONTENT_STATE.KILLED,
                                                                                 CONTENT_STATE.CORRECTED]}}]},
-                                     archived={'and': [{'term': {'_type': 'published'}},
-                                                       {'term': {'allow_post_publish_actions': False}},
-                                                       {'term': {'can_be_removed': False}}]})
+                                     archived={'and': [{'term': {'_type': 'archived'}}]})
 
     def _get_query(self, req):
         """Get elastic query."""
@@ -70,13 +67,6 @@ class SearchService(superdesk.Service):
 
         for repo in repos:
             filters.append(self._private_filters[repo])
-
-        # 'archived' is a logical entity and docs in archived repo actually exist in published repo.
-        # Without this, elastic search will throw error.
-        if 'archived' in repos:
-            repos.remove('archived')
-            if 'published' not in repos:
-                repos.append('published')
 
         return [{'or': filters}]
 

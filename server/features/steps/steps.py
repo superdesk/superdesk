@@ -47,6 +47,7 @@ from test_factory import setup_auth_user
 
 
 external_url = 'http://thumbs.dreamstime.com/z/digital-nature-10485007.jpg'
+DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%S%z"
 
 
 def test_json(context):
@@ -154,7 +155,11 @@ def get_res(url, context):
 
 
 def parse_date(datestr):
-    return datetime.strptime(datestr, "%Y-%m-%dT%H:%M:%S%z")
+    return datetime.strptime(datestr, DATETIME_FORMAT)
+
+
+def format_date(date_to_format):
+    return date_to_format.strftime(DATETIME_FORMAT)
 
 
 def assert_200(response):
@@ -223,7 +228,7 @@ def apply_placeholders(context, text):
                 if unit != -1:
                     value -= timedelta(days=int(placeholder[unit + 1]))
 
-            value = value.strftime("%Y-%m-%dT%H:%M:%S%z")
+            value = format_date(value)
         elif placeholder not in placeholders:
             try:
                 resource_name, field_name = placeholder.split('.', maxsplit=1)
@@ -233,11 +238,16 @@ def apply_placeholders(context, text):
             for name in field_name.split('.'):
                 if not resource:
                     break
+
                 resource = resource.get(name, None)
-            if resource:
-                value = str(resource)
-            else:
+
+            if not resource:
                 continue
+
+            if isinstance(resource, datetime):
+                value = format_date(resource)
+            else:
+                value = str(resource)
         else:
             value = placeholders[placeholder]
         text = text.replace('#%s#' % placeholder, value)
@@ -1411,20 +1421,30 @@ def get_unspiked_content(context, id):
 
 @then('we get global content expiry')
 def get_global_content_expiry(context):
-    get_desk_spike_expiry(context, context.app.config['CONTENT_EXPIRY_MINUTES'])
+    validate_expired_content(context, context.app.config['CONTENT_EXPIRY_MINUTES'], utcnow())
 
 
 @then('we get content expiry {minutes}')
 def get_content_expiry(context, minutes):
-    get_desk_spike_expiry(context, int(minutes))
+    validate_expired_content(context, minutes, utcnow())
+
+
+@then('we get expiry for schedule and embargo content {minutes} minutes after "{future_date}"')
+def get_content_expiry(context, minutes, future_date):
+    future_date = parse_date(apply_placeholders(context, future_date))
+    validate_expired_content(context, minutes, future_date)
 
 
 @then('we get desk spike expiry after "{test_minutes}"')
 def get_desk_spike_expiry(context, test_minutes):
+    validate_expired_content(context, test_minutes, utcnow())
+
+
+def validate_expired_content(context, minutes, start_datetime):
     response_data = json.loads(context.response.get_data())
     assert response_data['expiry']
     response_expiry = parse_date(response_data['expiry'])
-    expiry = utc.utcnow() + timedelta(minutes=int(test_minutes))
+    expiry = start_datetime + timedelta(minutes=int(minutes))
     assert response_expiry <= expiry
 
 
@@ -1655,6 +1675,7 @@ def step_impl_when_publish_url(context, item_id, pub_type, state):
     data = json.dumps(context_data)
     context.response = context.client.patch(get_prefixed_url(context.app, '/archive/{}/{}'.format(pub_type, item_id)),
                                             data=data, headers=headers)
+    store_placeholder(context, 'archive_{}'.format(pub_type))
     resp = parse_json_response(context.response)
     linked_packages = resp.get('linked_in_packages', [])
     if linked_packages:
@@ -1906,3 +1927,17 @@ def run_import_legal_publish_queue(context):
     with context.app.test_request_context(context.app.config['URL_PREFIX']):
         from apps.legal_archive import ImportLegalPublishQueueCommand
         ImportLegalPublishQueueCommand().run()
+
+
+@when('we expire items')
+def expire_content(context):
+    with context.app.test_request_context(context.app.config['URL_PREFIX']):
+        ids = json.loads(apply_placeholders(context, context.text))
+        expiry = utcnow() - timedelta(minutes=5)
+        for item_id in ids:
+            original = get_resource_service('archive').find_one(req=None, _id=item_id)
+            get_resource_service('archive').system_update(item_id, {'expiry': expiry}, original)
+            get_resource_service('published').update_published_items(item_id, 'expiry', expiry)
+
+        from apps.archive.commands import RemoveExpiredContent
+        RemoveExpiredContent().run()

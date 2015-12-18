@@ -68,6 +68,9 @@ MONGO_URI = env('MONGO_URI', 'mongodb://localhost/%s' % MONGO_DBNAME)
 LEGAL_ARCHIVE_DBNAME = env('LEGAL_ARCHIVE_DBNAME', 'legal_archive')
 LEGAL_ARCHIVE_URI = env('LEGAL_ARCHIVE_URI', 'mongodb://localhost/%s' % LEGAL_ARCHIVE_DBNAME)
 
+ARCHIVED_DBNAME = env('ARCHIVED_DBNAME', 'archived')
+ARCHIVED_URI = env('ARCHIVED_URI', 'mongodb://localhost/%s' % ARCHIVED_DBNAME)
+
 ELASTICSEARCH_URL = env('ELASTICSEARCH_URL', 'http://localhost:9200')
 ELASTICSEARCH_INDEX = env('ELASTICSEARCH_INDEX', 'superdesk')
 if env('ELASTIC_PORT'):
@@ -125,9 +128,9 @@ CELERYBEAT_SCHEDULE = {
         'task': 'apps.auth.session_purge',
         'schedule': timedelta(minutes=20)
     },
-    'spike:gc': {
-        'task': 'apps.archive.content_purge',
-        'schedule': crontab(minute=30)
+    'content:gc': {
+        'task': 'apps.archive.content_expiry',
+        'schedule': crontab(minute='*/30')
     },
     'publish:transmit': {
         'task': 'superdesk.publish.transmit',
@@ -290,6 +293,9 @@ CONTENT_EXPIRY_MINUTES = int(env('CONTENT_EXPIRY_MINUTES', 4320))
 # The number of minutes before ingest items purged
 # 2880 = 2 days in minutes
 INGEST_EXPIRY_MINUTES = int(env('INGEST_EXPIRY_MINUTES', 2880))
+
+# The number records to be fetched for expiry.
+MAX_EXPIRY_QUERY_LIMIT = int(env('MAX_EXPIRY_QUERY_LIMIT', 100))
 
 # This setting can be used to apply a limit on the elastic search queries, it is a limit per shard.
 # A value of -1 indicates that no limit will be applied.

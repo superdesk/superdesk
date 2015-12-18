@@ -21,7 +21,7 @@ Feature: Content Publishing
       """
       And "desks"
       """
-      [{"name": "Sports"}]
+      [{"name": "Sports", "content_expiry": 60}]
       """
       When we post to "/archive" with success
       """
@@ -441,7 +441,7 @@ Feature: Content Publishing
       Given empty "subscribers"
       And "desks"
       """
-      [{"name": "Sports"}]
+      [{"name": "Sports", "content_expiry": 60}]
       """
       And the "validators"
       """
@@ -451,7 +451,7 @@ Feature: Content Publishing
       """
       [{"guid": "123", "headline": "test", "_current_version": 1, "state": "fetched",
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
-        "publish_schedule":"2016-05-30T10:00:00+00:00",
+        "publish_schedule":"#DATE+2#",
         "subject":[{"qcode": "17004000", "name": "Statistics"}],
         "slugline": "test",
         "body_html": "Test Document body"}]
@@ -469,14 +469,14 @@ Feature: Content Publishing
       """
       {"_current_version": 2, "state": "scheduled", "operation": "publish"}
       """
-
+      And we get expiry for schedule and embargo content 60 minutes after "#archive_publish.publish_schedule#"
       When we get "/publish_queue"
       Then we get list with 1 items
       """
       {
         "_items":
           [
-            {"destination":{"name":"Test"}, "publish_schedule":"2016-05-30T10:00:00+0000"}
+            {"destination":{"name":"Test"}, "publish_schedule": "#archive.publish_schedule#"}
           ]
       }
       """
@@ -752,7 +752,7 @@ Feature: Content Publishing
       """
       Then we get OK response
 
-    @auth @test
+    @auth
     Scenario: We can lock a published content and then correct it and then kill the article
       Given the "validators"
       """

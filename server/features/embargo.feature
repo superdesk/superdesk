@@ -56,6 +56,7 @@ Feature: Embargo Date and Time on an Article (User Story: https://dev.sourcefabr
     """
     {"_current_version": 3, "state": "published"}
     """
+    And we get expiry for schedule and embargo content 4320 minutes after "#archive_publish.embargo#"
     And we check if article has Embargo and Ed. Note of the article has embargo indication
     When we get "/published"
     Then we check if article has Embargo and Ed. Note of the article has embargo indication
@@ -100,6 +101,7 @@ Feature: Embargo Date and Time on an Article (User Story: https://dev.sourcefabr
     """
     {"_current_version": 3, "state": "published", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
     """
+    And we get expiry for schedule and embargo content 4320 minutes after "#archive_publish.embargo#"
     And we check if article has Embargo and Ed. Note of the article has embargo indication
     When we get "/published"
     Then we get existing resource
@@ -107,7 +109,6 @@ Feature: Embargo Date and Time on an Article (User Story: https://dev.sourcefabr
     {"_items" : [{"_id": "123", "guid": "123", "headline": "test", "_current_version": 3, "state": "published",
       "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]}
     """
-    And we validate the published item expiry to be after publish expiry set in desk settings 4320
     And we check if article has Embargo and Ed. Note of the article has embargo indication
     When we get "/publish_queue"
     Then we get list with 1 items

@@ -30,7 +30,7 @@ from superdesk.services import BaseService
 from superdesk import get_resource_service
 from apps.archive.archive import ArchiveResource, SOURCE as ARCHIVE
 from apps.archive.common import validate_schedule, ITEM_OPERATION, convert_task_attributes_to_objectId, is_genre, \
-    BROADCAST_GENRE
+    BROADCAST_GENRE, get_expiry
 from superdesk.utc import utcnow
 from superdesk.workflow import is_workflow_state_transition_valid
 from superdesk.publish.formatters import get_formatter
@@ -413,6 +413,7 @@ class BasePublishService(BaseService):
 
         self.set_state(original, updates)
         updates.setdefault(config.LAST_UPDATED, last_updated)
+        self._set_item_expiry(updates, original)
 
         if original[config.VERSION] == updates.get(config.VERSION, original[config.VERSION]):
             resolve_document_version(document=updates, resource=ARCHIVE, method='PATCH', latest_doc=original)
@@ -420,6 +421,18 @@ class BasePublishService(BaseService):
         if updates.get(EMBARGO, original.get(EMBARGO)) \
                 and updates.get('ednote', original.get('ednote', '')).find('Embargo') == -1:
             updates['ednote'] = '{} {}'.format(original.get('ednote', ''), 'Embargoed.').strip()
+
+    def _set_item_expiry(self, updates, original):
+        """
+        Set the expiry for the item
+        :param dict updates: doc on which publishing action is performed
+        """
+        desk_id = original.get('task', {}).get('desk')
+        stage_id = original.get('task', {}).get('stage')
+        offset = updates.get(EMBARGO, original.get(EMBARGO)) or \
+            updates.get('publish_schedule', original.get('publish_schedule'))
+
+        updates['expiry'] = get_expiry(desk_id, stage_id, offset=offset)
 
     def _update_archive(self, original, updates, versioned_doc=None, should_insert_into_versions=True):
         """
@@ -478,6 +491,7 @@ class BasePublishService(BaseService):
             for r in take_refs:
                 if r[GUID_FIELD] == take_article_id:
                     sequence_num_of_take_to_be_published = r[SEQUENCE]
+                    r['is_published'] = True
                     break
 
             if takes and self.published_state != 'killed':

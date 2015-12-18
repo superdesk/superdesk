@@ -69,29 +69,6 @@ Feature: Stages
         """
 
     @auth @notification
-    Scenario: Updating Expiry of a Stage also updates the expiry of the content on that stage
-        When we post to "/stages"
-        """
-        {"name": "update expiry", "desk": "#desks._id#", "content_expiry": 10}
-        """
-        And we post to "/archive"
-        """
-        [{"_id": "testid1", "guid": "testid1", "task": {"desk": "#desks._id#", "stage" :"#stages._id#"}}]
-        """
-        And we get "archive/testid1"
-        Then we get content expiry 10
-        When we patch "/stages/#stages._id#"
-        """
-        {"content_expiry":20 }
-        """
-        And we get "archive/testid1"
-        Then we get content expiry 20
-        Then we get notifications
-        """
-        [{"event": "stage", "extra": {"updated": 1, "desk_id": "#desks._id#", "stage_id": "#stages._id#"}}]
-        """
-
-    @auth @notification
     Scenario: Adding content to a stage having 0 expiry will get global expiry for the content
         When we post to "/stages"
         """

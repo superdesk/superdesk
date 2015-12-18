@@ -7,10 +7,10 @@ Feature: Published Items Repo
         Then we get list with 0 items
 
     @auth
-    Scenario: Get archive items with published state
+    Scenario: Get published items with published state
         Given "published"
         """
-        [{"_id": "tag:example.com,0000:newsml_BRE9A605", "state": "published", "allow_post_publish_actions": true}]
+        [{"_id": "tag:example.com,0000:newsml_BRE9A605", "state": "published"}]
         """
         When we get "/published"
         Then we get existing resource
@@ -18,50 +18,140 @@ Feature: Published Items Repo
         {"_items": [{"_id": "tag:example.com,0000:newsml_BRE9A605", "state": "published"}]}
         """
     @auth
-    Scenario: Get archive items with non-published state
-        Given "published"
+    Scenario: Insert published items with non-published state
+        When we post to "published"
         """
         [{"_id": "tag:example.com,0000:newsml_BRE9A607", "state": "draft"}]
         """
-        When we get "/published"
-        Then we get list with 0 items
+        Then we get error 400
+        """
+         {"_status": "ERR", "_message": "Invalid state (draft) for the Published item."}
+        """
+
+    @auth
+    Scenario: Update published items with non-published state
+        When we post to "published"
+        """
+        [{"_id": "tag:example.com,0000:newsml_BRE9A607", "state": "published"}]
+        """
+        When we patch "/published/tag:example.com,0000:newsml_BRE9A607"
+        """
+        {"state": "corrected"}
+        """
+        Then we get OK response
+        When we patch "/published/tag:example.com,0000:newsml_BRE9A607"
+        """
+        {"state": "draft"}
+        """
+        Then we get error 400
+        """
+        {"_status": "ERR", "_issues": {"validator exception": "400: Invalid state (draft) for the Published item."}}
+        """
 
     @auth
     Scenario: Delete Item from archived
-        Given "published"
-	    """
-        [{"_id": "tag:example.com,0000:newsml_BRE9A605", "type": "text", "state": "published", "allow_post_publish_actions": false}]
-	    """
+        Given "desks"
+        """
+        [{"name": "Sports", "content_expiry": 60}]
+        """
+        And "validators"
+        """
+        [
+            {
+                "schema": {},
+                "type": "text",
+                "act": "publish",
+                "_id": "publish_text"
+            }
+
+        ]
+        """
+        When we post to "/subscribers" with "wire" and success
+        """
+        {
+          "name":"Channel 1","media_type":"media", "subscriber_type": "wire", "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
+          "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
+        }
+        """
+        And we post to "/archive" with success
+        """
+        [{"guid": "tag:example.com,0000:newsml_BRE9A605", "type": "text", "headline": "test",
+          "state": "fetched", "slugline": "slugline",
+          "anpa_category" : [{"qcode" : "e", "name" : "Entertainment"}],
+          "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
+          "subject":[{"qcode": "17004000", "name": "Statistics"}],
+          "body_html": "Test Document body"}]
+        """
+        When we publish "tag:example.com,0000:newsml_BRE9A605" with "publish" type and "published" state
+        Then we get OK response
+        When we get "/published/tag:example.com,0000:newsml_BRE9A605"
+        Then we get OK response
         When we patch "/users/#CONTEXT_USER_ID#"
         """
         {"user_type": "user", "privileges": {"archived": 1, "archive": 1, "unlock": 1, "tasks": 1, "users": 1}}
         """
-        Then we get response code 200
+        Then we get OK response
+        When we expire items
+        """
+        ["tag:example.com,0000:newsml_BRE9A605"]
+        """
         When we get "/archived"
         Then we get list with 1 items
-	    """
-        {"_items": [{"_id": "tag:example.com,0000:newsml_BRE9A605", "type": "text", "state": "published", "allow_post_publish_actions": false, "can_be_removed": false}]}
-	    """
-        When we delete "/archived/tag:example.com,0000:newsml_BRE9A605"
+        When we delete "/archived/tag:example.com,0000:newsml_BRE9A605:2"
         Then we get response code 204
         When we get "/archived"
         Then we get list with 0 items
 
     @auth
     Scenario: Fails to delete from archived with no privilege
-        Given "published"
-	    """
-        [{"_id": "tag:example.com,0000:newsml_BRE9A605", "type": "text", "state": "published", "allow_post_publish_actions": false}]
-	    """
+        Given "desks"
+        """
+        [{"name": "Sports", "content_expiry": 60}]
+        """
+        And "validators"
+        """
+        [
+            {
+                "schema": {},
+                "type": "text",
+                "act": "publish",
+                "_id": "publish_text"
+            }
+
+        ]
+        """
+        When we post to "/subscribers" with "wire" and success
+        """
+        {
+          "name":"Channel 1","media_type":"media", "subscriber_type": "wire", "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
+          "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
+        }
+        """
+        And we post to "/archive" with success
+        """
+        [{"guid": "tag:example.com,0000:newsml_BRE9A605", "type": "text", "headline": "test",
+          "state": "fetched", "slugline": "slugline",
+          "anpa_category" : [{"qcode" : "e", "name" : "Entertainment"}],
+          "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
+          "subject":[{"qcode": "17004000", "name": "Statistics"}],
+          "body_html": "Test Document body"}]
+        """
+        When we publish "tag:example.com,0000:newsml_BRE9A605" with "publish" type and "published" state
+        Then we get OK response
+        When we get "/published/tag:example.com,0000:newsml_BRE9A605"
+        Then we get OK response
         When we patch "/users/#CONTEXT_USER_ID#"
         """
-        {"user_type": "user", "privileges": {"archived": 0, "archive": 1, "unlock": 1, "tasks": 1, "users": 1}}
+        {"user_type": "user", "privileges": {"archive": 1, "unlock": 1, "tasks": 1, "users": 1}}
         """
-        Then we get response code 200
+        Then we get OK response
+        When we expire items
+        """
+        ["tag:example.com,0000:newsml_BRE9A605"]
+        """
         When we get "/archived"
         Then we get list with 1 items
-	    """
-        {"_items": [{"type": "text", "state": "published", "allow_post_publish_actions": false, "can_be_removed": false}]}
-	    """
-        When we delete "/archived/#published._id#"
+        When we delete "/archived/tag:example.com,0000:newsml_BRE9A605:2"
         Then we get response code 403
+        When we get "/archived"
+        Then we get list with 1 items

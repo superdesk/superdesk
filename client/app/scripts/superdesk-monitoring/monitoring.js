@@ -332,6 +332,8 @@
                     }
                 });
 
+                scope.$on('content:expired', queryItems);
+
                 scope.$on('$destroy', unbindActionKeyShortcuts);
 
                 scope.$watch('selected', function(newVal, oldVal) {
