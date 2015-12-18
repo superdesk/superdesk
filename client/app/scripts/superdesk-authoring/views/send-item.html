@@ -1,9 +1,9 @@
 <div class="slide-pane slide-pane--dark content-item-preview" ng-show="isActive" ng-class="{open: isActive, 'slide-pane--inset': mode === 'authoring'}">
 
     <div class="slide-pane__header">
-        <h3 ng-show="mode === 'authoring' && itemActions.publish" translate>Send to / Publish</h3>
-        <h3 ng-show="mode === 'authoring' && !itemActions.publish" translate>Send to</h3>
-        <h3 ng-show="mode !== 'authoring'" translate>Fetch To</h3>
+        <h3 ng-show="canSendItem() && itemActions.publish" translate>Send to / Publish</h3>
+        <h3 ng-show="canSendItem() && !itemActions.publish" translate>Send to</h3>
+        <h3 ng-show="!canSendItem()" translate>Fetch To</h3>
         <div class="close" ng-click="close()"><i class="icon-close-small icon-white"></i></div>
     </div>
 
@@ -73,10 +73,10 @@
                         ng-click="send()"
                         ng-disabled="disableSendButton()"
                         translate>
-                    {{mode !== 'authoring' ? 'fetch' : 'send'}}
+                    {{!canSendItem() ? 'fetch' : 'send'}}
                 </button>
             </li>
-            <li ng-if="showSendButtonAndDestination() && mode !== 'authoring'">
+            <li ng-if="showSendButtonAndDestination() && !canSendItem()">
                 <button class="btn btn-info"
                         ng-click="send(true)"
                         ng-disabled="disableFetchAndOpenButton()"
@@ -84,7 +84,7 @@
                     fetch and open
                 </button>
             </li>
-            <li class="full-width" ng-if="mode === 'authoring' && (itemActions.publish || itemActions.kill || itemActions.correct)">
+            <li class="full-width" ng-if="canSendItem() && (itemActions.publish || itemActions.kill || itemActions.correct)">
                 <button type="submit"
                         class="btn btn-info"
                         ng-show="_editable"

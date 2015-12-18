@@ -29,7 +29,7 @@ describe('ingest', function() {
         }));
 
         it('can send an item as', inject(function(send, api, $q, $rootScope) {
-            var item = {_id: 1},
+            var item = {_id: 1, _type: 'ingest'},
                 config = {
                     desk: 'desk1',
                     stage: 'stage1',
@@ -48,7 +48,7 @@ describe('ingest', function() {
         it('can send multiple items as', inject(function(send, api, $q, $rootScope) {
             spyOn(api, 'save').and.returnValue($q.when({_id: 'foo', _created: 'now'}));
 
-            var items = [{_id: 1}, {_id: 2}];
+            var items = [{_id: 1, _type: 'ingest'}, {_id: 2, _type: 'ingest'}];
             expect(send.config).toBe(null);
 
             var archives;
