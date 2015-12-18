@@ -1,18 +1,16 @@
-<div class="save-search" ng-hide="editSearch || edit">
+<div class="save-search" ng-hide="editSearch || edit && !editingSearch">
 	<div ng-if="!editingSearch">
 		<a id="clear_filters" class="save-search__link" ng-click="clear()" translate>Clear filters</a>
 		<button id="save_search_init" class="btn btn-info" ng-click="editItem()" translate>Save Search</button>
 	</div>
 	<div ng-if="editingSearch">
 		<button id="saveas_search_init" class="btn" ng-click="saveas()" translate ng-if="editingSearch">Save As</button>
-		<button id="save_search_init" class="btn btn-info" ng-click="editItem()" translate>Save Changes</button>
+		<button id="save_search_init" class="btn btn-info" ng-click="editItem()" ng-if="!editingSearch" translate>Save Changes</button>
+		<button id="save_search_init" class="btn btn-info" ng-click="save(edit)" ng-if="editingSearch" translate>Save Changes</button>
 	</div>
-
-
-
 </div>
 
-<div class="save-search-panel" ng-if="edit">
+<div class="save-search-panel" ng-if="edit && activateSearchPane">
 	<div class="save-search-panel__title" translate>Save search</div>
 	<div class="search-content">
 		<form name="viewsForm">

@@ -1,7 +1,7 @@
 <div>
     <div class="header">
       <div class="backlink-toolbar" ng-show="editingSearch">
-        <button ng-click="editingSearch = false" class="backlink" translate=""><span>Back / Cancel</span></button>
+        <button ng-click="cancel()" class="backlink" translate=""><span>Back / Cancel</span></button>
       </div>
         <ul ng-show="!editingSearch">
             <li ng-class="{active: sTab}" ng-click="sTab = true" translate>Advanced Search</li>
@@ -17,13 +17,13 @@
           <form name="viewsForm">
             <fieldset>
               <div class="field">
-                <input id="search_name" type="text" class="fullwidth-input line-input" ng-model="editingSearch.name" placeholder="{{:: 'Name' | translate}}" required>
+                <input id="search_name" type="text" class="fullwidth-input line-input" ng-model="edit.name" placeholder="{{:: 'Name' | translate}}" required>
               </div>
               <div class="field">
-                <textarea id="search_description" class="line-input" sd-auto-height ng-model="editingSearch.description" placeholder="{{:: 'Description' | translate}}"></textarea>
+                <textarea id="search_description" class="line-input" sd-auto-height ng-model="edit.description" placeholder="{{:: 'Description' | translate}}"></textarea>
               </div>
               <div class="field">
-                <span id="search_global" sd-switch ng-model="editingSearch.is_global"></span>
+                <span id="search_global" sd-switch ng-model="edit.is_global"></span>
                 <label class="label--inline" translate>Make global</label>
               </div>
             </fieldset>
@@ -175,7 +175,7 @@
         </div>
     </div>
 
-    <div sd-save-search ng-show="showSaveSearch"></div>
+    <div sd-save-search ng-show="showSaveSearch && sTab"></div>
 
     <div class="content views" ng-if="!sTab">
         <div sd-saved-searches></div>

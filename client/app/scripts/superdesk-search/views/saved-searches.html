@@ -1,5 +1,5 @@
 <div class="search-filters">
-	<input id="search_saved_searches" ng-model="searchText" type="text" placeholder="{{:: 'Search saved searches' | translate}}">
+	<input id="search_saved_searches" ng-model="searchText" ng-keyup="filter()" type="text" placeholder="{{:: 'Search saved searches' | translate}}">
 	<button id="search_saved_searches_button" ng-click="filter()">
 		<i class="svg-icon-right"></i>
 	</button>
