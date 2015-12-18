@@ -1,7 +1,11 @@
 <div id="{{ :: item._id }}" class="media-box media-{{ :: item.type}}"
     sd-media-box
-    ng-class="{selected: item._id === selected._id, archived: item.archived || item.created, locked: lock.isLocked}"
-    sd-mouse-hover="focused">
+    sd-mouse-hover="focused"
+    ng-class="{
+        locked: lock.isLocked,
+        selected: item._id === selected._id,
+        archived: item.archived || item.created
+    }">
 
 <div class="archiving-progress" style="width:{{ _progress }}%" ng-if="_progress"></div>
 
@@ -49,6 +53,9 @@
     </div>
 </div>
 
-<div ng-if="focused" class="item-right toolbox" sd-item-actions-menu data-item="item" data-active="focused || (item._id === selected._id)"></div>
+<div class="item-right toolbox"
+    sd-item-actions-menu
+    data-active="focused || (item._id === selected._id)"
+    data-item="item"></div>
 
 </div>

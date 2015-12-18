@@ -885,11 +885,12 @@
 
                     var updateTimeout,
                         criteria = search.query($location.search()).getCriteria(true),
-                        scrollElem = elem.find('.content'),
+                        list = elem.find('.shadow-list-holder'),
                         oldQuery = _.omit($location.search(), '_id');
 
                     scope.flags = controller.flags;
                     scope.selected = scope.selected || {};
+                    scope.rendering = false;
 
                     scope.repo = {
                         ingest: true, archive: true,
@@ -912,16 +913,7 @@
                         scope.preview(args.item);
                     });
 
-                    scrollElem.on('scroll', handleScroll);
-
-                    scope.$watch('view', function(newValue, oldValue) {
-                        if (newValue !== oldValue) {
-                            console.time('view');
-                            listComponent.setState({view: newValue}, function() {
-                                console.timeEnd('view');
-                            });
-                        }
-                    });
+                    list.on('scroll', handleScroll);
 
                     scope.$watch('selected', function(newVal, oldVal) {
                         if (!newVal && scope.previewingBroadcast) {
@@ -951,9 +943,6 @@
                         updateTimeout = $timeout(renderIfNeeded, 100, false);
                     }
 
-                    scope.rendering = false;
-                    var list = document.getElementById('content-list');
-
                     /**
                      * Trigger render in case user scrolls to the very end of list
                      */
@@ -962,7 +951,7 @@
                             return; // automatic scroll after removing items
                         }
 
-                        if (isListEnd(list) && !scope.rendering) {
+                        if (isListEnd(list[0]) && !scope.rendering) {
                             scope.rendering = true;
                             render(null, true);
                         }
@@ -971,11 +960,11 @@
                     /**
                      * Check if we reached end of the list elem
                      *
-                     * @param {Element} list
+                     * @param {Element} elem
                      * @return {Boolean}
                      */
-                    function isListEnd(list) {
-                        return list.scrollTop + list.offsetHeight + 50 >= list.scrollHeight;
+                    function isListEnd(elem) {
+                        return elem.scrollTop + elem.offsetHeight + 300 >= elem.scrollHeight;
                     }
 
                     /*
@@ -1042,53 +1031,147 @@
 
                         function setScopeItems(items) {
                             if (!scope.items) { // initial set of items
-                                scope.itemsById = {};
-                                scope.itemsList = [];
-                                items._items.forEach(function(item) {
-                                    scope.itemsById[item._id] = item;
-                                    scope.itemsList.push(item._id);
-                                });
+                                scope.items = items;
                             } else if (next) { // adding new items to list
-                                items._items.forEach(function(item) {
-                                    if (!scope.itemsById[item._id]) {
-                                        scope.itemsById[item._id] = item;
-                                        scope.itemsList.push(item._id);
-                                    } else if (scope.itemsById[item._id]._etag !== item._etag) {
-                                        scope.itemsById[item._id] = item;
-                                    }
+                                var prevItems = scope.items._items;
+                                scope.items = angular.extend(items, {
+                                    _items: prevItems.concat(items._items)
                                 });
                             } else { // replacing items with new ones, but keep old objects if not changed
-                                var oldItems = scope.itemsById;
-                                scope.itemsList = [];
-                                scope.itemsById = {};
-                                items._items.forEach(function(item) {
-                                    scope.itemsList.push(item._id);
-                                    if (oldItems[item._id] && oldItems[item._id]._etag === item._etag) {
-                                        scope.itemsById = oldItems[item._id];
-                                    } else {
-                                        scope.itemsById = item;
-                                    }
-                                });
+                                scope.items = items;
                             }
 
-                            // set for aggregations
-                            scope.items = items;
-
-                            console.time('render');
-                            listComponent.setState({
-                                view: scope.view,
-                                itemsList: scope.itemsList,
-                                itemsById: scope.itemsById
+                            scope.$applyAsync(function() { // next digest will render
+                                scope.rendering = false;
                             });
-                            console.timeEnd('render');
-                            console.log('items:', scope.itemsList.length);
-                            scope.rendering = false;
                         }
                     }
 
-                    scope.itemsList = [];
-                    scope.itemsById = {};
+                    /*
+                     * Function for updating list
+                     * after item has been deleted
+                     */
+                    function itemDelete(e, data) {
+                        if (session.identity._id === data.user) {
+                            queryItems();
+                        }
+                    }
 
+                    scope.preview = function preview(item) {
+                        if (multiSelectable) {
+                            if (_.findIndex(scope.selectedList, {_id: item._id}) === -1) {
+                                scope.selectedList.push(item);
+                            } else {
+                                _.remove(scope.selectedList, {_id: item._id});
+                            }
+                        }
+                        scope.selected.preview = item;
+                        $location.search('_id', item ? item._id : null);
+                    };
+
+                    queryItems();
+
+                    scope.openLightbox = function openLightbox() {
+                        scope.selected.view = scope.selected.preview;
+                    };
+
+                    scope.closeLightbox = function closeLightbox() {
+                        scope.selected.view = null;
+                    };
+
+                    scope.openSingleItem = function (packageItem) {
+                        packages.fetchItem(packageItem).then(function(item) {
+                            scope.selected.view = item;
+                        });
+                    };
+
+                    scope.setview = setView;
+
+                    var savedView;
+                    preferencesService.get('archive:view').then(function(result) {
+                        savedView = result.view;
+                        scope.view = (!!savedView && savedView !== 'undefined') ? savedView : 'mgrid';
+                    });
+
+                    scope.$on('key:v', toggleView);
+
+                    function setView(view) {
+                        scope.view = view || 'mgrid';
+                        update['archive:view'].view = view || 'mgrid';
+                        preferencesService.update(update, 'archive:view');
+                    }
+
+                    function toggleView() {
+                        var nextView = scope.view === LIST_VIEW ? GRID_VIEW : LIST_VIEW;
+                        return setView(nextView);
+                    }
+
+                    /**
+                     * Generates Identifier to be used by track by expression.
+                     */
+                    scope.uuid = function(item) {
+                        return search.generateTrackByIdentifier(item);
+                    };
+                }
+            };
+        }])
+
+        .directive('sdItemsList', [
+            '$location',
+            '$timeout',
+            'packages',
+            'asset',
+            'api',
+            'search',
+            'session',
+            'moment',
+            'gettext',
+            'superdesk',
+            'workflowService',
+            'archiveService',
+            'activityService',
+            'multi',
+            'desks',
+            'familyService',
+        function(
+            $location,
+            $timeout,
+            packages,
+            asset,
+            api,
+            search,
+            session,
+            moment,
+            gettext,
+            superdesk,
+            workflowService,
+            archiveService,
+            activityService,
+            multi,
+            desks,
+            familyService
+        ) {
+            return {
+                controllerAs: 'listController',
+                controller: ['$q', 'ingestSources', 'desks', 'highlightsService',
+                function($q, ingestSources, desks, highlightsService) {
+                    var self = this;
+                    self.ready = $q.all({
+                        ingestProvidersById: ingestSources.initialize().then(function() {
+                            self.ingestProvidersById = ingestSources.providersLookup;
+                        }),
+                        desksById: desks.initialize().then(function() {
+                            self.desksById = desks.deskLookup;
+                        }),
+                        highlightsById: highlightsService.get().then(function(result) {
+                            self.highlightsById = {};
+                            result._items.forEach(function(item) {
+                                self.highlightsById[item._id] = item;
+                            });
+                        })
+                    });
+                }],
+                link: function(scope, elem) {
                     /**
                      * Test if an item has thumbnail
                      *
@@ -1870,113 +1953,79 @@
                         }
                     });
 
-                    /**
-                     * Init react rendering
-                     */
-                    var listComponent;
-                    scope.$applyAsync(function() {
-                        var list = elem.find('.shadow-list-holder')[0];
+                    scope.listController.ready.then(function() { // we can init
                         var itemList = React.createElement(ItemList, {
-                            ingestProvidersById: scope.ingestProvidersById,
-                            desksById: scope.desksById,
-                            highlightsById: scope.highlightsById
+                            desksById: scope.listController.desksById,
+                            highlightsById: scope.listController.highlightsById,
+                            ingestProvidersById: scope.listController.ingestProvidersById
                         });
 
-                        listComponent = ReactDOM.render(itemList, list);
-                    });
+                        var listComponent = ReactDOM.render(itemList, elem[0]);
 
-                    scope.$on('item:lock', function(_e, data) {
-                        listComponent.updateItem(data.item, {
-                            lock_user: data.user,
-                            lock_session: data.lock_session,
-                            lock_time: data.lock_time
+                        scope.$watch('items', function(items) {
+                            if (!items) {
+                                return;
+                            }
+
+                            console.time('render');
+
+                            var itemsList = [];
+                            var itemsById = angular.extend({}, listComponent.state.itemsById);
+
+                            items._items.forEach(function(item) {
+                                itemsList.push(item._id);
+                                if (!itemsById[item._id] || itemsById[item._id]._etag !== item._etag) {
+                                    // keep old item as long as it's save version
+                                    itemsById[item._id] = item;
+                                }
+                            });
+
+                            listComponent.setState({
+                                itemsList: itemsList,
+                                itemsById: itemsById,
+                                view: scope.view
+                            });
+
+                            console.timeEnd('render');
                         });
-                    });
 
-                    scope.$on('item:unlock', function(_e, data) {
-                        listComponent.updateItem(data.item, {
-                            lock_user: null,
-                            lock_session: null,
-                            lock_time: null
+                        scope.$watch('view', function(newValue, oldValue) {
+                            if (newValue !== oldValue) {
+                                console.time('view');
+                                listComponent.setState({view: newValue}, function() {
+                                    console.timeEnd('view');
+                                });
+                            }
                         });
-                    });
 
-                    scope.$on('multi:reset', function(e, data) {
-                        var itemsById = angular.extend({}, listComponent.state.itemsById);
-                        var ids = data.ids || [];
-                        ids.forEach(function(id) {
-                            itemsById[id] = angular.extend({}, itemsById[id], {
-                                selected: false
+                        scope.$on('item:lock', function(_e, data) {
+                            listComponent.updateItem(data.item, {
+                                lock_user: data.user,
+                                lock_session: data.lock_session,
+                                lock_time: data.lock_time
                             });
                         });
 
-                        listComponent.setState({itemsById: itemsById});
-                    });
-
-                    /*
-                     * Function for updating list after item has been deleted
-                     */
-                    function itemDelete(e, data) {
-                        if (session.identity._id === data.user) {
-                            queryItems();
-                        }
-                    }
-
-                    scope.preview = function preview(item) {
-                        if (multiSelectable) {
-                            if (_.findIndex(scope.selectedList, {_id: item._id}) === -1) {
-                                scope.selectedList.push(item);
-                            } else {
-                                _.remove(scope.selectedList, {_id: item._id});
-                            }
-                        }
-                        scope.selected.preview = item;
-                        $location.search('_id', item ? item._id : null);
-                    };
-
-                    queryItems();
-
-                    scope.openLightbox = function openLightbox() {
-                        scope.selected.view = scope.selected.preview;
-                    };
-
-                    scope.closeLightbox = function closeLightbox() {
-                        scope.selected.view = null;
-                    };
-
-                    scope.openSingleItem = function (packageItem) {
-                        packages.fetchItem(packageItem).then(function(item) {
-                            scope.selected.view = item;
+                        scope.$on('item:unlock', function(_e, data) {
+                            listComponent.updateItem(data.item, {
+                                lock_user: null,
+                                lock_session: null,
+                                lock_time: null
+                            });
                         });
-                    };
 
-                    scope.setview = setView;
+                        scope.$on('multi:reset', function(e, data) {
+                            var itemsById = angular.extend({}, listComponent.state.itemsById);
+                            var ids = data.ids || [];
+                            ids.forEach(function(id) {
+                                itemsById[id] = angular.extend({}, itemsById[id], {
+                                    selected: false
+                                });
+                            });
 
-                    var savedView;
-                    preferencesService.get('archive:view').then(function(result) {
-                        savedView = result.view;
-                        scope.view = (!!savedView && savedView !== 'undefined') ? savedView : 'mgrid';
+                            listComponent.setState({itemsById: itemsById});
+                        });
                     });
-
-                    scope.$on('key:v', toggleView);
-
-                    function setView(view) {
-                        scope.view = view || 'mgrid';
-                        update['archive:view'].view = view || 'mgrid';
-                        preferencesService.update(update, 'archive:view');
-                    }
-
-                    function toggleView() {
-                        var nextView = scope.view === LIST_VIEW ? GRID_VIEW : LIST_VIEW;
-                        return setView(nextView);
-                    }
-
-                    /**
-                     * Generates Identifier to be used by track by expression.
-                     */
-                    scope.uuid = function(item) {
-                        return search.generateTrackByIdentifier(item);
-                    };
                 }
             };
         }])
@@ -2807,34 +2856,7 @@
                 priority: 200,
                 label: gettext('Search'),
                 templateUrl: asset.templateUrl('superdesk-search/views/search.html'),
-                sideTemplateUrl: 'scripts/superdesk-workspace/views/workspace-sidenav.html',
-                controller: ['$scope', 'ingestProvidersById', 'desksById', 'highlightsById',
-                function($scope, ingestProvidersById, desksById, highlightsById) {
-                    $scope.ingestProvidersById = ingestProvidersById;
-                    $scope.desksById = desksById;
-                    $scope.highlightsById = highlightsById;
-                }],
-                resolve: {
-                    ingestProvidersById: ['ingestSources', function(ingestSources) {
-                        return ingestSources.initialize().then(function() {
-                            return ingestSources.providersLookup;
-                        });
-                    }],
-                    desksById: ['desks', function(desks) {
-                        return desks.initialize().then(function() {
-                            return desks.deskLookup;
-                        });
-                    }],
-                    highlightsById: ['highlightsService', function(highlightsService) {
-                        return highlightsService.get().then(function(result) {
-                            var highlights = {};
-                            result._items.forEach(function(item) {
-                                highlights[item._id] = item;
-                            });
-                            return highlights;
-                        });
-                    }]
-                }
+                sideTemplateUrl: 'scripts/superdesk-workspace/views/workspace-sidenav.html'
             });
         }]);
 
