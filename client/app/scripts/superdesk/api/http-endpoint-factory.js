@@ -144,9 +144,10 @@ define(['lodash'], function(_) {
          *
          * @param {Object} item
          * @param {Object} diff
+         * @param {Object} params
          * @returns {Promise}
          */
-        HttpEndpoint.prototype.update = function(item, diff) {
+        HttpEndpoint.prototype.update = function(item, diff, params) {
             if (diff && diff._etag) {
                 item._etag = diff._etag;
             }
@@ -160,6 +161,7 @@ define(['lodash'], function(_) {
                 method: 'PATCH',
                 url: urls.item(url),
                 data: clean(diff, !item._links),
+                params: params,
                 headers: getHeaders(this, item)
             }).then(function(response) {
                 _.extend(item, response.data);

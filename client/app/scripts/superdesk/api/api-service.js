@@ -232,11 +232,12 @@ define([
              * @param {Object} updates
              * @param {Object} params
              */
-            api.update = function apiUpdate(resource, item, updates) {
+            api.update = function apiUpdate(resource, item, updates, params) {
                 return http({
                     method: 'PATCH',
                     url: getResourceUrl(resource, item, item._id),
                     data: updates,
+                    params: params,
                     headers: getHeaders(item)
                 });
             };
