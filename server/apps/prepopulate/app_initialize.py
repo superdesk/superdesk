@@ -75,8 +75,12 @@ __entities__ = {
                               ('item_version', pymongo.ASCENDING)],
                              [('state', pymongo.ASCENDING),
                               ('destination.delivery_type', pymongo.ASCENDING)],
-                             [('subscriber_id', pymongo.ASCENDING)]], False),
-    'archived': (None, [[('archived_id', pymongo.ASCENDING), {'unique': True}]], False)
+                             [('subscriber_id', pymongo.ASCENDING)],
+                             [('_updated', pymongo.DESCENDING)]], False),
+    'archived': (None, [[('archived_id', pymongo.ASCENDING), {'unique': True}]], False),
+    'legal_archive_versions': (None, [[('_id_document', pymongo.ASCENDING),
+                                       ('_current_version', pymongo.ASCENDING)]], False),
+    'legal_publish_queue': (None, [[('_updated', pymongo.DESCENDING)]], False)
 }
 
 
