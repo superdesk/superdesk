@@ -33,7 +33,7 @@ function Content() {
     };
 
     this.getItems = function() {
-        return element.all(by.repeater('items._items'));
+        return element.all(by.css('.media-box'));
     };
 
     this.getItem = function(item) {
@@ -105,12 +105,12 @@ function Content() {
 
     this.getCount = function () {
         waitFor(list);
-        return list.all(by.repeater('items._items')).count();
+        return list.all(by.css('.media-box')).count();
     };
 
     this.getItemCount = function () {
         waitFor(list);
-        return list.all(by.repeater('item in items track by generateTrackByIdentifier(item)')).count();
+        return list.all(by.css('.media-box')).count();
     };
 
     /**

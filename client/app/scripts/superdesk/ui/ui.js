@@ -1267,4 +1267,4 @@
         .directive('sdSplitterWidget', splitterWidget)
         .directive('sdMouseHover', MouseHoverDirective)
         ;
-});
+})();

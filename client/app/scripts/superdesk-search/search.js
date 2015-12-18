@@ -1118,6 +1118,7 @@
 
         .directive('sdItemsList', [
             '$location',
+            '$document',
             '$timeout',
             'packages',
             'asset',
@@ -1135,6 +1136,7 @@
             'familyService',
         function(
             $location,
+            $document,
             $timeout,
             packages,
             asset,
@@ -1839,8 +1841,10 @@
                     });
 
                     var Keys = Object.freeze({
-                        right: 39,
                         left: 37,
+                        up: 38,
+                        right: 39,
+                        down: 40,
                         enter: 13
                     });
 
@@ -1890,22 +1894,29 @@
 
                         handleKey: function(event) {
                             var diff;
-                            if (event.keyCode === Keys.right) {
-                                diff = 1;
-                            } else if (event.keyCode === Keys.left) {
-                                diff = -1;
-                            }
 
-                            if (event.keyCode === Keys.enter) {
-                                if (this.state.selected) {
-                                    this.select(this.getSelectedItem());
-                                }
+                            switch (event.keyCode) {
+                                case Keys.right:
+                                case Keys.down:
+                                    diff = 1;
+                                    break;
 
-                                event.stopPropagation();
-                                return;
+                                case Keys.left:
+                                case Keys.up:
+                                    diff = -1;
+                                    break;
+
+                                case Keys.enter:
+                                    if (this.state.selected) {
+                                        this.select(this.getSelectedItem());
+                                    }
+
+                                    event.stopPropagation();
+                                    return;
                             }
 
                             if (diff != null) {
+                                event.preventDefault();
                                 event.stopPropagation();
                                 if (this.state.selected) {
                                     for (var i = 0; i < this.state.itemsList.length; i++) {
@@ -1945,7 +1956,6 @@
                                 'ul',
                                 {
                                     className: this.state.view + '-view list-view',
-                                    onKeyDown: this.handleKey,
                                     tabIndex: '0'
                                 },
                                 this.state.itemsList.map(createItem)
@@ -1962,6 +1972,11 @@
 
                         var listComponent = ReactDOM.render(itemList, elem[0]);
 
+                        $document.on('keydown', listComponent.handleKey);
+                        scope.$on('$destroy', function() {
+                            $document.off('keydown', listComponent.handleKey);
+                        });
+
                         scope.$watch('items', function(items) {
                             if (!items) {
                                 return;
@@ -1970,13 +1985,17 @@
                             console.time('render');
 
                             var itemsList = [];
+                            var currentItems = {};
                             var itemsById = angular.extend({}, listComponent.state.itemsById);
 
                             items._items.forEach(function(item) {
-                                itemsList.push(item._id);
                                 if (!itemsById[item._id] || itemsById[item._id]._etag !== item._etag) {
-                                    // keep old item as long as it's save version
                                     itemsById[item._id] = item;
+                                }
+
+                                if (!currentItems[item._id]) { // filter out possible duplicates
+                                    currentItems[item._id] = true;
+                                    itemsList.push(item._id);
                                 }
                             });
 
