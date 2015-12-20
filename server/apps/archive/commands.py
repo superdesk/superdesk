@@ -137,7 +137,10 @@ class RemoveExpiredContent(superdesk.Command):
             except:
                 logger.exception('{} Failed to delete killed item from published. {}'.format(log_msg, msg))
 
-        archive_service.delete_by_article_ids(list(items_to_remove))
+        if items_to_remove:
+            logger.info('{} Deleting articles.: {}'.format(log_msg, items_to_remove))
+            archive_service.delete_by_article_ids(list(items_to_remove))
+
         logger.info('{} Deleting killed and spiked items from archive.'.format(log_msg))
 
     def _can_remove_item(self, item, processed_item=None):

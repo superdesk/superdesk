@@ -735,6 +735,17 @@ Feature: Content Publishing
       """
       And we publish "#archive._id#" with "publish" type and "published" state
       Then we get OK response
+      When we get "/legal_archive/123"
+      Then we get OK response
+      And we get existing resource
+      """
+      {"_current_version": 1, "state": "published", "task":{"desk": "#desks.name#"}}
+      """
+      When we get "/legal_archive/123?version=all"
+      Then we get list with 1 items
+      When run import legal publish queue
+      And we get "/legal_publish_queue"
+      Then we get list with 1 items
       When we post to "/archive/#archive._id#/lock"
       """
       {}
@@ -751,6 +762,17 @@ Feature: Content Publishing
       {}
       """
       Then we get OK response
+      When we get "/legal_archive/123"
+      Then we get OK response
+      And we get existing resource
+      """
+      {"_current_version": 2, "state": "corrected", "task":{"desk": "#desks.name#"}}
+      """
+      When we get "/legal_archive/123?version=all"
+      Then we get list with 2 items
+      When run import legal publish queue
+      And we get "/legal_publish_queue"
+      Then we get list with 2 items
 
     @auth
     Scenario: We can lock a published content and then correct it and then kill the article

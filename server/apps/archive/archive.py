@@ -627,7 +627,6 @@ class ArchiveService(BaseService):
         query = {
             '$and': [
                 {'expiry': {'$lte': date_to_str(expiry_datetime)}},
-                {ITEM_STATE: {'$ne': CONTENT_STATE.SCHEDULED}},
                 {'$or': [
                     {'task.desk': {'$ne': None}},
                     {ITEM_STATE: CONTENT_STATE.SPIKED, 'task.desk': None}
