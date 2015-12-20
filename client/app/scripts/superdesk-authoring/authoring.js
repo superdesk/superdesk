@@ -52,7 +52,8 @@
         unspike: false,
         package_item: false,
         multi_edit: false,
-        send: false
+        send: false,
+        create_broadcast: false
     });
 
     /**
@@ -495,8 +496,8 @@
             var lockedByMe = !lock.isLocked(current_item);
             action.view = !lockedByMe;
 
-            var isBroadcast = (current_item.genre && current_item.genre.length > 0 &&
-                               current_item.type === 'text' &&
+            var isBroadcast = (angular.isDefined(current_item.genre) && current_item.genre.length > 0 &&
+                               _.contains(['text', 'preformatted'], current_item.type) &&
                                current_item.genre.some(function(genre) {
                                    return genre.name === 'Broadcast Script';
                                }));
@@ -564,9 +565,9 @@
                 !current_item.embargo && current_item.package_type !== 'takes' &&
                 current_item.state !== 'killed' && !current_item.publish_schedule;
 
-            action.create_broadcast = (!_.contains(['spiked', 'scheduled', 'killed'], current_item.state)) &&
-                (_.contains(['published', 'corrected'], current_item.state)) &&
-                current_item.type === 'text' && !isBroadcast;
+            action.create_broadcast = (_.contains(['published', 'corrected'], current_item.state)) &&
+                _.contains(['text', 'preformatted'], current_item.type) &&
+                !isBroadcast && user_privileges.archive_broadcast;
 
             action.multi_edit = !is_read_only_state;
 
