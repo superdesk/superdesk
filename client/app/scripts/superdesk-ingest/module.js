@@ -960,15 +960,23 @@ define([
             link: function(scope) {
                 var currFilter;
 
-                scope.matchingFilters = [];  // used for filter search
-                scope.filterSearchTerm = null;
+                function init() {
+                    scope.matchingFilters = [];  // used for filter search
+                    scope.filterSearchTerm = null;
 
-                currFilter = _.find(scope.filters, {_id: scope.rule.filter});
-                if (currFilter) {
-                    scope.selectedFilter = currFilter;
-                } else {
-                    scope.selectedFilter = null;
+                    currFilter = _.find(scope.filters, {_id: scope.rule.filter});
+                    if (currFilter) {
+                        scope.selectedFilter = currFilter;
+                    } else {
+                        scope.selectedFilter = null;
+                    }
                 }
+
+                init();
+
+                scope.$watch('rule', function() {
+                    init();
+                });
 
                 /**
                  * Finds a subset of all content filters whose names contain

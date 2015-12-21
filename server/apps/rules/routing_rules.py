@@ -259,8 +259,11 @@ class RoutingRuleSchemeService(BaseService):
         """
         for rule in routing_scheme.get('rules', []):
             schedule = rule.get('schedule')
-            if schedule and (set(schedule.keys()) == {'time_zone'}):
-                rule['schedule'] = None
+            if schedule:
+                if set(schedule.keys()) == {'time_zone'}:
+                    rule['schedule'] = None
+                elif 'time_zone' not in schedule.keys():
+                    schedule['time_zone'] = 'UTC'
 
     def _validate_routing_scheme(self, routing_scheme):
         """
