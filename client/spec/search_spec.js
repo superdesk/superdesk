@@ -25,7 +25,7 @@ describe('search', function() {
         expect(globalSearch.getItems().count()).toBe(3);
     });
 
-    it('can search by search within field', function() {
+    xit('can search by search within field', function() {
         globalSearch.openFilterPanel();
         expect(globalSearch.getItems().count()).toBe(14);
 
@@ -37,7 +37,7 @@ describe('search', function() {
         expect(element.all(by.repeater('parameter in tags.selectedKeywords')).count()).toBe(1);
     });
 
-    it('can search by search within field with parenthesis and clear by tag', function() {
+    xit('can search by search within field with parenthesis and clear by tag', function() {
         globalSearch.openFilterPanel();
         expect(globalSearch.getItems().count()).toBe(14);
 
@@ -111,7 +111,7 @@ describe('search', function() {
         globalSearch.goButton.click();
         expect(globalSearch.getItems().count()).toBe(1);
         expect(element.all(by.repeater('parameter in tags.selectedParameters')).count()).toBe(1);
-        element(by.css('.icon-close-small')).click();
+        element(by.css('.icon-close-small.icon-white')).click();
         expect(globalSearch.getItems().count()).toBe(14);
     });
 
