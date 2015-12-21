@@ -264,9 +264,9 @@
     }
 
     MonitoringGroupDirective.$inject = ['cards', 'api', 'authoringWorkspace', '$timeout', 'superdesk',
-        'activityService', 'workflowService', 'keyboardManager', 'desks', 'search', 'multi', 'archiveService'];
+        'activityService', 'workflowService', 'keyboardManager', 'desks', 'search', 'multi', 'archiveService', 'gettext'];
     function MonitoringGroupDirective(cards, api, authoringWorkspace, $timeout, superdesk, activityService,
-            workflowService, keyboardManager, desks, search, multi, archiveService) {
+            workflowService, keyboardManager, desks, search, multi, archiveService, gettext) {
 
         var ITEM_HEIGHT = 57,
             ITEMS_COUNT = 5,
@@ -358,7 +358,7 @@
                             monitoring.viewMonitoringHome();
                         }
                     }
-                }, {inputDisabled: false});
+                }, {inputDisabled: false, group: gettext('Monitoring'), description: gettext('Switches between single/grouped stage view')});
 
                 /*
                  * Change between single desk view and grouped view by keyboard
@@ -372,7 +372,7 @@
                             monitoring.viewMonitoringHome();
                         }
                     }
-                }, {inputDisabled: false});
+                }, {inputDisabled: false, group: gettext('Monitoring'), description: gettext('Switches between single/grouped desk view')});
 
                 /*
                  * Bind item actions on keyboard shortcuts
