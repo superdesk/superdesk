@@ -33,7 +33,7 @@
         });
     }])
 
-    .service('keyboardManager', ['$window', '$timeout', function ($window, $timeout) {
+    .service('keyboardManager', ['$window', '$timeout', 'gettext', function ($window, $timeout, gettext) {
         var stack = [],
             defaultOpt = {
                 'type':             'keydown',
@@ -41,7 +41,10 @@
                 'inputDisabled':    true,
                 'target':           $window.document,
                 'keyCode':          false,
-                'global':           false
+                'global':           false,
+                'group':            gettext('Other'),
+                'description':      gettext('No description'),
+                'hide':             false
             },
             shift_nums = {
                 '`': '~',
@@ -297,6 +300,37 @@
                 elt.removeEventListener(type, callback, false);
             } else {
                 elt['on' + type] = false;
+            }
+        };
+    }])
+
+    .directive('sdKeyboardModal', ['keyboardManager', 'gettext', function(keyboardManager, gettext) {
+        var process = function(eventList) {
+            var data = {};
+            for (var label in eventList) {
+                data[eventList[label].opt.group] = data[eventList[label].opt.group] || [];
+                data[eventList[label].opt.group].push({label: label, description: eventList[label].opt.description});
+            }
+            return data;
+        };
+        return {
+            templateUrl: 'scripts/superdesk/keyboard/views/keyboard-modal.html',
+            link: function(scope) {
+                scope.enabled = false;
+                scope.data = {};
+
+                keyboardManager.bind('alt+k', function() {
+                    scope.enabled = true;
+                    scope.data = process(keyboardManager.keyboardEvent);
+                }, {global: true, group: gettext('General'), description: gettext('Displays active keyboard shortcuts')});
+
+                keyboardManager.bind('alt+k', function() {
+                    scope.enabled = false;
+                }, {global: true, type: 'keyup', group: gettext('General'), description: gettext('Displays active keyboard shortcuts')});
+
+                scope.close = function() {
+                    scope.enabled = false;
+                };
             }
         };
     }]);

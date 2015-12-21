@@ -2235,13 +2235,12 @@
                     var ESC = 27;
                     scope.meta = {};
                     scope.flags = {enabled: false};
-                    var opt = {global: true};
                     keyboardManager.bind('ctrl+0', function() {
                         scope.flags.enabled = true;
-                    }, opt);
+                    }, {global: true, description: gettext('Shows search modal'), group: gettext('Search')});
                     keyboardManager.bind('esc', function() {
                         scope.flags.enabled = false;
-                    }, opt);
+                    }, {global: true, description: gettext('Hides search modal'), group: gettext('Search')});
 
                     function reset() {
                         scope.meta.unique_name = '';

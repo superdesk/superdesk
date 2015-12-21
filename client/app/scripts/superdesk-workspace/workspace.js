@@ -303,8 +303,8 @@
         };
     }
 
-    WorkspaceSidenavDirective.$inject = ['superdeskFlags', '$location', 'keyboardManager'];
-    function WorkspaceSidenavDirective(superdeskFlags, $location, keyboardManager) {
+    WorkspaceSidenavDirective.$inject = ['superdeskFlags', '$location', 'keyboardManager', 'gettext'];
+    function WorkspaceSidenavDirective(superdeskFlags, $location, keyboardManager, gettext) {
         return {
             templateUrl: 'scripts/superdesk-workspace/views/workspace-sidenav-items.html',
             link: function(scope, elem) {
@@ -329,15 +329,14 @@
                  * By using keyboard shortcuts, change the current showed view
                  *
                  */
-                var opt = {global: true, inputDisabled: false};
                 keyboardManager.bind('alt+h', function (e) {
                     e.preventDefault();
                     $location.url('/workspace');
-                }, opt);
+                }, {global: true, inputDisabled: false, group: gettext('General'), description: gettext('Opens workspace')});
                 keyboardManager.bind('alt+m', function (e) {
                     e.preventDefault();
                     $location.url('/workspace/monitoring');
-                }, opt);
+                }, {global: true, inputDisabled: false, group: gettext('General'), description: gettext('Opens monitoring')});
                 keyboardManager.bind('alt+d', function (e) {
                     e.preventDefault();
                     elem.find('.highlights-dropdown .dropdown-toggle').click();
@@ -348,23 +347,23 @@
                     keyboardManager.push('down', function() {
                         elem.find('.dropdown-menu button:focus').parent('li').next().children('button').focus();
                     });
-                }, opt);
+                }, {global: true, inputDisabled: false, group: gettext('General'), description: gettext('Opens highlights')});
                 keyboardManager.bind('alt+t', function (e) {
                     e.preventDefault();
                     $location.url('/workspace/tasks');
-                }, opt);
+                }, {global: true, inputDisabled: false, group: gettext('General'), description: gettext('Opens tasks')});
                 keyboardManager.bind('alt+x', function (e) {
                     e.preventDefault();
                     $location.url('/workspace/spike-monitoring');
-                }, opt);
+                }, {global: true, inputDisabled: false, group: gettext('General'), description: gettext('Opens spike')});
                 keyboardManager.bind('alt+p', function (e) {
                     e.preventDefault();
                     $location.url('/workspace/personal');
-                }, opt);
+                }, {global: true, inputDisabled: false, group: gettext('General'), description: gettext('Opens personal')});
                 keyboardManager.bind('alt+f', function (e) {
                     e.preventDefault();
                     $location.url('search');
-                }, opt);
+                }, {global: true, inputDisabled: false, group: gettext('General'), description: gettext('Opens search')});
             }
         };
     }

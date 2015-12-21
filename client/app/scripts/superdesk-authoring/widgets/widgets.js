@@ -47,7 +47,7 @@ function WidgetsManagerCtrl($scope, $routeParams, authoringWidgets, archiveServi
         angular.forEach(_.sortBy($scope.widgets, 'order'), function (widget, index) {
             keyboardManager.bind('ctrl+' + (index + 1), function () {
                 $scope.activate(widget);
-            }, {inputDisabled: false});
+            }, {inputDisabled: false, group: gettext('Authoring'), description: gettext('Toggles widget')});
             if ($location.search()[widget._id]) {
                 $scope.activate(widget);
             }
