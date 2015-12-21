@@ -336,40 +336,47 @@
 // SUBNAV
 // ------------
 .subnav {
-		position: absolute;
-		top: @nav-height;
-		left: 0;
-		right: 0;
-		height:@subnav-height;
-		padding:10px 20px;
-		.border-box();
-		z-index: 1001;
-		background: rgba(245,245,245,0.90);
-		border-bottom: 0px;
-		.box-shadow-both(0 1px 3px rgba(0,0,0,0.07), 0 1px 0 0 rgba(0,0,0,0.1));
-		.transition( all 0.3s ease);
-
-		//page title placed in subnav-fixed
-		.page-nav-title {
+	position: absolute;
+	top: @nav-height;
+	left: 0;
+	right: 0;
+	height:@subnav-height;
+	padding:10px 20px;
+	.border-box();
+	z-index: 1001;
+	background: rgba(245,245,245,0.90);
+	border-bottom: 0px;
+	.box-shadow-both(0 1px 3px rgba(0,0,0,0.07), 0 1px 0 0 rgba(0,0,0,0.1));
+	.transition( all 0.3s ease);
+	//page title placed in subnav-fixed
+	.page-nav-title {
+		color: #666;
+		font-size: 18px;
+		line-height: 28px;
+		float: left;
+		.text-normal();
+		span {
 			color: #666;
-			font-size: 18px;
-			line-height: 28px;
-			float: left;
-			.text-normal();
-			span {
-				color: #666;
-				.text-semibold();
-			}
+			.text-semibold();
 		}
+	}
+	&--plain {
+		padding: 0;
+	}
+	&--archive {
+		top:@nav-height*2;
+		z-index: 1000;
+	}
 }
+
 .subnav.level2 {
-		position: absolute;
-		background: #f5f5f5;
-		top:0;
-		left: 0 !important;
-		height: @subnav-height;
-		z-index: 2;
-		.box-shadow(none);
+	position: absolute;
+	background: #f5f5f5;
+	top:0;
+	left: 0 !important;
+	height: @subnav-height;
+	z-index: 2;
+	.box-shadow(none);
 }
 .monitoring{
 	.subnav {

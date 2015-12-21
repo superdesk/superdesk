@@ -3,6 +3,8 @@
 // ----------------------------------------------------------------------------------------
 @import 'mixins.less';
 @import 'variables.less';
+@import 'animation.less';
+
 
 .archive-sidebar {
 	position:absolute;
@@ -19,6 +21,7 @@
 		height: @nav-height + 1;
 		border-bottom: 1px solid #ddd;
 		background-color: #f4f4f4;
+		position: relative;
 		.border-box();
 		.icon {
 			width: 48px;
@@ -31,6 +34,7 @@
 		}
 		ul {
 			float: left;
+			padding-left: 5px;
 			li {
 				float: left;
 				height: 48px;
@@ -38,26 +42,27 @@
 				margin: 0 15px;
 				line-height: 48px;
 				font-size: 14px;
+				.opacity(70);
 				&:hover {
 					cursor: pointer;
 					border-bottom: 3px solid #bbb;
 				}
 				&.active {
 					border-bottom: 3px solid @sd-blue;
+					.opacity(100);
 				}
 			}
 		}
 		.doopen {
 			position: absolute;
-			top: 13px;
+			top: 16px;
 			right: 8px;
 			padding-left: 10px;
 			padding-right: 10px;
-			i {
-				.opacity(60);
-			}
+			.opacity(40);
 			&:hover {
 				cursor: pointer;
+				.opacity(100);
 			}
 		}
 	}
@@ -66,21 +71,22 @@
 	.content {
 		position: absolute;
 		top:@nav-height; left:0px; bottom:0px; right:0px;
-		padding: 20px; 
+		padding: 20px;
 		overflow: auto;
 		padding-bottom: @bottom-view-padding;
-		.edit-search {
-			font-weight: 500;
-		    font-size: 15px;
-		    margin: -20px -20px 15px -15px;
-		    padding: 5px;
-		    border-bottom: 1px solid @gray;
-		}
 		&.pull {
 			bottom: 60px;
 		}
 	}
 
+	.edit-search {
+		font-weight: 500;
+			font-size: 15px;
+			margin: 10px -20px 15px;
+			fieldset {
+				padding: 0 20px;
+			}
+	}
 	.toggle-box {
             .toggle-box__label {
                 font-size: 12px;
@@ -109,7 +115,7 @@
                                 color: #333333;
                                 height: auto;
                                 line-height: 18px;
-                                i { 
+                                i {
                                     margin-top: -8px;
                                     margin-right: 0;
                                 }
@@ -214,7 +220,7 @@
 				left: 5px;
 				top: 0px;
 				visibility: hidden;
-				
+
 			}
 
 			.hover-box {
@@ -227,7 +233,7 @@
 					}
 				}
 			}
-			
+
 			&.checked {
 				.sd-checkbox {
 					visibility: visible;
@@ -299,7 +305,7 @@
 					.border-box();
 					width: 100%;
 				}
-			}	
+			}
 		}
 		.datepicker-input {
 			min-width: initial;
@@ -351,7 +357,7 @@
 					.search-button {
 						position: absolute;
 						right:6px;
-						top:16px;
+						top:8px;
 					}
 					.delete, .edit {
 						//float: left;
@@ -394,6 +400,22 @@
 		}
 	}
 }
+
+.backlink-toolbar {
+	padding: 16px 20px 0;
+	margin-bottom: 20px;
+	.border-box();
+	height: @nav-height;
+	background: white;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+	position: relative;
+	z-index: 2;
+	animation: dropOut .2s cubic-bezier(0.695, 0.105, 0.285, 1.275) 1;
+	.backlink {
+		animation: appearFromRight 0.4s ease-out 1;
+	}
+}
+
 .saved-searches {
 
 }
@@ -410,11 +432,11 @@
 
 .sidebar-open {
 	.archive-content {
-		left: @archive-sidebar-width !important;	
+		left: @archive-sidebar-width !important;
 	}
 }
 
-.save-search, 
+.save-search,
 .save-search-panel {
 	position: absolute;
 	bottom: 0;
@@ -440,4 +462,11 @@
 	margin-bottom: 20px;
 }
 
-
+.save-search__link {
+	display: inline-block;
+	margin-right: 10px;
+	cursor: pointer;
+	&:hover {
+		text-decoration: underline;
+	}
+}
