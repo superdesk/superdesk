@@ -18,40 +18,36 @@
                 });
             });
         });
-        beforeEach(inject(function(session, preferencesService, $q) {
+        beforeEach(inject(function(session, preferencesService, authAdapter, urls, $q) {
             session.clear();
             spyOn(preferencesService, 'get').and.returnValue($q.when({}));
+            spyOn(urls, 'resource').and.returnValue($q.when('http://localhost:5000/api/auth'));
+            spyOn(session, 'start').and.returnValue(true);
         }));
 
-        /* THIS FAILS
-                it('can login', inject(function(auth, session, $httpBackend, $rootScope) {
+        fit('can login', inject(function(auth, session, $httpBackend, $rootScope) {
 
-                    expect(session.identity).toBe(null);
-                    expect(session.token).toBe(null);
+            expect(session.identity).toBe(null);
+            expect(session.token).toBe(null);
 
-                    var resolved = {};
+            var resolved = {};
 
-                    $httpBackend.expectGET('http://user/1').respond({username: 'foo'});
+            $httpBackend.expectPOST('http://localhost:5000/api/auth').respond(200, {
+                user: 'foo'
+            });
 
-                    session.getIdentity().then(function() {
-        // NONE OF THIS EVER EXECUTES
-                        resolved.identity = true;
-                    });
+            auth.login('admin', 'admin').then(function(identity) {
+                expect(session.start).toHaveBeenCalled();
+                resolved.login = true;
+            }, function() {
+                resolved.login = false;
+            });
 
-                    auth.login('admin', 'admin').then(function(identity) {
-        // NONE OF THIS EVER EXECUTES
-                        expect(session.identity.username).toBe('foo');
-                        expect(session.token).toBe('sess');
-                        resolved.login = true;
-                    });
+            $httpBackend.flush();
+            $rootScope.$apply();
 
-                    $rootScope.$apply();
-
-        // SO THESE NEVER GET SET
-                    expect(resolved.login).toBe(true);
-                    expect(resolved.identity).toBe(true);
-                }));
-*/
+            expect(resolved.login).toBe(true);
+        }));
 
         it('checks credentials', inject(function(auth, $rootScope) {
             var resolved = false, rejected = false;
