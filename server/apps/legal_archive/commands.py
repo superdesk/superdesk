@@ -62,17 +62,17 @@ class LegalArchiveImport:
         legal_archive_doc.pop('lock_session', None)
         legal_archive_doc.pop('lock_time', None)
 
-        logger.info('Removed irrelevant properties from the article ' + log_msg)
+        logger.info('Removed irrelevant properties from the article {}'.format(log_msg))
 
         # Step 1
         article_in_legal_archive = legal_archive_service.find_one(req=None, _id=legal_archive_doc[config.ID_FIELD])
 
         # Step 2 - De-normalizing the legal archive doc
         self._denormalize_user_desk(legal_archive_doc, log_msg)
-        logger.info('De-normalized article ' + log_msg)
+        logger.info('De-normalized article {}'.format(log_msg))
 
         # Step 3 - Upserting Legal Archive
-        logger.info('Upserting Legal Archive Repo with article ' + log_msg)
+        logger.info('Upserting Legal Archive Repo with article {}'.format(log_msg))
 
         if article_in_legal_archive:
             legal_archive_service.put(legal_archive_doc[config.ID_FIELD], legal_archive_doc)
@@ -84,7 +84,7 @@ class LegalArchiveImport:
         version_history = list(get_resource_service('archive_versions').get(req=None, lookup=lookup))
         legal_version_history = list(legal_archive_versions_service.get(req=None, lookup=lookup))
 
-        logger.info('Fetched version history for article ' + log_msg)
+        logger.info('Fetched version history for article {}'.format(log_msg))
         versions_to_insert = [version for version in version_history
                               if not any(legal_version for legal_version in legal_version_history
                                          if version[config.VERSION] == legal_version[config.VERSION])]
@@ -92,14 +92,14 @@ class LegalArchiveImport:
         for version_doc in versions_to_insert:
             self._denormalize_user_desk(version_doc,
                                         self.log_msg_format.format(_id=version_doc[version_id_field],
-                                                                   unique_name=version_doc['unique_name'],
+                                                                   unique_name=version_doc.get('unique_name'),
                                                                    _current_version=version_doc[config.VERSION],
-                                                                   expiry=version_doc['expiry']))
-            del version_doc[config.ETAG]
+                                                                   expiry=version_doc.get('expiry')))
+            version_doc.pop(config.ETAG, None)
 
         if versions_to_insert:
             legal_archive_versions_service.post(versions_to_insert)
-            logger.info('Inserted de-normalized version history for article ' + log_msg)
+            logger.info('Inserted de-normalized version history for article {}'.format(log_msg))
 
         logger.info('Upsert completed for article ' + log_msg)
 
@@ -109,38 +109,46 @@ class LegalArchiveImport:
         """
 
         # De-normalizing User Details
-        if legal_archive_doc.get('original_creator'):
-            legal_archive_doc['original_creator'] = self.__get_user_name(legal_archive_doc['original_creator'])
+        legal_archive_doc['original_creator'] = self.__get_user_name(legal_archive_doc.get('original_creator'))
+        legal_archive_doc['version_creator'] = self.__get_user_name(legal_archive_doc.get('version_creator'))
 
-        if legal_archive_doc.get('version_creator'):
-            legal_archive_doc['version_creator'] = self.__get_user_name(legal_archive_doc['version_creator'])
-
-        logger.info('De-normalized User Details for article ' + log_msg)
+        logger.info('De-normalized User Details for article {}'.format(log_msg))
 
         # De-normalizing Desk and Stage details
         if legal_archive_doc.get('task'):
             if legal_archive_doc['task'].get('desk'):
                 desk = get_resource_service('desks').find_one(req=None, _id=str(legal_archive_doc['task']['desk']))
-                legal_archive_doc['task']['desk'] = desk['name']
-                logger.info('De-normalized Desk Details for article ' + log_msg)
+                if desk:
+                    legal_archive_doc['task']['desk'] = desk.get('name')
+                    logger.info('De-normalized Desk Details for article {}'.format(log_msg))
+                else:
+                    logger.info('Desk Details Not Found: {}. {}'.format(legal_archive_doc['task'].get('desk'), log_msg))
 
             if legal_archive_doc['task'].get('stage'):
                 stage = get_resource_service('stages').find_one(req=None, _id=str(legal_archive_doc['task']['stage']))
-                legal_archive_doc['task']['stage'] = stage['name']
-                logger.info('De-normalized Stage Details for article ' + log_msg)
+                if stage:
+                    legal_archive_doc['task']['stage'] = stage.get('name')
+                    logger.info('De-normalized Stage Details for article {}'.format(log_msg))
+                else:
+                    logger.info('Stage Details Not Found: {}. {}'.format(legal_archive_doc['task'].get('stage'),
+                                                                         log_msg))
 
-            if legal_archive_doc['task'].get('user'):
-                legal_archive_doc['task']['user'] = self.__get_user_name(legal_archive_doc['task']['user'])
+            legal_archive_doc['task']['user'] = self.__get_user_name(legal_archive_doc['task'].get('user'))
 
     def __get_user_name(self, user_id):
         """
         Retrieves display_name of the user identified by user_id
         """
+        logger.info('Get User Details for ID:{}'.format(user_id))
 
         if not user_id:
             return ''
 
         user = get_resource_service('users').find_one(req=None, _id=user_id)
+
+        if not user:
+            return ''
+
         return get_display_name(user)
 
     def import_legal_publish_queue(self):
@@ -156,6 +164,7 @@ class LegalArchiveImport:
             logger.info('No Items to import.')
             return
 
+        logger.info('Items to import {}.'.format(len(queue_items)))
         logger.info('Get subscribers info for de-normalising queue items.')
         subscriber_ids = list({str(queue_item['subscriber_id']) for queue_item in queue_items})
         query = {'$and': [{config.ID_FIELD: {'$in': subscriber_ids}}]}
@@ -191,7 +200,7 @@ class LegalArchiveImport:
         """
         legal_publish_queue_service = get_resource_service(LEGAL_PUBLISH_QUEUE_NAME)
         req = ParsedRequest()
-        req.sort = '[("%s", 1)]' % config.LAST_UPDATED
+        req.sort = '[("%s", -1)]' % config.LAST_UPDATED
         req.max_results = 1
         req.page = 1
         queue_item = list(legal_publish_queue_service.get(req=req, lookup={}))
@@ -208,19 +217,18 @@ class LegalArchiveImport:
         lookup = {
             'item_id': legal_queue_item['item_id'],
             'item_version': legal_queue_item['item_version'],
-            '_subscriber_id': legal_queue_item['subscriber_id']
+            'subscriber_id': legal_queue_item['subscriber_id']
         }
 
-        log_msg = '{item_id} -- version {item_version} -- subscriber {_subscriber_id}.'.format(**lookup)
+        log_msg = '{item_id} -- version {item_version} -- subscriber {subscriber_id}.'.format(**lookup)
 
         logger.info('Processing queue item: {}'.format(log_msg))
 
-        existing_queue_item = legal_publish_queue_service.find_one(req=None, **lookup)
+        existing_queue_item = legal_publish_queue_service.find_one(req=None, _id=legal_queue_item.get(config.ID_FIELD))
         legal_queue_item['subscriber_id'] = subscribers[str(queue_item['subscriber_id'])]['name']
         legal_queue_item['_subscriber_id'] = queue_item['subscriber_id']
 
         legal_queue_item.pop(config.ETAG, None)
-        legal_queue_item.pop(config.ID_FIELD, None)
 
         if not existing_queue_item:
             legal_publish_queue_service.post([legal_queue_item])

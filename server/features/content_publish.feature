@@ -21,7 +21,7 @@ Feature: Content Publishing
       """
       And "desks"
       """
-      [{"name": "Sports"}]
+      [{"name": "Sports", "content_expiry": 60}]
       """
       When we post to "/archive" with success
       """
@@ -441,7 +441,7 @@ Feature: Content Publishing
       Given empty "subscribers"
       And "desks"
       """
-      [{"name": "Sports"}]
+      [{"name": "Sports", "content_expiry": 60}]
       """
       And the "validators"
       """
@@ -451,7 +451,7 @@ Feature: Content Publishing
       """
       [{"guid": "123", "headline": "test", "_current_version": 1, "state": "fetched",
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
-        "publish_schedule":"2016-05-30T10:00:00+00:00",
+        "publish_schedule":"#DATE+2#",
         "subject":[{"qcode": "17004000", "name": "Statistics"}],
         "slugline": "test",
         "body_html": "Test Document body"}]
@@ -469,14 +469,14 @@ Feature: Content Publishing
       """
       {"_current_version": 2, "state": "scheduled", "operation": "publish"}
       """
-
+      And we get expiry for schedule and embargo content 60 minutes after "#archive_publish.publish_schedule#"
       When we get "/publish_queue"
       Then we get list with 1 items
       """
       {
         "_items":
           [
-            {"destination":{"name":"Test"}, "publish_schedule":"2016-05-30T10:00:00+0000"}
+            {"destination":{"name":"Test"}, "publish_schedule": "#archive.publish_schedule#"}
           ]
       }
       """
@@ -735,6 +735,17 @@ Feature: Content Publishing
       """
       And we publish "#archive._id#" with "publish" type and "published" state
       Then we get OK response
+      When we get "/legal_archive/123"
+      Then we get OK response
+      And we get existing resource
+      """
+      {"_current_version": 1, "state": "published", "task":{"desk": "#desks.name#"}}
+      """
+      When we get "/legal_archive/123?version=all"
+      Then we get list with 1 items
+      When run import legal publish queue
+      And we get "/legal_publish_queue"
+      Then we get list with 1 items
       When we post to "/archive/#archive._id#/lock"
       """
       {}
@@ -751,8 +762,19 @@ Feature: Content Publishing
       {}
       """
       Then we get OK response
+      When we get "/legal_archive/123"
+      Then we get OK response
+      And we get existing resource
+      """
+      {"_current_version": 2, "state": "corrected", "task":{"desk": "#desks.name#"}}
+      """
+      When we get "/legal_archive/123?version=all"
+      Then we get list with 2 items
+      When run import legal publish queue
+      And we get "/legal_publish_queue"
+      Then we get list with 2 items
 
-    @auth @test
+    @auth
     Scenario: We can lock a published content and then correct it and then kill the article
       Given the "validators"
       """

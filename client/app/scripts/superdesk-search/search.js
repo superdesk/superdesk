@@ -883,6 +883,7 @@
                     scope.$on('item:spike', queryItems);
                     scope.$on('item:unspike', queryItems);
                     scope.$on('item:duplicate', queryItems);
+                    scope.$on('content:expired', queryItems);
                     scope.$on('broadcast:preview', function(event, args) {
                         scope.previewingBroadcast = true;
                         scope.preview(args.item);
@@ -1141,25 +1142,36 @@
                 templateUrl: asset.templateUrl('superdesk-search/views/save-search.html'),
                 link: function(scope, elem) {
                     scope.edit = null;
+                    scope.activateSearchPane = false;
 
-                    scope.editItem = function() {
+                    scope.$on('edit:search', function(event, args)  {
+                        scope.activateSearchPane = false;
+                        scope.edit = _.create(scope.editingSearch) || {};
+                    });
+
+                    scope.editItem = function () {
+                        scope.activateSearchPane = true;
                         scope.edit = _.create(scope.editingSearch) || {};
                     };
 
                     scope.saveas = function() {
+                        scope.activateSearchPane = true;
                         scope.edit = _.clone(scope.editingSearch) || {};
                         delete scope.edit._id;
                         scope.edit.name = '';
                         scope.edit.description = '';
                     };
 
-                    scope.cancel = function() {
+                    scope.cancel = function () {
+                        scope.sTab = scope.editingSearch ? false : true;
+                        scope.resetEditingSearch();
                         scope.edit = null;
+                        scope.activateSearchPane = false;
                     };
 
                     scope.clear = function() {
                         scope.resetEditingSearch();
-                        scope.cancel();
+                        scope.edit = null;
                         $location.url('/search');
                     };
 
@@ -1171,7 +1183,7 @@
                         function onSuccess() {
                             notify.success(gettext('Saved search is saved successfully'));
                             scope.cancel();
-                            scope.changeTab();
+                            scope.sTab = false;
                             scope.edit = null;
                         }
 
@@ -1469,7 +1481,8 @@
                             if (!scope.repo) {
                                 scope.repo = {'search': 'local'};
                             } else {
-                                if (!scope.repo.archive && !scope.repo.ingest && !scope.repo.published && !scope.repo.archived) {
+                                if (!scope.repo.archive && !scope.repo.ingest &&
+                                    !scope.repo.published && !scope.repo.archived) {
                                     scope.repo.search = params.repo;
                                 } else {
                                     scope.repo.search = 'local';

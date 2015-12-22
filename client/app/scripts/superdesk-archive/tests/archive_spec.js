@@ -54,6 +54,13 @@ describe('content', function() {
             expect(archiveService.isLegal(item)).toBe(true);
         }));
 
+        it('verifies if item is from Archived repo or not', inject(function(archiveService) {
+            expect(archiveService.isArchived(item)).toBe(false);
+
+            item._type = 'archived';
+            expect(archiveService.isArchived(item)).toBe(true);
+        }));
+
         it('returns the related items', inject(function(archiveService, api, $q, search) {
             spyOn(api, 'query').and.returnValue($q.when());
             archiveService.getRelatedItems('test');
@@ -80,12 +87,12 @@ describe('content', function() {
             item.state = 'submitted';
             expect(archiveService.getType(item)).toBe('archive');
 
+            item._type = 'archived';
             item.state = 'published';
-            item.allow_post_publish_actions = true;
-            expect(archiveService.getType(item)).toBe('archive');
-
-            item.allow_post_publish_actions = false;
             expect(archiveService.getType(item)).toBe('archived');
+
+            item._type = 'published';
+            expect(archiveService.getType(item)).toBe('archive');
 
             item._type = 'legal_archive';
             expect(archiveService.getType(item)).toBe('legal_archive');

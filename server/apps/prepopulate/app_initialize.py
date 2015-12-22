@@ -41,11 +41,9 @@ __entities__ = {
     'validators': ('validators.json', '', True),
     'content_templates': ('content_templates.json', ['template_name'], False),
     'ingest_providers': ('ingest_providers.json', '', True),
-    'published': (None, [[('can_be_removed', pymongo.ASCENDING)],
-                         [('expiry', pymongo.ASCENDING),
-                          ('state', pymongo.ASCENDING),
-                          ('allow_post_publish_actions', pymongo.ASCENDING),
-                          ('_created', pymongo.ASCENDING)],
+    'published': (None, [[('expiry', pymongo.ASCENDING),
+                          ('_created', pymongo.ASCENDING),
+                          ('state', pymongo.ASCENDING)],
                          [('item_id', pymongo.ASCENDING),
                           ('state', pymongo.ASCENDING)],
                          [('publish_schedule', pymongo.ASCENDING),
@@ -60,7 +58,8 @@ __entities__ = {
     'archive': (None, [[('_updated', pymongo.ASCENDING)],
                        [('expiry', pymongo.ASCENDING),
                         ('state', pymongo.ASCENDING)],
-                       [('groups.refs.guid', pymongo.ASCENDING), {'sparse': True}],
+                       [('type', pymongo.ASCENDING)],
+                       [('groups.refs.residRef', pymongo.ASCENDING), {'sparse': True}],
                        [('publish_schedule', pymongo.ASCENDING),
                         ('state', pymongo.ASCENDING)],
                        [('unique_name', pymongo.ASCENDING)]], False),
@@ -76,7 +75,12 @@ __entities__ = {
                               ('item_version', pymongo.ASCENDING)],
                              [('state', pymongo.ASCENDING),
                               ('destination.delivery_type', pymongo.ASCENDING)],
-                             [('subscriber_id', pymongo.ASCENDING)]], False)
+                             [('subscriber_id', pymongo.ASCENDING)],
+                             [('_updated', pymongo.DESCENDING)]], False),
+    'archived': (None, [[('archived_id', pymongo.ASCENDING), {'unique': True}]], False),
+    'legal_archive_versions': (None, [[('_id_document', pymongo.ASCENDING),
+                                       ('_current_version', pymongo.ASCENDING)]], False),
+    'legal_publish_queue': (None, [[('_updated', pymongo.DESCENDING)]], False)
 }
 
 

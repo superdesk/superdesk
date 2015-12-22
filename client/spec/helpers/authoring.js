@@ -394,4 +394,15 @@ function Authoring() {
         return duplicatedItem.element(by.className('state-label')).getText();
     };
 
+    this.getItemState = function() {
+        return element(by.className('metadata')).element(by.className('state-label'));
+    };
+
+    this.isPublishedState = function() {
+        return this.getItemState().getText()
+            .then(function(state) {
+                return (['published', 'corrected', 'killed'].indexOf(state.toLowerCase()) !== -1);
+            });
+    };
+
 }

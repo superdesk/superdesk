@@ -8,16 +8,43 @@
         .archive-content {
             height: 100%;
         }
-	.search-page-header {
-		display: flex;
-		position: relative;
-		> div {
-			flex: 0 0 auto;
-		}
-		.searchbar-flex-handler {
-			flex: 1 0 auto;
-		}
-	}
+}
+
+.search-page-header {
+  display: flex;
+  position: relative;
+  background-color: @sd-background;
+  .box-sizing(border-box);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.07), 0 1px 0 0 rgba(0, 0, 0, 0.1);
+  width: 100%;
+
+  .searchbar-flex-handler {
+    //flex: 1 0 auto;
+    flex-grow: 1;
+  }
+}
+
+.filter-trigger {
+  width: 48px;
+  height: 48px;
+  line-height: 54px;
+  text-align: center;
+  background: @archive-sidebar-bg;
+  //border-right: 1px solid #e0e0e0;
+  .transition(all ease 0.1s);
+  overflow: hidden;
+  i {
+    .opacity(60);
+  }
+  &:hover {
+    cursor: pointer;
+  }
+  &--active {
+    background: @sd-blue-text;
+    i {
+      color:white;
+    }
+  }
 }
 
 .multi-action-bar {
@@ -34,7 +61,7 @@
 	.navbtn {
 		border: none;
 	}
-                
+
     #multi-select-count {
         margin-left: 15px;
     }
@@ -75,14 +102,14 @@
 			margin-top: 3px;
 		}
 	}
-	
+
 	input {
 		height: @nav-height;
 		line-height: 100%;
 		font-size: 14px;
 		border: 0 !important;
 		padding: 0 @nav-height;
-		
+
 		background: none;
 		&:focus, &:active {
 			.box-shadow(none) !important;
@@ -91,7 +118,7 @@
 			line-height: 17px;
 		}
 	}
-	
+
 	.trigger {
 		right: 0;
 		background: none;
@@ -99,26 +126,18 @@
 
 	.search-cancel {
 		position: absolute;
-		top: 16px; right: 55px;
-		background: rgba(0, 0, 0, 0.3);
-		.border-radius(50%);
+		top: 12px; right: 55px;
+		background: transparent;
 		border: 0;
 		padding: 0;
-  		//zoom: 0.8;
-  		height: 15px;
-  		width: 15px;
+  		opacity: 0.4;
+  		height: 24px;
+  		width: 24px;
+		padding:4px;
   		cursor: pointer;
-		i {
-			margin: 0;
-			font-size: 12px;
-			width:11px;
-			height:11px;
-			position: absolute;
-			top:0px;
-			left:1px;
-		}
+		transition: all 300ms ease;
 		&:hover {
-			background: rgba(0, 0, 0, 0.6)
+			opacity: 0.8;
 		}
 	}
 
@@ -241,8 +260,3 @@
 	}
 }
 
-#search-parameters {
-	.superdeskRepos {
-		padding-left: 30px;
-	}
-}

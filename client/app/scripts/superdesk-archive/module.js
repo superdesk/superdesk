@@ -146,13 +146,15 @@
          * @return String
          *      'ingest' if the state of the item is Ingested
          *      'spike' if the state of the item is Spiked
-         *      'archived' if the state of the item is Published and allow_post_publish_actions is false
+         *      'archived' if item is archived (no post publish actions)
          *      'archive' if none of the above is returned
          */
         this.getType = function(item) {
             var itemType;
             if (this.isLegal(item)) {
                 itemType = item._type;
+            } else if (this.isArchived(item)) {
+                itemType = 'archived';
             } else if (item._type === 'externalsource') {
                 itemType = 'externalsource';
             } else if (item.state === 'spiked') {
@@ -160,13 +162,7 @@
             } else if (item.state === 'ingested') {
                 itemType = 'ingest';
             } else {
-                var isPublished = this.isPublished(item);
-
-                if (!isPublished || (isPublished && item.allow_post_publish_actions === true)) {
-                    itemType = 'archive';
-                } else if (isPublished && item.allow_post_publish_actions === false) {
-                    itemType = 'archived';
-                }
+                itemType = 'archive';
             }
 
             return itemType;
@@ -179,7 +175,17 @@
          * @return boolean if the item is fetched from Legal Archive, false otherwise.
          */
         this.isLegal = function(item) {
-            return (angular.isDefined(item._type) && !_.isNull(item._type) && item._type === 'legal_archive');
+            return item._type === 'legal_archive';
+        };
+
+        /**
+         * Returns true if the item is fetched from Archived
+         *
+         * @param {Object} item
+         * @return boolean if the item is fetched from Archived, false otherwise.
+         */
+        this.isArchived = function(item) {
+            return item._type === 'archived';
         };
 
         /**

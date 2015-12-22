@@ -74,26 +74,6 @@
 	&.wide {
 		left:10px;
 	}
-	.filter-trigger {
-		width: 48px;
-		height: 48px;
-		line-height: 54px;
-		text-align: center;
-		background: @archive-sidebar-bg;
-		//border-right: 1px solid #e0e0e0;
-		.transition(all ease 0.1s);
-		overflow: hidden;
-		i {
-			.opacity(60);
-		}
-		&:hover {
-			cursor: pointer;
-		}
-		&.hidden {
-			width: 0;
-			border-right: 0;
-		}
-	}
 
 	.content-inner {
 		position: absolute;
@@ -142,18 +122,6 @@
 					}
 				}
 			}
-			.view-select {
-				button {
-					background: none;
-					border: 0;
-					padding: 15px 16px;
-					border-left: 1px solid #dfdfdf;
-					.opacity(60);
-					&:hover {
-						.opacity(80);
-					}
-				}
-			}
 		}
 	}
 	.content .shadow-list-holder {
@@ -164,6 +132,21 @@
 		bottom: 0;
 		max-height: none;
 		min-height: auto;
+	}
+}
+
+.view-select {
+	button {
+		height: 48px;
+		width: 48px;
+		background: none;
+		border: 0;
+		padding: 15px 16px;
+		border-left: 1px solid #dfdfdf;
+		.opacity(60);
+		&:hover {
+			.opacity(80);
+		}
 	}
 }
 
@@ -381,7 +364,7 @@
 				}
 				&.dropdown:hover .dropdown-menu {
 				    display: block;
-				    min-width: 100%;     
+				    min-width: 100%;
 				}
 			}
 		}
@@ -458,7 +441,7 @@
 			right: 0;
 			bottom: 0;
 		}
-                &:hover .action { 
+                &:hover .action {
                     display: block;
                 }
 		.media-box-generic;
@@ -520,7 +503,7 @@
 			}
 
 		}
-                
+
                 .item-right {
                     top: auto;
                     height: 31px;
@@ -671,8 +654,8 @@
 					display: inline-block;
 					margin-left: 0px;
 					&.dropdown:hover .dropdown-menu {
-					    display: block;  
-					    min-width: 100%; 
+					    display: block;
+					    min-width: 100%;
 					}
 					.dropdown-toggle {
 							padding: 0;
@@ -1106,7 +1089,7 @@
         background: linear-gradient(to right, rgba(255,255,255,0) 0%,rgba(255,255,255,0) 0%,rgba(255,255,255,1) 40%);
         i {
             opacity: 0.4;
-            margin-right: -14px; 
+            margin-right: -14px;
         }
         &:hover {
             i {

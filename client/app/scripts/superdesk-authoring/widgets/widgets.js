@@ -30,6 +30,8 @@ function WidgetsManagerCtrl($scope, $routeParams, authoringWidgets, archiveServi
 
         if (archiveService.isLegal(item)) {
             display = 'legalArchive';
+        } else if (archiveService.isArchived(item)) {
+            display = 'archived';
         } else {
             display = item.type === 'composite' ? 'packages' : item.state === 'killed' ? 'killedItem' : 'authoring';
         }

@@ -15,34 +15,36 @@ describe('saved_search', function() {
     });
 
     it('can save a private search', function() {
-        expect(globalSearch.getItems().count()).toBe(11);
+        expect(globalSearch.getItems().count()).toBe(14);
         globalSearch.openFilterPanel();
-        expect(globalSearch.getItems().count()).toBe(11);
+        expect(globalSearch.getItems().count()).toBe(14);
         expect(globalSearch.getPriorityElements().count()).toBe(3);
         var priority = globalSearch.getPriorityElementByIndex(0);
         priority.click();
         expect(globalSearch.getItems().count()).toBe(1);
         element(by.id('save_search_init')).click();
-        element(by.id('search_name')).sendKeys('A Search');
-        element(by.id('search_description')).sendKeys('Description for search');
-        element(by.id('search_save')).click();
+        var searchPanel = element(by.className('save-search-panel'));
+        searchPanel.all(by.id('search_name')).sendKeys('A Search');
+        searchPanel.all(by.id('search_description')).sendKeys('Description for search');
+        searchPanel.all(by.id('search_save')).click();
         var savedSearch = element.all(by.repeater('search in userSavedSearches')).get(0);
         expect(savedSearch.element(by.css('.search-name')).getText()).toBe('A Search');
     });
 
     it('can save a global search and another user sees it', function() {
-        expect(globalSearch.getItems().count()).toBe(11);
+        expect(globalSearch.getItems().count()).toBe(14);
         globalSearch.openFilterPanel();
-        expect(globalSearch.getItems().count()).toBe(11);
+        expect(globalSearch.getItems().count()).toBe(14);
         expect(globalSearch.getPriorityElements().count()).toBe(3);
         var priority = globalSearch.getPriorityElementByIndex(0);
         priority.click();
         expect(globalSearch.getItems().count()).toBe(1);
         element(by.id('save_search_init')).click();
-        element(by.id('search_name')).sendKeys('A Global Search');
-        element(by.id('search_description')).sendKeys('Description for search');
-        element(by.id('search_global')).click();
-        element(by.id('search_save')).click();
+        var searchPanel = element(by.className('save-search-panel'));
+        searchPanel.all(by.id('search_name')).sendKeys('A Global Search');
+        searchPanel.all(by.id('search_description')).sendKeys('Description for search');
+        searchPanel.all(by.id('search_global')).click();
+        searchPanel.all(by.id('search_save')).click();
         var savedSearch = element.all(by.repeater('search in userSavedSearches')).get(0);
         expect(savedSearch.element(by.css('.search-name')).getText()).toBe('A Global Search [Global]');
         element(by.css('button.current-user')).click();

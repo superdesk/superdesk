@@ -238,4 +238,16 @@ function GlobalSearch() {
     this.getGenreElementByIndex = function(index) {
         return this.getGenreElements().get(index);
     };
+
+    /**
+     * Get the Archived Content
+     */
+    this.getArchivedContent = function() {
+        this.openFilterPanel();
+        this.openParameters();
+        this.ingestRepo.click();
+        this.archiveRepo.click();
+        this.publishedRepo.click();
+        this.goButton.click();
+    };
 }

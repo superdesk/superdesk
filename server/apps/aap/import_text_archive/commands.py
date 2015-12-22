@@ -13,6 +13,7 @@ import superdesk
 import urllib3
 import urllib
 import xml.etree.ElementTree as etree
+from superdesk import config
 from superdesk.io.iptc import subject_codes
 from datetime import datetime
 from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE, ITEM_STATE, CONTENT_STATE
@@ -240,9 +241,11 @@ class AppImportTextArchiveCommand(superdesk.Command):
                     pass
 
             item['pubstatus'] = 'usable'
-            item['allow_post_publish_actions'] = False
+            # this is required for the archived service additional lookup
+            item['item_id'] = item['guid']
+            item[config.VERSION] = 1
 
-            res = superdesk.get_resource_service('published')
+            res = superdesk.get_resource_service('archived')
             original = res.find_one(req=None, guid=item['guid'])
             if not original:
                 item['_id'] = item['guid']

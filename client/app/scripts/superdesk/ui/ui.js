@@ -931,34 +931,43 @@
                     minutes,
                     utcConvert;
 
-                utcConvert = (scope.noUtcConvert || '').toLowerCase() !== 'true';
-
-                scope.open = false;
-                scope.hoursRange = range(0, 23);
-                scope.minutesRange = range(0, 59, STEP);
-
-                tzdata.$promise.then(function () {
-                    scope.timeZones = tzdata.getTzNames();
+                scope.$watch('model', function() {
+                    init();
+                    update();
                 });
 
-                if (scope.model) {
-                    hours = scope.model.substr(0, 2);
-                    minutes = scope.model.substr(2, 2);
+                function init() {
+                    d = new Date();
+                    utcConvert = (scope.noUtcConvert || '').toLowerCase() !== 'true';
+                    scope.open = false;
+                    scope.hoursRange = range(0, 23);
+                    scope.minutesRange = range(0, 59, STEP);
 
-                    if (utcConvert) {
-                        d.setUTCHours(hours);
-                        d.setUTCMinutes(minutes);
+                    tzdata.$promise.then(function () {
+                        scope.timeZones = tzdata.getTzNames();
+                    });
+
+                    if (scope.model) {
+                        hours = scope.model.substr(0, 2);
+                        minutes = scope.model.substr(2, 2);
+
+                        if (utcConvert) {
+                            d.setUTCHours(hours);
+                            d.setUTCMinutes(minutes);
+                        } else {
+                            d.setHours(hours);
+                            d.setMinutes(minutes);
+                        }
                     } else {
-                        d.setHours(hours);
-                        d.setMinutes(minutes);
+                        d.setHours(0);
+                        d.setMinutes(0);
                     }
-                } else {
-                    d.setHours(0);
-                    d.setMinutes(0);
+
+                    // whether or not the model actually has a value
+                    scope.hasValue = !!scope.model;
                 }
 
-                // whether or not the model actually has a value
-                scope.hasValue = !!scope.model;
+                init();
 
                 /**
                  * Set local hours

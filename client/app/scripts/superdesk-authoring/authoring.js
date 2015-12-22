@@ -52,7 +52,8 @@
         unspike: false,
         package_item: false,
         multi_edit: false,
-        send: false
+        send: false,
+        create_broadcast: false
     });
 
     /**
@@ -193,8 +194,8 @@
          * @param {string} repo - repository where an item whose identifier is _id can be found.
          */
         this.open = function openAuthoring(_id, read_only, repo) {
-            if (repo === 'legal_archive') {
-                return api.find('legal_archive', _id).then(function(item) {
+            if (_.contains(['legal_archive', 'archived'], repo)) {
+                return api.find(repo, _id).then(function(item) {
                     item._editable = false;
                     return item;
                 });
@@ -484,7 +485,8 @@
             // killed item and item that have last publish action are readonly
             if ((angular.isUndefined(current_item) || angular.isUndefined(user_privileges)) ||
                 (current_item.state === 'killed') ||
-                (angular.isDefined(current_item.takes) && current_item.takes.state === 'killed')) {
+                (angular.isDefined(current_item.takes) && current_item.takes.state === 'killed') ||
+                (current_item._type && current_item._type === 'archived')) {
                 return action;
             }
 
@@ -494,8 +496,8 @@
             var lockedByMe = !lock.isLocked(current_item);
             action.view = !lockedByMe;
 
-            var isBroadcast = (current_item.genre && current_item.genre.length > 0 &&
-                               current_item.type === 'text' &&
+            var isBroadcast = (angular.isDefined(current_item.genre) && current_item.genre.length > 0 &&
+                               _.contains(['text', 'preformatted'], current_item.type) &&
                                current_item.genre.some(function(genre) {
                                    return genre.name === 'Broadcast Script';
                                }));
@@ -563,9 +565,9 @@
                 !current_item.embargo && current_item.package_type !== 'takes' &&
                 current_item.state !== 'killed' && !current_item.publish_schedule;
 
-            action.create_broadcast = (!_.contains(['spiked', 'scheduled', 'killed'], current_item.state)) &&
-                (_.contains(['published', 'corrected'], current_item.state)) &&
-                current_item.type === 'text' && !isBroadcast;
+            action.create_broadcast = (_.contains(['published', 'corrected'], current_item.state)) &&
+                _.contains(['text', 'preformatted'], current_item.type) &&
+                !isBroadcast && user_privileges.archive_broadcast;
 
             action.multi_edit = !is_read_only_state;
 
@@ -1609,10 +1611,10 @@
             }
         };
     }
-    SendItem.$inject = ['$q', 'api', 'desks', 'notify', 'authoringWorkspace', 'superdeskFlags',
-        '$location', 'macros', '$rootScope', 'authoring', 'send', 'spellcheck', 'confirm', 'archiveService', 'preferencesService'];
-    function SendItem($q, api, desks, notify, authoringWorkspace, superdeskFlags,
-        $location, macros, $rootScope, authoring, send, spellcheck, confirm, archiveService, preferencesService) {
+    SendItem.$inject = ['$q', 'api', 'desks', 'notify', 'authoringWorkspace', 'superdeskFlags', '$location', 'macros',
+        '$rootScope', 'authoring', 'send', 'spellcheck', 'confirm', 'archiveService', 'preferencesService', 'multi'];
+    function SendItem($q, api, desks, notify, authoringWorkspace, superdeskFlags, $location, macros,
+            $rootScope, authoring, send, spellcheck, confirm, archiveService, preferencesService, multi) {
         return {
             scope: {
                 item: '=',
@@ -1644,6 +1646,7 @@
                     if (config !== oldConfig) {
                         scope.isActive = !!config;
                         scope.item = scope.isActive ? {} : null;
+                        scope.multiItems = multi.count ? multi.getItems() : null;
                         scope.config = config;
                         activate();
                     }
@@ -1850,6 +1853,23 @@
                     } else {
                         return runSendAndContinue();
                     }
+                };
+
+                /*
+                 * Returns true if 'send' action is allowed, otherwise false
+                 * @returns {Boolean}
+                 */
+                scope.canSendItem = function () {
+                    var itemType = [], typesList;
+                    if (scope.multiItems) {
+                        angular.forEach(scope.multiItems, function (item) {
+                            itemType[item._type] = 1;
+                        });
+                        typesList = Object.keys(itemType);
+                        itemType = typesList.length === 1 ? typesList[0] : null;
+                    }
+
+                    return scope.mode === 'authoring' || itemType === 'archive';
                 };
 
                 /**
@@ -2348,6 +2368,7 @@
                     }],
                     filters: [
                         {action: 'list', type: 'archive'},
+                        {action: 'list', type: 'archived'},
                         {action: 'list', type: 'legal_archive'},
                         {action: 'view', type: 'item'}
                     ],

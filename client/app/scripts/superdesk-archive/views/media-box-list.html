@@ -3,11 +3,12 @@
 <div ng-click="clickAction(item)">
     <span class="state-border"></span>
 
-    <div class="list-field type-icon" ng-if="item._type === 'legal_archive'">
+    <div class="list-field type-icon" ng-if="item._type === 'legal_archive' || item._type === 'archived'">
         <i class="filetype-icon-{{ :: item.type}}" ng-hide="hover || item.selected"></i>
     </div>
 
-    <div class="list-field type-icon" ng-if="item._type !== 'legal_archive'" ng-mouseenter="hover = true" ng-mouseleave="hover = false">
+    <div class="list-field type-icon" ng-if="item._type !== 'legal_archive' && item._type !== 'archived'"
+         ng-mouseenter="hover = true" ng-mouseleave="hover = false">
         <i class="filetype-icon-{{ :: item.type}}" ng-hide="hover || item.selected"></i>
         <span sd-check ng-model="item.selected" ng-change="toggleSelected(item)" ng-show="hover || item.selected"></span>
     </div>

@@ -123,6 +123,7 @@
         $scope.$on('item:take', refreshItems);
         $scope.$on('item:duplicate', refreshItems);
         $scope.$on('content:update', refreshItems);
+        $scope.$on('content:expired', refreshItems);
         $scope.$on('item:deleted', refreshItems);
         $scope.$on('item:highlight', refreshItems);
         $scope.$on('item:spike', reset);

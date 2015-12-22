@@ -173,7 +173,7 @@ Feature: Desks
             """
 
 	@auth
-    @notification @test
+    @notification
 	Scenario: Update desk type
         Given we have "desks" with "SPORTS_DESK_ID" and success
         """
@@ -239,9 +239,9 @@ Feature: Desks
         """
         Given "published"
          """
-         [{"_id":"1","slugline": "slugline1", "last_published_version": "True",
+         [{"_id":"1","slugline": "slugline1", "last_published_version": "True", "state": "published",
          "task": {"desk": "#SPORTS_DESK_ID#"}, "place": [{"name": "FED"}], "headline": "one", "family_id": 1},
-         {"_id":"2","slugline": "slugline2", "last_published_version": "True",
+         {"_id":"2","slugline": "slugline2", "last_published_version": "True", "state": "published",
          "task": {"desk": "#SPORTS_DESK_ID#"}, "place": [{"name": "FED"}], "headline": "two", "family_id": 2}]
          """
         When we post to "users"
@@ -264,12 +264,12 @@ Feature: Desks
         """
         When we post to "published" with delay
          """
-         [{"_id":"1","slugline": "slugline1", "last_published_version": true,
+         [{"_id":"1","slugline": "slugline1", "last_published_version": true, "state": "published",
          "task": {"desk": "#SPORTS_DESK_ID#"}, "place": [{"name": "FED"}], "headline": "one", "family_id": "1"}]
          """
         And we post to "published" with delay
          """
-         [{"_id":"2","slugline": "slugline2", "last_published_version": true,
+         [{"_id":"2","slugline": "slugline2", "last_published_version": true, "state": "published",
          "task": {"desk": "#SPORTS_DESK_ID#"}, "place": [{"name": "FED"}], "headline": "one", "family_id": "1"}]
          """
         When we post to "users"

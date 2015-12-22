@@ -955,15 +955,23 @@
             link: function(scope) {
                 var currFilter;
 
-                scope.matchingFilters = [];  // used for filter search
-                scope.filterSearchTerm = null;
+                function init() {
+                    scope.matchingFilters = [];  // used for filter search
+                    scope.filterSearchTerm = null;
 
-                currFilter = _.find(scope.filters, {_id: scope.rule.filter});
-                if (currFilter) {
-                    scope.selectedFilter = currFilter;
-                } else {
-                    scope.selectedFilter = null;
+                    currFilter = _.find(scope.filters, {_id: scope.rule.filter});
+                    if (currFilter) {
+                        scope.selectedFilter = currFilter;
+                    } else {
+                        scope.selectedFilter = null;
+                    }
                 }
+
+                init();
+
+                scope.$watch('rule', function() {
+                    init();
+                });
 
                 /**
                  * Finds a subset of all content filters whose names contain
@@ -1478,7 +1486,7 @@
                 icon: 'remove',
                 monitor: true,
                 controller: ['api', 'data', function(api, data) {
-                    var itemToDelete = {'_id': data.item.item_id, '_etag': data.item._etag};
+                    var itemToDelete = {'_id': data.item._id, '_etag': data.item._etag};
                     api
                         .remove(itemToDelete, {}, 'archived')
                         .then(
@@ -1519,8 +1527,8 @@
         });
     }]);
 
-    SendService.$inject = ['desks', 'api', '$q', 'notify', 'authoringWorkspace'];
-    function SendService(desks, api, $q, notify, authoringWorkspace) {
+    SendService.$inject = ['desks', 'api', '$q', 'notify', 'authoringWorkspace', 'multi'];
+    function SendService(desks, api, $q, notify, authoringWorkspace, multi) {
         this.one = sendOne;
         this.all = sendAll;
 
@@ -1582,13 +1590,19 @@
          */
         function sendOneAs(item, config) {
             var data = getData(config);
-            return api.save('fetch', {}, data, item).then(function(archived) {
-                item.archived = archived._created;
-                if (config.open) {
-                    authoringWorkspace.edit(archived);
-                }
-                return archived;
-            });
+            if (item._type === 'ingest') {
+                return api.save('fetch', {}, data, item).then(function (archived) {
+                    item.archived = archived._created;
+                    if (config.open) {
+                        authoringWorkspace.edit(archived);
+                    }
+                    return archived;
+                });
+            } else if (!item.lock_user) {
+                return api.save('move', {}, {task: data}, item).then(function (item) {
+                    return item;
+                });
+            }
 
             function getData(config) {
                 var data = {
@@ -1621,6 +1635,7 @@
             vm.config = $q.defer();
             return vm.config.promise.then(function(config) {
                 vm.config = null;
+                multi.reset();
                 return $q.all(items.map(function(item) {
                     return sendOneAs(item, config);
                 }));

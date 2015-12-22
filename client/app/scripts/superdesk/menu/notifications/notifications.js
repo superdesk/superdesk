@@ -225,12 +225,17 @@
         .service('deskNotifications', DeskNotificationsService)
         .directive('sdMarkAsRead', MarkAsReadDirective)
 
-        .directive('sdNotifications', ['asset', function(asset) {
+        .directive('sdNotifications', ['asset', 'authoringWorkspace', function(asset, authoringWorkspace) {
             return {
                 require: '^sdSuperdeskView',
                 templateUrl: asset.templateUrl('superdesk/menu/notifications/views/notifications.html'),
                 link: function(scope, elem, attrs, ctrl) {
                     scope.flags = ctrl.flags;
+
+                    scope.openArticle = function (notification) {
+                        ctrl.flags.notifications = !ctrl.flags.notifications;
+                        authoringWorkspace.edit(notification.item, 'edit');
+                    };
                 }
             };
         }]);
