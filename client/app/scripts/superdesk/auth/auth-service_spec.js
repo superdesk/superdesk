@@ -25,7 +25,7 @@
             spyOn(session, 'start').and.returnValue(true);
         }));
 
-        fit('can login', inject(function(auth, session, $httpBackend, $rootScope) {
+        it('can login', inject(function(auth, session, $httpBackend, $rootScope) {
 
             expect(session.identity).toBe(null);
             expect(session.token).toBe(null);
@@ -49,8 +49,10 @@
             expect(resolved.login).toBe(true);
         }));
 
-        it('checks credentials', inject(function(auth, $rootScope) {
+        it('checks credentials', inject(function(auth, $httpBackend, $rootScope) {
             var resolved = false, rejected = false;
+
+            $httpBackend.expectPOST('http://localhost:5000/api/auth').respond(403, {});
 
             auth.login('wrong', 'credentials').then(function() {
                 resolved = true;
@@ -58,7 +60,9 @@
                 rejected = true;
             });
 
+            $httpBackend.flush();
             $rootScope.$apply();
+
             expect(resolved).toBe(false);
             expect(rejected).toBe(true);
         }));
