@@ -126,7 +126,6 @@ class TakesPackageService():
         self.__link_items__(takes_package, target, link)
 
         ids = get_resource_service(ARCHIVE).post([takes_package])
-        insert_into_versions(id_=ids[0])
         original_target = get_resource_service(ARCHIVE).find_one(req=None, _id=target[config.ID_FIELD])
         target[LINKED_IN_PACKAGES] = original_target[LINKED_IN_PACKAGES]
         get_resource_service('archive_broadcast').on_broadcast_master_updated(ITEM_CREATE, target,
@@ -149,17 +148,11 @@ class TakesPackageService():
         if not takes_package:
             # setting the sequence to 1 for target.
             updates = {SEQUENCE: 1}
-            if target[ITEM_STATE] in [CONTENT_STATE.SPIKED,
-                                      CONTENT_STATE.KILLED,
-                                      CONTENT_STATE.SCHEDULED,
-                                      CONTENT_STATE.INGESTED]:
+            if target[ITEM_STATE] in [CONTENT_STATE.SPIKED, CONTENT_STATE.KILLED,
+                                      CONTENT_STATE.SCHEDULED, CONTENT_STATE.INGESTED]:
                 raise SuperdeskApiError.forbiddenError("Item isn't in a valid state for creating takes.")
-            elif target[ITEM_STATE] in [CONTENT_STATE.PUBLISHED,
-                                        CONTENT_STATE.CORRECTED]:
-                archive_service.system_update(target.get(config.ID_FIELD), updates, target)
             else:
-                resolve_document_version(updates, ARCHIVE, 'PATCH', target)
-                archive_service.patch(target.get(config.ID_FIELD), updates)
+                archive_service.system_update(target.get(config.ID_FIELD), updates, target)
 
         if not link.get(config.ID_FIELD):
             self.__copy_metadata__(target, link, takes_package)
@@ -181,7 +174,6 @@ class TakesPackageService():
             archive_service.patch(link[config.ID_FIELD], {SEQUENCE: link[SEQUENCE]})
 
         insert_into_versions(id_=takes_package_id)
-
         return link
 
     def is_last_takes_package_item(self, doc):

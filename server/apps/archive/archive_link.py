@@ -7,14 +7,14 @@
 # For the full copyright and license information, please see the
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
-
+from eve.utils import config
 from flask import request
 
 from superdesk import get_resource_service, Service
 from superdesk.metadata.item import EMBARGO
 from superdesk.resource import Resource, build_custom_hateoas
 from apps.packages import TakesPackageService
-from apps.archive.common import CUSTOM_HATEOAS, BROADCAST_GENRE, is_genre
+from apps.archive.common import CUSTOM_HATEOAS, BROADCAST_GENRE, is_genre, insert_into_versions
 from apps.auth import get_user
 from superdesk.metadata.utils import item_url
 from apps.archive.archive import SOURCE as ARCHIVE
@@ -69,6 +69,7 @@ class ArchiveLinkService(Service):
             link = service.find_one(req=None, _id=link_id)
 
         linked_item = self.packageService.link_as_next_take(target, link)
+        insert_into_versions(id_=linked_item[config.ID_FIELD])
         doc.update(linked_item)
         build_custom_hateoas(CUSTOM_HATEOAS, doc)
         return [linked_item['_id']]

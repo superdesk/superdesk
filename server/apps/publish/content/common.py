@@ -188,8 +188,11 @@ class BasePublishService(BaseService):
 
                         if original[ITEM_TYPE] in {CONTENT_TYPE.TEXT, CONTENT_TYPE.PREFORMATTED} and \
                                 self.sending_to_digital_subscribers(updated):
+
                             # create a takes package
                             package_id = self.takes_package_service.package_story_as_a_take(updated, {}, None)
+                            insert_into_versions(id_=package_id)
+
                             updates[LINKED_IN_PACKAGES] = updated[LINKED_IN_PACKAGES]
                             package = get_resource_service(ARCHIVE).find_one(req=None, _id=package_id)
                             queued_digital = self._publish_takes_package(package, updates, original, last_updated)

@@ -128,7 +128,6 @@
         $scope.$on('item:highlight', refreshItems);
         $scope.$on('item:spike', reset);
         $scope.$on('item:unspike', reset);
-        $scope.$on('item:published:no_post_publish_actions', refreshItems);
 
         desks.fetchCurrentUserDesks().then(function() {
             // only watch desk/stage after we get current user desk

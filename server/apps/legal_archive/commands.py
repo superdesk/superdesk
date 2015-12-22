@@ -9,6 +9,9 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import logging
+
+from bson.objectid import ObjectId
+
 import superdesk
 from copy import deepcopy
 from flask import current_app as app
@@ -88,6 +91,15 @@ class LegalArchiveImport:
         versions_to_insert = [version for version in version_history
                               if not any(legal_version for legal_version in legal_version_history
                                          if version[config.VERSION] == legal_version[config.VERSION])]
+
+        # This happens when user kills an article from Dusty Archive
+        if article_in_legal_archive and article_in_legal_archive[config.VERSION] < legal_archive_doc[config.VERSION] \
+                and len(versions_to_insert) == 0:
+            resource_def = app.config['DOMAIN'][ARCHIVE]
+            versioned_doc = deepcopy(legal_archive_doc)
+            versioned_doc[versioned_id_field(resource_def)] = legal_archive_doc[config.ID_FIELD]
+            versioned_doc[config.ID_FIELD] = ObjectId()
+            versions_to_insert.append(versioned_doc)
 
         for version_doc in versions_to_insert:
             self._denormalize_user_desk(version_doc,

@@ -879,7 +879,6 @@
 
                     scope.context = 'search';
                     scope.$on('item:deleted:archived', itemDelete);
-                    scope.$on('item:published:no_post_publish_actions', itemDelete);
                     scope.$on('item:spike', queryItems);
                     scope.$on('item:unspike', queryItems);
                     scope.$on('item:duplicate', queryItems);
@@ -1044,8 +1043,7 @@
                     }
 
                     /*
-                     * Function for updating list
-                     * after item has been deleted
+                     * Function for updating list after item has been deleted
                      */
                     function itemDelete(e, data) {
                         if (session.identity._id === data.user) {

@@ -46,4 +46,8 @@ class LegalPublishQueueResource(LegalResource, PublishQueueResource):
     endpoint_name = LEGAL_PUBLISH_QUEUE_NAME
     resource_title = endpoint_name
 
+    item_schema = {'_subscriber_id': Resource.rel('subscribers')}
+    item_schema.update(PublishQueueResource.schema)
+    schema = item_schema
+
     datasource = {'source': LEGAL_PUBLISH_QUEUE_NAME}

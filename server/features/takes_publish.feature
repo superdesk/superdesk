@@ -142,7 +142,7 @@ Feature: Take Package Publishing
       {
           "_items": [
               {
-                  "_current_version": 4,
+                  "_current_version": 3,
                   "state": "published",
                   "body_html": "Take-1"
               },
@@ -235,7 +235,7 @@ Feature: Take Package Publishing
           "_items": [
               {
                   "_id": "123",
-                  "_current_version": 4,
+                  "_current_version": 3,
                   "state": "published",
                   "body_html": "Take-1"
               },
@@ -362,7 +362,7 @@ Feature: Take Package Publishing
           "_items": [
               {
                   "_id": "123",
-                  "_current_version": 4,
+                  "_current_version": 3,
                   "state": "published",
                   "body_html": "Take-1",
                   "last_published_version": true
@@ -404,7 +404,7 @@ Feature: Take Package Publishing
           "_items": [
               {
                   "_id": "123",
-                  "_current_version": 4,
+                  "_current_version": 3,
                   "state": "published",
                   "body_html": "Take-1",
                   "last_published_version": false
@@ -452,7 +452,7 @@ Feature: Take Package Publishing
               },
               {
                   "_id": "123",
-                  "_current_version": 5,
+                  "_current_version": 4,
                   "state": "killed",
                   "last_published_version": true,
                   "body_html": "Killed",
@@ -598,7 +598,7 @@ Feature: Take Package Publishing
               "state" : "pending",
               "subscriber_id" : "#First_Wire_Subscriber#",
               "headline" : "Take-1 soccer headline=1",
-              "item_version": 4
+              "item_version": 3
             },
             {
               "item_id" : "#archive.123.take_package#",
@@ -635,7 +635,7 @@ Feature: Take Package Publishing
               "publishing_action" : "published",
               "content_type" : "text",
               "subscriber_id" : "#First_Wire_Subscriber#",
-              "item_version": 4
+              "item_version": 3
             },
             {
               "item_id" : "#archive.123.take_package#",
@@ -676,7 +676,7 @@ Feature: Take Package Publishing
               "content_type" : "text",
               "subscriber_id" : "#First_Wire_Subscriber#",
               "headline" : "Take-1 soccer headline=1",
-              "item_version": 4
+              "item_version": 3
             },
             {
               "item_id" : "#archive.123.take_package#",
