@@ -178,12 +178,6 @@ module.exports = function(config) {
             'app/scripts/superdesk-dashboard/grid/grid.js',
 
             'app/scripts/superdesk-search-providers/module.js',
-
-            // must be loaded after app includes, but before spec includes
-            //'app/scripts/superdesk/mocks.js', // fuck this thing
-
-            // specs files
-            // NOTE: uncommented are passing
             'app/scripts/superdesk-archive/controllers/upload_spec.js',
             'app/scripts/superdesk-archive/family_spec.js',
             'app/scripts/superdesk-archive/tests/archive_spec.js',
@@ -216,7 +210,7 @@ module.exports = function(config) {
             'app/scripts/superdesk/api/timeout-interceptor_spec.js',
             'app/scripts/superdesk/api/url-resolver_spec.js',
             'app/scripts/superdesk/auth/auth-interceptor_spec.js',
-            'app/scripts/superdesk/auth/auth-service_spec.js', // CONTAINS FAILS
+            'app/scripts/superdesk/auth/auth-service_spec.js',
             'app/scripts/superdesk/auth/basic-auth-adapter_spec.js',
             'app/scripts/superdesk/auth/session-service_spec.js',
             'app/scripts/superdesk/auth/tests/auth_spec.js',
