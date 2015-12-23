@@ -405,4 +405,14 @@ function Authoring() {
             });
     };
 
+    this.getSubjectMetadataDropdownOpened = function() {
+        var subject = element(by.className('authoring-header__detailed')).all(by.css('[data-field="subject"]'));
+        return subject.all(by.className('dropdown-toggle')).click();
+    };
+
+    this.getNextLevelSelectedCategory = function() {
+        var subject = element(by.className('authoring-header__detailed')).all(by.css('[data-field="subject"]'));
+        return subject.all(by.className('levelup')).all(by.css('[ng-click="selectTerm(activeTerm)"]'));
+    };
+
 }
