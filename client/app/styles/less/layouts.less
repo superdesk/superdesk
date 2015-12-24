@@ -57,6 +57,7 @@ a:hover {
             box-shadow: 2px 0 10px 0 rgba(0,0,0,0.3);
             right: 44%;
             z-index:100;
+						border-right: 3px solid #666;
             .transition(all .5s);
             @media only screen and (max-width : 1430px) {
                 right: 54%;
@@ -109,6 +110,7 @@ a:hover {
 	position: absolute;
 	top: 0;
 	right: 0;
+	.box-sizing(border-box);
 	bottom: @authoring-opened-articles;
         left: @sidebar-width;
         background-color: @sd-background;
@@ -119,6 +121,7 @@ a:hover {
 	top: 0;
 	right: 0;
 	bottom: 0;
+	.box-sizing(border-box);
 }
 
 // Main section
