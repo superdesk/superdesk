@@ -28,7 +28,7 @@ from superdesk.metadata.item import CONTENT_TYPE, ITEM_TYPE, not_analyzed, GUID_
     PUB_STATUS
 from superdesk.metadata.packages import PACKAGE_TYPE, TAKES_PACKAGE, RESIDREF, SEQUENCE
 from superdesk.notification import push_notification
-from apps.archive.common import get_user, item_schema, is_genre, BROADCAST_GENRE, ITEM_OPERATION
+from apps.archive.common import get_user, item_schema, is_genre, BROADCAST_GENRE, ITEM_OPERATION, is_item_in_package
 from apps.archive.archive import SOURCE as ARCHIVE
 import superdesk
 from superdesk.services import BaseService
@@ -97,9 +97,10 @@ class ArchivedService(BaseService):
         Overriding to validate the item being killed is actually eligible for kill. Validates the following:
             1. Is item of type Text?
             2. Is item a Broadcast Script?
-            3. Is item available in production or part of a normal package?
-            4. Is the associated Digital Story is available in production or part of normal package?
-            5. If item is a Take then is any take available in production or part of normal package?
+            3. Does item acts as a Master Story for any of the existing broadcasts?
+            4. Is item available in production or part of a normal package?
+            5. Is the associated Digital Story is available in production or part of normal package?
+            6. If item is a Take then is any take available in production or part of normal package?
         :param doc: represents the article in archived collection
         :type doc: dict
         :raises SuperdeskApiError.badRequestError() if any of the above validation conditions fail.
@@ -107,16 +108,25 @@ class ArchivedService(BaseService):
 
         bad_req_error = SuperdeskApiError.badRequestError
 
+        id_field = doc[config.ID_FIELD]
+        item_id = doc['item_id']
+
+        doc['item_id'] = id_field
+        doc[config.ID_FIELD] = item_id
+
         if doc[ITEM_TYPE] != CONTENT_TYPE.TEXT:
             raise bad_req_error(message='Only Text articles are allowed to Kill in Archived repo')
 
         if is_genre(doc, BROADCAST_GENRE):
             raise bad_req_error(message="Killing of Broadcast Items isn't allowed in Archived repo")
 
+        if get_resource_service('archive_broadcast').get_broadcast_items_from_master_story(doc, True):
+            raise bad_req_error(message="Can't kill as this article acts as a Master Story for existing broadcast(s)")
+
         if get_resource_service(ARCHIVE).find_one(req=None, _id=doc[GUID_FIELD]):
             raise bad_req_error(message="Can't Kill as article is still available in production")
 
-        if self._is_article_in_a_package(doc):
+        if is_item_in_package(doc):
             raise bad_req_error(message="Can't kill as article is part of a Package")
 
         takes_package_service = TakesPackageService()
@@ -132,7 +142,7 @@ class ArchivedService(BaseService):
                 raise bad_req_error(message='Digital Story of the article not found in Archived repo')
 
             takes_package = takes_package[0]
-            if self._is_article_in_a_package(takes_package):
+            if is_item_in_package(takes_package):
                 raise bad_req_error(message="Can't kill as Digital Story is part of a Package")
 
             for takes_ref in takes_package_service.get_package_refs(takes_package):
@@ -144,8 +154,11 @@ class ArchivedService(BaseService):
                     if not take:
                         raise bad_req_error(message='One of Take(s) not found in Archived repo')
 
-                    if self._is_article_in_a_package(take[0]):
+                    if is_item_in_package(take[0]):
                         raise bad_req_error(message="Can't kill as one of Take(s) is part of a Package")
+
+        doc['item_id'] = item_id
+        doc[config.ID_FIELD] = id_field
 
     def delete(self, lookup):
         """
@@ -211,19 +224,6 @@ class ArchivedService(BaseService):
 
     def _get_archived_id(self, item_id, version):
         return '{}:{}'.format(item_id, version)
-
-    def _is_article_in_a_package(self, article):
-        """
-        Returns True if the given article is part of a Normal Package, False otherwise.
-
-        :param article: article to be checked
-        :type article: dict
-        :return: True if the given article is part of a Normal Package, False otherwise.
-        :rtype: bool
-        """
-
-        packages = PackageService().get_linked_in_packages(article)
-        return [p for p in packages if PACKAGE_TYPE not in p] if packages else False  # filtering out Takes Packages
 
     def _find_articles_to_kill(self, lookup):
         """

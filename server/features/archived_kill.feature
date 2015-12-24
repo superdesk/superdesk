@@ -448,6 +448,28 @@ Feature: Kill a content item in the (dusty) archive
     {"_message": "Can't kill as one of Take(s) is part of a Package"}
     """
 
+  @auth
+  Scenario: Killing an article isn't allowed if article is a Master Story for Broadcast(s)
+    Given "archived"
+    """
+    [
+     {"item_id": "123", "guid": "123", "type": "text", "headline": "Take-1", "slugline": "Take-1",
+      "headline": "headline", "anpa_category" : [{"qcode" : "e", "name" : "Entertainment"}], "state": "published",
+      "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
+      "subject":[{"qcode": "17004000", "name": "Statistics"}], "body_html": "Test Document body", "_current_version": 2},
+     {"item_id": "234", "anpa_category" : [{"qcode" : "e", "name" : "Entertainment"}], "state": "published",
+      "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
+      "genre" : [{"name" : "Broadcast Script", "value" : "Broadcast Script"}], "headline": "broadcast",
+      "slugline" : "broadcast", "broadcast" : {"master_id" : "123"}, "type" : "text",
+      "subject":[{"qcode": "17004000", "name": "Statistics"}], "body_html": "Test Document body", "_current_version": 2}
+    ]
+    """
+    When we delete "/archived/123:2"
+    Then we get error 400
+    """
+    {"_message": "Can't kill as this article acts as a Master Story for existing broadcast(s)"}
+    """
+
     @auth
     Scenario: Fails to delete from archived with no privilege
       Given "archived"

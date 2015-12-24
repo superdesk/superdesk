@@ -118,10 +118,11 @@ class ArchiveBroadcastService(BaseService):
         if item.get(ITEM_STATE) not in [CONTENT_STATE.CORRECTED, CONTENT_STATE.PUBLISHED]:
             raise SuperdeskApiError.badRequestError(message="Invalid content state.")
 
-    def _get_broadcast_items(self, ids):
+    def _get_broadcast_items(self, ids, include_archived_repo=False):
         """
         Get the broadcast items for the master_id and takes_package_id
         :param list ids: list of item ids
+        :param include_archived_repo True if archived repo needs to be included in search, default is False
         :return list: list of broadcast items
         """
         query = {
@@ -141,13 +142,18 @@ class ArchiveBroadcastService(BaseService):
         }
 
         req = ParsedRequest()
-        req.args = {'source': json.dumps(query), 'repo': 'archive,published'}
+        repos = 'archive,published'
+        if include_archived_repo:
+            repos = 'archive,published,archived'
+
+        req.args = {'source': json.dumps(query), 'repo': repos}
         return get_resource_service('search').get(req=req, lookup=None)
 
-    def get_broadcast_items_from_master_story(self, item):
+    def get_broadcast_items_from_master_story(self, item, include_archived_repo=False):
         """
         Get the broadcast items from the master story.
         :param dict item: master story item
+        :param include_archived_repo True if archived repo needs to be included in search, default is False
         :return list: returns list of broadcast items
         """
         if is_genre(item, BROADCAST_GENRE):
@@ -157,7 +163,7 @@ class ArchiveBroadcastService(BaseService):
         if self.takesService.get_take_package_id(item):
             ids.append(str(self.takesService.get_take_package_id(item)))
 
-        return list(self._get_broadcast_items(ids))
+        return list(self._get_broadcast_items(ids, include_archived_repo))
 
     def on_broadcast_master_updated(self, item_event, item,
                                     takes_package_id=None, rewrite_id=None):
