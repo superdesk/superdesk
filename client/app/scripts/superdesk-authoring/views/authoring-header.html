@@ -18,17 +18,6 @@
             <div class="data"><a href="" ng-click="activateWidget()">{{relatedItems._items.length}}</a></div>
         </div>
         <div>
-            <label translate>GENRE</label>
-            <div sd-meta-dropdown
-                 class="data"
-                 data-item="item"
-                 data-field="genre"
-                 data-list="metadata.genre"
-                 ng-disabled="!_editable || item.broadcast.master_id"
-                 data-change="autosave(item)">
-            </div>
-        </div>
-        <div>
             <span class="state-label legal" ng-if="item.flags.marked_for_legal" translate>Legal</span>
         </div>
         <div ng-if="item.broadcast.master_id">
@@ -40,7 +29,7 @@
 
     <div class="authoring-header__detailed">
         <div class="item-wrapper">
-            <div class="item">
+
                 <label translate>SLUGLINE</label>
                 <input type="text"
                        sd-autofocus
@@ -50,6 +39,20 @@
                        ng-change="autosave(item)"
                        ng-disabled="!_editable"
                        ng-trim="false">
+
+        </div>
+
+        <div class="item-wrapper">
+            <div class="item">
+                <label translate>GENRE</label>
+                <div sd-meta-dropdown
+                     class="data"
+                     data-item="item"
+                     data-field="genre"
+                     data-list="metadata.genre"
+                     ng-disabled="!_editable || item.broadcast.master_id"
+                     data-change="autosave(item)">
+                </div>
             </div>
             <div class="item">
                 <label translate>TAKEKEY</label>
@@ -109,10 +112,10 @@
             <div sd-meta-terms
                  class="data"
                  ng-disabled="!_editable"
-                 data-item="item" 
-                 data-field="anpa_category" 
+                 data-item="item"
+                 data-field="anpa_category"
                  data-unique="qcode"
-                 data-list="availableCategories" 
+                 data-list="availableCategories"
                  data-header="true"
                  data-change="autosave(item)">
             </div>
@@ -122,12 +125,12 @@
             <label translate>SUBJECT</label>
             <div sd-meta-terms
                  class="data"
-                 data-item="item" 
-                 data-field="subject" 
-                 data-unique="qcode" 
-                 data-list="metadata.subjectcodes" 
-                 ng-disabled="!_editable" 
-                 data-header="true" 
+                 data-item="item"
+                 data-field="subject"
+                 data-unique="qcode"
+                 data-list="metadata.subjectcodes"
+                 ng-disabled="!_editable"
+                 data-header="true"
                  data-change="autosave(item)">
             </div>
         </div>
