@@ -293,3 +293,24 @@ ol.linenums li:last-child {
         }
     }
 }
+
+.iconFont-list {
+  display: flex;
+  flex-wrap: wrap;
+  li {
+      width: 240px;
+      max-width: 25%;
+      flex: 0 0 auto;
+      padding: 10px 0;
+      margin: 0 40px 30px 20px;
+      .border-box();
+      .box-shadow(inset 0 -1px #e7e7e7);
+      span {
+        font-size: 16px;
+      }
+      i {
+        vertical-align: text-bottom;
+        margin-right: 12px;
+      }
+    }
+}
