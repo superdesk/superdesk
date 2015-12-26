@@ -7,7 +7,7 @@
         <a class="main-link pull-left"
           ng-hide="currentRoute.topTemplateUrl"
           ng-href="{{currentRoute | menuGroup}}"
-          translate>{{ currentRoute.label }}</a>
+          >{{ currentRoute.label | translate}}</a>
         <div class="top-nav pull-left" ng-include="currentRoute.topTemplateUrl"></div>
       </div>
 

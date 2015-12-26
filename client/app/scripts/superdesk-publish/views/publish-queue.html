@@ -39,7 +39,7 @@
                                 <a href="" ng-click="filterStatus(null, 'status')" translate>None</a>
                             </li>
                             <li ng-repeat="status in publish_queue_statuses track by $index">
-                                <a href="" ng-click="filterStatus(status, 'status')" translate>{{ :: status }}</a>
+                                <a href="" ng-click="filterStatus(status, 'status')">{{ :: status | translate}}</a>
                             </li>
                         </ul>
                     </div>

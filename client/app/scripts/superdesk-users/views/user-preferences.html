@@ -12,7 +12,7 @@
                 ng-if="p.category !== 'article_defaults' && p.category !== 'categories'">
                 <div class="legend">{{ p.category }}</div>
                 <div sd-info-item>
-                    <label translate>{{ :: p.label }}</label>
+                    <label>{{ :: p.label | translate}}</label>
                     <span ng-hide="p.allowed" sd-switch ng-model="p.enabled"></span>
                     <span ng-show="p.allowed">
                         <label ng-repeat="i in p.allowed">
@@ -27,7 +27,7 @@
 
                 <div class="legend" translate>Dateline</div>
                 <div sd-info-item ng-if="preferencesLoaded === true">
-                    <label translate>{{ :: preferences['dateline:located'].label }}</label>
+                    <label>{{ :: preferences['dateline:located'].label | translate}}</label>
                     <span sd-meta-locators data-list="cities" data-item="preferences['dateline:located']" data-field="located"
                           data-change="changeDatelinePreview(item, city)"></span>
                 </div>
@@ -37,7 +37,7 @@
                 </div>
 
                 <div sd-info-item ng-if="preferencesLoaded === true">
-                    <label translate>{{ :: preferences['article:default:place'].label }}</label>
+                    <label>{{ :: preferences['article:default:place'].label | translate}}</label>
                     <span sd-meta-dropdown data-item="preferences['article:default:place']"
                           data-field="place" data-list="locators" data-change="articleDefaultsChanged(item)"></span>
                 </div>

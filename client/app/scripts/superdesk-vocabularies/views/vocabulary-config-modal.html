@@ -11,7 +11,7 @@
 
                 <fieldset>
                     <div ng-repeat="(key, value) in model" ng-if="key !== 'is_active'" class="field vocabularyField">
-                        <label translate>{{ :: key }}</label>
+                        <label>{{ :: key | translate}}</label>
                     </div>
 
                     <div ng-repeat="item in vocabulary.items track by $index">
