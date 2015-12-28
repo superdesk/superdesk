@@ -41,16 +41,9 @@
 
         <div class="button-stack right-stack">
             <div class="pull-left-10x" ng-if="type === 'highlights'" sd-create-highlights-button data-highlight="monitoring.queryParam.highlight"></div>
-            <div class="dropdown navbtn strict" ng-if="type === 'monitoring'" dropdown>
-                <button class="dropdown-toggle" dropdown-toggle><i class="icon-dots-vertical"></i></button>
-                <ul class="dropdown-menu pull-right">
-                    <li>
-                        <button ng-click="aggregate.edit()">
-                            <i class="icon-settings"></i> {{ :: 'Settings' | translate }}
-                        </button>
-                    </li>
-                </ul>
-            </div>
+            <button class="navbtn strict" ng-if="type === 'monitoring'" ng-click="aggregate.edit()">
+                <i class="icon-settings"></i>
+            </button>
 
             <div class="dropdown navbtn strict" ng-if="!state.opened" title="{{ :: 'Create' | translate }}" dropdown>
                 <button class="dropdown-toggle sd-create-btn" dropdown-toggle></button>
@@ -59,20 +52,38 @@
         </div>          
     </div>
 
-    <section class="main-section search-page-container"
-             ng-class="monitoring.state">
+    <section class="main-section search-page-container" ng-class="monitoring.state">
 
-        <div class="subnav">
-            <ul class="filtertype-icon-list">
-                <li ng-repeat="fileType in aggregate.fileTypes" ng-click="aggregate.setFileType(fileType)" ng-class="{active: aggregate.hasFileType(fileType)}" title="{{fileType}}">
+        <div sd-media-query min-width="450" class="subnav">
+
+            <ul class="filter-type pull-left" ng-if="!elementState || elementState === 'comfort'">
+                <li ng-repeat="fileType in aggregate.fileTypes" ng-click="aggregate.setFileType(fileType)" class="filter-type__item" ng-class="{'filter-type__item--active': aggregate.hasFileType(fileType)}" title="{{fileType}}">
                     <a href="" ng-if="fileType=='all'" class="filetype-icon-{{fileType}}" translate>all</a>
                     <i ng-if="fileType!='all'" class="filetype-icon-{{fileType}}"></i>
                 </li>
             </ul>
-            <div sd-item-sortbar></div>
+
+            <div sd-item-sortbar ng-if="!elementState || elementState === 'comfort'"></div>
+
+            <div class="button-stack right-stack" ng-if="elementState === 'compact'">
+                <div class="dropdown navbtn strict" dropdown>
+                    <button class="dropdown-toggle" dropdown-toggle><i class="icon-dots-vertical"></i></button>
+                    <ul class="dropdown-menu pull-right">
+                        <li class="filter-type">
+                            <div ng-repeat="fileType in aggregate.fileTypes" ng-click="aggregate.setFileType(fileType)" class="filter-type__item" ng-class="{'filter-type__item--active': aggregate.hasFileType(fileType)}" title="{{fileType}}">
+                                <a ng-if="fileType=='all'" class="filetype-icon-{{fileType}}" translate>all</a>
+                                <i ng-if="fileType!='all'" class="filetype-icon-{{fileType}}"></i>
+                            </div>
+                        </li>
+                        <li class="divider"></li>
+                        <li sd-item-sortbar></li>
+                    </ul>
+                </div>
+            </div>
+
         </div>
         <div class="preview-layout monitoring-preview-layout">
-            <div class="content-list" ng-if="!aggregate.loading">   
+            <div class="content-list" ng-if="!aggregate.loading">
                 <div ng-if="(!monitoring.singleGroup || monitoring.isDeskChanged()) && type === 'monitoring'">
                     <div ng-repeat="group in aggregate.groups track by group._id"
                          sd-monitoring-group data-group="group"  data-num-items="group.max_items"

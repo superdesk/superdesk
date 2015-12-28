@@ -498,7 +498,7 @@
 // -------------------------------------------------
 .dropdown {
     &.open {
-        li > .dropdown {
+        li .dropdown {
             float: none;
             .dropdown-toggle {
                 margin: 0;
@@ -526,9 +526,12 @@
                 right: auto;
                 top: 0;
                 min-width: 160px;
+                z-index: 10;
                 &.right-submenu {
                     left: auto;
                     right: 100%;
+                }
+                &.upward {
                     top: auto;
                     bottom: -10px;
                 }

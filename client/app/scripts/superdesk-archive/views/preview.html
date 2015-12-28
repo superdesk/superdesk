@@ -20,7 +20,7 @@
 
         <p class="nav-space" ng-if="!selected.preview.headline && !lock"></p>
 
-        <div class="state-label state-{{selected.preview.state}}" ng-class="{state_embargo: item.embargo}">{{selected.preview.state}}</div>
+        <div class="state-label state-{{selected.preview.state}}" ng-class="{state_embargo: item.embargo}">{{selected.preview.state | formatString}}</div>
         <div class="state-label legal" ng-if="item.flags.marked_for_legal" translate>Legal</div>
 
         <div sd-highlights-info data-item="selected.preview"></div>
