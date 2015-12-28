@@ -33,7 +33,7 @@
         });
     }])
 
-    .service('keyboardManager', ['$window', '$timeout', 'gettext', function ($window, $timeout, gettext) {
+    .service('keyboardManager', ['$window', '$timeout', function ($window, $timeout) {
         var stack = [],
             defaultOpt = {
                 'type':             'keydown',
@@ -41,10 +41,7 @@
                 'inputDisabled':    false,
                 'target':           $window.document,
                 'keyCode':          false,
-                'global':           false,
-                'group':            gettext('Other'),
-                'description':      gettext('No description'),
-                'hide':             false
+                'global':           false
             },
             shift_nums = {
                 '`': '~',
