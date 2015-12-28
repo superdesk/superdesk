@@ -32,6 +32,29 @@ Feature: Fetch Items from Ingest
       ]}
       """
 
+
+    @auth
+    @provider
+    Scenario: Fetch an item empty byline and dateline doesn't get populated
+      Given empty "archive"
+      And "desks"
+      """
+      [{"name": "Sports"}]
+      """
+      And ingest from "reuters"
+      """
+      [{"guid": "tag_reuters.com_2014_newsml_LOVEA6M0L7U2E"}]
+      """
+      When we post to "/ingest/tag_reuters.com_2014_newsml_LOVEA6M0L7U2E/fetch"
+      """
+      {"desk": "#desks._id#"}
+      """
+      Then we get new resource
+      When we get "/archive?q=#desks._id#"
+      Then we get no "byline"
+      Then we get no "dateline"
+
+
     @auth
     @provider
     Scenario: Fetch an item of type Media and validate metadata set by API

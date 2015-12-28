@@ -525,8 +525,11 @@ def convert_task_attributes_to_objectId(doc):
 
 def copy_metadata_from_user_preferences(doc, repo_type=ARCHIVE):
     """
-    Copies following properties: byline, signoff, dateline.located, place from user preferences to doc if the repo_type
-    is Archive.
+    Copies following properties: byline, dateline.located,
+    place from user preferences to doc if the repo_type is Archive and
+    if the story is not fetched.
+
+    signoff is copied for fetched and created stories
 
     About Dateline: Dateline has 3 parts: Located, Date (Format: Month Day) and Source. Dateline can either be simple:
     Sydney, July 30 AAP - or can be complex: Surat,Gujarat,IN, July 30 AAP -. Date in the dateline is timezone
@@ -537,25 +540,26 @@ def copy_metadata_from_user_preferences(doc, repo_type=ARCHIVE):
     if repo_type == ARCHIVE:
         user = get_user()
 
-        if 'dateline' not in doc:
-            current_date_time = dateline_ts = utcnow()
-            doc['dateline'] = {'date': current_date_time, 'source': ORGANIZATION_NAME_ABBREVIATION, 'located': None,
-                               'text': None}
+        if doc.get('operation', '') != 'fetch':
+            if 'dateline' not in doc:
+                current_date_time = dateline_ts = utcnow()
+                doc['dateline'] = {'date': current_date_time, 'source': ORGANIZATION_NAME_ABBREVIATION, 'located': None,
+                                   'text': None}
 
-            if user and user.get('user_preferences', {}).get('dateline:located'):
-                located = user.get('user_preferences', {}).get('dateline:located', {}).get('located')
-                if located:
-                    doc['dateline']['located'] = located
-                    doc['dateline']['text'] = format_dateline_to_locmmmddsrc(located, dateline_ts)
+                if user and user.get('user_preferences', {}).get('dateline:located'):
+                    located = user.get('user_preferences', {}).get('dateline:located', {}).get('located')
+                    if located:
+                        doc['dateline']['located'] = located
+                        doc['dateline']['text'] = format_dateline_to_locmmmddsrc(located, dateline_ts)
 
-        if BYLINE not in doc and user and user.get(BYLINE):
-                doc[BYLINE] = user[BYLINE]
+            if BYLINE not in doc and user and user.get(BYLINE):
+                    doc[BYLINE] = user[BYLINE]
 
-        if 'place' not in doc and user:
-            place_in_preference = user.get('user_preferences', {}).get('article:default:place')
+            if 'place' not in doc and user:
+                place_in_preference = user.get('user_preferences', {}).get('article:default:place')
 
-            if place_in_preference:
-                doc['place'] = place_in_preference.get('place')
+                if place_in_preference:
+                    doc['place'] = place_in_preference.get('place')
 
         set_sign_off(doc, repo_type=repo_type, user=user)
 
