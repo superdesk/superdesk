@@ -272,10 +272,6 @@ function Monitoring() {
     };
 
     this.showMonitoringSettings = function() {
-        element.all(by.className('icon-dots-vertical')).first().click();
-        browser.wait(function() {
-            return element(by.css('.icon-settings')).isDisplayed();
-        });
         element(by.css('.icon-settings')).click();
         browser.wait(function() {
             return element.all(by.css('.aggregate-widget-config')).isDisplayed();
