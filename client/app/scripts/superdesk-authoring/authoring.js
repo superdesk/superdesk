@@ -1384,8 +1384,8 @@
                         scope.saveDisabled = false;
                     });
                 };
-                scope.$on('key:ctrl:shift:u', function($event, event) {
-                    event.preventDefault();
+                keyboardManager.bind('ctrl+shift+u', function(e) {
+                    e.preventDefault();
                     if (scope.item._locked &&
                         !scope.item.sendTo &&
                         scope.can_unlock() &&
@@ -1395,12 +1395,11 @@
                         scope.unlock();
                     }
                 });
-                scope.$on('key:ctrl:shift:e', function($event, event) {
-                    event.preventDefault();
+                keyboardManager.bind('ctrl+shift+e', function() {
                     scope.close();
                 });
-                scope.$on('key:ctrl:shift:s', function($event, event) {
-                    event.preventDefault();
+                keyboardManager.bind('ctrl+shift+s', function(e) {
+                    e.preventDefault();
                     if (scope._editable &&
                         scope.itemActions.save &&
                         scope.action === 'edit' &&
@@ -1410,7 +1409,6 @@
                         scope.saveTopbar();
                     }
                 });
-
             }
         };
     }
@@ -2414,6 +2412,11 @@
                     rel: 'content_templates_apply'
                 }
             });
+        }])
+        .run(['keyboardManager', 'gettext', function(keyboardManager, gettext) {
+            keyboardManager.register('Authoring', 'ctrl + shift + u', gettext('Unlocks current item'));
+            keyboardManager.register('Authoring', 'ctrl + shift + e', gettext('Closes current item'));
+            keyboardManager.register('Authoring', 'ctrl + shift + s', gettext('Saves current item'));
         }]);
 
     AuthoringContainerDirective.$inject = ['authoring', 'authoringWorkspace'];

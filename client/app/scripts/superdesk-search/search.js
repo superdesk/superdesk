@@ -2237,10 +2237,10 @@
                     scope.flags = {enabled: false};
                     keyboardManager.bind('ctrl+0', function() {
                         scope.flags.enabled = true;
-                    }, {global: true, description: gettext('Shows search modal'), group: gettext('Search')});
+                    }, {global: true});
                     keyboardManager.bind('esc', function() {
                         scope.flags.enabled = false;
-                    }, {global: true, description: gettext('Hides search modal'), group: gettext('Search')});
+                    }, {global: true});
 
                     function reset() {
                         scope.meta.unique_name = '';
@@ -2878,6 +2878,11 @@
                 templateUrl: asset.templateUrl('superdesk-search/views/search.html'),
                 sideTemplateUrl: 'scripts/superdesk-workspace/views/workspace-sidenav.html'
             });
+        }])
+
+        .run(['keyboardManager', 'gettext', function(keyboardManager, gettext) {
+            keyboardManager.register('Search', 'ctrl + 0', gettext('Shows search modal'));
+            keyboardManager.register('Search', 'v', gettext('Toggles search view'));
         }]);
 
     MultiActionBarController.$inject = ['$rootScope', 'multi', 'multiEdit', 'send',

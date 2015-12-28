@@ -5,7 +5,16 @@
         .service('workspaces', WorkspaceService)
         .directive('sdDeskDropdown', WorkspaceDropdownDirective)
         .directive('sdWorkspaceSidenav', WorkspaceSidenavDirective)
-        .directive('sdEditWorkspace', EditWorkspaceDirective);
+        .directive('sdEditWorkspace', EditWorkspaceDirective)
+        .run(['keyboardManager', 'gettext', function(keyboardManager, gettext) {
+            keyboardManager.register('General', 'alt + h', gettext('Opens workspace'));
+            keyboardManager.register('General', 'alt + m', gettext('Opens monitoring'));
+            keyboardManager.register('General', 'alt + d', gettext('Opens highlights'));
+            keyboardManager.register('General', 'alt + t', gettext('Opens tasks'));
+            keyboardManager.register('General', 'alt + x', gettext('Opens spike'));
+            keyboardManager.register('General', 'alt + p', gettext('Opens personal'));
+            keyboardManager.register('General', 'alt + f', gettext('Opens search'));
+        }]);
 
     WorkspaceService.$inject = ['api', 'desks', 'session', 'preferencesService', '$q'];
     function WorkspaceService(api, desks, session, preferences, $q) {
@@ -332,11 +341,11 @@
                 keyboardManager.bind('alt+h', function (e) {
                     e.preventDefault();
                     $location.url('/workspace');
-                }, {global: true, inputDisabled: false, group: gettext('General'), description: gettext('Opens workspace')});
+                }, {global: true, inputDisabled: false});
                 keyboardManager.bind('alt+m', function (e) {
                     e.preventDefault();
                     $location.url('/workspace/monitoring');
-                }, {global: true, inputDisabled: false, group: gettext('General'), description: gettext('Opens monitoring')});
+                }, {global: true, inputDisabled: false});
                 keyboardManager.bind('alt+d', function (e) {
                     e.preventDefault();
                     elem.find('.highlights-dropdown .dropdown-toggle').click();
@@ -347,23 +356,23 @@
                     keyboardManager.push('down', function() {
                         elem.find('.dropdown-menu button:focus').parent('li').next().children('button').focus();
                     });
-                }, {global: true, inputDisabled: false, group: gettext('General'), description: gettext('Opens highlights')});
+                }, {global: true, inputDisabled: false});
                 keyboardManager.bind('alt+t', function (e) {
                     e.preventDefault();
                     $location.url('/workspace/tasks');
-                }, {global: true, inputDisabled: false, group: gettext('General'), description: gettext('Opens tasks')});
+                }, {global: true, inputDisabled: false});
                 keyboardManager.bind('alt+x', function (e) {
                     e.preventDefault();
                     $location.url('/workspace/spike-monitoring');
-                }, {global: true, inputDisabled: false, group: gettext('General'), description: gettext('Opens spike')});
+                }, {global: true, inputDisabled: false});
                 keyboardManager.bind('alt+p', function (e) {
                     e.preventDefault();
                     $location.url('/workspace/personal');
-                }, {global: true, inputDisabled: false, group: gettext('General'), description: gettext('Opens personal')});
+                }, {global: true, inputDisabled: false});
                 keyboardManager.bind('alt+f', function (e) {
                     e.preventDefault();
                     $location.url('search');
-                }, {global: true, inputDisabled: false, group: gettext('General'), description: gettext('Opens search')});
+                }, {global: true, inputDisabled: false});
             }
         };
     }

@@ -47,7 +47,7 @@ function WidgetsManagerCtrl($scope, $routeParams, authoringWidgets, archiveServi
         angular.forEach(_.sortBy($scope.widgets, 'order'), function (widget, index) {
             keyboardManager.bind('ctrl+' + (index + 1), function () {
                 $scope.activate(widget);
-            }, {inputDisabled: false, group: gettext('Authoring'), description: gettext('Toggles widget')});
+            }, {inputDisabled: false});
             if ($location.search()[widget._id]) {
                 $scope.activate(widget);
             }
@@ -112,6 +112,8 @@ function AuthoringWidgetsDir(desks) {
 
 angular.module('superdesk.authoring.widgets', [])
     .provider('authoringWidgets', AuthoringWidgetsProvider)
-    .directive('sdAuthoringWidgets', AuthoringWidgetsDir);
-
+    .directive('sdAuthoringWidgets', AuthoringWidgetsDir)
+    .run(['keyboardManager', 'gettext', function(keyboardManager, gettext) {
+        keyboardManager.register('Authoring', 'ctrl + #', gettext('Toggles widget #'));
+    }]);
 })();

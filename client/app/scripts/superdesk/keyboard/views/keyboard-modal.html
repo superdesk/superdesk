@@ -6,9 +6,9 @@
         <section ng-repeat="(group, items) in data">
             <h4>{{group}}</h4>
             <ul>
-                <li ng-repeat="item in items" ng-hide="item.opt.hide">
-                    <span class=""><b>{{item.label}}</b></span>
-                    <span class="">{{item.description}}</span>
+                <li ng-repeat="(label, description) in items">
+                    <span class=""><b>{{label}}</b></span>
+                    <span class="">{{description}}</span>
                 </li>
             </ul>
             <br>

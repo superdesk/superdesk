@@ -33,18 +33,15 @@
         });
     }])
 
-    .service('keyboardManager', ['$window', '$timeout', 'gettext', function ($window, $timeout, gettext) {
+    .service('keyboardManager', ['$window', '$timeout', function ($window, $timeout) {
         var stack = [],
             defaultOpt = {
                 'type':             'keydown',
                 'propagate':        false,
-                'inputDisabled':    true,
+                'inputDisabled':    false,
                 'target':           $window.document,
                 'keyCode':          false,
-                'global':           false,
-                'group':            gettext('Other'),
-                'description':      gettext('No description'),
-                'hide':             false
+                'global':           false
             },
             shift_nums = {
                 '`': '~',
@@ -123,6 +120,12 @@
 
         // Store all keyboard combination shortcuts
         this.keyboardEvent = {};
+
+        this.registry = {};
+        this.register = function register(group, label, description) {
+            this.registry[group] = this.registry[group] || {};
+            this.registry[group][label] = description;
+        };
 
         // Add a new keyboard combination shortcut
         this.bind = function bind(label, callback, opt) {
@@ -305,14 +308,6 @@
     }])
 
     .directive('sdKeyboardModal', ['keyboardManager', 'gettext', function(keyboardManager, gettext) {
-        var process = function(eventList) {
-            var data = {};
-            for (var label in eventList) {
-                data[eventList[label].opt.group] = data[eventList[label].opt.group] || [];
-                data[eventList[label].opt.group].push({label: label, description: eventList[label].opt.description});
-            }
-            return data;
-        };
         return {
             templateUrl: 'scripts/superdesk/keyboard/views/keyboard-modal.html',
             link: function(scope) {
@@ -321,7 +316,7 @@
 
                 keyboardManager.bind('alt+k', function() {
                     scope.enabled = true;
-                    scope.data = process(keyboardManager.keyboardEvent);
+                    scope.data = keyboardManager.registry;
                 }, {global: true, group: gettext('General'), description: gettext('Displays active keyboard shortcuts')});
 
                 keyboardManager.bind('alt+k', function() {

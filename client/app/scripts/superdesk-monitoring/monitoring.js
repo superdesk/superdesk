@@ -12,7 +12,11 @@
         .directive('sdItemActionsMenu', ItemActionsMenu)
         .config(configureMonitoring)
         .config(configureSpikeMonitoring)
-        .config(configurePersonal);
+        .config(configurePersonal)
+        .run(['keyboardManager', 'gettext', function(keyboardManager, gettext) {
+            keyboardManager.register('Monitoring', 'ctrl + g', gettext('Switches between single/grouped stage view'));
+            keyboardManager.register('Monitoring', 'ctrl + alt + g', gettext('Switches between single/grouped desk view'));
+        }]);
 
     configureMonitoring.$inject = ['superdeskProvider'];
     function configureMonitoring(superdesk) {
@@ -260,9 +264,9 @@
     }
 
     MonitoringGroupDirective.$inject = ['cards', 'api', 'authoringWorkspace', '$timeout', 'superdesk',
-        'activityService', 'workflowService', 'keyboardManager', 'desks', 'search', 'multi', 'archiveService', 'gettext'];
+        'activityService', 'workflowService', 'keyboardManager', 'desks', 'search', 'multi', 'archiveService'];
     function MonitoringGroupDirective(cards, api, authoringWorkspace, $timeout, superdesk, activityService,
-            workflowService, keyboardManager, desks, search, multi, archiveService, gettext) {
+            workflowService, keyboardManager, desks, search, multi, archiveService) {
 
         var ITEM_HEIGHT = 57,
             ITEMS_COUNT = 5,
@@ -354,7 +358,7 @@
                             monitoring.viewMonitoringHome();
                         }
                     }
-                }, {inputDisabled: false, group: gettext('Monitoring'), description: gettext('Switches between single/grouped stage view')});
+                }, {inputDisabled: false});
 
                 /*
                  * Change between single desk view and grouped view by keyboard
@@ -368,7 +372,7 @@
                             monitoring.viewMonitoringHome();
                         }
                     }
-                }, {inputDisabled: false, group: gettext('Monitoring'), description: gettext('Switches between single/grouped desk view')});
+                }, {inputDisabled: false});
 
                 /*
                  * Bind item actions on keyboard shortcuts

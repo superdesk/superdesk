@@ -9,6 +9,9 @@
     ])
         .service('content', ContentService)
         .directive('sdContentCreate', ContentCreateDirective)
+        .run(['keyboardManager', 'gettext', function(keyboardManager, gettext) {
+            keyboardManager.register('General', 'ctrl + m', gettext('Creates new item'));
+        }])
         ;
 
     ContentService.$inject = ['api', 'superdesk', 'templates', 'desks', 'packages', 'archiveService'];
@@ -66,8 +69,8 @@
         };
     }
 
-    ContentCreateDirective.$inject = ['api', 'desks', 'templates', 'content', 'authoringWorkspace', 'superdesk'];
-    function ContentCreateDirective(api, desks, templates, content, authoringWorkspace, superdesk) {
+    ContentCreateDirective.$inject = ['api', 'desks', 'templates', 'content', 'authoringWorkspace', 'superdesk', 'keyboardManager'];
+    function ContentCreateDirective(api, desks, templates, content, authoringWorkspace, superdesk, keyboardManager) {
         return {
             scope: true,
             templateUrl: 'scripts/superdesk-workspace/content/views/sd-content-create.html',
@@ -126,9 +129,17 @@
                     });
                 });
 
+                /*
                 scope.$on('key:ctrl:m', function($event, event) {
                     if (event) {
                         event.preventDefault();
+                    }
+                    scope.create();
+                });
+                */
+                keyboardManager.bind('ctrl+m', function(e) {
+                    if (e) {
+                        e.preventDefault();
                     }
                     scope.create();
                 });
