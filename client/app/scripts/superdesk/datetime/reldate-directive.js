@@ -1,4 +1,4 @@
-define(['moment'], function(moment) {
+(function() {
     'use strict';
 
     /**
@@ -10,7 +10,7 @@ define(['moment'], function(moment) {
      * Params:
      * @param {object} ngModel - datetime string in utc
      */
-    return function() {
+    angular.module('superdesk.datetime').directive('sdReldate', [ function() {
         return {
             require: 'ngModel',
             template: '<time datetime="{{ datetime }}" title="{{ title }}">{{ reldate }}</time>',
@@ -26,5 +26,5 @@ define(['moment'], function(moment) {
                 };
             }
         };
-    };
-});
+    }]);
+})();

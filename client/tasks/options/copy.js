@@ -9,8 +9,7 @@ module.exports = {
                 'fonts/*',
                 'images/**/*',
                 'styles/css/*.css',
-                'scripts/**/*.{html,css,jpg,jpeg,png,gif,svg,json}',
-                'scripts/bower_components/requirejs/require.js'
+                'scripts/**/*.{html,css,jpg,jpeg,png,gif,svg,json}'
             ]
         }]
     },

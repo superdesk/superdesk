@@ -1,8 +1,8 @@
-define([], function() {
+(function() {
     'use strict';
 
-    SuperdeskAuthAdapter.$inject = ['$http', '$q', 'urls'];
-    function SuperdeskAuthAdapter($http, $q, urls) {
+    angular.module('superdesk.auth').service('authAdapter', ['$http', '$q', 'urls',
+    function ($http, $q, urls) {
 
         /**
          * Authenticate using given credentials
@@ -24,7 +24,6 @@ define([], function() {
                 });
             });
         };
-    }
+    }]);
 
-    return SuperdeskAuthAdapter;
-});
+})();

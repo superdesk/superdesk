@@ -8,6 +8,7 @@ describe('user notifications', function() {
         {recipients: [{'user_id': 'foo', 'read': 1}, {'user_id': 'bar', 'read': 0}]}
     ]};
 
+    beforeEach(module('superdesk.session'));
     beforeEach(module('superdesk.api'));
     beforeEach(module('superdesk.menu.notifications'));
 
@@ -61,6 +62,7 @@ describe('desk notifications', function() {
         {recipients: [{'desk_id': 'desk1', 'read': 1}, {'desk_id': 'desk2', 'read': 0}]}
     ]};
 
+    beforeEach(module('superdesk.session'));
     beforeEach(module('superdesk.api'));
     beforeEach(module('superdesk.menu.notifications'));
 

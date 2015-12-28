@@ -1,9 +1,4 @@
-define([
-    'angular',
-    'require',
-    'moment',
-    'superdesk-archive/archive-widget/baseWidget'
-], function(angular, require, moment) {
+(function() {
     'use strict';
 
     angular.module('superdesk.widgets.relatedItem', [
@@ -14,7 +9,7 @@ define([
             authoringWidgets.widget('related-item', {
                 label: gettext('Related Item'),
                 icon: 'related',
-                template: require.toUrl('./widget-relatedItem.html'),
+                template: 'scripts/superdesk-archive/related-item-widget/widget-relatedItem.html',
                 order: 7,
                 side: 'right',
                 display: {authoring: true, packages: false, killedItem: true, legalArchive: false, archived: false}
@@ -81,4 +76,4 @@ define([
             };
             BaseWidgetController.call(this, $scope);
         }]);
-});
+})();

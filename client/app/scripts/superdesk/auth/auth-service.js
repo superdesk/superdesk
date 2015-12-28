@@ -1,8 +1,8 @@
-define([], function() {
+(function() {
     'use strict';
 
-    AuthService.$inject = ['$q', 'api', 'session', 'authAdapter'];
-    function AuthService($q, api, session, authAdapter) {
+    angular.module('superdesk.auth').service('auth', ['$q', 'api', 'session', 'authAdapter',
+    function ($q, api, session, authAdapter) {
 
         /**
          * Login using given credentials
@@ -26,7 +26,6 @@ define([], function() {
                         });
                 });
         };
-    }
+    }]);
 
-    return AuthService;
-});
+})();

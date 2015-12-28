@@ -1,15 +1,12 @@
-define([
-    'angular',
-    'require'
-], function(angular, require) {
+(function() {
     'use strict';
 
     angular.module('superdesk.widgets.ingeststats', [])
         .factory('colorSchemes', ['$resource', function($resource) {
             return $resource('scripts/superdesk-ingest/static-resources/color-schemes.json');
         }])
-        .config(['widgetsProvider', function(widgets) {
-            widgets.widget('ingest-stats', {
+        .config(['dashboardWidgetsProvider', function(dashboardWidgets) {
+            dashboardWidgets.addWidget('ingest-stats', {
                 label: 'Ingest Stats',
                 multiple: true,
                 icon: 'signal',
@@ -17,9 +14,9 @@ define([
                 max_sizey: 1,
                 sizex: 1,
                 sizey: 1,
-                thumbnail: require.toUrl('./thumbnail.svg'),
-                template: require.toUrl('./widget-ingeststats.html'),
-                configurationTemplate: require.toUrl('./configuration.html'),
+                thumbnail: 'scripts/superdesk-ingest/ingest-stats-widget/thumbnail.svg',
+                template: 'scripts/superdesk-ingest/ingest-stats-widget/widget-ingeststats.html',
+                configurationTemplate: 'scripts/superdesk-ingest/ingest-stats-widget/configuration.html',
                 configuration: {
                     source: 'provider',
                     colorScheme: 'superdesk',
@@ -48,4 +45,4 @@ define([
                 $scope.schemes = colorsData.schemes;
             });
         }]);
-});
+})();

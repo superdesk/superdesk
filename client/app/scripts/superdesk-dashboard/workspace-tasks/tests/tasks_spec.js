@@ -48,7 +48,7 @@ describe('tasks', function() {
                 expect(publishedArgs[1].source.filter.bool.must_not.term).toEqual({package_type: 'takes'});
             }));
 
-            it('can get scheduled', inject(function(api, moment) {
+            it('can get scheduled', inject(function(api) {
                 expect(scope.scheduled).toBe(result);
                 var scheduledArgs = api.query.calls.argsFor(1);
                 expect(scheduledArgs[0]).toBe('content_templates');

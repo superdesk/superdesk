@@ -112,7 +112,8 @@
         }));
 
         it('can get main menu and filter out based on features/permissions',
-        inject(function(superdesk, $rootScope) {
+        inject(function(superdesk, $rootScope, privileges, $q) {
+            privileges.loaded = $q.when();
 
             var menu;
             superdesk.getMenu(superdesk.MENU_MAIN).then(function(_menu) {

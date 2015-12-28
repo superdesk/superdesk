@@ -1,10 +1,8 @@
-define([
-    'lodash',
-    'bower_components/jcrop/js/jquery.Jcrop'
-], function(_) {
+(function() {
     'use strict';
 
-    return ['notify', 'gettext', function(notify, gettext) {
+    angular.module('superdesk.upload')
+    .directive('sdCrop', ['notify', 'gettext', function(notify, gettext) {
         return {
             scope: {
                 src: '=',
@@ -80,5 +78,5 @@ define([
                 });
             }
         };
-    }];
-});
+    }]);
+})();

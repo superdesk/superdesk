@@ -1,9 +1,9 @@
-define(['./analytics'], function(analyticsModule) {
+(function() {
     'use strict';
 
     describe('analytics', function() {
 
-        beforeEach(module(analyticsModule.name));
+        beforeEach(module('superdesk.analytics'));
         beforeEach(module(function($provide) {
             $provide.constant('config', {
                 analytics: {piwik: {}, ga: {}}
@@ -24,4 +24,4 @@ define(['./analytics'], function(analyticsModule) {
             expect(analytics.track).toHaveBeenCalledWith(activity);
         }));
     });
-});
+})();

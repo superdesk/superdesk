@@ -1,9 +1,5 @@
-define([
-    'angular',
-    './es'
-], function(angular, ElasticSearchService) {
+(function() {
     'use strict';
 
-    return angular.module('superdesk.elastic', [])
-        .service('es', ElasticSearchService);
-});
+    return angular.module('superdesk.elastic', []);
+})();

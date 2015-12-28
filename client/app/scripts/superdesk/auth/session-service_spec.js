@@ -1,7 +1,4 @@
-define([
-    'superdesk/auth/session-service',
-    'superdesk/services/storage'
-], function (SessionService, StorageService) {
+(function() {
     'use strict';
 
     var SESSION = {
@@ -15,10 +12,8 @@ define([
 
         beforeEach(function() {
             localStorage.clear();
-            module(StorageService.name);
-            module(function ($provide) {
-                $provide.service('session', SessionService);
-            });
+            module('superdesk.services.storage');
+            module('superdesk.session');
         });
 
         it('has identity and token property', inject(function (session) {
@@ -59,21 +54,30 @@ define([
             expect(identity.name).toBe('foo');
         }));
 
-        it('can store state for future requests', inject(function (session, $injector, $rootScope) {
+        it('can store state for future requests', inject(function (session, $rootScope) {
             session.start(SESSION, {name: 'bar'});
 
-            var nextSession = $injector.instantiate(SessionService);
-
-            $rootScope.$apply();
+            var nextInjector = angular.injector(['superdesk.session', 'superdesk.services.storage', 'ng']);
+            var nextSession = nextInjector.get('session');
+            nextInjector.get('$rootScope').$digest();
+            $rootScope.$digest();
 
             expect(nextSession.token).toBe(SESSION.token);
             expect(nextSession.identity.name).toBe('bar');
 
             nextSession.expire();
-            $rootScope.$apply();
+            $rootScope.$digest();
 
             expect(session.token).toBe(null);
             expect(session.identity.name).toBe('bar');
+        }));
+
+        it('can set test user with given id', inject(function (session) {
+            session.testUser('1234id');
+
+            expect(session.token).toBe(1);
+            expect(session.identity._id).toBe('1234id');
+            expect(session.sessionId).toBe('s1234id');
         }));
 
         it('can filter blacklisted fields from indentity', inject(function(session) {
@@ -103,12 +107,15 @@ define([
             expect(session.getSessionHref()).toBe(SESSION._links.self.href);
         }));
 
-        it('can update identity', inject(function (session, $injector, $rootScope) {
+        it('can update identity', inject(function (session, $rootScope) {
             session.start(SESSION, {name: 'bar'});
             session.updateIdentity({name: 'baz'});
             expect(session.identity.name).toBe('baz');
 
-            var nextSession = $injector.instantiate(SessionService);
+            var nextInjector = angular.injector(['superdesk.session', 'superdesk.services.storage', 'ng']);
+            var nextSession = nextInjector.get('session');
+            nextInjector.get('$rootScope').$digest();
+
             $rootScope.$apply();
             expect(nextSession.identity.name).toBe('baz');
         }));
@@ -138,4 +145,4 @@ define([
             expect(success).not.toHaveBeenCalled();
         }));
     });
-});
+})();

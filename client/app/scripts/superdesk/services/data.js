@@ -1,4 +1,4 @@
-define(['angular', 'lodash'], function(angular, _) {
+(function() {
     'use strict';
 
     return angular.module('superdesk.services.data', [])
@@ -170,4 +170,4 @@ define(['angular', 'lodash'], function(angular, _) {
                 }
             };
         }]);
-});
+})();

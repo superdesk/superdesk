@@ -1,13 +1,43 @@
-define([
-    'angular',
-    'require',
-    './auth-interceptor',
-    './auth-service',
-    './session-service',
-    './basic-auth-adapter',
-    './login-modal-directive'
-], function(angular, require, AuthInterceptor) {
+(function() {
     'use strict';
+
+    /**
+     * Expire session on 401 server response
+     */
+    AuthExpiredInterceptor.$inject = ['session', '$q', '$injector', '$rootScope'];
+    function AuthExpiredInterceptor(session, $q, $injector, $rootScope) {
+
+        function handleAuthExpired(response) {
+            session.expire();
+            return session.getIdentity().then(function() {
+                var $http = $injector.get('$http');
+                $http.defaults.headers.common.Authorization = session.token;
+                response.config.headers.Authorization = session.token;
+                return $injector.get('request').resend(response.config);
+            });
+        }
+
+        return {
+            response: function(response) {
+                if (response.status === 401) {
+                    return handleAuthExpired(response);
+                }
+
+                return response;
+            },
+            responseError: function(response) {
+
+                if (response.status === 401) {
+
+                    if (!(((response.data || {})._issues || {}).credentials)) {
+                        return handleAuthExpired(response);
+                    }
+                }
+
+                return $q.reject(response);
+            }
+        };
+    }
 
     ResetPassworController.$inject = ['$scope', '$location', 'api', 'notify', 'gettext'];
     function ResetPassworController($scope, $location, api, notify, gettext) {
@@ -65,8 +95,7 @@ define([
         .constant('SESSION_EVENTS', {
             LOGIN: 'login',
             LOGOUT: 'logout'
-        })
-        .service('session', require('./session-service'));
+        });
 
     return angular.module('superdesk.auth', [
         'superdesk.features',
@@ -74,11 +103,9 @@ define([
         'superdesk.session',
         'superdesk.asset'
         ])
-        .service('auth', require('./auth-service'))
-        .service('authAdapter', require('./basic-auth-adapter'))
-        .directive('sdLoginModal', require('./login-modal-directive'))
+        .service('AuthExpiredInterceptor', AuthExpiredInterceptor)
         .config(['$httpProvider', 'superdeskProvider', 'assetProvider', function($httpProvider, superdesk, asset) {
-            $httpProvider.interceptors.push(AuthInterceptor);
+            $httpProvider.interceptors.push('AuthExpiredInterceptor');
 
             superdesk
                 .activity('/reset-password/', {
@@ -137,4 +164,4 @@ define([
                 }
             });
         }]);
-});
+})();

@@ -1,4 +1,4 @@
-define([], function() {
+(function() {
     'use strict';
 
     /**
@@ -25,5 +25,7 @@ define([], function() {
         };
     }
 
-    return RequestService;
-});
+    angular.module('superdesk.api')
+    .service('request', RequestService);
+
+})();

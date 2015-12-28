@@ -1,12 +1,4 @@
-define([
-    'angular',
-    'moment',
-    'require',
-    './group-dates-directive',
-    './reldate-directive',
-    './reldate-directive-complex',
-    './absdate-directive'
-], function(angular, moment, require) {
+(function() {
     'use strict';
 
     function DateTimeDirective() {
@@ -30,11 +22,6 @@ define([
     }
 
     return angular.module('superdesk.datetime', [])
-
-        .directive('sdGroupDates', require('./group-dates-directive'))
-        .directive('sdReldate', require('./reldate-directive'))
-        .directive('sdReldateComplex', require('./reldate-directive-complex'))
-        .directive('sdAbsdate', require('./absdate-directive'))
         .directive('sdDatetime', DateTimeDirective)
 
         .filter('reldate', function reldateFactory() {
@@ -62,7 +49,5 @@ define([
                 SAT: gettext('Saturday'),
                 SUN: gettext('Sunday')
             });
-        }])
-
-        ;
-});
+        }]);
+})();

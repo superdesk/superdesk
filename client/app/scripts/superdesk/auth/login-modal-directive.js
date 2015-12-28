@@ -1,11 +1,16 @@
-define([], function() {
+(function() {
     'use strict';
 
     /**
      * Login modal is watching session token and displays modal when needed
      */
-    LoginModalDirective.$inject = ['session', 'auth', 'features', 'asset', '$route'];
-    function LoginModalDirective(session, auth, features, asset, $route) {
+    angular.module('superdesk.auth').directive('sdLoginModal', [
+    'session',
+    'auth',
+    'features',
+    'asset',
+    '$route',
+    function (session, auth, features, asset, $route) {
         return {
             replace: true,
             templateUrl: asset.templateUrl('superdesk/auth/login-modal.html'),
@@ -50,7 +55,6 @@ define([], function() {
                 });
             }
         };
-    }
+    }]);
 
-    return LoginModalDirective;
-});
+})();

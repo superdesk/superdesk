@@ -1,4 +1,4 @@
-define(['angular'], function(angular) {
+(function() {
     'use strict';
 
     return angular.module('superdesk.preferences', ['superdesk.notify', 'superdesk.session'])
@@ -215,4 +215,4 @@ define(['angular'], function(angular) {
                     });
                 }
             }]);
-});
+})();

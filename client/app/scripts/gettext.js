@@ -1,4 +1,4 @@
-define([], function() {
+(function() {
     'use strict';
 
     /**
@@ -12,10 +12,10 @@ define([], function() {
      * @param {string} input
      * @return {string} unmodified input
      */
-    function gettext(input) {
+    var gettext = function (input) {
         return input;
-    }
+    };
 
     /* exported gettext */
     window.gettext = gettext;
-});
+})();

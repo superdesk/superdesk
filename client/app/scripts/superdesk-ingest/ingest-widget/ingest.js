@@ -1,16 +1,12 @@
-define([
-    'angular',
-    'require',
-    'superdesk-archive/archive-widget/baseWidget'
-], function(angular, require, BaseWidget) {
+(function() {
     'use strict';
 
     angular.module('superdesk.widgets.ingest', [
         'superdesk.widgets.base',
         'superdesk.authoring.widgets'
     ])
-        .config(['widgetsProvider', function(widgets) {
-            widgets.widget('ingest', {
+        .config(['dashboardWidgetsProvider', function(dashboardWidgets) {
+            dashboardWidgets.addWidget('ingest', {
                 label: 'Ingest',
                 multiple: true,
                 icon: 'ingest',
@@ -18,8 +14,8 @@ define([
                 max_sizey: 2,
                 sizex: 1,
                 sizey: 2,
-                thumbnail: require.toUrl('./thumbnail.svg'),
-                template: require.toUrl('./widget-ingest.html'),
+                thumbnail: 'scripts/superdesk-ingest/ingest-widget/thumbnail.svg',
+                template: 'scripts/superdesk-ingest/ingest-widget/widget-ingest.html',
                 configurationTemplate: 'scripts/superdesk-archive/archive-widget/configuration.html',
                 configuration: {maxItems: 10, savedSearch: null, updateInterval: 5},
                 description: 'Ingest widget'
@@ -48,4 +44,4 @@ define([
 
             BaseWidgetController.call(this, $scope);
         }]);
-});
+})();

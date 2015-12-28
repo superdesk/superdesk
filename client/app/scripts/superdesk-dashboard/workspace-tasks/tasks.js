@@ -70,8 +70,8 @@ function TasksService(desks, $rootScope, api, datetimeHelper) {
     };
 }
 
-TasksController.$inject = ['$scope', '$timeout', 'api', 'notify', 'desks', 'tasks', '$filter', 'moment', 'archiveService'];
-function TasksController($scope, $timeout, api, notify, desks, tasks, $filter, moment, archiveService) {
+TasksController.$inject = ['$scope', '$timeout', 'api', 'notify', 'desks', 'tasks', '$filter', 'archiveService'];
+function TasksController($scope, $timeout, api, notify, desks, tasks, $filter, archiveService) {
 
     var KANBAN_VIEW = 'kanban',
         timeout;

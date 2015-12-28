@@ -1,36 +1,28 @@
-define([
-    'superdesk/services/storage',
-    'superdesk/auth/auth-service',
-    'superdesk/auth/session-service'
-], function(StorageService, AuthService, SessionService) {
+(function() {
+
     'use strict';
 
-    var USER_HREF = 'http://user/1',
-        SESSION = 'sess',
-        USERNAME = 'foo';
-
-    beforeEach(module('superdesk.preferences'));
-
-    beforeEach(function() {
-        module(StorageService.name);
-        module(function($provide) {
-            $provide.service('api', function($q) {
-                this.users = {
-                    getById: function(id) {
-                        return $q.when({username: USERNAME});
-                    }
-                };
-            });
-            $provide.service('auth', AuthService);
-            $provide.service('session', SessionService);
-            $provide.service('authAdapter', AuthAdapterMock);
-        });
-    });
-
     describe('auth service', function() {
-        beforeEach(inject(function(session, preferencesService, $q) {
+        beforeEach(function() {
+            module('superdesk.preferences');
+            module('superdesk.services.storage');
+            module('superdesk.auth');
+            module('superdesk.session');
+            module(function($provide) {
+                $provide.service('api', function($q) {
+                    this.users = {
+                        getById: function(id) {
+                            return $q.when({username: 'foo'});
+                        }
+                    };
+                });
+            });
+        });
+        beforeEach(inject(function(session, preferencesService, authAdapter, urls, $q) {
             session.clear();
             spyOn(preferencesService, 'get').and.returnValue($q.when({}));
+            spyOn(urls, 'resource').and.returnValue($q.when('http://localhost:5000/api/auth'));
+            spyOn(session, 'start').and.returnValue(true);
         }));
 
         it('can login', inject(function(auth, session, $httpBackend, $rootScope) {
@@ -40,26 +32,27 @@ define([
 
             var resolved = {};
 
-            $httpBackend.expectGET(USER_HREF).respond({username: USERNAME});
-
-            session.getIdentity().then(function() {
-                resolved.identity = true;
+            $httpBackend.expectPOST('http://localhost:5000/api/auth').respond(200, {
+                user: 'foo'
             });
 
             auth.login('admin', 'admin').then(function(identity) {
-                expect(session.identity.username).toBe(USERNAME);
-                expect(session.token).toBe(SESSION);
+                expect(session.start).toHaveBeenCalled();
                 resolved.login = true;
+            }, function() {
+                resolved.login = false;
             });
 
+            $httpBackend.flush();
             $rootScope.$apply();
 
             expect(resolved.login).toBe(true);
-            expect(resolved.identity).toBe(true);
         }));
 
-        it('checks credentials', inject(function(auth, $rootScope) {
+        it('checks credentials', inject(function(auth, $httpBackend, $rootScope) {
             var resolved = false, rejected = false;
+
+            $httpBackend.expectPOST('http://localhost:5000/api/auth').respond(403, {});
 
             auth.login('wrong', 'credentials').then(function() {
                 resolved = true;
@@ -67,36 +60,12 @@ define([
                 rejected = true;
             });
 
+            $httpBackend.flush();
             $rootScope.$apply();
+
             expect(resolved).toBe(false);
             expect(rejected).toBe(true);
         }));
     });
 
-    /**
-     * Mock auth adapter which will authenticate admin:admin and fail otherwise
-     *
-     * @param {object} $q
-     */
-    function AuthAdapterMock($q) {
-
-        /**
-         * Mock auth - authenticate with admin:admin
-         *
-         * @param {string} username
-         * @param {string} password
-         * @returns {Promise}
-         */
-        this.authenticate = function(username, password) {
-            var defer = $q.defer();
-
-            if (username === 'admin' && password === 'admin') {
-                defer.resolve({token: SESSION, user: '1', _links: {self: {href: 'delete_session_url'}}});
-            } else {
-                defer.reject();
-            }
-
-            return defer.promise;
-        };
-    }
-});
+})();

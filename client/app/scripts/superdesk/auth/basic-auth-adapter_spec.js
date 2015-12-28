@@ -1,7 +1,4 @@
-define([
-    'superdesk/api/url-resolver-service',
-    './basic-auth-adapter'
-], function(UrlResolverService, BasicAuthAdapter) {
+(function() {
     'use strict';
 
     /* jshint maxlen:false */
@@ -12,15 +9,19 @@ define([
         session = 'xyz';
 
     describe('basic auth adapter', function() {
-        beforeEach(function() {
-            module(function($provide) {
-                $provide.constant('config', {server: {url: SERVER_URL}});
-                $provide.service('authAdapter', BasicAuthAdapter);
-                $provide.service('urls', UrlResolverService);
-            });
+        var $httpBackend;
+
+        beforeEach(module('superdesk.auth'));
+        beforeEach(inject(function (_$httpBackend_) {
+            $httpBackend = _$httpBackend_;
+        }));
+
+        afterEach(function() {
+            $httpBackend.verifyNoOutstandingExpectation();
+            $httpBackend.verifyNoOutstandingRequest();
         });
 
-        it('can login', inject(function(authAdapter, urls, $q, $httpBackend) {
+        it('can login', inject(function(authAdapter, urls, $q) {
             $httpBackend
                 .expectPOST(LOGIN_URL, {username: username, password: password})
                     .respond({token: session, user: '1'});
@@ -38,7 +39,7 @@ define([
             expect(identity.token).toBe('Basic ' + btoa(session + ':'));
         }));
 
-        it('can reject on failed auth', inject(function(authAdapter, urls, $q, $httpBackend) {
+        it('can reject on failed auth', inject(function(authAdapter, urls, $q) {
             var resolved = false, rejected = false;
 
             spyOn(urls, 'resource').and.returnValue($q.when(LOGIN_URL));
@@ -59,4 +60,4 @@ define([
         }));
 
     });
-});
+})();

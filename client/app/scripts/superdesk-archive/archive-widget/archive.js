@@ -1,16 +1,12 @@
-define([
-    'angular',
-    'require',
-    './baseWidget'
-], function(angular, require) {
+(function() {
     'use strict';
 
     angular.module('superdesk.widgets.archive', [
         'superdesk.widgets.base',
         'superdesk.authoring.widgets'
     ])
-        .config(['widgetsProvider', function(widgets) {
-            widgets.widget('archive', {
+        .config(['dashboardWidgetsProvider', function(dashboardWidgets) {
+            dashboardWidgets.addWidget('archive', {
                 label: 'Content',
                 multiple: true,
                 icon: 'archive',
@@ -18,9 +14,9 @@ define([
                 max_sizey: 2,
                 sizex: 1,
                 sizey: 2,
-                thumbnail: require.toUrl('./thumbnail.svg'),
-                template: require.toUrl('./widget-archive.html'),
-                configurationTemplate: require.toUrl('./configuration.html'),
+                thumbnail: 'scripts/superdesk-archive/archive-widget/thumbnail.svg',
+                template: 'scripts/superdesk-archive/archive-widget/widget-archive.html',
+                configurationTemplate: 'scripts/superdesk-archive/archive-widget/configuration.html',
                 configuration: {maxItems: 10, savedSearch: null, updateInterval: 5},
                 description: 'Content widget'
             });
@@ -58,4 +54,4 @@ define([
 
             BaseWidgetController.call(this, $scope);
         }]);
-});
+})();

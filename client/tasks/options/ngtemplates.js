@@ -3,7 +3,7 @@
 module.exports = {
     app: {
         cwd: 'app',
-        src: 'scripts/superdesk*/**/*.html',
+        src: ['scripts/superdesk*/**/*.html', 'scripts/superdesk*/**/*.svg'],
         dest: '<%= distDir %>/scripts/templates-cache.js',
         options: {
             htmlmin: {

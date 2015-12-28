@@ -1,4 +1,4 @@
-define(['angular'], function(angular) {
+(function() {
     'use strict';
     var config = {
         server: {
@@ -10,4 +10,4 @@ define(['angular'], function(angular) {
     };
 
     return angular.module('superdesk.config', []).constant('config', config);
-});
+})();

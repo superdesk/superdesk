@@ -1,4 +1,4 @@
-define(['superdesk/datetime/datetime'], function() {
+(function() {
     'use strict';
 
     beforeEach(function() {
@@ -18,4 +18,4 @@ define(['superdesk/datetime/datetime'], function() {
             expect($filter('time')(date)).toBe('8:05');
         }));
     });
-});
+})();

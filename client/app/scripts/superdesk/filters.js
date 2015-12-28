@@ -1,9 +1,4 @@
-define([
-    'angular',
-    'lodash',
-    'moment',
-    'moment-timezone'
-], function(angular, _, moment) {
+(function() {
     'use strict';
 
     return angular.module('superdesk.filters', []).
@@ -227,4 +222,4 @@ define([
                 return '(' + filterCondition.field + ' ' + filterCondition.operator + ' ' + conditionValue + ')';
             };
         });
-});
+})();

@@ -1,10 +1,9 @@
-define([
-    'lodash'
-], function(_) {
+(function() {
     'use strict';
 
-    return ['superdesk', 'activityService', 'workflowService', 'asset', 'notify',
-    function(superdesk, activityService, workflowService, asset, notify) {
+    angular.module('superdesk.activity')
+    .directive('sdActivityList', ['superdesk', 'activityService', 'workflowService', 'asset', 'notify', 'lodash',
+    function(superdesk, activityService, workflowService, asset, notify, _) {
         return {
             scope: {
                 item: '=',
@@ -99,5 +98,5 @@ define([
                 scope.$watch('item', initializeActivities, true);
             }
         };
-    }];
-});
+    }]);
+})();

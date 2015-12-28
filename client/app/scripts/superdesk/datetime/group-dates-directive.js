@@ -1,4 +1,4 @@
-define(['moment'], function(moment) {
+(function() {
     'use strict';
 
     /**
@@ -11,7 +11,7 @@ define(['moment'], function(moment) {
      * @scope {object} ngModel
      * @scope {string} sdGroupDates - model field to group by
      */
-    return function() {
+    angular.module('superdesk.datetime').directive('sdGroupDates', [ function() {
         var lastDate = null;
         var COMPARE_FORMAT = 'YYYY-M-D';
         var DISPLAY_DATE_FORMAT = 'D. MMMM YYYY';
@@ -44,5 +44,5 @@ define(['moment'], function(moment) {
                 };
             }
         };
-    };
-});
+    }]);
+})();

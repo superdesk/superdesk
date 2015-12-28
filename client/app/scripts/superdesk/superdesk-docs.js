@@ -7,22 +7,7 @@
  * AUTHORS and LICENSE files distributed with this source code, or
  * at https://www.sourcefabric.org/superdesk/license
  */
-
-define([
-    'angular',
-    'require',
-
-    'angular-ui',
-    'angular-route',
-    'angular-resource',
-
-    './datetime/datetime',
-    './ui/ui',
-    './directives/all',
-    './services/modalService',
-    './config/config'
-
-], function(angular, require) {
+(function() {
     'use strict';
 
     var modules = [
@@ -30,14 +15,26 @@ define([
         'ngResource',
         'ui.bootstrap',
 
-        require('./datetime/datetime').name,
-        require('./ui/ui').name,
-        require('./services/modalService').name
-    ];
+        'superdesk.datetime',
+        'superdesk.ui',
+        'superdesk.services.modal',
 
-    modules.push.apply(modules, require('./directives/all'));
+        'superdesk.directives.autofocus',
+        'superdesk.directives.throttle',
+        'superdesk.directives.sort',
+        'superdesk.links',
+        'superdesk.check.directives',
+        'superdesk.confirm.directives',
+        'superdesk.select.directives',
+        'superdesk.permissions.directives',
+        'superdesk.avatar',
+        'superdesk.dragdrop.directives',
+        'superdesk.typeahead.directives',
+        'superdesk.slider.directives',
+        'superdesk.directives.searchList'
+    ];
 
     var app = angular.module('superdesk.docs.core', modules);
 
     return app;
-});
+})();

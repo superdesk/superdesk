@@ -1,4 +1,4 @@
-define(['moment'], function(moment) {
+(function() {
     'use strict';
 
     /**
@@ -10,7 +10,7 @@ define(['moment'], function(moment) {
      * Params:
      * @param {object} ngModel - datetime string in utc
      */
-    return function() {
+    angular.module('superdesk.datetime').directive('sdReldateComplex', [ function() {
         var COMPARE_FORMAT = 'YYYY-M-D';
         var DISPLAY_DATE_FORMAT = 'D. MMMM YYYY [at] HH:mm';
         var DISPLAY_CDATE_FORMAT = 'D. MMMM [at] HH:mm';
@@ -42,5 +42,5 @@ define(['moment'], function(moment) {
                 };
             }
         };
-    };
-});
+    }]);
+})();

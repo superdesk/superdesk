@@ -1,4 +1,4 @@
-define(['angular'], function(angular) {
+(function() {
     'use strict';
 
     return angular.module('superdesk.search.dir', [])
@@ -33,4 +33,4 @@ define(['angular'], function(angular) {
             }
         };
     });
-});
+})();

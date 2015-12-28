@@ -1,9 +1,4 @@
-define([
-    'angular',
-    'require',
-    'moment',
-    './autoheight-directive'
-], function(angular, require, moment) {
+(function() {
     'use strict';
 
     /**
@@ -1227,9 +1222,8 @@ define([
         };
     }
 
-    return angular.module('superdesk.ui', ['superdesk.dashboard.world-clock'])
+    angular.module('superdesk.ui', ['superdesk.dashboard.world-clock'])
         .directive('sdShadow', ShadowDirective)
-        .directive('sdAutoHeight', require('./autoheight-directive'))
         .directive('sdToggleBox', ToggleBoxDirective)
         .filter('nl2el', NewlineToElement)
         .factory('WizardHandler', WizardHandlerFactory)
@@ -1253,4 +1247,4 @@ define([
         .directive('sdDropdownFocus', DropdownFocus)
         .directive('sdWeekdayPicker', WeekdayPickerDirective)
         .directive('sdSplitterWidget', splitterWidget);
-});
+})();

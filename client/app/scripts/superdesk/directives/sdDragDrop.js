@@ -1,7 +1,4 @@
-define([
-    'jquery',
-    'angular'
-], function($, angular) {
+(function() {
     'use strict';
 
     return angular.module('superdesk.dragdrop.directives', [])
@@ -96,4 +93,4 @@ define([
                 }
             };
         }]);
-});
+})();

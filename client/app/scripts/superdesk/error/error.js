@@ -1,24 +1,7 @@
-define([
-    'angular',
-    'raven-js'
-], function(angular, Raven) {
+(function() {
     'use strict';
 
-    var app = angular.module('superdesk.error', []);
-
-    app.config(['config', '$httpProvider', function(config, $httpProvider) {
-        if (config.raven && config.raven.dsn) {
-            Raven.config(config.raven.dsn, {logger: 'javascript-client'}).install();
-            $httpProvider.interceptors.push(ErrorHttpInterceptorFactory);
-
-            app.factory('$exceptionHandler', function () {
-                return function errorCatcherHandler(exception, cause) {
-                    Raven.captureException(exception, {tags: {component: 'ui'}, extra: exception});
-                    throw exception;
-                };
-            });
-        }
-    }]);
+    var Raven = window.Raven;
 
     ErrorHttpInterceptorFactory.$inject = ['$q'];
     function ErrorHttpInterceptorFactory($q) {
@@ -38,5 +21,19 @@ define([
         };
     }
 
-    return app;
-});
+    angular.module('superdesk.error', [])
+    .config(['config', '$httpProvider', '$provide', function(config, $httpProvider, $provide) {
+        if (config.raven && config.raven.dsn) {
+            Raven.config(config.raven.dsn, {logger: 'javascript-client'}).install();
+            $httpProvider.interceptors.push(ErrorHttpInterceptorFactory);
+
+            $provide.factory('$exceptionHandler', function () {
+                return function errorCatcherHandler(exception, cause) {
+                    Raven.captureException(exception, {tags: {component: 'ui'}, extra: exception});
+                    throw exception;
+                };
+            });
+        }
+    }]);
+
+})();

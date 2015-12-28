@@ -1,8 +1,8 @@
-define(['angular'], function(angular) {
+(function() {
     'use strict';
 
-    return angular.module('superdesk.services.dragdrop', []).
-        service('dragDropService', [function() {
-            this.item = null;
-        }]);
-});
+    angular.module('superdesk.services.dragdrop', [])
+    .service('dragDropService', [function() {
+        this.item = null;
+    }]);
+})();

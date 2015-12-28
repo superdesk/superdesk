@@ -1,7 +1,4 @@
-define([
-    'lodash',
-    'bower_components/jcrop/js/jquery.Jcrop'
-], function(_) {
+(function() {
     'use strict';
     /**
      * sd-image-crop based on Jcrop tool and provides Image crop functionality for
@@ -20,7 +17,12 @@ define([
      * scope.preview should be define on container page so that the coordiates can be used
      * to pass in api that is serving for saving the crop.
      */
-    return ['notify', 'gettext', '$timeout', 'imageFactory', function(notify, gettext, $timeout, imageFactory) {
+    angular.module('superdesk.upload').directive('sdImageCrop', [
+        'notify',
+        'gettext',
+        '$timeout',
+        'imageFactory',
+    function(notify, gettext, $timeout, imageFactory) {
         return {
             scope: {
                 src: '=',
@@ -153,5 +155,5 @@ define([
                 });
             }
         };
-    }];
-});
+    }]);
+})();

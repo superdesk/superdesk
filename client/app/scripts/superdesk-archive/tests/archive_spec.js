@@ -20,8 +20,10 @@ describe('content', function() {
     }));
 
     describe('archive service', function() {
-        beforeEach(inject(function (desks, session) {
+        beforeEach(inject(function (desks, session, preferencesService) {
             session.identity = {_id: 'user:1'};
+
+            spyOn(preferencesService, 'update').and.returnValue(true);
 
             desks.userDesks = {_items: [{_id: '1', name: 'sport', working_stage: '2', incoming_stage: '3'},
                                         {_id: '2', name: 'news', working_stage: '4', incoming_stage: '5'}]};
@@ -31,6 +33,7 @@ describe('content', function() {
         }));
 
         it('can add an item to user\'s active desk', inject(function(archiveService) {
+
             archiveService.addTaskToArticle(item);
 
             expect(item.task.desk).toBe('2');

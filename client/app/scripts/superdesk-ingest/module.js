@@ -1,12 +1,7 @@
-define([
-    'angular',
-    'd3',
-    'moment',
-    'superdesk-archive/controllers/baseList',
-    './ingest-widget/ingest',
-    './ingest-stats-widget/stats'
-], function(angular, d3, moment, BaseListController) {
+(function() {
     'use strict';
+
+    var BaseListController = window.BaseListController;
 
     angular.module('superdesk.ingest.send', [
         'superdesk.api',
@@ -1657,6 +1652,4 @@ define([
         }
     }
 
-    return app;
-
-});
+})();

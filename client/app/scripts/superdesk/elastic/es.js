@@ -1,10 +1,10 @@
-define([], function() {
+(function() {
     'use strict';
 
     /**
      * Elastic search query builder service
      */
-    function ElasticSearchQueryService() {
+    angular.module('superdesk.elastic').service('es', [ function() {
 
         var SIZE_DEFAULT = 25;
 
@@ -44,7 +44,6 @@ define([], function() {
         }
 
         return buildQuery;
-    }
+    }]);
 
-    return ElasticSearchQueryService;
-});
+})();

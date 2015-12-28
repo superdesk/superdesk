@@ -1,18 +1,18 @@
-define(['lodash'], function(_) {
+(function() {
     'use strict';
 
-    function WidgetsProvider() {
+    angular.module('superdesk.dashboard.widgets', [])
+    .provider('dashboardWidgets', function() {
 
-        var widgets = {};
+        var privateWidgets = {};
 
-        this.widget = function(id, widget) {
-            widgets[id] = _.extend({_id: id}, widget);
+        this.addWidget = function(id, widget, debug) {
+            privateWidgets[id] = _.extend({_id: id}, widget);
         };
 
         this.$get = function() {
-            return _.values(widgets);
+            return _.values(privateWidgets);
         };
-    }
+    });
 
-    return WidgetsProvider;
-});
+})();

@@ -3,8 +3,8 @@
 'use strict';
 
 angular.module('superdesk.aggregate.widgets', ['superdesk.aggregate', 'superdesk.dashboard.widgets'])
-        .config(['widgetsProvider', function(widgets) {
-            widgets.widget('aggregate', {
+        .config(['dashboardWidgetsProvider', function(dashboardWidgets) {
+            dashboardWidgets.addWidget('aggregate', {
                 label: 'Monitoring',
                 multiple: true,
                 icon: 'archive',

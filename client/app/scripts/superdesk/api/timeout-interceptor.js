@@ -1,4 +1,4 @@
-define([], function() {
+(function() {
     'use strict';
 
     /**
@@ -56,5 +56,6 @@ define([], function() {
         };
     }
 
-    return TimeoutInterceptor;
-});
+    angular.module('superdesk.api').factory('timeoutInterceptor', TimeoutInterceptor);
+
+})();

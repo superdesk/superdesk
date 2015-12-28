@@ -77,7 +77,6 @@ module.exports = function (grunt) {
         'build',
         'copy:bower',
         'concat:bowerCore',
-        'concat:bowerApps',
         'uglify:bower',
         'clean:bower'
     ]);
@@ -88,7 +87,6 @@ module.exports = function (grunt) {
         'ngtemplates',
         'useminPrepare',
         'concat',
-        'requirejs', // must go after concat
         'uglify',
         'cssmin',
         'copy:assets',

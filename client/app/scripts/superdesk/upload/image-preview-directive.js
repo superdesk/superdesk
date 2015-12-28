@@ -1,6 +1,7 @@
-define([], function() {
+(function() {
     'use strict';
-    return [function() {
+
+    angular.module('superdesk.upload').directive('sdImagePreview', [ function() {
         var IS_IMG_REGEXP = /^image\//;
         return {
             scope: {
@@ -33,5 +34,5 @@ define([], function() {
                 });
             }
         };
-    }];
-});
+    }]);
+})();

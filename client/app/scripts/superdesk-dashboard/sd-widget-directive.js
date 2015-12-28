@@ -1,6 +1,4 @@
-define([
-    'require'
-], function(require) {
+(function() {
     'use strict';
 
     ConfigController.$inject = ['$scope'];
@@ -23,7 +21,8 @@ define([
      * Params:
      * @scope {Object} widget
      */
-    return ['$modal', 'asset', function($modal, asset) {
+    angular.module('superdesk.dashboard').directive('sdWidget', [
+        '$modal', 'asset', function($modal, asset) {
         return {
             templateUrl: asset.templateUrl('superdesk-dashboard/views/widget.html'),
             restrict: 'A',
@@ -33,12 +32,12 @@ define([
             link: function(scope, element, attrs) {
                 scope.openConfiguration = function () {
                     $modal.open({
-                        templateUrl: require.toUrl('./views/configuration.html'),
+                        templateUrl: 'scripts/superdesk-dashboard/views/configuration.html',
                         controller: ConfigController,
                         scope: scope
                     });
                 };
             }
         };
-    }];
-});
+    }]);
+})();
