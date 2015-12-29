@@ -137,7 +137,7 @@ class ArchivedService(BaseService):
 
             req = ParsedRequest()
             req.sort = '[("%s", -1)]' % config.VERSION
-            takes_package = list(self.get_from_mongo(req=req, lookup={'item_id': takes_package_id}))
+            takes_package = list(self.get(req=req, lookup={'item_id': takes_package_id}))
             if not takes_package:
                 raise bad_req_error(message='Digital Story of the article not found in Archived repo')
 
@@ -241,17 +241,17 @@ class ArchivedService(BaseService):
         req = ParsedRequest()
         req.sort = '[("%s", -1)]' % config.VERSION
 
-        archived_doc = list(self.get_from_mongo(req=req, lookup={'item_id': archived_doc['item_id']}))[0]
+        archived_doc = list(self.get(req=req, lookup={'item_id': archived_doc['item_id']}))[0]
         articles_to_kill = [archived_doc]
         takes_package_service = TakesPackageService()
         takes_package_id = takes_package_service.get_take_package_id(archived_doc)
         if takes_package_id:
-            takes_package = list(self.get_from_mongo(req=req, lookup={'item_id': takes_package_id}))[0]
+            takes_package = list(self.get(req=req, lookup={'item_id': takes_package_id}))[0]
             articles_to_kill.append(takes_package)
 
             for takes_ref in takes_package_service.get_package_refs(takes_package):
                 if takes_ref[RESIDREF] != archived_doc[GUID_FIELD]:
-                    take = list(self.get_from_mongo(req=req, lookup={'item_id': takes_ref[RESIDREF]}))[0]
+                    take = list(self.get(req=req, lookup={'item_id': takes_ref[RESIDREF]}))[0]
                     articles_to_kill.append(take)
 
         return articles_to_kill
@@ -269,6 +269,7 @@ class ArchivedService(BaseService):
         article.pop('allow_post_publish_actions', None)
         article.pop('can_be_removed', None)
         article.pop('archived_id', None)
+        article.pop('_type', None)
         article.pop('_links', None)
         article.pop(config.ETAG, None)
 

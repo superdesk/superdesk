@@ -86,6 +86,12 @@ Feature: Kill a content item in the (dusty) archive
     """
     When we get "/legal_archive/123?version=all"
     Then we get list with 3 items
+    When we expire killed items
+    """
+    ["123"]
+    """
+    And we get "/published"
+    Then we get list with 0 items
 
   @auth @notification
   Scenario: Kill a Text Article also kills the Digital Story in the Dusty Archive
@@ -154,6 +160,12 @@ Feature: Kill a content item in the (dusty) archive
     """
     When we get "/legal_archive/#archive.123.take_package#?version=all"
     Then we get list with 3 items
+    When we expire killed items
+    """
+    ["123", "#archive.123.take_package#"]
+    """
+    And we get "/published"
+    Then we get list with 0 items
 
   @auth @notification
   Scenario: Killing Take in Dusty Archive will kill other takes including the Digital Story
@@ -246,6 +258,12 @@ Feature: Kill a content item in the (dusty) archive
     """
     When we get "/legal_archive/#take2#?version=all"
     Then we get list with 3 items
+    When we expire killed items
+    """
+    ["123", "#take1#", "#take2#", "#archive.123.take_package#"]
+    """
+    And we get "/published"
+    Then we get list with 0 items
 
   @auth
   Scenario: Killing an article other than Text isn't allowed

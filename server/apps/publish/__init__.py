@@ -8,14 +8,15 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-
 import logging
 
 import superdesk
+from apps.publish.commands import RemoveExpiredKilledContent
 from apps.publish.content import ArchivePublishResource, ArchivePublishService, \
     KillPublishResource, KillPublishService, CorrectPublishResource, CorrectPublishService
 from apps.publish.published_item import PublishedItemResource, PublishedItemService
 from superdesk import get_backend
+from superdesk.celery_app import celery
 
 logger = logging.getLogger(__name__)
 
@@ -43,3 +44,8 @@ def init_app(app):
     superdesk.privilege(name='kill', label='Kill', description='Kill a published content')
     superdesk.privilege(name='correct', label='Correction', description='Correction to a published content')
     superdesk.privilege(name='publish_queue', label='Publish Queue', description='User can update publish queue')
+
+
+@celery.task()
+def content_expiry():
+    RemoveExpiredKilledContent().run()
