@@ -26,13 +26,24 @@ describe('users', function() {
         beforeEach(function(done) {
             openUrl('/#/profile').then(done);
         });
-
         it('can render user profile', function() {
             expect(bindingValue('user.username')).toBe('admin');
             expect(modelValue('user.first_name')).toBe('first name');
             expect(modelValue('user.last_name')).toBe('last name');
             expect(modelValue('user.email')).toBe('a@a.com');
             expect(modelValue('user.sign_off')).toBe('fl');
+        });
+
+        it('can save and use language preferences', function() {
+            userPrefs.setLang('de');
+            userPrefs.btnSave.click();
+            element(by.css('[ng-hide="currentRoute.topTemplateUrl"]')).getText().then(function(text) {
+                expect(text).toEqual('DE - My Profile');
+            });
+            browser.sleep(500);
+            //go back to original lanuages
+            userPrefs.setLang('en');
+            userPrefs.btnSave.click();
         });
     });
 
