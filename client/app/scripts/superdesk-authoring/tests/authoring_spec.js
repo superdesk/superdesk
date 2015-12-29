@@ -132,19 +132,6 @@ describe('authoring', function() {
         expect($scope.item._autosave).toBeNull();
     }));
 
-    it('can open item stage', inject(function($rootScope, $location, desks, superdesk) {
-        var $scope = startAuthoring({headline: 'test'}, 'edit');
-        $scope.item.task = {desk: 1, stage: 2};
-
-        spyOn(desks, 'setWorkspace');
-        spyOn(superdesk, 'intent');
-
-        $scope.openStage();
-
-        expect(desks.setWorkspace).toHaveBeenCalledWith(1, 2);
-        expect(superdesk.intent).toHaveBeenCalledWith('view', 'content');
-    }));
-
     /**
      * Start authoring ctrl for given item.
      *

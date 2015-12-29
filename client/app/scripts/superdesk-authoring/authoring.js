@@ -972,14 +972,6 @@
                     }
                 }
 
-                /*
-                 * Open list of items in selected stage
-                 */
-                $scope.openStage = function openStage() {
-                    desks.setWorkspace($scope.item.task.desk, $scope.item.task.stage);
-                    superdesk.intent('view', 'content');
-                };
-
                 /**
                  * Start editing current item
                  */

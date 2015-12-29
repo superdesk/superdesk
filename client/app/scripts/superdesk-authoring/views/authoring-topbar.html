@@ -26,7 +26,7 @@
     </div>
 
     <div class="authoring-topbar clearfix pull-left" ng-class="{'has-highlights': item.highlights}">
-        <button class="stage" ng-show="stage" ng-if="item._type !== 'legal_archive'" ng-click="openStage()"><b>{{deskName}}</b> / {{ stage.name }}</button>
+        <span class="stage" ng-show="stage" ng-if="item._type !== 'legal_archive'"><b>{{deskName}}</b> / {{ stage.name }}</span>
         <span class="stage" ng-show="stage" ng-if="item._type === 'legal_archive'"><b>{{deskName}}</b> / {{ stage }}</span>
         <div ng-if="item.more_coming === true" class="state-label state-in_progress" translate>More coming</div>
         <span ng-if="item.highlights" sd-highlights-title data-item="item" data-orientation="'bottom'"></span>
