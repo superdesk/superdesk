@@ -184,4 +184,4 @@ class RemoveExpiredKilledContent(superdesk.Command):
 
 
 superdesk.command('publish:remove_overdue_scheduled', UpdateOverdueScheduledPublishedContent())
-superdesk.command('published:remove_killed_if_expired', UpdateOverdueScheduledPublishedContent())
+superdesk.command('published:remove_killed_if_expired', RemoveExpiredKilledContent())
