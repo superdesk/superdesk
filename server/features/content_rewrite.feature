@@ -642,7 +642,7 @@ Feature: Rewrite content
             "type": "text",
             "headline": "RETAKE",
             "slugline": "RETAKE",
-            "anpa_take_key": "update (reopens)",
+            "anpa_take_key": "update (reopens)=2",
             "state": "draft",
             "original_creator": "#CONTEXT_USER_ID#",
             "takes": {

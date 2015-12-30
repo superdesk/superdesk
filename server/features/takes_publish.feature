@@ -775,7 +775,7 @@ Feature: Take Package Publishing
           "type": "text",
           "headline": "Take-1 headline",
           "slugline": "Take-1 slugline",
-          "anpa_take_key": "Take (reopens)",
+          "anpa_take_key": "Take (reopens)=2",
           "state": "draft",
           "original_creator": "#CONTEXT_USER_ID#"
       }
@@ -879,7 +879,7 @@ Feature: Take Package Publishing
           "type": "text",
           "headline": "Take-1 headline",
           "slugline": "Take-1 slugline",
-          "anpa_take_key": "Take (reopens)",
+          "anpa_take_key": "Take (reopens)=2",
           "state": "draft",
           "original_creator": "#CONTEXT_USER_ID#"
       }
@@ -1391,7 +1391,7 @@ Feature: Take Package Publishing
             "type": "text",
             "headline": "Overseas Sport headline",
             "slugline": "comics",
-            "anpa_take_key": "Take (reopens)",
+            "anpa_take_key": "Take (reopens)=3",
             "state": "draft",
             "original_creator": "#CONTEXT_USER_ID#",
             "takes": {

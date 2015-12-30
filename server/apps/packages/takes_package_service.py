@@ -91,7 +91,7 @@ class TakesPackageService():
         to['event_id'] = target.get('event_id')
         to['anpa_take_key'] = '{}={}'.format(take_key, sequence)
         if target.get(ITEM_STATE) in PUBLISH_STATES:
-            to['anpa_take_key'] = '{} ({})'.format(take_key, RE_OPENS)
+            to['anpa_take_key'] = '{} ({})={}'.format(take_key, RE_OPENS, sequence)
         to[config.VERSION] = 1
         to[ITEM_STATE] = CONTENT_STATE.PROGRESS if to.get('task', {}).get('desk', None) else CONTENT_STATE.DRAFT
 
