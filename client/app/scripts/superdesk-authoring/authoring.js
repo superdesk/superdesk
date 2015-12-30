@@ -1334,6 +1334,11 @@
                             $scope.origItem._locked = $scope.item._locked = false;
                             $scope.origItem.lock_session = $scope.item.lock_session = null;
                             $scope.origItem.lock_user = $scope.item.lock_user = null;
+
+                            if (data.state && data.state !== $scope.item.state) {
+                                $scope.item.state = data.state;
+                                $scope.origItem.state = data.state;
+                            }
                         }
                     }
                 });
