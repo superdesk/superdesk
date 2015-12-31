@@ -1553,6 +1553,7 @@
                     function(archiveItem) {
                         item.task_id = archiveItem.task_id;
                         item.archived = archiveItem._created;
+                        multi.reset();
                         return archiveItem;
                     }, function(response) {
                         var message = 'Failed to fetch the item';
