@@ -434,7 +434,7 @@ def fetch_from_provider(context, provider_name, guid, routing_scheme=None, desk_
             from bson.objectid import ObjectId
             item['task'] = {'desk': ObjectId(desk_id), 'stage': ObjectId(stage_id)}
 
-    failed = context.ingest_items(items, provider, rule_set=provider.get('rule_set'),
+    failed = context.ingest_items(items, provider, provider_service, rule_set=provider.get('rule_set'),
                                   routing_scheme=provider.get('routing_scheme'))
     assert len(failed) == 0, failed
 
