@@ -166,7 +166,6 @@ module.exports = function(config) {
 
             'app/scripts/superdesk-archive/module.js',
             'app/scripts/superdesk-archive/controllers/list.js',
-            'app/scripts/superdesk-archive/controllers/upload.js',
             'app/scripts/superdesk-archive/archive-widget/archive.js',
             'app/scripts/superdesk-archive/related-item-widget/relatedItem.js',
             'app/scripts/superdesk-archive/directives.js',
