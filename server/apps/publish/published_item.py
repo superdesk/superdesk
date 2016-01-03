@@ -11,7 +11,7 @@
 import logging
 import json
 
-from eve.utils import ParsedRequest, config
+from eve.utils import ParsedRequest, config, date_to_str
 from bson.objectid import ObjectId
 from flask import current_app as app
 import superdesk
@@ -19,7 +19,7 @@ from apps.packages import TakesPackageService
 from superdesk.errors import SuperdeskApiError
 from superdesk.resource import Resource
 from superdesk.services import BaseService
-from superdesk.metadata.item import not_analyzed, ITEM_STATE, PUBLISH_STATES, EMBARGO
+from superdesk.metadata.item import not_analyzed, ITEM_STATE, PUBLISH_STATES, EMBARGO, CONTENT_STATE
 from apps.archive.common import handle_existing_data, item_schema, remove_media_files, get_expiry
 from superdesk.metadata.utils import aggregations
 from apps.archive.archive import SOURCE as ARCHIVE
@@ -292,3 +292,23 @@ class PublishedItemService(BaseService):
             return
         get_resource_service('archived').post(published_items)
         self.delete_by_article_id(_id)
+
+    def get_expired_items(self, expiry_datetime):
+        """
+        Get the expired items where content state is killed.
+
+        :param datetime expiry_datetime: expiry datetime
+        :return pymongo.cursor: expired non published items.
+        """
+
+        query = {
+            '$and': [
+                {'expiry': {'$lte': date_to_str(expiry_datetime)}},
+                {ITEM_STATE: CONTENT_STATE.KILLED}
+            ]
+        }
+
+        req = ParsedRequest()
+        req.max_results = config.MAX_EXPIRY_QUERY_LIMIT
+        req.sort = 'expiry,_created'
+        return self.get_from_mongo(req=None, lookup=query)

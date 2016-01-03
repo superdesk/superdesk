@@ -2327,11 +2327,22 @@
                     priority: 100,
                     icon: 'kill',
                     group: 'corrections',
-                    controller: ['data', 'authoringWorkspace', function(data, authoringWorkspace) {
-                        authoringWorkspace.kill(data.item);
+                    controller: ['data', 'authoringWorkspace', 'api', function(data, authoringWorkspace, api) {
+                        if (data.item._type === 'archived') {
+                            var itemToDelete = {'_id': data.item._id, '_etag': data.item._etag};
+                            api.remove(itemToDelete, {}, 'archived').then(function(response) {
+                                data.item.error = response;
+                            });
+                        } else {
+                            authoringWorkspace.kill(data.item);
+                        }
                     }],
-                    filters: [{action: 'list', type: 'archive'}],
-                    additionalCondition:['authoring', 'item', function(authoring, item) {
+                    filters: [{action: 'list', type: 'archive'}, {action: 'list', type: 'archived'}],
+                    additionalCondition:['authoring', 'item', 'privileges', function(authoring, item, privileges) {
+                        if (item._type === 'archived') {
+                            return privileges.privileges.archived;
+                        }
+
                         return authoring.itemActions(item).kill;
                     }],
                     privileges: {kill: 1}

@@ -132,6 +132,10 @@ CELERYBEAT_SCHEDULE = {
         'task': 'apps.archive.content_expiry',
         'schedule': crontab(minute='*/30')
     },
+    'published:gc': {
+        'task': 'apps.publish.content_expiry',
+        'schedule': crontab(hour='0')
+    },
     'publish:transmit': {
         'task': 'superdesk.publish.transmit',
         'schedule': timedelta(seconds=10)

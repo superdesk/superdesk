@@ -1941,3 +1941,15 @@ def expire_content(context):
 
         from apps.archive.commands import RemoveExpiredContent
         RemoveExpiredContent().run()
+
+
+@when('we expire killed items')
+def expire_killed_content(context):
+    with context.app.test_request_context(context.app.config['URL_PREFIX']):
+        ids = json.loads(apply_placeholders(context, context.text))
+        expiry = utcnow() - timedelta(minutes=5)
+        for item_id in ids:
+            get_resource_service('published').update_published_items(item_id, 'expiry', expiry)
+
+        from apps.publish.commands import RemoveExpiredKilledContent
+        RemoveExpiredKilledContent().run()

@@ -152,7 +152,7 @@ Feature: Content Expiry Not Published Items
       "_items": [
         {"_id": "123", "type": "text",
          "linked_in_packages": [{"package": "#TAKE_PACKAGE#", "package_type": "takes"}],
-         "_current_version": 2, "sequence": 1},
+         "_current_version": 1, "sequence": 1},
         {"_id": "#TAKE_PACKAGE#", "package_type": "takes", "type": "composite", "sequence": 2},
         {"_id": "#TAKE2#", "type": "text",
          "linked_in_packages": [{"package": "#TAKE_PACKAGE#", "package_type": "takes"}],
@@ -186,7 +186,7 @@ Feature: Content Expiry Not Published Items
       "_items": [
         {"_id": "123", "type": "text",
          "linked_in_packages": [{"package": "#TAKE_PACKAGE#", "package_type": "takes"}],
-         "_current_version": 2, "sequence": 1},
+         "_current_version": 1, "sequence": 1},
         {"_id": "#TAKE_PACKAGE#", "package_type": "takes", "type": "composite", "sequence": 2},
         {"_id": "#TAKE2#", "type": "text",
          "linked_in_packages": [{"package": "#TAKE_PACKAGE#", "package_type": "takes"}],

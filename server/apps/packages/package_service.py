@@ -443,3 +443,12 @@ class PackageService():
         :return list: list of package ids
         """
         return [package_link.get(PACKAGE) for package_link in item.get(LINKED_IN_PACKAGES, []) or []]
+
+    def get_linked_in_packages(self, item):
+        """
+        Returns all linked in packages for an item (including takes package)
+        :param dict item:
+        :return list: list of package ids
+        """
+
+        return [package for package in item.get(LINKED_IN_PACKAGES, [])]

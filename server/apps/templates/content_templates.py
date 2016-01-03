@@ -26,7 +26,7 @@ from flask import render_template_string
 
 
 CONTENT_TEMPLATE_PRIVILEGE = 'content_templates'
-TEMPLATE_FIELDS = {'template_name', 'template_type', 'schedule',
+TEMPLATE_FIELDS = {'template_name', 'template_type', 'schedule', 'type', 'state',
                    'last_run', 'next_run', 'template_desk', 'template_stage',
                    config.ID_FIELD, config.LAST_UPDATED, config.DATE_CREATED,
                    config.ETAG, 'task'}

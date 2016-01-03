@@ -53,12 +53,12 @@ class KillPublishService(BasePublishService):
         Kill will broadcast kill email notice to all subscriber in the system and then kill the item.
         If item is a take then all the takes are killed as well.
         """
-        self._broadcast_kill_email(original)
+        self.broadcast_kill_email(original)
         super().update(id, updates, original)
         self._publish_kill_for_takes(updates, original)
         get_resource_service('archive_broadcast').kill_broadcast(updates, original)
 
-    def _broadcast_kill_email(self, original):
+    def broadcast_kill_email(self, original):
         """
         Sends the broadcast email to all subscribers (including in-active subscribers)
         :param original: Document to kill
@@ -83,12 +83,17 @@ class KillPublishService(BasePublishService):
                 if ref[GUID_FIELD] != original[config.ID_FIELD]:
                     original_data = super().find_one(req=None, _id=ref[GUID_FIELD])
                     updates_data = copy(updates)
+                    '''
+                    We need to update the archive item and not worry about queued as we could have a takes only going
+                    to digital client.
+                    Popping out the config.VERSION as Take referenced by original and Take referenced by original_data
+                    might have different and if not popped out then it might jump the versions.
+                    '''
+                    updates_data.pop(config.VERSION, None)
+                    self._set_updates(original_data, updates_data, last_updated)
                     queued = self.publish(doc=original_data,
                                           updates=updates_data,
                                           target_media_type=SUBSCRIBER_TYPES.WIRE)
-                    # we need to update the archive item and not worry about queued as we could have
-                    # a takes only going to digital client.
-                    self._set_updates(original_data, updates_data, last_updated)
                     self._update_archive(original=original_data, updates=updates_data,
                                          should_insert_into_versions=True)
                     self.update_published_collection(published_item_id=original_data['_id'])
