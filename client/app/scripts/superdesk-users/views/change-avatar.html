@@ -10,10 +10,9 @@
                 <i class="avatar-icon-{{ method.id }}"></i> {{ method.label }}
             </li>
         </ul>
-        <div class="remove-avatar">
-            <i class="avatar-icon-remove"></i><span class="ng-scope">No image</span>
-            <span class="sd-checkbox ng-valid" sd-check="" ng-model="" ng-disabled=""></span>                        
-            <label>shows your initials instead</label>
+        <div class="remove-avatar" ng-click="removeImage()" ng-show="locals.data.picture_url">
+            <i class="avatar-icon-remove"></i><span class="ng-scope" translate>No image</span>
+            <label translate>shows your initials instead</label>
         </div>
     </aside>
 
