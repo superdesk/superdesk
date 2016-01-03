@@ -399,7 +399,6 @@
                     }
 
                     var picture_url = response.data.renditions.viewImage.href;
-                    $scope.locals.data.picture_url = picture_url;
                     $scope.locals.data.avatar = response.data._id;
 
                     return $scope.resolve(picture_url);
