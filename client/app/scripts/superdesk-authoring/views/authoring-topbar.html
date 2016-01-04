@@ -70,7 +70,7 @@
 			 translate>Export</button>
 
         <button class="navbtn navbtn-hover strict"
-                ng-if="!item._locked"
+                ng-if="!item._locked && _editable"
                 title="{{ :: 'Minimize' | translate }}"
                 ng-click="minimize()">
             <i class="big-icon-minimize"></i>
