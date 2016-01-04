@@ -18,41 +18,46 @@
         'superdesk.ingest.send'
     ]);
 
-    app.value('feedingServices', {
-        file: {
+    app.value('feedingServices', [
+        {
+            value: 'file',
             label: 'File Feed',
             templateUrl: 'scripts/superdesk-ingest/views/settings/fileConfig.html'
         },
-        reuters_http: {
+        {
+            value: 'reuters_http',
             label: 'Reuters Feed API',
             templateUrl: 'scripts/superdesk-ingest/views/settings/reutersConfig.html'
         },
-        rss: {
+        {
+            value: 'rss',
             label: 'RSS',
             templateUrl: 'scripts/superdesk-ingest/views/settings/rssConfig.html'
         },
-        ftp: {
+        {
+            value: 'ftp',
             label: 'FTP',
             templateUrl: 'scripts/superdesk-ingest/views/settings/ftp-config.html'
         },
-        email: {
+        {
+            value: 'email',
             label: 'Email',
             templateUrl: 'scripts/superdesk-ingest/views/settings/emailConfig.html'
         }
-    });
+    ]);
 
-    app.value('feedParsers', {
-        email_rfc822: 'EMail RFC822 Parser',
-        nitf: 'NITF Parser',
-        newsml12: 'News ML 1.2 Parser',
-        afpnewsml12: 'AFP News ML 1.2 Parser',
-        newsml2: 'News ML-G2 Parser',
-        wenn: 'WENN Parser',
-        anpa1312: 'ANPA Parser',
-        iptc7901: 'IPTC 7901 Parser',
-        dpa_iptc7901: 'DPA IPTC 7901 Parser',
-        zczc: 'ZCZC Parser'
-    });
+    app.value('feedParsers', [
+        {value: 'email_rfc822', name: 'EMail RFC822 Parser'},
+        {value: 'nitf', name: 'NITF Parser'},
+        {value: 'newsml12', name: 'News ML 1.2 Parser'},
+        {value: 'afpnewsml12', name: 'AFP News ML 1.2 Parser'},
+        {value: 'newsml2', name: 'News ML-G2 Parser'},
+        {value: 'wenn', name: 'WENN Parser'},
+        {value: 'anpa1312', name: 'ANPA Parser'},
+        {value: 'iptc7901', name: 'IPTC 7901 Parser'},
+        {value: 'dpa_iptc7901', name: 'DPA IPTC 7901 Parser'},
+        {value: 'zczc', name: 'ZCZC Parser'}
+    ]);
 
     var PROVIDER_DASHBOARD_DEFAULTS = {
         show_log_messages: true,
@@ -362,8 +367,8 @@
                 $scope.provider = null;
                 $scope.origProvider = null;
 
-                $scope.feedingServices = feedingServices;
-                $scope.feedParsers = feedParsers;
+                $scope.feedingServices = $filter('sortByName')(feedingServices, 'label');
+                $scope.feedParsers = $filter('sortByName')(feedParsers);
                 $scope.fileTypes = ['text', 'picture', 'composite', 'video', 'audio'];
                 $scope.minutes = [0, 1, 2, 3, 4, 5, 8, 10, 15, 30, 45];
                 $scope.seconds = [0, 5, 10, 15, 30, 45];
@@ -647,6 +652,18 @@
                         $scope.provider.config = {'url': 'http://rmb.reuters.com/rmd/rest/xml',
                             'auth_url': 'https://commerce.reuters.com/rmd/rest/xml/login'};
                     }
+                };
+
+                /**
+                 * Returns the templateURL for the selected feeding service.
+                 * @returns {string}
+                 */
+                $scope.getConfigTemplateURL = function() {
+                    var feedingService = _.find($scope.feedingServices, function (fs) {
+                        return fs.value === $scope.provider.feeding_service;
+                    });
+
+                    return feedingService ? feedingService.templateUrl : '';
                 };
             }
         };
