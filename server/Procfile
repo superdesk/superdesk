@@ -1,4 +1,7 @@
 rest: gunicorn -c gunicorn_config.py wsgi
 wamp: python3 -u ws.py
-work: celery -A worker worker
+work: celery -A worker -Q default  worker
+expiry: celery -A worker -Q expiry  worker
+legal: celery -A worker -Q legal  worker
+publish: celery -A worker -Q publish  worker
 beat: celery -A worker beat --pid=

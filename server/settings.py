@@ -15,6 +15,7 @@ import json
 
 from datetime import timedelta
 from celery.schedules import crontab
+from kombu import Queue, Exchange
 
 try:
     from urllib.parse import urlparse
@@ -112,6 +113,53 @@ CELERYD_LOG_FORMAT = '%(message)s level=%(levelname)s process=%(processName)s'
 CELERYD_TASK_LOG_FORMAT = ' '.join([CELERYD_LOG_FORMAT, 'task=%(task_name)s task_id=%(task_id)s'])
 
 CELERYBEAT_SCHEDULE_FILENAME = env('CELERYBEAT_SCHEDULE_FILENAME', './celerybeatschedule.db')
+CELERY_DEFAULT_QUEUE = 'default'
+CELERY_DEFAULT_EXCHANGE = 'default'
+CELERY_DEFAULT_ROUTING_KEY = 'default'
+
+CELERY_QUEUES = (
+    Queue('default', Exchange(CELERY_DEFAULT_EXCHANGE), routing_key=CELERY_DEFAULT_ROUTING_KEY),
+    Queue('expiry', Exchange('expiry', type='topic'), routing_key='expiry.#'),
+    Queue('legal', Exchange('legal', type='topic'), routing_key='legal.#'),
+    Queue('publish', Exchange('publish', type='topic'), routing_key='publish.#'),
+)
+
+CELERY_ROUTES = {
+    'apps.archive.content_expiry': {
+        'queue': 'expiry',
+        'routing_key': 'expiry.content'
+    },
+    'superdesk.io.gc_ingest': {
+        'queue': 'expiry',
+        'routing_key': 'expiry.ingest'
+    },
+    'apps.auth.session_purge': {
+        'queue': 'expiry',
+        'routing_key': 'expiry.session'
+    },
+    'apps.publish.content_expiry': {
+        'queue': 'expiry',
+        'routing_key': 'expiry.publish'
+    },
+    'apps.legal_archive.import_legal_publish_queue': {
+        'queue': 'legal',
+        'routing_key': 'legal.publish_queue'
+    },
+    'apps.legal_archive.commands.import_into_legal_archive': {
+        'queue': 'legal',
+        'routing_key': 'legal.archive'
+    },
+    'superdesk.publish.transmit': {
+        'queue': 'publish',
+        'routing_key': 'publish.transmit'
+    },
+    'apps.archive.remove_scheduled': {
+        'queue': 'publish',
+        'routing_key': 'publish.remove_scheduled'
+    }
+}
+
+
 CELERYBEAT_SCHEDULE = {
     'ingest:update': {
         'task': 'superdesk.io.update_ingest',
