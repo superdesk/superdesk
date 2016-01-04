@@ -1864,7 +1864,6 @@
                         },
 
                         select: function(item) {
-                            console.time('select');
                             $timeout.cancel(this.updateTimeout);
                             this.updateTimeout = $timeout(function() {
                                 scope.$apply(function() {
@@ -1873,8 +1872,6 @@
                             }, 100, false);
                             this.setState({
                                 selected: item._id
-                            }, function() {
-                                console.timeEnd('select');
                             });
                         },
 
@@ -1982,8 +1979,6 @@
                                 return;
                             }
 
-                            console.time('render');
-
                             var itemsList = [];
                             var currentItems = {};
                             var itemsById = angular.extend({}, listComponent.state.itemsById);
@@ -2004,16 +1999,11 @@
                                 itemsById: itemsById,
                                 view: scope.view
                             });
-
-                            console.timeEnd('render');
                         });
 
                         scope.$watch('view', function(newValue, oldValue) {
                             if (newValue !== oldValue) {
-                                console.time('view');
-                                listComponent.setState({view: newValue}, function() {
-                                    console.timeEnd('view');
-                                });
+                                listComponent.setState({view: newValue});
                             }
                         });
 
