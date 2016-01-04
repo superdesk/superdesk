@@ -59,3 +59,48 @@ describe('MetadataWidgetCtrl controller', function () {
         );
     });
 });
+
+describe('metadata drop down', function() {
+
+    beforeEach(module('superdesk.templates-cache'));
+    beforeEach(module('superdesk.translate'));
+    beforeEach(module('superdesk.authoring.metadata'));
+
+    it('with sort field', inject(function($rootScope, $compile, $timeout) {
+        var list = [{'name': 'x'}, {'name': 'a'}, {'name': 't'}];
+        var scope = $rootScope.$new();
+        var html = '<div sd-meta-dropdown data-field="genre" data-list="list" data-sort="name"></div>';
+
+        scope.list = list;
+        expect(list[0].name).toBe('x');
+        expect(list[1].name).toBe('a');
+        expect(list[2].name).toBe('t');
+
+        $compile(html)(scope).find('div[sd-meta-dropdown]');
+        scope.$digest();
+        $timeout.flush();
+
+        expect(scope.list[0].name).toBe('a');
+        expect(scope.list[1].name).toBe('t');
+        expect(scope.list[2].name).toBe('x');
+    }));
+
+    it('without sort field', inject(function($rootScope, $compile, $timeout) {
+        var list = [{'name': 'x'}, {'name': 'a'}, {'name': 't'}];
+        var scope = $rootScope.$new();
+        var html = '<div sd-meta-dropdown data-field="genre" data-list="list"></div>';
+
+        scope.list = list;
+        expect(list[0].name).toBe('x');
+        expect(list[1].name).toBe('a');
+        expect(list[2].name).toBe('t');
+
+        $compile(html)(scope).find('div[sd-meta-dropdown]');
+        scope.$digest();
+        $timeout.flush();
+
+        expect(scope.list[0].name).toBe('x');
+        expect(scope.list[1].name).toBe('a');
+        expect(scope.list[2].name).toBe('t');
+    }));
+});

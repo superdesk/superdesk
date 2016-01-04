@@ -170,7 +170,8 @@ function MetadataDropdownDirective($timeout) {
             field: '@',
             icon: '@',
             label: '@',
-            change: '&'
+            change: '&',
+            sort: '@'
         },
         templateUrl: 'scripts/superdesk-authoring/metadata/views/metadata-dropdown.html',
         link: function(scope) {
@@ -188,9 +189,16 @@ function MetadataDropdownDirective($timeout) {
             };
 
             $timeout(function() {
-                if (scope.list && scope.field === 'place') {
-                    scope.places = _.groupBy(scope.list, 'group');
+                if (scope.list) {
+                    if (scope.sort) {
+                        scope.list = _.sortBy(scope.list, scope.sort);
+                    }
+
+                    if (scope.field === 'place') {
+                        scope.places = _.groupBy(scope.list, 'group');
+                    }
                 }
+
             });
         }
     };
