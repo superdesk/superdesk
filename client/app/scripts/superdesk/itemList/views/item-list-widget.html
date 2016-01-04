@@ -68,7 +68,12 @@
                     <div ng-if="options.mode === 'basic'" class="basic item-block urgency-{{ item.urgency }}" 
                         ng-class="{pinned: options.pinEnabled && isPinned(item), 'pinned-instance': options.pinEnabled && item.pinnedInstance}" ng-click="view(item)">
                         <div class="content">
-                            <p><i class="filetype-icon-{{item.type}}"></i><span class="keyword" ng-if="item.slugline">{{ item.slugline }}</span> {{item.headline || item.type}}</p>
+                            <p>
+                                <i class="filetype-icon-{{item.type}}"></i>
+                                <span class="keyword" ng-if="item.slugline">{{ item.slugline }}</span> <span>{{item.headline || item.type}}</span>
+                                <span ng-if="item.flags.marked_for_legal" class="state-label legal" translate>Legal</span>
+                            </p>
+
                         </div>
                     </div>
                     <div ng-if="options.mode === 'detailed'" class="item-block urgency-{{ item.urgency }}" 
@@ -82,7 +87,8 @@
                                 <li><time sd-datetime data-date="item.versioncreated"></time></li>
                                 <li ng-show="item.byline"><em translate>by</em>{{ item.byline }}</li>
                                 <li ng-show="item.provider && options.sizex > 1"><em translate>source</em>{{ item.provider }}</li>
-                                <li><div class="state-label state-{{item.state}}" ng-class="{state_embargo: item.embargo}">{{item.state}}</div></li>
+                                <li><div class="state-label state-{{item.state}}" ng-class="{state_embargo: item.embargo}">{{item.state}}</div>
+                                <div ng-if="item.flags.marked_for_legal" class="state-label legal" translate>Legal</div></li>
                             </ul>
 
                             <div class="main-line clearfix">
