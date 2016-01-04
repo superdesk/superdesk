@@ -160,8 +160,8 @@ function MetadataCtrl(
     resolvePublishScheduleAndEmbargoTS();
 }
 
-MetadataDropdownDirective.$inject = ['$timeout'];
-function MetadataDropdownDirective($timeout) {
+MetadataDropdownDirective.$inject = ['$timeout', '$filter'];
+function MetadataDropdownDirective($timeout, $filter) {
     return {
         scope: {
             list: '=',
@@ -188,8 +188,12 @@ function MetadataDropdownDirective($timeout) {
             };
 
             $timeout(function() {
-                if (scope.list && scope.field === 'place') {
-                    scope.places = _.groupBy(scope.list, 'group');
+                if (scope.list) {
+                    if (scope.field === 'place') {
+                        scope.places = _.groupBy(scope.list, 'group');
+                    } else if (scope.field === 'genre') {
+                        scope.list = $filter('sortByName')(scope.list);
+                    }
                 }
             });
         }

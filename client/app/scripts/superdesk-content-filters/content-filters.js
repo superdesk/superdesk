@@ -596,8 +596,8 @@
      *   Controller for the Filter Search tab, found on the Content Filters
      *   settings page.
      */
-    FilterSearchController.$inject = ['$scope', 'contentFilters', 'notify'];
-    function FilterSearchController($scope, contentFilters, notify) {
+    FilterSearchController.$inject = ['$scope', 'contentFilters', 'notify', '$filter'];
+    function FilterSearchController($scope, contentFilters, notify, $filter) {
         $scope.filterCondition = null;
         $scope.operatorLookup = {};
         $scope.valueLookup = {};
@@ -642,7 +642,7 @@
 
         function populateData() {
             return contentFilters.getFilterConditionParameters().then(function(params) {
-                $scope.filterConditionParameters = params;
+                $scope.filterConditionParameters = $filter('sortByName')(params, 'field');
                 _.each(params, function(param) {
                     $scope.operatorLookup[param.field] = param.operators;
                     $scope.valueLookup[param.field] = param.values;

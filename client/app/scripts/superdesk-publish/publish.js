@@ -373,11 +373,11 @@
                 $scope.subTypes = null;
 
                 if (angular.isDefined(metadata.values.geographical_restrictions)) {
-                    $scope.geoRestrictions = metadata.values.geographical_restrictions;
+                    $scope.geoRestrictions = $filter('sortByName')(metadata.values.geographical_restrictions);
                     $scope.subTypes = metadata.values.subscriber_types;
                 } else {
                     metadata.fetchMetadataValues().then(function() {
-                        $scope.geoRestrictions = metadata.values.geographical_restrictions;
+                        $scope.geoRestrictions = $filter('sortByName')(metadata.values.geographical_restrictions);
                         $scope.subTypes = metadata.values.subscriber_types;
                     });
                 }

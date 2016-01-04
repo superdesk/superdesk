@@ -56,12 +56,12 @@
 
                         <div class="field">
                             <label for="provider-feeding-service" translate>Feeding Service</label>
-                            <select id="provider-feeding-service" ng-change="initProviderConfig()" required ng-model="provider.feeding_service" ng-options="key as val.label for (key, val) in feedingServices"></select>
+                            <select id="provider-feeding-service" ng-change="initProviderConfig()" required ng-model="provider.feeding_service" ng-options="fs.value as fs.label for fs in feedingServices"></select>
                         </div>
 
                         <div class="field">
                             <label for="provider-feed-parser" translate>Feed Parser</label>
-                            <select id="provider-feed-parser" ng-model="provider.feed_parser" ng-options="key as val for (key, val) in feedParsers">
+                            <select id="provider-feed-parser" ng-model="provider.feed_parser" ng-options="fp.value as fp.name for fp in feedParsers">
                                 <option value=""></option>
                             </select>
                         </div>
@@ -102,7 +102,7 @@
                         <div sd-content-expiry data-item="provider" data-preview="false" data-expiryfield="content_expiry" data-header="Content Expiry"></div>
 
                         <div class="field credentials">
-                            <div ng-include="feedingServices[provider.feeding_service].templateUrl"></div>
+                            <div ng-include="getConfigTemplateURL()"></div>
                         </div>
 
                         <div class="field">
