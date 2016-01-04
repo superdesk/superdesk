@@ -976,7 +976,11 @@
                  * Start editing current item
                  */
                 $scope.edit = function edit() {
-                    authoringWorkspace.edit($scope.origItem);
+                    if (archiveService.isPublished($scope.origItem)) {
+                        authoringWorkspace.view($scope.origItem);
+                    } else {
+                        authoringWorkspace.edit($scope.origItem);
+                    }
                 };
 
                 /**
