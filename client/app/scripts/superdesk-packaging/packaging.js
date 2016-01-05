@@ -739,12 +739,11 @@
                 filters: [
                     {action: 'list', type: 'archive'}
                 ],
-                condition: function(item) {
-                    return item.task && item.task.desk;
-                },
-                additionalCondition:['authoringWorkspace', 'item', function(authoringWorkspace, item) {
+                additionalCondition:['authoringWorkspace', 'item', 'authoring',
+                function(authoringWorkspace, item, authoring) {
                     var pkg = authoringWorkspace.getItem();
-                    return pkg && pkg.type === 'composite' && pkg._id !== item._id;
+                    var actions = authoring.itemActions(item);
+                    return pkg && pkg.type === 'composite' && pkg._id !== item._id && actions.add_to_current;
                 }],
                 group: 'packaging'
             })
@@ -768,12 +767,12 @@
                 filters: [
                     {action: 'list', type: 'archive'}
                 ],
-                condition: function(item) {
-                    return item.task && item.task.desk;
-                },
-                additionalCondition:['authoringWorkspace', 'item', function(authoringWorkspace, item) {
+                additionalCondition:['authoringWorkspace', 'item', 'authoring',
+                function(authoringWorkspace, item, authoring) {
                     var openItem = authoringWorkspace.getItem();
-                    return openItem && openItem.type !== 'composite' && openItem._id !== item._id;
+                    var actions = authoring.itemActions(item);
+                    return openItem && openItem.type !== 'composite' && openItem._id !== item._id &&
+                        actions.add_to_current;
                 }],
                 group: 'packaging'
             });
