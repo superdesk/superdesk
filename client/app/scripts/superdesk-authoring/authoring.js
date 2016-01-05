@@ -53,7 +53,8 @@
         package_item: false,
         multi_edit: false,
         send: false,
-        create_broadcast: false
+        create_broadcast: false,
+        add_to_current: false
     });
 
     /**
@@ -578,6 +579,8 @@
                 action.duplicate = user_privileges.duplicate &&
                     !_.contains(['spiked', 'killed'], current_item.state) &&
                     (angular.isUndefined(current_item.package_type) || current_item.package_type !== 'takes');
+
+                action.add_to_current = !_.contains(['spiked', 'scheduled', 'killed'], current_item.state);
 
                 var desk = _.find(self.userDesks, {'_id': current_item.task.desk});
                 if (!desk) {

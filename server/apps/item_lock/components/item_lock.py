@@ -86,7 +86,7 @@ class ItemLock(BaseComponent):
             # delete the item if nothing is saved so far
             # version 0 created on lock item
             if item.get(config.VERSION, 0) == 0 and item[ITEM_STATE] == CONTENT_STATE.DRAFT:
-                superdesk.get_resource_service('archive').delete(lookup={'_id': item['_id']})
+                superdesk.get_resource_service('archive').delete_action(lookup={'_id': item['_id']})
                 push_content_notification([item])
             else:
                 updates = {LOCK_USER: None, LOCK_SESSION: None, 'lock_time': None, 'force_unlock': True}
