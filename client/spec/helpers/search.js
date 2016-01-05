@@ -56,7 +56,7 @@ function GlobalSearch() {
      * @return {promise} list of elements
      */
     this.getItems = function() {
-        return element.all(by.repeater('items._items'));
+        return element.all(by.css('.media-box'));
     };
 
     /**
@@ -82,7 +82,7 @@ function GlobalSearch() {
      * @return {string}
      */
     this.getTextItem = function(index) {
-        return this.getItem(index).element(by.id('title')).getText();
+        return this.getItem(index).element(by.className('item-heading')).getText();
     };
 
     /**

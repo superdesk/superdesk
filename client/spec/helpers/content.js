@@ -33,7 +33,7 @@ function Content() {
     };
 
     this.getItems = function() {
-        return element.all(by.css('.media-box'));
+        return element.all(by.className('media-box'));
     };
 
     this.getItem = function(item) {
@@ -61,10 +61,10 @@ function Content() {
         return this.actionOnItem('Edit', item);
     };
 
-    function waitFor(elem) {
+    function waitFor(elem, time) {
         return browser.wait(function() {
             return elem.isDisplayed();
-        }, 300);
+        }, time || 800);
     }
 
     this.openItemMenu = function(item) {
@@ -120,8 +120,14 @@ function Content() {
 
     this.selectItem = function(item) {
         var crtItem = this.getItem(item);
-        browser.actions().mouseMove(crtItem.element(by.className('filetype-icon-text'))).perform();
-        return crtItem.element(by.css('[ng-change="toggleSelected(item)"]')).click();
+        var typeIcon = crtItem.element(by.className('type-icon'));
+        expect(typeIcon.isDisplayed()).toBe(true);
+        browser.actions().mouseMove(typeIcon).perform();
+        var checkbox = element(by.className('selectbox'));
+        browser.wait(checkbox.isDisplayed, 10000);
+        browser.pause();
+        expect(checkbox.isDisplayed()).toBe(true);
+        return checkbox.click();
     };
 
     this.spikeItems = function() {

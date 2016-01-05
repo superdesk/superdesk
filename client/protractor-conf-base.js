@@ -13,8 +13,8 @@ function getChromeOptions() {
 }
 
 var config = {
-    allScriptsTimeout: 20000,
-    baseUrl: 'http://localhost:9090',
+    allScriptsTimeout: 34000,
+    baseUrl: 'http://localhost:9000',
     params: {
         baseBackendUrl: 'http://localhost:5000/api/',
         username: 'admin',
