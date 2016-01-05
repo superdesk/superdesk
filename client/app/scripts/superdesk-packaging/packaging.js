@@ -742,7 +742,11 @@
                 condition: function(item) {
                     return item.task && item.task.desk;
                 },
-                additionalCondition:['authoringWorkspace', 'item', function(authoringWorkspace, item) {
+                additionalCondition:['archiveService', 'authoringWorkspace', 'item', function(archiveService, authoringWorkspace, item) {
+                    if (archiveService.isPublished(item) && item.archive_item && item.archive_item.state === 'killed') {
+                        return false;
+                    }
+
                     var pkg = authoringWorkspace.getItem();
                     return pkg && pkg.type === 'composite' && pkg._id !== item._id;
                 }],
