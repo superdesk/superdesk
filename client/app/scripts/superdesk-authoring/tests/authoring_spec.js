@@ -608,7 +608,7 @@ describe('authoring actions', function() {
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
             allowedActions(itemActions, ['new_take', 'save', 'edit', 'duplicate', 'spike',
-                    'mark_item', 'package_item', 'multi_edit', 'publish']);
+                    'mark_item', 'package_item', 'multi_edit', 'publish', 'add_to_current']);
         }));
 
     it('cannot perform publish if the item is marked for not publication',
@@ -637,7 +637,7 @@ describe('authoring actions', function() {
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
             allowedActions(itemActions, ['new_take', 'save', 'edit', 'duplicate', 'spike',
-                    'mark_item', 'package_item', 'multi_edit']);
+                    'mark_item', 'package_item', 'multi_edit', 'add_to_current']);
         }));
 
     it('cannot publish if user does not have publish privileges on the desk',
@@ -666,7 +666,7 @@ describe('authoring actions', function() {
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
             allowedActions(itemActions, ['new_take', 'save', 'edit', 'duplicate', 'spike',
-                'mark_item', 'package_item', 'multi_edit']);
+                'mark_item', 'package_item', 'multi_edit', 'add_to_current']);
         }));
 
     it('can only view the item if the user does not have desk membership',
@@ -744,7 +744,7 @@ describe('authoring actions', function() {
             privileges.setUserPrivileges(userPrivileges);
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
-            allowedActions(itemActions, ['view', 'package_item', 'multi_edit']);
+            allowedActions(itemActions, ['view', 'package_item', 'multi_edit', 'add_to_current']);
         }));
 
     it('can only view item if the item is spiked',
@@ -801,7 +801,7 @@ describe('authoring actions', function() {
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
             allowedActions(itemActions, ['save', 'edit', 'duplicate', 'spike',
-                'mark_item', 'package_item', 'multi_edit', 'publish']);
+                'mark_item', 'package_item', 'multi_edit', 'publish', 'add_to_current']);
 
             item = {
                 '_id': 'test',
@@ -818,7 +818,7 @@ describe('authoring actions', function() {
 
             itemActions = authoring.itemActions(item);
             allowedActions(itemActions, ['save', 'edit', 'duplicate',
-                'mark_item', 'package_item', 'multi_edit', 'publish']);
+                'mark_item', 'package_item', 'multi_edit', 'publish', 'add_to_current']);
         }));
 
     it('Can peform new take',
@@ -850,7 +850,7 @@ describe('authoring actions', function() {
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
             allowedActions(itemActions, ['new_take', 'save', 'edit', 'duplicate', 'spike',
-                'mark_item', 'package_item', 'multi_edit', 'publish']);
+                'mark_item', 'package_item', 'multi_edit', 'publish', 'add_to_current']);
 
             item = {
                 '_id': 'test',
@@ -875,7 +875,7 @@ describe('authoring actions', function() {
             };
 
             itemActions = authoring.itemActions(item);
-            allowedActions(itemActions, ['new_take', 'duplicate', 'view',
+            allowedActions(itemActions, ['new_take', 'duplicate', 'view', 'add_to_current',
                 'mark_item', 'package_item', 'multi_edit', 'correct', 'kill', 're_write']);
         }));
 
@@ -920,7 +920,7 @@ describe('authoring actions', function() {
             privileges.setUserPrivileges(userPrivileges);
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
-            allowedActions(itemActions, ['new_take', 'duplicate', 'view',
+            allowedActions(itemActions, ['new_take', 'duplicate', 'view', 'add_to_current',
                 'mark_item', 'package_item', 'multi_edit', 'correct', 'kill', 're_write', 'create_broadcast']);
         }));
 
@@ -964,7 +964,7 @@ describe('authoring actions', function() {
             privileges.setUserPrivileges(userPrivileges);
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
-            allowedActions(itemActions, ['new_take', 'duplicate', 'view',
+            allowedActions(itemActions, ['new_take', 'duplicate', 'view', 'add_to_current',
                 'mark_item', 'package_item', 'multi_edit', 're_write']);
         }));
 
@@ -1095,7 +1095,7 @@ describe('authoring actions', function() {
             privileges.setUserPrivileges(userPrivileges);
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
-            allowedActions(itemActions, ['correct', 'kill', 'new_take', 're_write',
+            allowedActions(itemActions, ['correct', 'kill', 'new_take', 're_write', 'add_to_current',
                 'mark_item', 'duplicate', 'view', 'package_item', 'multi_edit']);
         }));
 
@@ -1130,7 +1130,7 @@ describe('authoring actions', function() {
             privileges.setUserPrivileges(userPrivileges);
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
-            allowedActions(itemActions, ['new_take', 'save', 'edit', 'duplicate', 'spike',
+            allowedActions(itemActions, ['new_take', 'save', 'edit', 'duplicate', 'spike', 'add_to_current',
                     'mark_item', 'package_item', 'multi_edit', 'publish']);
         }));
 
@@ -1165,7 +1165,7 @@ describe('authoring actions', function() {
             privileges.setUserPrivileges(userPrivileges);
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
-            allowedActions(itemActions, ['new_take', 'save', 'edit', 'duplicate', 'spike',
+            allowedActions(itemActions, ['new_take', 'save', 'edit', 'duplicate', 'spike', 'add_to_current',
                     'mark_item', 'package_item', 'multi_edit', 'publish']);
         }));
 
@@ -1200,7 +1200,7 @@ describe('authoring actions', function() {
             privileges.setUserPrivileges(userPrivileges);
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
-            allowedActions(itemActions, ['new_take', 'save', 'edit', 'duplicate', 'spike',
+            allowedActions(itemActions, ['new_take', 'save', 'edit', 'duplicate', 'spike', 'add_to_current',
                     'mark_item', 'package_item', 'multi_edit', 'publish', 'send']);
         }));
 
@@ -1236,7 +1236,7 @@ describe('authoring actions', function() {
             privileges.setUserPrivileges(userPrivileges);
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
-            allowedActions(itemActions, ['save', 'edit', 'duplicate', 'spike',
+            allowedActions(itemActions, ['save', 'edit', 'duplicate', 'spike', 'add_to_current',
                     'mark_item', 'multi_edit', 'publish', 'send']);
         }));
 
@@ -1272,7 +1272,7 @@ describe('authoring actions', function() {
             privileges.setUserPrivileges(userPrivileges);
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
-            allowedActions(itemActions, ['save', 'edit', 'duplicate', 'spike',
+            allowedActions(itemActions, ['save', 'edit', 'duplicate', 'spike', 'add_to_current',
                     'mark_item', 'multi_edit', 'publish', 'send']);
         }));
 
@@ -1320,7 +1320,7 @@ describe('authoring actions', function() {
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
             allowedActions(itemActions, ['duplicate', 'new_take', 're_write', 'mark_item', 'multi_edit',
-                    'correct', 'kill', 'package_item', 'view', 'create_broadcast']);
+                    'correct', 'kill', 'package_item', 'view', 'create_broadcast', 'add_to_current']);
         }));
 
     it('Create broadcast icon is available for text item with genre Article.',
@@ -1367,7 +1367,7 @@ describe('authoring actions', function() {
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
             allowedActions(itemActions, ['duplicate', 'new_take', 're_write', 'mark_item', 'multi_edit',
-                    'correct', 'kill', 'package_item', 'view', 'create_broadcast']);
+                    'correct', 'kill', 'package_item', 'view', 'create_broadcast', 'add_to_current']);
         }));
 
     it('Create broadcast icon is not available for broadcast item',
@@ -1420,7 +1420,7 @@ describe('authoring actions', function() {
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
             allowedActions(itemActions, ['duplicate', 'mark_item', 'multi_edit',
-                    'correct', 'kill', 'package_item', 'view']);
+                    'correct', 'kill', 'package_item', 'view', 'add_to_current']);
         }));
 
     it('rewrite is not allowed if re-written item exists.',
@@ -1473,7 +1473,7 @@ describe('authoring actions', function() {
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
             allowedActions(itemActions, ['duplicate', 'mark_item', 'multi_edit', 'create_broadcast',
-                    'correct', 'kill', 'package_item', 'view']);
+                    'correct', 'kill', 'package_item', 'view', 'add_to_current']);
         }));
 });
 
