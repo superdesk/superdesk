@@ -62,6 +62,7 @@
                 slugline: '',
                 description: '',
                 type: 'composite',
+                version: 0,
                 groups: [
                     {
                         role: 'grpRole:NEP',
