@@ -408,6 +408,10 @@ def fetch_from_provider(context, provider_name, guid, routing_scheme=None, desk_
     ingest_provider_service = get_resource_service('ingest_providers')
     provider = ingest_provider_service.find_one(name=provider_name, req=None)
     provider['routing_scheme'] = routing_scheme
+    if 'rule_set' in provider:
+        rule_set = get_resource_service('rule_sets').find_one(_id=provider['rule_set'], req=None)
+    else:
+        rule_set = None
 
     provider_service = registered_feeding_services[provider['feeding_service']]
     provider_service = provider_service.__class__()
@@ -434,7 +438,7 @@ def fetch_from_provider(context, provider_name, guid, routing_scheme=None, desk_
             from bson.objectid import ObjectId
             item['task'] = {'desk': ObjectId(desk_id), 'stage': ObjectId(stage_id)}
 
-    failed = context.ingest_items(items, provider, provider_service, rule_set=provider.get('rule_set'),
+    failed = context.ingest_items(items, provider, provider_service, rule_set=rule_set,
                                   routing_scheme=provider.get('routing_scheme'))
     assert len(failed) == 0, failed
 
