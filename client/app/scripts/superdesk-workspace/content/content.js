@@ -129,14 +129,6 @@
                     });
                 });
 
-                /*
-                scope.$on('key:ctrl:m', function($event, event) {
-                    if (event) {
-                        event.preventDefault();
-                    }
-                    scope.create();
-                });
-                */
                 keyboardManager.bind('ctrl+m', function(e) {
                     if (e) {
                         e.preventDefault();

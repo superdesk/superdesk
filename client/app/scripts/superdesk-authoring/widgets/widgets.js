@@ -110,7 +110,7 @@ function AuthoringWidgetsDir(desks) {
     };
 }
 
-angular.module('superdesk.authoring.widgets', [])
+angular.module('superdesk.authoring.widgets', ['superdesk.keyboard'])
     .provider('authoringWidgets', AuthoringWidgetsProvider)
     .directive('sdAuthoringWidgets', AuthoringWidgetsDir)
     .run(['keyboardManager', 'gettext', function(keyboardManager, gettext) {

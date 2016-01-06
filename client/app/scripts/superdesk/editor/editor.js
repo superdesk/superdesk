@@ -601,7 +601,6 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
                     scope.medium = new window.MediumEditor(scope.node, editorOptions);
 
                     scope.$on('spellcheck:run', render);
-                    //scope.$on('key:ctrl:shift:d', render);
                     keyboardManager.bind('ctrl+shift+d', render);
 
                     function cancelTimeout(event) {

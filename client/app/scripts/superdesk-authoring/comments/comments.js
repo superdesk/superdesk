@@ -125,7 +125,7 @@ function CommentTextDirective($compile) {
     };
 }
 
-angular.module('superdesk.authoring.comments', ['superdesk.authoring.widgets', 'mentio', 'superdesk.api'])
+angular.module('superdesk.authoring.comments', ['superdesk.authoring.widgets', 'mentio', 'superdesk.api', 'superdesk.keyboard'])
     .config(['authoringWidgetsProvider', function(authoringWidgetsProvider) {
         authoringWidgetsProvider
             .widget('comments', {

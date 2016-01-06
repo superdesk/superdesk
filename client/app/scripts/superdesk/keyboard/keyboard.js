@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    return angular.module('superdesk.keyboard', [])
+    return angular.module('superdesk.keyboard', ['gettext'])
 
     // unbind all keyboard shortcuts when switching route
     .run(['$rootScope', 'keyboardManager', function($rootScope, kb) {
