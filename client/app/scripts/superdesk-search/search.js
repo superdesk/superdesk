@@ -352,8 +352,8 @@
         function initSelectedParameters (parameters) {
             tags.selectedParameters = [];
             while (parameters.indexOf(':') > 0 &&
-                   parameters.indexOf(':') < parameters.indexOf('(') &&
-                   parameters.indexOf(':') < parameters.indexOf(')')) {
+                   parameters.indexOf(':') < parameters.indexOf('(', parameters.indexOf(':')) &&
+                   parameters.indexOf(':') < parameters.indexOf(')', parameters.indexOf(':'))) {
 
                 var colonIndex = parameters.indexOf(':');
                 var parameter = parameters.substring(parameters.lastIndexOf(' ', colonIndex), parameters.indexOf(')', colonIndex) + 1);
@@ -1407,8 +1407,18 @@
                         }
                     };
 
-                    scope.search = function() {
-                        $location.search('q', scope.query || null);
+                    scope.search = function () {
+                        var newQuery = _.uniq(scope.query.split(/[\s,]+/)),
+                            output = '';
+
+                        _.each(newQuery, function (item, key) {
+                            if (item) {
+                                output += key !== 0 ? ' (' + item + ')' : '(' + item + ')';
+                            }
+                        });
+
+                        scope.query = newQuery.join(' ');
+                        $location.search('q', output || null);
                     };
 
                     scope.cancel = function() {
@@ -1421,7 +1431,7 @@
                     //initial query
                     var srch = $location.search();
                     if (srch.q && srch.q !== '') {
-                        scope.query = srch.q;
+                        scope.query = srch.q.replace(/[()]/g, '');
                     } else {
                         scope.query = null;
                     }
