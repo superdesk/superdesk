@@ -98,9 +98,9 @@
 </div>
 
 <div class="field" ng-if="metadata.footers && item.type !== 'composite' && !item.package_type">
-    <label translate>Public Service Announcements</label>
-    <select id="psa_options" ng-model="item.body_footer_value" ng-disabled="!_editable"
-            ng-options="f.name for f in metadata.footers track by f.name" ng-change="addPSAToFooter()">
+    <label translate>Helplines/Contact Information</label>
+    <select id="helplines" ng-model="item.body_footer_value" ng-disabled="!_editable"
+            ng-options="f.name for f in metadata.footers track by f.name" ng-change="addHelplineToFooter()">
         <option value=""></option>
     </select>
 </div>
