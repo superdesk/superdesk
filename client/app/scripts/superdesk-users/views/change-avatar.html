@@ -6,10 +6,14 @@
 <div class="modal-body split-popup">
     <aside class="sidebar">
         <ul>
-            <li ng-repeat="method in methods" ng-click="activate(method)" ng-class="{active: active == this}">
+            <li ng-repeat="method in methods" ng-click="activate(method)" ng-class="{active: active === method}">
                 <i class="avatar-icon-{{ method.id }}"></i> {{ method.label }}
             </li>
         </ul>
+        <div class="remove-avatar" ng-click="removeImage()" ng-show="locals.data.picture_url">
+            <i class="avatar-icon-remove"></i><span class="ng-scope" translate>No image</span>
+            <label translate>shows your initials instead</label>
+        </div>
     </aside>
 
     <section class="main" sd-image-preview="preview.url" data-file="preview.img" data-progress-width="progress.width">

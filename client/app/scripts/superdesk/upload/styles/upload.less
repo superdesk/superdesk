@@ -26,6 +26,7 @@ user avatar uploader
 		position: relative;
 	}
 	.sidebar {
+		width: 229px;
 		ul {
 			li {
 				border-bottom: 1px solid #eee;
@@ -60,6 +61,9 @@ user avatar uploader
 					}
 				}
 				&.active {
+					background-color: white;
+					border-right: 1px solid white;
+					margin-right: -1px;
 					a {
 						color: #333;
 					}
@@ -76,12 +80,45 @@ user avatar uploader
 				}
 			}
 		}
+		.remove-avatar {
+			padding: 7px 10px 7px 20px;
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			border-top: 1px solid #eee;
+			i {
+				opacity: 0.4;
+				float: left;
+				margin-right: 10px;
+			}
+			.sd-checkbox {
+				float: right;
+				margin: 2px 0 0 0;
+			}
+			span {
+				vertical-align: middle;
+			}
+			label {
+				font-size: 11px;
+				color: @grayLight;
+				margin: 0;
+			}
+			&:hover {				
+    			background: #f4f4f4;
+			}
+			&.active {
+				i {
+					opacity: 1;
+				}
+			}
+		}
 	}
 	.main {
 		padding: 20px;
 		overflow: visible;
-		.box-shadow(-2px 0 3px -2px #eee);
 		overflow: auto;
+		background-color: white;
 
 		.computer {
 			height: 100%;
