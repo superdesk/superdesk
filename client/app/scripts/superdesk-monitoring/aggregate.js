@@ -489,7 +489,7 @@
                     if (scope.privateSavedSearches.length > 0) {
                         scope.privateSavedSearches.length = 0;
                     }
-                    _.each(scope.searches, function(item) {
+                    _.each(_.sortBy(scope.searches, 'name'), function(item) {
                         if (item.user === user && !item.is_global) {
                             scope.privateSavedSearches.push(item);
                         }
@@ -504,7 +504,7 @@
                     if (scope.globalSavedSearches.length > 0) {
                         scope.globalSavedSearches.length = 0;
                     }
-                    _.each(scope.searches, function(item) {
+                    _.each(_.sortBy(scope.searches, 'name'), function(item) {
                         if (item.is_global) {
                             scope.globalSavedSearches.push(item);
                             var group = scope.editGroups[item._id];
