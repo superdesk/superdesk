@@ -587,6 +587,16 @@ def step_impl_when_delete_url(context, url):
         context.outbox = outbox
 
 
+@when('we delete all sessions "{url}"')
+def step_impl_when_delete_all_url(context, url):
+    with context.app.mail.record_messages() as outbox:
+        url = apply_placeholders(context, url)
+        headers = context.headers
+        href = get_prefixed_url(context.app, url)
+        context.response = context.client.delete(href, headers=headers)
+        context.outbox = outbox
+
+
 @when('we delete latest')
 def when_we_delete_it(context):
     with context.app.mail.record_messages() as outbox:

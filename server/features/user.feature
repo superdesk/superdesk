@@ -285,6 +285,31 @@ Feature: User Resource
         """
 
     @auth
+    Scenario: Clear sessions of a logged-in user
+        Given "users"
+        """
+        [{"username": "foobar", "password": "barbar", "email": "foo@bar.com"}]
+        """
+        When we get "/users/#users._id#"
+        Then we get existing resource
+        """
+        {"username": "foobar", "sign_off": "FOO"}
+        """
+        When we login as user "foobar" with password "barbar" and user type "user"
+        """
+        {"user_type": "user", "email": "foo.bar@foobar.org"}
+        """
+        When we switch user
+        And we delete all sessions "/users/#users._id#/sessions"
+        Then we get response code 204
+        When we get "/users/#users._id#"
+        Then we get existing resource
+        """
+        {"username": "foobar", "display_name": "foobar", "user_type": "user",
+        "session_preferences": {}}
+        """
+
+    @auth
     Scenario: User gets invisible stages
         Given empty "users"
         Given empty "desks"
