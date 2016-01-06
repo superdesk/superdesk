@@ -78,7 +78,7 @@ class UpdateIngestTest(SuperdeskTestCase):
         items = provider_service.fetch_ingest(guid)
         items.extend(provider_service.fetch_ingest(guid))
         self.assertEqual(12, len(items))
-        self.ingest_items(items, provider)
+        self.ingest_items(items, provider, provider_service)
 
     def test_ingest_item_expiry(self):
         provider_name = 'reuters'
@@ -90,7 +90,7 @@ class UpdateIngestTest(SuperdeskTestCase):
         items = provider_service.fetch_ingest(guid)
         self.assertIsNone(items[1].get('expiry'))
         items[1]['versioncreated'] = utcnow()
-        self.ingest_items([items[1]], provider)
+        self.ingest_items([items[1]], provider, provider_service)
         self.assertIsNotNone(items[1].get('expiry'))
 
     def test_ingest_item_sync_if_missing_from_elastic(self):
@@ -242,7 +242,7 @@ class UpdateIngestTest(SuperdeskTestCase):
         service.post(items)
 
         # ingest the items and expire them
-        self.ingest_items(items, provider)
+        self.ingest_items(items, provider, provider_service)
         before = service.get(req=None, lookup={})
         self.assertEqual(6, before.count())
 
@@ -274,7 +274,7 @@ class UpdateIngestTest(SuperdeskTestCase):
         service.post(items)
 
         # ingest the items and expire them
-        self.ingest_items(items, provider)
+        self.ingest_items(items, provider, provider_service)
 
         # four files in grid fs
         current_files = self.app.media.fs('upload').find()
@@ -348,7 +348,7 @@ class UpdateIngestTest(SuperdeskTestCase):
         service.post(items)
 
         # ingest the items
-        self.ingest_items(items, provider)
+        self.ingest_items(items, provider, provider_service)
 
         items = provider_service.fetch_ingest(guid)
         for item in items:
@@ -356,7 +356,7 @@ class UpdateIngestTest(SuperdeskTestCase):
             item['expiry'] = utcnow() + timedelta(hours=11)
 
         # ingest them again
-        self.ingest_items(items, provider)
+        self.ingest_items(items, provider, provider_service)
 
         # 12 files in grid fs
         current_files = self.app.media.fs('upload').find()
@@ -377,7 +377,7 @@ class UpdateIngestTest(SuperdeskTestCase):
         service.post(items)
 
         # ingest the items and check the subject code has been derived
-        self.ingest_items(items, provider)
+        self.ingest_items(items, provider, provider_service)
         self.assertEqual(items[0]['subject'][0]['qcode'], '15000000')
 
     def test_anpa_category_to_subject_derived_ingest_ignores_inactive_categories(self):
@@ -395,7 +395,7 @@ class UpdateIngestTest(SuperdeskTestCase):
         service.post(items)
 
         # ingest the items and check the subject code has been derived
-        self.ingest_items(items, provider)
+        self.ingest_items(items, provider, provider_service)
         self.assertNotIn('subject', items[0])
 
     def test_subject_to_anpa_category_derived_ingest(self):
@@ -422,7 +422,7 @@ class UpdateIngestTest(SuperdeskTestCase):
             service.post(items)
 
             # ingest the items and check the subject code has been derived
-            self.ingest_items(items, provider)
+            self.ingest_items(items, provider, provider_service)
             self.assertEqual(items[0]['anpa_category'][0]['qcode'], 'f')
 
     def test_subject_to_anpa_category_derived_ingest_ignores_inactive_map_entries(self):
@@ -449,5 +449,5 @@ class UpdateIngestTest(SuperdeskTestCase):
             service.post(items)
 
             # ingest the items and check the subject code has been derived
-            self.ingest_items(items, provider)
+            self.ingest_items(items, provider, provider_service)
             self.assertNotIn('anpa_category', items[0])

@@ -20,6 +20,7 @@ from superdesk.io import register_feeding_service
 from superdesk.io.feeding_services.http_service import HTTPFeedingService
 from superdesk.logging import logger
 from superdesk.utc import utcnow
+from urllib.parse import urlparse, urlunparse
 
 
 class ReutersHTTPFeedingService(HTTPFeedingService):
@@ -187,6 +188,11 @@ class ReutersHTTPFeedingService(HTTPFeedingService):
                     items.extend(self._parse_items(ref.get('residRef')))
 
         return items
+
+    def prepare_href(self, href):
+        (scheme, netloc, path, params, query, fragment) = urlparse(href)
+        new_href = urlunparse((scheme, netloc, path, '', '', ''))
+        return '%s?auth_token=%s' % (new_href, self._get_auth_token(self.provider, update=True))
 
 
 register_feeding_service(ReutersHTTPFeedingService.NAME, ReutersHTTPFeedingService(), ReutersHTTPFeedingService.ERRORS)
