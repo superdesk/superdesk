@@ -186,9 +186,6 @@ describe('users', function() {
         it('should filter categories in the Authoring metadata head menu ' +
            'based on the user\'s preferred categories settings',
             function () {
-                var catListItems,  // elements in the offered category list
-                    parentDiv;
-
                 userPrefs.btnCheckNone.click();  // uncheck all categories
 
                 // select the Entertainment and Finance categories
@@ -206,25 +203,9 @@ describe('users', function() {
                 // categories are offered
                 authoring.setCategoryBtn.click();
 
-                // it is difficult to distinguish the categories menu element
-                // from other similar menus, thus we need to perform all
-                // element selections from the button's immediate parent
-                parentDiv = authoring.setCategoryBtn.element(by.xpath('..'));
-
-                /////
-                // XXX: workaround - there seems to be a bug in sd-typeahead,
-                // no categories are shown, thus something needs to be entered
-                // into textbox (and immediately deleted) so that the category
-                // list shows up
-                /// TODO: remove when the bug is resolved and this is not needed
-                //        anymore
-                var txtCategory = parentDiv.element(by.css('input[type="text"]'));
-                txtCategory.sendKeys('x', protractor.Key.BACK_SPACE);
-                /// end workaround ///
-
-                catListItems = parentDiv.all(by.css('.item-list li > button'));
-
-                expect(catListItems.count()).toEqual(2);
+                var cat = element(by.id('category-setting'));
+                var catListItems = cat.all(by.repeater('term in activeTree'));
+                expect(catListItems.count()).toBe(2);
                 expect(catListItems.get(0).getText()).toEqual('Entertainment');
                 expect(catListItems.get(1).getText()).toEqual('Finance');
             }

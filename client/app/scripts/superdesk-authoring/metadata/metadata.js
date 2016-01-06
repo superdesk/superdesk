@@ -322,10 +322,11 @@ function MetadataListEditingDirective(metadata) {
 
                 var tree = {};
                 angular.forEach(items, function(item) {
-                    if (!tree.hasOwnProperty(item.parent)) {
-                        tree[item.parent] = [item];
+                    var parent = item.parent || null;
+                    if (!tree.hasOwnProperty(parent)) {
+                        tree[parent] = [item];
                     } else {
-                        tree[item.parent].push(item);
+                        tree[parent].push(item);
                     }
                 });
 

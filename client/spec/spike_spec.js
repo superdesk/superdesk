@@ -35,7 +35,7 @@ describe('spike', function() {
         content.setListView();
 
         var personalCount;
-        element.all(by.repeater('items._items')).count().then(function(count) {
+        content.getItems().count().then(function(count) {
             personalCount = count;
         });
 

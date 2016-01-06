@@ -181,7 +181,7 @@ describe('authoring', function() {
     it('keyboard shortcuts', function() {
         monitoring.actionOnItem('Edit', 1, 0);
         authoring.writeText('z');
-        element(by.cssContainingText('span', 'Headline')).click();
+        element(by.cssContainingText('span', 'Body')).click();
         ctrlShiftKey('s');
         browser.wait(function() {
             return element(by.buttonText('SAVE')).getAttribute('disabled');
@@ -246,9 +246,8 @@ describe('authoring', function() {
         expect(monitoring.getTextItemBySlugline(1, 1)).toBe('ITEM9 SLUGLINE');
         monitoring.actionOnItem('Edit', 1, 1);
         authoring.publish(); // item9 published
-        browser.sleep(200);
 
-        monitoring.actionOnItem('Duplicate', 4, 1); // duplicate item9 text published item
+        monitoring.actionOnItem('Duplicate', 4, {type: 'text'}); // duplicate item9 text published item
         expect(monitoring.getGroupItems(0).count()).toBe(1);
         monitoring.actionOnItem('Edit', 0, 0);
 

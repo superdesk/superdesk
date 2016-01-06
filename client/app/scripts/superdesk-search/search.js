@@ -1360,13 +1360,11 @@
                         },
 
                         setHover: function() {
-                            console.log('set hover');
                             this.setState({hover: true});
                         },
 
                         unsetHover: function() {
                             if (this.state.hover) {
-                                console.log('unset hover');
                                 this.setState({hover: false});
                             }
                         },

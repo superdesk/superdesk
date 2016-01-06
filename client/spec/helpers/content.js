@@ -122,12 +122,12 @@ function Content() {
         var crtItem = this.getItem(item);
         var typeIcon = crtItem.element(by.className('type-icon'));
         expect(typeIcon.isDisplayed()).toBe(true);
-        browser.actions().mouseMove(typeIcon).perform();
-        var checkbox = element(by.className('selectbox'));
-        browser.wait(checkbox.isDisplayed, 10000);
-        browser.pause();
-        expect(checkbox.isDisplayed()).toBe(true);
-        return checkbox.click();
+        browser.actions()
+            .mouseMove(typeIcon)
+            .mouseMove(crtItem)
+            .mouseMove(typeIcon)
+            .perform();
+        return typeIcon.element(by.className('selectbox')).click();
     };
 
     this.spikeItems = function() {

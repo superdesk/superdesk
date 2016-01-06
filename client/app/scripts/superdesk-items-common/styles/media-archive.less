@@ -64,6 +64,19 @@
 	}
 }
 
+#content-list {
+	display: flex;
+	flex-direction: column;
+
+	.search-tags {
+		flex: 0 1 auto;
+	}
+
+	.shadow-list-holder {
+		flex: 1 1 auto;
+	}
+}
+
 .archive-content {
 	position:absolute;
 	top:0px; right:0px; bottom:0px; left:0px;
@@ -125,11 +138,7 @@
 		}
 	}
 	.content .shadow-list-holder {
-		position: absolute;
-		left: 0;
-		right: 0;
-		top: 0;
-		bottom: 0;
+		position: relative;
 		max-height: none;
 		min-height: auto;
 	}

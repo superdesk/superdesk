@@ -410,7 +410,7 @@
                              */
                             if (inputField.length > 0) {
                                 inputField.focus();
-                            } else {
+                            } else if (buttonList.length) {
                                 buttonList[0].focus();
                             }
 

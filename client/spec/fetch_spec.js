@@ -86,7 +86,7 @@ describe('fetch', function() {
         expect(btnFetchAndOpen.getAttribute('disabled')).toBeTruthy();
     });
 
-    fit('can fetch multiple items', function() {
+    it('can fetch multiple items', function() {
         workspace.openIngest();
         content.selectItem(0);
         element(by.id('fetch-all-btn')).click();
