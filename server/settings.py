@@ -137,10 +137,6 @@ CELERY_ROUTES = {
         'queue': 'expiry',
         'routing_key': 'expiry.session'
     },
-    'apps.publish.content_expiry': {
-        'queue': 'expiry',
-        'routing_key': 'expiry.publish'
-    },
     'apps.legal_archive.import_legal_publish_queue': {
         'queue': 'legal',
         'routing_key': 'legal.publish_queue'
@@ -179,10 +175,6 @@ CELERYBEAT_SCHEDULE = {
     'content:gc': {
         'task': 'apps.archive.content_expiry',
         'schedule': crontab(minute='*/30')
-    },
-    'published:gc': {
-        'task': 'apps.publish.content_expiry',
-        'schedule': crontab(hour='0')
     },
     'publish:transmit': {
         'task': 'superdesk.publish.transmit',

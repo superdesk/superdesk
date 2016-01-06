@@ -8,6 +8,8 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
+from operator import itemgetter
+
 from flask import current_app as app
 from eve.utils import config, ParsedRequest
 import logging
@@ -26,9 +28,10 @@ from superdesk.errors import SuperdeskApiError
 from superdesk.metadata.utils import aggregations
 from superdesk.metadata.item import CONTENT_TYPE, ITEM_TYPE, not_analyzed, GUID_FIELD, ITEM_STATE, CONTENT_STATE, \
     PUB_STATUS
-from superdesk.metadata.packages import PACKAGE_TYPE, TAKES_PACKAGE, RESIDREF, SEQUENCE
+from superdesk.metadata.packages import PACKAGE_TYPE, TAKES_PACKAGE, RESIDREF, SEQUENCE, GROUPS, REFS
 from superdesk.notification import push_notification
-from apps.archive.common import get_user, item_schema, is_genre, BROADCAST_GENRE, ITEM_OPERATION, is_item_in_package
+from apps.archive.common import get_user, item_schema, is_genre, BROADCAST_GENRE, ITEM_OPERATION, is_item_in_package, \
+    insert_into_versions
 from apps.archive.archive import SOURCE as ARCHIVE
 import superdesk
 from superdesk.services import BaseService
@@ -166,7 +169,7 @@ class ArchivedService(BaseService):
             1. Check if Article has an associated Digital Story and if Digital Story has more Takes.
                If both Digital Story and more Takes exists then all of them would be killed along with the one requested
             2. For each article being killed do the following:
-                i.   Apply the Kill Template and create an entry in the published collection.
+                i.   Apply the Kill Template and create an entry in archive, archive_versions and published collections.
                 ii.  Query the Publish Queue in Legal Archive and find the subscribers who received the article
                      previously and create transmission entries in Publish Queue.
                 iii. Change the state of the article to Killed in Legal Archive.
@@ -182,6 +185,7 @@ class ArchivedService(BaseService):
 
         # Step 1
         articles_to_kill = self._find_articles_to_kill(lookup)
+        articles_to_kill.sort(key=itemgetter(ITEM_TYPE), reverse=True)  # Needed because package has to be inserted last
         kill_service = KillPublishService()
 
         for article in articles_to_kill:
@@ -189,7 +193,7 @@ class ArchivedService(BaseService):
             to_apply_template = {'template_name': 'kill', 'item': article}
             get_resource_service('content_templates_apply').post([to_apply_template])
             article = to_apply_template['item']
-            self._remove_and_set_kill_properties(article)
+            self._remove_and_set_kill_properties(article, articles_to_kill)
 
             # Step 2(ii)
             transmission_details = list(
@@ -210,7 +214,10 @@ class ArchivedService(BaseService):
             super().delete({'item_id': article[config.ID_FIELD]})
 
             # Step 2(i) - Creating entries in published collection
-            get_resource_service('published').post([article])
+            docs = [article]
+            get_resource_service(ARCHIVE).post(docs)
+            insert_into_versions(doc=article)
+            get_resource_service('published').post(docs)
 
             # Step 2(v)
             kill_service.broadcast_kill_email(article)
@@ -256,12 +263,14 @@ class ArchivedService(BaseService):
 
         return articles_to_kill
 
-    def _remove_and_set_kill_properties(self, article):
+    def _remove_and_set_kill_properties(self, article, articles_to_kill):
         """
         Removes the irrelevant properties from the given article and sets the properties for kill operation.
 
         :param article: article from the archived repo
         :type article: dict
+        :param articles_to_kill: list of articles which were about to kill from dusty archive
+        :type articles_to_kill: list
         """
 
         article[config.ID_FIELD] = article.pop('item_id', article['item_id'])
@@ -282,5 +291,14 @@ class ArchivedService(BaseService):
         article['version_creator'] = str(user[config.ID_FIELD])
 
         resolve_document_version(article, ARCHIVE, 'PATCH', article)
+
+        if article[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
+            for group in article.get(GROUPS, []):
+                for ref in group.get(REFS, []):
+                    if RESIDREF in ref:
+                        item_in_package = [item for item in articles_to_kill if item.get('item_id') == ref[RESIDREF]]
+                        ref['location'] = ARCHIVE
+                        ref[config.VERSION] = item_in_package[0][config.VERSION]
+
 
 superdesk.privilege(name='archived', label='Archived Management', description='User can remove items from the archived')

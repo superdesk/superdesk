@@ -86,7 +86,7 @@ Feature: Kill a content item in the (dusty) archive
     """
     When we get "/legal_archive/123?version=all"
     Then we get list with 3 items
-    When we expire killed items
+    When we expire items
     """
     ["123"]
     """
@@ -160,7 +160,7 @@ Feature: Kill a content item in the (dusty) archive
     """
     When we get "/legal_archive/#archive.123.take_package#?version=all"
     Then we get list with 3 items
-    When we expire killed items
+    When we expire items
     """
     ["123", "#archive.123.take_package#"]
     """
@@ -258,7 +258,7 @@ Feature: Kill a content item in the (dusty) archive
     """
     When we get "/legal_archive/#take2#?version=all"
     Then we get list with 3 items
-    When we expire killed items
+    When we expire items
     """
     ["123", "#take1#", "#take2#", "#archive.123.take_package#"]
     """
