@@ -50,6 +50,16 @@
         };
 
         /**
+         * Create a package containing given item
+         *
+         * @param {Object} item
+         * @return {Promise}
+         */
+        this.createPackageFromItems = function(item) {
+            return packages.createPackageFromItems([item]);
+        };
+
+        /**
          * Create new item using given template
          *
          * @param {Object} template

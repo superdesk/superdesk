@@ -24,7 +24,7 @@ describe('workspace', function() {
         spyOn(workspaces, 'getActive');
 
         var ctrl = $controller('DashboardController', {
-            widgets: [{_id: 'foo', name: 'foo'}],
+            dashboardWidgets: [{_id: 'foo', name: 'foo'}],
             $scope: $rootScope.$new()
         });
 
