@@ -83,7 +83,8 @@ describe('superdesk.workspace.content', function() {
                 slugline: 'test_slugline',
                 body_html: 'test_body_html',
                 task: {desk: '2', stage: '4', user: 'user:1'},
-                template: 'template1'
+                template: 'template1',
+                version: 0
             });
         }));
     });

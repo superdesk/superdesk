@@ -32,10 +32,9 @@ describe('content', function() {
             item = {'_id': '123'};
         }));
 
-        it('can add an item to user\'s active desk', inject(function(archiveService) {
-
+        it('can add an item to user\'s active desk', inject(function(archiveService, desks) {
+            spyOn(desks, 'getCurrentDesk').and.returnValue({_id: '2', working_stage: '4'});
             archiveService.addTaskToArticle(item);
-
             expect(item.task.desk).toBe('2');
             expect(item.task.stage).toBe('4');
         }));

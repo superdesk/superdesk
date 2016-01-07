@@ -19,6 +19,11 @@
 
         var TEXT_TYPE = 'text';
 
+        var Item = function(type) {
+            this.type = type || TEXT_TYPE;
+            this.version = 0;
+        };
+
         /**
          * Save data to content api
          *
@@ -36,7 +41,7 @@
          * @return {Promise}
          */
         this.createItem = function(type) {
-            var item = {type: type || TEXT_TYPE, version: 0};
+            var item = new Item(type);
             archiveService.addTaskToArticle(item);
             return save(item);
         };
@@ -69,8 +74,8 @@
          * @return {Promise}
          */
         this.createItemFromTemplate = function(template) {
-            var item = templates.pickItemData(template.data || {});
-            item.template = template._id;
+            var item = new Item(template.data.type || null);
+            angular.extend(item, templates.pickItemData(template.data || {}), {template: template._id});
             archiveService.addTaskToArticle(item);
             return save(item).then(function(newItem) {
                 templates.addRecentTemplate(desks.activeDeskId, template._id);
