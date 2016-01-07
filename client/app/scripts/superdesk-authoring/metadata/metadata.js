@@ -314,9 +314,7 @@ function MetadataListEditingDirective(metadata) {
             metadata.subjectScope = scope;
 
             scope.$watch('list', function(items) {
-                if (
-                    !items || items.length === 0
-                ) {
+                if (!items || items.length === 0) {
                     return;
                 }
 
@@ -407,8 +405,15 @@ function MetadataListEditingDirective(metadata) {
 
                 tempItem[scope.field] = filteredArray;
                 _.extend(scope.item, tempItem);
-                // Push the term back onto the terms list
-                scope.terms.push(term);
+
+                /*
+                 * Push the term back onto the terms list if the field isn't subject/company codes as the term isn't
+                 * removed from scope.list/scope.terms when user selects a term.
+                 */
+                if (scope.field !== 'subject' || scope.field !== 'company_codes') {
+                    scope.terms.push(term);
+                }
+
                 scope.terms = _.sortBy(scope.terms, 'name');
                 scope.change({item: scope.item});
             };
