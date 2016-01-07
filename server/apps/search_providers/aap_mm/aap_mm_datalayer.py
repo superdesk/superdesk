@@ -45,7 +45,7 @@ class AAPMMDatalayer(DataLayer):
         self._headers = {'cookie': r.getheader('set-cookie'), 'Content-Type': 'application/json'}
 
     def set_credentials(self, provider_config):
-        username = provider_config.get('user')
+        username = provider_config.get('username')
         password = provider_config.get('password')
 
         if username and username != self._username and password and password != self._password:
