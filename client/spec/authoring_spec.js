@@ -132,7 +132,7 @@ describe('authoring', function() {
         //view item history publish operation
         expect(monitoring.getTextItem(2, 3)).toBe('item6');
         monitoring.actionOnItem('Edit', 2, 3);
-        authoring.addPublicServiceAnnouncement('Children');
+        authoring.addHelpline('Children');
         expect(authoring.getBodyFooter()).toMatch(/Kids Helpline*/);
         authoring.publish();
         monitoring.filterAction('composite');

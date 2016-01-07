@@ -2246,9 +2246,9 @@
                 };
 
                 /**
-                 * Adds the selected Public Service Announcement to the item allowing user for further edit.
+                 * Adds the selected Helpline to the item allowing user for further edit.
                  */
-                scope.addPSAToFooter = function() {
+                scope.addHelplineToFooter = function() {
                     if (!scope.item.body_footer) {
                         scope.item.body_footer = '';
                     }

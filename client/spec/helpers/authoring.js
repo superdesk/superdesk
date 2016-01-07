@@ -343,8 +343,8 @@ function Authoring() {
                 .all(by.className(theme)).first().click();
     };
 
-    this.addPublicServiceAnnouncement = function (psaLabel) {
-        element(by.id('psa_options')).element(by.css('option[label="' + psaLabel + '"]')).click();
+    this.addHelpline = function (helplineLabel) {
+        element(by.id('helplines')).element(by.css('option[label="' + helplineLabel + '"]')).click();
     };
 
     this.getBodyFooter = function () {
