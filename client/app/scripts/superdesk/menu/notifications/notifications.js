@@ -24,7 +24,6 @@
             // filter out system messages for non-admin users
             if (session.identity.user_type === 'user') {
                 filter.user = {$exists: true};
-                filter.item = {$exists: true};
             }
 
             return filter;
@@ -106,6 +105,11 @@
             }
         });
 
+        $rootScope.$on('activity', function(_e, extras) {
+            if (isCurrentUser(extras)) {
+                $timeout(reload, UPDATE_TIMEOUT, false);
+            }
+        });
         $rootScope.$on(SESSION_EVENTS.LOGIN, reload);
 
     }

@@ -236,12 +236,11 @@ class DesksService(BaseService):
 
             for added_user in added:
                 user = superdesk.get_resource_service('users').find_one(req=None, _id=added_user)
-                add_activity(ACTIVITY_UPDATE,
-                             'user {{user}} has been added to desk {{desk}}: Please re-login.',
-                             self.datasource,
-                             notify=added,
-                             user=user.get('username'),
-                             desk=desk.get('name'))
+                activity = add_activity(ACTIVITY_UPDATE,
+                                        'user {{user}} has been added to desk {{desk}}: Please re-login.',
+                                        self.datasource, notify=added, can_push_notification=False,
+                                        user=user.get('username'), desk=desk.get('name'))
+                push_notification('activity', _dest=activity['recipients'])
         else:
             push_notification(self.notification_key, updated=1, desk_id=str(desk.get(config.ID_FIELD)))
 

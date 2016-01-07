@@ -39,7 +39,6 @@ describe('user notifications', function() {
 
         var query = args[1].where;
         expect(query.user).toEqual({$exists: true});
-        expect(query.item).toEqual({$exists: true});
     }));
 
     it('can fetch system notification for admins',
