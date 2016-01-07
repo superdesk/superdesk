@@ -21,14 +21,16 @@
          * @param {Object} item
          */
         this.toggle = function(item) {
+            items = _.without(items, _.find(items, identity));
             if (item.selected) {
                 items = _.union(items, [item]);
-            } else {
-                _.remove(items, function(obj) {
-                    return (obj._id === item._id && obj._current_version === item._current_version);
-                });
             }
+
             this.count = items.length;
+
+            function identity(_item) {
+                return _item._id === item._id && _item._current_version === item._current_version;
+            }
         };
 
         /**
@@ -49,12 +51,15 @@
          * Reset to empty
          */
         this.reset = function() {
+            var ids = [];
             _.each(items, function(item) {
                 item.selected = false;
+                ids.push(item._id);
             });
             $rootScope.$broadcast('multi:reset', items);
             items = [];
             this.count = 0;
+            $rootScope.$broadcast('multi:reset', {ids: ids}); // let react know
         };
 
         // main

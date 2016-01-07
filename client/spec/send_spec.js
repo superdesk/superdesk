@@ -2,20 +2,32 @@
 
 var workspace = require('./helpers/workspace'),
     authoring = require('./helpers/authoring'),
-    monitoring = require('./helpers/monitoring');
+    monitoring = require('./helpers/monitoring'),
+    content = require('./helpers/content');
 
 describe('send', function() {
+
+    function getItemState(index) {
+        return content.getItem(0)
+            .element(by.css('.state-label'))
+            .getText();
+    }
+
+    function waitForItems(count) {
+        return browser.wait(function() {
+            return content.getItems().count().then(function(_count) {
+                return _count === count;
+            });
+        }, 500);
+    }
+
     it('can submit item to a desk', function() {
         workspace.open();
         workspace.editItem(1);
         authoring.sendTo('Sports Desk');
         workspace.switchToDesk('SPORTS DESK');
-        expect(
-            element.all(by.repeater('items._items'))
-                .first()
-                .element(by.css('.state-label'))
-                .getText()
-        ).toBe('SUBMITTED');
+        waitForItems(3);
+        expect(getItemState(0)).toBe('SUBMITTED');
     });
 
     it('warns that there are spelling mistakes', function () {
@@ -39,12 +51,8 @@ describe('send', function() {
         authoring.confirmSendTo();
 
         workspace.switchToDesk('SPORTS DESK');
-        expect(
-                element.all(by.repeater('items._items'))
-                .first()
-                .element(by.css('.state-label'))
-                .getText()
-                ).toBe('SUBMITTED');
+        waitForItems(3);
+        expect(getItemState(0)).toBe('SUBMITTED');
     });
 
     it('can cancel submit request because there are spelling mistakes', function () {
@@ -89,13 +97,8 @@ describe('send', function() {
         authoring.confirmSendTo();
 
         workspace.switchToDesk('SPORTS DESK');
-
-        expect(
-                element.all(by.repeater('items._items'))
-                .first()
-                .element(by.css('.state-label'))
-                .getText()
-                ).toBe('SUBMITTED');
+        waitForItems(3);
+        expect(getItemState(0)).toBe('SUBMITTED');
     });
 
     it('can remember last sent destination desk and stage', function() {

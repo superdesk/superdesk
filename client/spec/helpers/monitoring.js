@@ -55,8 +55,25 @@ function Monitoring() {
         return element.all(by.repeater('group in aggregate.groups'));
     };
 
+    /**
+     * Get Item from a group
+     *
+     * when using object for an item you can set type of an item and it will return first
+     * item of that type from group
+     *
+     * @param {Number} group
+     * @param {Number|Object} item
+     * @return {WebElement}
+     */
     this.getItem = function(group, item) {
-        return this.getGroup(group).all(by.repeater('item in items')).get(item);
+        var all = this.getGroup(group).all(by.repeater('item in items'));
+        if (item.type) {
+            return all.filter(function(elem) {
+                return elem.all(by.className('filetype-icon-' + item.type)).count();
+            }).get(item.index || 0);
+        } else {
+            return all.get(item);
+        }
     };
 
     this.getGroupItems = function(group) {
@@ -248,7 +265,9 @@ function Monitoring() {
     this.openItemMenu = function(group, item) {
         var itemElem = this.getItem(group, item);
         browser.actions().mouseMove(itemElem).perform();
-        itemElem.element(by.className('icon-dots-vertical')).click();
+        var dotsElem = itemElem.element(by.className('icon-dots-vertical'));
+        expect(dotsElem.isDisplayed()).toBe(true);
+        dotsElem.click();
         return element(by.css('.dropdown-menu.open'));
     };
 

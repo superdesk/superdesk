@@ -33,7 +33,7 @@ function Content() {
     };
 
     this.getItems = function() {
-        return element.all(by.repeater('items._items'));
+        return element.all(by.className('media-box'));
     };
 
     this.getItem = function(item) {
@@ -61,10 +61,10 @@ function Content() {
         return this.actionOnItem('Edit', item);
     };
 
-    function waitFor(elem) {
+    function waitFor(elem, time) {
         return browser.wait(function() {
             return elem.isDisplayed();
-        }, 300);
+        }, time || 800);
     }
 
     this.openItemMenu = function(item) {
@@ -105,12 +105,12 @@ function Content() {
 
     this.getCount = function () {
         waitFor(list);
-        return list.all(by.repeater('items._items')).count();
+        return list.all(by.css('.media-box')).count();
     };
 
     this.getItemCount = function () {
         waitFor(list);
-        return list.all(by.repeater('item in items track by generateTrackByIdentifier(item)')).count();
+        return list.all(by.css('.media-box')).count();
     };
 
     /**
@@ -120,8 +120,14 @@ function Content() {
 
     this.selectItem = function(item) {
         var crtItem = this.getItem(item);
-        browser.actions().mouseMove(crtItem.element(by.className('filetype-icon-text'))).perform();
-        return crtItem.element(by.css('[ng-change="toggleSelected(item)"]')).click();
+        var typeIcon = crtItem.element(by.className('type-icon'));
+        expect(typeIcon.isDisplayed()).toBe(true);
+        browser.actions()
+            .mouseMove(typeIcon)
+            .mouseMove(crtItem)
+            .mouseMove(typeIcon)
+            .perform();
+        return typeIcon.element(by.className('selectbox')).click();
     };
 
     this.spikeItems = function() {

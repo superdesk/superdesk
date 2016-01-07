@@ -23,7 +23,7 @@ describe('content', function() {
     beforeEach(function() {
         openUrl('/#/workspace');
         workspace.switchToDesk('PERSONAL');
-        expect(element.all(by.repeater('items._items')).count()).toBe(2);
+        expect(element.all(by.css('.media-box')).count()).toBe(2);
     });
 
     // wait a bit after sending keys to body

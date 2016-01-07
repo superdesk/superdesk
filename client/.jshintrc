@@ -41,7 +41,10 @@
     "jasmine": false,
     "spyOn": false,
     "JSON": false,
-    "d3": false
+    "d3": false,
+    "React": false,
+    "ReactDOM": false,
+    "classNames": false
   },
   "forin": true,
   "noempty": true,

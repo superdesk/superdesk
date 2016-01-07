@@ -74,15 +74,9 @@
                     </div>
                 </header>
 
-                <div class="content" sd-updown data-items="items._items" data-select="preview(item)">
+                <div id="content-list" class="content" sd-updown data-items="items._items" data-select="preview(item)">
                     <div class="loading-indicator" ng-show="loading" translate>loading</div>
-                    <div sd-shadow>
-                        <ul class="{{view}}-view list-view">
-                            <li ng-repeat="item in items._items" class="list-item-view" ng-class="{active: item === selected.preview || item._id === selected.fetch}">
-                                <div sd-media-box></div>
-                            </li>
-                        </ul>
-                    </div>
+                    <div class="shadow-list-holder" sd-items-list></div>
                 </div>
             </div>
 

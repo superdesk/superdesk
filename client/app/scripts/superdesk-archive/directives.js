@@ -313,20 +313,18 @@
                 scope: {
                     item: '='
                 },
-                template: '{{name}}',
+                template: '{{ name }}',
                 link: function(scope) {
-                    scope.$watch('item', function() {
-                        scope.name = '';
+                    scope.name = '';
 
-                        if (!scope.item.ingest_provider && 'source' in scope.item) {
-                            scope.name = scope.item.source;
+                    if (!scope.item.ingest_provider && 'source' in scope.item) {
+                        scope.name = scope.item.source;
+                    }
+
+                    ingestSources.initialize().then(function() {
+                        if (scope.item.ingest_provider && scope.item.ingest_provider in ingestSources.providersLookup) {
+                            scope.name = ingestSources.providersLookup[scope.item.ingest_provider].name;
                         }
-
-                        ingestSources.initialize().then(function() {
-                            if (scope.item.ingest_provider && scope.item.ingest_provider in ingestSources.providersLookup) {
-                                scope.name = ingestSources.providersLookup[scope.item.ingest_provider].name;
-                            }
-                        });
                     });
                 }
             };
@@ -342,27 +340,23 @@
                 }
             };
         }])
+        .directive('sdMediaBoxGrid', function() {
+            return {
+                templateUrl: 'scripts/superdesk-archive/views/media-box-grid.html'
+            };
+        })
+        .directive('sdMediaBoxList', function() {
+            return {
+                templateUrl: 'scripts/superdesk-archive/views/media-box-list.html'
+            };
+        })
         .directive('sdMediaBox', ['$location', 'lock', 'multi', 'archiveService', function($location, lock, multi, archiveService) {
             return {
                 restrict: 'A',
-                templateUrl: 'scripts/superdesk-archive/views/media-box.html',
                 link: function(scope, element, attrs) {
-                    scope.lock = {isLocked: false};
-
-                    scope.$watch('view', function(view) {
-                        switch (view) {
-                        case 'mlist':
-                        case 'compact':
-                            scope.itemTemplate = 'scripts/superdesk-archive/views/media-box-list.html';
-                            break;
-                        default:
-                            scope.itemTemplate = 'scripts/superdesk-archive/views/media-box-grid.html';
-                        }
-                    });
-
-                    scope.$watch('item', function(item) {
-                        scope.lock.isLocked = item && (lock.isLocked(item) || lock.isLockedByMe(item));
-                    });
+                    scope.lock = {
+                        isLocked: scope.item && (lock.isLocked(scope.item) || lock.isLockedByMe(scope.item))
+                    };
 
                     scope.$on('item:lock', function(_e, data) {
                         if (scope.item && scope.item._id === data.item) {
@@ -478,10 +472,8 @@
                         if (val === undefined) {
                             stopRatioWatch();
                         }
-                        calcRatio();
+                        _.debounce(_calcRatio, 150);
                     });
-
-                    var calcRatio = _.debounce(_calcRatio, 150);
 
                     function _calcRatio() {
                         var el = elem.find('figure');

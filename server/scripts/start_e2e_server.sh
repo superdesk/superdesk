@@ -7,6 +7,9 @@ ELASTICSEARCH_INDEX=superdesk_e2e
 LEGAL_ARCHIVE_DBNAME=superdesk_e2e_legal_archive
 ARCHIVED_DBNAME=superdesk_e2e_archived
 REDIS_URL=redis://localhost:6379/2
+WEB_CONCURRENCY=3
+WEB_TIMEOUT=5
+
 EOF
 
 honcho -e /tmp/testenv run python manage.py users:create -u admin -p admin -e admin@localhost --admin=true
