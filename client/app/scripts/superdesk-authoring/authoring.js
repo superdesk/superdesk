@@ -504,9 +504,8 @@
                                }));
 
             // new take should be on the text item that are closed or last take but not killed and doesn't have embargo.
-
             action.new_take = !is_read_only_state && current_item.type === 'text' &&
-                !current_item.embargo && !current_item.publish_schedule &&
+                !current_item.embargo && (this.isPublished(current_item) || !current_item.publish_schedule) &&
                 (angular.isUndefined(current_item.takes) || current_item.takes.last_take === current_item._id) &&
                 (angular.isUndefined(current_item.more_coming) || !current_item.more_coming) && !isBroadcast &&
                 !current_item.rewritten_by;
@@ -562,9 +561,9 @@
                  user_privileges.mark_for_highlights);
 
             // allow all stories to be packaged if it doesn't have Embargo
-            action.package_item = current_item.state !== 'spiked' && current_item.state !== 'scheduled' &&
+            action.package_item = !_.contains(['spiked', 'scheduled', 'killed'], current_item.state) &&
                 !current_item.embargo && current_item.package_type !== 'takes' &&
-                current_item.state !== 'killed' && !current_item.publish_schedule;
+                (this.isPublished(current_item) || !current_item.publish_schedule);
 
             action.create_broadcast = (_.contains(['published', 'corrected'], current_item.state)) &&
                 _.contains(['text', 'preformatted'], current_item.type) &&

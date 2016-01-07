@@ -54,7 +54,7 @@ class UpdateOverdueScheduledContent(superdesk.Command):
                 logger.info('updating overdue scheduled article with id {} and headline {} -- expired on: {} now: {}'.
                             format(item[config.ID_FIELD], item['headline'], item['publish_schedule'], now))
 
-                superdesk.get_resource_service(ARCHIVE).patch(item['item_id'], item_update)
+                superdesk.get_resource_service(ARCHIVE).patch(item[config.ID_FIELD], item_update)
         finally:
             mark_task_as_not_running("archive", "update_overdue_scheduled")
 
