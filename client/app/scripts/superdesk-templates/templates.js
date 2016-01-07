@@ -373,8 +373,8 @@
         }
     }
 
-    TemplateSelectDirective.$inject = ['api', 'desks', 'session', 'templates', 'notify'];
-    function TemplateSelectDirective(api, desks, session, templates, notify) {
+    TemplateSelectDirective.$inject = ['api', 'desks', 'session', 'templates', 'notify', 'gettext'];
+    function TemplateSelectDirective(api, desks, session, templates, notify, gettext) {
         var PAGE_SIZE = 200;
 
         return {
@@ -405,7 +405,7 @@
                         desks.getCurrentDeskId(), session.identity._id, scope.options.keyword)
                     .then(function(result) {
                         if (result._items.length === 0) {
-                            notify.error('No Templates found.');
+                            notify.error(gettext('No Templates found.'));
                         } else {
                             scope.open = true;
                             scope.publicTemplates = [];
