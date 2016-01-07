@@ -12,7 +12,13 @@
 
 import os
 import settings
+import logging
+import logging.config
+
 from superdesk.factory import get_app as superdesk_app
+from superdesk.logging import configure_logging
+
+logger = logging.getLogger(__name__)
 
 
 def get_app(config=None):
@@ -38,6 +44,7 @@ def get_app(config=None):
     config['DOMAIN'] = {}
 
     app = superdesk_app(config, media_storage)
+    configure_logging(config['LOG_CONFIG_FILE'])
     return app
 
 if __name__ == '__main__':

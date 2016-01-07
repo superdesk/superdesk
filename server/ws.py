@@ -9,16 +9,17 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-
-from settings import WS_HOST, WS_PORT, LOG_SERVER_ADDRESS, LOG_SERVER_PORT
+import logging
+from settings import WS_HOST, WS_PORT, LOG_CONFIG_FILE
 from superdesk.ws import create_server
+from superdesk.logging import configure_logging
 
+logger = logging.getLogger(__name__)
 
 if __name__ == '__main__':
     config = {
         'WS_HOST': WS_HOST,
-        'WS_PORT': WS_PORT,
-        'LOG_SERVER_ADDRESS': LOG_SERVER_ADDRESS,
-        'LOG_SERVER_PORT': LOG_SERVER_PORT
+        'WS_PORT': WS_PORT
     }
+    configure_logging(LOG_CONFIG_FILE)
     create_server(config)
