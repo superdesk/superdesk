@@ -373,8 +373,8 @@
         }
     }
 
-    TemplateSelectDirective.$inject = ['api', 'desks', 'session', 'templates'];
-    function TemplateSelectDirective(api, desks, session, templates) {
+    TemplateSelectDirective.$inject = ['api', 'desks', 'session', 'templates', 'notify', 'gettext'];
+    function TemplateSelectDirective(api, desks, session, templates, notify, gettext) {
         var PAGE_SIZE = 200;
 
         return {
@@ -385,7 +385,7 @@
             },
             link: function(scope) {
                 scope.options = {
-                    keyword: null,
+                    keyword: null
                 };
 
                 scope.close = function() {
@@ -404,15 +404,20 @@
                     templates.fetchTemplates(scope.options.page, PAGE_SIZE, 'create',
                         desks.getCurrentDeskId(), session.identity._id, scope.options.keyword)
                     .then(function(result) {
-                        scope.publicTemplates = [];
-                        scope.privateTemplates = [];
-                        result._items.forEach(function(template) {
-                            if (template.is_public !== false) {
-                                scope.publicTemplates.push(template);
-                            } else {
-                                scope.privateTemplates.push(template);
-                            }
-                        });
+                        if (result._items.length === 0) {
+                            notify.error(gettext('No Templates found.'));
+                        } else {
+                            scope.open = true;
+                            scope.publicTemplates = [];
+                            scope.privateTemplates = [];
+                            result._items.forEach(function(template) {
+                                if (template.is_public !== false) {
+                                    scope.publicTemplates.push(template);
+                                } else {
+                                    scope.privateTemplates.push(template);
+                                }
+                            });
+                        }
                     });
                 }
 
