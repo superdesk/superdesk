@@ -5,7 +5,7 @@
 		translate-n="multi.count"
 		translate-plural="{{ multi.count }} Items selected">{{ multi.count }} Item selected</span>
 
-    <div class="pull-right" ng-if="action.canPackageItems() && state !== 'spiked'">
+    <div class="pull-right" ng-if="action.canPackageItems() && (state !== 'ingested' && state !== 'spiked')">
         <button class="navbtn strict" ng-click="action.createPackage()" title="{{ :: 'Create Package' | translate }}">
             <i class="big-icon-package-create"></i>
         </button>
