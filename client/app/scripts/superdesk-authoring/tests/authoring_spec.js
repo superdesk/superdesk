@@ -535,10 +535,11 @@ describe('authoring actions', function() {
     var userDesks = [{'_id': 'desk1'}, {'_id': 'desk2'}];
 
     /**
-    * Assert the actions
-    * @param {Object} actions : actions to be asserted.
-    * @param {Object} keys : keys to be truthy.
-    */
+     * Assert the actions
+     *
+     * @param {Object} actions : actions to be asserted.
+     * @param {string[]} keys : keys to be truthy.
+     */
     function allowedActions(actions, keys) {
         _.forOwn(actions, function(value, key) {
             if (_.contains(keys, key)) {
@@ -821,7 +822,7 @@ describe('authoring actions', function() {
                 'mark_item', 'package_item', 'multi_edit', 'publish', 'add_to_current']);
         }));
 
-    it('Can peform new take',
+    it('Can perform new take',
         inject(function(privileges, desks, authoring, $q, $rootScope) {
             var item = {
                 '_id': 'test',
@@ -1274,6 +1275,45 @@ describe('authoring actions', function() {
             var itemActions = authoring.itemActions(item);
             allowedActions(itemActions, ['save', 'edit', 'duplicate', 'spike', 'add_to_current',
                     'mark_item', 'multi_edit', 'publish', 'send']);
+        }));
+
+    it('Can do new take, rewrite and package item for scheduled item after passing publish schedule.',
+        inject(function(privileges, desks, authoring, $q, $rootScope) {
+            var pastTimestamp = new Date();
+            pastTimestamp.setHours(pastTimestamp.getHours() - 1);
+
+            var item = {
+                '_id': 'test',
+                'state': 'published',
+                'flags': {'marked_for_not_publication': false},
+                'type': 'text',
+                'task': {
+                    'desk': 'desk1'
+                },
+                'more_coming': false,
+                '_current_version': 2,
+                'publish_schedule': pastTimestamp
+            };
+
+            var userPrivileges = {
+                'duplicate': true,
+                'mark_item': false,
+                'spike': true,
+                'unspike': true,
+                'mark_for_highlights': true,
+                'unlock': true,
+                'publish': true,
+                'correct': true,
+                'kill': true,
+                'package_item': true,
+                'move': true
+            };
+
+            privileges.setUserPrivileges(userPrivileges);
+            $rootScope.$digest();
+            var itemActions = authoring.itemActions(item);
+            allowedActions(itemActions, ['correct', 'kill', 'duplicate', 'add_to_current', 'new_take', 're_write',
+                'view', 'package_item', 'mark_item', 'multi_edit']);
         }));
 
     it('Create broadcast icon is available for text item.',
