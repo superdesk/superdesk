@@ -9,13 +9,15 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import superdesk
-
+import logging
 from superdesk import get_resource_service
 from flask import current_app as app
 from apps.archive.archive import SOURCE as ARCHIVE
 from apps.archive.common import generate_unique_id_and_name, remove_unwanted, insert_into_versions
 from superdesk.metadata.item import GUID_TAG, FAMILY_ID, ITEM_STATE, CONTENT_STATE
 from superdesk.metadata.utils import generate_guid
+
+logger = logging.getLogger(__name__)
 
 
 class AppScaffoldDataCommand(superdesk.Command):
@@ -30,13 +32,13 @@ class AppScaffoldDataCommand(superdesk.Command):
     ]
 
     def run(self, no_of_stories):
-        self.logger.info('Starting scaffolding')
+        logger.info('Starting scaffolding')
         no_of_stories = int(no_of_stories)
 
         desks = get_resource_service('desks').get(None, {})
 
         for i, desk in enumerate(desks):
-            self.logger.info('Adding items for desk:' + str(desk['_id']))
+            logger.info('Adding items for desk:' + str(desk['_id']))
             self.ingest_items_for(desk, no_of_stories, i + 1)
         return 0
 
@@ -50,12 +52,12 @@ class AppScaffoldDataCommand(superdesk.Command):
 
         for x in range(0, no_of_buckets):
             skip = x * bucket_size * skip_index
-            self.logger.info('Page : {}, skip: {}'.format(x + 1, skip))
+            logger.info('Page : {}, skip: {}'.format(x + 1, skip))
             cursor = get_resource_service('published').get_from_mongo(None, {})
             cursor.skip(skip)
             cursor.limit(bucket_size)
             items = list(cursor)
-            self.logger.info('Inserting {} items'.format(len(items)))
+            logger.info('Inserting {} items'.format(len(items)))
             archive_items = []
 
             for item in items:
