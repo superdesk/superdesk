@@ -470,7 +470,7 @@ describe('monitoring', function() {
         //view all items in desk single view
         monitoring.actionOnDeskSingleView();
         expect(monitoring.getSingleViewItemCount()).toBe(8);
-        expect(monitoring.getDeskSingleViewTitle()).toBe('Politic Desk desk');
+        expect(monitoring.getDeskSingleViewTitle()).toBe('Politic Desk desk 8');
 
         //Monitoring Home
         monitoring.actionMonitoringHome();
@@ -479,7 +479,7 @@ describe('monitoring', function() {
         //Stage single view
         monitoring.actionOnStageSingleView();
         expect(monitoring.getSingleViewItemCount()).toBe(0);
-        expect(monitoring.getStageSingleViewTitle()).toBe('Politic Desk / Working Stage stage');
+        expect(monitoring.getStageSingleViewTitle()).toBe('Politic Desk / Working Stage stage 0');
     });
 
     it('can remember multi selection even after scrolling and can reset multi-selection', function() {
