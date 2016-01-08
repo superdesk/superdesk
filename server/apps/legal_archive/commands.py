@@ -45,8 +45,8 @@ class LegalArchiveImport:
         """
 
         if not doc.get(ITEM_STATE) in {CONTENT_STATE.PUBLISHED, CONTENT_STATE.CORRECTED, CONTENT_STATE.KILLED}:
-            logger.exception('Invalid state: {}. Cannot move the item to legal archive. item: {}'.
-                             format(doc.get(ITEM_STATE), self.log_msg_format.format(**doc)))
+            logger.error('Invalid state: {}. Cannot move the item to legal archive. item: {}'.
+                         format(doc.get(ITEM_STATE), self.log_msg_format.format(**doc)))
             return
 
         # required for behave test.

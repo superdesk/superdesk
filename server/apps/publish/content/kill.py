@@ -99,8 +99,8 @@ class KillPublishService(BasePublishService):
                     self.update_published_collection(published_item_id=original_data['_id'])
 
                     if not queued:
-                        logger.exception("Could not publish the kill for take {} with headline {}".
-                                         format(original_data.get(config.ID_FIELD), original_data.get('headline')))
+                        logger.error("Could not publish the kill for take {} with headline {}".
+                                     format(original_data.get(config.ID_FIELD), original_data.get('headline')))
 
     def get_subscribers(self, doc, target_media_type):
         """

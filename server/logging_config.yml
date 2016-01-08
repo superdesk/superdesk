@@ -1,0 +1,38 @@
+# -*- coding: utf-8; -*-
+#
+# This file is part of Superdesk.
+#
+# Copyright 2013, 2014, 2015 Sourcefabric z.u. and contributors.
+#
+# For the full copyright and license information, please see the
+# AUTHORS and LICENSE files distributed with this source code, or
+# at https://www.sourcefabric.org/superdesk/license
+
+version: 1
+disable_existing_loggers: False
+handlers:
+  console:
+    class: logging.StreamHandler
+    stream  : ext://sys.stdout
+  logstash:
+    class: logging.handlers.SysLogHandler
+    address: !!python/tuple [localhost, 5555]
+loggers:
+  # superdesk.ws - used for debug message can be removed later on.
+  superdesk.ws:
+    handlers: [console, logstash]
+    level: DEBUG
+  superdesk:
+    level: INFO
+    handlers: [console, logstash]
+  apps:
+    handlers: [console, logstash]
+    level: WARN
+  macros:
+    handlers: [console, logstash]
+    level: WARN
+  worker:
+    handlers: [console, logstash]
+    level: WARN
+  root:
+    handlers: [console, logstash]

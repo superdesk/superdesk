@@ -208,8 +208,8 @@ class BasePublishService(BaseService):
 
                 queued = queued_digital or queued_wire
                 if not queued:
-                    logger.exception('Nothing is saved to publish queue for story: {} for action: {}'.
-                                     format(original[config.ID_FIELD], self.publish_type))
+                    logger.error('Nothing is saved to publish queue for story: {} for action: {}'.
+                                 format(original[config.ID_FIELD], self.publish_type))
 
             self._update_archive(original=original, updates=updates, should_insert_into_versions=auto_publish)
             push_notification('item:publish', item=str(id), unique_name=original['unique_name'],
@@ -625,8 +625,8 @@ class BasePublishService(BaseService):
 
         # Step 7
         if not target_media_type and not queued:
-            logger.exception('Nothing is saved to publish queue for story: {} for action: {}'.
-                             format(doc[config.ID_FIELD], self.publish_type))
+            logger.error('Nothing is saved to publish queue for story: {} for action: {}'.
+                         format(doc[config.ID_FIELD], self.publish_type))
 
         return queued
 
