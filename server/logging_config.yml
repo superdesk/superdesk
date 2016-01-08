@@ -27,12 +27,12 @@ loggers:
     handlers: [console, logstash]
   apps:
     handlers: [console, logstash]
-    level: INFO
+    level: WARN
   macros:
     handlers: [console, logstash]
-    level: INFO
+    level: WARN
   worker:
     handlers: [console, logstash]
-    level: INFO
+    level: WARN
   root:
     handlers: [console, logstash]
