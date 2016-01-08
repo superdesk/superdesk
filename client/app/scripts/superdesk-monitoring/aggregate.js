@@ -358,8 +358,8 @@
         };
     }
 
-    AggregateSettingsDirective.$inject = ['desks', 'workspaces', 'session', 'preferencesService', 'WizardHandler'];
-    function AggregateSettingsDirective(desks, workspaces, session, preferencesService, WizardHandler) {
+    AggregateSettingsDirective.$inject = ['desks', 'workspaces', 'session', 'preferencesService', 'WizardHandler', '$filter'];
+    function AggregateSettingsDirective(desks, workspaces, session, preferencesService, WizardHandler, $filter) {
         return {
             templateUrl: 'scripts/superdesk-monitoring/views/aggregate-settings-configuration.html',
             scope: {
@@ -489,7 +489,7 @@
                     if (scope.privateSavedSearches.length > 0) {
                         scope.privateSavedSearches.length = 0;
                     }
-                    _.each(scope.searches, function(item) {
+                    _.each($filter('sortByName')(scope.searches), function(item) {
                         if (item.user === user && !item.is_global) {
                             scope.privateSavedSearches.push(item);
                         }
@@ -504,7 +504,7 @@
                     if (scope.globalSavedSearches.length > 0) {
                         scope.globalSavedSearches.length = 0;
                     }
-                    _.each(scope.searches, function(item) {
+                    _.each($filter('sortByName')(scope.searches), function(item) {
                         if (item.is_global) {
                             scope.globalSavedSearches.push(item);
                             var group = scope.editGroups[item._id];

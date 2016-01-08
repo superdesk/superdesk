@@ -65,7 +65,7 @@ describe('monitoring', function() {
         monitoring.nextSearches();
         monitoring.nextReorder();
         monitoring.saveSettings();
-        expect(monitoring.getTextItem(0, 0)).toBe('item1');
+        expect(monitoring.getTextItem(0, 0)).toBe('ingest1');
     });
 
     it('configure a stage and a saved search and show them on monitoring view', function() {
@@ -81,7 +81,7 @@ describe('monitoring', function() {
         monitoring.nextReorder();
         monitoring.saveSettings();
         expect(monitoring.getTextItem(0, 2)).toBe('item6');
-        expect(monitoring.getTextItem(1, 0)).toBe('item1');
+        expect(monitoring.getTextItem(1, 0)).toBe('ingest1');
     });
 
     it('configure a stage and a saved search then unselect stage and show search on monitoring view',
@@ -103,7 +103,7 @@ describe('monitoring', function() {
         monitoring.nextSearches();
         monitoring.nextReorder();
         monitoring.saveSettings();
-        expect(monitoring.getTextItem(0, 0)).toBe('item1');
+        expect(monitoring.getTextItem(0, 0)).toBe('ingest1');
     });
 
     it('configure stage and search and then reorder', function() {
@@ -119,13 +119,13 @@ describe('monitoring', function() {
         monitoring.moveOrderItem(0, 1);
         monitoring.nextReorder();
         monitoring.saveSettings();
-        expect(monitoring.getTextItem(0, 0)).toBe('item1');
+        expect(monitoring.getTextItem(0, 0)).toBe('ingest1');
         expect(monitoring.getTextItem(1, 2)).toBe('item6');
 
         monitoring.showMonitoringSettings();
         monitoring.nextStages();
         monitoring.nextSearches();
-        expect(monitoring.getOrderItemText(0)).toBe('global saved search item');
+        expect(monitoring.getOrderItemText(0)).toBe('global saved search ingest1');
         expect(monitoring.getOrderItemText(1)).toBe('Politic Desk : two');
     });
 
@@ -147,14 +147,14 @@ describe('monitoring', function() {
         monitoring.saveSettings();
         expect(monitoring.getTextItem(0, 0)).toBe('item1');
         expect(monitoring.getTextItem(1, 2)).toBe('item6');
-        expect(monitoring.getTextItem(2, 0)).toBe('item1');
+        expect(monitoring.getTextItem(2, 0)).toBe('ingest1');
     });
 
     it('configure a saved search that contain ingest items', function() {
         monitoring.showMonitoringSettings();
         monitoring.toggleDesk(0);
         monitoring.nextStages();
-        monitoring.toggleGlobalSearch(1);
+        monitoring.toggleGlobalSearch(0);
         monitoring.nextSearches();
         monitoring.nextReorder();
         monitoring.saveSettings();
@@ -165,7 +165,7 @@ describe('monitoring', function() {
         monitoring.showMonitoringSettings();
         monitoring.toggleDesk(0);
         monitoring.nextStages();
-        monitoring.toggleGlobalSearch(2);
+        monitoring.toggleGlobalSearch(1);
         monitoring.nextSearches();
         monitoring.nextReorder();
         monitoring.saveSettings();
@@ -182,7 +182,7 @@ describe('monitoring', function() {
         monitoring.switchGlobalSearchOn();
         monitoring.toggleGlobalSearch(3);
         expect(monitoring.getGlobalSearchText(3)).toBe('global saved search other user by first name1 last name1');
-        monitoring.togglePrivateSearch(0);
+        monitoring.togglePrivateSearch(1);
         monitoring.nextSearches();
         monitoring.nextReorder();
         monitoring.saveSettings();
@@ -190,8 +190,8 @@ describe('monitoring', function() {
         expect(monitoring.getTextItem(6, 1)).toBe('item9');
         monitoring.showMonitoringSettings();
         monitoring.nextStages();
-        expect(monitoring.getGlobalSearchText(0)).toBe('global saved search item by first name last name');
-        expect(monitoring.getPrivateSearchText(0)).toBe('saved search item');
+        expect(monitoring.getGlobalSearchText(0)).toBe('global saved search ingest1 by first name last name');
+        expect(monitoring.getPrivateSearchText(0)).toBe('saved search ingest1');
     });
 
     it('configure monitoring view for more than 1 desk', function() {
@@ -242,7 +242,7 @@ describe('monitoring', function() {
         monitoring.toggleStage(1, 2);
         monitoring.toggleStage(1, 4);
         monitoring.nextStages();
-        monitoring.toggleGlobalSearch(0);
+        monitoring.toggleGlobalSearch(2);
         monitoring.nextSearches();
         monitoring.nextReorder();
         monitoring.saveSettings();
@@ -490,7 +490,7 @@ describe('monitoring', function() {
         monitoring.toggleStage(0, 4);
         monitoring.toggleDeskOutput(0);
         monitoring.nextStages();
-        monitoring.toggleGlobalSearch(0);
+        monitoring.toggleGlobalSearch(2);
         monitoring.nextSearches();
         // bring global search group in first place in monitoring view
         monitoring.moveOrderItem(0, 1);
