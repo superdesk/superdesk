@@ -2941,7 +2941,8 @@
         this.canPackageItems = function() {
             var canPackage = true;
             multi.getItems().forEach(function(item) {
-                canPackage = canPackage && item.state !== 'killed';
+                canPackage = canPackage && item._type !== 'archived' &&
+                    !_.contains(['ingested', 'spiked', 'killed'], item.state);
             });
             return canPackage;
         };

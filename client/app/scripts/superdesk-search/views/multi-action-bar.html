@@ -5,20 +5,20 @@
 		translate-n="multi.count"
 		translate-plural="{{ multi.count }} Items selected">{{ multi.count }} Item selected</span>
 
-    <div class="pull-right" ng-if="action.canPackageItems() && (state !== 'ingested' && state !== 'spiked')">
+    <div class="pull-right" ng-if="action.canPackageItems()">
         <button class="navbtn strict" ng-click="action.createPackage()" title="{{ :: 'Create Package' | translate }}">
             <i class="big-icon-package-create"></i>
         </button>
         <button class="navbtn strict" ng-if="isOpenItemType('composite')" ng-click="action.addToPackage()" title="{{ :: 'Add to Current Package' | translate }}">
             <i class="big-icon-package-add"></i>
         </button>
-    </div>
 
-    <div class="dropdown strict highlights-dropdown pull-right" ng-if="type === 'archive' && state !== 'spiked'" title="{{ :: 'Mark item' | translate }}" dropdown>
-         <button class="dropdown-toggle navbtn" dropdown-toggle>
-            <i class="big-icon-marked-star"></i>
-         </button>
-         <ul class="dropdown-menu pull-right" sd-multi-mark-highlights-dropdown></ul>
+        <div class="dropdown strict highlights-dropdown pull-right" title="{{ :: 'Mark item' | translate }}" dropdown>
+             <button class="dropdown-toggle navbtn" dropdown-toggle>
+                <i class="big-icon-marked-star"></i>
+             </button>
+             <ul class="dropdown-menu pull-right" sd-multi-mark-highlights-dropdown></ul>
+        </div>
     </div>
 
 	<div class="pull-right" ng-if="type === 'archive'">
