@@ -899,6 +899,7 @@
 
                     scope.context = 'search';
                     scope.$on('item:deleted:archived', itemDelete);
+                    scope.$on('item:fetch', queryItems);
                     scope.$on('item:spike', queryItems);
                     scope.$on('item:unspike', queryItems);
                     scope.$on('item:duplicate', queryItems);
