@@ -222,7 +222,7 @@
                 return '(' + filterCondition.field + ' ' + filterCondition.operator + ' ' + conditionValue + ')';
             };
         })
-        .filter('formatString', function() {
+        .filter('removeLodash', function() {
             return function (value) {
                 var cleanedValue = value || '';
 

@@ -1248,8 +1248,8 @@
      * <div sd-media-query min-width='650' max-width='1440'></div>
      *
      */
-    mediaQuery.$inject = ['$window', '$timeout'];
-    function mediaQuery($window, $timeout) {
+    mediaQuery.$inject = ['$window'];
+    function mediaQuery($window) {
         return {
             scope: {
                 minWidth: '=',
@@ -1261,18 +1261,22 @@
                 window.on('resize', _.debounce(calcSize, 300));
 
                 function calcSize() {
-                    $timeout(function () {
-                        if (elem.width() < scope.minWidth) {
+                    if (elem.width() < scope.minWidth) {
+                        scope.$parent.$applyAsync(function () {
                             scope.$parent.elementState = 'compact';
-                            elem.removeClass('comfort').addClass('compact');
-                        } else if (elem.width() > scope.maxWidth) {
+                        });
+                        elem.removeClass('comfort').addClass('compact');
+                    } else if (elem.width() > scope.maxWidth) {
+                        scope.$parent.$applyAsync(function () {
                             scope.$parent.elementState = 'comfort';
-                            elem.removeClass('compact').addClass('comfort');
-                        } else {
+                        });
+                        elem.removeClass('compact').addClass('comfort');
+                    } else {
+                        scope.$parent.$applyAsync(function () {
                             scope.$parent.elementState = null;
-                            elem.removeClass('compact comfort');
-                        }
-                    });
+                        });
+                        elem.removeClass('compact comfort');
+                    }
                 }
 
                 calcSize();

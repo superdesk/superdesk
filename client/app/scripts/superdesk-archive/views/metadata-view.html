@@ -160,7 +160,7 @@
     <dl>
             <dt translate>State</dt>
             <dd>
-                <div class="state-label state-{{item.state}}" ng-class="{state_embargo: item.embargo}">{{item.state | formatString}}</div>
+                <div class="state-label state-{{item.state}}" ng-class="{state_embargo: item.embargo}">{{item.state | removeLodash}}</div>
                 <div ng-if="item.flags.marked_for_not_publication" class="state-label not-for-publication" translate>Not For Publication</div>
                 <div ng-if="item.flags.marked_for_legal" class="state-label legal" translate>Legal</div>
             </dd>

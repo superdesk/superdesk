@@ -3,7 +3,7 @@
 	<div class="dropdown" dropdown sd-dropdown-position>
 	    <button id="order_button" class="dropdown-toggle" dropdown-toggle>{{ active.label }} <b class="caret"></b>
 	    </button>
-	    <ul class="dropdown-menu right-submenu" id="order_selector">
+	    <ul class="dropdown-menu left-submenu" id="order_selector">
 	        <li ng-repeat="option in sortOptions" ng-class="{active: option === selected}">
 	            <a href="" ng-click="sort(option.field)">{{ option.label }}</a>
 	        </li>
