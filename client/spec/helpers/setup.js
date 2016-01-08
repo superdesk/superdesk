@@ -15,17 +15,13 @@ function openBaseUrl() {
 }
 
 function resize(width, height) {
-    return browser.driver.manage().window().setSize(width, height)
-        .then(function() {
-            browser.driver.manage().window().getSize()
-            .then(function(size) {
-                if (size.width === width && size.height === height) {
-                    return true;
-                } else {
-                    return resize(width, height);
-                }
-            });
-        });
+    var win = browser.driver.manage().window();
+    return win.getSize().then(function(size) {
+        if (size.width !== width || size.height !== height) {
+            console.log('resize', size);
+            return win.setSize(width, height);
+        }
+    });
 }
 
 module.exports = function(params) {
