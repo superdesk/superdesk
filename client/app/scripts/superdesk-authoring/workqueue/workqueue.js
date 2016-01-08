@@ -44,16 +44,34 @@ function WorkqueueService(session, api) {
     };
 }
 
-WorkqueueCtrl.$inject = ['$scope', '$route', 'workqueue', 'authoringWorkspace', 'multiEdit', 'superdesk', 'lock', '$location'];
-function WorkqueueCtrl($scope, $route, workqueue, authoringWorkspace, multiEdit, superdesk, lock, $location) {
+WorkqueueCtrl.$inject = [
+    '$scope',
+    '$route',
+    'workqueue',
+    'authoringWorkspace',
+    'multiEdit',
+    'superdesk',
+    'lock',
+    '$location',
+    'session',
+    'authoring'
+];
+function WorkqueueCtrl($scope, $route, workqueue, authoringWorkspace, multiEdit, superdesk, lock, $location, session, authoring) {
 
     $scope.active = null;
     $scope.workqueue = workqueue;
     $scope.multiEdit = multiEdit;
 
-    $scope.$on('item:lock', updateWorkqueue);
-    $scope.$on('item:unlock', updateWorkqueue);
     $scope.$on('$locationChangeSuccess', updateWorkqueue);
+    $scope.$on('item:lock', updateWorkqueue);
+    $scope.$on('item:unlock', function (_e, data) {
+        var item = _.find(workqueue.items, {_id: data.item});
+        if (item && session.sessionId !== data.lock_session && $scope.active._id !== item._id) {
+            authoring.unlock(item, data.user, item.headline);
+        }
+
+        updateWorkqueue();
+    });
     $scope.$on('media_archive', function(e, data) {
         workqueue.updateItem(data.item);
     });
