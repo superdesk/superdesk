@@ -28,8 +28,8 @@ Feature: Rewrite content
       [{"guid": "123", "type": "text", "headline": "test", "_current_version": 1, "state": "fetched",
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
         "subject":[{"qcode": "17004000", "name": "Statistics"}],
-        "body_html": "Test Document body",
-        "flags": {"marked_for_legal": true},
+        "body_html": "Test Document body", "genre": [{"name": "Article", "value": "Article"}],
+        "flags": {"marked_for_legal": true}, "body_footer": "Suicide Call Back Service 1300 659 467",
         "place": [{"qcode" : "ACT", "world_region" : "Oceania", "country" : "Australia",
         "name" : "ACT", "state" : "Australian Capital Territory"}]}]
       """
@@ -82,8 +82,8 @@ Feature: Rewrite content
       Then we get existing resource
       """
       {"_items" : [{"_id": "#REWRITE_ID#", "anpa_take_key": "update", "rewrite_of": "#archive.123.take_package#",
-        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"},
-        "flags": {"marked_for_legal": true},
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}, "genre": [{"name": "Article", "value": "Article"}],
+        "flags": {"marked_for_legal": true}, "body_footer": "Suicide Call Back Service 1300 659 467",
         "place": [{"qcode" : "ACT"}]}]}
       """
       When we get "/archive/123"
@@ -299,7 +299,7 @@ Feature: Rewrite content
           "task": {"desk": "#desks._id#"}}]}
         """
 
-      @auth
+    @auth
       Scenario: Rewrite of a rewritten published content
         Given the "validators"
         """
@@ -512,9 +512,7 @@ Feature: Rewrite content
       {"_items": [{"_id": "123", "rewritten_by": "#REWRITE_OF#"}]}
       """
 
-
-
-      @auth
+    @auth
       Scenario: A new take on a rewritten story fails
         Given the "validators"
         """
@@ -577,7 +575,7 @@ Feature: Rewrite content
         {"_message": "Article has been rewritten before !"}
         """
 
-        @auth
+    @auth
         Scenario: A new take on a published rewrite succeeds
         Given the "validators"
         """

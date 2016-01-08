@@ -13,7 +13,7 @@ import logging
 from flask import request
 
 from superdesk import get_resource_service, Service, config
-from superdesk.metadata.item import ITEM_STATE, EMBARGO
+from superdesk.metadata.item import ITEM_STATE, EMBARGO, CONTENT_STATE
 from superdesk.resource import Resource, build_custom_hateoas
 from apps.archive.common import CUSTOM_HATEOAS, ITEM_CREATE, ARCHIVE
 from superdesk.metadata.utils import item_url
@@ -87,21 +87,19 @@ class ArchiveRewriteService(Service):
         """
         rewrite = dict()
         fields = ['family_id', 'abstract', 'anpa_category', 'pubstatus', 'slugline', 'urgency', 'subject', 'priority',
-                  'byline', 'dateline', 'headline', 'event_id', 'place', 'flags']
+                  'byline', 'dateline', 'headline', 'event_id', 'place', 'flags', 'genre', 'body_footer']
 
         for field in fields:
             if original.get(field):
                 rewrite[field] = original[field]
 
-        if digital:
-            # check if there's digital
+        if digital:  # check if there's digital
             rewrite['rewrite_of'] = digital[config.ID_FIELD]
-        else:
-            # if not use original's id
+        else:  # if not use original's id
             rewrite['rewrite_of'] = original[config.ID_FIELD]
 
         send_to(doc=rewrite, desk_id=original['task']['desk'])
-        rewrite['state'] = 'in_progress'
+        rewrite[ITEM_STATE] = CONTENT_STATE.PROGRESS
         self._set_take_key(rewrite, original.get('event_id'))
         return rewrite
 
