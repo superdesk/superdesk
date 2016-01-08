@@ -11,7 +11,7 @@
         <i class="icon-white icon-plus-large"></i>
     </button>
     <ul class="dropdown-menu nested-menu pull-right">
-        <li ng-if="!activeTerm && header && isOpen">
+        <li ng-if="!activeTerm && header">
             <ul sd-typeahead items="terms" term="selectedTerm" search="searchTerms(term)" select="selectTerm(item)" always-visible="header" data-disabled="disabled">
                 <li typeahead-item="t" ng-repeat="t in terms track by t.qcode" ng-if="!activeTree.length || activeList"><button>{{ :: t.name }}</button></li>
             </ul>
