@@ -54,8 +54,8 @@
         }))
         .then(angular.bind(this, function() {
             return this.readSettings()
-                .then(angular.bind(this, function(groups) {
-                    initGroups(groups);
+                .then(angular.bind(this, function(settings) {
+                    initGroups(settings);
                     setupCards();
                     this.loading = false;
                 }));
@@ -90,7 +90,7 @@
                             self.widget.configuration.label = widget.configuration.label || '';
                         }
                     });
-                    return groups;
+                    return {'type': 'desk', 'groups': groups};
                 });
             } else {
                 return workspaces.getActiveId()
@@ -99,16 +99,17 @@
                             return preferencesService.get(PREFERENCES_KEY)
                                 .then(function(preference) {
                                     if (preference && preference[activeWorkspace.id] && preference[activeWorkspace.id].groups) {
-                                        return preference[activeWorkspace.id].groups;
+                                        return {'type': 'workspace', 'groups': preference[activeWorkspace.id].groups};
                                     }
+                                    return {'type': 'workspace', 'groups': []};
                                 });
                         } else if (activeWorkspace.type === 'desk') {
                             var desk = self.deskLookup[activeWorkspace.id];
                             if (desk && desk.monitoring_settings) {
-                                return desk.monitoring_settings;
+                                return {'type': 'desk', 'groups': desk.monitoring_settings};
                             }
                         }
-                        return [];
+                        return {'type': 'desk', 'groups': []};
                     });
             }
         };
@@ -118,11 +119,21 @@
          * are not available(deleted or no right on them for stages only) and return all
          * stages for current desk if monitoring setting is not set
          **/
-        function initGroups(groups) {
+        function initGroups(settings) {
             if (self.groups.length > 0) {
                 self.groups.length = 0;
             }
-            if (!groups || groups.length === 0) {
+            if (settings && settings.groups.length > 0) {
+                _.each(settings.groups, function(item) {
+                    if (item.type === 'stage' && !self.stageLookup[item._id]) {
+                        return;
+                    }
+                    if (item.type === 'search' && !self.searchLookup[item._id]) {
+                        return;
+                    }
+                    self.groups.push(item);
+                });
+            } else if (settings && settings.groups.length === 0 && settings.type === 'desk') {
                 _.each(self.stageLookup, function(item) {
                     if (item.desk === desks.getCurrentDeskId()) {
                         self.groups.push({_id: item._id, type: 'stage', header: item.name});
@@ -133,16 +144,6 @@
                 if (currentDesk) {
                     self.groups.push({_id: currentDesk._id + ':output', type: 'deskOutput', header: currentDesk.name});
                 }
-            } else {
-                _.each(groups, function(item) {
-                    if (item.type === 'stage' && !self.stageLookup[item._id]) {
-                        return;
-                    }
-                    if (item.type === 'search' && !self.searchLookup[item._id]) {
-                        return;
-                    }
-                    self.groups.push(item);
-                });
             }
             initSpikeGroups();
             updateFileTypeCriteria();
@@ -185,8 +186,8 @@
                 return null;
             }
             return self.readSettings()
-                .then(function(groups) {
-                    initGroups(groups);
+                .then(function(settings) {
+                    initGroups(settings);
                     setupCards();
                 });
         }
