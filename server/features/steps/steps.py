@@ -1945,3 +1945,31 @@ def expire_content(context):
 
         from apps.archive.commands import RemoveExpiredContent
         RemoveExpiredContent().run()
+
+
+@when('the publish schedule lapses')
+def run_overdue_schedule_jobs(context):
+    with context.app.test_request_context(context.app.config['URL_PREFIX']):
+        ids = json.loads(apply_placeholders(context, context.text))
+        lapse_time = utcnow() - timedelta(minutes=5)
+        updates = {'publish_schedule': lapse_time, 'state': 'published'}
+
+        for item_id in ids:
+            original = get_resource_service('archive').find_one(req=None, _id=item_id)
+            get_resource_service('archive').system_update(item_id, updates, original)
+            get_resource_service('published').update_published_items(item_id, 'publish_schedule', lapse_time)
+            get_resource_service('published').update_published_items(item_id, 'state', 'published')
+
+
+@when('we get takes package "{url}" and validate')
+def we_get_takes_package_and_validate(context, url):
+    with context.app.test_request_context(context.app.config['URL_PREFIX']):
+        url = apply_placeholders(context, url)
+        response_data = get_res(url, context)
+
+        from apps.packages.takes_package_service import TakesPackageService
+        response_data = TakesPackageService().get_take_package(response_data)
+
+        context_data = json.loads(apply_placeholders(context, context.text))
+        assert_equal(json_match(context_data, response_data), True,
+                     msg=str(context_data) + '\n != \n' + str(response_data))
