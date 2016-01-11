@@ -44,6 +44,7 @@ function backendRequest(params, callback) {
 
         if (!error) {
             console.log('response err', response.statusCode, body);
+            console.log('request', params);
             throw new Error('response err: ' + response.statusCode);
         }
 
@@ -55,14 +56,44 @@ function backendRequest(params, callback) {
     request(params, responseHandler);
 }
 
-function backendRequestAuth (params, callback) {
-    callback = callback || function() {};
-    var token = browser.params.token;
-    if (token) {
-        if (!params.headers) {
-            params.headers = {};
-        }
-        params.headers.authorization = 'Basic ' + bt(token + ':');
+/**
+ * Run given callback once there is a token in place
+ */
+function withToken(callback) {
+    if (browser.params.token) {
+        callback();
+    } else {
+        request.post({
+                rejectUnauthorized: false,
+                url: getBackendUrl('/auth'),
+                json: {
+                    'username': browser.params.username,
+                    'password': browser.params.password
+                }
+            }, function(error, response, json) {
+                if (error) {
+                    throw new Error(error);
+                }
+                if (!json.token) {
+                    console.log(json);
+                    throw new Error('Auth failed');
+                }
+                browser.params.token = json.token;
+                callback(error, response, json);
+            }
+        );
     }
-    exports.backendRequest(params, callback);
+}
+
+/**
+ * Perform backend request with auth info
+ */
+function backendRequestAuth(params, callback) {
+    callback = callback || function() {};
+    withToken(function() {
+        var token = browser.params.token;
+        params.headers = params.headers || {};
+        params.headers.authorization = 'Basic ' + bt(token + ':');
+        backendRequest(params, callback);
+    });
 }
