@@ -1,12 +1,13 @@
 'use strict';
 
+var backendRequest = require('./backend').backendRequest;
 var backendRequestAuth = require('./backend').backendRequestAuth;
 
-exports.resetApp = resetApp;
 exports.post = post;
+exports.resetApp = resetApp;
 
 function resetApp(profile, callback) {
-    backendRequestAuth({
+    backendRequest({
         uri: '/prepopulate',
         method: 'POST',
         json: {'profile': profile}
