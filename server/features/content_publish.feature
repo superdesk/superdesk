@@ -224,7 +224,6 @@ Feature: Content Publishing
       When we get "/publish_queue"
       Then we get list with 1 items
 
-
     @auth
     @vocabulary
     Scenario: Publish a user content blocked by the filter
@@ -482,9 +481,8 @@ Feature: Content Publishing
       """
       When we get "/legal_archive/123"
       Then we get error 404
-      
 
-   @auth
+    @auth
     Scenario: Deschedule an item
       Given empty "subscribers"
       And "desks"
@@ -705,7 +703,6 @@ Feature: Content Publishing
       {}
       """
       Then we get OK response
-
 
     @auth
     Scenario: We can lock a published content and then correct it
@@ -1088,8 +1085,6 @@ Feature: Content Publishing
       """
       Then we get response code 400
 
-
-
     @auth
     Scenario: As a user I shouldn't be able to publish an item which is marked as not for publication
       Given "desks"
@@ -1195,8 +1190,6 @@ Feature: Content Publishing
       Then we get OK response
       When we get "/publish_queue"
       Then we get list with 0 items
-
-
 
     @auth
     Scenario: Publish fails when publish validators fail
@@ -1470,4 +1463,52 @@ Feature: Content Publishing
       """
       {"_items" : [{"_id": "123", "guid": "123", "headline": "test", "_current_version": 2, "state": "published",
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]}
+      """
+
+    @auth
+    Scenario: User should be able to create a new take after the publish schedule passes
+      Given "subscribers"
+      """
+      [{"name":"Channel 3","media_type":"media", "subscriber_type": "digital", "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
+       "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
+      }]
+      """
+      And "desks"
+      """
+      [{"name": "Sports", "content_expiry": 60, "members": [{"user": "#CONTEXT_USER_ID#"}]}]
+      """
+      And the "validators"
+      """
+      [{"_id": "publish_text", "act": "publish", "type": "text", "schema":{}}]
+      """
+      And "archive"
+      """
+      [{"guid": "123", "headline": "test", "_current_version": 1, "state": "fetched",
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
+        "publish_schedule":"#DATE+1#", "subject":[{"qcode": "17004000", "name": "Statistics"}],
+        "slugline": "test", "body_html": "Test Document body"}]
+      """
+      When we publish "#archive._id#" with "publish" type and "published" state
+      Then we get OK response
+      And we get existing resource
+      """
+      {"_current_version": 2, "state": "scheduled", "operation": "publish"}
+      """
+      When we get "/published"
+      Then we get list with 2 items
+      When the publish schedule lapses
+      """
+      ["123", "#archive.123.take_package#"]
+      """
+      And we post to "/archive/123/link"
+      """
+      [{"desk": "#desks._id#"}]
+      """
+      Then we get OK response
+      When we get takes package "/archive/123" and validate
+      """
+      {"type": "composite", "package_type": "takes",
+       "groups" : [{"refs" : [{"guid" : "123", "sequence" : 1}, {"sequence" : 2}],
+                    "role" : "grpRole:main", "id" : "main"}]
+      }
       """

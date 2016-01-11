@@ -52,9 +52,6 @@ class ArchiveLinkService(Service):
         self._validate_link(target, target_id)
         link = {}
 
-        if is_genre(target, BROADCAST_GENRE):
-            raise SuperdeskApiError.badRequestError("Cannot add new take to the story with genre as broadcast.")
-
         if desk_id:
             link = {'task': {'desk': desk_id}}
             user = get_user()
@@ -86,6 +83,9 @@ class ArchiveLinkService(Service):
 
         if target.get(EMBARGO):
             raise SuperdeskApiError.badRequestError("Takes can't be created for an Item having Embargo")
+
+        if is_genre(target, BROADCAST_GENRE):
+            raise SuperdeskApiError.badRequestError("Cannot add new take to the story with genre as broadcast.")
 
         if get_resource_service('published').is_rewritten_before(target['_id']):
             raise SuperdeskApiError.badRequestError(message='Article has been rewritten before !')

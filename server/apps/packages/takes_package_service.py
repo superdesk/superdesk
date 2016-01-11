@@ -165,6 +165,8 @@ class TakesPackageService():
             del takes_package[config.ID_FIELD]
             takes_package.pop('unique_id', None)
             takes_package.pop('unique_name', None)
+            takes_package.pop('publish_schedule', None)
+
             resolve_document_version(takes_package, ARCHIVE, 'PATCH', takes_package)
             archive_service.patch(takes_package_id, takes_package)
             get_resource_service('archive_broadcast').on_broadcast_master_updated(ITEM_CREATE, target,
