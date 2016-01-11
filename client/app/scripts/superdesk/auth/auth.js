@@ -130,8 +130,8 @@
         }])
 
         // watch session token, identity
-        .run(['$rootScope', '$route', '$location', '$http', '$window', 'session', 'api',
-        function($rootScope, $route, $location, $http, $window, session, api) {
+        .run(['$rootScope', '$http', '$window', 'session', 'api', 'superdeskFlags', 'authoringWorkspace', 'modal', 'gettext',
+        function($rootScope, $http, $window, session, api, superdeskFlags, authoringWorkspace, modal, gettext) {
             $rootScope.logout = function() {
 
                 function replace() {
@@ -139,9 +139,22 @@
                     $window.location.replace('/'); // reset page for new user
                 }
 
-                api.auth.getById(session.sessionId).then(function (sessionData) {
-                    api.auth.remove(sessionData).then(replace, replace);
-                });
+                var canLogout = true;
+                if (superdeskFlags.flags.authoring) {
+                    var item = authoringWorkspace.getItem();
+
+                    if (item && item._autosaved) {
+                        canLogout = false;
+                        modal.confirm(gettext('There are some unsaved changes. Please save them before signing out.'),
+                            gettext('Warning'), gettext('OK'), '');
+                    }
+                }
+
+                if (canLogout) {
+                    api.auth.getById(session.sessionId).then(function (sessionData) {
+                        api.auth.remove(sessionData).then(replace, replace);
+                    });
+                }
             };
 
             // populate current user
