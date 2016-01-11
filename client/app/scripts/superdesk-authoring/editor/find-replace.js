@@ -20,6 +20,7 @@ function FindReplaceDirective($timeout, $rootScope, editor) {
         link: function(scope, elem) {
             scope.to = '';
             scope.from = '';
+            scope.caseSensitive = true;
 
             /**
              * Highlight next matching string
@@ -55,10 +56,16 @@ function FindReplaceDirective($timeout, $rootScope, editor) {
                 var selectionStart = input.selectionStart;
                 var selectionEnd = input.selectionEnd;
 
-                editor.setSettings({findreplace: {needle: needle}});
+                editor.setSettings({findreplace: {needle: needle, caseSensitive: scope.caseSensitive}});
                 editor.render();
                 editor.selectNext();
                 input.setSelectionRange(selectionStart, selectionEnd);
+            });
+
+            scope.$watch('caseSensitive', function (caseSensitive) {
+                editor.setSettings({findreplace: {needle: scope.from, caseSensitive: caseSensitive}});
+                editor.render();
+                editor.selectNext();
             });
 
             scope.$on('$destroy', function() {
