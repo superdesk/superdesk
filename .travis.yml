@@ -60,7 +60,7 @@ install:
 before_script:
     - if [ "${TARGET}" != "${TARGET/e2e/}" ]; then
         cd server ;
-        (nohup env SUPERDESK_URL='http://127.0.0.1:5000/api' SUPERDESK_CLIENT_URL='http://127.0.0.1:9000' WEB_CONCURRENCY=3 WEB_TIMEOUT=8 SUPERDESK_TESTING='True' honcho start wamp rest & );
+        (nohup env SUPERDESK_URL='http://127.0.0.1:5000/api' SUPERDESK_CLIENT_URL='http://127.0.0.1:9000' WEB_CONCURRENCY=3 WEB_TIMEOUT=8 SUPERDESK_TESTING='True' honcho start & );
         cd ../client ;
         grunt build --server='http://127.0.0.1:5000/api' --ws='ws://127.0.0.1:5100' ;
         cd dist ;

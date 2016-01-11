@@ -52,41 +52,45 @@ function backendRequest(params, callback) {
     }
 
     params.rejectUnauthorized = false;
-    params.timeout = 5000;
+    params.timeout = 8000;
     request(params, responseHandler);
 }
 
 /**
  * Run given callback once there is a token in place
+ *
+ * @param {function} callback
  */
 function withToken(callback) {
     if (browser.params.token) {
         callback();
     } else {
         request.post({
-                rejectUnauthorized: false,
-                url: getBackendUrl('/auth'),
-                json: {
-                    'username': browser.params.username,
-                    'password': browser.params.password
-                }
-            }, function(error, response, json) {
-                if (error) {
-                    throw new Error(error);
-                }
-                if (!json.token) {
-                    console.log(json);
-                    throw new Error('Auth failed');
-                }
-                browser.params.token = json.token;
-                callback(error, response, json);
+            rejectUnauthorized: false,
+            url: getBackendUrl('/auth'),
+            json: {
+                username: browser.params.username,
+                password: browser.params.password
             }
-        );
+        }, function(error, response, json) {
+            if (error) {
+                throw new Error(error);
+            }
+            if (!json.token) {
+                console.log(json);
+                throw new Error('Auth failed');
+            }
+            browser.params.token = json.token;
+            callback(error, response, json);
+        });
     }
 }
 
 /**
  * Perform backend request with auth info
+ *
+ * @param {Object} params
+ * @param {function} callback
  */
 function backendRequestAuth(params, callback) {
     callback = callback || function() {};

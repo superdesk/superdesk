@@ -1977,6 +1977,17 @@
                             $document.off('keydown', listComponent.handleKey);
                         });
 
+                        /**
+                         * Test if item a equals to item b
+                         *
+                         * @param {Object} a
+                         * @param {Object} b
+                         * @return {Boolean}
+                         */
+                        function isSameVersion(a, b) {
+                            return a._etag === b._etag && a._current_version === b._current_version;
+                        }
+
                         scope.$watch('items', function(items) {
                             if (!items) {
                                 return;
@@ -1987,7 +1998,7 @@
                             var itemsById = angular.extend({}, listComponent.state.itemsById);
 
                             items._items.forEach(function(item) {
-                                if (!itemsById[item._id] || itemsById[item._id]._etag !== item._etag) {
+                                if (!itemsById[item._id] || !isSameVersion(itemsById[item._id], item)) {
                                     itemsById[item._id] = item;
                                 }
 

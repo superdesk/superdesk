@@ -12,5 +12,5 @@ WEB_TIMEOUT=5
 
 EOF
 
-honcho -e /tmp/testenv start rest wamp
+honcho -e /tmp/testenv start
 rm -f /tmp/testenv
