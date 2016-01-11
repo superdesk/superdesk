@@ -162,9 +162,7 @@
             this.stop(item);
 
             if (angular.isDefined(item._autosave) && item._autosave !== null) {
-                api(RESOURCE).remove(item._autosave).then(function () {
-                    //authoringWorkspace.removeAutosave(_autosave);
-                });
+                api(RESOURCE).remove(item._autosave);
             }
 
             item._autosave = null;
