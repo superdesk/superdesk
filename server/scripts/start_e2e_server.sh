@@ -12,6 +12,5 @@ WEB_TIMEOUT=5
 
 EOF
 
-honcho -e /tmp/testenv run python manage.py users:create -u admin -p admin -e admin@localhost --admin=true
-honcho -e /tmp/testenv start
+honcho -e /tmp/testenv start rest wamp
 rm -f /tmp/testenv

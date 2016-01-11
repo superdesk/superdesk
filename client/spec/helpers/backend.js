@@ -43,12 +43,8 @@ function backendRequest(params, callback) {
         }
 
         if (!error) {
-            console.log('Request:');
-            console.log(response.request.href);
-            console.log(response.request);
-            console.log('Response:');
-            console.log(body);
-            throw new Error('Status code: ' + response.statusCode);
+            console.log('response err', response.statusCode, body);
+            throw new Error('response err: ' + response.statusCode);
         }
 
         throw new Error('Request error=' + JSON.stringify(error) + ' params=' + JSON.stringify(params));
