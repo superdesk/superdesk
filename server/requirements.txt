@@ -7,4 +7,4 @@ pymongo==2.8
 Eve==0.6.0
 
 
--e git+git://github.com/superdesk/superdesk-core@054785aa#egg=Superdesk-Core==0.0.1-dev
+-e git+git://github.com/superdesk/superdesk-core@054785a#egg=Superdesk-Core==0.0.1-dev
