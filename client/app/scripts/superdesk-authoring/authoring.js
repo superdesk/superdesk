@@ -762,10 +762,9 @@
         };
 
         this.confirmSpellcheck = function confirmSpellcheck(msg) {
-            return modal.confirm(
-                $interpolate(gettext('You have {{ message }} spelling mistakes. Are you sure you want to continue?'))
-                ({message: msg})
-            );
+            var mistakes = msg > 1?'mistakes':'mistake';
+            var confirmMessage = 'You have {{ message }} spelling {{ mistakes }}. Are you sure you want to continue?';
+            return modal.confirm($interpolate(gettext(confirmMessage))({message: msg, mistakes: mistakes}));
         };
 
         /**
@@ -1615,9 +1614,9 @@
         };
     }
     SendItem.$inject = ['$q', 'api', 'desks', 'notify', 'authoringWorkspace', 'superdeskFlags', '$location', 'macros',
-        '$rootScope', 'authoring', 'send', 'spellcheck', 'confirm', 'archiveService', 'preferencesService', 'multi'];
+        '$rootScope', 'authoring', 'send', 'editor', 'confirm', 'archiveService', 'preferencesService', 'multi'];
     function SendItem($q, api, desks, notify, authoringWorkspace, superdeskFlags, $location, macros,
-            $rootScope, authoring, send, spellcheck, confirm, archiveService, preferencesService, multi) {
+            $rootScope, authoring, send, editor, confirm, archiveService, preferencesService, multi) {
         return {
             scope: {
                 item: '=',
@@ -1718,17 +1717,19 @@
                 };
 
                 scope.send = function (open) {
-                    var spellcheckErrors = spellcheck.countErrors();
-                    if (scope.mode === 'authoring' && spellcheckErrors > 0) {
-                        confirm.confirmSpellcheck(spellcheckErrors)
-                                .then(angular.bind(this, function send() {
-                                    return runSend(open);
-                                }), function (err) { // cancel
-                                    return false;
-                                });
-                    } else {
-                        return runSend(open);
-                    }
+                    return editor.countErrors()
+                        .then(function(spellcheckErrors) {
+                            if (scope.mode === 'authoring' && spellcheckErrors > 0) {
+                                confirm.confirmSpellcheck(spellcheckErrors)
+                                        .then(angular.bind(this, function send() {
+                                            return runSend(open);
+                                        }), function (err) { // cancel
+                                            return false;
+                                        });
+                            } else {
+                                return runSend(open);
+                            }
+                        });
                 };
 
                 /*
@@ -1845,17 +1846,19 @@
                         return;
                     }
 
-                    var spellcheckErrors = spellcheck.countErrors();
-                    if (spellcheckErrors > 0) {
-                        confirm.confirmSpellcheck(spellcheckErrors)
-                                .then(angular.bind(this, function send() {
-                                    return runSendAndContinue();
-                                }), function (err) { // cancel
-                                    return false;
-                                });
-                    } else {
-                        return runSendAndContinue();
-                    }
+                    return editor.countErrors()
+                        .then(function(spellcheckErrors) {
+                            if (spellcheckErrors > 0) {
+                                confirm.confirmSpellcheck(spellcheckErrors)
+                                    .then(angular.bind(this, function send() {
+                                        return runSendAndContinue();
+                                    }), function (err) { // cancel
+                                        return false;
+                                    });
+                            } else {
+                                return runSendAndContinue();
+                            }
+                        });
                 };
 
                 /*

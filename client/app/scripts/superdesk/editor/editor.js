@@ -125,8 +125,8 @@ function HistoryStack(initialValue) {
     };
 }
 
-EditorService.$inject = ['spellcheck', '$rootScope', '$timeout'];
-function EditorService(spellcheck, $rootScope, $timeout) {
+EditorService.$inject = ['spellcheck', '$rootScope', '$timeout', '$q'];
+function EditorService(spellcheck, $rootScope, $timeout, $q) {
     this.settings = {spellcheck: true};
 
     this.KEY_CODES = Object.freeze({
@@ -237,7 +237,9 @@ function EditorService(spellcheck, $rootScope, $timeout) {
      * Render highlights in all registered scopes
      */
     this.render = function() {
-        scopes.forEach(self.renderScope);
+        scopes.forEach(function(scope) {
+            self.renderScope(scope);
+        });
     };
 
     /**
@@ -469,12 +471,12 @@ function EditorService(spellcheck, $rootScope, $timeout) {
         var spans = node.getElementsByClassName('rangySelectionBoundary');
         while (spans.length) {
             var span = spans.item(0);
-            span.parentNode.removeChild(span);
-            if (span.parentNode.normalize) {
-                span.parentNode.normalize();
+            var parent = span.parentNode;
+            parent.removeChild(span);
+            if (parent.normalize) {
+                parent.normalize();
             }
         }
-
         return node;
     }
 
@@ -535,6 +537,29 @@ function EditorService(spellcheck, $rootScope, $timeout) {
     this.redo = function(scope) {
         scope.history.selectNext();
         useHistory(scope);
+    };
+
+    /**
+     * Gives count of spelling errors.
+     *
+     */
+    this.countErrors = function() {
+        var spelling_errors = [];
+        var promises = [];
+
+        _.each(scopes, function(scope) {
+            promises.push(spellcheck.errors(scope.node).then(
+                function(result) {
+                    if (result.length) {
+                        spelling_errors = spelling_errors.concat(result);
+                    }
+                }
+            ));
+        });
+
+        return $q.all(promises).then(function() {
+            return spelling_errors.length;
+        });
     };
 
     /**
@@ -636,7 +661,8 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
                     });
 
                     editorElem.on('blur', function(event) {
-                        cancelTimeout(event);
+                        $timeout.cancel(updateTimeout);
+                        scope.node.classList.remove(TYPING_CLASS);
                         updateModel();
                     });
 

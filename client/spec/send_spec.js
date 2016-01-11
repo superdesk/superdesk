@@ -25,6 +25,8 @@ describe('send', function() {
         workspace.open();
         workspace.editItem(1);
         authoring.sendTo('Sports Desk');
+        // modal for the incorrect spelling.
+        authoring.confirmSendTo();
         workspace.switchToDesk('SPORTS DESK');
         waitForItems(3);
         expect(getItemState(0)).toBe('SUBMITTED');
@@ -94,6 +96,11 @@ describe('send', function() {
 
         authoring.writeText('Text, that not saved yet');
         authoring.sendTo('Sports Desk');
+
+        //Spell check confirmation modal save action
+        authoring.confirmSendTo();
+
+        //Unsaved item confirmation modal save action
         authoring.confirmSendTo();
 
         workspace.switchToDesk('SPORTS DESK');
@@ -108,6 +115,9 @@ describe('send', function() {
         monitoring.showHideList();
 
         authoring.sendTo('Politic Desk');
+        //Spell check confirmation modal save action
+        authoring.confirmSendTo();
+
         expect(monitoring.getGroups().count()).toBe(6);
 
         //now continue to open new item to see if its remembered?

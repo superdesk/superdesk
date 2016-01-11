@@ -9,7 +9,10 @@ SpellcheckService.$inject = ['$q', 'api', 'dictionaries'];
 function SpellcheckService($q, api, dictionaries) {
     var lang,
         dict,
-        numberOfErrors;
+        numberOfErrors,
+        self;
+
+    self = this;
 
     /**
      * Set current language
@@ -107,13 +110,6 @@ function SpellcheckService($q, api, dictionaries) {
     };
 
     /**
-     * Return number of spelling errors
-     */
-    this.countErrors = function() {
-        return numberOfErrors;
-    };
-
-    /**
      * Get suggested corrections for given word
      *
      * @param {string} word
@@ -153,6 +149,7 @@ function SpellcheckMenuController(editor, $rootScope) {
 
     function pushSettings() {
         editor.setSettings({spellcheck: self.isAuto});
+        editor.render();
     }
 }
 
