@@ -99,13 +99,16 @@ function AuthoringWidgetsDir(desks) {
             var editor = elem.find('.page-content-container'),
                 stickyHeader = elem.find('.authoring-sticky');
 
-            editor.on('scroll', function () {
+            editor.on('scroll', _.debounce(clipHeader, 100));
+
+            function clipHeader() {
                 if (editor.scrollTop() > 5) {
                     stickyHeader.addClass('authoring-sticky--fixed');
                 } else {
                     stickyHeader.removeClass('authoring-sticky--fixed');
                 }
-            });
+            }
+
         }
     };
 }

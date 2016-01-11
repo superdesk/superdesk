@@ -1224,18 +1224,62 @@
 
     function MouseHoverDirective() {
         return {
-            link: function(scope, elem, attrs) {
+            link: function (scope, elem, attrs) {
                 var key = attrs.sdMouseHover || 'hover';
 
-                elem.on('mouseenter', function() {
+                elem.on('mouseenter', function () {
                     scope[key] = true;
                     scope.$digest();
                 });
 
-                elem.on('mouseleave', function() {
+                elem.on('mouseleave', function () {
                     scope[key] = false;
                     scope.$digest();
                 });
+            }
+        };
+    }
+
+    /*
+     * Media Query directive is used for creating responsive
+     * layout's for single elements on page
+     *
+     * Usage:
+     * <div sd-media-query min-width='650' max-width='1440'></div>
+     *
+     */
+    mediaQuery.$inject = ['$window'];
+    function mediaQuery($window) {
+        return {
+            scope: {
+                minWidth: '=',
+                maxWidth: '='
+            },
+            link: function (scope, elem) {
+                var window = angular.element($window);
+
+                window.on('resize', _.debounce(calcSize, 300));
+
+                function calcSize() {
+                    if (elem.width() < scope.minWidth) {
+                        scope.$parent.$applyAsync(function () {
+                            scope.$parent.elementState = 'compact';
+                        });
+                        elem.removeClass('comfort').addClass('compact');
+                    } else if (elem.width() > scope.maxWidth) {
+                        scope.$parent.$applyAsync(function () {
+                            scope.$parent.elementState = 'comfort';
+                        });
+                        elem.removeClass('compact').addClass('comfort');
+                    } else {
+                        scope.$parent.$applyAsync(function () {
+                            scope.$parent.elementState = null;
+                        });
+                        elem.removeClass('compact comfort');
+                    }
+                }
+
+                calcSize();
             }
         };
     }
@@ -1266,5 +1310,5 @@
         .directive('sdWeekdayPicker', WeekdayPickerDirective)
         .directive('sdSplitterWidget', splitterWidget)
         .directive('sdMouseHover', MouseHoverDirective)
-        ;
+        .directive('sdMediaQuery', mediaQuery);
 })();

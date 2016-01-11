@@ -38,7 +38,7 @@
         </div>
         <div class="line">
             <div class="state-label state-{{item.state}}" ng-class="{state_embargo: item.embargo}"
-                 ng-hide="!item.state || (viewType !== undefined && viewType !== null && viewType !== 'deskOutput')">{{item.state}}</div>
+                 ng-hide="!item.state || (viewType !== undefined && viewType !== null && viewType !== 'deskOutput')">{{item.state | removeLodash}}</div>
             <div class="takekey" ng-if="item.anpa_take_key">{{ item.anpa_take_key }}</div>
             <span class="signal" ng-if="item.signal">{{ item.signal }}</span>
             <span class="broadcast-status" tooltip="{{item.broadcast.status}}" ng-if="item.broadcast.status">!</span>

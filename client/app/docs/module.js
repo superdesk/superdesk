@@ -14,10 +14,10 @@
 
     var app = angular.module('superdesk.docs', []);
 
-    MainDocsView.$inject = ['$location', '$anchorScroll'];
+    MainDocsView.$inject = ['$location', '$anchorScroll', 'asset'];
     function MainDocsView($location, $anchorScroll) {
         return {
-            templateUrl: '/views/main.html',
+            templateUrl: '/docs/views/main.html',
             link: function(scope, elem, attrs) {
                 scope.scrollTo = function(id) {
                     $location.hash(id);

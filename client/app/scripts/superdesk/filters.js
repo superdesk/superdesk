@@ -221,5 +221,12 @@
                 var conditionValue = labels.length > 0 ? labels.join(', ') : filterCondition.value;
                 return '(' + filterCondition.field + ' ' + filterCondition.operator + ' ' + conditionValue + ')';
             };
+        })
+        .filter('removeLodash', function() {
+            return function (value) {
+                var cleanedValue = value || '';
+
+                return cleanedValue.replace('_', ' ');
+            };
         });
 })();
