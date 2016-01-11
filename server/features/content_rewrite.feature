@@ -82,7 +82,7 @@ Feature: Rewrite content
       Then we get existing resource
       """
       {"_items" : [{"_id": "#REWRITE_ID#", "anpa_take_key": "update", "rewrite_of": "#archive.123.take_package#",
-        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}, "genre": [{"name": "Article", "value": "Article"}],
+        "task": {"desk": "#desks._id#", "stage": "#desks.working_stage#"}, "genre": [{"name": "Article", "value": "Article"}],
         "flags": {"marked_for_legal": true}, "body_footer": "Suicide Call Back Service 1300 659 467",
         "place": [{"qcode" : "ACT"}]}]}
       """

@@ -98,7 +98,7 @@ class ArchiveRewriteService(Service):
         else:  # if not use original's id
             rewrite['rewrite_of'] = original[config.ID_FIELD]
 
-        send_to(doc=rewrite, desk_id=original['task']['desk'])
+        send_to(doc=rewrite, desk_id=original['task']['desk'], default_stage='working_stage')
         rewrite[ITEM_STATE] = CONTENT_STATE.PROGRESS
         self._set_take_key(rewrite, original.get('event_id'))
         return rewrite

@@ -54,7 +54,7 @@ def compare_dictionaries(original, updates):
     return modified
 
 
-def send_to(doc, update=None, desk_id=None, stage_id=None, user_id=None):
+def send_to(doc, update=None, desk_id=None, stage_id=None, user_id=None, default_stage='incoming_stage'):
     """Send item to given desk and stage.
     Applies the outgoing and incoming macros of current and destination stages
 
@@ -62,6 +62,8 @@ def send_to(doc, update=None, desk_id=None, stage_id=None, user_id=None):
     :param update: updates for the document
     :param desk: id of desk where item should be sent
     :param stage: optional stage within the desk
+    :param default_stage: if no stage_id is passed then it determines the stage in that desk the doc is assigned,
+            either the the incomming stage or the working stage.
     """
 
     original_task = doc.setdefault('task', {})
@@ -81,8 +83,8 @@ def send_to(doc, update=None, desk_id=None, stage_id=None, user_id=None):
 
         task['desk'] = desk_id
         if not stage_id:
-            task['stage'] = desk.get('incoming_stage')
-            destination_stage = get_resource_service('stages').find_one(req=None, _id=desk.get('incoming_stage'))
+            task['stage'] = desk.get(default_stage)
+            destination_stage = get_resource_service('stages').find_one(req=None, _id=desk.get(default_stage))
 
     if stage_id:
         destination_stage = get_resource_service('stages').find_one(req=None, _id=stage_id)

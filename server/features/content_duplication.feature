@@ -42,13 +42,13 @@ Feature: Duplication of Content within Desk
       When we get "/archive/#duplicate._id#"
       Then we get existing resource
       """
-      {"state": "submitted", "_current_version": 4, "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}
+      {"state": "submitted", "_current_version": 4, "task": {"desk": "#desks._id#", "stage": "#desks.working_stage#", "user": "#CONTEXT_USER_ID#"}}
       """
       Then there is no "last_production_desk" in task
       And there is no "last_authoring_desk" in task
       And we get notifications
       """
-        [{"event": "content:update", "extra": {"items": {"123": 1}, "desks": {"#desks._id#": 1}, "stages": {"#desks.incoming_stage#": 1}}, "_created": "__any_value__"}]
+        [{"event": "content:update", "extra": {"items": {"123": 1}, "desks": {"#desks._id#": 1}, "stages": {"#desks.working_stage#": 1}}, "_created": "__any_value__"}]
       """
       When we get "/archive/#duplicate._id#?version=all"
       Then we get list with 4 items
@@ -70,7 +70,7 @@ Feature: Duplication of Content within Desk
       When we get "/archive/#duplicate._id#"
       Then we get existing resource
       """
-      {"state": "submitted", "_current_version": 1, "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}
+      {"state": "submitted", "_current_version": 1, "task": {"desk": "#desks._id#", "stage": "#desks.working_stage#", "user": "#CONTEXT_USER_ID#"}}
       """
       When we get "/archive/#duplicate._id#?version=all"
       Then we get list with 1 items
@@ -149,7 +149,7 @@ Feature: Duplication of Content within Desk
       And we get "/archive/#duplicate._id#"
       Then we get existing resource
       """
-      {"state": "submitted", "sign_off": "foo", "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
+      {"state": "submitted", "sign_off": "foo", "task": {"desk": "#desks._id#", "stage": "#desks.working_stage#"}}
       """
 
     @auth
