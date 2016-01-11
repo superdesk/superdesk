@@ -22,7 +22,7 @@ Feature: Fetch Items from Ingest
       """
       {"_items": [
       	{
-      		"family_id": "tag_reuters.com_2014_newsml_LOVEA6M0L7U2E", 
+      		"family_id": "tag_reuters.com_2014_newsml_LOVEA6M0L7U2E",
       		"ingest_id": "tag_reuters.com_2014_newsml_LOVEA6M0L7U2E",
       		"operation": "fetch",
       		"sign_off": "abc",
@@ -63,8 +63,8 @@ Feature: Fetch Items from Ingest
       """
       [{"name": "Sports"}]
       """
-      When we fetch from "reuters" ingest "tag_reuters.com_0000_newsml_GM1EA7M13RP01"
-      And we post to "/ingest/#reuters.tag_reuters.com_0000_newsml_GM1EA7M13RP01#/fetch" with success
+      When we fetch from "reuters" ingest "tag_reuters.com_0000_newsml_GM1EA7M13RP01:484616934"
+      And we post to "/ingest/#reuters.tag_reuters.com_0000_newsml_GM1EA7M13RP01:484616934#/fetch" with success
       """
       {
       "desk": "#desks._id#"
@@ -93,8 +93,8 @@ Feature: Fetch Items from Ingest
       """
       [{"name": "Sports"}]
       """
-      When we fetch from "reuters" ingest "tag_reuters.com_2014_newsml_KBN0FL0NM"
-      And we post to "/ingest/#reuters.tag_reuters.com_2014_newsml_KBN0FL0NM#/fetch"
+      When we fetch from "reuters" ingest "tag_reuters.com_2014_newsml_KBN0FL0NM:10"
+      And we post to "/ingest/#reuters.tag_reuters.com_2014_newsml_KBN0FL0NM:10#/fetch"
       """
       {
       "desk": "#desks._id#"
@@ -214,8 +214,8 @@ Feature: Fetch Items from Ingest
     @provider
     Scenario: Fetch should fail when no desk is specified
       Given empty "archive"
-      When we fetch from "reuters" ingest "tag_reuters.com_0000_newsml_GM1EA7M13RP01"
-      When we post to "/ingest/tag_reuters.com_0000_newsml_GM1EA7M13RP01/fetch"
+      When we fetch from "reuters" ingest "tag_reuters.com_0000_newsml_GM1EA7M13RP01:484616934"
+      When we post to "/ingest/tag_reuters.com_0000_newsml_GM1EA7M13RP01:484616934/fetch"
       """
       {}
       """

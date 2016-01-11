@@ -1,0 +1,217 @@
+<?xml version='1.0' encoding='utf8'?>
+<ns0:newsMessage xmlns:html="http://www.w3.org/1999/xhtml" xmlns:ns0="http://iptc.org/std/nar/2006-10-01/" xmlns:ns1="http://www.reuters.com/ns/2003/08/content">
+  <ns0:header>
+    <ns0:sent>2016-01-04T15:43:34.000Z</ns0:sent>
+    <ns0:sender>reuters.com</ns0:sender>
+    <ns0:transmitId>tag:reuters.com,0000:newsml_L1N14N0FF:978556838</ns0:transmitId>
+    <ns0:priority>3</ns0:priority>
+    <ns0:destination>RAST</ns0:destination>
+    <ns0:destination>AFA</ns0:destination>
+    <ns0:destination>CSA</ns0:destination>
+    <ns0:destination>LBY</ns0:destination>
+    <ns0:destination>RWSA</ns0:destination>
+    <ns0:destination>RWS</ns0:destination>
+    <ns0:destination>REULB</ns0:destination>
+    <ns0:destination>GNS</ns0:destination>
+    <ns0:destination>ABN</ns0:destination>
+    <ns0:destination>C</ns0:destination>
+    <ns0:destination>GRO</ns0:destination>
+    <ns0:destination>MTL</ns0:destination>
+    <ns0:destination>SOF</ns0:destination>
+    <ns0:destination>G</ns0:destination>
+    <ns0:destination>RBN</ns0:destination>
+    <ns0:destination>O</ns0:destination>
+    <ns0:destination>OIL</ns0:destination>
+    <ns0:destination>RNP</ns0:destination>
+    <ns0:destination>PGE</ns0:destination>
+    <ns0:destination>PEN</ns0:destination>
+    <ns0:destination>SXNA</ns0:destination>
+    <ns0:channel>TXT</ns0:channel>
+  </ns0:header>
+  <ns0:itemSet>
+    <ns0:newsItem conformance="power" guid="tag:reuters.com,0000:newsml_L1N14N0FF" standard="NewsML-G2" standardversion="2.10" version="978556838" xml:lang="en">
+      <ns0:catalogRef href="http://www.iptc.org/std/catalog/catalog.IPTC-G2-Standards_3.xml" />
+      <ns0:rightsInfo>
+        <ns0:copyrightHolder literal="Thomson Reuters" />
+        <ns0:copyrightNotice xml:lang="en">(c) Copyright Thomson Reuters 2016. Click For Restrictions - http://about.reuters.com/fulllegal.asp</ns0:copyrightNotice>
+      </ns0:rightsInfo>
+      <ns0:itemMeta>
+        <ns0:itemClass qcode="icls:text" ns1:msgType="A" />
+        <ns0:provider literal="reuters.com" />
+        <ns0:versionCreated>2016-01-04T15:43:34.000Z</ns0:versionCreated>
+        <ns0:firstCreated>2016-01-04T15:43:34.000Z</ns0:firstCreated>
+        <ns0:pubStatus qcode="stat:usable" />
+        <ns0:role qcode="itemRole:N" />
+        <ns0:fileName>2016-01-04T154334Z_978556838_L1N14N0FF_RTRMADT_0_USA-WEATHER-UPDATE-1-PIX-CORRECTED.XML</ns0:fileName>
+        <ns0:generator versioninfo="00.00.01">G3:IIM:FH</ns0:generator>
+        <ns0:profile versioninfo="00.00.01">SNI-Text</ns0:profile>
+        <ns0:service qcode="svc:RTR_TNS" />
+        <ns0:memberOf creator="trRule:rule1" literal="Business" modified="2016-01-04T15:43:35.000Z">
+          <ns0:name>Business</ns0:name>
+        </ns0:memberOf>
+        <ns0:memberOf creator="trRule:rule2" literal="Economy" modified="2016-01-04T15:43:35.000Z">
+          <ns0:name>Economy</ns0:name>
+        </ns0:memberOf>
+        <ns0:memberOf creator="trRule:rule8" literal="Entertainment" modified="2016-01-04T15:43:35.000Z">
+          <ns0:name>Entertainment and Lifestyle</ns0:name>
+        </ns0:memberOf>
+        <ns0:memberOf creator="trRule:rule9" literal="Environment" modified="2016-01-04T15:43:35.000Z">
+          <ns0:name>Environment</ns0:name>
+        </ns0:memberOf>
+        <ns0:memberOf creator="trRule:rule11" literal="Politics" modified="2016-01-04T15:43:35.000Z">
+          <ns0:name>Politics</ns0:name>
+        </ns0:memberOf>
+        <ns0:memberOf creator="trRule:rule13" literal="Science" modified="2016-01-04T15:43:35.000Z">
+          <ns0:name>Science</ns0:name>
+        </ns0:memberOf>
+        <ns0:memberOf creator="trRule:rule29" literal="World-US" modified="2016-01-04T15:43:35.000Z">
+          <ns0:name>US</ns0:name>
+        </ns0:memberOf>
+        <ns0:signal qcode="edStat:C" />
+        <ns0:signal qcode="prodId:TXT" />
+        <ns0:signal qcode="pmt:text" />
+        <ns1:versionedId guid="tag:reuters.com,0000:newsml_L1N14N0FF:978556838" />
+      </ns0:itemMeta>
+      <ns0:contentMeta>
+        <ns0:urgency>3</ns0:urgency>
+        <ns0:infoSource literal="Reuters" role="cRole:origProv" />
+        <ns0:creator literal="Reuters" />
+        <ns0:altId type="idType:USN" ns1:isOriginal="1">L1N14N0FF</ns0:altId>
+        <ns0:altId type="idType:OTR">L1N14N0FF</ns0:altId>
+        <ns0:language tag="en" />
+        <ns0:genre qcode="N2:MTPIX">
+          <ns0:name>Media type Pictures</ns0:name>
+        </ns0:genre>
+        <ns0:subject qcode="MCC:a" />
+        <ns0:subject qcode="N2:TRAN" />
+        <ns0:subject qcode="N2:RORA" />
+        <ns0:subject qcode="N2:USAMO" />
+        <ns0:subject qcode="N2:USATN" />
+        <ns0:subject qcode="N2:USAAR" />
+        <ns0:subject qcode="N2:USAIL" />
+        <ns0:subject qcode="N2:USAOK" />
+        <ns0:subject qcode="N2:NEWS1" />
+        <ns0:subject qcode="N2:DIS" />
+        <ns0:subject qcode="N2:LIF" />
+        <ns0:subject qcode="N2:PXP" />
+        <ns0:subject qcode="N2:FLD" />
+        <ns0:subject qcode="N2:WRM" />
+        <ns0:subject qcode="N2:PRCP" />
+        <ns0:subject qcode="N2:WEA" />
+        <ns0:subject qcode="N2:US" />
+        <ns0:subject qcode="N2:ENV" />
+        <ns0:subject qcode="N2:NRG" />
+        <ns0:subject qcode="N2:INDS" />
+        <ns0:subject qcode="N2:AMERS" />
+        <ns0:subject qcode="N2:GEN" />
+        <ns0:subject qcode="N2:SOCI" />
+        <ns0:subject qcode="N2:POL" />
+        <ns0:subject qcode="N2:COM" />
+        <ns0:subject qcode="subj:04015000" />
+        <ns0:subject qcode="subj:03000000" />
+        <ns0:subject qcode="subj:10000000" />
+        <ns0:subject qcode="subj:03005000" />
+        <ns0:subject qcode="subj:06011000" />
+        <ns0:subject qcode="subj:17000000" />
+        <ns0:subject qcode="subj:06000000" />
+        <ns0:subject qcode="subj:04009001" />
+        <ns0:subject qcode="subj:04000000" />
+        <ns0:subject qcode="subj:11000000" />
+        <ns0:subject qcode="subj:04008024" />
+        <ns0:subject qcode="N2:ENR" />
+        <ns0:subject qcode="N2:DLI" />
+        <ns0:subject qcode="N2:ENG" />
+        <ns0:subject qcode="N2:TPT" />
+        <ns0:subject qcode="N2:USA" />
+        <ns0:subject qcode="N2:SCI" />
+        <ns0:subject qcode="N2:BACT" />
+        <ns0:subject qcode="N2:PIA" />
+        <ns0:subject qcode="N2:ENT" />
+        <ns0:subject qcode="a1312cat:a" />
+        <ns0:subject qcode="a1312cat:f" />
+        <ns0:subject qcode="a1312cat:p" />
+        <ns0:subject qcode="MCCL:OVR" />
+        <ns0:subject qcode="MCCL:OEC" />
+        <ns0:slugline separator="-">USA-WEATHER/ (UPDATE 1, PIX, CORRECTED)</ns0:slugline>
+        <ns0:headline>CORRECTED-S. Illinois battles flooding as Mississippi River builds downstream</ns0:headline>
+        <ns0:creditline>Reuters</ns0:creditline>
+        <ns0:description role="descRole:caption">USA-WEATHER/ (UPDATE 1, PIX, CORRECTED):CORRECTED-S. Illinois battles flooding as Mississippi River builds downstream</ns0:description>
+      </ns0:contentMeta>
+      <ns0:contentSet>
+        <ns0:inlineXML contenttype="application/xhtml+html" wordcount="562">
+          <html:html>
+            <html:head>
+              <html:title />
+            </html:head>
+            <html:body>
+              <html:p>(In Jan. 3 story, corrects last paragraph to reflect that
+figure on Exxon Mobil terminal refers to capacity, not barrels
+per day)</html:p>
+              <html:p>Jan 3 (Reuters) - Residents of flooded areas in far southern
+Illinois anxiously waited for the swollen Mississippi River to
+peak on Sunday, with hundreds electing to remain in their homes,
+as states downstream prepared for the rising waters.</html:p>
+              <html:p>About 125 structures were flooded in hard-hit Alexander
+County, the southernmost point in Illinois, where three families
+near one breach stayed dry behind sandbag fortifications and
+private levees, county board Chairman Chalen Tatum said.</html:p>
+              <html:p>The National Weather Service on Sunday canceled a flash
+flood watch for Alexander and two other Illinois counties, where
+record or near-record river levels have threatened levees.</html:p>
+              <html:p>Days of downpours totaling 10 inches or more in spots pushed
+the Mississippi and smaller rivers over their banks in several
+states. At least 31 people have died in Missouri, Illinois,
+Oklahoma and Arkansas, most of them after vehicles drove into
+flooded areas.</html:p>
+              <html:p>Nine people have died in the Illinois flooding and a dozen
+counties have been declared disaster areas there, said Patti
+Thompson, spokeswoman for the Illinois Emergency Management
+Agency.</html:p>
+              <html:p>In Alexander County, officials knocked on more than 500
+doors to urge people to leave voluntarily, though many stayed,
+Tatum said. The voluntary evacuation could run another four days
+and no injuries or deaths have been reported, he said.</html:p>
+              <html:p>"The levees have a lot of pressure on them," Tatum said,
+adding that a breach two days ago in a levee west of Miller City
+in the county has reached a quarter-mile wide. "We hope they
+hold, but I don't want to bet someone's life on it."</html:p>
+              <html:p>Tatum said many more homes were affected by a flood in 2011
+and expressed frustration that already approved buy-outs of more
+than 100 homes and small businesses related to that flooding
+have been stalled by an Illinois state budget impasse.</html:p>
+              <html:p>The Mississippi receded further from dangerous levels at St.
+Louis and farther south at Thebes, Illinois, and Cape Girardeau,
+Missouri, on Sunday, the NWS said.</html:p>
+              <html:p>Significant flooding was expected into mid-January along the
+Mississippi River at points downstream, from Tennessee to
+Mississippi, Arkansas and Louisiana.</html:p>
+              <html:p>"I hope it's going to slow down," said Kristy Morgan, an
+assistant manager of Little General Marathon Gas in Tiptonville,
+a small city in the northwest corner of Tennessee.</html:p>
+              <html:p>"All I know is they have been working around the clock doing
+sand-bagging," Morgan said of city and county personnel and
+emergency agencies in the area.</html:p>
+              <html:p>The river is expected to crest at the moderate flood stage
+on Thursday in Memphis, Tennessee, according to the NWS. In
+Louisiana, where crests at some points along the river are not
+expected until mid-January, officials are checking levees daily.</html:p>
+              <html:p>The river is expected to reach major flood stage from
+Arkansas City, Arkansas, to Natchez, Mississippi, the NWS said.
+Islands and camps inside the levee structures would be expected
+to flood, with some backup flooding from rivers that flow into
+the Mississippi, the NWS said.</html:p>
+              <html:p>Exxon Mobil Corp said its refined products terminal
+in Memphis remained closed. On Friday the company decided to
+shut the terminal just south of downtown, which has a capacity
+of 340,000 barrels, as flood waters threatened to inundate it.
+ 
+
+ (Reporting by David Bailey in Minneapolis, Erwin Seba in
+Houston and Tim Ghianni in Nashville; Editing by Dan Grebler)</html:p>
+            </html:body>
+          </html:html>
+        </ns0:inlineXML>
+      </ns0:contentSet>
+    </ns0:newsItem>
+  </ns0:itemSet>
+</ns0:newsMessage>
