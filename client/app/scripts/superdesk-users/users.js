@@ -1720,6 +1720,10 @@
                 return user ? user.display_name || user.username : null;
             };
         }])
-        ;
+
+        .run(['keyboardManager', 'gettext', function(keyboardManager, gettext) {
+            keyboardManager.register('Users', 'Up', gettext('Previous user'));
+            keyboardManager.register('Users', 'Down', gettext('Next user'));
+        }]);
 
 })();

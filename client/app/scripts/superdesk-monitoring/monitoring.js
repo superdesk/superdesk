@@ -12,7 +12,11 @@
         .directive('sdItemActionsMenu', ItemActionsMenu)
         .config(configureMonitoring)
         .config(configureSpikeMonitoring)
-        .config(configurePersonal);
+        .config(configurePersonal)
+        .run(['keyboardManager', 'gettext', function(keyboardManager, gettext) {
+            keyboardManager.register('Monitoring', 'ctrl + g', gettext('Switches between single/grouped stage view'));
+            keyboardManager.register('Monitoring', 'ctrl + alt + g', gettext('Switches between single/grouped desk view'));
+        }]);
 
     configureMonitoring.$inject = ['superdeskProvider'];
     function configureMonitoring(superdesk) {

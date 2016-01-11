@@ -5,7 +5,16 @@
         .service('workspaces', WorkspaceService)
         .directive('sdDeskDropdown', WorkspaceDropdownDirective)
         .directive('sdWorkspaceSidenav', WorkspaceSidenavDirective)
-        .directive('sdEditWorkspace', EditWorkspaceDirective);
+        .directive('sdEditWorkspace', EditWorkspaceDirective)
+        .run(['keyboardManager', 'gettext', function(keyboardManager, gettext) {
+            keyboardManager.register('General', 'alt + h', gettext('Opens workspace'));
+            keyboardManager.register('General', 'alt + m', gettext('Opens monitoring'));
+            keyboardManager.register('General', 'alt + d', gettext('Opens highlights'));
+            keyboardManager.register('General', 'alt + t', gettext('Opens tasks'));
+            keyboardManager.register('General', 'alt + x', gettext('Opens spike'));
+            keyboardManager.register('General', 'alt + p', gettext('Opens personal'));
+            keyboardManager.register('General', 'alt + f', gettext('Opens search'));
+        }]);
 
     WorkspaceService.$inject = ['api', 'desks', 'session', 'preferencesService', '$q'];
     function WorkspaceService(api, desks, session, preferences, $q) {
@@ -303,8 +312,8 @@
         };
     }
 
-    WorkspaceSidenavDirective.$inject = ['superdeskFlags', '$location', 'keyboardManager'];
-    function WorkspaceSidenavDirective(superdeskFlags, $location, keyboardManager) {
+    WorkspaceSidenavDirective.$inject = ['superdeskFlags', '$location', 'keyboardManager', 'gettext'];
+    function WorkspaceSidenavDirective(superdeskFlags, $location, keyboardManager, gettext) {
         return {
             templateUrl: 'scripts/superdesk-workspace/views/workspace-sidenav-items.html',
             link: function(scope, elem) {
@@ -329,15 +338,14 @@
                  * By using keyboard shortcuts, change the current showed view
                  *
                  */
-                var opt = {global: true, inputDisabled: false};
                 keyboardManager.bind('alt+h', function (e) {
                     e.preventDefault();
                     $location.url('/workspace');
-                }, opt);
+                }, {global: true, inputDisabled: false});
                 keyboardManager.bind('alt+m', function (e) {
                     e.preventDefault();
                     $location.url('/workspace/monitoring');
-                }, opt);
+                }, {global: true, inputDisabled: false});
                 keyboardManager.bind('alt+d', function (e) {
                     e.preventDefault();
                     elem.find('.highlights-dropdown .dropdown-toggle').click();
@@ -348,23 +356,23 @@
                     keyboardManager.push('down', function() {
                         elem.find('.dropdown-menu button:focus').parent('li').next().children('button').focus();
                     });
-                }, opt);
+                }, {global: true, inputDisabled: false});
                 keyboardManager.bind('alt+t', function (e) {
                     e.preventDefault();
                     $location.url('/workspace/tasks');
-                }, opt);
+                }, {global: true, inputDisabled: false});
                 keyboardManager.bind('alt+x', function (e) {
                     e.preventDefault();
                     $location.url('/workspace/spike-monitoring');
-                }, opt);
+                }, {global: true, inputDisabled: false});
                 keyboardManager.bind('alt+p', function (e) {
                     e.preventDefault();
                     $location.url('/workspace/personal');
-                }, opt);
+                }, {global: true, inputDisabled: false});
                 keyboardManager.bind('alt+f', function (e) {
                     e.preventDefault();
                     $location.url('search');
-                }, opt);
+                }, {global: true, inputDisabled: false});
             }
         };
     }

@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    return angular.module('superdesk.keyboard', [])
+    return angular.module('superdesk.keyboard', ['gettext'])
 
     // unbind all keyboard shortcuts when switching route
     .run(['$rootScope', 'keyboardManager', function($rootScope, kb) {
@@ -38,7 +38,7 @@
             defaultOpt = {
                 'type':             'keydown',
                 'propagate':        false,
-                'inputDisabled':    true,
+                'inputDisabled':    false,
                 'target':           $window.document,
                 'keyCode':          false,
                 'global':           false
@@ -120,6 +120,12 @@
 
         // Store all keyboard combination shortcuts
         this.keyboardEvent = {};
+
+        this.registry = {};
+        this.register = function register(group, label, description) {
+            this.registry[group] = this.registry[group] || {};
+            this.registry[group][label] = description;
+        };
 
         // Add a new keyboard combination shortcut
         this.bind = function bind(label, callback, opt) {
@@ -297,6 +303,29 @@
                 elt.removeEventListener(type, callback, false);
             } else {
                 elt['on' + type] = false;
+            }
+        };
+    }])
+
+    .directive('sdKeyboardModal', ['keyboardManager', 'gettext', function(keyboardManager, gettext) {
+        return {
+            templateUrl: 'scripts/superdesk/keyboard/views/keyboard-modal.html',
+            link: function(scope) {
+                scope.enabled = false;
+                scope.data = {};
+
+                keyboardManager.bind('alt+k', function() {
+                    scope.enabled = true;
+                    scope.data = keyboardManager.registry;
+                }, {global: true, group: gettext('General'), description: gettext('Displays active keyboard shortcuts')});
+
+                keyboardManager.bind('alt+k', function() {
+                    scope.enabled = false;
+                }, {global: true, type: 'keyup', group: gettext('General'), description: gettext('Displays active keyboard shortcuts')});
+
+                scope.close = function() {
+                    scope.enabled = false;
+                };
             }
         };
     }]);

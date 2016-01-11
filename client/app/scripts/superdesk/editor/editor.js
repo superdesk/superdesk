@@ -555,7 +555,8 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
 
     .service('editor', EditorService)
 
-    .directive('sdTextEditor', ['editor', 'spellcheck', '$timeout', 'config', function (editor, spellcheck, $timeout, config) {
+    .directive('sdTextEditor', ['editor', 'spellcheck', '$timeout', 'config', 'keyboardManager',
+    function (editor, spellcheck, $timeout, config, keyboardManager) {
 
         var disableToolbar = config.editor.disableEditorToolbar || false;
 
@@ -600,7 +601,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
                     scope.medium = new window.MediumEditor(scope.node, editorOptions);
 
                     scope.$on('spellcheck:run', render);
-                    scope.$on('key:ctrl:shift:d', render);
+                    keyboardManager.bind('ctrl+shift+d', render);
 
                     function cancelTimeout(event) {
                         $timeout.cancel(updateTimeout);
@@ -716,6 +717,9 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
                 }
             }
         };
+    }])
+    .run(['keyboardManager', 'gettext', function(keyboardManager, gettext) {
+        keyboardManager.register('Authoring', 'ctrl + shift + d', gettext('Runs spellchecker'));
     }]);
 
 })();
