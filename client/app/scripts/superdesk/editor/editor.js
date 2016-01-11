@@ -285,7 +285,9 @@ function EditorService(spellcheck, $rootScope, $timeout, $q) {
         var index, text;
         while (tree.nextNode()) {
             text = tree.currentNode.textContent;
-            while ((index = text.indexOf(needle)) > -1) {
+            while ((index = self.settings.findreplace.caseSensitive ?
+                    text.indexOf(needle) :
+                    text.toLowerCase().indexOf(needle.toLowerCase())) > -1) {
                 tokens.push({
                     word: text.substr(index, needle.length),
                     index: currentOffset + index

@@ -12,6 +12,13 @@
             <input type="text" class="form-control" id="find-replace-with" ng-model="to">
         </div>
 
+        <div class="btn-group" role="group">
+            <label class="pull-left" translate>Case Sensitive</label>
+            <span class="pull-right" sd-switch ng-model="caseSensitive"></span>
+        </div>
+
+        <div class="field clearfix"></div>
+
         <div class="btn-group pull-right" role="group">
             <button class="btn btn-default" ng-click="prev()" ng-disabled="!from">&laquo;</button>
             <button class="btn btn-default" ng-click="next()" ng-disabled="!from">&raquo;</button>
