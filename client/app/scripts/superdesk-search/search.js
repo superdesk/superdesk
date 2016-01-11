@@ -1506,7 +1506,7 @@
 
                         render: function() {
                             var items = [];
-                            items.push(React.createElement('dt', {key: 'dt'}, gettext('fetched in')));
+                            items.push(React.createElement('dt', {key: 'dt', style: {paddingRight:'5px'}}, gettext('fetched in')));
 
                             if (this.state.desks.length) {
                                 var desk = this.state.desks[0];

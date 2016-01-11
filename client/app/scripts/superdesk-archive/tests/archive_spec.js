@@ -32,6 +32,13 @@ describe('content', function() {
             item = {'_id': '123'};
         }));
 
+        it('can add an item to personal workspace', inject(function($location, archiveService, desks) {
+            spyOn(desks, 'getCurrentDesk').and.returnValue({_id: '2', working_stage: '4'});
+            $location.path('/workspace/personal');
+            archiveService.addTaskToArticle(item);
+            expect(item.task).not.toBeDefined();
+        }));
+
         it('can add an item to user\'s active desk', inject(function(archiveService, desks) {
             spyOn(desks, 'getCurrentDesk').and.returnValue({_id: '2', working_stage: '4'});
             archiveService.addTaskToArticle(item);
