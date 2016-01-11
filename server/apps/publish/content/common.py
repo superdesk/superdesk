@@ -513,9 +513,11 @@ class BasePublishService(BaseService):
             updated_take = original_of_take_to_be_published.copy()
             updated_take.update(updates_of_take_to_be_published)
             metadata_from = updated_take
-            if self.published_state == 'corrected' and len(takes) > 1:
-                # get the last take metadata only if there are more than one takes
-                metadata_from = takes[-1]
+            # this rules has changed to use the last published metadata
+            # per ticket SD-3885
+            # if self.published_state == 'corrected' and len(takes) > 1:
+            #     # get the last take metadata only if there are more than one takes
+            #     metadata_from = takes[-1]
 
             for metadata in metadata_tobe_copied:
                 if metadata in metadata_from:
