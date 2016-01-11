@@ -52,7 +52,7 @@
                 new_package.task = {desk: desks.getCurrentDeskId()};
             }
             this.addItemsToPackage(new_package, idRef, items);
-            return api.archive.save(new_package);
+            return api.save('archive', new_package);
         };
 
         this.createEmptyPackage = function(defaults, idRef) {
