@@ -430,12 +430,12 @@
          * @param {Object} item
          * @param {string} userId
          */
-        this.unlock = function unlock(item, userId) {
+        this.unlock = function unlock(item, userId, headline) {
             autosave.stop(item);
             item.lock_session = null;
             item.lock_user = null;
             item._locked = false;
-            confirm.unlock(userId);
+            confirm.unlock(userId, headline);
         };
 
         /**
@@ -772,10 +772,12 @@
          * Make user aware that an item was unlocked
          *
          * @param {string} userId Id of user who unlocked an item.
+         * @param {string} headline Headline of item which is unlocked
          */
-        this.unlock = function unlock(userId) {
+        this.unlock = function unlock(userId, headline) {
             api.find('users', userId).then(function(user) {
-                var msg = gettext('This item was unlocked by <b>{{ user }}</b>.').
+                var itemHeading = headline ? 'Item <b>' + headline + '</b>' : 'This item';
+                var msg = gettext(itemHeading + ' was unlocked by <b>{{ user }}</b>.').
                     replace('{{ user }}', $filter('username')(user));
                 return modal.confirm(msg, gettext('Item Unlocked'), gettext('OK'), false);
             });
