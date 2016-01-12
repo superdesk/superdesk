@@ -22,8 +22,8 @@ Feature: Package Publishing
         "destinations":[{"name":"Test","format": "ninjs", "delivery_type":"PublicArchive","config":{"recipients":"test@test.com"}}]
         }
         """
-    	When we fetch from "reuters" ingest "tag_reuters.com_2014_newsml_KBN0FL0NM"
-        And we post to "/ingest/#reuters.tag_reuters.com_2014_newsml_KBN0FL0NM#/fetch"
+    	When we fetch from "reuters" ingest "tag_reuters.com_2014_newsml_KBN0FL0NM:10"
+        And we post to "/ingest/#reuters.tag_reuters.com_2014_newsml_KBN0FL0NM:10#/fetch"
         """
         {
         "desk": "#desks._id#"

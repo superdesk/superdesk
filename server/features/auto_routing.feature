@@ -184,7 +184,7 @@ Feature: Auto Routing
         ]
         """
         Then we get response code 201
-        When we fetch from "reuters" ingest "tag_reuters.com_2014_newsml_KBN0FL0NM" using routing_scheme
+        When we fetch from "reuters" ingest "tag_reuters.com_2014_newsml_KBN0FL0NM:10" using routing_scheme
         """
         #routing_schemes._id#
         """
@@ -192,7 +192,7 @@ Feature: Auto Routing
         """
         {
           "routing_scheme": "#routing_schemes._id#",
-          "ingest": "#reuters.tag_reuters.com_2014_newsml_KBN0FL0NM#"
+          "ingest": "#reuters.tag_reuters.com_2014_newsml_KBN0FL0NM:10#"
         }
         """
 
@@ -634,11 +634,11 @@ Feature: Auto Routing
         ]
         """
         Then we get response code 201
-        When we fetch from "reuters" ingest "tag_reuters.com_2014_newsml_KBN0FL0NN" using routing_scheme
+        When we fetch from "reuters" ingest "tag_reuters.com_2014_newsml_KBN0FL0NN:5" using routing_scheme
         """
         #routing_schemes._id#
         """
-        When we fetch from "reuters" ingest "tag_reuters.com_2014_newsml_KBN0FL0NN" using routing_scheme
+        When we fetch from "reuters" ingest "tag_reuters.com_2014_newsml_KBN0FL0NN:5" using routing_scheme
         """
         #routing_schemes._id#
         """
@@ -646,7 +646,7 @@ Feature: Auto Routing
         """
         {
           "routing_scheme": "#routing_schemes._id#",
-          "ingest": "#reuters.tag_reuters.com_2014_newsml_KBN0FL0NN#"
+          "ingest": "#reuters.tag_reuters.com_2014_newsml_KBN0FL0NN:5#"
         }
         """
         When we get "/archive"

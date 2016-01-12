@@ -523,8 +523,13 @@
                         url += scope.item._current_version ? '?version=' + scope.item._current_version: '';
                         endpoint = scope.item.location;
                     } else {
-                        url = scope.item.location + '/' + scope.item.residRef + ':' + scope.item._current_version;
-                        endpoint = 'archived';
+                        if (_.contains('ingest', scope.item.location)) {
+                            url = scope.item.location + '/' + scope.item.residRef;
+                            endpoint = 'ingest';
+                        } else {
+                            url = scope.item.location + '/' + scope.item.residRef + ':' + scope.item._current_version;
+                            endpoint = 'archived';
+                        }
                     }
 
                     api[endpoint].getByUrl(url)

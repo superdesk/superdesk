@@ -70,7 +70,7 @@ class UpdateIngestTest(SuperdeskTestCase):
 
     def test_ingest_items(self):
         provider_name = 'reuters'
-        guid = 'tag_reuters.com_2014_newsml_KBN0FL0NM'
+        guid = 'tag_reuters.com_2014_newsml_KBN0FL0NM:10'
         provider = self._get_provider(provider_name)
         provider_service = self._get_provider_service(provider)
         provider_service.provider = provider
@@ -82,7 +82,7 @@ class UpdateIngestTest(SuperdeskTestCase):
 
     def test_ingest_item_expiry(self):
         provider_name = 'reuters'
-        guid = 'tag_reuters.com_2014_newsml_KBN0FL0NM'
+        guid = 'tag_reuters.com_2014_newsml_KBN0FL0NM:10'
         provider = self._get_provider(provider_name)
         provider_service = self._get_provider_service(provider)
         provider_service.provider = provider
@@ -95,7 +95,7 @@ class UpdateIngestTest(SuperdeskTestCase):
 
     def test_ingest_item_sync_if_missing_from_elastic(self):
         provider_name = 'reuters'
-        guid = 'tag_reuters.com_2014_newsml_KBN0FL0NM'
+        guid = 'tag_reuters.com_2014_newsml_KBN0FL0NM:10'
         provider = self._get_provider(provider_name)
         provider_service = self._get_provider_service(provider)
         provider_service.provider = provider
@@ -179,7 +179,7 @@ class UpdateIngestTest(SuperdeskTestCase):
 
     def test_filter_expired_items(self):
         provider_name = 'reuters'
-        guid = 'tag_reuters.com_2014_newsml_KBN0FL0NM'
+        guid = 'tag_reuters.com_2014_newsml_KBN0FL0NM:10'
         provider = get_resource_service('ingest_providers').find_one(name=provider_name, req=None)
         provider_service = self._get_provider_service(provider)
         provider_service.provider = provider
@@ -191,7 +191,7 @@ class UpdateIngestTest(SuperdeskTestCase):
 
     def test_filter_expired_items_with_no_expiry(self):
         provider_name = 'reuters'
-        guid = 'tag_reuters.com_2014_newsml_KBN0FL0NM'
+        guid = 'tag_reuters.com_2014_newsml_KBN0FL0NM:10'
         provider = get_resource_service('ingest_providers').find_one(name=provider_name, req=None)
         provider_service = self._get_provider_service(provider)
         provider_service.provider = provider
@@ -201,7 +201,7 @@ class UpdateIngestTest(SuperdeskTestCase):
 
     def test_query_getting_expired_content(self):
         provider_name = 'reuters'
-        guid = 'tag_reuters.com_2014_newsml_KBN0FL0NM'
+        guid = 'tag_reuters.com_2014_newsml_KBN0FL0NM:10'
         provider = get_resource_service('ingest_providers').find_one(name=provider_name, req=None)
         provider_service = self._get_provider_service(provider)
         provider_service.provider = provider
@@ -223,7 +223,7 @@ class UpdateIngestTest(SuperdeskTestCase):
 
     def test_expiring_with_content(self):
         provider_name = 'reuters'
-        guid = 'tag_reuters.com_2014_newsml_KBN0FL0NM'
+        guid = 'tag_reuters.com_2014_newsml_KBN0FL0NM:10'
         provider = get_resource_service('ingest_providers').find_one(name=provider_name, req=None)
         provider_service = self._get_provider_service(provider)
         provider_service.provider = provider
@@ -255,7 +255,7 @@ class UpdateIngestTest(SuperdeskTestCase):
 
     def test_expiring_content_with_files(self):
         provider_name = 'reuters'
-        guid = 'tag_reuters.com_2014_newsml_KBN0FL0NM'
+        guid = 'tag_reuters.com_2014_newsml_KBN0FL0NM:10'
         provider = get_resource_service('ingest_providers').find_one(name=provider_name, req=None)
         provider_service = self._get_provider_service(provider)
         provider_service.provider = provider
@@ -301,7 +301,7 @@ class UpdateIngestTest(SuperdeskTestCase):
 
     def test_all_ingested_items_have_sequence(self):
         provider_name = 'reuters'
-        guid = 'tag_reuters.com_2014_newsml_KBN0FL0NM'
+        guid = 'tag_reuters.com_2014_newsml_KBN0FL0NM:10'
         provider = self._get_provider(provider_name)
         provider_service = self._get_provider_service(provider)
         provider_service.provider = provider
@@ -333,7 +333,7 @@ class UpdateIngestTest(SuperdeskTestCase):
 
     def test_files_dont_duplicate_ingest(self):
         provider_name = 'reuters'
-        guid = 'tag_reuters.com_2014_newsml_KBN0FL0NM'
+        guid = 'tag_reuters.com_2014_newsml_KBN0FL0NM:10'
         provider = get_resource_service('ingest_providers').find_one(name=provider_name, req=None)
         provider_service = self._get_provider_service(provider)
         provider_service.provider = provider
@@ -451,3 +451,29 @@ class UpdateIngestTest(SuperdeskTestCase):
             # ingest the items and check the subject code has been derived
             self.ingest_items(items, provider, provider_service)
             self.assertNotIn('anpa_category', items[0])
+
+    def test_ingest_cancellation(self):
+        provider_name = 'reuters'
+        guid = 'tag_reuters.com_2016_newsml_L1N14N0FF:978556838'
+        provider = get_resource_service('ingest_providers').find_one(name=provider_name, req=None)
+        provider_service = self._get_provider_service(provider)
+        provider_service.provider = provider
+        provider_service.URL = provider.get('config', {}).get('url')
+        items = provider_service.fetch_ingest(guid)
+        for item in items:
+            item['ingest_provider'] = provider['_id']
+            item['expiry'] = utcnow() + timedelta(hours=11)
+        self.ingest_items(items, provider, provider_service)
+        guid = 'tag_reuters.com_2016_newsml_L1N14N0FF:1542761538'
+        items = provider_service.fetch_ingest(guid)
+        for item in items:
+            item['ingest_provider'] = provider['_id']
+            item['expiry'] = utcnow() + timedelta(hours=11)
+        self.ingest_items(items, provider, provider_service)
+        ingest_service = get_resource_service('ingest')
+        lookup = {'uri': items[0].get('uri')}
+        family_members = ingest_service.get_from_mongo(req=None, lookup=lookup)
+        self.assertEqual(family_members.count(), 2)
+        for relative in family_members:
+            self.assertEqual(relative['pubstatus'], 'canceled')
+            self.assertEqual(relative['state'], 'killed')

@@ -80,8 +80,8 @@ Feature: Duplication of Content within Desk
     @auth
     @provider
     Scenario: Duplicate a package
-      When we fetch from "reuters" ingest "tag_reuters.com_2014_newsml_KBN0FL0NM"
-      And we post to "/ingest/#reuters.tag_reuters.com_2014_newsml_KBN0FL0NM#/fetch" with success
+      When we fetch from "reuters" ingest "tag_reuters.com_2014_newsml_KBN0FL0NM:10"
+      And we post to "/ingest/#reuters.tag_reuters.com_2014_newsml_KBN0FL0NM:10#/fetch" with success
       """
       {"desk": "#desks._id#"}
       """
