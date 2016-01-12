@@ -169,10 +169,11 @@ function MetadropdownFocusDirective($timeout, keyboardManager) {
                 if (isOpen) {
                     _.defer(function() {
                             var keyboardOptions = {inputDisabled: false};
-                            var buttonList = elem.find('button');
+                            // narrow the selection to consider only dropdown list's button items
+                            var buttonList = elem.find('.dropdown-menu button');
 
                             if (buttonList.length > 0) {
-                                buttonList[1].focus();
+                                buttonList[0].focus();
                             }
 
                             keyboardManager.push('up', function () {
@@ -181,11 +182,9 @@ function MetadropdownFocusDirective($timeout, keyboardManager) {
                                     var indexValue = _.findIndex(buttonList, function(chr) {
                                         return chr === focusedElem;
                                     });
-
-                                    if (indexValue > 1) {
+                                    // select previous item on key UP
+                                    if (indexValue > 0 && indexValue < buttonList.length) {
                                         buttonList[indexValue - 1].focus();
-                                    } else {
-                                        buttonList[1].focus();
                                     }
                                 }
                             }, keyboardOptions);
@@ -196,11 +195,9 @@ function MetadropdownFocusDirective($timeout, keyboardManager) {
                                     var indexValue = _.findIndex(buttonList, function(chr) {
                                         return chr === focusedElem;
                                     });
-
-                                    if (indexValue > 0 && indexValue < buttonList.length - 1) {
+                                    // select next item on key DOWN
+                                    if (indexValue < buttonList.length - 1) {
                                         buttonList[indexValue + 1].focus();
-                                    } else {
-                                        buttonList[1].focus();
                                     }
                                 }
                             }, keyboardOptions);
