@@ -1200,8 +1200,8 @@ Feature: Take Package Publishing
                     "_id": "#archive.123.take_package#",
                     "body_html": "Take-1<br>corrected<br>Take-3",
                     "_current_version": 6,
-                    "slugline": "Take-3 slugline",
-                    "headline": "Take-3 soccer headline",
+                    "slugline": "Take-2 slugline",
+                    "headline": "Take-2 soccer headline",
                     "last_published_version": true
                 }
         ]
@@ -1465,3 +1465,154 @@ Feature: Take Package Publishing
            ]
         }
         """
+
+  @auth @vocabulary
+    Scenario: After correcting  a Take digital package stays as corrected
+      Given the "validators"
+      """
+        [{"_id": "publish_text", "act": "publish", "type": "text", "schema":{}},
+         {"_id": "correct_text", "act": "correct", "type": "text", "schema":{}},
+         {"_id": "kill_text", "act": "kill", "type": "text", "schema":{}}]
+      """
+      And "desks"
+      """
+      [{"name": "Sports", "members": [{"user": "#CONTEXT_USER_ID#"}]}]
+      """
+       When we post to "/subscribers" with success
+      """
+      [{
+        "name":"Channel 3","media_type":"media", "subscriber_type": "digital", "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
+        "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
+      }, {
+        "name":"Channel 4","media_type":"media", "subscriber_type": "wire", "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
+        "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
+      }]
+      """
+      And we post to "archive" with success
+      """
+      [{
+          "guid": "123",
+          "type": "text",
+          "headline": "Take-1 soccer headline",
+          "abstract": "Take-1 abstract",
+          "task": {
+              "user": "#CONTEXT_USER_ID#"
+          },
+          "body_html": "Take-1",
+          "state": "draft",
+          "slugline": "Take-1 slugline",
+          "urgency": "4",
+          "pubstatus": "usable",
+          "subject":[{"qcode": "17004000", "name": "Statistics"}],
+          "anpa_category": [{"qcode": "A", "name": "Sport"}],
+          "anpa_take_key": "Take"
+      }]
+      """
+      And we post to "/archive/123/move"
+      """
+      [{"task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
+      """
+      Then we get OK response
+      When we post to "archive/123/link"
+      """
+      [{}]
+      """
+      Then we get next take as "TAKE2"
+      """
+      {
+          "type": "text",
+          "headline": "Take-1 soccer headline",
+          "slugline": "Take-1 slugline",
+          "anpa_take_key": "Take=2",
+          "state": "draft",
+          "original_creator": "#CONTEXT_USER_ID#"
+      }
+      """
+      When we patch "/archive/#TAKE2#"
+      """
+      {"body_html": "Take-2", "abstract": "Take-2 Abstract",
+      "headline": "Take-2 soccer headline", "slugline": "Take-2 slugline"}
+      """
+      And we post to "/archive/#TAKE2#/move"
+      """
+      [{"task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
+      """
+      Then we get OK response
+      When we get "/archive"
+      Then we get list with 3 items
+
+      When we publish "123" with "publish" type and "published" state
+      Then we get OK response
+      When we publish "123" with "correct" type and "corrected" state
+      """
+      {
+        "body_html": "corrected"
+      }
+      """
+
+      When we get "/published"
+      Then we get list with 4 items
+      """
+      {
+        "_items": [
+                {
+                    "type": "composite",
+                    "package_type": "takes",
+                    "sequence": 2,
+                    "_id": "#archive.123.take_package#",
+                    "body_html": "corrected",
+                    "_current_version": 3,
+                    "slugline": "Take-1 slugline",
+                    "headline": "Take-1 soccer headline",
+                    "last_published_version": true,
+                    "state": "corrected"
+                }
+        ]
+      }
+      """
+      When we publish "#TAKE2#" with "publish" type and "published" state
+      Then we get OK response
+      When we get "/published"
+      Then we get list with 6 items
+      """
+      {
+        "_items": [
+                {
+                    "type": "composite",
+                    "package_type": "takes",
+                    "sequence": 2,
+                    "_id": "#archive.123.take_package#",
+                    "body_html": "Take-1",
+                    "_current_version": 2,
+                    "slugline": "Take-1 slugline",
+                    "headline": "Take-1 soccer headline",
+                    "last_published_version": false,
+                    "state": "published"
+                },
+                {
+                    "type": "composite",
+                    "package_type": "takes",
+                    "sequence": 2,
+                    "_id": "#archive.123.take_package#",
+                    "body_html": "corrected",
+                    "_current_version": 3,
+                    "slugline": "Take-1 slugline",
+                    "headline": "Take-1 soccer headline",
+                    "last_published_version": false,
+                    "state": "corrected"
+                },
+                {
+                    "type": "composite",
+                    "package_type": "takes",
+                    "sequence": 2,
+                    "_id": "#archive.123.take_package#",
+                    "body_html": "corrected<br>Take-2",
+                    "_current_version": 4,
+                    "slugline": "Take-2 slugline",
+                    "headline": "Take-2 soccer headline",
+                    "last_published_version": true,
+                    "state": "corrected"
+                }
+        ]
+      }
+      """
