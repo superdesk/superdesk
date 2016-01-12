@@ -16,6 +16,9 @@ module.exports = function(grunt) {
             embedly: {
                 key: process.env.EMBEDLY_KEY || ''
             },
+            iframely: {
+                key: process.env.IFRAMELY_KEY || ''
+            },
             analytics: {
                 piwik: {
                     url: process.env.PIWIK_URL || '',

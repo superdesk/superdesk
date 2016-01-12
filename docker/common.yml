@@ -60,6 +60,7 @@ superdesk:
    - SUPERDESK_CLIENT_URL=http://127.0.0.1
    - SUPERDESK_TESTING=True
    - EMBEDLY_KEY
+   - IFRAMELY_KEY
   volumes:
    - ../results/server/unit:/opt/superdesk/results-unit/
    - ../results/server/behave:/opt/superdesk/results-behave/
