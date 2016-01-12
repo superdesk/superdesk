@@ -124,7 +124,7 @@ describe('authoring', function() {
         authoring.save();
         authoring.showHistory();
         expect(authoring.getHistoryItems().count()).toBe(2);
-        expect(authoring.getHistoryItem(0).getText()).toMatch(/Story \d+ Created by.*/);
+        expect(authoring.getHistoryItem(0).getText()).toMatch(/Story \d+ (.*) Created by.*/);
         expect(authoring.getHistoryItem(1).getText()).toMatch(/Updated by.*/);
         authoring.save();
         authoring.close();

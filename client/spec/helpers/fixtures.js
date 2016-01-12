@@ -1,20 +1,18 @@
 'use strict';
 
+var backendRequest = require('./backend').backendRequest;
 var backendRequestAuth = require('./backend').backendRequestAuth;
-var pp = browser.params;
 
-exports.resetApp = resetApp;
 exports.post = post;
+exports.resetApp = resetApp;
 
 function resetApp(profile, callback) {
-    backendRequestAuth({
+    backendRequest({
         uri: '/prepopulate',
         method: 'POST',
-        json: {
-            'profile': profile
-        }
+        json: {'profile': profile}
     }, function(e, r, j) {
-        pp.token = null;
+        browser.params.token = null;
         callback(e, r, j);
     });
 }

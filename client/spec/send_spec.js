@@ -8,9 +8,8 @@ var workspace = require('./helpers/workspace'),
 describe('send', function() {
 
     function getItemState(index) {
-        return content.getItem(0)
-            .element(by.css('.state-label'))
-            .getText();
+        var label = content.getItem(index).element(by.css('.state-label'));
+        return label.getText();
     }
 
     function waitForItems(count) {

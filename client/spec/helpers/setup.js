@@ -2,7 +2,6 @@
 
 /* global beforeEach */
 
-var getToken = require('./auth').getToken;
 var resetApp = require('./fixtures').resetApp;
 var waitForSuperdesk = require('./utils').waitForSuperdesk;
 
@@ -15,17 +14,12 @@ function openBaseUrl() {
 }
 
 function resize(width, height) {
-    return browser.driver.manage().window().setSize(width, height)
-        .then(function() {
-            browser.driver.manage().window().getSize()
-            .then(function(size) {
-                if (size.width === width && size.height === height) {
-                    return true;
-                } else {
-                    return resize(width, height);
-                }
-            });
-        });
+    var win = browser.driver.manage().window();
+    return win.getSize().then(function(size) {
+        if (size.width !== width || size.height !== height) {
+            return win.setSize(width, height);
+        }
+    });
 }
 
 module.exports = function(params) {
@@ -34,14 +28,12 @@ module.exports = function(params) {
         require('./waitReady');
         resize(1280, 800)
         .then(function() {
-            getToken(function() {
-                resetApp(params.fixture_profile, function() {
-                    openBaseUrl()
-                        .then(clearStorage)
-                        .then(openBaseUrl)
-                        .then(waitForSuperdesk)
-                        .then(done);
-                });
+            resetApp(params.fixture_profile, function() {
+                openBaseUrl()
+                    .then(clearStorage)
+                    .then(openBaseUrl)
+                    .then(waitForSuperdesk)
+                    .then(done);
             });
         });
     });

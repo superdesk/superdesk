@@ -26,8 +26,10 @@ describe('superdesk.workspace.content', function() {
 
         it('can create packages', inject(function(api, content, desks, session, $rootScope) {
             session.identity = {_id: '1'};
-            desks.userDesks = {_items: [{_id: '1', name: 'sport', working_stage: '2', incoming_stage: '3'}]};
-            desks.setCurrentDeskId('1');
+            desks.userDesks = {_items: []};
+            spyOn(desks, 'getCurrentDesk')
+                .and
+                .returnValue({_id: '1', name: 'sport', working_stage: '2', incoming_stage: '3'});
 
             content.createPackageItem().then(done);
             $rootScope.$digest();
@@ -41,8 +43,10 @@ describe('superdesk.workspace.content', function() {
 
         it('can create packages from items', inject(function(api, content, session, desks, $rootScope) {
             session.identity = {_id: '1'};
-            desks.userDesks = {_items: [{_id: '1', name: 'sport', working_stage: '2', incoming_stage: '3'}]};
-            desks.setCurrentDeskId('1');
+
+            spyOn(desks, 'getCurrentDesk')
+                .and
+                .returnValue({_id: '1', name: 'sport', working_stage: '2', incoming_stage: '3'});
 
             content.createPackageFromItems({data: 123}).then(done);
             $rootScope.$digest();
@@ -63,10 +67,9 @@ describe('superdesk.workspace.content', function() {
         it('can create items from template', inject(function(api, content, desks, session, $rootScope) {
             session.identity = {_id: 'user:1'};
 
-            desks.userDesks = {_items: [{_id: '1', name: 'sport', working_stage: '2', incoming_stage: '3'},
-                                        {_id: '2', name: 'news', working_stage: '4', incoming_stage: '5'}]};
-
-            desks.setCurrentDeskId('2');
+            spyOn(desks, 'getCurrentDesk')
+                .and
+                .returnValue({_id: '2', name: 'news', working_stage: '4', incoming_stage: '5'});
 
             content.createItemFromTemplate({
                 _id: 'template1',
@@ -83,7 +86,9 @@ describe('superdesk.workspace.content', function() {
                 slugline: 'test_slugline',
                 body_html: 'test_body_html',
                 task: {desk: '2', stage: '4', user: 'user:1'},
-                template: 'template1'
+                template: 'template1',
+                type: 'text',
+                version: 0
             });
         }));
     });

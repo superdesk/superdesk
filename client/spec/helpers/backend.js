@@ -1,7 +1,7 @@
 'use strict';
 
-var request = require('request'),
-    bt = require('btoa');
+var request = require('request');
+var bt = require('btoa');
 
 var constructUrl = require('./utils').constructUrl;
 
@@ -19,36 +19,85 @@ function backendRequest(params, callback) {
         params.url = getBackendUrl(params.uri);
         delete params.uri;
     }
+
+    function isErrorResponse(response) {
+        return response.statusCode < 200 || response.statusCode >= 300;
+    }
+
+    // how many times it will try to request before throwing error
+    var ttl = 3;
+
+    function responseHandler(error, response, body) {
+        if (!error && !isErrorResponse(response)) {
+            return callback(error, response, body);
+        }
+
+        if (error) {
+            console.error('request error', JSON.stringify(error), JSON.stringify(params));
+        }
+
+        if (ttl) {
+            ttl -= 1;
+            params.timeout *= 2;
+            return request(params, responseHandler);
+        }
+
+        if (!error) {
+            console.log('response err', response.statusCode, body);
+            console.log('request', params);
+            throw new Error('response err: ' + response.statusCode);
+        }
+
+        throw new Error('Request error=' + JSON.stringify(error) + ' params=' + JSON.stringify(params));
+    }
+
     params.rejectUnauthorized = false;
-    request(
-        params,
-        function(error, response, body) {
+    params.timeout = 8000;
+    request(params, responseHandler);
+}
+
+/**
+ * Run given callback once there is a token in place
+ *
+ * @param {function} callback
+ */
+function withToken(callback) {
+    if (browser.params.token) {
+        callback();
+    } else {
+        request.post({
+            rejectUnauthorized: false,
+            url: getBackendUrl('/auth'),
+            json: {
+                username: browser.params.username,
+                password: browser.params.password
+            }
+        }, function(error, response, json) {
             if (error) {
                 throw new Error(error);
             }
-            if (
-                (response.statusCode < 200) && (response.statusCode >= 300)
-            ) {
-                console.log('Request:');
-                console.log(response.request.href);
-                console.log(response.request);
-                console.log('Response:');
-                console.log(body);
-                throw new Error('Status code: ' + response.statusCode);
+            if (!json.token) {
+                console.log(json);
+                throw new Error('Auth failed');
             }
-            callback(error, response, body);
-        }
-    );
+            browser.params.token = json.token;
+            callback(error, response, json);
+        });
+    }
 }
 
-function backendRequestAuth (params, callback) {
+/**
+ * Perform backend request with auth info
+ *
+ * @param {Object} params
+ * @param {function} callback
+ */
+function backendRequestAuth(params, callback) {
     callback = callback || function() {};
-    var token = browser.params.token;
-    if (token) {
-        if (!params.headers) {
-            params.headers = {};
-        }
+    withToken(function() {
+        var token = browser.params.token;
+        params.headers = params.headers || {};
         params.headers.authorization = 'Basic ' + bt(token + ':');
-    }
-    exports.backendRequest(params, callback);
+        backendRequest(params, callback);
+    });
 }
