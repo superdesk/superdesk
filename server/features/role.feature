@@ -201,3 +201,57 @@ Feature: Role Resource
             [{"event": "user_role_changed", "extra": {"updated": 1, "user_id": "#users._id#"}}]
             """
 
+    @auth @notification
+    Scenario: Privilege notification on update of a role privileges
+        Given "roles"
+            """
+            [{"name": "Admin", "privileges": {"ingest":  1, "archive": 1, "fetch": 0}}]
+            """
+        And "users"
+            """
+            [{"first_name": "Foo", "last_name": "Bar", "username": "foobar",
+            "password": "barbar", "email": "foo@bar.com", "role": "#roles._id#"}]
+            """
+        When we patch "roles/#roles._id#"
+            """
+            {"privileges": {"fetch":  1}}
+            """
+        Then we get updated response
+        When we get "activity"
+        Then we get list with 3 items
+            """
+            {"_items":[
+               {
+                "resource": "roles",
+                "message": "role {{role}} is granted new privileges: Please re-login.",
+                "data": {"role": "Admin"}
+               }
+            ]}
+            """
+        Then we get notifications
+            """
+            [
+                {"event": "activity", "extra": {"_dest": [{"user_id": "#users._id#", "read": false}]}}
+            ]
+            """
+        When we patch "roles/#roles._id#"
+            """
+            {"privileges": {"users":  1}}
+            """
+        Then we get updated response
+        When we get "activity"
+        Then we get list with 4 items
+            """
+            {"_items":[
+               {
+                "resource": "roles",
+                "message": "role {{role}} is granted new privileges: Please re-login.",
+                "data": {"role": "Admin"}
+               },
+               {
+                "resource": "roles",
+                "message": "role {{role}} is granted new privileges: Please re-login.",
+                "data": {"role": "Admin"}
+               }
+            ]}
+            """
