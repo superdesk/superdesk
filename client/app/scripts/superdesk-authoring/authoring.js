@@ -182,10 +182,18 @@
         //TODO: have to trap desk update event for refereshing users desks.
         this.userDesks = [];
 
-        desks.fetchCurrentUserDesks()
-            .then(function(desks_list) {
-                self.userDesks = desks_list._items;
-            });
+        /**
+         * Returns the default properties which should be picked from item before sending API Request for save/update.
+         *
+         * @returns {Object}
+         */
+        this.getContentFieldDefaults = function() {
+            return CONTENT_FIELDS_DEFAULTS;
+        };
+
+        desks.fetchCurrentUserDesks().then(function(desks_list) {
+            self.userDesks = desks_list._items;
+        });
 
         /**
          * Open an item for editing
@@ -2346,10 +2354,7 @@
                     group: 'corrections',
                     controller: ['data', 'authoringWorkspace', 'api', function(data, authoringWorkspace, api) {
                         if (data.item._type === 'archived') {
-                            var itemToDelete = {'_id': data.item._id, '_etag': data.item._etag};
-                            api.remove(itemToDelete, {}, 'archived').then(function(response) {
-                                data.item.error = response;
-                            });
+                            data.item._initiateKill = true;
                         } else {
                             authoringWorkspace.kill(data.item);
                         }

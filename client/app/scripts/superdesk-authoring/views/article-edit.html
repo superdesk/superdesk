@@ -26,7 +26,7 @@
   <div class="abstract" ng-if="!_editable">{{item.abstract}}</div>
 </div>
 
-<div class="field">
+<div class="field" ng-if="item._type !== 'archived'">
   <label translate>By</label>
   <input type="text"
          class="byline"
@@ -39,7 +39,7 @@
 
 <!--This article-edit view is used by templates as well.
     ng-if is used to hide dateline for the template create/edit screen.-->
-<div class="field" ng-if="!template || template.template_type !== 'kill'">
+<div class="field" ng-if="item._type !== 'archived' && (!template || template.template_type !== 'kill')">
     <label translate>Dateline</label>
     <div class="dateline">
         <div sd-meta-locators
@@ -97,7 +97,7 @@
   <div class="abstract" ng-if="!_editable">{{item.description}}</div>
 </div>
 
-<div class="field" ng-if="metadata.footers && item.type !== 'composite' && !item.package_type">
+<div class="field" ng-if="metadata.footers && item._type !== 'archived' && item.type !== 'composite' && !item.package_type">
     <label translate>Helplines/Contact Information</label>
     <select id="helplines" ng-model="item.body_footer_value" ng-disabled="!_editable"
             ng-options="f.name for f in metadata.footers track by f.name" ng-change="addHelplineToFooter()">

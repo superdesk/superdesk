@@ -63,8 +63,8 @@ class ArchivedResource(Resource):
 
     schema = item_schema(extra_fields)
     resource_methods = ['GET']
-    item_methods = ['GET', 'DELETE']
-    privileges = {'DELETE': 'archived'}
+    item_methods = ['GET', 'PATCH', 'DELETE']
+    privileges = {'PATCH': 'archived', 'DELETE': 'archived'}
 
     additional_lookup = {
         'url': 'regex("[\w,.:-]+")',
@@ -164,36 +164,44 @@ class ArchivedService(BaseService):
         doc[config.ID_FIELD] = id_field
 
     def delete(self, lookup):
+        if app.testing and len(lookup) == 0:
+            super().delete(lookup)
+            return
+
+    def on_deleted(self, doc):
+        pass
+
+    def update(self, id, updates, original):
         """
         Overriding to handle with Kill workflow in the Archived repo:
             1. Check if Article has an associated Digital Story and if Digital Story has more Takes.
                If both Digital Story and more Takes exists then all of them would be killed along with the one requested
             2. For each article being killed do the following:
-                i.   Apply the Kill Template and create an entry in archive, archive_versions and published collections.
+                i.   Create an entry in archive, archive_versions and published collections.
                 ii.  Query the Publish Queue in Legal Archive and find the subscribers who received the article
                      previously and create transmission entries in Publish Queue.
                 iii. Change the state of the article to Killed in Legal Archive.
                 iv.  Delete all the published versions from Archived.
                 v.   Send a broadcast email to all subscribers.
-        :param lookup: query to find the article in archived repo
-        :type lookup: dict
+        :param id: primary key of the item to be killed
+        :type id: str
+        :param updates: updates to be applied on the article before saving
+        :type updates: dict
+        :param original:
+        :type original: dict
         """
 
-        if app.testing and len(lookup) == 0:
-            super().delete(lookup)
-            return
-
         # Step 1
-        articles_to_kill = self._find_articles_to_kill(lookup)
+        articles_to_kill = self._find_articles_to_kill({'_id': id})
         articles_to_kill.sort(key=itemgetter(ITEM_TYPE), reverse=True)  # Needed because package has to be inserted last
         kill_service = KillPublishService()
 
+        updated = original.copy()
+        updated.update(updates)
+
         for article in articles_to_kill:
             # Step 2(i)
-            to_apply_template = {'template_name': 'kill', 'item': article}
-            get_resource_service('content_templates_apply').post([to_apply_template])
-            article = to_apply_template['item']
-            self._remove_and_set_kill_properties(article, articles_to_kill)
+            self._remove_and_set_kill_properties(article, articles_to_kill, updated)
 
             # Step 2(ii)
             transmission_details = list(
@@ -222,9 +230,10 @@ class ArchivedService(BaseService):
             # Step 2(v)
             kill_service.broadcast_kill_email(article)
 
-    def on_deleted(self, doc):
+    def on_updated(self, updates, original):
         user = get_user()
-        push_notification('item:deleted:archived', item=str(doc[config.ID_FIELD]), user=str(user.get(config.ID_FIELD)))
+        push_notification('item:deleted:archived', item=str(original[config.ID_FIELD]),
+                          user=str(user.get(config.ID_FIELD)))
 
     def on_fetched_item(self, doc):
         doc['_type'] = 'archived'
@@ -263,7 +272,7 @@ class ArchivedService(BaseService):
 
         return articles_to_kill
 
-    def _remove_and_set_kill_properties(self, article, articles_to_kill):
+    def _remove_and_set_kill_properties(self, article, articles_to_kill, updates):
         """
         Removes the irrelevant properties from the given article and sets the properties for kill operation.
 
@@ -271,6 +280,8 @@ class ArchivedService(BaseService):
         :type article: dict
         :param articles_to_kill: list of articles which were about to kill from dusty archive
         :type articles_to_kill: list
+        :param updates: updates to be applied on the article before saving
+        :type updates: dict
         """
 
         article[config.ID_FIELD] = article.pop('item_id', article['item_id'])
@@ -281,6 +292,9 @@ class ArchivedService(BaseService):
         article.pop('_type', None)
         article.pop('_links', None)
         article.pop(config.ETAG, None)
+
+        for field in ['headline', 'abstract', 'body_html']:
+            article[field] = updates.get(field, article[field])
 
         article[ITEM_STATE] = CONTENT_STATE.KILLED
         article[ITEM_OPERATION] = ITEM_KILL
