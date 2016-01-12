@@ -466,6 +466,21 @@
     }
 
     /**
+     * Delete sessions of a user
+     */
+    SessionsDeleteCommand.$inject = ['api', 'data', '$q', 'notify', 'gettext', '$rootScope'];
+    function SessionsDeleteCommand(api, data, $q, notify, gettext, $rootScope) {
+        var user = data.item;
+        api.remove(user, {}, 'clear_sessions')
+        .then(function () {
+            user.session_preferences = {};
+            notify.success(gettext('Sessions cleared'));
+        }, function (response) {
+            notify.error(gettext('Error. Sessions could not be cleared.'));
+        });
+    }
+
+    /**
      * Resolve a user by route id and redirect to /users if such user does not exist
      */
     UserResolver.$inject = ['api', '$route', 'notify', 'gettext', '$location'];
@@ -777,6 +792,22 @@
                     icon: 'trash',
                     confirm: gettext('Please confirm that you want to disable a user.'),
                     controller: UserDeleteCommand,
+                    filters: [
+                        {
+                            action: superdesk.ACTION_EDIT,
+                            type: 'user'
+                        }
+                    ],
+                    condition: function(data) {
+                        return data.is_enabled;
+                    },
+                    privileges: {users: 1}
+                })
+                .activity('clear/sessions', {
+                    label: gettext('Clear sessions'),
+                    icon: 'kill',
+                    confirm: gettext('Please confirm that you want to delete all the sessions for this user.'),
+                    controller: SessionsDeleteCommand,
                     filters: [
                         {
                             action: superdesk.ACTION_EDIT,

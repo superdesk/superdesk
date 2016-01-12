@@ -9,6 +9,7 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 from superdesk.resource import Resource
+from superdesk.metadata.utils import item_url
 
 
 class SessionsResource(Resource):
@@ -23,3 +24,12 @@ class SessionsResource(Resource):
     resource_methods = ['GET', 'POST']
     item_methods = ['GET', 'DELETE', 'PATCH']
     embedded_fields = ['user']
+
+
+class UserSessionClearResource(Resource):
+    endpoint_name = 'clear_sessions'
+    url = 'users/<{0}:user_id>/sessions'.format(item_url)
+    datasource = {'source': 'users'}
+    resource_methods = ['DELETE']
+    resource_title = endpoint_name
+    privileges = {'DELETE': 'users'}
