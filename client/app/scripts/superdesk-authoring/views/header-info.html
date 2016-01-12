@@ -49,19 +49,8 @@
     </div>
 
     <div class="authoring-header__detailed">
-        <div class="item-wrapper">
-            <div class="item" ng-if="schema.slugline">
-                <label translate>SLUGLINE</label>
-                <input type="text"
-                       sd-autofocus
-                       class="line-input slugline"
-                       id="slugline"
-                       ng-model="item.slugline"
-                       ng-change="autosave(item)"
-                       ng-disabled="!_editable"
-                       ng-trim="false">
-            </div>
-            <div class="item" ng-if="schema.anpa_take_key">
+        <div class="item-wrapper" ng-if="schema.anpa_take_key">
+            <div class="item">
                 <label translate>TAKEKEY</label>
                 <input type="text"
                        class="line-input"
@@ -73,8 +62,8 @@
             </div>
         </div>
 
-        <div class="item-wrapper">
-            <div class="item" ng-if="metadata.locators && schema.place">
+        <div class="item-wrapper" ng-if="metadata.locators && schema.place">
+            <div class="item">
                 <label translate>PLACE</label>
                 <div sd-meta-dropdown
                      class="data"
@@ -140,6 +129,18 @@
                  data-header="true" 
                  data-change="autosave(item)">
             </div>
+        </div>
+
+        <div class="item" ng-if="schema.slugline">
+            <label translate>SLUGLINE</label>
+            <input type="text"
+                   sd-autofocus
+                   class="line-input slugline"
+                   id="slugline"
+                   ng-model="item.slugline"
+                   ng-change="autosave(item)"
+                   ng-disabled="!_editable"
+                   ng-trim="false">
         </div>
 
         <div class="item-wrapper" ng-if="schema.ednote">
