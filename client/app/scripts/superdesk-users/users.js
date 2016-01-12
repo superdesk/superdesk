@@ -344,8 +344,8 @@
         $scope.profile = $scope.user._id === session.identity._id;
     }
 
-    ChangeAvatarController.$inject = ['$scope', 'upload', 'session', 'urls', 'betaService', 'gettext', 'notify'];
-    function ChangeAvatarController($scope, upload, session, urls, beta, gettext, notify) {
+    ChangeAvatarController.$inject = ['$scope', 'upload', 'session', 'urls', 'betaService', 'gettext', 'notify', 'lodash'];
+    function ChangeAvatarController($scope, upload, session, urls, beta, gettext, notify, _) {
 
         $scope.methods = [
             {id: 'upload', label: gettext('Upload from computer')},
