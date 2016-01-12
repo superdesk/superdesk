@@ -168,9 +168,6 @@ class ArchivedService(BaseService):
             super().delete(lookup)
             return
 
-    def on_deleted(self, doc):
-        pass
-
     def update(self, id, updates, original):
         """
         Overriding to handle with Kill workflow in the Archived repo:

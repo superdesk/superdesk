@@ -670,6 +670,7 @@
 
                                 api.save('content_templates_apply', {}, itemForTemplate, {}).then(function(result) {
                                     itemForTemplate = _.pick(result, _.keys(authoring.getContentFieldDefaults()));
+                                    scope.item = _.create(scope.item);
                                     _.each(itemForTemplate, function(value, key) {
                                         if (!_.isUndefined(value) && !_.isEmpty(value)) {
                                             scope.item[key] = value;
@@ -682,7 +683,7 @@
                                 if (response.data._message) {
                                     notify.error(response.data._message);
                                 } else {
-                                    notify.error(gettext('Unkown Error: Cannot kill the item'));
+                                    notify.error(gettext('Unknown Error: Cannot kill the item'));
                                 }
                             }
                         );

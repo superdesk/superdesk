@@ -15,6 +15,7 @@ import superdesk
 from superdesk.metadata.item import CONTENT_STATE, ITEM_STATE
 from superdesk.metadata.utils import aggregations
 from apps.archive.archive import SOURCE as ARCHIVE
+from superdesk.resource import build_custom_hateoas
 
 
 class SearchService(superdesk.Service):
@@ -101,6 +102,18 @@ class SearchService(superdesk.Service):
             getattr(app, 'on_fetched_resource_%s' % resource)(response)
 
         return docs
+
+    def on_fetched(self, doc):
+        """
+        Overriding to add HATEOS for each individual item in the response.
+
+        :param doc: response doc
+        :type doc: dict
+        """
+
+        docs = doc[app.config['ITEMS']]
+        for item in docs:
+            build_custom_hateoas({'self': {'title': item['_type'], 'href': '/{}/{{_id}}'.format(item['_type'])}}, item)
 
 
 class SearchResource(superdesk.Resource):

@@ -63,7 +63,8 @@
     <div class="state-label state-{{ item.state }}" ng-if="item.state" ng-class="{state_embargo: item.embargo}">{{ item.state | removeLodash }}</div>
 </div>
 
-<div ng-if="focused" class="item-right toolbox"
-    sd-item-actions-menu data-item="item" data-active="focused"></div>
+    <div ng-if="focused" class="item-right toolbox" sd-item-actions-menu data-item="item" data-active="focused"></div>
+
+    <div sd-archived-item-kill ng-if="item._type === 'archived' && item._initiateKill" data-item="item"></div>
 
 </div>
