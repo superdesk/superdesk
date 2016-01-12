@@ -238,7 +238,11 @@ class BasePublishService(BaseService):
                                              original_of_take_to_be_published=original,
                                              package=package)
 
-        self._set_updates(package, package_updates, last_updated)
+        # If the original package is corrected then the next take shouldn't change it back to 'published'
+        preserve_state = package.get(ITEM_STATE, '') == CONTENT_STATE.CORRECTED and \
+            updates.get(ITEM_OPERATION, ITEM_PUBLISH) == ITEM_PUBLISH
+
+        self._set_updates(package, package_updates, last_updated, preserve_state)
         package_updates.setdefault(ITEM_OPERATION, updates.get(ITEM_OPERATION, ITEM_PUBLISH))
         self._update_archive(package, package_updates)
         '''
@@ -404,7 +408,7 @@ class BasePublishService(BaseService):
 
         return self._get_subscribers_for_previously_sent_items(query)
 
-    def _set_updates(self, original, updates, last_updated):
+    def _set_updates(self, original, updates, last_updated, preserve_state=False):
         """
         Sets config.VERSION, config.LAST_UPDATED, ITEM_STATE in updates document.
         If item is being published and embargo is available then append Editorial Note with 'Embargoed'.
@@ -412,9 +416,12 @@ class BasePublishService(BaseService):
         :param dict original: original document
         :param dict updates: updates related to the original document
         :param datetime last_updated: datetime of the updates.
+        :param preserve_state: doesn't update the state: it is used for preserving the state of digital package
         """
 
-        self.set_state(original, updates)
+        if not preserve_state:
+            self.set_state(original, updates)
+
         updates.setdefault(config.LAST_UPDATED, last_updated)
         self._set_item_expiry(updates, original)
 
