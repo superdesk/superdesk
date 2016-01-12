@@ -878,7 +878,7 @@ function SdTextEditorBlockEmbedController($timeout, $element, $scope) {
 }
 
 angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embed',
-                                    'angular-embedly', 'superdesk.config'])
+                                    'superdesk.config'])
     .service('editor', EditorService)
     .directive('sdAddEmbed', function() {
         return {
@@ -1292,44 +1292,24 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                 }
             }
         };
-    }]).run(['embedService', 'embedlyService', '$q', '$http', function(embedService, embedlyService, $q, $http) {
-            // Tweets embed code are not provided by Embedly, we need to use this special handler
-            embedService.registerHandler({
-                name: 'Twitter',
-                patterns: [
-                    'https?://(?:www|mobile\\.)?twitter\\.com/(?:#!/)?[^/]+/status(?:es)?/(\\d+)/?$',
-                    'https?://t\\.co/[a-zA-Z0-9]+'
-                ],
-                embed: function(url) {
-                    var deferred = $q.defer();
-                    embedlyService.embed(url).then(
-                        function successCallback(response) {
-                            var data = response.data;
-                            if (data.provider_name === 'Twitter') {
-                                data.html = [
-                                    '<blockquote class="twitter-tweet" lang="en">',
-                                    '  <p lang="en" dir="ltr">' + data.description + '</p>',
-                                    '  — ' + data.title + ' (@' + data.author_name + ')',
-                                    '  <a href="' + url + '">' + url + '</a>',
-                                    '</blockquote>',
-                                    '<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>'
-                                ].join('');
-                            }
-                            deferred.resolve(data);
-                        },
-                        function errorCallback(error) {
-                            deferred.reject(error.error_message || error.data.error_message);
-                        }
-                    );
-                    return deferred.promise;
-                }
-            });
-        }
-    ]).config(['embedServiceProvider', 'embedlyServiceProvider', 'iframelyServiceProvider', '$injector',
-        function(embedServiceProvider, embedlyServiceProvider, iframelyServiceProvider, $injector) {
+    }])
+    // FIXME: This is a demonstration about how to add a special handler.
+    // This is useless and must be removed.
+    .run(['embedService', 'iframelyService', function(embedService, iframelyService) {
+        embedService.registerHandler({
+            name: 'Twitter',
+            patterns: [
+                'https?://(?:www|mobile\\.)?twitter\\.com/(?:#!/)?[^/]+/status(?:es)?/(\\d+)/?$',
+                'https?://t\\.co/[a-zA-Z0-9]+'
+            ],
+            embed: function(url) {
+                return iframelyService.embed(url);
+            }
+        });
+    }])
+    .config(['embedServiceProvider', 'iframelyServiceProvider', '$injector',
+        function(embedServiceProvider, iframelyServiceProvider, $injector) {
         var config = $injector.get('config');
-        // embed.ly private key
-        embedlyServiceProvider.setKey(config.embedly.key);
         // iframe.ly private key
         iframelyServiceProvider.setKey(config.iframely.key);
         // don't use noembed as first choice
