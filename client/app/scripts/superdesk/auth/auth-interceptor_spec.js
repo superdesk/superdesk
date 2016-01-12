@@ -7,6 +7,8 @@
         beforeEach(module('superdesk.api'));
         beforeEach(module('superdesk.auth'));
         beforeEach(module('superdesk.session'));
+        beforeEach(module('superdesk.menu'));
+        beforeEach(module('superdesk.authoring'));
 
         it('should intercept 401 response, run auth and resend request',
         inject(function($injector, $q, $rootScope, session, request, AuthExpiredInterceptor) {

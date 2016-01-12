@@ -125,7 +125,7 @@
         };
 
         /**
-         * Autosave an item
+         * Auto-saves an item
          */
         this.save = function saveAutosave(item) {
             if (item._editable && !item._locked) {
@@ -1286,7 +1286,10 @@
 
                 $scope.autosave = function(item) {
                     $scope.dirty = true;
-                    return authoring.autosave(item);
+                    var autosavedItem = authoring.autosave(item);
+                    authoringWorkspace.addAutosave();
+
+                    return autosavedItem;
                 };
 
                 function refreshItem() {
@@ -2640,6 +2643,15 @@
          */
         this.getState = function() {
             return self.state;
+        };
+
+        /**
+         * Should be invoked when an item is saved by system without user interaction
+         */
+        this.addAutosave = function () {
+            if (self.item) {
+                self.item._autosaved = true;
+            }
         };
 
         /**

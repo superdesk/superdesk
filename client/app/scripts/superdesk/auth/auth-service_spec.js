@@ -8,6 +8,8 @@
             module('superdesk.services.storage');
             module('superdesk.auth');
             module('superdesk.session');
+            module('superdesk.menu');
+            module('superdesk.authoring');
             module(function($provide) {
                 $provide.service('api', function($q) {
                     this.users = {

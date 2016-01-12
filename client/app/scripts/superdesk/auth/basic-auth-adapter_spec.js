@@ -12,6 +12,8 @@
         var $httpBackend;
 
         beforeEach(module('superdesk.auth'));
+        beforeEach(module('superdesk.menu'));
+        beforeEach(module('superdesk.authoring'));
         beforeEach(inject(function (_$httpBackend_) {
             $httpBackend = _$httpBackend_;
         }));
