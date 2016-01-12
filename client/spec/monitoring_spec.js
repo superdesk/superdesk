@@ -329,10 +329,9 @@ describe('monitoring', function() {
     });
 
     it('can view items in related item tab', function() {
-        monitoring.turnOffWorkingStage(0);
-        expect(monitoring.getGroupItems(0).count()).toBe(0);
-        expect(monitoring.getGroupItems(1).count()).toBe(4);
-        monitoring.actionOnItem('Duplicate', 1, 0);
+        expect(monitoring.getGroupItems(1).count()).toBe(0);
+        expect(monitoring.getGroupItems(2).count()).toBe(4);
+        monitoring.actionOnItem('Duplicate', 2, 0);
         monitoring.filterAction('text');
         expect(monitoring.getGroupItems(0).count()).toBe(1);
         expect(monitoring.getTextItem(0, 0)).toBe('item5');
@@ -408,7 +407,7 @@ describe('monitoring', function() {
         monitoring.openAction(0, 3);
         browser.sleep(500);
 
-        expect(monitoring.getTextItem(0, 3)).toBe('item7');
+        expect(monitoring.getTextItem(0, 4)).toBe('ingest1');
         expect(authoring.save_button.isDisplayed()).toBe(true);
     });
 
@@ -531,11 +530,10 @@ describe('monitoring', function() {
     });
 
     it('can view published duplicated item in duplicate tab of non-published original item', function() {
-        monitoring.turnOffWorkingStage(0);
-        expect(monitoring.getGroupItems(0).count()).toBe(0);
-        expect(monitoring.getGroupItems(1).count()).toBe(4);
-        expect(monitoring.getTextItem(1, 0)).toBe('item5'); // original item
-        monitoring.actionOnItem('Duplicate', 1, 0);
+        expect(monitoring.getGroupItems(1).count()).toBe(0);
+        expect(monitoring.getGroupItems(2).count()).toBe(4);
+        expect(monitoring.getTextItem(2, 0)).toBe('item5'); // original item
+        monitoring.actionOnItem('Duplicate', 2, 0);
         monitoring.filterAction('text');
         expect(monitoring.getGroupItems(0).count()).toBe(1);
         expect(monitoring.getTextItem(0, 0)).toBe('item5'); // duplicated item
@@ -543,7 +541,7 @@ describe('monitoring', function() {
         monitoring.actionOnItem('Edit', 0, 0);
         authoring.publish();
         //now preview original item's duplicate tab for duplicated published item
-        monitoring.previewAction(1, 0);
+        monitoring.previewAction(2, 0);
         monitoring.tabAction('related');
         expect(authoring.getDuplicatedItemState(0)).toBe('PUBLISHED');
     });
