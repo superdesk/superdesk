@@ -8,7 +8,12 @@
         };
     }
 
-    angular.module('superdesk.menu', ['superdesk.menu.notifications', 'superdesk.asset', 'superdesk.api'])
+    angular.module('superdesk.menu', [
+        'superdesk.menu.notifications',
+        'superdesk.privileges',
+        'superdesk.asset',
+        'superdesk.api'
+    ])
 
         .service('superdeskFlags', SuperdeskFlagsService)
 
@@ -28,8 +33,15 @@
             };
         }])
 
-        .directive('sdMenuWrapper', ['$route', 'superdesk', 'betaService', 'userNotifications', 'asset', 'lodash',
-        function($route, superdesk, betaService, userNotifications, asset, _) {
+        .directive('sdMenuWrapper', [
+            '$route',
+            'superdesk',
+            'betaService',
+            'userNotifications',
+            'asset',
+            'privileges',
+            'lodash',
+        function($route, superdesk, betaService, userNotifications, asset, privileges, _) {
             return {
                 require: '^sdSuperdeskView',
                 templateUrl: asset.templateUrl('superdesk/menu/views/menu.html'),
@@ -88,6 +100,10 @@
                     });
 
                     scope.notifications = userNotifications;
+
+                    privileges.loaded.then(function() {
+                        scope.privileges = privileges.privileges;
+                    });
                 }
             };
         }]);

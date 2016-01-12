@@ -18,7 +18,7 @@
                 <img sd-user-avatar data-user="currentUser" alt="{{currentUser.display_name || currentUser.username }}">
               </figure>
           </button>
-          <button ng-click="toggleBeta()" class="beta-switch pull-right">
+          <button ng-if="privileges.feature_preview" ng-click="toggleBeta()" class="beta-switch pull-right">
               <span class="stable" ng-if="!beta" tooltip="{{ :: 'Switch to feature preview' | translate }}" tooltip-placement="left">stable</span>
               <span class="beta" ng-if="beta" tooltip="{{ :: 'Turn off feature preview' | translate }}" tooltip-placement="left">feature preview</span>
           </button>
