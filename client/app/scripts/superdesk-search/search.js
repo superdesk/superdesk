@@ -549,7 +549,6 @@
 
                     scope.$on('edit:search', function(event, args)  {
                         scope.sTab = true;
-                        scope.editingSearch = args;
                     });
 
                     scope.changeTab = function() {
@@ -2087,6 +2086,7 @@
 
                     scope.$on('edit:search', function(event, args)  {
                         scope.activateSearchPane = false;
+                        scope.editingSearch = args;
                         scope.edit = _.create(scope.editingSearch) || {};
                     });
 
