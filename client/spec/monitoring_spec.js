@@ -188,8 +188,8 @@ describe('monitoring', function() {
         monitoring.nextSearches();
         monitoring.nextReorder();
         monitoring.saveSettings();
-        expect(monitoring.getTextItem(6, 0)).toBe('item5');
-        expect(monitoring.getTextItem(6, 1)).toBe('item9');
+        expect(monitoring.getTextItem(0, 0)).toBe('item5');
+        expect(monitoring.getTextItem(0, 1)).toBe('item9');
         monitoring.showMonitoringSettings();
         monitoring.nextStages();
         expect(monitoring.getGlobalSearchText(0)).toBe('global saved search ingest1 by first name last name');
