@@ -448,14 +448,19 @@
                                 }
                             }, keyboardOptions);
 
-                            keyboardManager.push('backspace', function () {
+                            keyboardManager.push('left', function () {
                                 elem.find('.backlink').click();
+                            });
+                            keyboardManager.push('right', function () {
+                                var selectedElem = elem.find('button:focus').parent('li');
+                                selectedElem.find('.nested-toggle').click();
                             });
                         });
                     } else if (isOpen === false) { // Exclusively false, prevent executing if it is undefined
                         keyboardManager.pop('up');
                         keyboardManager.pop('down');
-                        keyboardManager.pop('backspace');
+                        keyboardManager.pop('left');
+                        keyboardManager.pop('right');
                     }
                 });
             }

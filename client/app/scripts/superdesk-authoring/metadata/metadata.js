@@ -160,8 +160,59 @@ function MetadataCtrl(
     resolvePublishScheduleAndEmbargoTS();
 }
 
-MetadataDropdownDirective.$inject = ['$timeout', '$filter'];
-function MetadataDropdownDirective($timeout, $filter) {
+MetadropdownFocusDirective.$inject = ['$timeout', 'keyboardManager'];
+function MetadropdownFocusDirective($timeout, keyboardManager) {
+    return {
+        require: 'dropdown',
+        link: function(scope, elem, attrs, dropdown) {
+            scope.$watch(dropdown.isOpen, function(isOpen) {
+                if (isOpen) {
+                    _.defer(function() {
+                            var keyboardOptions = {inputDisabled: false};
+                            // narrow the selection to consider only dropdown list's button items
+                            var buttonList = elem.find('.dropdown-menu button');
+
+                            if (buttonList.length > 0) {
+                                buttonList[0].focus();
+                            }
+
+                            keyboardManager.push('up', function () {
+                                if (buttonList.length > 0) {
+                                    var focusedElem = elem.find('button:focus')[0];
+                                    var indexValue = _.findIndex(buttonList, function(chr) {
+                                        return chr === focusedElem;
+                                    });
+                                    // select previous item on key UP
+                                    if (indexValue > 0 && indexValue < buttonList.length) {
+                                        buttonList[indexValue - 1].focus();
+                                    }
+                                }
+                            }, keyboardOptions);
+
+                            keyboardManager.push('down', function () {
+                                if (buttonList.length > 0) {
+                                    var focusedElem = elem.find('button:focus')[0];
+                                    var indexValue = _.findIndex(buttonList, function(chr) {
+                                        return chr === focusedElem;
+                                    });
+                                    // select next item on key DOWN
+                                    if (indexValue < buttonList.length - 1) {
+                                        buttonList[indexValue + 1].focus();
+                                    }
+                                }
+                            }, keyboardOptions);
+                        });
+                } else if (isOpen === false) {
+                    keyboardManager.pop('down');
+                    keyboardManager.pop('up');
+                }
+            });
+        }
+    };
+}
+
+MetadataDropdownDirective.$inject = ['$timeout', '$filter', 'keyboardManager'];
+function MetadataDropdownDirective($timeout, $filter, keyboardManager) {
     return {
         scope: {
             list: '=',
@@ -173,7 +224,7 @@ function MetadataDropdownDirective($timeout, $filter) {
             change: '&'
         },
         templateUrl: 'scripts/superdesk-authoring/metadata/views/metadata-dropdown.html',
-        link: function(scope) {
+        link: function(scope, elem) {
             scope.select = function(item) {
                 var o = {};
 
@@ -185,6 +236,11 @@ function MetadataDropdownDirective($timeout, $filter) {
 
                 _.extend(scope.item, o);
                 scope.change({item: scope.item});
+
+                //retain focus on same dropdown control after selection.
+                _.defer (function() {
+                    elem.find('.dropdown-toggle').focus();
+                });
             };
 
             $timeout(function() {
@@ -373,7 +429,6 @@ function MetadataListEditingDirective(metadata) {
 
             scope.selectTerm = function(term) {
                 if (term) {
-
                     // Only select terms that are not already selected
                     if (!_.find(scope.item[scope.field], function(i) {return i.qcode === term.qcode;})) {
                         //instead of simple push, extend the item[field] in order to trigger dirty $watch
@@ -392,6 +447,14 @@ function MetadataListEditingDirective(metadata) {
                     scope.terms = _.without(scope.terms, term);
                     scope.postprocessing();
                     scope.change({item: scope.item});
+
+                    //retain focus and initialise activeTree on same dropdown control after selection.
+                    _.defer (function() {
+                        scope.activeTerm = null;
+                        scope.activeTree = scope.tree[null];
+                        elem.find('.dropdown-toggle').focus();
+                        scope.searchTerms(null);
+                    });
                 }
             };
 
@@ -594,5 +657,6 @@ angular.module('superdesk.authoring.metadata', ['superdesk.authoring.widgets'])
     .directive('sdMetaTerms', MetadataListEditingDirective)
     .directive('sdMetaDropdown', MetadataDropdownDirective)
     .directive('sdMetaWordsList', MetadataWordsListEditingDirective)
+    .directive('sdMetadropdownFocus', MetadropdownFocusDirective)
     .directive('sdMetaLocators', MetadataLocatorsDirective);
 })();

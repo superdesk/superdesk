@@ -282,4 +282,28 @@ describe('authoring', function() {
         authoring.publish();
         assertToastMsg('error', 'BODY_HTML empty values not allowed');
     });
+
+    it('keyboard navigation operations on subject dropdown', function() {
+        //Open any item in Edit mode
+        monitoring.actionOnItem('Edit', 1, 1);
+
+        //Open subject metadata dropdown field
+        authoring.getSubjectMetadataDropdownOpened();
+        browser.sleep(200); //wait a bit
+
+        //Perform down arrow would focus/active next element in list
+        browser.actions().sendKeys(protractor.Key.DOWN).perform();
+        browser.sleep(200);
+        expect(browser.driver.switchTo().activeElement().getText()).toEqual('arts, culture and entertainment');
+
+        //Perform right arrow would navigate to next level of focused category and selected as input term
+        browser.actions().sendKeys(protractor.Key.RIGHT).perform();
+        var selectedTerm = authoring.getNextLevelSelectedCategory();
+        expect(selectedTerm.get(0).getText()).toBe('arts, culture and entertainment');
+
+        //Perform Left arrow key would back to one level up in tree and should be focused/active
+        browser.actions().sendKeys(protractor.Key.LEFT).perform();
+        browser.sleep(200);
+        expect(browser.driver.switchTo().activeElement().getText()).toEqual('arts, culture and entertainment');
+    });
 });
