@@ -126,8 +126,8 @@
         });
     }
 
-    ReloadService.$inject = ['$window', '$rootScope', 'session', 'desks', 'gettext'];
-    function ReloadService($window, $rootScope, session, desks, gettext) {
+    ReloadService.$inject = ['$window', '$rootScope', 'session', 'desks', 'gettext', 'superdeskFlags'];
+    function ReloadService($window, $rootScope, session, desks, gettext, superdeskFlags) {
         var _this = this;
         _this.userDesks = [];
         _this.result = null;
@@ -145,7 +145,7 @@
             'user_privileges_revoked': 'User privileges are revoked'
         };
         var roleEvents = {
-            'role_privileges_revoked': 'Role role_privileges_revoked'
+            'role_privileges_revoked': 'Role privileges are revoked'
         };
         var deskEvents = {
             'desk_membership_revoked': 'User removed from desk',
@@ -162,7 +162,7 @@
         });
         this.reload = function(result) {
             if (result.reload) {
-                if ($window.location.hash != null && $window.location.hash.match('/authoring/') != null) {
+                if (superdeskFlags.flags.authoring) {
                     _this.broadcast(gettext(result.message));
                 } else {
                     $window.location.reload(true);
@@ -224,7 +224,7 @@
         };
     }
 
-    return angular.module('superdesk.notification', ['superdesk.desks'])
+    return angular.module('superdesk.notification', ['superdesk.desks', 'superdesk.menu'])
         .service('reloadService', ReloadService)
         .service('notifyConnectionService', NotifyConnectionService)
         .run(WebSocketProxy);

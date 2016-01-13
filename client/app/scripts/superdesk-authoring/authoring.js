@@ -1310,8 +1310,6 @@
                     authoring.saveWorkConfirmation($scope.origItem, $scope.item, $scope.dirty, changeMsg)
                     .then(function(res) {
                         desks.setCurrentDeskId(null);
-                        $location.url('/workspace/content');
-                        referrer.setReferrerUrl('/workspace/content');
                     })
                     ['finally'](function() {
                         $window.location.reload(true);

@@ -96,12 +96,6 @@
                         $timeout(reload, UPDATE_TIMEOUT, false);
                     }
                 });
-            } else {
-                $rootScope.$on('activity', function(_e, extras) {
-                    if (isCurrentUser(extras)) {
-                        $timeout(reload, UPDATE_TIMEOUT, false);
-                    }
-                });
             }
         });
 
