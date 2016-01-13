@@ -170,11 +170,12 @@ describe('authoring', function() {
         monitoring.actionOnItem('Duplicate', 1, 0);
         monitoring.showSpiked();
         monitoring.showMonitoring();
-        expect(monitoring.getTextItem(0, 0)).toBe('item5');
-        monitoring.actionOnItem('Edit', 0, 0);
+        monitoring.turnOffWorkingStage(0);
+        expect(monitoring.getTextItem(5, 1)).toBe('item5');
+        monitoring.actionOnItem('Edit', 5, 1);
         authoring.showHistory();
         expect(authoring.getHistoryItems().count()).toBe(2);
-        expect(authoring.getHistoryItem(1).getText()).toMatch(/Copied to \d+ \(Politic Desk\/Incoming Stage\) by .*/);
+        expect(authoring.getHistoryItem(1).getText()).toMatch(/Copied to \d+ \(Politic Desk\/Working Stage\) by .*/);
         authoring.close();
     });
 
@@ -248,8 +249,9 @@ describe('authoring', function() {
         authoring.publish(); // item9 published
 
         monitoring.actionOnItem('Duplicate', 4, {type: 'text'}); // duplicate item9 text published item
-        expect(monitoring.getGroupItems(0).count()).toBe(1);
-        monitoring.actionOnItem('Edit', 0, 0);
+        monitoring.turnOffWorkingStage(0);
+        expect(monitoring.getGroupItems(5).count()).toBe(1);
+        monitoring.actionOnItem('Edit', 5, 0);
 
         authoring.openRelatedItem(); // opens related item widget
         expect(authoring.getRelatedItemBySlugline(0).getText()).toBe('item9 slugline');
