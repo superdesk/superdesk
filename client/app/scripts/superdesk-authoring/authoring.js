@@ -2295,8 +2295,18 @@
         };
     }
 
-    headerInfoDirective.$inject = ['api', 'familyService', 'authoringWidgets', 'authoring', '$rootScope', 'archiveService', 'content'];
-    function headerInfoDirective(api, familyService, authoringWidgets, authoring, $rootScope, archiveService, content) {
+    headerInfoDirective.$inject = [
+        'api',
+        'familyService',
+        'authoringWidgets',
+        'authoring',
+        '$rootScope',
+        'archiveService',
+        'content',
+        'metadata',
+        'lodash'
+    ];
+    function headerInfoDirective(api, familyService, authoringWidgets, authoring, $rootScope, archiveService, content, metadata, lodash) {
         return {
             templateUrl: 'scripts/superdesk-authoring/views/header-info.html',
             require: '^sdAuthoringWidgets',
@@ -2343,7 +2353,27 @@
                             scope.schema = type.schema || scope.schema;
                         });
                     }
+                });
 
+                metadata.initialize().then(function() {
+                    scope.$watch('item.anpa_category', function(services) {
+                        var qcodes = _.pluck(services, 'qcode');
+                        var cvs = [];
+                        metadata.cvs.forEach(function(cv) {
+                            var cvService = cv.service || {};
+                            var match = false;
+
+                            qcodes.forEach(function(qcode) {
+                                match = match || cvService[qcode];
+                            });
+
+                            if (match) {
+                                cvs.push(cv);
+                            }
+                        });
+
+                        scope.cvs = _.sortBy(cvs, 'priority');
+                    });
                 });
             }
         };
