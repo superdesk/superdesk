@@ -171,8 +171,8 @@ describe('authoring', function() {
         monitoring.showSpiked();
         monitoring.showMonitoring();
         monitoring.turnOffWorkingStage(0);
-        expect(monitoring.getTextItem(5, 0)).toBe('item5');
-        monitoring.actionOnItem('Edit', 5, 0);
+        expect(monitoring.getTextItem(5, 1)).toBe('item5');
+        monitoring.actionOnItem('Edit', 5, 1);
         authoring.showHistory();
         expect(authoring.getHistoryItems().count()).toBe(2);
         expect(authoring.getHistoryItem(1).getText()).toMatch(/Copied to \d+ \(Politic Desk\/Working Stage\) by .*/);
