@@ -88,6 +88,7 @@ function findTextNode(node, offset) {
  */
 function HistoryStack(initialValue) {
     var stack = [];
+    var selectionStack = [];
     var index = -1;
 
     /**
@@ -96,10 +97,12 @@ function HistoryStack(initialValue) {
      *
      * @param {string} value
      */
-    this.add = function(value) {
+    this.add = function(value, selection) {
         index = index + 1;
         stack[index] = value;
+        selectionStack[index] = selection;
         stack.splice(index + 1, stack.length);
+        selectionStack.splice(index + 1, selectionStack.length);
     };
 
     /**
@@ -122,6 +125,18 @@ function HistoryStack(initialValue) {
     this.get = function() {
         var state = index > -1 ? stack[index] : initialValue;
         return state;
+    };
+
+    /**
+     * Get current cursor position
+     */
+    this.getSelection = function() {
+        var selectionState = index > -1 ? selectionStack[index] : null;
+        if (selectionState) {
+            selectionState.restored = false;
+        }
+
+        return selectionState;
     };
 }
 
@@ -335,9 +350,7 @@ function EditorService(spellcheck, $rootScope, $timeout, $q) {
         }
         var token = tokens.shift();
         hiliteToken(node, token, className);
-        $timeout(function() {
-            hilite(node, tokens, className, true);
-        }, 0, false);
+        $timeout(hilite(node, tokens, className, true), 0, false);
     }
 
     /**
@@ -447,8 +460,11 @@ function EditorService(spellcheck, $rootScope, $timeout, $q) {
     /**
      * Store current anchor position within given node
      */
-    this.storeSelection = function storeSelection() {
-        self.selection = window.rangy ? window.rangy.saveSelection() : null;
+    this.storeSelection = function storeSelection(node) {
+        var spans = node.getElementsByClassName('rangySelectionBoundary');
+        if (spans.length === 0 || !self.selection) {
+            self.selection = window.rangy ? window.rangy.saveSelection() : null;
+        }
     };
 
     /**
@@ -475,7 +491,7 @@ function EditorService(spellcheck, $rootScope, $timeout, $q) {
             var span = spans.item(0);
             var parent = span.parentNode;
             parent.removeChild(span);
-            if (parent.normalize) {
+            if (parent && parent.normalize) {
                 parent.normalize();
             }
         }
@@ -514,10 +530,12 @@ function EditorService(spellcheck, $rootScope, $timeout, $q) {
      * @param {Scope} scope
      */
     this.commitScope = function(scope) {
-        var nodeValue = clearRangy(clean(scope.node)).innerHTML;
+        var nodeValue = clean(scope.node).innerHTML;
         if (nodeValue !== scope.model.$viewValue) {
             scope.model.$setViewValue(nodeValue);
-            scope.history.add(scope.model.$viewValue);
+            self.storeSelection(scope.node);
+            scope.history.add(clean(scope.node).innerHTML, self.selection);
+            self.resetSelection(scope.node);
         }
     };
 
@@ -574,6 +592,7 @@ function EditorService(spellcheck, $rootScope, $timeout, $q) {
         if (val != null) {
             scope.node.innerHTML = val;
             scope.model.$setViewValue(val);
+            self.selection = scope.history.getSelection();
         }
     }
 }
@@ -602,7 +621,6 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
             link: function(scope, elem, attrs, ngModel) {
 
                 scope.model = ngModel;
-                editor.registerScope(scope);
 
                 var TYPING_CLASS = 'typing';
 
@@ -612,95 +630,98 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
 
                 ngModel.$viewChangeListeners.push(changeListener);
 
+                var ctrlOperations = {};
+                ctrlOperations[editor.KEY_CODES.Z] = doUndo;
+                ctrlOperations[editor.KEY_CODES.Y] = doRedo;
+
+                scope.$on('spellcheck:run', render);
+                keyboardManager.bind('ctrl+shift+d', render);
+
                 ngModel.$render = function () {
-
                     var editorOptions = angular.extend({}, editorConfig, scope.config || {});
-
-                    spellcheck.setLanguage(scope.language);
 
                     editorElem = elem.find('.editor-type-html');
                     editorElem.empty();
                     editorElem.html(ngModel.$viewValue || '');
+
+                    spellcheck.setLanguage(scope.language);
 
                     scope.node = editorElem[0];
                     scope.model = ngModel;
 
                     scope.medium = new window.MediumEditor(scope.node, editorOptions);
 
-                    scope.$on('spellcheck:run', render);
-                    keyboardManager.bind('ctrl+shift+d', render);
-
-                    function cancelTimeout(event) {
-                        $timeout.cancel(updateTimeout);
-                        scope.node.classList.add(TYPING_CLASS);
-                    }
-
-                    var ctrlOperations = {};
-                    ctrlOperations[editor.KEY_CODES.Z] = doUndo;
-                    ctrlOperations[editor.KEY_CODES.Y] = doRedo;
-
-                    editorElem.on('keydown', function(event) {
-                        if (editor.shouldIgnore(event)) {
-                            return;
-                        }
-
-                        cancelTimeout(event);
-                    });
-
-                    editorElem.on('keyup', function(event) {
-                        if (editor.shouldIgnore(event)) {
-                            return;
-                        }
-
-                        cancelTimeout(event);
-
-                        if (event.ctrlKey && ctrlOperations[event.keyCode]) {
-                            ctrlOperations[event.keyCode]();
-                            return;
-                        }
-
-                        updateTimeout = $timeout(updateModel, 800, false);
-                    });
-
-                    editorElem.on('blur', function(event) {
-                        $timeout.cancel(updateTimeout);
-                        scope.node.classList.remove(TYPING_CLASS);
-                        updateModel();
-                    });
-
-                    editorElem.on('contextmenu', function(event) {
-                        if (editor.isErrorNode(event.target)) {
-                            event.preventDefault();
-                            var menu = elem[0].getElementsByClassName('dropdown-menu')[0],
-                                toggle = elem[0].getElementsByClassName('dropdown-toggle')[0];
-                            if (elem.find('.dropdown.open').length) {
-                                click(toggle);
+                    if (!scope.rendered) {
+                        editorElem.on('keydown', function(event) {
+                            if (editor.shouldIgnore(event)) {
+                                return;
                             }
 
-                            scope.suggestions = null;
-                            spellcheck.suggest(event.target.textContent).then(function(suggestions) {
-                                scope.suggestions = suggestions;
-                                scope.replaceTarget = event.target;
-                                $timeout(function() {
-                                    menu.style.left = (event.target.offsetLeft) + 'px';
-                                    menu.style.top = (event.target.offsetTop + event.target.offsetHeight) + 'px';
-                                    menu.style.position = 'absolute';
+                            cancelTimeout();
+                        });
+
+                        editorElem.on('keyup', function(event) {
+                            if (editor.shouldIgnore(event)) {
+                                return;
+                            }
+
+                            cancelTimeout();
+
+                            if (event.ctrlKey && ctrlOperations[event.keyCode]) {
+                                ctrlOperations[event.keyCode]();
+                                return;
+                            }
+
+                            updateTimeout = $timeout(updateModel, 800, false);
+                        });
+
+                        editorElem.on('blur', function(event) {
+                            $timeout.cancel(updateTimeout);
+                            scope.node.classList.remove(TYPING_CLASS);
+                            updateModel();
+                        });
+
+                        editorElem.on('contextmenu', function(event) {
+                            if (editor.isErrorNode(event.target)) {
+                                event.preventDefault();
+                                var menu = elem[0].getElementsByClassName('dropdown-menu')[0],
+                                    toggle = elem[0].getElementsByClassName('dropdown-toggle')[0];
+                                if (elem.find('.dropdown.open').length) {
                                     click(toggle);
-                                }, 0, false);
-                            });
+                                }
 
-                            return false;
-                        }
-                    });
+                                scope.suggestions = null;
+                                spellcheck.suggest(event.target.textContent).then(function(suggestions) {
+                                    scope.suggestions = suggestions;
+                                    scope.replaceTarget = event.target;
+                                    $timeout(function() {
+                                        menu.style.left = (event.target.offsetLeft) + 'px';
+                                        menu.style.top = (event.target.offsetTop + event.target.offsetHeight) + 'px';
+                                        menu.style.position = 'absolute';
+                                        click(toggle);
+                                    }, 0, false);
+                                });
 
-                    scope.$on('$destroy', function() {
-                        editorElem.off();
-                        spellcheck.setLanguage(null);
-                    });
+                                return false;
+                            }
+                        });
 
-                    scope.cursor = {};
-                    render(null, null, true);
+                        scope.$on('$destroy', function() {
+                            editorElem.off();
+                            spellcheck.setLanguage(null);
+                        });
+
+                        editor.registerScope(scope);
+                        scope.cursor = {};
+                        render(null, null, true);
+                        scope.rendered = true;
+                    }
                 };
+
+                function cancelTimeout() {
+                    $timeout.cancel(updateTimeout);
+                    scope.node.classList.add(TYPING_CLASS);
+                }
 
                 function render($event, event, preventStore) {
                     editor.renderScope(scope, $event, preventStore);
@@ -724,14 +745,12 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
                 function doUndo() {
                     scope.$applyAsync(function() {
                         editor.undo(scope);
-                        editor.renderScope(scope);
                     });
                 }
 
                 function doRedo() {
                     scope.$applyAsync(function() {
                         editor.redo(scope);
-                        editor.renderScope(scope);
                     });
                 }
 
