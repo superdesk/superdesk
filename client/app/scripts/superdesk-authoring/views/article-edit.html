@@ -2,8 +2,8 @@
   <label translate>Headline</label>
     <span sd-character-count data-item="item.headline" data-html="true" data-limit="limits.headline"></span>
     <div id="title" class="headline"
-        sd-text-editor
-        data-config="{disableToolbar: true, disableReturn: true}"
+        sd-text-editor 
+        data-config="{disableToolbar: true, disableReturn: true, disableEditing: isPublished(item)}"
         data-language="item.language"
         ng-model="item.headline"
         ng-change="autosave(item)"
@@ -17,7 +17,7 @@
     <span sd-character-count data-item="item.abstract" data-html="true" data-limit="limits.abstract"></span>
     <div id="abstract" class="abstract"
         sd-text-editor
-        data-config="{disableToolbar: true}"
+        data-config="{disableToolbar: true, disableEditing: isPublished(item)}"
         data-language="item.language"
         ng-model="item.abstract"
         ng-change="autosave(item)"
@@ -77,6 +77,7 @@
     <span sd-word-count data-item="item.body_html" data-html="true"></span>
     <div id="bodyhtml" 
          sd-text-editor
+         data-config="{disableEditing: isPublished(item)}"
          ng-model="item.body_html"
          ng-if="_editable"
          ng-change="autosave(item)"
@@ -108,7 +109,7 @@
 <div class="field" ng-if="item.body_footer">
     <label translate>Footer</label>
     <div id="body_footer" class="body" sd-text-editor
-        data-config="{disableToolbar: true}" data-language="item.language"
+        data-config="{disableToolbar: true, disableEditing: isPublished(item)}" data-language="item.language"
         ng-model="item.body_footer" ng-if="_editable" ng-trim="false"></div>
     <div class="abstract" ng-if="!_editable">{{item.body_footer}}</div>
 </div>

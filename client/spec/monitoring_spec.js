@@ -547,4 +547,27 @@ describe('monitoring', function() {
         monitoring.tabAction('related');
         expect(authoring.getDuplicatedItemState(0)).toBe('PUBLISHED');
     });
+
+    it('can view published item as readonly when opened in multiEdit ', function() {
+        monitoring.turnOffWorkingStage(0);
+        monitoring.actionOnItem('Edit', 1, 0);
+        authoring.publish();
+
+        //open published text item
+        monitoring.filterAction('text');
+        monitoring.actionOnItem('Correct item', 4, 0);
+
+        //press multiEdit button to open publish item in multiEdit
+        authoring.multieditOption.click();
+        element(by.buttonText('Ok')).click();
+        expect(element(by.className('state-label')).getText()).toEqual('PUBLISHED');
+
+        var btnSave = element(by.css('[ng-click="save(item, articleEdit)"]'));
+        expect(btnSave.isDisplayed()).toBeFalsy();  // Save button hidden for publish item
+
+        var textField = element(by.className('text-editor'));
+        // expect contenteditable=true attribute is missing/null for text-editor field,
+        // hence editing is disabled for published item
+        expect(textField.getAttribute('contenteditable')).toBe(null);
+    });
 });
