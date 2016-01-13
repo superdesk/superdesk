@@ -70,6 +70,15 @@ function WorkqueueCtrl($scope, $route, workqueue, authoringWorkspace, multiEdit,
             authoring.unlock(item, data.user, item.headline);
         }
 
+        if (item && item.linked_in_packages) {
+            _.each(item.linked_in_packages, function(item) {
+                var pck = _.find(workqueue.items, {_id: item.package});
+                if (pck) {
+                    authoringWorkspace.edit(pck);
+                }
+            });
+        }
+
         updateWorkqueue();
     });
     $scope.$on('media_archive', function(e, data) {
