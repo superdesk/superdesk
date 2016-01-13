@@ -2061,13 +2061,13 @@
                             p = p.then(function() {
                                 var itemDesk = desks.getItemDesk(scope.item);
                                 if (itemDesk) {
-                                    if (scope.destination_last) {
+                                    if (scope.destination_last && scope.destination_last.desk != null) {
                                         scope.selectDesk(desks.deskLookup[scope.destination_last.desk]);
                                     } else {
                                         scope.selectDesk(itemDesk);
                                     }
                                 } else {
-                                    if (scope.destination_last) {
+                                    if (scope.destination_last && scope.destination_last.desk != null) {
                                         scope.selectDesk(desks.deskLookup[scope.destination_last.desk]);
                                     } else {
                                         scope.selectDesk(desks.getCurrentDesk());
