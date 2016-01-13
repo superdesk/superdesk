@@ -279,7 +279,6 @@ function MetadataTagsDirective(api) {
                 scope.refreshing = true;
                 var body = scope.item[scope.sourceField]
                     .replace(/<br[^>]*>/gi, '&nbsp;')
-                    .replace(/<\/?[^>]+><\/?[^>]+>/gi, ' ')
                     .replace(/<\/?[^>]+>/gi, '').trim()
                     .replace(/&nbsp;/g, ' ');
                 api.save('keywords', {text: body})
