@@ -157,6 +157,7 @@ module.exports = function(config) {
             'app/scripts/superdesk-workspace/workspace.js',
 
             'app/scripts/superdesk-settings/module.js',
+            'app/scripts/superdesk-spinner/spinner.js',
 
             'app/scripts/superdesk-archive/controllers/baseList.js',
             'app/scripts/superdesk-archive/archive-widget/baseWidget.js',

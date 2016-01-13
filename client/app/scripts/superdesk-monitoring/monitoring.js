@@ -2,7 +2,9 @@
 
     'use strict';
 
-    angular.module('superdesk.monitoring', ['superdesk.api', 'superdesk.aggregate', 'superdesk.search', 'superdesk.ui', 'superdesk.spinner'])
+    angular.module('superdesk.monitoring', [
+        'superdesk.api', 'superdesk.aggregate', 'superdesk.search', 'superdesk.ui', 'superdesk.spinner'
+    ])
         .service('cards', CardsService)
         .controller('Monitoring', MonitoringController)
         .directive('sdMonitoringView', MonitoringViewDirective)
