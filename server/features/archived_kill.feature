@@ -38,7 +38,7 @@ Feature: Kill a content item in the (dusty) archive
   Scenario: Kill a Text Article in the Dusty Archive
     When we post to "/archive" with success
     """
-    [{"guid": "123", "type": "text", "headline": "test", "state": "fetched", "slugline": "slugline",
+    [{"guid": "123", "type": "text", "abstract": "test", "state": "fetched", "slugline": "slugline",
       "headline": "headline", "anpa_category" : [{"qcode" : "e", "name" : "Entertainment"}],
       "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
       "subject":[{"qcode": "17004000", "name": "Statistics"}], "targeted_for": [{"name": "Digital", "allow": false}],
@@ -70,8 +70,11 @@ Feature: Kill a content item in the (dusty) archive
     """
     When we get "/legal_publish_queue"
     Then we get list with 1 items
-    When we delete "/archived/123:2"
-    Then we get deleted response
+    When we patch "/archived/123:2"
+    """
+    {}
+    """
+    Then we get OK response
     And we get 1 emails
     When we get "/published"
     Then we get list with 1 items
@@ -97,7 +100,7 @@ Feature: Kill a content item in the (dusty) archive
   Scenario: Kill a Text Article also kills the Digital Story in the Dusty Archive
     When we post to "/archive" with success
     """
-    [{"guid": "123", "type": "text", "headline": "test", "state": "fetched", "slugline": "slugline",
+    [{"guid": "123", "type": "text", "abstract": "test", "state": "fetched", "slugline": "slugline",
       "headline": "headline", "anpa_category" : [{"qcode" : "e", "name" : "Entertainment"}],
       "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
       "subject":[{"qcode": "17004000", "name": "Statistics"}],
@@ -137,8 +140,11 @@ Feature: Kill a content item in the (dusty) archive
     """
     When we get "/legal_publish_queue"
     Then we get list with 2 items
-    When we delete "/archived/123:2"
-    Then we get deleted response
+    When we patch "/archived/123:2"
+    """
+    {}
+    """
+    Then we get OK response
     And we get 2 emails
     When we get "/published"
     Then we get list with 2 items
@@ -171,7 +177,7 @@ Feature: Kill a content item in the (dusty) archive
   Scenario: Killing Take in Dusty Archive will kill other takes including the Digital Story
     When we post to "/archive" with success
     """
-    [{"guid": "123", "type": "text", "headline": "test", "state": "fetched", "slugline": "slugline",
+    [{"guid": "123", "type": "text", "abstract": "test", "state": "fetched", "slugline": "slugline",
       "headline": "headline", "anpa_category" : [{"qcode" : "e", "name" : "Entertainment"}],
       "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
       "subject":[{"qcode": "17004000", "name": "Statistics"}], "body_html": "Test Document body"}]
@@ -185,7 +191,11 @@ Feature: Kill a content item in the (dusty) archive
     """
     {"_id": "#take1#"}
     """
-    When we post to "archive/#take1#/link"
+    When we patch "/archive/#take1#"
+    """
+    {"abstract": "Take 1", "headline": "Take 1", "body_html": "Take 1"}
+    """
+    And we post to "archive/#take1#/link"
     """
     [{"desk": "#desks._id#"}]
     """
@@ -193,7 +203,11 @@ Feature: Kill a content item in the (dusty) archive
     """
     {"_id": "#take2#"}
     """
-    When we publish "123" with "publish" type and "published" state
+    When we patch "/archive/#take2#"
+    """
+    {"abstract": "Take 2", "headline": "Take 2", "body_html": "Take 2"}
+    """
+    And we publish "123" with "publish" type and "published" state
     Then we get OK response
     When we publish "123" with "correct" type and "corrected" state
     """
@@ -221,8 +235,11 @@ Feature: Kill a content item in the (dusty) archive
     Then we get list with 8 items
     When we get "/legal_publish_queue"
     Then we get list with 8 items
-    When we delete "/archived/123:2"
-    Then we get deleted response
+    When we patch "/archived/123:2"
+    """
+    {}
+    """
+    Then we get OK response
     And we get 4 emails
     When we get "/published"
     Then we get list with 4 items
@@ -247,17 +264,17 @@ Feature: Kill a content item in the (dusty) archive
     When we get "/legal_archive/#take1#"
     Then we get existing resource
     """
-    {"_id": "#take1#", "type": "text", "_current_version": 3, "state": "killed", "pubstatus": "canceled", "operation": "kill"}
+    {"_id": "#take1#", "type": "text", "_current_version": 4, "state": "killed", "pubstatus": "canceled", "operation": "kill"}
     """
     When we get "/legal_archive/#take1#?version=all"
-    Then we get list with 3 items
+    Then we get list with 4 items
     When we get "/legal_archive/#take2#"
     Then we get existing resource
     """
-    {"_id": "#take2#", "type": "text", "_current_version": 3, "state": "killed", "pubstatus": "canceled", "operation": "kill"}
+    {"_id": "#take2#", "type": "text", "_current_version": 4, "state": "killed", "pubstatus": "canceled", "operation": "kill"}
     """
     When we get "/legal_archive/#take2#?version=all"
-    Then we get list with 3 items
+    Then we get list with 4 items
     When we expire items
     """
     ["123", "#take1#", "#take2#", "#archive.123.take_package#"]

@@ -27,7 +27,6 @@
         <span ng-if="item.urgency" class="output-item-label label-{{item.urgency}}">{{ item.urgency }}</span>
     </div>
 
-
     <div class="item-info">
         <div class="line">
             <span class="word-count">{{ item.word_count }}</span>
@@ -57,5 +56,7 @@
     sd-item-actions-menu
     data-active="focused || (item._id === selected._id)"
     data-item="item"></div>
+
+<div sd-archived-item-kill ng-if="item._type === 'archived' && item._initiateKill" data-item="item"></div>
 
 </div>
