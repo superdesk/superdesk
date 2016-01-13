@@ -2,6 +2,7 @@
     <div class="editbar clearfix">
         <button class="btn btn-info pull-right"
             type="button"
+            ng-hide="isPublished(item)"
             ng-click="save(item, articleEdit)"
             ng-disabled="articleEdit.$pristine && !item._autosave"
             translate>Save</button>
@@ -10,5 +11,8 @@
             ng-click="remove(item)"
             translate>Remove Item</button>
     </div>
-    <fieldset sd-article-edit></fieldset>
+    <div>
+        <div class="state-label state-{{item.state}}">{{item.state}}</div>
+        <fieldset sd-article-edit></fieldset>
+    </div>
 </form></article>

@@ -232,6 +232,12 @@
                 scope.remove = function(item) {
                     multiEdit.remove(item._id);
                 };
+
+                scope.isPublished = function(item) {
+                    if (item != null) {
+                        return authoring.isPublished(item);
+                    }
+                };
             }
         };
     }
