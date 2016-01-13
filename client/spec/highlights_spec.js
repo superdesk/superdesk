@@ -181,24 +181,25 @@ describe('highlights', function() {
 
             //create the highlight and add a item to it
             highlights.createHighlightsPackage('Highlight two');
-            workspace.actionOnItemSubmenu('Add to current', 'main', 3);
-            expect(authoring.getGroupItems('main').count()).toBe(1);
+            workspace.actionOnItemSubmenu('Add to current', 'one', 3);
+            expect(authoring.getGroupItems('one').count()).toBe(3);
 
             //from monitoring add an item to highlight package
             workspace.showList('Monitoring');
-            monitoring.actionOnItemSubmenu('Add to current', 'story', 2, 3);
-            expect(authoring.getGroupItems('story').count()).toBe(1);
+            monitoring.actionOnItemSubmenu('Add to current', 'two', 2, 3);
+            expect(authoring.getGroupItems('two').count()).toBe(1);
 
             //change desk on highlights
             workspace.showHighlightList('Highlight one');
             workspace.selectDesk('SPORTS DESK');
             expect(browser.getLocationAbsUrl()).toMatch('/monitoring');
 
-            //show highlist three and add an item to highlight package
+            //show highlist three and add an item to highlight package two
             workspace.selectDesk('POLITIC DESK');
             workspace.showHighlightList('Highlight three');
-            workspace.actionOnItemSubmenu('Add to current', 'sidebars', 0);
-            expect(authoring.getGroupItems('sidebars').count()).toBe(1);
+            expect(authoring.getGroupItems('two').count()).toBe(1);
+            workspace.actionOnItemSubmenu('Add to current', 'two', 0);
+            expect(authoring.getGroupItems('two').count()).toBe(2);
 
             //export highlight
             authoring.save();

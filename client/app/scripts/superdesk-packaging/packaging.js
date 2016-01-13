@@ -658,12 +658,21 @@
         };
     }
 
-    AddPackageDropdownDirective.$inject = ['$rootScope', 'packages'];
-    function AddPackageDropdownDirective($rootScope, packages) {
+    AddPackageDropdownDirective.$inject = ['$rootScope', 'api', 'packages', 'authoringWorkspace'];
+    function AddPackageDropdownDirective($rootScope, api, packages, authoringWorkspace) {
         return {
             templateUrl: 'scripts/superdesk-packaging/views/sd-add-package-dropdown.html',
             link: function(scope) {
-                scope.groupList = packages.groupList;
+                var pkg = authoringWorkspace.getItem();
+                scope.groupList = null;
+                if (pkg.highlight) {
+                    api('highlights').getById(pkg.highlight)
+                    .then(function(result) {
+                        scope.groupList = result.groups;
+                    });
+                }
+                scope.groupList = scope.groupList || packages.groupList;
+
                 scope.select = function(group) {
                     $rootScope.$broadcast('package:addItems', {items: [scope.item], group: group});
                 };
