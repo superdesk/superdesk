@@ -14,7 +14,7 @@
 	    		<ul class="pills-list">
 					<li ng-repeat="config in configurations._items">
 
-						<h6 class="pull-left">{{ config.name }}</h6>
+						<h6 class="pull-left" title="{{ config.name }}">{{ config.name }}</h6>
 
 						<div class="actions">
 							<button ng-click="edit(config)" title="{{:: 'Edit configuration' | translate }}"><i class="icon-pencil"></i></button>

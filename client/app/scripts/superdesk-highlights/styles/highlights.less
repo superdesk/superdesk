@@ -91,6 +91,11 @@
         color: @white;
         padding-right: 45px;
         padding: 5px 75px 5px 10px;
+        max-width: 250px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+
         .menu-label { 
             font-size: 11px;
             padding-left: 0;
@@ -138,6 +143,12 @@
             line-height: 16px;
             padding: 0 16px;
             margin-bottom: 5px;
+        }
+        button {
+            max-width: 250px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
         }
     }
 }

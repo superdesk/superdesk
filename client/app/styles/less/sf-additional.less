@@ -1383,11 +1383,18 @@ header .sortbar {
 			color: @sd-text;
 			.text-normal();
 			float: left;
+            max-width: 430px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
 		}
 		&:hover {
 			.actions {
 				display: block !important;
 			}
+            h6 {
+                max-width: 370px;
+            }
 		}
 	}
 	&.pills-editable {
