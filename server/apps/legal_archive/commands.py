@@ -203,7 +203,10 @@ class LegalArchiveImport:
         if max_date:
             lookup[config.LAST_UPDATED] = {'$gte': max_date}
 
-        return legal_publish_queue_service.get(req=None, lookup=lookup)
+        req = ParsedRequest()
+        req.max_results = 500
+
+        return legal_publish_queue_service.get(req=req, lookup=lookup)
 
     def _get_max_date_from_publish_queue(self):
         """
@@ -214,7 +217,6 @@ class LegalArchiveImport:
         req = ParsedRequest()
         req.sort = '[("%s", -1)]' % config.LAST_UPDATED
         req.max_results = 1
-        req.page = 1
         queue_item = list(legal_publish_queue_service.get(req=req, lookup={}))
         return queue_item[0][config.LAST_UPDATED] if queue_item else None
 
