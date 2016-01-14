@@ -15,7 +15,7 @@
                 <i class="icon-close-small icon-white"></i>
             </button>
         </li>
-        <li ng-repeat="highlight in highlights track by highlight._id">
+        <li ng-repeat="highlight in highlights track by highlight._id" title="{{ :: highlight.name }}">
             {{ :: highlight.name }}
             <button class="btn btn-mini" ng-click="unmarkHighlight(highlight._id)" translate>REMOVE</button>
         </li>
