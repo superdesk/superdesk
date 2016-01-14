@@ -57,14 +57,14 @@
             <select id="datelineMonth"
                     ng-options="monthName for (monthName, monthValue) in monthNames"
                     ng-disabled="!item.dateline.located || !_editable"
-                    ng-change="resetNumberOfDays(true)"
+                    ng-change="resetNumberOfDays(true, datelineMonth)"
                     ng-model="datelineMonth">
                 <option value=""></option>
             </select>
             <select id="datelineDay"
                     ng-options="day for day in daysInMonth"
                     ng-disabled="!item.dateline.located || !_editable"
-                    ng-change="modifyDatelineDate()"
+                    ng-change="modifyDatelineDate(datelineDay)"
                     ng-model="datelineDay">
                 <option value=""></option>
             </select>

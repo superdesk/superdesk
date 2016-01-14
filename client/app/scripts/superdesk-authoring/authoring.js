@@ -2202,13 +2202,18 @@
                  * Populates the datelineDay field with the days in the selected month.
                  *
                  * @param {Boolean} resetDatelineDate if true resets the dateline.date to be relative to selected date.
+                 * @param {String} datelineMonth - the selected month
                  */
-                scope.resetNumberOfDays = function(resetDatelineDate) {
+                scope.resetNumberOfDays = function(resetDatelineDate, datelineMonth) {
                     if (scope.datelineMonth !== '') {
                         scope.daysInMonth = $filter('daysInAMonth')(parseInt(scope.datelineMonth));
 
                         if (resetDatelineDate) {
-                            scope.modifyDatelineDate();
+                            if (datelineMonth) {
+                                scope.datelineMonth = datelineMonth;
+                            }
+
+                            scope.modifyDatelineDate(scope.datelineDay);
                         }
                     } else {
                         scope.daysInMonth = [];
@@ -2219,9 +2224,15 @@
                 /**
                  * Invoked when user selects a different day in dateline day list. This method calculates the
                  * relative UTC based on the new values of month and day and sets to dateline.date.
+                 *
+                 * @param {String} datelineDay - the selected day
                  */
-                scope.modifyDatelineDate = function() {
+                scope.modifyDatelineDate = function(datelineDay) {
                     if (scope.datelineMonth !== '' && scope.datelineDay !== '') {
+                        if (datelineDay) {
+                            scope.datelineDay = datelineDay;
+                        }
+
                         scope.item.dateline.date = $filter('relativeUTCTimestamp')(scope.item.dateline.located,
                                 parseInt(scope.datelineMonth), parseInt(scope.datelineDay));
 
