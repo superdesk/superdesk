@@ -63,6 +63,7 @@ function WorkqueueCtrl($scope, $route, workqueue, authoringWorkspace, multiEdit,
     $scope.multiEdit = multiEdit;
 
     $scope.$on('$locationChangeSuccess', updateWorkqueue);
+    $scope.$on('content:update', updateWorkqueue);
     $scope.$on('item:lock', updateWorkqueue);
     $scope.$on('item:unlock', function (_e, data) {
         var item = _.find(workqueue.items, {_id: data.item});
