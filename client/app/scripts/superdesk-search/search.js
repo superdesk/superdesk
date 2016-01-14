@@ -2738,8 +2738,9 @@
             };
         }])
 
-        .directive('sdSavedSearches', ['$rootScope', 'api', 'session', 'notify', 'gettext', 'asset', '$location', 'desks', 'privileges',
-        function($rootScope, api, session, notify, gettext, asset, $location, desks, privileges) {
+        .directive('sdSavedSearches', ['$rootScope', 'api', 'session', 'modal', 'notify', 'gettext', 'asset',
+                                       '$location', 'desks', 'privileges',
+        function($rootScope, api, session, modal, notify, gettext, asset, $location, desks, privileges) {
             return {
                 templateUrl: asset.templateUrl('superdesk-search/views/saved-searches.html'),
                 scope: {},
@@ -2824,11 +2825,16 @@
                     };
 
                     scope.remove = function(searches) {
-                        resource.remove(searches).then(function() {
-                            notify.success(gettext('Saved search removed'));
-                            initSavedSearches();
-                        }, function() {
-                            notify.error(gettext('Error. Saved search not deleted.'));
+                        modal.confirm(
+                            gettext('Are you sure you want to delete saved search?')
+                        )
+                        .then(function() {
+                            resource.remove(searches).then(function() {
+                                notify.success(gettext('Saved search removed'));
+                                initSavedSearches();
+                            }, function() {
+                                notify.error(gettext('Error. Saved search not deleted.'));
+                            });
                         });
                     };
 
