@@ -960,6 +960,10 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
 
         var EDITOR_CONFIG = {
             toolbar: {
+                static: true,
+                align: 'left',
+                sticky: true,
+                updateOnEmptySelection: true,
                 buttons: [
                     // H1 and H2 buttons which actually produce
                     // <h2> and <h3> tags respectively
