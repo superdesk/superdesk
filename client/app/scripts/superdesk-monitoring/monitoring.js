@@ -2,7 +2,9 @@
 
     'use strict';
 
-    angular.module('superdesk.monitoring', ['superdesk.api', 'superdesk.aggregate', 'superdesk.search', 'superdesk.ui'])
+    angular.module('superdesk.monitoring', [
+        'superdesk.api', 'superdesk.aggregate', 'superdesk.search', 'superdesk.ui', 'superdesk.spinner'
+    ])
         .service('cards', CardsService)
         .controller('Monitoring', MonitoringController)
         .directive('sdMonitoringView', MonitoringViewDirective)
@@ -264,9 +266,9 @@
     }
 
     MonitoringGroupDirective.$inject = ['cards', 'api', 'authoringWorkspace', '$timeout', 'superdesk',
-        'activityService', 'workflowService', 'keyboardManager', 'desks', 'search', 'multi', 'archiveService'];
+        'activityService', 'workflowService', 'keyboardManager', 'desks', 'search', 'multi', 'archiveService', 'spinner'];
     function MonitoringGroupDirective(cards, api, authoringWorkspace, $timeout, superdesk, activityService,
-            workflowService, keyboardManager, desks, search, multi, archiveService) {
+            workflowService, keyboardManager, desks, search, multi, archiveService, spinner) {
 
         var ITEM_HEIGHT = 57,
             ITEMS_COUNT = 5,
@@ -531,6 +533,7 @@
                     criteria.source.size = to - from;
 
                     var lookup = multi.getIds();    //Ids of selected items
+                    spinner.start();
                     return apiquery().then(function(items) {
                         scope.$on('multi:reset', function(event, args) {
                             lookup = null;
@@ -538,6 +541,7 @@
                         });
 
                         scope.$applyAsync(function() {
+                            spinner.stop();
                             if (scope.total !== items._meta.total) {
                                 scope.total = items._meta.total;
                                 list.style.height = (scope.total * ITEM_HEIGHT) + 'px';
@@ -565,7 +569,6 @@
                  * return {promise} list of items
                  */
                 function apiquery() {
-
                     var provider = 'search';
                     if (scope.group.type === 'search' || scope.group.type === 'deskOutput') {
                         if (criteria.repo && criteria.repo.indexOf(',') === -1) {
