@@ -5,7 +5,7 @@
         return {
             scope: {date: '='},
             link: function datetimeLink(scope, elem) {
-                scope.$watch(':: date', renderDate);
+                scope.$watch('date', renderDate);
 
                 /**
                  * Render relative date within given directive

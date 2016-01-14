@@ -23,11 +23,11 @@
                     <span sd-theme-select ng-if="!proofread" data-key="theme"></span>
                 </div>
             </div>
-            
+
             <div class="page-content-container" ng-click="views.send = false">
                 <header sd-authoring-header class="authoring-header" ng-class="{active: !toggleHeader}"></header>
 
-                <article class="theme-container " ng-class="{preview: !_editable}">                   
+                <article class="theme-container " ng-class="{preview: !_editable}">
                     <div ng-if="item.type !== 'composite'" class="fieldset" sd-article-edit></div>
                     <div ng-if="item.type === 'composite'" sd-package-edit></div>
                 </article>
