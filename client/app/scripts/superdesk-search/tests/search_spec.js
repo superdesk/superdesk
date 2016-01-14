@@ -58,6 +58,12 @@ describe('search service', function() {
         expect(filters).toContain({term: {'original_creator': '123'}});
     }));
 
+    it('can create query for keywords', inject(function($rootScope, search) {
+        var criteria = search.query({keywords: '["FINANCE"]'}).getCriteria();
+        var postFilters = criteria.post_filter.and;
+        expect(postFilters).toContain({terms: {'keywords': ['FINANCE']}});
+    }));
+
     it('can create query for unique_name', inject(function($rootScope, search) {
         // only to desk is specified
         var criteria = search.query({unique_name: '123'}).getCriteria();

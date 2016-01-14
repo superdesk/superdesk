@@ -34,7 +34,7 @@
             <div sd-item-search data-repo="repo" data-context="context"></div>
         </div>
 
-        <div sd-toggle-box data-title="{{ 'Content types' | translate }}" ng-hide="isEmpty('type')" data-open="true">
+        <div sd-toggle-box data-title="{{:: 'Content types' | translate }}" ng-hide="isEmpty('type')" data-open="true">
             <ul class="filter-box content-type-filters">
                 <li ng-repeat="(key,value) in aggregations.type" ng-click="toggleFilter('type', key)" ng-class="{checked: hasFilter('type',key)}">
                     <span class="hover-box">
@@ -46,7 +46,7 @@
             </ul>
         </div>
 
-        <div sd-toggle-box data-title="{{ 'Desks' | translate }}" ng-hide="isEmpty('desk')" data-open="true">
+        <div sd-toggle-box data-title="{{:: 'Desks' | translate }}" ng-hide="isEmpty('desk')" data-open="true">
             <ul class="filter-box">
                 <li ng-repeat="(key,value) in aggregations.desk" ng-click="toggleFilter('desk', value.id)">
                     <span class="sd-checkbox" ng-checked="hasFilter('desk', value.id)"></span>
@@ -55,7 +55,7 @@
             </ul>
         </div>
 
-        <div sd-toggle-box data-title="{{ 'Stages' | translate }}" ng-hide="isEmpty('stage')" data-open="true" >
+        <div sd-toggle-box data-title="{{:: 'Stages' | translate }}" ng-hide="isEmpty('stage')" data-open="true" >
             <ul class="filter-box">
                 <li ng-repeat="(key,value) in aggregations.stage" ng-click="toggleFilter('stage', value.id)">
                     <span class="sd-checkbox" ng-checked="hasFilter('stage', key)"></span>
@@ -64,7 +64,7 @@
             </ul>
         </div>
 
-        <div sd-toggle-box data-title="{{ 'Sources' | translate }}" ng-hide="isEmpty('source')" data-open="true">
+        <div sd-toggle-box data-title="{{:: 'Sources' | translate }}" ng-hide="isEmpty('source')" data-open="true">
             <ul class="filter-box">
                 <li ng-repeat="(key,value) in aggregations.source" ng-click="toggleFilter('source', key)">
                     <span class="sd-checkbox" ng-checked="hasFilter('source',key)"></span>
@@ -73,7 +73,7 @@
             </ul>
         </div>
 
-        <div sd-toggle-box data-title="{{ 'Credits' | translate }}" ng-hide="isEmpty('credit')" data-open="true">
+        <div sd-toggle-box data-title="{{:: 'Credits' | translate }}" ng-hide="isEmpty('credit')" data-open="true">
             <ul class="filter-box">
                 <li ng-repeat="(key,value) in aggregations.credit" ng-click="toggleFilter('credit', key)">
                     <span class="sd-checkbox" ng-checked="hasFilter('credit',key)"></span>
@@ -82,7 +82,7 @@
             </ul>
         </div>
 
-        <div sd-toggle-box data-title="{{ 'Categories' | translate }}" ng-hide="isEmpty('category')" data-open="true">
+        <div sd-toggle-box data-title="{{:: 'Categories' | translate }}" ng-hide="isEmpty('category')" data-open="true">
             <ul class="filter-box">
                 <li ng-repeat="(key,value) in aggregations.category" ng-click="toggleFilter('category', key)">
                     <span class="sd-checkbox" ng-checked="hasFilter('category',key)"></span>
@@ -91,7 +91,16 @@
             </ul>
         </div>
 
-        <div sd-toggle-box data-title="{{ 'Genres' | translate }}" ng-hide="isEmpty('genre')" data-open="true">
+        <div sd-toggle-box data-title="{{:: 'Keywords' | translate }}" ng-hide="isEmpty('keywords')" data-open="true">
+            <ul class="filter-box">
+                <li ng-repeat="(key,value) in aggregations.keywords" ng-click="toggleFilter('keywords', key)">
+                    <span class="sd-checkbox" ng-checked="hasFilter('keywords',key)"></span>
+                    <span>{{:: key | translate}} <i>{{:: value }}</i></span>
+                </li>
+            </ul>
+        </div>
+
+        <div sd-toggle-box data-title="{{:: 'Genres' | translate }}" ng-hide="isEmpty('genre')" data-open="true">
             <ul class="filter-box">
                 <li ng-repeat="(key,value) in aggregations.genre" ng-click="toggleFilter('genre', key)">
                     <span class="sd-checkbox" ng-checked="hasFilter('genre',key)"></span>
@@ -100,7 +109,7 @@
             </ul>
         </div>
 
-        <div sd-toggle-box data-title="{{ 'Urgency' | FacetLabels }}" ng-hide="isEmpty('urgency')" data-open="true">
+        <div sd-toggle-box data-title="{{:: 'Urgency' | FacetLabels }}" ng-hide="isEmpty('urgency')" data-open="true">
             <ul class="filter-box">
                 <li ng-repeat="(key,value) in aggregations.urgency" ng-click="toggleFilter('urgency', key)">
                     <span class="sd-checkbox" ng-checked="hasFilter('urgency',key)"></span>
@@ -109,7 +118,7 @@
             </ul>
         </div>
 
-        <div sd-toggle-box data-title="{{ 'Priority' | FacetLabels }}" ng-hide="isEmpty('priority')" data-open="true">
+        <div sd-toggle-box data-title="{{:: 'Priority' | FacetLabels }}" ng-hide="isEmpty('priority')" data-open="true">
             <ul class="filter-box">
                 <li ng-repeat="(key,value) in aggregations.priority" ng-click="toggleFilter('priority', key)">
                     <span class="sd-checkbox" ng-checked="hasFilter('priority',key)"></span>
@@ -118,7 +127,7 @@
             </ul>
         </div>
 
-        <div sd-toggle-box data-title="{{ 'Flags' | FacetLabels }}" ng-hide="isEmpty('priority')" data-open="true">
+        <div sd-toggle-box data-title="{{:: 'Flags' | FacetLabels }}" ng-hide="isEmpty('priority')" data-open="true">
             <ul class="filter-box">
                 <li ng-click="toggleFilter('legal', 'true')">
                     <span class="sd-checkbox" ng-checked="hasFilter('legal', 'true')"></span>
@@ -127,7 +136,7 @@
             </ul>
         </div>
 
-        <div sd-toggle-box data-title="{{ 'Dates' | translate }}" data-open="true">
+        <div sd-toggle-box data-title="{{:: 'Dates' | translate }}" data-open="true">
 
            <form class="date-filter">
                 <div class="predefined-dates">

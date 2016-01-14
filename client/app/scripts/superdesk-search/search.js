@@ -183,6 +183,10 @@
                     query.post_filter({terms: {'anpa_category.name': JSON.parse(params.category)}});
                 }
 
+                if (params.keywords) {
+                    query.post_filter({terms: {'keywords': JSON.parse(params.keywords)}});
+                }
+
                 if (params.genre) {
                     query.post_filter({terms: {'genre.name': JSON.parse(params.genre)}});
                 }
@@ -330,6 +334,7 @@
         var FacetKeys = {
             'type': 1,
             'category': 1,
+            'keywords': 1,
             'urgency': 1,
             'priority': 1,
             'source': 1,
@@ -568,6 +573,7 @@
                             'source': {},
                             'credit': {},
                             'category': {},
+                            'keywords': {},
                             'urgency': {},
                             'priority': {},
                             'genre': {},
@@ -596,6 +602,14 @@
                                 _.forEach(scope.items._aggregations.category.buckets, function(cat) {
                                     if (cat.key !== '') {
                                         scope.aggregations.category[cat.key] = cat.doc_count;
+                                    }
+                                });
+                            }
+
+                            if (angular.isDefined(scope.items._aggregations.keywords)) {
+                                _.forEach(scope.items._aggregations.keywords.buckets, function(cat) {
+                                    if (cat.key !== '') {
+                                        scope.aggregations.keywords[cat.key] = cat.doc_count;
                                     }
                                 });
                             }
