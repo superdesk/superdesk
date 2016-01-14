@@ -2,6 +2,7 @@
     <div ng-if="vm.config.multiBlockEdition" class="block__remove" ng-click="vm.removeBlock(block)">
         <i class="icon-close-small"></i>
     </div>
+    <sd-add-embed ng-if="vm.config.multiBlockEdition && $first" add-to-position="$index" class="block__add-embed"></sd-add-embed>
     <div ng-switch="block.blockType">
         <div ng-switch-when="embed"
              sd-text-editor-block-embed="block"
@@ -16,5 +17,5 @@
              ng-model="block.body">
         </div>
     </div>
-    <sd-add-embed ng-if="vm.config.multiBlockEdition" class="block__add-embed"></sd-add-embed>
+    <sd-add-embed ng-if="vm.config.multiBlockEdition" add-to-position="$index + 1" class="block__add-embed"></sd-add-embed>
 </div>

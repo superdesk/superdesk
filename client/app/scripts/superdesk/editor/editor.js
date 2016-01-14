@@ -568,6 +568,26 @@ function SdTextEditorController(_) {
             focus: false
         });
     }
+    function prepareBlocks(blocks) {
+        var newBlocks = [];
+        blocks.forEach(function(block, i) {
+            // if not the first block and this is a text block following another one
+            if (i > 0 && block.blockType === 'text' && blocks[i-1].blockType === 'text') {
+                // we merge the content with the previous block
+                newBlocks[newBlocks.length - 1].body += block.body;
+            } else {
+                // otherwise we add the full block
+                newBlocks.push(block);
+            }
+            // add emtpy text block if block is between 2 embed blocks or at the end
+            if (blocks[i].blockType === 'embed') {
+                if (i === blocks.length - 1 || blocks[i + 1].blockType === 'embed') {
+                    newBlocks.push(new Block());
+                }
+            }
+        });
+        return newBlocks;
+    }
     angular.extend(vm, {
         blocks: [],
         initEditorWithOneBlock: function(model) {
@@ -598,7 +618,7 @@ function SdTextEditorController(_) {
                 if (element.nodeName === 'P') {
                     commitBlock();
                     if (angular.isDefined(element.innerHTML) && element.textContent !== '' && element.textContent !== '\n') {
-                        blocks.push(new Block({body: element.innerHTML.trim()}));
+                        blocks.push(new Block({body: element.outerHTML.trim()}));
                     }
                 // detect if it's an embed
                 } else if (element.nodeName === '#comment') {
@@ -648,6 +668,7 @@ function SdTextEditorController(_) {
             if (blocks.length === 0) {
                 blocks.push(new Block());
             }
+            blocks = prepareBlocks(blocks);
             // update the actual blocks value at the end to prevent more digest cycle as needed
             vm.blocks = blocks;
         },
@@ -680,16 +701,17 @@ function SdTextEditorController(_) {
         getBlockPosition: function(block) {
             return _.indexOf(vm.blocks, block);
         },
-        insertNewBlockAfter: function(block, attrs) {
+        insertNewBlock: function(position, attrs) {
             var new_block = new Block(attrs);
-            vm.blocks.splice(vm.getBlockPosition(block) + 1, 0, new_block);
+            vm.blocks.splice(position, 0, new_block);
             vm.setFocusOnBlock(new_block);
             vm.commitChanges();
+            vm.blocks = prepareBlocks(vm.blocks);
         },
         removeBlock: function(block) {
-            // remove block only if it's not the first one
+            // remove block only if it's not the only one
             var block_position = vm.getBlockPosition(block);
-            if (block_position > 0) {
+            if (vm.blocks.length > 1) {
                 vm.blocks.splice(block_position, 1);
                 vm.setFocusOnBlock(vm.blocks[block_position - 1]);
             } else {
@@ -731,7 +753,6 @@ SdAddEmbedController.$inject = ['embedService', '$element', '$timeout', '$q', 'l
 function SdAddEmbedController (embedService, $element, $timeout, $q, _) {
     var vm = this;
     angular.extend(vm, {
-        blockBefore: undefined,  // defined in link method
         editorCtrl: undefined,  // defined in link method
         extended: false,
         toggle: function(close) {
@@ -820,7 +841,7 @@ function SdAddEmbedController (embedService, $element, $timeout, $q, _) {
         },
         createFigureBlock: function(embedType, body, caption) {
             // create a new block containing the embed
-            return vm.editorCtrl.insertNewBlockAfter(vm.blockBefore, {
+            return vm.editorCtrl.insertNewBlock(vm.addToPosition, {
                 blockType: 'embed',
                 embedType: embedType,
                 body: body,
@@ -882,14 +903,14 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
     .service('editor', EditorService)
     .directive('sdAddEmbed', function() {
         return {
-            scope: true,
+            scope: {addToPosition: '='},
             require: ['sdAddEmbed', '^sdTextEditor'],
             templateUrl: 'scripts/superdesk/editor/views/add-embed.html',
             controllerAs: 'vm',
             controller: SdAddEmbedController,
+            bindToController: true,
             link: function(scope, element, attrs, controllers) {
                 angular.extend(controllers[0], {
-                    blockBefore: scope.block,
                     editorCtrl: controllers[1]
                 });
             }
@@ -996,7 +1017,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                 placeholderText: gettext('Paste or type a full link')
             },
             placeholder: false,
-            disableReturn: true,
+            disableReturn: false,
             spellcheck: false
         };
 
@@ -1206,46 +1227,6 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                                 return range.extractContents();
                             }
                         }
-                    }
-
-                    // Actions to support multi blocks edition
-                    if (scope.config.multiBlockEdition) {
-                        var KEY_CODES = Object.freeze({
-                            enter: 13,
-                            backspace: 8
-                        });
-                        editorElem.on('keyup', function(e) {
-                            $timeout(function () {
-                                // press enter, create a new block
-                                if (e.keyCode === KEY_CODES.enter) {
-                                    // last paragraph contains what is after the cursor
-                                    var last_paragraph = extractBlockContentsFromCaret();
-                                    var last_paragraph_div = document.createElement('div');
-                                    last_paragraph_div.appendChild(last_paragraph.cloneNode(true));
-                                    sdTextEditor
-                                    .insertNewBlockAfter(scope.sdTextEditorBlockText, {
-                                        body: last_paragraph_div.innerHTML.replace(/^<br>$/, '')
-                                    });
-                                // backspace
-                                } else if (e.keyCode === KEY_CODES.backspace) {
-                                    // remove the block if empty
-                                    if ($(scope.node).text() === '') {
-                                        scope.removeBlock();
-                                    } else {
-                                        var sel = window.getSelection();
-                                        if (sel.rangeCount) {
-                                            var selRange = sel.getRangeAt(0);
-                                            var previous_block = sdTextEditor.getPreviousBlock(scope.sdTextEditorBlockText);
-                                            if (selRange.startOffset === 0 && previous_block && previous_block.blockType === 'text') {
-                                                // complete the previous block with the current block content
-                                                previous_block.body += scope.node.innerHTML;
-                                                scope.removeBlock();
-                                            }
-                                        }
-                                    }
-                                }
-                            });
-                        });
                     }
                 };
 
