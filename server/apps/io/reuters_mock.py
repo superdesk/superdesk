@@ -24,7 +24,7 @@ def item_request(url, request):
     try:
         params = parse_qs(url.query, keep_blank_values=True)
         fixtures = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'fixtures')
-        file = os.path.join(fixtures, params['id'][0])
+        file = os.path.join(fixtures, params['id'][0].replace(':','_version_'))
         with open(file, "r") as stored_response:
             content = stored_response.read()
             return {'status_code': 200, 'content': content}
