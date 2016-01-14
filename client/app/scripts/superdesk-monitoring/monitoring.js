@@ -2,9 +2,7 @@
 
     'use strict';
 
-    angular.module('superdesk.monitoring', [
-        'superdesk.api', 'superdesk.aggregate', 'superdesk.search', 'superdesk.ui', 'superdesk.spinner'
-    ])
+    angular.module('superdesk.monitoring', ['superdesk.api', 'superdesk.aggregate', 'superdesk.search', 'superdesk.ui'])
         .service('cards', CardsService)
         .controller('Monitoring', MonitoringController)
         .directive('sdMonitoringView', MonitoringViewDirective)
@@ -266,9 +264,9 @@
     }
 
     MonitoringGroupDirective.$inject = ['cards', 'api', 'authoringWorkspace', '$timeout', 'superdesk',
-        'activityService', 'workflowService', 'keyboardManager', 'desks', 'search', 'multi', 'archiveService', 'spinner'];
+        'activityService', 'workflowService', 'keyboardManager', 'desks', 'search', 'multi', 'archiveService'];
     function MonitoringGroupDirective(cards, api, authoringWorkspace, $timeout, superdesk, activityService,
-            workflowService, keyboardManager, desks, search, multi, archiveService, spinner) {
+            workflowService, keyboardManager, desks, search, multi, archiveService) {
 
         var ITEM_HEIGHT = 57,
             ITEMS_COUNT = 5,
@@ -297,6 +295,7 @@
                 scope.page = 1;
                 scope.fetching = false;
                 scope.previewingBroadcast = false;
+                scope.loading = false;
                 scope.cacheNextItems = [];
                 scope.cachePreviousItems = [];
                 scope.limited = (monitoring.singleGroup || scope.group.type === 'highlights') ? false : true;
@@ -532,8 +531,8 @@
                     criteria.source.from = from;
                     criteria.source.size = to - from;
 
+                    scope.loading = true;
                     var lookup = multi.getIds();    //Ids of selected items
-                    spinner.start();
                     return apiquery().then(function(items) {
                         scope.$on('multi:reset', function(event, args) {
                             lookup = null;
@@ -541,7 +540,6 @@
                         });
 
                         scope.$applyAsync(function() {
-                            spinner.stop();
                             if (scope.total !== items._meta.total) {
                                 scope.total = items._meta.total;
                                 list.style.height = (scope.total * ITEM_HEIGHT) + 'px';
@@ -560,6 +558,7 @@
                                     });
                                 });
                             }
+                            scope.loading = false;
                         });
                     });
                 }
