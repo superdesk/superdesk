@@ -2,16 +2,19 @@
     <div ng-if="vm.config.multiBlockEdition" class="block__remove" ng-click="vm.removeBlock(block)">
         <i class="icon-close-small"></i>
     </div>
-    <div sd-text-editor-block-embed="block"
-         on-block-change="vm.commitChanges()"
-         ng-if="block.blockType === 'embed'">
+    <div ng-switch="block.blockType">
+        <div ng-switch-when="embed"
+             sd-text-editor-block-embed="block"
+             on-block-change="vm.commitChanges()">
+        </div>
+        <div ng-switch-when="text"
+             sd-text-editor-block-text="block"
+             type="vm.type"
+             config="vm.config"
+             language="vm.language"
+             ng-change="vm.commitChanges()"
+             ng-model="block.body">
+        </div>
     </div>
-    <div sd-text-editor-block-text="block"
-         ng-if="block.blockType === 'text'"
-         type="vm.type"
-         config="vm.config"
-         language="vm.language"
-         ng-change="vm.commitChanges()"
-         ng-model="block.body"></div>
     <sd-add-embed ng-if="vm.config.multiBlockEdition" class="block__add-embed"></sd-add-embed>
 </div>
