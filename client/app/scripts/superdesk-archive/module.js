@@ -129,8 +129,8 @@
         };
     }
 
-    ArchiveService.$inject = ['desks', 'session', 'api', '$q', 'search'];
-    function ArchiveService(desks, session, api, $q, search) {
+    ArchiveService.$inject = ['desks', 'session', 'api', '$q', 'search', '$location'];
+    function ArchiveService(desks, session, api, $q, search, $location) {
         /**
          * Adds 'task' property to the article represented by item.
          *
@@ -139,7 +139,7 @@
          */
         this.addTaskToArticle = function (item, desk) {
             desk = desk || desks.getCurrentDesk();
-            if ((!item.task || !item.task.desk) && desk) {
+            if ((!item.task || !item.task.desk) && desk && $location.path() !== '/workspace/personal') {
                 item.task = {'desk': desk._id, 'stage': desk.working_stage, 'user': session.identity._id};
             }
         };
