@@ -220,6 +220,11 @@ describe('content', function() {
     });
 
     it('can enable/disable send and continue based on emabrgo', function() {
+        // Initial steps before proceeding, to get initial state of send buttons.
+        workspace.editItem('item3', 'SPORTS');
+        authoring.sendTo('Sports Desk', 'Incoming Stage');
+        authoring.confirmSendTo();
+
         workspace.editItem('item3', 'SPORTS');
         authoring.sendToButton.click().then(function() {
             // Initial State

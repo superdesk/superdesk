@@ -131,4 +131,33 @@ describe('send', function() {
         expect(dropdownSelected.getText()).toEqual('Politic Desk');
     });
 
+    it('can remember last sent destination desk and stage on multi selection sendTo panel', function() {
+        monitoring.openMonitoring();
+
+        monitoring.selectItem(2, 0);
+        expect(monitoring.getItem(2, 0).element(by.model('item.selected')).getAttribute('checked')).toBeTruthy();
+
+        monitoring.selectItem(2, 1);
+        expect(monitoring.getItem(2, 1).element(by.model('item.selected')).getAttribute('checked')).toBeTruthy();
+
+        monitoring.openSendMenu();
+        authoring.sendTo('Sports Desk', 'Working Stage');
+
+        //now continue to open new multi selected items' SendTo panel to see if last destination remembered?
+        monitoring.selectItem(3, 0);
+        expect(monitoring.getItem(3, 0).element(by.model('item.selected')).getAttribute('checked')).toBeTruthy();
+
+        //open sendTo panel
+        monitoring.openSendMenu();
+
+        var sidebar = element.all(by.css('.slide-pane')).last(),
+            dropdown = sidebar.element(by.css('.dropdown--dark .dropdown-toggle')),
+            dropdownSelected = dropdown.element(by.css('[ng-show="selectedDesk"]'));
+
+        expect(dropdownSelected.getText()).toEqual('Sports Desk'); // desk remembered
+
+        var btnStage = element(by.buttonText('Working Stage'));
+        expect(btnStage.getAttribute('class')).toContain('active'); // stage remembered
+    });
+
 });

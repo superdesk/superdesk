@@ -1815,6 +1815,14 @@
                     } else if (scope.mode === 'archive') {
                         return sendContent(deskId, stageId, scope.selectedMacro, open);
                     } else if (scope.config) {
+                        // Remember last destination desk and stage
+                        if (scope.destination_last &&
+                                (scope.destination_last.desk !== deskId && scope.destination_last.stage !== stageId)) {
+                            updateLastDestination(deskId, stageId);
+                        } else {
+                            updateLastDestination(deskId, stageId);
+                        }
+
                         return scope.config.resolve({
                             desk: deskId,
                             stage: stageId,
@@ -2053,13 +2061,17 @@
                             p = p.then(function() {
                                 var itemDesk = desks.getItemDesk(scope.item);
                                 if (itemDesk) {
-                                    if (scope.destination_last) {
+                                    if (scope.destination_last && scope.destination_last.desk != null) {
                                         scope.selectDesk(desks.deskLookup[scope.destination_last.desk]);
                                     } else {
                                         scope.selectDesk(itemDesk);
                                     }
                                 } else {
-                                    scope.selectDesk(desks.getCurrentDesk());
+                                    if (scope.destination_last && scope.destination_last.desk != null) {
+                                        scope.selectDesk(desks.deskLookup[scope.destination_last.desk]);
+                                    } else {
+                                        scope.selectDesk(desks.getCurrentDesk());
+                                    }
                                 }
                             });
                         }
