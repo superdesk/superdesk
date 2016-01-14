@@ -52,6 +52,7 @@
         {value: 'newsml12', name: 'News ML 1.2 Parser'},
         {value: 'afpnewsml12', name: 'AFP News ML 1.2 Parser'},
         {value: 'newsml2', name: 'News ML-G2 Parser'},
+        {value: 'scoop_newsml2', name: 'Scoop Media News ML-G2 Parser'},
         {value: 'wenn', name: 'WENN Parser'},
         {value: 'anpa1312', name: 'ANPA Parser'},
         {value: 'iptc7901', name: 'IPTC 7901 Parser'},
