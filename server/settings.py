@@ -148,6 +148,10 @@ CELERY_ROUTES = {
         'queue': 'publish',
         'routing_key': 'publish.transmit'
     },
+    'superdesk.publish.publish_content.publish': {
+        'queue': 'publish',
+        'routing_key': 'publish.transmit'
+    },
     'apps.archive.remove_scheduled': {
         'queue': 'publish',
         'routing_key': 'publish.remove_scheduled'
