@@ -107,7 +107,7 @@ def init_app(app):
     superdesk.privilege(name='metadata_uniquename', label='Edit Unique Name', description='User can edit unique name.')
     superdesk.privilege(name='hold', label='Hold', description='Hold a content')
     superdesk.privilege(name='restore', label='Restore', description='Restore a hold a content')
-    superdesk.privilege(name='rewrite', label='Rewrite', description='Rewrite a published content')
+    superdesk.privilege(name='rewrite', label='Update', description='Update a published content')
 
     superdesk.intrinsic_privilege(ArchiveUnlockResource.endpoint_name, method=['POST'])
     superdesk.intrinsic_privilege(ArchiveLinkResource.endpoint_name, method=['POST'])
