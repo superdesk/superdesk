@@ -39,7 +39,7 @@
 						<option value="{{ :: auto.week }}" ng-selected="configEdit.auto_insert === auto.week" translate>This week</option>
 						<option ng-repeat="hour in hours"
 							value="{{ :: getHourVal(hour) }}"
-							ng-selected="configEdit.auto_insert === getHourVal(hour)" translate>Last {{ hour }} hours</option>
+							ng-selected="configEdit.auto_insert === getHourVal(hour)"><span translate>Last</span> {{ hour }} <span translate>hours</span></option>
 					</select>
 				</div>
                 <div class="field">

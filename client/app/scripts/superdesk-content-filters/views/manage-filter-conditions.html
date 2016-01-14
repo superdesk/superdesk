@@ -28,7 +28,7 @@
 
 <div sd-modal data-model="filterCondition" class="filter-condition-modal modal-large">
     <div class="modal-header"> <a href="" class="close" ng-click="cancel()"><i class="icon-close-small"></i></a>
-        <h3 translate ng-show="filterCondition._id" translate>Edit Filter Condition "{{ origFilterCondition.name }}"</h3>
+        <h3 ng-show="filterCondition._id"><span translate>Edit Filter Condition</span> "{{ origFilterCondition.name }}"</h3>
         <h3 translate ng-hide="filterCondition._id" translate>Add New Filter Condition</h3>
     </div>
     <div class="modal-body">

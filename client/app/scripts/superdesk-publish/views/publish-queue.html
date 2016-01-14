@@ -54,7 +54,7 @@
                 </div>
                 <div class="refresh-box">
                     <button ng-click="reload()" class="pull-right" tooltip="{{:: 'Refresh' | translate}}" tooltip-placement="left"><i class="icon-refresh"></i></button>
-                    <span class="pull-right" translate>Last refreshed at: {{ lastRefreshedAt | date:'dd-MM-yyyy HH:mm:ss' }}</span>
+                    <span class="pull-right"><span translate>Last refreshed at</span>: {{ lastRefreshedAt | date:'dd-MM-yyyy HH:mm:ss' }}</span>
                 </div>
                 <div sd-pagination-alt class="pagination-box" data-page="page" data-max-page="maxPage"></div>
             </header>

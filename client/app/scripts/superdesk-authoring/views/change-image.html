@@ -10,7 +10,7 @@
             <div class="crop-area image">
                 <ul> 
                     <li ng-repeat="cropsize in data.cropsizes track by cropsize.name">
-                    <label class="field-label" translate>ASPECT RATIO: {{cropsize.name.replace('-', '/')}}</label>
+                    <label class="field-label"><span translate>ASPECT RATIO</span>: {{cropsize.name.replace('-', '/') | translate}}</label>
                     <label class="cords-label">{{preview[cropsize.name].cords}}</label>
                     <div sd-image-crop data-show-Min-Size-Error="true"
                         data-src="data.renditions.original.href" data-cords="preview[cropsize.name].cords" data-box-width="800" 

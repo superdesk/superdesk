@@ -104,7 +104,7 @@
                                 <button class="btn btn-primary" ng-click="save()" ng-disabled="!enableSave()" translate>Save</button>
                             </div>
                             <p ng-if="message">{{ message }}</p>
-                            <p ng-show="_errorUniqueness" translate>Stage with name "{{ editStage.name }}"" already exists.</p>
+                            <p ng-show="_errorUniqueness"><span translate>Stage with name</span> "{{ editStage.name }}"" <span translate>already exists</span>.</p>
                             <p ng-show="_errorLimits" translate>Character limit exceeded, stage can not be created/updated.</p>
                             <span ng-show="_error" translate>There was a problem, stage not created/updated.</span>
                         </div>
@@ -118,14 +118,14 @@
                             <label class="label globalread" ng-if="selected.default_incoming === null || selected.default_incoming">
                                 {{:: 'Incoming Stage' }}
                             </label>
-                            <label translate>Global Read: <label class="label globalread">
+                            <label><span translate>Global Read</span>: <label class="label globalread">
                                 {{(selected.is_visible == null || selected.is_visible) ? 'ON' : 'OFF'}}
                             </label></label>
-                            <label translate>Stage description: {{ selected.description}}</label>
+                            <label><span translate>Stage description</span>: {{ selected.description}}</label>
                             <label translate>Content expiry:</label>
                             <div sd-content-expiry data-item="selected" data-preview="true" data-expiryfield="content_expiry"></div>
-                            <label translate>Incoming Rule: {{selected.incoming_macro}}</label>
-                            <label translate>Outgoing Rule: {{selected.outgoing_macro}}</label>
+                            <label><span translate>Incoming Rule</span>: {{selected.incoming_macro}}</label>
+                            <label><span translate>Outgoing Rule</span>: {{selected.outgoing_macro}}</label>
                         </div>
 
                         <div class="row" ng-if="editStage">

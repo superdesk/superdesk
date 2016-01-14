@@ -1,7 +1,7 @@
 <div>
     <div class="header">
       <div class="backlink-toolbar" ng-show="editingSearch && !activateSearchPane">
-        <button ng-click="cancel()" class="backlink" translate=""><span>Back / Cancel</span></button>
+        <button ng-click="cancel()" class="backlink"><span translate>Back / Cancel</span></button>
       </div>
         <ul ng-show="!editingSearch || activateSearchPane">
             <li ng-class="{active: sTab}" ng-click="sTab = true" translate>Advanced Search</li>
@@ -13,7 +13,7 @@
 
         <!--<div sd-search-within></div>-->
 
-        <div id="edit-search-name" class="edit-search" ng-show="editingSearch && !activateSearchPane" translate>
+        <div id="edit-search-name" class="edit-search" ng-show="editingSearch && !activateSearchPane">
           <form name="viewsForm">
             <fieldset>
               <div class="field">

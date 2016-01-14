@@ -764,7 +764,7 @@
 
         this.confirmSaveWork = function confirmSavework(msg) {
             return modal.confirm(
-                $interpolate(gettext('Configuration has changed, {{ message }}. Would you like to save story to your workspace?'))
+                $interpolate(gettext('Configuration has changed, ' + msg + '. Would you like to save story to your workspace?'))
                 ({message: msg})
             );
         };
@@ -784,7 +784,7 @@
         this.unlock = function unlock(userId, headline) {
             api.find('users', userId).then(function(user) {
                 var itemHeading = headline ? 'Item <b>' + headline + '</b>' : 'This item';
-                var msg = gettext(itemHeading + ' was unlocked by <b>{{ user }}</b>.').
+                var msg = gettext(itemHeading + ' was unlocked by <b>' + user + '</b>.').
                     replace('{{ user }}', $filter('username')(user));
                 return modal.confirm(msg, gettext('Item Unlocked'), gettext('OK'), false);
             });
@@ -797,7 +797,7 @@
          */
         this.lock = function lock(userId) {
             api.find('users', userId).then(function(user) {
-                var msg = gettext('This item was locked by <b>{{ user }}</b>.').
+                var msg = gettext('This item was locked by <b>' +  user + '</b>.').
                     replace('{{ user }}', $filter('username')(user));
                 return modal.confirm(msg, gettext('Item locked'), gettext('OK'), false);
             });

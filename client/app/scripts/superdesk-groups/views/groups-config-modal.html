@@ -24,7 +24,7 @@
 							</div>
 						</fieldset>
 						<p ng-if="message">{{ message }}</p>
-						<span ng-show="_errorUniqueness" translate>Group with name "{{ group.edit.name }}" already exists.</span>
+						<span ng-show="_errorUniqueness"><span translate>Group with name</span> "{{ group.edit.name }}" <span translate>already exists</span>.</span>
 						<p ng-show="_errorLimits" translate>Character limit exceeded, group can not be created/updated.</p>
 						<span ng-show="_error" translate>There was a problem, group not created/updated.</span>
 					</div>

@@ -72,8 +72,8 @@
                 <button class="btn btn-info"
                         ng-click="send()"
                         ng-disabled="disableSendButton()"
-                        translate>
-                    {{!canSendItem() ? 'fetch' : 'send'}}
+                        >
+                    {{!canSendItem() ? 'fetch' : 'send' | translate}}
                 </button>
             </li>
             <li ng-if="showSendButtonAndDestination() && !canSendItem()">
@@ -89,8 +89,8 @@
                         class="btn btn-info"
                         ng-show="_editable"
                         ng-click="_publish()"
-                        translate>
-                    {{_action === 'edit' ? 'publish' : _action}}
+                        >
+                    {{_action === 'edit' ? 'publish' : _action | translate}}
                 </button>
             </li>
         </ul>

@@ -7,7 +7,7 @@
     </button>
 
     <ul id="select-desk-menu" class="dropdown-menu" role="menu">
-        <li class="menu-label" translate><div>DESKS</div></li>
+        <li class="menu-label"><div translate>DESKS</div></li>
         <li class="desk-item" ng-repeat="desk in desks track by desk._id">
             <button ng-click="selectDesk(desk)"
                     ng-disabled="desk._id === selected._id">
@@ -15,7 +15,7 @@
             </button>
         </li>
 
-        <li class="menu-label" translate><div>CUSTOM WORKSPACES</div></li>
+        <li class="menu-label"><div translate>CUSTOM WORKSPACES</div></li>
         <li class="workspace-item" ng-repeat="workspace in wsList track by workspace._id">
             <button ng-click="selectWorkspace(workspace)"
                     ng-disabled="workspace._id === selected._id">
@@ -24,7 +24,7 @@
             </button>
         </li>
         <li>
-            <button class="action-btn" ng-click="createWorkspace()" translate>
+            <button class="action-btn" ng-click="createWorkspace()">
                 <i class="icon-plus-small icon-round icon-white"></i>
                 <span class="circle"></span>
                 {{ :: 'CREATE NEW WORKSPACE' | translate }}

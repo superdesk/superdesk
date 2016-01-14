@@ -37,7 +37,7 @@
                     <span class="pagination">
                         <button type="button" ng-disabled="page === 1" ng-click="page = page - 1">
                             &lt;</button>
-                        <label translate>{{page}}/{{maxPage}}</label>
+                        <label>{{page | translate}}/{{maxPage | translate}}</label>
                         <button type="button" ng-disabled="page === maxPage" ng-click="page = page + 1">&gt;</i></button>
                     </span>
                      <input type="text" placeholder="{{ :: 'Search' | translate }}"

@@ -23,7 +23,7 @@
 
 <div sd-modal data-model="subscriber" class="subscriber-modal modal-big moz-scroll-fix">
     <div class="modal-header"> <a href="" class="close" ng-click="cancel()"><i class="icon-close-small"></i></a>
-        <h3 translate ng-show="subscriber._id">Edit Subscriber "{{ origSubscriber.name }}"</h3>
+        <h3 ng-show="subscriber._id"><span translate>Edit Subscriber</span> "{{ origSubscriber.name }}"</h3>
         <h3 translate ng-hide="subscriber._id">Add New Subscriber</h3>
     </div>
     <div class="modal-body">
@@ -83,8 +83,8 @@
 
                         <div class="field" ng-if="subscriber.content_filter.filter_id">
                             <label translate>Publish Filter Type</label>
-                            <label class="inline-label" translate><input type="radio" ng-model="subscriber.content_filter.filter_type" value="permitting">Permitting</label>
-                            <label class="inline-label" translate><input type="radio" ng-model="subscriber.content_filter.filter_type" value="blocking">Blocking</label>
+                            <label class="inline-label"><input type="radio" ng-model="subscriber.content_filter.filter_type" value="permitting"><span translate>Permitting</span></label>
+                            <label class="inline-label"><input type="radio" ng-model="subscriber.content_filter.filter_type" value="blocking"><span translate>Blocking</span></label>
                         </div>
 
                         <div class="field">

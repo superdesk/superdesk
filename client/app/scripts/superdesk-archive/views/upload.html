@@ -18,7 +18,7 @@
 	</div>
     <div class="upload-edit" ng-show="items.length" ng-class="{compact: dragshow, error: failed}">
         <div class="upload-error" ng-if="errorMessage">
-            <span class="action" translate>Error: {{ :: errorMessage}}</span>
+            <span class="action"><span translate>Error</span>: {{ :: errorMessage | translate}}</span>
         </div>        
         <ul class="upload-thumbs">
             <li ng-repeat="item in items">
