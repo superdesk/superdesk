@@ -134,6 +134,7 @@ describe('authoring', function() {
         monitoring.actionOnItem('Edit', 2, 3);
         authoring.addHelpline('Children');
         expect(authoring.getBodyFooter()).toMatch(/Kids Helpline*/);
+        expect(authoring.save_button.isEnabled()).toBe(true);
         authoring.publish();
         monitoring.filterAction('composite');
         monitoring.actionOnItem('Open', 4, 0);
