@@ -83,7 +83,7 @@
                 }
             };
         })
-        .directive('sdMediaPreview', ['api', '$rootScope', function(api, $rootScope) {
+        .directive('sdMediaPreview', ['api', '$rootScope', 'desks', function(api, $rootScope, desks) {
             return {
                 templateUrl: 'scripts/superdesk-archive/views/preview.html',
                 link: function(scope) {
@@ -92,6 +92,9 @@
                             $rootScope.$broadcast('broadcast:preview', {'item': item});
                         });
                     };
+                    desks.initialize().then(function() {
+                        scope.userLookup = desks.userLookup;
+                    });
                 }
             };
         }])
@@ -315,17 +318,21 @@
                 },
                 template: '{{ name }}',
                 link: function(scope) {
+                    scope.$watch('item', renderIngest);
+
                     scope.name = '';
 
-                    if (!scope.item.ingest_provider && 'source' in scope.item) {
-                        scope.name = scope.item.source;
-                    }
-
-                    ingestSources.initialize().then(function() {
-                        if (scope.item.ingest_provider && scope.item.ingest_provider in ingestSources.providersLookup) {
-                            scope.name = ingestSources.providersLookup[scope.item.ingest_provider].name;
+                    function renderIngest() {
+                        if (!scope.item.ingest_provider && 'source' in scope.item) {
+                            scope.name = scope.item.source;
                         }
-                    });
+
+                        ingestSources.initialize().then(function() {
+                            if (scope.item.ingest_provider && scope.item.ingest_provider in ingestSources.providersLookup) {
+                                scope.name = ingestSources.providersLookup[scope.item.ingest_provider].name;
+                            }
+                        });
+                    }
                 }
             };
         }])

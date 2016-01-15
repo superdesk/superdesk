@@ -1,6 +1,56 @@
 <div>
     <div class="content-container">
 
+      <header class="preview-header" ng-class="{active: !toggleHeader}">
+        <div class="preview-header__timestamp">
+            <label translate>Created</label><time sd-datetime data-date="selected.preview.firstcreated"></time>
+            <label ng-if="selected.preview.original_creator" translate>by</label><b>{{userLookup[selected.preview.original_creator].display_name}}</b>
+            <div ng-if="selected.preview.versioncreated" class="preview-header__border-block">
+                <label translate>Modified</label>
+                <time sd-datetime data-date="selected.preview.versioncreated"></time>
+            </div>
+        </div>
+
+        <div class="preview-header__flex-container">
+          <div class="preview-header__icon-block">
+            <div class="preview-header__flex-row">
+              <i class="filetype-icon-{{selected.preview.type }}" title="{{'Article Type' | translate }}"></i>
+            </div>
+            <div class="preview-header__flex-row">
+              <span ng-if="selected.preview.priority" class="priority-label priority-label--{{selected.preview.priority}}">{{selected.preview.priority}}</span>
+            </div>
+            <div class="preview-header__flex-row">
+              <span ng-if="selected.preview.urgency" class="urgency-label urgency-label--{{selected.preview.urgency}}">{{selected.preview.urgency}}</span>
+            </div>
+          </div>
+          <div class="preview-header__main-block">
+            <div class="preview-header__flex-row">
+              <span ng-if="selected.preview.slugline" class="keyword">{{selected.preview.slugline}}</span>
+            </div>
+            <div class="preview-header__flex-row preview-header__flex-row--single-line" ng-if="selected.preview.anpa_take_key">
+              <span class="inline-label">takekey:</span><span class="takekey">{{selected.preview.anpa_take_key}}</span>
+            </div>
+            <div class="preview-header__flex-row">
+              <span class="state-label state-{{selected.preview.state}}" ng-class="{state_embargo: item.embargo}">{{selected.preview.state | removeLodash}}</span>
+              <span class="state-label legal" ng-if="selected.preview.flags.marked_for_legal" translate>Legal</span>
+            </div>
+          </div>
+          <div class="preview-header__side-block">
+            <div class="preview-header__flex-row" ng-if="item.type === 'text'">
+                <span class="word-count"><b>{{ selected.preview.word_count || 0 }}</b> <span translate translate-n="selected.preview.word_count" translate-plural="WORDS">WORD</span></span>
+            </div>
+            <div class="preview-header__flex-row">
+              <span class="data" sd-meta-ingest data-item="item"></span>
+            </div>
+            <div class="preview-header__flex-row">
+              <div sd-highlights-info data-item="selected.preview"></div>
+            </div>
+          </div>
+        </div>
+
+        <button class="preview-header__toggle" ng-class="{active: toggleHeader}" ng-click="toggleHeader = !toggleHeader" tabindex="-1"><i class="icon-chevron-up-thin"></i></button>
+      </header>
+
         <div class="composite-nav" ng-if="selected.preview.type === 'composite'">
            <div class="top">
                <span><i class="filetype-icon-large-composite"></i> {{ selected.preview.slugline }}</span>
@@ -13,17 +63,12 @@
 
         <div id="locked" class="clearfix" sd-item-lock data-item="selected.preview"></div>
 
-        <div class="rewrite" ng-if="selected.preview.rewrite_id">{{ :: 'This story has been rewritten by: ' | translate }}<a ng-click="previewRewriteStory()" 
+        <div class="rewrite" ng-if="selected.preview.rewrite_id">{{ :: 'This story has been rewritten by: ' | translate }}<a ng-click="previewRewriteStory()"
             class="open-item"><i class="icon-external"></i></a></div>
 
         <p class="title preview-headline" ng-if="selected.preview.headline" ng-class="{condensed: !lock}">{{ selected.preview.headline }}</p>
 
         <p class="nav-space" ng-if="!selected.preview.headline && !lock"></p>
-
-        <div class="state-label state-{{selected.preview.state}}" ng-class="{state_embargo: item.embargo}">{{selected.preview.state | removeLodash}}</div>
-        <div class="state-label legal" ng-if="item.flags.marked_for_legal" translate>Legal</div>
-
-        <div sd-highlights-info data-item="selected.preview"></div>
 
         <div class="core-content">
 
