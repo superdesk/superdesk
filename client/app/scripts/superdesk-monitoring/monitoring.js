@@ -318,6 +318,7 @@
                 scope.$on('ingest:update', queryItems);
                 scope.$on('item:spike', queryItems);
                 scope.$on('item:duplicate', queryItems);
+                scope.$on('item:copy', queryItems);
                 scope.$on('broadcast:created', function(event, args) {
                     scope.previewingBroadcast = true;
                     queryItems();
