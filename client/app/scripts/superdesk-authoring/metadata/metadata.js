@@ -277,7 +277,11 @@ function MetadataTagsDirective(api) {
              */
             scope.refresh = function() {
                 scope.refreshing = true;
-                api.save('keywords', {text: scope.item[scope.sourceField]})
+                var body = scope.item[scope.sourceField]
+                    .replace(/<br[^>]*>/gi, '&nbsp;')
+                    .replace(/<\/?[^>]+>/gi, '').trim()
+                    .replace(/&nbsp;/g, ' ');
+                api.save('keywords', {text: body})
                 .then(function(result) {
                     scope.extractedTags = _.pluck(result.keywords, 'text');
                     scope.tags = _.uniq(scope.extractedTags.concat(scope.item[scope.field]));
