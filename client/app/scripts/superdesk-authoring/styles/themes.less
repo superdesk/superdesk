@@ -11,7 +11,7 @@
 
 // dark
 @dark-theme-bg: rgba(34, 34, 34, 1);
-@dark-theme-text: rgba(170, 204, 209, 1); 
+@dark-theme-text: rgba(170, 204, 209, 1);
 
 //natural
 @natural-theme-bg: rgba(239, 233, 197, 1);
@@ -22,7 +22,7 @@
 
 //dark-khaki
 @dark-khaki-theme-bg: rgba(148, 158, 95, 1);
-@dark-khaki-theme-text: rgba(37, 40, 24, 1); 
+@dark-khaki-theme-text: rgba(37, 40, 24, 1);
 
 //dark-turquise
 @dark-turquoise-theme-bg: rgba(0, 206, 209, 1);
@@ -34,7 +34,7 @@
 
 //pale-yellow
 @pale-yellow-theme-bg: rgba(247, 250, 152, 1);
-@pale-yellow-theme-text: rgba(50, 50, 50, 1);    
+@pale-yellow-theme-text: rgba(50, 50, 50, 1);
 
 .dark-theme() {
 	background: @dark-theme-bg;
@@ -110,7 +110,7 @@ body, html {
             margin-right: 0;
         }
         &:hover {
-            background-color: rgba(152, 152, 152, 0.3);                        
+            background-color: rgba(152, 152, 152, 0.3);
         }
         &.active {
             .box-shadow(inset 0 2px 0 rgba(55, 55, 55, 0.1));
@@ -129,7 +129,7 @@ body, html {
                 margin-bottom: 1px;
             }
             &:hover {
-                background-color: rgba(152, 152, 152, 0.3);                        
+                background-color: rgba(152, 152, 152, 0.3);
             }
         }
         &.open {
@@ -298,16 +298,19 @@ body, html {
 	//labels
 	.field label {
 		.text-normal();
-		background: rgba(0, 0, 0, 0.2);
+		background: rgba(0, 0, 0, 0.4);
 		.border-radius(2px);
 		color: #fff;
 		display: inline-block;
-		padding: 0 5px;
-		font-size: 10px;
-		line-height: 15px;
+		padding: 1px 8px 0;
+		font-size: 11px;
+		line-height: 16px;
 		height: 15px;
 		.transition(all ease 0.2s);
 		opacity: 0;
+		text-transform: uppercase;
+		font-style: normal;
+		letter-spacing: 0.1em;
 
 	}
 
@@ -390,7 +393,7 @@ body, html {
 		}
 		input, textarea {
 			border-color: rgba(210, 60, 50, 0.15) !important;
-		} 
+		}
 	}
 
 	.field.limit-error input, .field.limit-error textarea {
@@ -413,7 +416,7 @@ body, html {
 
 
 	// text styles
-	
+
 	color: rgba(51, 51, 51, 1);
 	.text-editor, .headline, .abstract, input {
 		color: rgba(51, 51, 51, 1) !important;
@@ -506,12 +509,12 @@ body, html {
 .dark-theme {
 	&.main-article {
 		.dark-theme();
-		.text-editor, 
-		.headline, 
-		.abstract, 
+		.text-editor,
+		.headline,
+		.abstract,
 		.dateline input,
         .dateline select,
-		input, 
+		input,
 		.text-editor p {
 			color: @dark-theme-text !important;
 		}
@@ -530,12 +533,12 @@ body, html {
 .dark-theme-mono {
 	&.main-article {
 		.dark-theme-mono();
-		.text-editor, 
-		.headline, 
-		.abstract, 
+		.text-editor,
+		.headline,
+		.abstract,
 		.dateline input,
         .dateline select,
-		input, 
+		input,
 		.text-editor p {
 			color: @dark-theme-text !important;
 			font-family: @monoFontFamily;
@@ -556,12 +559,12 @@ body, html {
 .dark-blue-theme {
 	&.main-article {
 		.dark-blue-theme();
-		.text-editor, 
-		.headline, 
-		.abstract, 
+		.text-editor,
+		.headline,
+		.abstract,
 		.dateline input,
         .dateline select,
-		input, 
+		input,
 		.text-editor p {
 			color: @dark-blue-theme-text !important;
 		}
