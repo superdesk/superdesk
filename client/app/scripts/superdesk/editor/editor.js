@@ -679,17 +679,17 @@ function SdTextEditorController(_) {
                     if (angular.isDefined(block.body) && block.body.trim() !== '') {
                         if (block.blockType === 'embed') {
                             new_body += [
-                                '<!-- EMBED START ' + block.embedType.trim() + ' -->',
+                                '<!-- EMBED START ' + block.embedType.trim() + ' -->\n',
                                 '<figure>',
                                 block.body,
                                 '<figcaption>',
                                 block.caption,
                                 '</figcaption>',
                                 '</figure>',
-                                '<!-- EMBED END ' + block.embedType.trim() + ' -->\n'].join('');
+                                '\n<!-- EMBED END ' + block.embedType.trim() + ' -->\n'].join('');
                         } else {
                             // wrap all the other blocks around <p></p>
-                            new_body += '<p>' + block.body + '</p>\n';
+                            new_body += block.body + '\n';
                         }
                     }
                 });
