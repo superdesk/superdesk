@@ -978,12 +978,12 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
         };
     }])
     .directive('sdTextEditorBlockText', ['editor', 'spellcheck', '$timeout', function (editor, spellcheck, $timeout) {
-
         var EDITOR_CONFIG = {
             toolbar: {
                 static: true,
                 align: 'left',
                 sticky: true,
+                stickyTopOffset: 96, // header height
                 updateOnEmptySelection: true,
                 buttons: [
                     // H1 and H2 buttons which actually produce
