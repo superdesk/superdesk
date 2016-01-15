@@ -899,7 +899,7 @@ function SdTextEditorBlockEmbedController($timeout, $element, $scope) {
 }
 
 angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embed',
-                                    'angular-embedly', 'superdesk.config'])
+                                    'superdesk.config'])
     .service('editor', EditorService)
     .directive('sdAddEmbed', function() {
         return {
@@ -1277,103 +1277,30 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                 }
             }
         };
-    }]).run(['embedService', 'embedlyService', '$q', '$http', function(embedService, embedlyService, $q, $http) {
-            // Tweets embed code are not provided by Embedly, we need to use this special handler
-            embedService.registerHandler({
-                name: 'Twitter',
-                patterns: [
-                    'https?://(?:www|mobile\\.)?twitter\\.com/(?:#!/)?[^/]+/status(?:es)?/(\\d+)/?$',
-                    'https?://t\\.co/[a-zA-Z0-9]+'
-                ],
-                embed: function(url) {
-                    var deferred = $q.defer();
-                    embedlyService.embed(url).then(
-                        function successCallback(response) {
-                            var data = response.data;
-                            if (data.provider_name === 'Twitter') {
-                                data.html = [
-                                    '<blockquote class="twitter-tweet" lang="en">',
-                                    '  <p lang="en" dir="ltr">' + data.description + '</p>',
-                                    '  — ' + data.title + ' (@' + data.author_name + ')',
-                                    '  <a href="' + url + '">' + url + '</a>',
-                                    '</blockquote>',
-                                    '<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>'
-                                ].join('');
-                            }
-                            deferred.resolve(data);
-                        },
-                        function errorCallback(error) {
-                            deferred.reject(error.error_message || error.data.error_message);
-                        }
-                    );
-                    return deferred.promise;
-                }
-            });
-            embedService.registerHandler({
-                name: 'YouTube',
-                patterns: [
-                    '^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$'
-                ],
-                embed: function(url) {
-                    function getYoutubeId(url) {
-                        var regExp = /.*(?:youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=)([^#\&\?]*).*/;
-                        var match = url.match(regExp);
-                        return (match && match[1].length === 11) ? match[1] : false;
-                    }
-                    var deferred = $q.defer();
-                    embedlyService.embed(url).then(
-                        function successCallback(response) {
-                            var data = response.data;
-                            if (data.provider_name === 'YouTube') {
-                                data.html = [
-                                    '<iframe width="' + data.width + '" height="' + data.height + '" ',
-                                    'src="https://www.youtube.com/embed/' + getYoutubeId(data.url) + '" ',
-                                    'frameborder="0" allowfullscreen></iframe>'
-                                ].join('');
-                            }
-                            deferred.resolve(data);
-                        },
-                        function errorCallback(error) {
-                            deferred.reject(error.error_message || error.data.error_message);
-                        }
-                    );
-                    return deferred.promise;
-                }
-            });
-            embedService.registerHandler({
-                name: 'Instagram',
-                patterns: [
-                    '^((http:\/\/(instagr\.am\/p\/.*|instagram\.com\/p\/.*|' +
-                    'www\.instagram\.com\/p\/.*))|(https:\/\/(www\.instagram\.com\/p\/.*)))$'
-                ],
-                embed: function(url) {
-                    var deferred = $q.defer();
-                    embedlyService.embed(url).then(
-                        function successCallback(response) {
-                            var data = response.data;
-                            if (data.provider_name === 'Instagram') {
-                                $http.jsonp('http://instagram.com/publicapi/oembed/?callback=JSON_CALLBACK&url=' + url)
-                                .then(function(result) {
-                                    data.html = result.data.html;
-                                    deferred.resolve(data);
-                                });
-                            }
-                        },
-                        function errorCallback(error) {
-                            deferred.reject(error.error_message || error.data.error_message);
-                        }
-                    );
-                    return deferred.promise;
-                }
-            });
-        }
-    ]).config(['embedServiceProvider', 'embedlyServiceProvider', '$injector',
-        function(embedServiceProvider, embedlyServiceProvider, $injector) {
-        // embed.ly private key
+    }])
+    // FIXME: This is a demonstration about how to add a special handler.
+    // This is useless and must be removed.
+    .run(['embedService', 'iframelyService', function(embedService, iframelyService) {
+        embedService.registerHandler({
+            name: 'Twitter',
+            patterns: [
+                'https?://(?:www|mobile\\.)?twitter\\.com/(?:#!/)?[^/]+/status(?:es)?/(\\d+)/?$',
+                'https?://t\\.co/[a-zA-Z0-9]+'
+            ],
+            embed: function(url) {
+                return iframelyService.embed(url);
+            }
+        });
+    }])
+    .config(['embedServiceProvider', 'iframelyServiceProvider', '$injector',
+        function(embedServiceProvider, iframelyServiceProvider, $injector) {
         var config = $injector.get('config');
-        embedlyServiceProvider.setKey(config.embedly.key);
+        // iframe.ly private key
+        iframelyServiceProvider.setKey(config.iframely.key);
         // don't use noembed as first choice
-        embedServiceProvider.setConfig('allwaysUseEmbedlyByDefault', true);
+        embedServiceProvider.setConfig('useOnlyFallback', true);
+        // iframely respect the original embed for more services than 'embedly'
+        embedServiceProvider.setConfig('fallbackService', 'iframely');
     }]);
 
 })();

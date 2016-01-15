@@ -13,8 +13,8 @@ module.exports = function(grunt) {
         var config = {
             raven: {dsn: process.env.SUPERDESK_RAVEN_DSN || ''},
             server: {url: server, ws: ws},
-            embedly: {
-                key: process.env.EMBEDLY_KEY || ''
+            iframely: {
+                key: process.env.IFRAMELY_KEY || ''
             },
             analytics: {
                 piwik: {
