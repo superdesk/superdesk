@@ -313,7 +313,7 @@ function MetadataWordsListEditingDirective($timeout) {
                 });
 
                 if (index < 0) {
-                    t.push(keyword);
+                    t.push(keyword.toUpperCase());
 
                     var o = {};
                     o[scope.field] = t;
