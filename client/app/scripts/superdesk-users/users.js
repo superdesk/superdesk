@@ -932,6 +932,7 @@
                  asset, privileges, desks, keyboardManager, gettextCatalog) {
 
             return {
+                /* global languageMappingList */
                 templateUrl: asset.templateUrl('superdesk-users/views/edit-form.html'),
                 scope: {
                     origUser: '=user',
@@ -973,9 +974,10 @@
                     });
                     //get available translation languages
                     scope.languages = _.map(gettextCatalog.strings, function(translation, lang) {
-                        return lang;
+                        return {'code': lang, 'nativeName': languageMappingList[lang].nativeName};
                     });
-                    scope.languages.unshift(gettextCatalog.baseLanguage);
+                    scope.languages.unshift(
+                        {'code': gettextCatalog.baseLanguage, 'nativeName': languageMappingList[gettextCatalog.baseLanguage].nativeName});
 
                     scope.cancel = function() {
                         resetUser(scope.origUser);

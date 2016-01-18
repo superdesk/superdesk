@@ -107,7 +107,7 @@
 
                 <div sd-info-item class="user_role">
                   <label for="user_language" translate>Language</label>
-                  <select ng-focus="focused()" ng-model="user.language" name="user_language" id="user_language" ng-options="lang as lang for lang in languages"></select>
+                  <select ng-focus="focused()" ng-model="user.language" name="user_language" id="user_language" ng-options="lang.code as lang.nativeName for lang in languages"></select>
                 </div>
 
                 <div sd-info-item class="user_type" ng-if="privileges.users">
