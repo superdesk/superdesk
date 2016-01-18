@@ -117,13 +117,15 @@
                  data-unique="qcode"
                  data-list="availableCategories"
                  data-header="true"
-                 data-change="autosave(item)">
+                 data-change="autosave(item)"
+                 data-reload-list="false">
             </div>
         </div>
 
         <div class="item-wrapper" ng-if="metadata.subjectcodes">
             <label translate>SUBJECT</label>
-            <div sd-meta-terms
+            <div id="subjects"
+                 sd-meta-terms
                  class="data"
                  data-item="item"
                  data-field="subject"
@@ -131,7 +133,8 @@
                  data-list="metadata.subjectcodes"
                  ng-disabled="!_editable"
                  data-header="true"
-                 data-change="autosave(item)">
+                 data-change="autosave(item)"
+                 data-reload-list="true">
             </div>
         </div>
 
@@ -145,7 +148,8 @@
                  data-list="metadata.company_codes"
                  ng-disabled="!_editable"
                  data-header="true"
-                 data-change="autosave(item)">
+                 data-change="autosave(item)"
+                 data-reload-list="false">
             </div>
         </div>
 

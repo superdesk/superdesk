@@ -133,10 +133,6 @@
                         }
                     });
 
-                    scope.$watch('items', function(items) {
-                        controller.activate(items.length ? items[0] : null);
-                    });
-
                     scope.$watch('focused', function(focused) {
                         if (focused) {
                             $timeout(function() { $input.focus(); }, 0, false);

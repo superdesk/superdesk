@@ -352,22 +352,29 @@ function MetadataWordsListEditingDirective($timeout) {
  * @param {String} unique - specify the name of the field, in list item which is unique (qcode, value...)
  *
  */
-MetadataListEditingDirective.$inject = ['metadata'];
-function MetadataListEditingDirective(metadata) {
+MetadataListEditingDirective.$inject = ['metadata', '$filter'];
+function MetadataListEditingDirective(metadata, $filter) {
     return {
         scope: {
             item: '=',
             field: '@',
             disabled: '=ngDisabled',
             list: '=',
-            unique: '@',
+            unique: '=',
             postprocessing: '&',
             change: '&',
-            header: '@'
+            header: '@',
+            reloadList: '@'
         },
         templateUrl: 'scripts/superdesk-authoring/metadata/views/metadata-terms.html',
         link: function(scope, elem) {
             metadata.subjectScope = scope;
+            var reloadList = scope.reloadList === 'true'? true : false;
+            scope.combinedList = [];
+
+            scope.$watch('unique', function(value) {
+                scope.uniqueField = value || 'qcode';
+            });
 
             scope.$watch('list', function(items) {
                 if (!items || items.length === 0) {
@@ -387,6 +394,9 @@ function MetadataListEditingDirective(metadata) {
                 scope.terms = items;
                 scope.tree = tree;
                 scope.activeTree = tree[null];
+                if (scope.item[scope.field]) {
+                    scope.combinedList = _.union(scope.list, scope.item[scope.field]);
+                }
             });
 
             scope.$on('$destroy', function() {
@@ -409,20 +419,20 @@ function MetadataListEditingDirective(metadata) {
 
             scope.activeList = false;
             scope.selectedTerm = '';
-            var uniqueField = scope.unique || 'qcode';
 
             scope.searchTerms = function(term) {
                 if (!term) {
                     scope.terms = scope.list;
                     scope.activeList = false;
                 } else {
-                    scope.terms = _.filter(scope.list, function(t) {
+                    var searchList = reloadList? scope.list : scope.combinedList;
+                    scope.terms = _.filter(searchList, function(t) {
                         var searchObj = {};
-                        searchObj[uniqueField] = t[uniqueField];
-                        scope.activeList = true;
+                        searchObj[scope.uniqueField] = t[scope.uniqueField];
                         return ((t.name.toLowerCase().indexOf(term.toLowerCase()) !== -1) &&
                             !_.find(scope.item[scope.field], searchObj));
                     });
+                    scope.activeList = true;
                 }
                 return scope.terms;
             };
@@ -443,17 +453,25 @@ function MetadataListEditingDirective(metadata) {
 
                     scope.selectedTerm = '';
 
-                    // Remove the selected term from the terms
-                    scope.terms = _.without(scope.terms, term);
+                    if (!reloadList) {
+                        // Remove the selected term from the terms
+                        scope.terms = _.without(scope.terms, term);
+                        scope.activeTree = _.without(scope.activeTree, term);
+                    }
+
                     scope.postprocessing();
                     scope.change({item: scope.item});
 
                     //retain focus and initialise activeTree on same dropdown control after selection.
                     _.defer (function() {
-                        scope.activeTerm = null;
-                        scope.activeTree = scope.tree[null];
                         elem.find('.dropdown-toggle').focus();
-                        scope.searchTerms(null);
+                        if (reloadList) {
+                            scope.activeTerm = null;
+                            scope.searchTerms(null);
+                            scope.activeTree = scope.tree[null];
+                        } else {
+                            scope.terms = _.clone(scope.activeTree) || [];
+                        }
                     });
                 }
             };
@@ -470,15 +488,13 @@ function MetadataListEditingDirective(metadata) {
                 tempItem[scope.field] = filteredArray;
                 _.extend(scope.item, tempItem);
 
-                /*
-                 * Push the term back onto the terms list if the field isn't subject/company codes as the term isn't
-                 * removed from scope.list/scope.terms when user selects a term.
-                 */
-                if (scope.field !== 'subject' || scope.field !== 'company_codes') {
+                if (!reloadList) {
                     scope.terms.push(term);
+                    scope.activeTree.push(term);
+                    scope.activeTree = $filter('sortByName')(scope.activeTree);
                 }
 
-                scope.terms = _.sortBy(scope.terms, 'name');
+                scope.terms = $filter('sortByName')(scope.terms);
                 scope.change({item: scope.item});
             };
         }
