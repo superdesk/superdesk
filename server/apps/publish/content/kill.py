@@ -11,7 +11,8 @@
 from eve.versioning import resolve_document_version
 from .common import BasePublishService, BasePublishResource, ITEM_KILL
 from eve.utils import config
-from superdesk.metadata.item import CONTENT_STATE, GUID_FIELD, PUB_STATUS
+from superdesk.metadata.item import CONTENT_STATE, ITEM_STATE, GUID_FIELD, PUB_STATUS
+from superdesk.metadata.packages import PACKAGE_TYPE
 from superdesk import get_resource_service
 from superdesk.publish import SUBSCRIBER_TYPES
 from superdesk.utc import utcnow
@@ -19,7 +20,7 @@ import logging
 from copy import copy
 from superdesk.emails import send_article_killed_email
 from superdesk.errors import SuperdeskApiError
-from apps.archive.common import is_item_in_package, ITEM_OPERATION, ARCHIVE, insert_into_versions
+from apps.archive.common import ITEM_OPERATION, ARCHIVE, insert_into_versions
 from apps.templates.content_templates import render_content_template
 
 logger = logging.getLogger(__name__)
@@ -39,9 +40,16 @@ class KillPublishService(BasePublishService):
 
     def on_update(self, updates, original):
         # check if we are trying to kill and item that is contained in normal non takes package
-        if is_item_in_package(original):
-            raise SuperdeskApiError.badRequestError(message='This item is in a package' +
-                                                            ' it needs to be removed before the item can be killed')
+        # and the package itself is not killed.
+
+        packages = self.package_service.get_packages(original[config.ID_FIELD])
+        if packages and packages.count() > 0:
+            for package in packages:
+                if package[ITEM_STATE] != CONTENT_STATE.KILLED and package.get(PACKAGE_TYPE, '') == '':
+                    raise SuperdeskApiError.badRequestError(message='This item is in a package. '
+                                                                    'It needs to be removed '
+                                                                    'before the item can be killed')
+
         updates['pubstatus'] = PUB_STATUS.CANCELED
         super().on_update(updates, original)
         updates[ITEM_OPERATION] = ITEM_KILL
