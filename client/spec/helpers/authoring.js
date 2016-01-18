@@ -25,6 +25,7 @@ function Authoring() {
     this.sendBtn = element(by.buttonText('send'));
 
     this.multieditOption = element(by.css('.big-icon-multiedit'));
+    this.multieditButton = element(by.id('multiedit'));
 
     this.setCategoryBtn = element(by.id('category-setting'))
         .element(by.tagName('button'));

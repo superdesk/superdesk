@@ -309,4 +309,13 @@ describe('authoring', function() {
         browser.sleep(200);
         expect(browser.driver.switchTo().activeElement().getText()).toEqual('arts, culture and entertainment');
     });
+
+    it('disable multi-edit option when action is kill', function() {
+        expect(monitoring.getTextItem(1, 0)).toBe('item5');
+        monitoring.actionOnItem('Edit', 1, 0);
+        authoring.publish();
+        monitoring.filterAction('text');
+        monitoring.actionOnItem('Kill item', 4, 0);
+        expect(authoring.multieditButton.isEnabled()).toBe(false);
+    });
 });
