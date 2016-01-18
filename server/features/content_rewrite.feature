@@ -29,9 +29,12 @@ Feature: Rewrite content
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
         "subject":[{"qcode": "17004000", "name": "Statistics"}],
         "body_html": "Test Document body", "genre": [{"name": "Article", "value": "Article"}],
-        "flags": {"marked_for_legal": true}, "body_footer": "Suicide Call Back Service 1300 659 467",
+        "flags": {"marked_for_legal": true},
+        "body_footer": "Suicide Call Back Service 1300 659 467",
         "place": [{"qcode" : "ACT", "world_region" : "Oceania", "country" : "Australia",
-        "name" : "ACT", "state" : "Australian Capital Territory"}]}]
+        "name" : "ACT", "state" : "Australian Capital Territory"}],
+        "company_codes" : [{"qcode" : "1PG", "security_exchange" : "ASX", "name" : "1-PAGE LIMITED"}]
+      }]
       """
       When we post to "/stages"
       """
@@ -83,7 +86,9 @@ Feature: Rewrite content
       """
       {"_items" : [{"_id": "#REWRITE_ID#", "anpa_take_key": "update", "rewrite_of": "#archive.123.take_package#",
         "task": {"desk": "#desks._id#", "stage": "#desks.working_stage#"}, "genre": [{"name": "Article", "value": "Article"}],
-        "flags": {"marked_for_legal": true}, "body_footer": "Suicide Call Back Service 1300 659 467",
+        "flags": {"marked_for_legal": true},
+        "body_footer": "Suicide Call Back Service 1300 659 467",
+        "company_codes" : [{"qcode" : "1PG", "security_exchange" : "ASX", "name" : "1-PAGE LIMITED"}],
         "place": [{"qcode" : "ACT"}]}]}
       """
       When we get "/archive/123"
