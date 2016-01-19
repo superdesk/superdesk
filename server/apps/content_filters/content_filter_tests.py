@@ -416,10 +416,14 @@ class RetrievingDataTests(ContentFilterTests):
             filename = os.path.join(os.path.abspath(
                 os.path.dirname("apps/prepopulate/data_initialization/vocabularies.json")), "vocabularies.json")
             cmd.run(filename)
-            self.assertTrue(len(self.s._get_subscribers_by_filter_condition(filter_condition1)) == 1)
-            self.assertTrue(len(self.s._get_subscribers_by_filter_condition(filter_condition2)) == 0)
-            self.assertTrue(len(self.s._get_subscribers_by_filter_condition(filter_condition3)) == 2)
-            self.assertTrue(len(self.s._get_subscribers_by_filter_condition(filter_condition4)) == 1)
+            r1 = self.s._get_subscribers_by_filter_condition(filter_condition1)
+            r2 = self.s._get_subscribers_by_filter_condition(filter_condition2)
+            r3 = self.s._get_subscribers_by_filter_condition(filter_condition3)
+            r4 = self.s._get_subscribers_by_filter_condition(filter_condition4)
+            self.assertTrue(len(r1[0]['selected_subscribers']) == 1)
+            self.assertTrue(len(r2[0]['selected_subscribers']) == 0)
+            self.assertTrue(len(r3[0]['selected_subscribers']) == 2)
+            self.assertTrue(len(r4[0]['selected_subscribers']) == 1)
 
 
 class DeleteMethodTestCase(ContentFilterTests):
