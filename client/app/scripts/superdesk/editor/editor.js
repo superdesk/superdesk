@@ -11,12 +11,6 @@
 
 'use strict';
 
-var EMBED_PROVIDERS = { // see http://noembed.com/#supported-sites
-    custom: 'Custom',
-    twitter: 'Twitter',
-    youtube: 'YouTube'
-};
-
 /**
  * Generate click event on given target node
  *
@@ -556,312 +550,6 @@ function EditorService(spellcheck, $rootScope, $timeout) {
     }
 }
 
-SdTextEditorController.$inject = ['lodash'];
-function SdTextEditorController(_) {
-    var vm = this;
-    function Block(attrs) {
-        angular.extend(this, {
-            body: attrs && attrs.body || '',
-            caption: attrs && attrs.caption || undefined,
-            blockType: attrs && attrs.blockType || 'text',
-            embedType: attrs && attrs.embedType || undefined,
-            focus: false
-        });
-    }
-    function prepareBlocks(blocks) {
-        var newBlocks = [];
-        blocks.forEach(function(block, i) {
-            // if not the first block and this is a text block following another one
-            if (i > 0 && block.blockType === 'text' && blocks[i-1].blockType === 'text') {
-                // we merge the content with the previous block
-                newBlocks[newBlocks.length - 1].body += block.body;
-            } else {
-                // otherwise we add the full block
-                newBlocks.push(block);
-            }
-            // add emtpy text block if block is between 2 embed blocks or at the end
-            if (blocks[i].blockType === 'embed') {
-                if (i === blocks.length - 1 || blocks[i + 1].blockType === 'embed') {
-                    newBlocks.push(new Block());
-                }
-            }
-        });
-        return newBlocks;
-    }
-    angular.extend(vm, {
-        blocks: [],
-        initEditorWithOneBlock: function(model) {
-            vm.model = model;
-            vm.blocks = [new Block({body: model.$modelValue})];
-        },
-        initEditorWithMultipleBlock: function(model) {
-            var blocks = [], block;
-            /**
-             * push the current block into the blocks collection if it is not empty
-             */
-            function commitBlock() {
-                if (block !== undefined && block.body.trim() !== '') {
-                    blocks.push(block);
-                    block = undefined;
-                }
-            }
-            // save the model to update it later
-            vm.model = model;
-            // parse the given model and create blocks per paragraph and embed
-            var content = model.$modelValue || '';
-            $('<div>' + content + '</div>')
-            .contents()
-            .toArray()
-            .forEach(function(element) {
-                // if we get a <p>, we push the current block and create a new one
-                // for the paragraph content
-                if (element.nodeName === 'P') {
-                    commitBlock();
-                    if (angular.isDefined(element.innerHTML) && element.textContent !== '' && element.textContent !== '\n') {
-                        blocks.push(new Block({body: element.outerHTML.trim()}));
-                    }
-                // detect if it's an embed
-                } else if (element.nodeName === '#comment') {
-                    if (element.nodeValue.indexOf('EMBED START') > -1) {
-                        commitBlock();
-                        // retrieve the embed type following the comment
-                        var embed_type = angular.copy(element.nodeValue).replace(' EMBED START ', '').trim();
-                        if (embed_type === '') {
-                            embed_type = EMBED_PROVIDERS.custom;
-                        }
-                        // create the embed block
-                        block = new Block({blockType: 'embed', embedType: embed_type});
-                    }
-                    if (element.nodeValue.indexOf('EMBED END') > -1) {
-                        commitBlock();
-                    }
-                // if it's not a paragraph or an embed, we update the current block
-                } else {
-                    if (block === undefined) {
-                        block = new Block();
-                    }
-                    // we want the outerHTML (ex: '<b>text</b>') or the node value for text and comment
-                    block.body += (element.outerHTML || element.nodeValue || '').trim();
-                }
-            });
-            // at the end of the loop, we push the last current block
-            if (block !== undefined && block.body.trim() !== '') {
-                blocks.push(block);
-            }
-            // extract body and caption from embed block
-            blocks.forEach(function(block) {
-                if (block.blockType === 'embed') {
-                    var original_body = angular.element(angular.copy(block.body));
-                    if (original_body.get(0).nodeName === 'FIGURE') {
-                        block.body = '';
-                        original_body.contents().toArray().forEach(function(element) {
-                            if (element.nodeName === 'FIGCAPTION') {
-                                block.caption = element.innerHTML;
-                            } else {
-                                block.body += element.outerHTML || element.nodeValue || '';
-                            }
-                        });
-                    }
-                }
-            });
-            // if no block, create an empty one to start
-            if (blocks.length === 0) {
-                blocks.push(new Block());
-            }
-            blocks = prepareBlocks(blocks);
-            // update the actual blocks value at the end to prevent more digest cycle as needed
-            vm.blocks = blocks;
-        },
-        commitChanges: function() {
-            var new_body = '';
-            if (vm.config.multiBlockEdition) {
-                vm.blocks.forEach(function(block) {
-                    if (angular.isDefined(block.body) && block.body.trim() !== '') {
-                        if (block.blockType === 'embed') {
-                            new_body += [
-                                '<!-- EMBED START ' + block.embedType.trim() + ' -->\n',
-                                '<figure>',
-                                block.body,
-                                '<figcaption>',
-                                block.caption,
-                                '</figcaption>',
-                                '</figure>',
-                                '\n<!-- EMBED END ' + block.embedType.trim() + ' -->\n'].join('');
-                        } else {
-                            // wrap all the other blocks around <p></p>
-                            new_body += block.body + '\n';
-                        }
-                    }
-                });
-            } else {
-                new_body = vm.blocks[0].body;
-            }
-            vm.model.$setViewValue(new_body);
-        },
-        getBlockPosition: function(block) {
-            return _.indexOf(vm.blocks, block);
-        },
-        insertNewBlock: function(position, attrs) {
-            var new_block = new Block(attrs);
-            vm.blocks.splice(position, 0, new_block);
-            vm.setFocusOnBlock(new_block);
-            vm.commitChanges();
-            vm.blocks = prepareBlocks(vm.blocks);
-        },
-        removeBlock: function(block) {
-            // remove block only if it's not the only one
-            var block_position = vm.getBlockPosition(block);
-            if (vm.blocks.length > 1) {
-                vm.blocks.splice(block_position, 1);
-                vm.setFocusOnBlock(vm.blocks[block_position - 1]);
-            } else {
-                // if it's the first block, just remove the content
-                block.body = '';
-            }
-            vm.commitChanges();
-        },
-        setFocusOnBlock: function(block) {
-            vm.blocks.forEach(function(b) {
-                b.focus = b === block;
-            });
-        },
-        focusPreviousBlock: function(block) {
-            var pos = vm.getBlockPosition(block);
-            // if not the first one, focus on the previous
-            if (pos > 0) {
-                vm.setFocusOnBlock(vm.blocks[pos - 1]);
-            }
-        },
-        focusNextBlock: function(block) {
-            var pos = vm.getBlockPosition(block);
-            // if not the last one, focus on the next
-            if (pos + 1 < vm.blocks.length) {
-                vm.setFocusOnBlock(vm.blocks[pos + 1]);
-            }
-        },
-        getPreviousBlock: function(block) {
-            var pos = vm.getBlockPosition(block);
-            // if not the first one
-            if (pos > 0) {
-                return vm.blocks[pos - 1];
-            }
-        }
-    });
-}
-
-SdAddEmbedController.$inject = ['embedService', '$element', '$timeout', '$q', 'lodash'];
-function SdAddEmbedController (embedService, $element, $timeout, $q, _) {
-    var vm = this;
-    angular.extend(vm, {
-        editorCtrl: undefined,  // defined in link method
-        extended: false,
-        toggle: function(close) {
-            // use parameter or toggle
-            vm.extended = angular.isDefined(close) ? !close : !vm.extended;
-            // on enter, focus on input
-            if (vm.extended) {
-                $timeout(function() {
-                    angular.element($element).find('input').focus();
-                });
-            // on leave, clear field
-            } else {
-                vm.input = '';
-            }
-        },
-        /**
-         * Return html code to represent an embedded picture
-         *
-         * @param {string} url
-         * @param {string} description
-         * @return {string} html
-         */
-        pictureToHtml: function(url, description) {
-            var html = '<img alt="' + (description || '') + '" src="' + url + '">\n';
-            return html;
-        },
-        /**
-         * Return html code to represent an embedded link
-         *
-         * @param {string} url
-         * @param {string} title
-         * @param {string} description
-         * @param {string} illustration
-         * @return {string} html
-         */
-        linkToHtml: function(url, title, description, illustration) {
-            var html = [
-                '<div class="embed--link">',
-                angular.isDefined(illustration) ?
-                '  <img src="' + illustration + '" class="embed--link__illustration"/>' : '',
-                '  <div class="embed--link__title">',
-                '      <a href="' + url + '" target="_blank">' + title + '</a>',
-                '  </div>',
-                '  <div class="embed--link__description">' + description + '</div>',
-                '</div>'];
-            return html.join('\n');
-        },
-        retrieveEmbed:function() {
-            // if it's an url, use embedService to retrieve the embed code
-            var embedCode;
-            if (_.startsWith(vm.input, 'http')) {
-                embedCode = embedService.get(vm.input).then(function(data) {
-                    var embed = data.html;
-                    if (!angular.isDefined(embed)) {
-                        if (data.type === 'photo') {
-                            embed = vm.pictureToHtml(data.url, data.description);
-                        } else if (data.type === 'link') {
-                            embed = vm.linkToHtml(data.url, data.title, data.description, data.thumbnail_url);
-                        }
-                    }
-                    return {
-                        body: embed,
-                        provider: data.provider_name
-                    };
-                });
-            // otherwise we use the content of the field directly
-            } else {
-                var embedType = EMBED_PROVIDERS.custom;
-                // try to guess the provider of the custom embed
-                if (vm.input.indexOf('twitter.com/widgets.js') > -1) {
-                    embedType = EMBED_PROVIDERS.twitter;
-                } else if (vm.input.indexOf('https://www.youtube.com') > -1){
-                    embedType = EMBED_PROVIDERS.youtube;
-                }
-                embedCode = $q.when({
-                    body: vm.input,
-                    provider: embedType
-                });
-            }
-            return embedCode;
-        },
-        updatePreview: function() {
-            vm.retrieveEmbed().then(function(embed) {
-                angular.element($element).find('.preview').html(embed.body);
-            });
-        },
-        createFigureBlock: function(embedType, body, caption) {
-            // create a new block containing the embed
-            return vm.editorCtrl.insertNewBlock(vm.addToPosition, {
-                blockType: 'embed',
-                embedType: embedType,
-                body: body,
-                caption: caption
-            });
-        },
-        createBlockFromEmbed: function() {
-            vm.retrieveEmbed().then(function(embed) {
-                vm.createFigureBlock(embed.provider, embed.body);
-                // close the addEmbed form
-                vm.toggle(true);
-            });
-        },
-        createBlockFromSdPicture: function(img, item) {
-            var html = vm.pictureToHtml(img.href, item.description);
-            vm.createFigureBlock('Image', html, item.description);
-        }
-    });
-}
-
 SdTextEditorBlockEmbedController.$inject = ['$timeout', '$element', '$scope'];
 function SdTextEditorBlockEmbedController($timeout, $element, $scope) {
     var vm = this;
@@ -901,13 +589,18 @@ function SdTextEditorBlockEmbedController($timeout, $element, $scope) {
 angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embed',
                                     'superdesk.config'])
     .service('editor', EditorService)
+    .constant('EMBED_PROVIDERS', { // see http://noembed.com/#supported-sites
+        custom: 'Custom',
+        twitter: 'Twitter',
+        youtube: 'YouTube'
+    })
     .directive('sdAddEmbed', function() {
         return {
-            scope: {addToPosition: '='},
+            scope: {addToPosition: '=', extended: '=', onClose: '&'},
             require: ['sdAddEmbed', '^sdTextEditor'],
             templateUrl: 'scripts/superdesk/editor/views/add-embed.html',
             controllerAs: 'vm',
-            controller: SdAddEmbedController,
+            controller: 'SdAddEmbedController',
             bindToController: true,
             link: function(scope, element, attrs, controllers) {
                 angular.extend(controllers[0], {
@@ -953,7 +646,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
             require: ['sdTextEditor', 'ngModel'],
             templateUrl: 'scripts/superdesk/editor/views/editor.html',
             controllerAs: 'vm',
-            controller: SdTextEditorController,
+            controller: 'SdTextEditorController',
             bindToController: true,
             link: function(scope, element, attr, controllers) {
                 var controller = controllers[0];
@@ -1010,7 +703,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                             'data-custom-attr': 'attr-value-h2'
                         }
                     },
-                    'bold', 'italic', 'underline', 'quote', 'anchor'
+                    'bold', 'italic', 'underline', 'quote', 'anchor', 'embed'
                 ]
             },
             anchor: {
@@ -1114,7 +807,37 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
 
                 ngModel.$render = function () {
                     var editorConfig = angular.extend({}, EDITOR_CONFIG, scope.config || {});
-                    spellcheck.setLanguage(scope.language);
+                    var EmbedButton = function(sdTextEditor) {
+                        angular.extend(this, {
+                            name: 'embed',
+                            contentDefault: '<b>Embed</b>', // default innerHTML of the button
+                            getButton: function () {
+                                this.button = document.createElement('button');
+                                this.button.classList.add('medium-editor-action');
+                                this.button.innerHTML = '<b>Embed</b>';
+                                this.button.onclick = this.handleClick.bind(this);
+                                return this.button;
+                            },
+                            handleClick: function() {
+                                var lastParagraph = extractBlockContentsFromCaret();
+                                var lastParagraphDiv = document.createElement('div');
+                                lastParagraphDiv.appendChild(lastParagraph.cloneNode(true));
+                                var indexWhereToAddNewBlock = sdTextEditor.getBlockPosition(scope.sdTextEditorBlockText) + 1;
+                                // add new text block for the remaining text
+                                sdTextEditor.insertNewBlock(indexWhereToAddNewBlock, {
+                                    body: lastParagraphDiv.innerHTML
+                                });
+                                // show the add-embed form
+                                scope.sdTextEditorBlockText.showAndFocusLowerAddAnEmbedBox();
+                                $timeout(updateModel, false);
+                            }
+                        });
+                    };
+                    editorConfig.extensions = {
+                        'embed': new EmbedButton(sdTextEditor)
+                    };
+                    // FIXME: create unwanted cursor moves
+                    // spellcheck.setLanguage(scope.language);
                     editorElem = elem.find(scope.type === 'preformatted' ?  '.editor-type-text' : '.editor-type-html');
                     editorElem.empty();
                     editorElem.html(ngModel.$viewValue || '');
@@ -1207,10 +930,12 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                     scope.cursor = {};
                     render(null, null, true);
 
+                    // NOTE: unused for the moment but will needed later in order to
+                    // split a text block.
                     function extractBlockContentsFromCaret() {
                         function getBlockContainer(node) {
                             while (node) {
-                                if (node.nodeType === 1 && /^(P|H[1-6]|DIV)$/i.test(node.nodeName)) {
+                                if (node.nodeType === 1 && /^(DIV)$/i.test(node.nodeName)) {
                                     return node;
                                 }
                                 node = node.parentNode;

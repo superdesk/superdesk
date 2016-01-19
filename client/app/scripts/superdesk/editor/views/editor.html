@@ -17,5 +17,10 @@
              ng-model="block.body">
         </div>
     </div>
-    <sd-add-embed ng-if="vm.config.multiBlockEdition" add-to-position="$index + 1" class="block__add-embed"></sd-add-embed>
+    <sd-add-embed ng-if="vm.config.multiBlockEdition"
+                  extended="block.lowerAddEmbedIsExtented"
+                  add-to-position="$index + 1"
+                  on-close="vm.renderBlocks()"
+                  class="block__add-embed">
+    </sd-add-embed>
 </div>

@@ -78,7 +78,6 @@
         </div>
     </div>
 </div>
-
 <div class="field body" ng-if="!isMediaType && schema.body_html">
   <label translate>Body</label>
     <span ng-if="schema.body_html.maxlength" sd-character-count data-item="item.body_html" data-html="true" data-limit="schema.body_html.maxlength"></span>
@@ -94,7 +93,7 @@
     </div>
     <div class="text-editor" sd-html-preview="item.body_html" ng-if="!_editable"></div>
 </div>
-
+<pre style="background-color:rgba(0,0,0,.2); white-space:pre-line">{{ item.body_html }}<pre>
 <div ng-if="isMediaType" class="field abstract">
   <label translate>Description</label>
   <textarea class="abstract"
