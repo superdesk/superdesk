@@ -318,4 +318,16 @@ describe('authoring', function() {
         monitoring.actionOnItem('Kill item', 4, 0);
         expect(authoring.multieditButton.isEnabled()).toBe(false);
     });
+
+    it('open publish item with footer text without <br> tag', function() {
+        expect(monitoring.getTextItem(1, 0)).toBe('item5');
+        monitoring.actionOnItem('Edit', 1, 0);
+        authoring.addHelpline('Suicide');
+        expect(authoring.getBodyFooter()).toMatch(/Readers seeking support and information about suicide*/);
+        expect(authoring.save_button.isEnabled()).toBe(true);
+        authoring.publish();
+        monitoring.filterAction('text');
+        monitoring.actionOnItem('Open', 4, 0);
+        expect(authoring.getBodyFooterPreview()).not.toContain('<br>');
+    });
 });

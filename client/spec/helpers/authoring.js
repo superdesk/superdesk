@@ -285,6 +285,7 @@ function Authoring() {
     var headline = element(by.model('item.headline')).all(by.className('editor-type-html')).first();
     var abstract = element(by.model('item.abstract')).all(by.className('editor-type-html')).first();
     var bodyFooter = element(by.id('body_footer')).all(by.className('editor-type-html')).first();
+    var bodyFooterPreview = element(by.id('body_footer_preview')).all(by.css('[ng-bind-html="html"]')).first();
     var packageSlugline = element.all(by.className('keyword')).last();
 
     this.writeText = function (text) {
@@ -350,6 +351,9 @@ function Authoring() {
 
     this.getBodyFooter = function () {
         return bodyFooter.getText();
+    };
+    this.getBodyFooterPreview = function () {
+        return bodyFooterPreview.getText();
     };
 
     this.showTransmissionDetails = function (publishedHistoryItemIndex) {
