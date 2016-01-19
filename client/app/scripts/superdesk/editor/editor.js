@@ -775,6 +775,12 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
                 }
 
                 function updateModel() {
+                    // In case of Kill action, don't undo back to initial value (i.e: original article text) - [ref: SD-3917]
+                    // Set initial value to kill template text at the beginning of history.
+                    if (scope.$parent.action === 'kill' && scope.history.getIndex() === -1) {
+                        scope.history.setInitialValue(scope.model.$viewValue);
+                    }
+
                     editor.commitScope(scope);
                 }
 
