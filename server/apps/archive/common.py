@@ -318,6 +318,9 @@ def set_item_expiry(update, original):
     desk_id = task.get('desk', None)
     stage_id = task.get('stage', None)
 
+    if not desk_id:
+        return
+
     if update == {}:
         original['expiry'] = get_expiry(desk_id, stage_id)
     else:

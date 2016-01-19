@@ -71,7 +71,6 @@ Feature: News Items Archive
         """
 
         And we get "archive/item-1"
-        Then we get global content expiry
         Then we get version 2
 
 	@auth
@@ -90,7 +89,6 @@ Feature: News Items Archive
         {"operation": "restore"}
         """
         And we get version 3
-        And we get global content expiry
         And the field "headline" value is "test"
 
 
@@ -113,7 +111,7 @@ Feature: News Items Archive
         Then we get list with 1 items
         """
         {"_items": [{"headline": "flower", "byline": "foo", "description": "flower desc",
-                     "pubstatus": "usable", "language": "en", "state": "draft", "sign_off": "abc"}]}
+                     "pubstatus": "usable", "language": "en", "state": "draft", "sign_off": "abc", "expiry": "__no_value__"}]}
         """
 
     @auth

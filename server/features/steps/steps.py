@@ -88,6 +88,16 @@ def test_key_is_present(key, context, response):
         '"%s" should be empty or false, but it was "%s" in (%s)' % (key, response[key], response)
 
 
+def test_key_is_not_present(key, response):
+    """Test if given key is not present in response.
+
+    :param key
+    :param response
+    """
+    assert key not in response, \
+        '"%s" should not be present, but it was "%s" in (%s)' % (key, response[key], response)
+
+
 def assert_is_now(val, key):
     """Assert that given datetime value is now (with 5s tolerance).
 
@@ -103,6 +113,9 @@ def json_match(context_data, response_data):
     if isinstance(context_data, dict):
         assert isinstance(response_data, dict), 'response data is not dict, but %s' % type(response_data)
         for key in context_data:
+            if context_data[key] == "__no_value__":
+                test_key_is_not_present(key, response_data)
+                continue
             if key not in response_data:
                 print(key, ' not in ', response_data)
                 return False

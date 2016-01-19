@@ -173,7 +173,7 @@ class RemoveExpiredContent(superdesk.Command):
         item_refs.extend(package_service.get_linked_in_package_ids(item))
 
         # check item refs in the ids to remove set
-        is_expired = item.get('expiry') < utcnow()
+        is_expired = 'expiry' in item and item.get('expiry') < utcnow()
 
         if is_expired:
             # now check recursively for all references
