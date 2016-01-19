@@ -926,13 +926,11 @@
             };
         }])
 
-        .directive('sdUserEdit', ['api', 'gettext', 'notify', 'usersService', 'userList', 'session', 'lodash',
+        .directive('sdUserEdit', ['api', 'gettext', 'notify', 'usersService', 'userList', 'session', 'lodash', 'langmap',
             '$location', '$route', 'superdesk', 'features', 'asset', 'privileges', 'desks', 'keyboardManager', 'gettextCatalog',
-        function(api, gettext, notify, usersService, userList, session, _, $location, $route, superdesk, features,
+        function(api, gettext, notify, usersService, userList, session, _, langmap, $location, $route, superdesk, features,
                  asset, privileges, desks, keyboardManager, gettextCatalog) {
-
             return {
-                /* global languageMappingList */
                 templateUrl: asset.templateUrl('superdesk-users/views/edit-form.html'),
                 scope: {
                     origUser: '=user',
@@ -974,10 +972,10 @@
                     });
                     //get available translation languages
                     scope.languages = _.map(gettextCatalog.strings, function(translation, lang) {
-                        return {'code': lang, 'nativeName': languageMappingList[lang].nativeName};
+                        return {'code': lang, 'nativeName': langmap[lang].nativeName};
                     });
                     scope.languages.unshift(
-                        {'code': gettextCatalog.baseLanguage, 'nativeName': languageMappingList[gettextCatalog.baseLanguage].nativeName});
+                        {'code': gettextCatalog.baseLanguage, 'nativeName': langmap[gettextCatalog.baseLanguage].nativeName});
 
                     scope.cancel = function() {
                         resetUser(scope.origUser);

@@ -35,7 +35,7 @@ describe('users', function() {
         });
 
         it('can save and use language preferences', function() {
-            userPrefs.setLang('de');
+            userPrefs.setLang('Deutsch');
             userPrefs.btnSave.click();
             element(by.css('[ng-hide="currentRoute.topTemplateUrl"]')).getText().then(function(text) {
                 expect(text).toEqual('DE - My Profile');

@@ -20,7 +20,8 @@
     "raven-js": "1.1.11",
     "jquery-ui": "1.11.2",
     "medium-editor": "4.9.0",
-    "ment.io": "0.9.22"
+    "ment.io": "0.9.22",
+    "langmap": "~0.0.10"
   },
   "ignore": [
     "**/.*",
