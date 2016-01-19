@@ -214,7 +214,9 @@
         return {
             link: function(scope, element) {
                 _.defer (function() {
-                    element.focus();
+                    var value = element.val();
+                    element.val('').focus();
+                    element.val(value);
                 });
             }
         };
