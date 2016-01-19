@@ -5,8 +5,8 @@
     <ul ng-if="workqueue.items.length" class="list" ng-class="{'full-width': !multiEdit.items.length}">
         <li ng-repeat="article in workqueue.items track by article._id " ng-class="{active: article === active}" style="width:{{ 100 / workqueue.items.length }}%">
             <a class="title" ng-click="edit(article, $event)" ng-href="{{ :: link(article) }}">
-                <span ng-show="article.headline">{{ article.headline }}</span>
-                <span ng-show="!article.headline" translate>Untitled</span>
+                <span ng-show="article.headline || article.slugline">{{ article.headline || article.slugline }}</span>
+                <span ng-show="!article.headline && !article.slugline" translate>Untitled</span>
             </a>
 
             <button class="close" ng-click="closeItem(article)"><i class="icon-close-small icon-white"></i></button>
