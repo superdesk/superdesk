@@ -500,7 +500,6 @@
                 function queryItems() {
                     criteria = cards.criteria(scope.group, null, monitoring.queryParam);
                     criteria.source.size = 0; // we only need to get total num of items
-                    scope.loading = true;
                     scope.total = null;
 
                     if (desks.changeDesk) {
@@ -513,8 +512,6 @@
                         monitoring.totalItems = items._meta.total;
                         scope.total = items._meta.total;
                         scope.$applyAsync(render);
-                    })['finally'](function() {
-                        scope.loading = false;
                     });
                 }
 
@@ -532,7 +529,6 @@
                     criteria.source.from = from;
                     criteria.source.size = to - from;
 
-                    scope.loading = true;
                     var lookup = multi.getIds();    //Ids of selected items
                     return apiquery().then(function(items) {
                         scope.$on('multi:reset', function(event, args) {
@@ -559,7 +555,6 @@
                                     });
                                 });
                             }
-                            scope.loading = false;
                         });
                     });
                 }
@@ -590,6 +585,15 @@
                     render();
                 }
 
+                function renderScroll() {
+                    scope.loading = true;
+                    return render()
+                        .then(function(result) {
+                            scope.loading = false;
+                            return result;
+                        });
+                }
+
                 function viewSingleGroup(group, type) {
                     monitoring.viewSingleGroup(group, type);
                 }
@@ -609,7 +613,7 @@
 
                 function handleScroll(event) {
                     $timeout.cancel(updateTimeout);
-                    updateTimeout = $timeout(render, 100, false);
+                    updateTimeout = $timeout(renderScroll, 100, false);
                 }
 
                 function handleKey(event) {
