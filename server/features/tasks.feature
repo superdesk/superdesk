@@ -26,7 +26,7 @@ Feature: Tasks
         And we get "/tasks"
         Then we get list with 1 items
 	    """
-        {"_items": [{"slugline": "first task", "type": "text", "task": {"desk": "#desks._id#"}}]}
+        {"_items": [{"slugline": "first task", "type": "text", "task": {"desk": "#desks._id#"}, "expiry": "__any_value__"}]}
 	    """
 
     @auth
