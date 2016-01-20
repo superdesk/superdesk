@@ -103,7 +103,10 @@ Feature: Subscribers
     And we get "/subscribers?filter_condition={"field":"anpa_category", "operator":"in", "value":"4"}"
     Then we get list with 1 items
     """
-    {"_items":[{"name":"News1"}]}
+    {"_items":[{
+    "filter_conditions": [{"name": "sport"}],
+    "content_filters": [{"name": "soccer-only"}],
+    "selected_subscribers": [{"name":"News1"}]}]}
     """
 
   @auth

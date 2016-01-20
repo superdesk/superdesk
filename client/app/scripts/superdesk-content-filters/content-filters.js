@@ -693,10 +693,15 @@
                 };
                 $scope.loading = true;
                 contentFilters.getFilterSearchResults(inputs).then(function(result) {
-                    $scope.searchResult = result;
-                    if (result.length === 0) {
+
+                    if (result[0].filter_conditions.length === 0 &&
+                        result[0].content_filters.length === 0 &&
+                        result[0].selected_subscribers.length === 0) {
                         notify.error(gettext('no results found'));
+                    } else {
+                        $scope.searchResult = result[0];
                     }
+
                     $scope.filterCondition.value = null;
                 })
                 ['finally'](function() {
