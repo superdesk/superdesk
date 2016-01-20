@@ -36,13 +36,15 @@ describe('users', function() {
 
         it('can save and use language preferences', function() {
             userPrefs.setLang('Deutsch');
+            browser.driver.wait(protractor.until.elementIsVisible(userPrefs.btnSave), 3000);
             userPrefs.btnSave.click();
             element(by.css('[ng-hide="currentRoute.topTemplateUrl"]')).getText().then(function(text) {
                 expect(text).toEqual('DE - My Profile');
             });
             browser.sleep(500);
             //go back to original lanuages
-            userPrefs.setLang('en');
+            userPrefs.setLang('English');
+            browser.driver.wait(protractor.until.elementIsVisible(userPrefs.btnSave), 3000);
             userPrefs.btnSave.click();
         });
     });

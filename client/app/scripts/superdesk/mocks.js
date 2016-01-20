@@ -3,6 +3,7 @@
 
 beforeEach(module(function($provide) {
     $provide.constant('lodash', window._);
+    $provide.constant('langmap', window.languageMappingList);
 }));
 
 beforeEach(module('superdesk.mocks'));
