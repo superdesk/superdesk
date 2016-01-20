@@ -10,10 +10,12 @@
 
 from flask import request
 from eve.validation import ValidationError
-
+from eve.utils import config
+import logging
 import superdesk
 from superdesk.resource import Resource
 from superdesk.services import BaseService
+from superdesk.utc import utcnow
 from superdesk import get_backend
 from superdesk import get_resource_service
 from superdesk.workflow import get_privileged_actions
@@ -24,6 +26,7 @@ _user_preferences_key = 'user_preferences'
 _session_preferences_key = 'session_preferences'
 _privileges_key = 'active_privileges'
 _action_key = 'allowed_actions'
+logger = logging.getLogger(__name__)
 
 
 def init_app(app):
@@ -32,7 +35,8 @@ def init_app(app):
     PreferencesResource(endpoint_name, app=app, service=service)
     app.on_session_end -= service.on_session_end
     app.on_session_end += service.on_session_end
-
+    app.on_role_privileges_revoked -= service.on_role_privileges_revoked
+    app.on_role_privileges_revoked += service.on_role_privileges_revoked
     superdesk.intrinsic_privilege(resource_name=endpoint_name, method=['PATCH'])
 
 
@@ -272,3 +276,20 @@ class PreferencesService(BaseService):
             return False
 
         return str(kwargs.get('user_id')) == str(session.get('user'))
+
+    def on_role_privileges_revoked(self, role, role_users):
+        """
+        Update the session for active user so that preferences can be reloaded.
+        :param dict role: role getting updated
+        :param list role_users: list of user belonging to the role.
+        """
+        if not role_users or not role:
+            return
+
+        logger.info('On_Role_Privileges_Revoked: Updating Users for Role:{}.'.format(role.get(config.ID_FIELD)))
+        for user in role_users:
+            try:
+                self.system_update(user[config.ID_FIELD], {config.LAST_UPDATED: utcnow()}, user)
+            except:
+                logger.warn('On_Role_Privileges_Revoked:Failed to update user:{} with role:{}.'.
+                            format(user.get(config.ID_FIELD), role.get(config.ID_FIELD)), exc_info=True)
