@@ -789,8 +789,13 @@
         * notify the user and then resolve the activity.
         */
         $scope.done = function() {
-            notify.success(gettext('Crop changes have been recorded'));
+            notify.success(gettext('Crop changes have been recorded.'));
             $scope.resolve($scope.data.cropData);
+        };
+
+        $scope.remove = function() {
+            notify.success(gettext('Image is removed.'));
+            $scope.resolve(null);
         };
 
         $scope.close = function() {
@@ -2536,19 +2541,25 @@
                 renditions.get();
 
                 scope.edit = function(item) {
-                    superdesk.intent('edit', 'crop', {item: item, renditions: renditions.renditions})
+                    var removable = !!scope.item.associations && !!scope.item.associations[scope.rel];
+                    superdesk.intent('edit', 'crop', {item: item, renditions: renditions.renditions, removable: removable})
                         .then(function(crops) {
-                            var renditions = angular.extend({}, item.renditions || {});
-                            angular.forEach(crops, function(crop, renditionName) {
-                                renditions[renditionName] = angular.extend(
-                                    {},
-                                    renditions[renditionName] || {},
-                                    crop
-                                );
-                            });
+                            var data;
+                            if (!crops) {
+                                data = updateItemAssociation(null);
+                            } else {
+                                var renditions = angular.extend({}, item.renditions || {});
+                                angular.forEach(crops, function(crop, renditionName) {
+                                    renditions[renditionName] = angular.extend(
+                                        {},
+                                        renditions[renditionName] || {},
+                                        crop
+                                    );
+                                });
 
-                            var updated = angular.extend({}, item, {renditions: renditions});
-                            var data = updateItemAssociation(updated);
+                                var updated = angular.extend({}, item, {renditions: renditions});
+                                data = updateItemAssociation(updated);
+                            }
                             scope.onchange({item: scope.item, data: data});
                         });
                 };
