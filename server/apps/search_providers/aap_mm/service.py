@@ -15,8 +15,9 @@ from flask import json
 
 import superdesk
 from apps.archive.archive import SOURCE as ARCHIVE
-from apps.archive.common import generate_unique_id_and_name
+from apps.archive.common import generate_unique_id_and_name, ITEM_OPERATION
 from apps.archive.common import insert_into_versions, remove_unwanted, set_original_creator
+from apps.duplication.archive_fetch import ITEM_FETCH
 from apps.tasks import send_to
 from superdesk import get_resource_service
 from superdesk.errors import SuperdeskApiError, ProviderError
@@ -63,6 +64,7 @@ class AAPMMService(superdesk.Service):
             dest_doc[ITEM_STATE] = doc.get(ITEM_STATE, CONTENT_STATE.FETCHED)
             dest_doc[INGEST_ID] = archived_doc[config.ID_FIELD]
             dest_doc[FAMILY_ID] = archived_doc[config.ID_FIELD]
+            dest_doc[ITEM_OPERATION] = ITEM_FETCH
             remove_unwanted(dest_doc)
             set_original_creator(dest_doc)
 

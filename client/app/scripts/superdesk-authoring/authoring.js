@@ -2156,9 +2156,8 @@
                                 scope.datelineDay = monthAndDay.day;
                                 scope.resetNumberOfDays(false);
                             }
+                            _.extend(item, updates);
                         }
-
-                        _.extend(item, updates);
                     }
                 });
 
