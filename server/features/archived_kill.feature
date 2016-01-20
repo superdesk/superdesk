@@ -38,7 +38,7 @@ Feature: Kill a content item in the (dusty) archive
   Scenario: Kill a Text Article in the Dusty Archive
     When we post to "/archive" with success
     """
-    [{"guid": "123", "type": "text", "abstract": "test", "state": "fetched", "slugline": "slugline",
+    [{"guid": "123", "type": "text", "state": "fetched", "slugline": "slugline",
       "headline": "headline", "anpa_category" : [{"qcode" : "e", "name" : "Entertainment"}],
       "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
       "subject":[{"qcode": "17004000", "name": "Statistics"}], "targeted_for": [{"name": "Digital", "allow": false}],

@@ -28,7 +28,7 @@ from superdesk.errors import SuperdeskApiError
 from superdesk.metadata.utils import aggregations
 from superdesk.metadata.item import CONTENT_TYPE, ITEM_TYPE, not_analyzed, GUID_FIELD, ITEM_STATE, CONTENT_STATE, \
     PUB_STATUS
-from superdesk.metadata.packages import PACKAGE_TYPE, TAKES_PACKAGE, RESIDREF, SEQUENCE, GROUPS, REFS
+from superdesk.metadata.packages import PACKAGE_TYPE, TAKES_PACKAGE, RESIDREF, SEQUENCE
 from superdesk.notification import push_notification
 from apps.archive.common import get_user, item_schema, is_genre, BROADCAST_GENRE, ITEM_OPERATION, is_item_in_package, \
     insert_into_versions
@@ -190,6 +190,7 @@ class ArchivedService(BaseService):
 
         # Step 1
         articles_to_kill = self._find_articles_to_kill({'_id': id})
+        logger.info('Fetched articles to kill for id: {}'.format(id))
         articles_to_kill.sort(key=itemgetter(ITEM_TYPE), reverse=True)  # Needed because package has to be inserted last
         kill_service = KillPublishService()
 
@@ -199,6 +200,7 @@ class ArchivedService(BaseService):
         for article in articles_to_kill:
             # Step 2(i)
             self._remove_and_set_kill_properties(article, articles_to_kill, updated)
+            logger.info('Removing and setting properties for article: {}'.format(article[config.ID_FIELD]))
 
             # Step 2(ii)
             transmission_details = list(
@@ -211,21 +213,26 @@ class ArchivedService(BaseService):
                 subscribers = list(get_resource_service('subscribers').get(req=None, lookup=query))
 
                 kill_service.queue_transmission(article, subscribers)
+                logger.info('Queued Transmission for article: {}'.format(article[config.ID_FIELD]))
 
             # Step 2(iii)
             import_into_legal_archive.apply_async(kwargs={'doc': article})
+            logger.info('Legal Archive import for article: {}'.format(article[config.ID_FIELD]))
 
             # Step 2(iv)
             super().delete({'item_id': article[config.ID_FIELD]})
+            logger.info('Delete for article: {}'.format(article[config.ID_FIELD]))
 
             # Step 2(i) - Creating entries in published collection
             docs = [article]
             get_resource_service(ARCHIVE).post(docs)
             insert_into_versions(doc=article)
             get_resource_service('published').post(docs)
+            logger.info('Insert into archive and published for article: {}'.format(article[config.ID_FIELD]))
 
             # Step 2(v)
             kill_service.broadcast_kill_email(article)
+            logger.info('Broadcast kill email for article: {}'.format(article[config.ID_FIELD]))
 
     def on_updated(self, updates, original):
         user = get_user()
@@ -283,15 +290,13 @@ class ArchivedService(BaseService):
 
         article[config.ID_FIELD] = article.pop('item_id', article['item_id'])
 
-        article.pop('allow_post_publish_actions', None)
-        article.pop('can_be_removed', None)
         article.pop('archived_id', None)
         article.pop('_type', None)
         article.pop('_links', None)
         article.pop(config.ETAG, None)
 
         for field in ['headline', 'abstract', 'body_html']:
-            article[field] = updates.get(field, article[field])
+            article[field] = updates.get(field, article.get(field, ''))
 
         article[ITEM_STATE] = CONTENT_STATE.KILLED
         article[ITEM_OPERATION] = ITEM_KILL
@@ -304,12 +309,12 @@ class ArchivedService(BaseService):
         resolve_document_version(article, ARCHIVE, 'PATCH', article)
 
         if article[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
-            for group in article.get(GROUPS, []):
-                for ref in group.get(REFS, []):
-                    if RESIDREF in ref:
-                        item_in_package = [item for item in articles_to_kill if item.get('item_id') == ref[RESIDREF]]
-                        ref['location'] = ARCHIVE
-                        ref[config.VERSION] = item_in_package[0][config.VERSION]
+            package_service = PackageService()
+            item_refs = package_service.get_item_refs(article)
+            for ref in item_refs:
+                item_in_package = [item for item in articles_to_kill if item.get('item_id') == ref[RESIDREF]]
+                ref['location'] = ARCHIVE
+                ref[config.VERSION] = item_in_package[0][config.VERSION]
 
 
 superdesk.privilege(name='archived', label='Archived Management', description='User can remove items from the archived')
