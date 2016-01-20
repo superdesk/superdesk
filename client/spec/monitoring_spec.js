@@ -568,4 +568,14 @@ describe('monitoring', function() {
         // hence editing is disabled for published item
         expect(textField.getAttribute('contenteditable')).toBe(null);
     });
+
+    it('can close already opened preview on an item action', function() {
+        monitoring.turnOffWorkingStage(0);
+        monitoring.previewAction(2, 2);
+        expect(monitoring.getPreviewTitle()).toBe('item6');
+        var previewPane = element(by.id('item-preview'));
+        expect(previewPane.isPresent()).toBe(true);
+        monitoring.actionOnItem('Edit', 2, 2);
+        expect(previewPane.isPresent()).toBe(false);
+    });
 });

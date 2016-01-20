@@ -327,7 +327,11 @@
                 scope.$on('$routeUpdate', queryItems);
                 scope.$on('broadcast:preview', function(event, args) {
                     scope.previewingBroadcast = true;
-                    preview(args.item);
+                    if (args.item != null) {
+                        preview(args.item);
+                    } else {
+                        monitoring.closePreview();
+                    }
                 });
 
                 scope.$on('item:highlight', queryItems);
@@ -754,8 +758,8 @@
         };
     }
 
-    ItemActionsMenu.$inject = ['superdesk', 'activityService', 'workflowService', 'archiveService'];
-    function ItemActionsMenu(superdesk, activityService, workflowService, archiveService) {
+    ItemActionsMenu.$inject = ['superdesk', 'activityService', 'workflowService', 'archiveService', '$rootScope'];
+    function ItemActionsMenu(superdesk, activityService, workflowService, archiveService, $rootScope) {
         return {
             scope: {
                 item: '=',
@@ -800,6 +804,7 @@
                 };
 
                 scope.run = function(activity) {
+                    $rootScope.$broadcast('broadcast:preview', {'item': null}); // closes preview if already opened
                     return activityService.start(activity, {data: {item: scope.item}});
                 };
 
