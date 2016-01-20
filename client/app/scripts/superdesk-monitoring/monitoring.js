@@ -691,10 +691,13 @@
 
                     // Update the figures if there's a desk mention message
                     if (scope.default_incoming) {
-                        scope.$on('desk:mention', function() {
-                            $timeout(init, 5000);
-                        });
+                        scope.$on('desk:mention', function() {$timeout(reload, 5000, true);});
                     }
+                }
+
+                function reload() {
+                    deskNotifications.reload();
+                    init();
                 }
 
                 /**
