@@ -1054,13 +1054,16 @@
     z-index: 2;
     .box-sizing(border-box);
     .box-shadow(0px 1px 3px -1px rgba(0,0,0,0.2));
-    .transition(all .5s);
+		max-height: 45px;
+    .transition(max-height .3s ease-in);
 		&.active {
+			.transition(max-height .3s ease-in);
+			max-height: 200px;
 			.preview-header__flex-container {
 				display:flex;
-				//width: 100%;
 				padding: 8px 0;
 				height: auto;
+				opacity: 1;
 			}
 			.preview-header__timestamp {
 				padding-bottom: 8px;
@@ -1117,6 +1120,8 @@
 			height: 0;
 			padding: 0;
 			overflow: hidden;
+			opacity: 0;
+			.transition(opacity 0.3s 0.4s);
 			.box-sizing(border-box);
 		}
 		.preview-header__icon-block {
