@@ -94,6 +94,7 @@ Feature: Content Expiry Published Items
       ]
     }
     """
+    When we enqueue published
     When we get "/publish_queue"
     Then we get list with 2 items
     When we expire items
@@ -108,6 +109,7 @@ Feature: Content Expiry Published Items
     """
     And we get "/published"
     Then we get list with 0 items
+    When we enqueue published
     When we get "/publish_queue"
     Then we get list with 0 items
     When we get "/archived"
@@ -139,6 +141,7 @@ Feature: Content Expiry Published Items
       ]
     }
     """
+    When we enqueue published
     When we get "/publish_queue"
     Then we get list with 2 items
     When we post to "/archive" with "package" and success
@@ -172,6 +175,7 @@ Feature: Content Expiry Published Items
     """
     When we get "published"
     Then we get list with 3 items
+    When we enqueue published
     When we get "publish_queue"
     Then we get list with 3 items
     When we expire items
@@ -180,6 +184,7 @@ Feature: Content Expiry Published Items
     """
     When we get "published"
     Then we get list with 3 items
+    When we enqueue published
     When we get "publish_queue"
     Then we get list with 3 items
     When we expire items
@@ -188,6 +193,7 @@ Feature: Content Expiry Published Items
     """
     When we get "published"
     Then we get list with 0 items
+    When we enqueue published
     When we get "publish_queue"
     Then we get list with 0 items
 
@@ -209,6 +215,7 @@ Feature: Content Expiry Published Items
       ]
     }
     """
+    When we enqueue published
     When we get "/publish_queue"
     Then we get list with 2 items
     When we post to "/archive" with success
@@ -288,6 +295,7 @@ Feature: Content Expiry Published Items
       ]
     }
     """
+    When we enqueue published
     When we get "publish_queue"
     Then we get list with 5 items
     When we get "archive"
@@ -315,6 +323,7 @@ Feature: Content Expiry Published Items
       ]
     }
     """
+    When we enqueue published
     When we get "publish_queue"
     Then we get list with 5 items
     When we get "archive"
@@ -342,6 +351,7 @@ Feature: Content Expiry Published Items
       ]
     }
     """
+    When we enqueue published
     When we get "publish_queue"
     Then we get list with 5 items
     When we get "archive"
@@ -361,6 +371,7 @@ Feature: Content Expiry Published Items
     """
     When we get "published"
     Then we get list with 0 items
+    When we enqueue published
     When we get "publish_queue"
     Then we get list with 0 items
     When we get "archive"
@@ -445,6 +456,7 @@ Feature: Content Expiry Published Items
     Then we get list with 0 items
     When we get "published"
     Then we get list with 0 items
+    When we enqueue published
     When we get "publish_queue"
     Then we get list with 0 items
     When we get "archived"
@@ -574,6 +586,7 @@ Feature: Content Expiry Published Items
     Then we get list with 3 items
     When we get "published"
     Then we get list with 2 items
+    When we enqueue published
     When we get "publish_queue"
     Then we get list with 2 items
     When we expire items
@@ -584,6 +597,7 @@ Feature: Content Expiry Published Items
     Then we get list with 0 items
     When we get "published"
     Then we get list with 0 items
+    When we enqueue published
     When we get "publish_queue"
     Then we get list with 0 items
     When we get "archived"
@@ -657,6 +671,7 @@ Feature: Content Expiry Published Items
     Then we get list with 2 items
     When we get "published"
     Then we get list with 3 items
+    When we enqueue published
     When we get "publish_queue"
     Then we get list with 4 items
     When we get "archived"
@@ -669,6 +684,7 @@ Feature: Content Expiry Published Items
     Then we get list with 0 items
     When we get "published"
     Then we get list with 0 items
+    When we enqueue published
     When we get "publish_queue"
     Then we get list with 0 items
     When we get "archived"
@@ -755,6 +771,7 @@ Feature: Content Expiry Published Items
     Then we get list with 0 items
     When we get "published"
     Then we get list with 0 items
+    When we enqueue published
     When we get "publish_queue"
     Then we get list with 0 items
     When we get "archived"
@@ -781,6 +798,7 @@ Feature: Content Expiry Published Items
     Then we get list with 0 items
     When we get "published"
     Then we get list with 6 items
+    When we enqueue published
     When we get "publish_queue"
     Then we get list with 6 items
     When we get "archived"
@@ -793,6 +811,7 @@ Feature: Content Expiry Published Items
     Then we get list with 0 items
     When we get "published"
     Then we get list with 0 items
+    When we enqueue published
     When we get "publish_queue"
     Then we get list with 0 items
     When we get "archived"

@@ -11,7 +11,6 @@
 from collections import namedtuple
 import json
 import logging
-from eve.utils import date_to_str
 from superdesk import get_resource_service
 import superdesk
 from superdesk.celery_app import update_key
@@ -34,11 +33,6 @@ from apps.packages import TakesPackageService
 logger = logging.getLogger(__name__)
 
 PUBLISHED = 'published'
-QUEUE_STATE = 'queue_state'
-queue_states = ['pending', 'in_progress', 'queued']
-PUBLISH_STATE = namedtuple('PUBLISH_STATE', ['PENDING', 'IN_PROGRESS', 'QUEUED'])(*queue_states)
-
-PUBLISHED = 'published'
 LAST_PUBLISHED_VERSION = 'last_published_version'
 QUEUE_STATE = 'queue_state'
 queue_states = ['pending', 'in_progress', 'queued']
@@ -50,8 +44,7 @@ published_item_fields = {
         'mapping': not_analyzed
     },
     'publish_state': {
-        'type': 'string',
-        'required': True
+        'type': 'string'
     },
 
     # last_published_version field is set to true for last published version of the item in the published collection
@@ -81,7 +74,7 @@ published_item_fields = {
     },
     'publish_sequence_no': {
         'type': 'integer',
-        'read_only': True
+        'readonly': True
     },
     'last_queue_event': {
         'type': 'datetime'

@@ -20,7 +20,6 @@ from apps.legal_archive.commands import import_into_legal_archive
 from apps.legal_archive.resource import LEGAL_PUBLISH_QUEUE_NAME
 from apps.packages.takes_package_service import TakesPackageService
 from apps.publish.content.common import ITEM_KILL
-from apps.publish.content.kill import KillPublishService
 from apps.publish.published_item import published_item_fields
 from apps.packages import PackageService
 from superdesk import get_resource_service
@@ -37,6 +36,8 @@ import superdesk
 from superdesk.services import BaseService
 from superdesk.resource import Resource
 from superdesk.utc import utcnow
+from apps.publish.enqueue.enqueue_killed import EnqueueKilledService
+from apps.publish.content.kill import KillPublishService
 
 logger = logging.getLogger(__name__)
 
@@ -192,12 +193,13 @@ class ArchivedService(BaseService):
         articles_to_kill = self._find_articles_to_kill({'_id': id})
         logger.info('Fetched articles to kill for id: {}'.format(id))
         articles_to_kill.sort(key=itemgetter(ITEM_TYPE), reverse=True)  # Needed because package has to be inserted last
-        kill_service = KillPublishService()
+        kill_service = EnqueueKilledService()
 
         updated = original.copy()
         updated.update(updates)
 
         for article in articles_to_kill:
+            article['item_id'] = article[config.ID_FIELD]
             # Step 2(i)
             self._remove_and_set_kill_properties(article, articles_to_kill, updated)
             logger.info('Removing and setting properties for article: {}'.format(article[config.ID_FIELD]))
@@ -231,7 +233,7 @@ class ArchivedService(BaseService):
             logger.info('Insert into archive and published for article: {}'.format(article[config.ID_FIELD]))
 
             # Step 2(v)
-            kill_service.broadcast_kill_email(article)
+            KillPublishService().broadcast_kill_email(article)
             logger.info('Broadcast kill email for article: {}'.format(article[config.ID_FIELD]))
 
     def on_updated(self, updates, original):

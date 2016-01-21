@@ -13,7 +13,7 @@ import logging
 from superdesk import get_resource_service
 from superdesk.errors import SuperdeskApiError
 from superdesk.metadata.item import CONTENT_TYPE, ITEM_TYPE, ITEM_STATE, EMBARGO
-from superdesk.metadata.packages import SEQUENCE
+from superdesk.metadata.packages import SEQUENCE, PACKAGE_TYPE
 from superdesk.notification import push_notification
 from superdesk.publish import SUBSCRIBER_TYPES
 from superdesk.publish.formatters import get_formatter
@@ -45,9 +45,12 @@ class EnqueueService:
 
     def _enqueue_item(self, item):
         print('_enqueue_item', item)
-        if item[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
+        if item[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE and item.get(PACKAGE_TYPE):
+            self.publish(doc=item, target_media_type=SUBSCRIBER_TYPES.DIGITAL)
+        elif item[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
             subscriber_items = {}
-            subscribers = self._get_subscribers_for_package_item(item)
+            subscribers, _ = self.get_subscribers(item, SUBSCRIBER_TYPES.DIGITAL)
+            subscribers.extend(self._get_subscribers_for_package_item(item))
             self._extend_subscriber_items(subscriber_items, subscribers, item, item.get('digital_item_id'))
             return self.publish_package(item, subscriber_items)
         else:
@@ -100,9 +103,6 @@ class EnqueueService:
         :raises PublishQueueError.item_not_queued_error:
                 If the nothing is queued.
         """
-#         queued = True
-#         no_formatters = []
-
         # Step 1
         subscribers, subscribers_yet_to_receive = self.get_subscribers(doc, target_media_type)
 
@@ -192,7 +192,7 @@ class EnqueueService:
 
                         for pub_seq_num, formatted_doc in formatted_docs:
                             publish_queue_item = dict()
-                            publish_queue_item['item_id'] = doc['_id']
+                            publish_queue_item['item_id'] = doc['item_id']
                             publish_queue_item['item_version'] = doc[config.VERSION]
                             publish_queue_item['formatted_item'] = formatted_doc
                             publish_queue_item['subscriber_id'] = subscriber['_id']
@@ -203,7 +203,6 @@ class EnqueueService:
                             publish_queue_item['content_type'] = doc.get('type', None)
                             publish_queue_item['headline'] = doc.get('headline', None)
 
-                            self.set_state(doc, publish_queue_item)
                             if publish_queue_item.get(ITEM_STATE):
                                 publish_queue_item['publishing_action'] = publish_queue_item.get(ITEM_STATE)
                                 del publish_queue_item[ITEM_STATE]

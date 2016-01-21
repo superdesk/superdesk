@@ -21,7 +21,7 @@ Feature: Published Items Repo
     Scenario: Insert published items with non-published state
         When we post to "published"
         """
-        [{"_id": "tag:example.com,0000:newsml_BRE9A607", "state": "draft"}]
+        [{"_id": "tag:example.com,0000:newsml_BRE9A607", "state": "draft", "queue_state": "pending"}]
         """
         Then we get error 400
         """
@@ -30,9 +30,13 @@ Feature: Published Items Repo
 
     @auth
     Scenario: Update published items with non-published state
-        When we post to "published"
+    	Given "archive"
+    	"""
+    	[{"_id": "tag:example.com,0000:newsml_BRE9A607", "guid": "tag:example.com,0000:newsml_BRE9A607"}]
+    	"""
+        When we post to "published" with success
         """
-        [{"_id": "tag:example.com,0000:newsml_BRE9A607", "state": "published"}]
+        [{"_id": "tag:example.com,0000:newsml_BRE9A607", "state": "published", "queue_state": "pending"}]
         """
         When we patch "/published/tag:example.com,0000:newsml_BRE9A607"
         """

@@ -174,7 +174,7 @@ class TakesPackageService():
                                                                                   takes_package_id=takes_package_id)
 
         if link.get(SEQUENCE):
-            archive_service.patch(link[config.ID_FIELD], {SEQUENCE: link[SEQUENCE]})
+            archive_service.system_update(link[config.ID_FIELD], {SEQUENCE: link[SEQUENCE]}, link)
 
         insert_into_versions(id_=takes_package_id)
         return link

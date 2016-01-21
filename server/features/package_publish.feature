@@ -837,6 +837,7 @@ Feature: Package Publishing
                   ]
       }
       """
+      When we enqueue published
       When we get "/publish_queue"
       Then we get list with 3 items
 
@@ -966,6 +967,7 @@ Feature: Package Publishing
                       ]
           }
           """
+	      When we enqueue published
           When we get "/publish_queue"
           Then we get list with 2 items
 
@@ -1106,6 +1108,7 @@ Feature: Package Publishing
       }
       """
         When we get digital item of "123"
+	    When we enqueue published
         When we get "/publish_queue"
         Then we get list with 5 items
         Then we get "#archive.123.take_package#" in formatted output as "main" story for subscriber "sub-2"
@@ -1268,6 +1271,7 @@ Feature: Package Publishing
       }
       """
       When we get digital item of "123"
+      When we enqueue published
       When we get "/publish_queue"
       Then we get list with 5 items
       Then we get "#archive.123.take_package#" in formatted output as "main" story for subscriber "sub-2"
@@ -1425,6 +1429,7 @@ Feature: Package Publishing
       }
       """
       When we get digital item of "123"
+      When we enqueue published
       When we get "/publish_queue"
       Then we get list with 5 items
       Then we get "#archive.123.take_package#" in formatted output as "NewsItemId" newsml12 story
@@ -1558,6 +1563,7 @@ Feature: Package Publishing
       }
       """
       When we get digital item of "123"
+      When we enqueue published
       When we get "/publish_queue"
       Then we get list with 4 items
       Then we get "#archive.123.take_package#" in formatted output as "main" story for subscriber "sub-2"
@@ -1684,6 +1690,7 @@ Feature: Package Publishing
       }
       """
       When we get digital item of "123"
+      When we enqueue published
       When we get "/publish_queue"
       Then we get list with 1 items
       """
@@ -1758,6 +1765,7 @@ Feature: Package Publishing
       """
       {"_id": "456", "state": "published"}
       """
+      When we enqueue published
       When we get "/publish_queue"
       Then we get list with 2 items
       When we post to "archive" with success
@@ -1835,6 +1843,7 @@ Feature: Package Publishing
                   ]
       }
       """
+      When we enqueue published
       When we get "/publish_queue"
       Then we get list with 3 items
       """
@@ -1967,6 +1976,7 @@ Feature: Package Publishing
       {"_items" : [{"_id": "789", "state": "published", "type": "text"},
       {"state": "published", "type": "composite", "headline": "item-3 headline"}]}
       """
+      When we enqueue published
       When we get "/publish_queue"
       Then we get list with 8 items
       """
@@ -2066,6 +2076,7 @@ Feature: Package Publishing
                   ]
       }
       """
+      When we enqueue published
       When we get "/publish_queue"
       Then we get list with 10 items
       """
@@ -2199,6 +2210,7 @@ Feature: Package Publishing
       """
       {"_items" : [{"_id": "789", "state": "published", "type": "text"}]}
       """
+      When we enqueue published
       When we get "/publish_queue"
       Then we get list with 3 items
       """
@@ -2292,6 +2304,7 @@ Feature: Package Publishing
                   ]
       }
       """
+      When we enqueue published
       When we get "/publish_queue"
       Then we get list with 3 items
       """
@@ -2474,6 +2487,7 @@ Feature: Package Publishing
                   ]
       }
       """
+      When we enqueue published
       When we get "/publish_queue"
       Then we get list with 4 items
       """
@@ -2484,9 +2498,11 @@ Feature: Package Publishing
       }
       """
       When we get digital item of "123"
+      When we enqueue published
       When we get "/publish_queue"
       Then we get "#archive.123.take_package#" as "main" story for subscriber "sub-2" in package "compositeitem"
       When we get digital item of "456"
+      When we enqueue published
       When we get "/publish_queue"
       Then we get "#archive.456.take_package#" as "sidebars" story for subscriber "sub-2" in package "compositeitem"
       Then we get "compositeitem" in formatted output as "main" story for subscriber "sub-2"
@@ -2921,6 +2937,7 @@ Feature: Package Publishing
                   ]
       }
       """
+      When we enqueue published
       When we get "/publish_queue?max_results=100"
       Then we get list with 26 items
       """
@@ -2945,6 +2962,7 @@ Feature: Package Publishing
       }
       """
       When we get digital item of "11"
+      When we enqueue published
       And we get "/publish_queue?max_results=100"
       Then we get "#archive.11.take_package#" as "main" story for subscriber "sub-1" in package "compositeitem1"
       And we get "compositeitem1" as "main" story for subscriber "sub-2" in package "outercompositeitem"
@@ -3130,6 +3148,7 @@ Feature: Package Publishing
                    "refs":[{"residRef":"123", "headline": "item-1 headline", "_current_version":3}]}]}]
       }
       """
+      When we enqueue published
       When we get "/publish_queue"
       Then we get list with 3 items
       When we publish "123" with "correct" type and "corrected" state
@@ -3147,6 +3166,7 @@ Feature: Package Publishing
                    "refs":[{"residRef":"123", "headline": "item-1.2 headline", "_current_version":4}]}]}]
       }
       """
+      When we enqueue published
       When we get "/publish_queue"
       Then we get list with 5 items
       """
@@ -3266,6 +3286,7 @@ Feature: Package Publishing
       Then we get OK response
       When we get "/published"
       Then we get list with 3 items
+      When we enqueue published
       When we get "/publish_queue"
       Then we get list with 0 items
       When we publish "123" with "correct" type and "corrected" state
@@ -3277,6 +3298,7 @@ Feature: Package Publishing
                    {"headline": "test package", "state": "corrected", "type": "composite"}]
       }
       """
+      When we enqueue published
       When we get "/publish_queue"
       Then we get list with 0 items
 
@@ -3401,6 +3423,7 @@ Feature: Package Publishing
       Then we get OK response
       When we get "/published"
       Then we get list with 2 items
+      When we enqueue published
       When we get "/publish_queue"
       Then we get list with 1 items
       When we publish "123" with "correct" type and "corrected" state
@@ -3411,6 +3434,7 @@ Feature: Package Publishing
       {"_items" : [{"_id": "123", "headline": "item-1 headline", "state": "corrected"}]
       }
       """
+      When we enqueue published
       When we get "/publish_queue"
       Then we get list with 2 items
 
@@ -3620,6 +3644,7 @@ Feature: Package Publishing
                   ]
       }
       """
+      When we enqueue published
       When we get "/publish_queue"
       Then we get list with 4 items
       """
@@ -3648,6 +3673,7 @@ Feature: Package Publishing
                   ]
       }
       """
+      When we enqueue published
       When we get "/publish_queue"
       Then we get list with 7 items
       """
@@ -3784,6 +3810,7 @@ Feature: Package Publishing
       Then we get OK response
       When we get "/published"
       Then we get list with 2 items
+      When we enqueue published
       When we get "/publish_queue"
       Then we get list with 1 items
       When we publish "123" with "kill" type and "killed" state
@@ -4102,6 +4129,7 @@ Feature: Package Publishing
                    {"_id": "compositeitem", "headline": "test package", "state": "published", "type": "composite"}]
       }
       """
+      When we enqueue published
       When we get "/publish_queue"
       Then we get list with 9 items
       """
@@ -4169,6 +4197,7 @@ Feature: Package Publishing
       {"_items" : [{"headline": "test package", "state": "corrected", "type": "composite"}]
       }
       """
+      When we enqueue published
       When we get "/publish_queue"
       Then we get list with 12 items
       """
@@ -4178,6 +4207,7 @@ Feature: Package Publishing
       }
       """
       When we get digital item of "789"
+      When we enqueue published
       When we get "/publish_queue"
       Then we get "#archive.789.take_package#" as "main" story for subscriber "sub-1" not in package "compositeitem" version "3"
       Then we get "#archive.789.take_package#" as "main" story for subscriber "sub-2" not in package "compositeitem" version "3"
@@ -4348,6 +4378,7 @@ Feature: Package Publishing
                    {"_id": "compositeitem", "headline": "test package", "state": "published", "type": "composite"}]
       }
       """
+      When we enqueue published
       When we get "/publish_queue"
       Then we get list with 6 items
       """
@@ -4424,6 +4455,7 @@ Feature: Package Publishing
                    {"_id": "compositeitem", "headline": "test package", "state": "corrected", "type": "composite"}]
       }
       """
+      When we enqueue published
       When we get "/publish_queue"
       Then we get list with 11 items
       """
@@ -4435,16 +4467,19 @@ Feature: Package Publishing
       }
       """
       When we get digital item of "789"
+      When we enqueue published
       When we get "/publish_queue"
       Then we get "#archive.789.take_package#" as "main" story for subscriber "sub-3" in package "compositeitem"
       Then we get "#archive.789.take_package#" as "main" story for subscriber "sub-2" in package "compositeitem"
       Then we get "#archive.789.take_package#" as "main" story for subscriber "sub-1" not in package "compositeitem" version "3"
       When we get digital item of "123"
+      When we enqueue published
       When we get "/publish_queue"
       Then we get "#archive.123.take_package#" as "main" story for subscriber "sub-3" not in package "compositeitem" version "3"
       Then we get "#archive.123.take_package#" as "main" story for subscriber "sub-2" in package "compositeitem"
       Then we get "#archive.123.take_package#" as "main" story for subscriber "sub-1" in package "compositeitem"
       When we get digital item of "456"
+      When we enqueue published
       When we get "/publish_queue"
       Then we get "#archive.456.take_package#" as "main" story for subscriber "sub-3" not in package "compositeitem" version "3"
       Then we get "#archive.456.take_package#" as "main" story for subscriber "sub-2" in package "compositeitem"
@@ -4569,6 +4604,7 @@ Feature: Package Publishing
       Then we get OK response
       When we get "/published"
       Then we get list with 5 items
+      When we enqueue published
       When we get "/publish_queue"
       Then we get list with 3 items
       When we publish "compositeitem" with "kill" type and "killed" state
@@ -4582,6 +4618,7 @@ Feature: Package Publishing
                    {"headline": "test package", "state": "killed", "type": "composite", "pubstatus": "canceled"}]
       }
       """
+      When we enqueue published
       When we get "/publish_queue"
       Then we get list with 4 items
       """
@@ -4751,6 +4788,7 @@ Feature: Package Publishing
       Then we get OK response
       When we get "/published"
       Then we get list with 6 items
+      When we enqueue published
       When we get "/publish_queue"
       Then we get list with 4 items
       When we publish "compositeitem" with "kill" type and "killed" state
@@ -5120,6 +5158,7 @@ Feature: Package Publishing
       Then we get OK response
       When we get "/published"
       Then we get list with 2 items
+      When we enqueue published
       When we get "/publish_queue"
       Then we get list with 1 items
       When we publish "123" with "correct" type and "corrected" state
@@ -5134,6 +5173,7 @@ Feature: Package Publishing
                    {"headline": "test package", "state": "corrected", "type": "composite"}]
       }
       """
+      When we enqueue published
       When we get "/publish_queue"
       Then we get list with 2 items
       """

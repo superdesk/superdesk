@@ -117,7 +117,7 @@ Feature: Publish Queue
       ]
       """
       And we publish "#archive._id#" with "publish" type and "published" state
-      Then we get "published_seq_num" in "/publish_queue/#archive.123.take_package#"
+      Then we get "publish_sequence_no" in "/published/#archive.123.take_package#"
 
   @auth @notification
   Scenario: Creating a new publish queue entry should add published sequence number

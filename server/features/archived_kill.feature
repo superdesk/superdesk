@@ -52,7 +52,8 @@ Feature: Kill a content item in the (dusty) archive
     """
     {"_items" : [{"_id": "123", "state": "published", "type": "text", "_current_version": 2}]}
     """
-    When we get "/publish_queue"
+    When we enqueue published
+    And we get "/publish_queue"
     Then we get list with 1 items
     When run import legal publish queue
     And we expire items
@@ -61,14 +62,16 @@ Feature: Kill a content item in the (dusty) archive
     """
     And we get "/published"
     Then we get list with 0 items
-    When we get "/publish_queue"
+    When we enqueue published
+    And we get "/publish_queue"
     Then we get list with 0 items
     When we get "/archived"
     Then we get list with 1 items
     """
     {"_items" : [{"item_id": "123", "state": "published", "type": "text", "_current_version": 2}]}
     """
-    When we get "/legal_publish_queue"
+    When run import legal publish queue
+    And we get "/legal_publish_queue"
     Then we get list with 1 items
     When we patch "/archived/123:2"
     """
@@ -78,7 +81,8 @@ Feature: Kill a content item in the (dusty) archive
     And we get 1 emails
     When we get "/published"
     Then we get list with 1 items
-    When we get "/publish_queue"
+    When we enqueue published
+    And we get "/publish_queue"
     Then we get list with 1 items
     When we get "/archived"
     Then we get list with 0 items
@@ -118,6 +122,7 @@ Feature: Kill a content item in the (dusty) archive
       ]
     }
     """
+    When we enqueue published
     When we get "/publish_queue"
     Then we get list with 2 items
     When run import legal publish queue
@@ -127,6 +132,7 @@ Feature: Kill a content item in the (dusty) archive
     """
     And we get "/published"
     Then we get list with 0 items
+    When we enqueue published
     When we get "/publish_queue"
     Then we get list with 0 items
     When we get "/archived"
@@ -138,6 +144,7 @@ Feature: Kill a content item in the (dusty) archive
       ]
     }
     """
+    When run import legal publish queue
     When we get "/legal_publish_queue"
     Then we get list with 2 items
     When we patch "/archived/123:2"
@@ -148,6 +155,7 @@ Feature: Kill a content item in the (dusty) archive
     And we get 2 emails
     When we get "/published"
     Then we get list with 2 items
+    When we enqueue published
     When we get "/publish_queue"
     Then we get list with 2 items
     When we get "/archived"
@@ -220,6 +228,7 @@ Feature: Kill a content item in the (dusty) archive
     Then we get OK response
     When we get "/published"
     Then we get list with 8 items
+    When we enqueue published
     When we get "/publish_queue"
     Then we get list with 8 items
     When run import legal publish queue
@@ -229,10 +238,12 @@ Feature: Kill a content item in the (dusty) archive
     """
     And we get "/published"
     Then we get list with 0 items
+    When we enqueue published
     When we get "/publish_queue"
     Then we get list with 0 items
     When we get "/archived"
     Then we get list with 8 items
+    When we enqueue published
     When we get "/legal_publish_queue"
     Then we get list with 8 items
     When we patch "/archived/123:2"
@@ -243,6 +254,7 @@ Feature: Kill a content item in the (dusty) archive
     And we get 4 emails
     When we get "/published"
     Then we get list with 4 items
+    When we enqueue published
     When we get "/publish_queue"
     Then we get list with 4 items
     When we get "/archived"

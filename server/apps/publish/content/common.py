@@ -30,12 +30,6 @@ from eve.utils import config
 from eve.validation import ValidationError
 from eve.versioning import resolve_document_version
 
-from apps.archive.common import get_user, insert_into_versions, item_operations
-
-from eve.utils import config
-from eve.validation import ValidationError
-from eve.versioning import resolve_document_version
-
 from apps.archive.archive import ArchiveResource, SOURCE as ARCHIVE
 from apps.archive.common import get_user, insert_into_versions, item_operations
 from apps.archive.common import validate_schedule, ITEM_OPERATION, convert_task_attributes_to_objectId, is_genre, \
@@ -47,7 +41,6 @@ from apps.packages import TakesPackageService
 from apps.packages.package_service import PackageService
 from apps.publish.published_item import LAST_PUBLISHED_VERSION, PUBLISHED
 from settings import DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES
-from apps.publish.enqueue import enqueue_item
 
 
 logger = logging.getLogger(__name__)
@@ -94,10 +87,9 @@ class BasePublishService(BaseService):
     package_service = PackageService()
 
     def on_update(self, updates, original):
-        updates['digital_item_id'] = self._get_digital_id_for_package_item(original)
         self._validate(original, updates)
         self._set_updates(original, updates, updates.get(config.LAST_UPDATED, utcnow()))
-        convert_task_attributes_to_objectId(updates) # ???
+        convert_task_attributes_to_objectId(updates)  # ???
 
     def on_updated(self, updates, original):
         original = get_resource_service(ARCHIVE).find_one(req=None, _id=original[config.ID_FIELD])
@@ -123,6 +115,8 @@ class BasePublishService(BaseService):
             if original[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
                 self._publish_package_items(original, updates)
             else:
+                updated = deepcopy(original)
+                updated.update(updates)
                 # if target_for is set the we don't to digital client.
                 if not (updates.get('targeted_for', original.get('targeted_for')) or
                         is_genre(original, BROADCAST_GENRE)):
@@ -143,22 +137,20 @@ class BasePublishService(BaseService):
                         If type of the item is text or preformatted then item need to be sent to
                         digital subscribers, so package the item as a take.
                         '''
-
-                            insert_into_versions(id_=package_id)
-
-                        updated = deepcopy(original)
-                        updated.update(updates)
                         package_id = self.takes_package_service.package_story_as_a_take(updated, {}, None)
-                    self.update_published_collection(published_item_id=original[config.ID_FIELD], updated=updated)
                     self.update_published_collection(published_item_id=package_id)
-
                     """
                     This sequence is for test purposes, it will be removed once the feature is finished.
                     """
-                    item = get_resource_service('published').find_one(req=None, item_id=original[config.ID_FIELD])
-                    package = get_resource_service('published').find_one(req=None, item_id=package_id)
-                    enqueue_item(item)
-                    enqueue_item(package)
+#                     package = get_resource_service('published').find_one(req=None, item_id=package_id)
+#                     enqueue_item(package)
+
+                self.update_published_collection(published_item_id=original[config.ID_FIELD], updated=updated)
+                """
+                This sequence is for test purposes, it will be removed once the feature is finished.
+                """
+#                 item = get_resource_service('published').find_one(req=None, item_id=original[config.ID_FIELD])
+#                 enqueue_item(item)
 
             self._process_publish_updates(original, updates)
             self._update_archive(original=original, updates=updates, should_insert_into_versions=auto_publish)
@@ -400,6 +392,10 @@ class BasePublishService(BaseService):
                 self.package_service.update_field_in_package(updates, package_item[config.ID_FIELD],
                                                              config.VERSION, package_item[config.VERSION])
 
+        updated = deepcopy(package)
+        updated.update(updates)
+        self.update_published_collection(published_item_id=package[config.ID_FIELD], updated=updated)
+
     def update_published_collection(self, published_item_id, updated=None):
         """
         Updates the published collection with the published item.
@@ -411,6 +407,8 @@ class BasePublishService(BaseService):
         if updated:
             published_item.update(updated)
         published_item['is_take_item'] = self._is_take_item(published_item)
+        if not published_item.get('digital_item_id'):
+            published_item['digital_item_id'] = self._get_digital_id_for_package_item(published_item)
         get_resource_service(PUBLISHED).update_published_items(published_item_id, LAST_PUBLISHED_VERSION, False)
         return get_resource_service(PUBLISHED).post([published_item])
 
@@ -432,7 +430,8 @@ class BasePublishService(BaseService):
         :param dict updates: updates related to the original document
         :param datetime last_updated: datetime of the updates.
         """
-        self.set_state(original, updates)
+        updates['publish_schedule'] = None
+        updates[ITEM_STATE] = self.published_state
         updates.setdefault(config.LAST_UPDATED, last_updated)
 
         if original[config.VERSION] == updates.get(config.VERSION, original[config.VERSION]):

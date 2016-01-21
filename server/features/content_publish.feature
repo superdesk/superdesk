@@ -143,6 +143,7 @@ Feature: Content Publishing
        ]
       }
       """
+      When we enqueue published
       When we get "/publish_queue"
       Then we get list with 2 items
       """
@@ -156,6 +157,7 @@ Feature: Content Publishing
       }
       """
       When run import legal publish queue
+      When we enqueue published
       And we get "/legal_publish_queue"
       Then we get list with 2 items
       """
@@ -221,6 +223,7 @@ Feature: Content Publishing
       {"_items" : [{"_id": "123", "guid": "123", "headline": "test", "_current_version": 2, "state": "published",
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]}
       """
+      When we enqueue published
       When we get "/publish_queue"
       Then we get list with 1 items
 
@@ -269,6 +272,7 @@ Feature: Content Publishing
       Then we get latest
       When we publish "#archive._id#" with "publish" type and "published" state
       Then we get OK response
+      When we enqueue published
       When we get "/publish_queue"
       Then we get list with 0 items
 
@@ -317,6 +321,7 @@ Feature: Content Publishing
       Then we get latest
       When we publish "#archive._id#" with "publish" type and "published" state
       Then we get OK response
+      When we enqueue published
       When we get "/publish_queue"
       Then we get list with 0 items
 
@@ -379,6 +384,7 @@ Feature: Content Publishing
       {"_items" : [{"_id": "123", "guid": "123", "headline": "test", "_current_version": 2, "state": "published",
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]}
       """
+      When we enqueue published
       When we get "/publish_queue"
       Then we get list with 1 items
 
@@ -469,6 +475,7 @@ Feature: Content Publishing
       {"_current_version": 2, "state": "scheduled", "operation": "publish"}
       """
       And we get expiry for schedule and embargo content 60 minutes after "#archive_publish.publish_schedule#"
+      When we enqueue published
       When we get "/publish_queue"
       Then we get list with 1 items
       """
@@ -520,6 +527,7 @@ Feature: Content Publishing
       """
       {"_current_version": 2, "state": "scheduled"}
       """
+      When we enqueue published
       When we get "/publish_queue"
       Then we get list with 2 items
       """
@@ -556,6 +564,7 @@ Feature: Content Publishing
           ]
       }
       """
+      When we enqueue published
       When we get "/publish_queue"
       Then we get list with 0 items
       When we get "/published"
@@ -1188,6 +1197,7 @@ Feature: Content Publishing
 
       And we publish "122" with "publish" type and "published" state
       Then we get OK response
+      When we enqueue published
       When we get "/publish_queue"
       Then we get list with 0 items
 
@@ -1374,6 +1384,7 @@ Feature: Content Publishing
         ]
       }
       """
+      When we enqueue published
       When we get "/publish_queue"
       Then we get list with 4 items
       """

@@ -11,11 +11,10 @@
 import logging
 from superdesk import get_backend
 import superdesk
-from superdesk.celery_app import celery
 
 from apps.publish.content import ArchivePublishResource, ArchivePublishService, \
     KillPublishResource, KillPublishService, CorrectPublishResource, CorrectPublishService
-from apps.publish.enqueue.enqueue_task import EnqueueContent
+from apps.publish.enqueue import EnqueueContent
 from apps.publish.published_item import PublishedItemResource, PublishedItemService
 
 
@@ -45,6 +44,7 @@ def init_app(app):
     superdesk.privilege(name='kill', label='Kill', description='Kill a published content')
     superdesk.privilege(name='correct', label='Correction', description='Correction to a published content')
     superdesk.privilege(name='publish_queue', label='Publish Queue', description='User can update publish queue')
+
 
 def enqueue_content():
     EnqueueContent().run()
