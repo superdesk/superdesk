@@ -24,6 +24,20 @@ Feature: AAP Multimedia Feature
         {"guid": "20150329001116807745", "desk": "#desks._id#"}
         """
         Then we get response code 201
+        When we get "/archive?q=#desks._id#"
+        Then we get list with 1 items
+        """
+        {"_items": [
+      	  {
+      		  "family_id": "20150329001116807745",
+      		  "ingest_id": "20150329001116807745",
+      		  "operation": "fetch",
+      		  "sign_off": "abc",
+      		  "byline": "JULIAN SMITH"
+      	  }
+        ]}
+        """
+        Then we get no "dateline"
 
     @auth
     Scenario: Can search credit and type facets
