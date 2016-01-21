@@ -125,8 +125,12 @@
                  * @param {Object} template
                  */
                 scope.createFromTemplate = function(template) {
-                    content.createItemFromTemplate(template).then(edit);
-                    scope.reloadTemplatesList = true;
+                    content.createItemFromTemplate(template).then(edit).then(function() {
+                        templates.getRecentTemplates(desks.activeDeskId, NUM_ITEMS)
+                        .then(function(result) {
+                            scope.contentTemplates = result;
+                        });
+                    });
                 };
 
                 /**
@@ -137,7 +141,6 @@
                 };
 
                 scope.contentTemplates = null;
-                scope.reloadTemplatesList = false;
 
                 scope.$watch(function() {
                     return desks.activeDeskId;
@@ -145,16 +148,6 @@
                     templates.getRecentTemplates(desks.activeDeskId, NUM_ITEMS)
                     .then(function(result) {
                         scope.contentTemplates = result;
-                    });
-                });
-
-                scope.$watch(function() {
-                    return scope.reloadTemplatesList;
-                }, function() {
-                    templates.getRecentTemplates(desks.activeDeskId, NUM_ITEMS)
-                    .then(function(result) {
-                        scope.contentTemplates = result;
-                        scope.reloadTemplatesList = false;
                     });
                 });
 
