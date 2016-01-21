@@ -23,7 +23,7 @@ function SdTextEditorController(_, EMBED_PROVIDERS) {
         var newBlocks = [];
         blocks.forEach(function(block, i) {
             // if not the first block and there is a text block following another one
-            if (i > 0 && block.blockType === 'text' && blocks[i-1].blockType === 'text') {
+            if (i > 0 && block.blockType === 'text' && blocks[i - 1].blockType === 'text') {
                 // we merge the content with the previous block
                 newBlocks[newBlocks.length - 1].body += block.body;
             } else {

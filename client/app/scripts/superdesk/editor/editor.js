@@ -790,6 +790,28 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
             }
         }
 
+        function extractBlockContentsFromCaret() {
+            function getBlockContainer(node) {
+                while (node) {
+                    if (node.nodeType === 1 && /^(DIV)$/i.test(node.nodeName)) {
+                        return node;
+                    }
+                    node = node.parentNode;
+                }
+            }
+            var sel = window.getSelection();
+            if (sel.rangeCount) {
+                var selRange = sel.getRangeAt(0);
+                var blockEl = getBlockContainer(selRange.endContainer);
+                if (blockEl) {
+                    var range = selRange.cloneRange();
+                    range.selectNodeContents(blockEl);
+                    range.setStart(selRange.endContainer, selRange.endOffset);
+                    return range.extractContents();
+                }
+            }
+        }
+
         return {
             scope: {type: '=', config: '=', language: '=', sdTextEditorBlockText: '='},
             require: ['ngModel', '^sdTextEditor'],
@@ -804,7 +826,6 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                 var updateTimeout;
                 var renderTimeout;
                 ngModel.$viewChangeListeners.push(changeListener);
-
                 ngModel.$render = function () {
                     var editorConfig = angular.extend({}, EDITOR_CONFIG, scope.config || {});
                     var EmbedButton = function(sdTextEditor) {
@@ -827,6 +848,8 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                                 sdTextEditor.insertNewBlock(indexWhereToAddNewBlock, {
                                     body: lastParagraphDiv.innerHTML
                                 });
+                                // hide the toolbar
+                                this.base.getExtensionByName('toolbar').hideToolbarDefaultActions();
                                 // show the add-embed form
                                 scope.sdTextEditorBlockText.showAndFocusLowerAddAnEmbedBox();
                                 $timeout(updateModel, false);
@@ -843,7 +866,11 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                     editorElem.html(ngModel.$viewValue || '');
                     scope.node = editorElem[0];
                     scope.model = ngModel;
+                    if (scope.medium) {
+                        scope.medium.destroy();
+                    }
                     scope.medium = new window.MediumEditor(scope.node, editorConfig);
+                    // scope.sdTextEditorBlockText.editorId = scope.medium.id;
                     // focus on the node if needed
                     scope.$watch('sdTextEditorBlockText.focus', function(should_focus) {
                         if (should_focus) {
@@ -856,7 +883,6 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
 
                     scope.$on('spellcheck:run', render);
                     scope.$on('key:ctrl:shift:s', render);
-
                     function cancelTimeout(event) {
                         $timeout.cancel(updateTimeout);
                         scope.node.classList.add(TYPING_CLASS);
@@ -923,36 +949,13 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                     }
 
                     scope.$on('$destroy', function() {
+                        scope.medium.destroy();
                         editorElem.off();
                         spellcheck.setLanguage(null);
                     });
 
                     scope.cursor = {};
                     render(null, null, true);
-
-                    // NOTE: unused for the moment but will needed later in order to
-                    // split a text block.
-                    function extractBlockContentsFromCaret() {
-                        function getBlockContainer(node) {
-                            while (node) {
-                                if (node.nodeType === 1 && /^(DIV)$/i.test(node.nodeName)) {
-                                    return node;
-                                }
-                                node = node.parentNode;
-                            }
-                        }
-                        var sel = window.getSelection();
-                        if (sel.rangeCount) {
-                            var selRange = sel.getRangeAt(0);
-                            var blockEl = getBlockContainer(selRange.endContainer);
-                            if (blockEl) {
-                                var range = selRange.cloneRange();
-                                range.selectNodeContents(blockEl);
-                                range.setStart(selRange.endContainer, selRange.endOffset);
-                                return range.extractContents();
-                            }
-                        }
-                    }
                 };
 
                 scope.removeBlock = function() {
