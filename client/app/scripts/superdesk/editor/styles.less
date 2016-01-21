@@ -1,6 +1,11 @@
 @import 'variables.less';
 @import 'mixins.less';
 
+[contenteditable=true]:empty:before{
+  content: attr(placeholder);
+  display: block; /* For Firefox */
+}
+
 .block {
     &__container {
         position: relative;
