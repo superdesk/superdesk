@@ -711,7 +711,31 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
             },
             placeholder: false,
             disableReturn: false,
-            spellcheck: false
+            spellcheck: false,
+            keyboardCommands: {
+                /* This example includes the default options for keyboardCommands,
+                   if nothing is passed this is what it used */
+                commands: [
+                    {
+                        command: 'bold',
+                        key: 'b',
+                        meta: false,
+                        shift: true
+                    },
+                    {
+                        command: 'italic',
+                        key: 'i',
+                        meta: true,
+                        shift: false
+                    },
+                    {
+                        command: 'underline',
+                        key: 'u',
+                        meta: true,
+                        shift: false
+                    }
+                ],
+            }
         };
 
         /**
@@ -767,27 +791,6 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                 line: lines,
                 column: column
             };
-        }
-
-        /**
-         * Place caret at the end of the element
-         */
-        function placeCaretAtEnd(el) {
-            el.focus();
-            if (typeof window.getSelection !== 'undefined' &&
-            typeof document.createRange !== 'undefined') {
-                var range = document.createRange();
-                range.selectNodeContents(el);
-                range.collapse(false);
-                var sel = window.getSelection();
-                sel.removeAllRanges();
-                sel.addRange(range);
-            } else if (typeof document.body.createTextRange !== 'undefined') {
-                var textRange = document.body.createTextRange();
-                textRange.moveToElementText(el);
-                textRange.collapse(false);
-                textRange.select();
-            }
         }
 
         function extractBlockContentsFromCaret() {
@@ -866,20 +869,12 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                     editorElem.html(ngModel.$viewValue || '');
                     scope.node = editorElem[0];
                     scope.model = ngModel;
+                    // destroy exiting instance
                     if (scope.medium) {
                         scope.medium.destroy();
                     }
+                    // create a new instance of the medium editor binded to this node
                     scope.medium = new window.MediumEditor(scope.node, editorConfig);
-                    // scope.sdTextEditorBlockText.editorId = scope.medium.id;
-                    // focus on the node if needed
-                    scope.$watch('sdTextEditorBlockText.focus', function(should_focus) {
-                        if (should_focus) {
-                            // focus and set the cursor at the end of the block
-                            $timeout(function() {
-                                placeCaretAtEnd(scope.node);
-                            });
-                        }
-                    });
 
                     scope.$on('spellcheck:run', render);
                     scope.$on('key:ctrl:shift:s', render);

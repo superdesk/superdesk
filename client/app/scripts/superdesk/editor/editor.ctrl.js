@@ -12,7 +12,6 @@ function SdTextEditorController(_, EMBED_PROVIDERS) {
             caption: attrs && attrs.caption || undefined,
             blockType: attrs && attrs.blockType || 'text',
             embedType: attrs && attrs.embedType || undefined,
-            focus: false,
             lowerAddEmbedIsExtented: undefined,
             showAndFocusLowerAddAnEmbedBox: function() {
                 this.lowerAddEmbedIsExtented = true;
@@ -157,7 +156,6 @@ function SdTextEditorController(_, EMBED_PROVIDERS) {
             vm.blocks.splice(position, 0, new_block);
             // FIXME
             // vm.renderBlocks();
-            vm.setFocusOnBlock(new_block);
             vm.commitChanges();
             return this;
         },
@@ -169,32 +167,12 @@ function SdTextEditorController(_, EMBED_PROVIDERS) {
             var block_position = vm.getBlockPosition(block);
             if (vm.blocks.length > 1) {
                 vm.blocks.splice(block_position, 1);
-                vm.setFocusOnBlock(vm.blocks[block_position - 1]);
             } else {
                 // if it's the first block, just remove the content
                 block.body = '';
             }
             vm.renderBlocks();
             vm.commitChanges();
-        },
-        setFocusOnBlock: function(block) {
-            vm.blocks.forEach(function(b) {
-                b.focus = b === block;
-            });
-        },
-        focusPreviousBlock: function(block) {
-            var pos = vm.getBlockPosition(block);
-            // if not the first one, focus on the previous
-            if (pos > 0) {
-                vm.setFocusOnBlock(vm.blocks[pos - 1]);
-            }
-        },
-        focusNextBlock: function(block) {
-            var pos = vm.getBlockPosition(block);
-            // if not the last one, focus on the next
-            if (pos + 1 < vm.blocks.length) {
-                vm.setFocusOnBlock(vm.blocks[pos + 1]);
-            }
         },
         getPreviousBlock: function(block) {
             var pos = vm.getBlockPosition(block);
