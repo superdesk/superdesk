@@ -19,7 +19,7 @@
                 <i class="icon-white icon-ok"></i>
             </button>
         </div>
-        {{:: 'Preview:' | translate }}
+        <div ng-if="vm.previewLoading">{{:: 'loading' | translate }} ...</div>
         <div class="preview"></div>
     </form>
 </div>

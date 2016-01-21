@@ -8,6 +8,7 @@ function SdAddEmbedController (embedService, $element, $timeout, $q, _, EMBED_PR
     var vm = this;
     angular.extend(vm, {
         editorCtrl: undefined,  // defined in link method
+        previewLoading: false,
         // extended: angular.isDefined(vm.extended) ? vm.extended : undefined,
         toggle: function(close) {
             // use parameter or toggle
@@ -60,7 +61,7 @@ function SdAddEmbedController (embedService, $element, $timeout, $q, _, EMBED_PR
                     }
                     return {
                         body: embed,
-                        provider: data.provider_name
+                        provider: data.provider_name || EMBED_PROVIDERS.custom
                     };
                 });
             // otherwise we use the content of the field directly
@@ -80,8 +81,10 @@ function SdAddEmbedController (embedService, $element, $timeout, $q, _, EMBED_PR
             return embedCode;
         },
         updatePreview: function() {
+            vm.previewLoading = true;
             vm.retrieveEmbed().then(function(embed) {
                 angular.element($element).find('.preview').html(embed.body);
+                vm.previewLoading = false;
             });
         },
         createFigureBlock: function(embedType, body, caption) {

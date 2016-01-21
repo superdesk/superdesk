@@ -711,31 +711,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
             },
             placeholder: false,
             disableReturn: false,
-            spellcheck: false,
-            keyboardCommands: {
-                /* This example includes the default options for keyboardCommands,
-                   if nothing is passed this is what it used */
-                commands: [
-                    {
-                        command: 'bold',
-                        key: 'b',
-                        meta: false,
-                        shift: true
-                    },
-                    {
-                        command: 'italic',
-                        key: 'i',
-                        meta: true,
-                        shift: false
-                    },
-                    {
-                        command: 'underline',
-                        key: 'u',
-                        meta: true,
-                        shift: false
-                    }
-                ],
-            }
+            spellcheck: false
         };
 
         /**
