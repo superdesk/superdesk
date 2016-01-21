@@ -1730,6 +1730,10 @@
 
                     ActionsMenu.Item = React.createClass({
                         run: function(event) {
+                            // Stop event propagation so that click on item action
+                            // won't select that item for preview/authoring.
+                            event.stopPropagation();
+
                             activityService.start(this.props.activity, {data: {item: this.props.item}});
                         },
 

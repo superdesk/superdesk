@@ -199,4 +199,22 @@ describe('search', function() {
         globalSearch.ingestRepo.click();
         expect(globalSearch.goButton.isEnabled()).toBe(true);
     });
+
+    it('can avoid opening/retaining item\'s preview on an item action', function() {
+        expect(globalSearch.getItems().count()).toBe(14);
+
+        var previewPane = element(by.id('item-preview'));
+        expect(previewPane.isPresent()).toBe(false);
+
+        globalSearch.actionOnItem('Edit', 2);
+        expect(previewPane.isPresent()).toBe(false);    // avoids opening preview
+
+        authoring.close();
+
+        globalSearch.itemClick(2);
+        expect(previewPane.isPresent()).toBe(true);
+
+        globalSearch.actionOnItem('Edit', 2);
+        expect(previewPane.isPresent()).toBe(false);    // avoids retaining already opened preview
+    });
 });
