@@ -149,7 +149,7 @@
                         var recipients = item.recipients || {};
                         _.each(recipients, function(recipient) {
                             if (recipient.desk_id) {
-                                if (!this.unread[recipient.desk_id]) {
+                                if (!(recipient.desk_id in this.unread)) {
                                     this._items[recipient.desk_id] = [];
                                     this.unread[recipient.desk_id] = 0;
                                 }

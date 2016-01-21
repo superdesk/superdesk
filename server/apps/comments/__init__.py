@@ -11,9 +11,13 @@
 """Generic comments module."""
 from .comments import CommentsService, CommentsResource, comments_schema  # noqa
 import superdesk
+from .user_mentions import on_activity_updated
 
 
 def init_app(app):
     endpoint_name = 'comments'
     service = CommentsService(endpoint_name, backend=superdesk.get_backend())
     CommentsResource(endpoint_name, app=app, service=service)
+
+    app.on_updated_activity -= on_activity_updated
+    app.on_updated_activity += on_activity_updated

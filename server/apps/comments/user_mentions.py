@@ -11,11 +11,10 @@
 from superdesk.activity import add_activity
 from eve.utils import ParsedRequest
 from flask import g
-
 from superdesk.emails import send_user_mentioned_email
-
 import re
 import superdesk
+from superdesk.notification import push_notification
 
 
 def get_mentions(text):
@@ -79,3 +78,8 @@ def notify_mentioned_desks(docs):
             add_activity('desk:mention', '', resource=None, type='comment', item=item,
                          comment=doc.get('text'), comment_id=str(doc.get('_id')),
                          notify_desks=mentioned_desks)
+
+
+def on_activity_updated(updates, original):
+    if original.get('desk', '') != '':
+        push_notification('desk:mention')
