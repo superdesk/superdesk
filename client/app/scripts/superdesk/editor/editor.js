@@ -850,7 +850,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                                 // add new text block for the remaining text
                                 sdTextEditor.insertNewBlock(indexWhereToAddNewBlock, {
                                     body: lastParagraphDiv.innerHTML
-                                });
+                                }, true);
                                 // hide the toolbar
                                 this.base.getExtensionByName('toolbar').hideToolbarDefaultActions();
                                 // show the add-embed form
@@ -875,7 +875,11 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                     }
                     // create a new instance of the medium editor binded to this node
                     scope.medium = new window.MediumEditor(scope.node, editorConfig);
-
+                    // listen updates by medium editor to update the model
+                    scope.medium.subscribe('editableInput', function() {
+                        cancelTimeout();
+                        updateTimeout = $timeout(updateModel, 800, false);
+                    });
                     scope.$on('spellcheck:run', render);
                     scope.$on('key:ctrl:shift:s', render);
                     function cancelTimeout(event) {
@@ -886,29 +890,6 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                     var ctrlOperations = {};
                     ctrlOperations[editor.KEY_CODES.Z] = doUndo;
                     ctrlOperations[editor.KEY_CODES.Y] = doRedo;
-
-                    editorElem.on('keydown', function(event) {
-                        if (editor.shouldIgnore(event)) {
-                            return;
-                        }
-
-                        cancelTimeout(event);
-                    });
-
-                    editorElem.on('keyup', function(event) {
-                        if (editor.shouldIgnore(event)) {
-                            return;
-                        }
-
-                        cancelTimeout(event);
-
-                        if (event.ctrlKey && ctrlOperations[event.keyCode]) {
-                            ctrlOperations[event.keyCode]();
-                            return;
-                        }
-
-                        updateTimeout = $timeout(updateModel, 800, false);
-                    });
 
                     editorElem.on('contextmenu', function(event) {
                         if (editor.isErrorNode(event.target)) {

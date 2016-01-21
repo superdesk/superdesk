@@ -18,6 +18,9 @@ function SdTextEditorController(_, EMBED_PROVIDERS) {
             },
         });
     }
+    /**
+    * For the given blocks, merge text blocks when there are following each other and add empty text block arround embeds if needed
+    */
     function prepareBlocks(blocks) {
         var newBlocks = [];
         blocks.forEach(function(block, i) {
@@ -36,6 +39,10 @@ function SdTextEditorController(_, EMBED_PROVIDERS) {
                 }
             }
         });
+        // add emtpy text block at the top if needed
+        if (newBlocks[0].blockType === 'embed') {
+            newBlocks.unshift(new Block());
+        }
         return newBlocks;
     }
     angular.extend(vm, {
@@ -138,7 +145,6 @@ function SdTextEditorController(_, EMBED_PROVIDERS) {
                                 '</figure>',
                                 '\n<!-- EMBED END ' + block.embedType.trim() + ' -->\n'].join('');
                         } else {
-                            // wrap all the other blocks around <p></p>
                             new_body += block.body + '\n';
                         }
                     }
@@ -151,14 +157,26 @@ function SdTextEditorController(_, EMBED_PROVIDERS) {
         getBlockPosition: function(block) {
             return _.indexOf(vm.blocks, block);
         },
-        insertNewBlock: function(position, attrs) {
+        /**
+        ** Merge text blocks when there are following each other and add empty text block arround embeds if needed
+        ** @param {Integer} position
+        ** @param {Object} block ; block attributes
+        ** @param {boolean} unprocess ; if true, it won't merge text blocks and
+        ** add empty text block if needed through the `renderBlocks()` function.
+        ** @returns {object} this
+        */
+        insertNewBlock: function(position, attrs, unprocess) {
             var new_block = new Block(attrs);
             vm.blocks.splice(position, 0, new_block);
-            // FIXME
-            // vm.renderBlocks();
+            if (!unprocess) {
+                vm.renderBlocks();
+            }
             vm.commitChanges();
             return this;
         },
+        /**
+        * Merge text blocks when there are following each other and add empty text block arround embeds if needed
+        */
         renderBlocks: function() {
             vm.blocks = prepareBlocks(vm.blocks);
         },
