@@ -452,7 +452,8 @@
                     queryTimeout = $timeout(queryItems, 50, false);
                 }
 
-                var list = elem[0].getElementsByClassName('inline-content-items')[0],
+                var list = elem[0].getElementsByClassName('stage-content')[0],
+                    listContent = elem[0].getElementsByClassName('inline-content-items')[0],
                     scrollElem = elem.find('.stage-content').first();
 
                 scrollElem.on('keydown', handleKey);
@@ -546,7 +547,7 @@
                                 list.style.height = (scope.total * ITEM_HEIGHT) + 'px';
                             }
 
-                            list.style.paddingTop = (from * ITEM_HEIGHT) + 'px';
+                            listContent.style.paddingTop = (from * ITEM_HEIGHT) + 'px';
                             scope.items = merge(items._items);
 
                             if (lookup != null) {
