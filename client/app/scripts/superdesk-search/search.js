@@ -802,7 +802,7 @@
                             // If it is subject code, remove it from left bar, too
                             if (param.indexOf('subject.name:') !== -1) {
                                 var elementName = param.substring(
-                                    param.lastIndexOf('(') + 1,
+                                    param.indexOf('(') + 1,
                                     param.lastIndexOf(')')
                                 );
 

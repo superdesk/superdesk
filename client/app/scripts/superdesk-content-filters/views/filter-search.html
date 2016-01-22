@@ -18,7 +18,13 @@
                 <label translate>Values</label>
                 <input ng-if="!isListValue()" required ng-model="filterCondition.value">
                 <div ng-if="isListValue()">
-                    <div class="term-editor" ng-keypress="handleKey($event)" sd-meta-terms data-item="filterCondition" data-field="values" data-unique="qcode" data-list="valueLookup[filterCondition.field]"></div>
+                    <div class="term-editor"
+                         ng-keypress="handleKey($event)"
+                         sd-meta-terms
+                         data-item="filterCondition"
+                         data-field="values"
+                         data-unique="valueFieldLookup[filterCondition.field]"
+                         data-list="valueLookup[filterCondition.field]"></div>
                 </div>
             </div>
             <div class="pull-right">
