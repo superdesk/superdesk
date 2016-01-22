@@ -349,6 +349,7 @@ body, html {
 
 	.text-editor:hover, .headline:hover, .abstract:hover, input:hover, select:hover {
 		border-color: rgba(150, 150, 150, 0.25) !important;
+		cursor: text;
 	}
 
     select:hover {
@@ -436,6 +437,17 @@ body, html {
 		font-size: 16px;
 		.keyword;
 		text-transform: none;
+		&::-webkit-input-placeholder {
+			color: #ccc;
+		}
+		&::-moz-placeholder {
+			color: #ccc;
+			opacity: 1;
+		}
+		&:focus {
+			&::-webkit-input-placeholder { color:transparent; }
+			&::-moz-placeholder { color:transparent; }
+		}
 	}
 
 	.text-editor {

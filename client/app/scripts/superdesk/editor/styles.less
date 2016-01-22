@@ -1,9 +1,18 @@
 @import 'variables.less';
 @import 'mixins.less';
 
-[contenteditable=true]:empty:before{
-  content: attr(placeholder);
-  display: block; /* For Firefox */
+[contenteditable=true] {
+	&:before{
+		display: block; /* For Firefox */
+	}
+	&:empty:before{
+  		content: attr(placeholder);
+  		display: block; /* For Firefox */
+  		color: #ccc;
+	}
+	&:focus:before{
+		display: none;
+	}
 }
 
 .block {
