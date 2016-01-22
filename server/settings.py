@@ -6,6 +6,7 @@ APPLICATION_NAME = 'Superdesk'
 INSTALLED_APPS = [
     'apps.auth',
     'superdesk.roles',
+    'superdesk.sequences',
 
     'superdesk.users',
     'apps.auth.db',
@@ -35,6 +36,7 @@ INSTALLED_APPS = [
     'apps.prepopulate',
     'apps.legal_archive',
     'apps.search',
+    'apps.saved_searches',
     'apps.privilege',
     'apps.rules',
     'apps.highlights',
@@ -55,8 +57,8 @@ INSTALLED_APPS = [
 
     'superdesk.io.subjectcodes',
     'pa.topics',
+    'pa.pa_img',
     'apps.archive_broadcast',
-    'apps.pa_img',
     'apps.keywords',
     'apps.content_types',
     'apps.picture_crop',
