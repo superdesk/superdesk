@@ -6,7 +6,11 @@
 .block {
     &__container {
         position: relative;
-        .text-editor {padding: 0;}
+        .text-editor {
+            padding: 0;
+            // leave the space for the `add-embed` when the toolbar is shown
+            &.toolbar-visible {margin-top: 45px;}
+        }
         .preview--caption, .editor--caption {
             margin: 20px 0px;
         }

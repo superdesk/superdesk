@@ -856,6 +856,13 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                         cancelTimeout();
                         updateTimeout = $timeout(updateModel, 800, false);
                     });
+                    // Add or remove the class toolbar-visible to the editor depending of the toolbar state
+                    scope.medium.subscribe('showToolbar', function() {
+                        editorElem.addClass('toolbar-visible');
+                    });
+                    scope.medium.subscribe('hideToolbar', function() {
+                        editorElem.removeClass('toolbar-visible');
+                    });
                     scope.$on('spellcheck:run', render);
                     scope.$on('key:ctrl:shift:s', render);
                     function cancelTimeout(event) {
