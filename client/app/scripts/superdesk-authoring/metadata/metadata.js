@@ -281,12 +281,16 @@ function MetadataTagsDirective(api) {
                     .replace(/<br[^>]*>/gi, '&nbsp;')
                     .replace(/<\/?[^>]+>/gi, '').trim()
                     .replace(/&nbsp;/g, ' ');
-                api.save('keywords', {text: body})
-                .then(function(result) {
-                    scope.extractedTags = _.pluck(result.keywords, 'text');
-                    scope.tags = _.uniq(scope.extractedTags.concat(scope.item[scope.field]));
+                if (body) {
+                    api.save('keywords', {text: body})
+                    .then(function(result) {
+                        scope.extractedTags = _.pluck(result.keywords, 'text');
+                        scope.tags = _.uniq(scope.extractedTags.concat(scope.item[scope.field]));
+                        scope.refreshing = false;
+                    });
+                } else {
                     scope.refreshing = false;
-                });
+                }
             };
 
             scope.refresh();
