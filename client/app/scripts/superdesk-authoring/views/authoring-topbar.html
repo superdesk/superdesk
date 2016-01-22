@@ -29,7 +29,7 @@
         <span class="stage" ng-show="stage" ng-if="item._type !== 'legal_archive'"><b>{{deskName}}</b> / {{ stage.name }}</span>
         <span class="stage" ng-show="stage" ng-if="item._type === 'legal_archive'"><b>{{deskName}}</b> / {{ stage }}</span>
         <div ng-if="item.more_coming === true" class="state-label state-in_progress" translate>More coming</div>
-        <span ng-if="item.highlights" sd-highlights-title data-item="item" data-orientation="'bottom'"></span>
+        <span ng-if="item.highlights" sd-highlights-title data-item="item"></span>
     </div>
 
     <div class="button-stack right-stack">

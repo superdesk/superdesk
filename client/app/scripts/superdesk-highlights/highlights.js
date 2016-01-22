@@ -198,13 +198,31 @@
                     }
                 });
 
+                var closeTimeout, self;
+
                 elem.on({
                     click: function (e) {
                         e.preventDefault();
                         e.stopPropagation();
                     },
-                    mouseenter: function () {
-                        $(this).find('.highlights-list').not('.open').children('.dropdown-toggle').click();
+                    mouseenter: function (e) {
+                        self = $(this).find('.highlights-list');
+                        self.not('.open').children('.dropdown-toggle').click();
+
+                        angular.element('.highlights-list-menu.open').on({
+                            mouseenter: function () {
+                                $timeout.cancel(closeTimeout);
+                            },
+                            mouseleave: function () {
+                                self.filter('.open').children('.dropdown-toggle').click();
+                            }
+                        });
+
+                    },
+                    mouseleave: function () {
+                        closeTimeout = $timeout(function () {
+                            self.filter('.open').children('.dropdown-toggle').click();
+                        }, 100, false);
                     }
                 });
 
