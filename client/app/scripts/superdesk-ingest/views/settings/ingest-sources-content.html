@@ -27,7 +27,7 @@
 
 <div sd-modal data-model="provider" class="ingestsource-modal moz-scroll-fix modal-large">
     <div class="modal-header"> <a href="" class="close" ng-click="cancel()"><i class="icon-close-small"></i></a>
-        <h3 translate ng-show="provider._id" translate>Edit Source "{{ origProvider.name }}"</h3>
+        <h3 ng-show="provider._id"><span translate>Edit Source</span> "{{ origProvider.name }}"</h3>
         <h3 translate ng-hide="provider._id" translate>Add New Source</h3>
     </div>
     <div class="modal-body">

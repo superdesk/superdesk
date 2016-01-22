@@ -21,7 +21,7 @@
                 </div>
 
                 <div class="error-holder" ng-if="error.credentials">
-                  <p class="alert alert-error" translate>{{error.message || 'Invalid credentials.'}}</p>
+                  <p class="alert alert-error">{{error.message || 'Invalid credentials.' | translate}}</p>
                 </div>
             </fieldset>
             
@@ -33,7 +33,7 @@
                 </div>
 
                 <div class="error-holder" ng-if="error.profile_to_import">
-                  <p class="alert alert-error" translate>{{error.message || 'Profile Not found'}}</p>
+                  <p class="alert alert-error">{{error.message || 'Profile Not found' | translate}}</p>
                 </div>
             </fieldset>
         </div>

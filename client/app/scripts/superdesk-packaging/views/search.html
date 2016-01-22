@@ -10,7 +10,7 @@
                 <div class="btn dropdown-toggle" dropdown-toggle><i class="icon-package-plus"></i> {{'Add items' | translate}}</div>
                 <ul class="dropdown-menu pull-right">
                     <li ng-repeat="t in groupList">
-                        <button option="{{ t | uppercase  }}" ng-click="addMultiItemsToGroup(t);" translate>{{ t | uppercase  }}</button>
+                        <button option="{{ t | uppercase  }}" ng-click="addMultiItemsToGroup(t);">{{ t | uppercase | translate }}</button>
                     </li>
                 </ul>
             </div>

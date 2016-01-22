@@ -41,8 +41,8 @@
 				</div>
 			</fieldset>
 			<p ng-if="message">{{ message }}</p>
-			<span ng-show="_errorUniqueness && !dictionary.user" translate>Dictionary with name "{{ dictionary.name }}" already exists.</span>
-			<span ng-show="_errorUniqueness && dictionary.user" translate>Personal dictionary for language "{{ dictionary.language_id }}" already exists.</span>
+			<span ng-show="_errorUniqueness && !dictionary.user"><span translate>Dictionary with name "</span>{{ dictionary.name }}<span translate>" already exists.</span></span>
+			<span ng-show="_errorUniqueness && dictionary.user"><span translate>Personal dictionary for language "</span>{{ dictionary.language_id }}<span translate>" already exists.</span></span>
 			<p ng-show="_errorLimits" translate>Character limit exceeded, dictionary can not be created/updated.</p>
 			<span ng-show="_error" translate>There was a problem, dictionary not created/updated.</span>
 		</ng-form>

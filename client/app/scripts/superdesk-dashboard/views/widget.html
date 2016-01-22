@@ -2,7 +2,7 @@
 	<div class="widget-line"></div>
 	<div class="widget-header" ng-if="!widget.removeHeader">
 		<span ng-show="widget.icon" class="widget-icon"><i class="icon-{{ widget.icon }}"></i></span>
-		<div class="widget-title" translate>{{ widget.configuration.label || widget.label }}</div>
+		<div class="widget-title">{{ widget.configuration.label || widget.label | translate}}</div>
 	</div>
 
 	<div class="widget-content clearfix" ng-transclude></div>

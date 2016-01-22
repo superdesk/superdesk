@@ -30,7 +30,7 @@
                 </ul>
             </div>
             <div class="desk clearfix">
-                <div class="desk-title" translate>Personal
+                <div class="desk-title"><span translate>Personal</span>
                     <span sd-switch class="pull-right" ng-model="editGroups['personal'].selected" ng-click="setPersonalInfo()"></span>
                 </div>
             </div>
@@ -40,9 +40,9 @@
 
     <div sd-wizard-step data-title="{{ :: 'Saved Searches' | translate }}" data-code="searches">
         <div class="content">
-            <div class="legend" translate>
-                Select global saved searches
-                <span sd-switch class="pull-right" ng-model="showGlobalSavedSearches" title="{{'Show all saved searches'}} | translate"></span>
+            <div class="legend"><span translate>Select global saved searches</span>  
+                <span sd-switch class="pull-right" ng-model="showGlobalSavedSearches" 
+                 title="{{'Show all saved searches' | translate}}"></span>
             </div>
             <div class="desk clearfix" ng-repeat="search in globalSavedSearches track by search._id | orderBy: 'name'" ng-if="showGlobalSavedSearches">
                 <div class="desk-title">

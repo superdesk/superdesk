@@ -3,7 +3,7 @@
         <div class="modal-header">
             <a href="" class="close" ng-click="cancel()"><i class="icon-close-small"></i></a>
 
-            <h3 translate>Edit Vocabulary: {{ :: vocabulary.display_name }}</h3>
+            <h3><span translate>Edit Vocabulary</span>: {{ :: vocabulary.display_name | translate}}</h3>
         </div>
 
         <div class="modal-body">
@@ -11,7 +11,7 @@
 
                 <fieldset>
                     <div ng-repeat="(key, value) in model" ng-if="key !== 'is_active'" class="field vocabularyField">
-                        <label translate>{{ :: key }}</label>
+                        <label>{{ :: key | translate}}</label>
                     </div>
 
                     <div ng-repeat="item in vocabulary.items track by $index">

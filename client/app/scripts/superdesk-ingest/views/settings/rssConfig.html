@@ -7,11 +7,11 @@
 </div>
 
 <div class="field">
-<label for="auth_required" translate>
+<label for="auth_required">
   <input type="checkbox" id="auth_required"
       ng-model="provider.config.auth_required"
       ng-change="$parent.setRssConfig(provider)"
-    >Requires Authentication</label>
+    ><span translate>Requires Authentication</span></label>
 </div>
 
 <fieldset ng-show="provider.config.auth_required" class="separated">

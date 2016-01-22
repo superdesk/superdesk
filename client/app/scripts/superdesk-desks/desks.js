@@ -970,7 +970,7 @@
                         if (response.data && response.data._issues) {
                             if (response.data._issues.name && response.data._issues.name.unique) {
                                 scope._errorMessage = $interpolate(gettext(
-                                    'Desk with name {{ name }} already exists.'))({name: scope.desk.edit.name});
+                                    'Desk with name ' + name + ' already exists.'))({name: scope.desk.edit.name});
                             } else if (response.data._issues['validator exception']) {
                                 scope._errorMessage = gettext(response.data._issues['validator exception']);
                             }

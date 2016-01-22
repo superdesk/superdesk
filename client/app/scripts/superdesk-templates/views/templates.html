@@ -49,7 +49,7 @@
 
 <div sd-modal data-model="template" class="modal-responsive">
   <div class="modal-header"> <a href="" class="close" ng-click="cancel()"><i class="icon-close-small"></i></a>
-    <h3 translate ng-show="template._id" translate>Edit Template "{{ origTemplate.template_name }}"</h3>
+    <h3 ng-show="template._id"><span translate>Edit Template</span> "{{ origTemplate.template_name }}"</h3>
     <h3 translate ng-hide="template._id" translate>Add New Template</h3>
   </div>
   <div class="modal-body">

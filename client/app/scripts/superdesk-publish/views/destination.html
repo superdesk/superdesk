@@ -24,7 +24,7 @@
 
         <div class="field" ng-if="actions">
             <button type="button" class="btn" ng-repeat="action in actions" ng-click="action.fn(destination)">
-                <span translate>{{:: action.label}}</span>
+                <span>{{:: action.label | translate}}</span>
             </button>
         </div>
     </fieldset>

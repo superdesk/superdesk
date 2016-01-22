@@ -23,7 +23,8 @@
     "angular-moment": "~0.10.3",
     "classnames": "~2.2.0",
     "react": "~0.14.3",
-    "protractor": "~3.0.0"
+    "protractor": "~3.0.0",
+    "langmap": "~0.0.10"
   },
   "ignore": [
     "**/.*",

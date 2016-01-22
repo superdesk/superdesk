@@ -33,6 +33,7 @@ module.exports = function(config) {
 
             'app/scripts/bower_components/momentjs/moment.js',
             'app/scripts/bower_components/moment-timezone/builds/moment-timezone-with-data-2010-2020.js',
+            'app/scripts/bower_components/langmap/language-mapping-list.js',
             'app/scripts/bower_components/angular-moment/angular-moment.js',
             'app/scripts/bower_components/d3/d3.js',
             'app/scripts/bower_components/jcrop/js/jquery.Jcrop.js',

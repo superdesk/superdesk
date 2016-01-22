@@ -1,5 +1,5 @@
 <div class="subnav">
-	<h3 class="page-nav-title" translate>Dashboard {{ dashboard.current.name }}</h3>
+	<h3 class="page-nav-title"><span translate>Dashboard</span> {{ dashboard.current.name | translate}}</h3>
 
 	<div class="button-stack right-stack">
 		<button class="navbtn" ng-click="dashboard.edit = true" ng-show="dashboard.widgets.length && !dashboard.edit">

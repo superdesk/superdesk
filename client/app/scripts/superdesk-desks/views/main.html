@@ -2,7 +2,7 @@
     <div class="navbtn toggle-list desk-tabs">
     	<ul>
 	    	<li ng-repeat="v in views" ng-class="{active: v === view}">
-	    		<a href="" id="{{v}}" ng-click="setView(v)" translate>{{v}}</a>
+	    		<a href="" id="{{v}}" ng-click="setView(v)">{{v | translate}}</a>
                         <div class="online-users" ng-if="v === view && view === 'users'">
                             <p><span sd-check ng-model="online_users" name="online_users" id="online_users" ng-change="changeOnlineUsers(online_users)"></span></p>
                             <label translate>show only online users</label>

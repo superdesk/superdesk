@@ -14,7 +14,7 @@
         </div>
         <h3 class="page-nav-title">
             <span ng-if="!monitoring.singleGroup && type === 'monitoring'" translate>Monitoring</span>
-            <span ng-if="type === 'spike'" translate>Spiked Items <span class="label-total">{{ monitoring.totalItems }}</span></span>
+            <span ng-if="type === 'spike'"><span translate>Spiked Items</span> <span class="label-total">{{ monitoring.totalItems }}</span></span>
             <span ng-if="type === 'personal'" translate>Personal Items</span>
             <div ng-if="type === 'highlights'" sd-highlight-label data-highlight="monitoring.queryParam.highlight" data-total="monitoring.totalItems">
             </div>

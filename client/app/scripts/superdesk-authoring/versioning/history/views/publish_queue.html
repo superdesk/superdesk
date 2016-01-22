@@ -6,8 +6,8 @@
         <i class="icon-minus-small true"></i> {{ :: 'Hide sent/queued items' | translate }}
     </a>
     <ul ng-if="show_transmission_details && queuedItems.length === 0">
-        <li class="alert-danger" translate>
-            <div>Not been transmitted to any subscriber</div>
+        <li class="alert-danger">
+            <div translate>Not been transmitted to any subscriber</div>
         </li>
     </ul>
     <ul ng-if="show_transmission_details && queuedItems.length > 0">

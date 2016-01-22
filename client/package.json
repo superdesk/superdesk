@@ -51,5 +51,8 @@
   },
   "scripts": {
     "test": "grunt ci:travis"
+  },
+  "dependencies": {
+    "langmap": "0.0.9"
   }
 }

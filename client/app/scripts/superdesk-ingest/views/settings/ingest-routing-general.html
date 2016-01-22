@@ -53,17 +53,17 @@
                             <span class="title" translate>Days</span>:
                             <ul>
                                 <li ng-repeat="day in rule.schedule.day_of_week">
-                                    - <span translate>{{dayLookup[day]}}</span>
+                                    - <span>{{dayLookup[day] | translate}}</span>
                                 </li>
                             </ul>
                         </div>
                         <div>
                             <span class="title" translate>Start time</span>:
-                            <span translate>{{rule.schedule.hour_of_day_from|insert:2:':'}}</span>
+                            <span>{{rule.schedule.hour_of_day_from|insert:2:':' | translate}}</span>
                         </div>
                         <div>
                             <span class="title" translate>End time</span>:
-                            <span translate>{{rule.schedule.hour_of_day_to|insert:2:':'}}</span>
+                            <span>{{rule.schedule.hour_of_day_to|insert:2:':' | translate}}</span>
                         </div>
                     </div>
                 </div>

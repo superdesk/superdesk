@@ -13,7 +13,7 @@
     </button>
     <ul class="dropdown-menu">
         <li ng-if="label"><div class="menu-label">{{label}}</div></li>
-        <li ng-click="select()" translate><button ng-disabled="disabled">None</button></li>
+        <li ng-click="select()"><button ng-disabled="disabled" translate>None</button></li>
 
         <li ng-repeat="item in list" ng-click="select(item)" ng-if="field !== 'place'">
             <button ng-disabled="disabled">

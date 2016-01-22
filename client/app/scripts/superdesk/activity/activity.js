@@ -290,6 +290,7 @@
         'superdesk.keyboard'
     ])
     .constant('lodash', window._)
+    .constant('langmap', window.languageMappingList)
     .provider('superdesk', SuperdeskProvider)
 
     .service('activityService', ['$location', '$injector', '$q', '$timeout', 'gettext', 'modal', 'lodash',
