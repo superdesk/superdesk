@@ -51,9 +51,18 @@
 </div>
 
 <div class="modal-footer">
-    <button type="button"
+    <button
+        type="button"
+        class="btn btn-medium btn-info"
+        ng-click="remove()"
+        ng-disabled="!data.removable"
+        translate
+    >Remove</button>
+    <button
+        type="button"
         class="btn btn-medium btn-info"
         ng-click="done()"
         ng-disabled="!data.isDirty"
-        translate>Save</button>
+        translate
+    >Save</button>
 </div>
