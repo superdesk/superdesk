@@ -72,13 +72,9 @@ before_script:
 script:
     - if [ "${TARGET}" = "unit" ]; then
         cd client && npm test && cd .. ;
-        cd server && flake8 && cd .. ;
-        cd server && behave ./features/ --format progress2 --logging-level ERROR && cd .. ;
-        cd server && nosetests --with-coverage --cover-package=superdesk,apps && cd .. ;
       fi
     - if [ "${TARGET}" = "server_ldap" ]; then
         cd server &&
-        LDAP_SERVER="ldap://sourcefabric.org" LDAP_BASE_FILTER="OU=Superdesk Users,dc=sourcefabric,dc=org" behave ./features/ --format progress2 --logging-level ERROR &&
         cd .. ;
       fi
     - if [ "${TARGET}" != "${TARGET/e2e_first/}" ]; then
@@ -130,6 +126,5 @@ after_script:
 after_success:
     - if [ "${TARGET}" = "unit" ]; then
         cd client && grunt coveralls && cd .. ;
-        cd server && coveralls --merge="../client/coveralls.json" ;
       fi
 
