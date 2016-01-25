@@ -61,7 +61,6 @@ published_item_fields = {
     },
     QUEUE_STATE: {
         'type': 'string',
-        'required': True,
         'default': 'pending',
         'allowed': queue_states,
     },

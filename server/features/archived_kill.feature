@@ -117,8 +117,8 @@ Feature: Kill a content item in the (dusty) archive
     Then we get list with 2 items
     """
     {"_items" : [
-      {"package_type": "takes", "_id": "#archive.123.take_package#", "state": "published", "type": "composite", "_current_version": 2},
-      {"_id": "123", "state": "published", "type": "text", "_current_version": 2}
+      {"package_type": "takes", "item_id": "#archive.123.take_package#", "state": "published", "type": "composite", "_current_version": 2},
+      {"item_id": "123", "state": "published", "type": "text", "_current_version": 2}
       ]
     }
     """

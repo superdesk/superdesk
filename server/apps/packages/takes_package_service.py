@@ -28,7 +28,7 @@ class TakesPackageService():
     # metadata field of take
     fields_for_creating_take = ['headline', 'anpa_category', 'pubstatus', 'slugline', 'urgency', 'subject',
                                 'dateline', 'place', 'priority', 'abstract', 'ednote', 'source', 'body_footer',
-                                'state', 'operation', 'flags', 'genre', 'company_codes']
+                                'operation', 'flags', 'genre', 'company_codes']
 
     def get_take_package_id(self, item):
         """
@@ -231,7 +231,7 @@ class TakesPackageService():
             refs = self.get_package_refs(package)
             if refs:
                 ref = next((ref for ref in refs if ref.get(SEQUENCE) == 1
-                            and ref.get(RESIDREF, '') != item.get(config.ID_FIELD, '')), None)
+                            and ref.get(RESIDREF, '') != item.get('item_id', '')), None)
                 if ref:
                     return ref.get(RESIDREF, None)
 

@@ -130,6 +130,7 @@ class BasePublishService(BaseService):
                         self._set_updates(package, package_updates, last_updated)
                         package_updates.setdefault(ITEM_OPERATION, updates.get(ITEM_OPERATION, ITEM_PUBLISH))
                         self._update_archive(package, package_updates)
+                        package.update(package_updates)
                         self._import_into_legal_archive(package)
                         package_id = package[config.ID_FIELD]
                     else:
@@ -138,7 +139,8 @@ class BasePublishService(BaseService):
                         digital subscribers, so package the item as a take.
                         '''
                         package_id = self.takes_package_service.package_story_as_a_take(updated, {}, None)
-                    self.update_published_collection(published_item_id=package_id)
+                    package_updated = {ITEM_STATE: self.published_state}
+                    self.update_published_collection(published_item_id=package_id, updated=package_updated)
                     """
                     This sequence is for test purposes, it will be removed once the feature is finished.
                     """

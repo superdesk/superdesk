@@ -199,7 +199,6 @@ class ArchivedService(BaseService):
         updated.update(updates)
 
         for article in articles_to_kill:
-            article['item_id'] = article[config.ID_FIELD]
             # Step 2(i)
             self._remove_and_set_kill_properties(article, articles_to_kill, updated)
             logger.info('Removing and setting properties for article: {}'.format(article[config.ID_FIELD]))
@@ -207,7 +206,7 @@ class ArchivedService(BaseService):
             # Step 2(ii)
             transmission_details = list(
                 get_resource_service(LEGAL_PUBLISH_QUEUE_NAME).get(req=None,
-                                                                   lookup={'item_id': article[config.ID_FIELD]}))
+                                                                   lookup={'item_id': article['item_id']}))
 
             if transmission_details:
                 subscriber_ids = [t['_subscriber_id'] for t in transmission_details]
@@ -216,6 +215,8 @@ class ArchivedService(BaseService):
 
                 kill_service.queue_transmission(article, subscribers)
                 logger.info('Queued Transmission for article: {}'.format(article[config.ID_FIELD]))
+
+            article[config.ID_FIELD] = article.pop('item_id', article['item_id'])
 
             # Step 2(iii)
             import_into_legal_archive.apply_async(kwargs={'doc': article})
@@ -289,12 +290,10 @@ class ArchivedService(BaseService):
         :param updates: updates to be applied on the article before saving
         :type updates: dict
         """
-
-        article[config.ID_FIELD] = article.pop('item_id', article['item_id'])
-
         article.pop('archived_id', None)
         article.pop('_type', None)
         article.pop('_links', None)
+        article.pop('queue_state', None)
         article.pop(config.ETAG, None)
 
         for field in ['headline', 'abstract', 'body_html']:

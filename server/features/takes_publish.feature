@@ -1473,7 +1473,7 @@ Feature: Take Package Publishing
         """
 
   @auth @vocabulary
-    Scenario: After correcting  a Take digital package stays as corrected
+    Scenario: After correcting a take digital package stays as corrected
       Given the "validators"
       """
         [{"_id": "publish_text", "act": "publish", "type": "text", "schema":{}},

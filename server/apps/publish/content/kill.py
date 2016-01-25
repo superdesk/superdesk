@@ -14,7 +14,6 @@ from eve.utils import config
 from superdesk.metadata.item import CONTENT_STATE, ITEM_STATE, GUID_FIELD, PUB_STATUS
 from superdesk.metadata.packages import PACKAGE_TYPE
 from superdesk import get_resource_service
-from superdesk.publish import SUBSCRIBER_TYPES
 from superdesk.utc import utcnow
 import logging
 from copy import copy
@@ -92,23 +91,14 @@ class KillPublishService(BasePublishService):
                     original_data = super().find_one(req=None, _id=ref[GUID_FIELD])
                     updates_data = copy(updates)
                     '''
-                    We need to update the archive item and not worry about queued as we could have a takes only going
-                    to digital client.
                     Popping out the config.VERSION as Take referenced by original and Take referenced by original_data
                     might have different and if not popped out then it might jump the versions.
                     '''
                     updates_data.pop(config.VERSION, None)
                     self._set_updates(original_data, updates_data, last_updated)
-                    queued = self.publish(doc=original_data,
-                                          updates=updates_data,
-                                          target_media_type=SUBSCRIBER_TYPES.WIRE)
                     self._update_archive(original=original_data, updates=updates_data,
                                          should_insert_into_versions=True)
                     self.update_published_collection(published_item_id=original_data['_id'])
-
-                    if not queued:
-                        logger.error("Could not publish the kill for take {} with headline {}".
-                                     format(original_data.get(config.ID_FIELD), original_data.get('headline')))
 
     def kill_item(self, item):
         """
