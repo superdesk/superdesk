@@ -831,6 +831,78 @@
         };
     }
 
+    TimezoneDirective.$inject = ['tzdata']
+    function TimezoneDirective(tzdata) {
+        return {
+            templateUrl: 'scripts/superdesk/ui/views/sd-timezone.html',
+            scope : {
+                timezone: '='
+            },
+            link: function(scope) {
+                scope.timeZones = [];     // all time zones to choose from
+                scope.tzSearchTerm = '';  // the current time zone search term
+
+                // filtered time zone list containing only those that match
+                // user-provided search term
+                scope.matchingTimeZones = [];
+
+                tzdata.$promise.then(function () {
+                    scope.timeZones = tzdata.getTzNames();
+                });
+
+                /**
+                 * Sets the list of time zones to select from to only those
+                 * that contain the given search term (case-insensitive).
+                 * If the search term is empty, it results in an empty list.
+                 *
+                 * @method searchTimeZones
+                 * @param {string} searchTerm
+                 */
+                scope.searchTimeZones = function (searchTerm) {
+                    var termLower;
+
+                    scope.tzSearchTerm = searchTerm;
+
+                    if (!searchTerm) {
+                        scope.matchingTimeZones = [];
+                        return;
+                    }
+
+                    termLower = searchTerm.toLowerCase();
+                    scope.matchingTimeZones = _.filter(
+                        scope.timeZones,
+                        function (item) {
+                            return (item.toLowerCase().indexOf(termLower) >= 0);
+                        }
+                    );
+                };
+
+                 /**
+                 * Sets the time zone of the routing rule's schedule and resets
+                 * the current time zone search term.
+                 *
+                 * @method selectTimeZone
+                 * @param {string} tz - name of the time zone to select
+                 */
+                scope.selectTimeZone = function (tz) {
+                    scope.timezone = tz;
+                    scope.tzSearchTerm = '';
+                };
+
+                /**
+                 * Clears the currently selected time zone of the routing
+                 * rule's schedule.
+                 *
+                 * @method clearSelectedTimeZone
+                 */
+                scope.clearSelectedTimeZone = function () {
+                    scope.timezone = null;
+                };
+
+            }
+        };
+    }
+
     TimepickerPopupDirective.$inject = ['$timeout'];
     function TimepickerPopupDirective($timeout) {
         return {
@@ -1305,6 +1377,7 @@
         .directive('sdDatepickerWrapper', DatepickerWrapper)
         .directive('sdDatepicker', DatepickerDirective)
         .directive('sdTimepickerInner', TimepickerInnerDirective)
+        .directive('sdTimezone', TimezoneDirective)
         .directive('sdTimepickerPopup', TimepickerPopupDirective)
         .directive('sdTimepicker', TimepickerDirective)
         .directive('sdTimepickerAlt', TimepickerAltDirective)
