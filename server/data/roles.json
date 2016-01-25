@@ -1,0 +1,64 @@
+[
+    {
+        "_id": "54e64cde1024542de2649be8",
+        "description": "Sub-editors rewrite copy to style, correct errors, add headlines etc and pass it on to a revise sub.\n\nSubs usually work in specific areas, so there are sport subs, finance subs, news (home and world) subs and features subs. \n\nSome newsrooms have so-called pool subs, who work on a mix of content, so news, finance, sport and features.",
+        "name": "Sub-editor",
+        "privileges": {"archive": 1, "correct": 1, "fetch": 1, "kill": 1, "publish": 1}
+    },
+    {
+        "_id": "54e64e671024542de640fee5",
+        "description": "A sub editor who checks content items after they have been subbed and then publishes it.",
+        "name": "Revise sub",
+        "privileges": {"archive": 1, "correct": 1, "fetch": 1, "kill": 1, "publish": 1, "unlock": 1}
+    },
+    {
+        "_id": "54e650f31024542de2649bea",
+        "description": "A producer (or chief sub, or chief of staff) monitors incoming feeds (if any) and copy submitted by in-house reporters. This is known as copytasting.\n\nThe producer fetches items to his/her working stage, edits metadata where necessary, adds an instruction to subs if necessary and sends it to a subbing stage.\n\nA producer generally heads each desk, so there is a  producer for each section - world news, home news, sport, features, finance, broadcast and New Zealand.",
+        "is_default": true,
+        "name": "Producer",
+        "privileges": {
+            "archive": 1,
+            "correct": 1,
+            "desks": 1,
+            "groups": 1,
+            "highlights": 1,
+            "hold": 1,
+            "ingest": 1,
+            "fetch": 1,
+            "ingest_providers": 1,
+            "kill": 1,
+            "mark_for_highlights": 1,
+            "metadata_uniquename": 1,
+            "planning": 1,
+            "publish": 1,
+            "restore": 1,
+            "roles": 1,
+            "rule_sets": 1,
+            "saved_searches": 1,
+            "spike": 1,
+            "tasks": 1,
+            "unlock": 1,
+            "unspike": 1,
+            "users": 1,
+            "vocabularies": 1
+        }
+    },
+    {
+        "_id": "54e651ef1024542de2649bed",
+        "description": "A bureau chief manages reporters in regional outposts. He or she checks the copy the reporters file, makes any changes they want and sends the content through to the producers in the main newsroom. \n\nDepending on where the bureaux are, they will file to either home or world news producers as appropriate. Any features content would be sent to a features producer.",
+        "name": "Bureau chief",
+        "privileges": {"fetch": 1}
+    },
+    {
+        "_id": "54e655e31024542de76d6636",
+        "description": "Reporters write about news, sport or finance. They work either in a bureau, where they are assigned work by the bureau chief and file it back to him/her, or in the main newsroom, where they report to a senior producer and file their copy to his/her respective desk. \n\nThere are also people who write features. These are newsroom-based and report/file to a features producer.",
+        "name": "Reporter",
+        "privileges": {"fetch": 1}
+    },
+    {
+        "_id": "54e686811024542de76d663a",
+        "description": "Copytakers type content dictated to them over the phone by reporters. They send this copy to the incoming stage of whichever desk is appropriate. Most reporters nowadays type their own copy, but copytakers are still used in some news organisations, mainly for handling sport results and commentary from live events.",
+        "name": "Copytaker",
+        "privileges": {"fetch": 1}
+    }
+]
