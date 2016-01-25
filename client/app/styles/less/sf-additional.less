@@ -1276,7 +1276,7 @@ header .sortbar {
 	.border-radius(2px);
 	margin-bottom: 7px;
 	position: relative;
-	&:hover {
+	&:not([disabled]):hover {
 		cursor: pointer;
 		.box-shadow(0px 1px 3px 0 rgba(0,0,0,0.35));
 		.action {
@@ -1290,6 +1290,10 @@ header .sortbar {
 			.box-shadow(0px 1px 3px 0 rgba(0,0,0,0.45));
 		}
 	}
+    &[disabled] {
+        cursor: default !important;
+        background-color: rgba(255,255,255,0.45);
+    }
 	.action {
 		display: none;
 		position: absolute;

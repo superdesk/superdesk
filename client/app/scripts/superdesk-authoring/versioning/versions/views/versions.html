@@ -10,7 +10,7 @@
             </div>
         </li>
 
-        <li class="item" ng-class="{selected: selected === version}" ng-repeat="version in versions" ng-click="openVersion(version)">
+        <li class="item" ng-class="{selected: selected === version}" ng-repeat="version in versions" ng-click="openVersion(version)" ng-disabled="!item._editable">
             <div class="header">
                 <time title="{{ :: version.versioncreated | date:'medium' }}">{{ version.versioncreated|reldate }}</time>
                 <span class="user">{{ :: 'by' | translate }} {{ version.creator }}</span>

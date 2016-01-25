@@ -86,6 +86,7 @@ angular.module('superdesk.authoring.find-replace', ['superdesk.editor', 'superde
                 template: 'scripts/superdesk-authoring/editor/views/find-replace.html',
                 order: 2,
                 side: 'right',
+                needEditable: true,
                 needUnlock: true,
                 display: {authoring: true, packages: false, killedItem: false, legalArchive: false, archived: false}
             });
