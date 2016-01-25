@@ -74,6 +74,9 @@ a:hover {
                 .transition(none);
                 + #authoring-container { .transition(none); }
             }
+            .ui-resizable-handle {
+                display: block;
+            }
         }
 
         #authoring-container {
@@ -90,6 +93,7 @@ a:hover {
     &:not(.authoring) {
         #workspace-container { width: auto !important; }
         #authoring-container { width: auto !important; }
+        .ui-resizable-handle { display: none !important; }
     }
     &.hideMonitoring {
         #workspace-container {
