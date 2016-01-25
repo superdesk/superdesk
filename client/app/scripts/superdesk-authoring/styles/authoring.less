@@ -485,24 +485,26 @@
     z-index: 2;
     .box-sizing(border-box);
     .box-shadow(0px 2px 4px -1px rgba(0,0,0,0.2));
-		max-height: 1px;
-    .transition(max-height 1s);
+		max-height: 0;
+    //.transition(max-height 0.3s ease-in);
 
     > .authoring-header__holder {
         height: 0px;
 				opacity: 0;
         overflow: hidden;
-				.transition(opacity 0.3s 0.4s);
+				//.transition(opacity 0.3s 0.4s);
+				.transition(opacity 0.4s 0.1s);
     }
 
     &.active {
 			max-height: 500px;
-			.transition(max-height 0.3s ease-in);
+			//.transition(max-height 0.3s ease-in);
         > .authoring-header__holder {
             height: auto;
 						opacity: 1;
             overflow: visible;
-						.transition(opacity 0.3s 0.4s);
+						//.transition(opacity 0.3s 0.4s);
+						.transition(opacity 0.4s 0.1s);
         }
     }
 
