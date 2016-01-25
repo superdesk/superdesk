@@ -2552,6 +2552,11 @@
                             scope.onchange({item: scope.item, data: data});
                         });
                 };
+
+                scope.remove = function(item) {
+                    var data = updateItemAssociation(null);
+                    scope.onchange({item: scope.item, data: data});
+                };
             }
         };
     }
