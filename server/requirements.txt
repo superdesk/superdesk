@@ -2,5 +2,5 @@ gunicorn==19.3.0
 honcho==0.6.6
 pymongo==2.8
 Eve==0.6.0
-Superdesk-Core==0.0.6
+Superdesk-Core==0.0.8
 
