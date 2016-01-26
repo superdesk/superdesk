@@ -1188,7 +1188,6 @@
                 }
 
                 workspace.resizable({
-                    autoHide: true,
                     handles: 'e',
                     minWidth: 400,
                     start: function(e, ui) {
