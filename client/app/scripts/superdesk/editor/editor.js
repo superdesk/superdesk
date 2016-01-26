@@ -786,7 +786,14 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                     var range = selRange.cloneRange();
                     range.selectNodeContents(blockEl);
                     range.setStart(selRange.endContainer, selRange.endOffset);
-                    return range.extractContents();
+                    var remaining = range.extractContents();
+                    // remove empty last line
+                    $(blockEl).find('p:last').each(function() {
+                        if ($(this).text() === '') {
+                            this.remove();
+                        }
+                    });
+                    return remaining;
                 }
             }
         }
@@ -841,14 +848,17 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                             if (!this.isActive()) {
                                 return false;
                             }
-                            var remainingElements = extractBlockContentsFromCaret();
+                            // save caret position
+                            scope.sdTextEditorBlockText.caretPosition = this.base.exportSelection();
+                            // extract the text after the cursor
                             var remainingElementsContainer = document.createElement('div');
-                            remainingElementsContainer.appendChild(remainingElements.cloneNode(true));
+                            remainingElementsContainer.appendChild(extractBlockContentsFromCaret().cloneNode(true));
                             // remove the first line if empty
-                            var firstParagraph = $(remainingElementsContainer).find('p:first');
-                            if (firstParagraph.text() === '') {
-                                firstParagraph.remove();
-                            }
+                            $(remainingElementsContainer).find('p:first').each(function() {
+                                if ($(this).text() === '') {
+                                    this.remove();
+                                }
+                            });
                             var indexWhereToAddNewBlock = sdTextEditor.getBlockPosition(scope.sdTextEditorBlockText) + 1;
                             // add new text block for the remaining text
                             sdTextEditor.insertNewBlock(indexWhereToAddNewBlock, {
@@ -884,6 +894,13 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                     }
                     // create a new instance of the medium editor binded to this node
                     scope.medium = new window.MediumEditor(scope.node, editorConfig);
+                    // restore the selection if exist
+                    if (scope.sdTextEditorBlockText.caretPosition) {
+                        scope.node.focus();
+                        scope.medium.importSelection(scope.sdTextEditorBlockText.caretPosition);
+                        // clear the saved position
+                        scope.sdTextEditorBlockText.caretPosition = undefined;
+                    }
                     // listen updates by medium editor to update the model
                     scope.medium.subscribe('editableInput', function() {
                         cancelTimeout();
