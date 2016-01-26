@@ -521,7 +521,7 @@ function MetadataLocatorsDirective($timeout) {
 
             $timeout(function() {
                 if (scope.item) {
-                    if (scope.fieldprefix && scope.item[scope.fieldprefix][scope.field]) {
+                    if (scope.fieldprefix && scope.item[scope.fieldprefix] && scope.item[scope.fieldprefix][scope.field]) {
                         scope.selectedTerm = scope.item[scope.fieldprefix][scope.field].city;
                     } else if (scope.item[scope.field]) {
                         scope.selectedTerm = scope.item[scope.field].city;
@@ -575,6 +575,10 @@ function MetadataLocatorsDirective($timeout) {
 
                 if (locator) {
                     if (angular.isDefined(scope.fieldprefix)) {
+                        if (!angular.isDefined(scope.item[scope.fieldprefix]))
+                        {
+                            _.extend(scope.item, {dateline: {}});
+                        }
                         updates[scope.fieldprefix] = scope.item[scope.fieldprefix];
                         updates[scope.fieldprefix][scope.field] = locator;
                     } else {

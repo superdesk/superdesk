@@ -2147,8 +2147,8 @@
                 /* Creates a copy of dateline object from item.__proto__.dateline */
                 scope.$watch('item', function(item) {
                     if (item) {
-                        var updates = {dateline: {}};
                         if (item.dateline) {
+                            var updates = {dateline: {}};
                             updates.dateline = _.pick(item.dateline, ['source', 'date', 'located', 'text']);
                             if (item.dateline.located) {
                                 var monthAndDay = $filter('formatDatelineToMMDD')(item.dateline.date, item.dateline.located);
@@ -2156,9 +2156,8 @@
                                 scope.datelineDay = monthAndDay.day;
                                 scope.resetNumberOfDays(false);
                             }
+                            _.extend(item, updates);
                         }
-
-                        _.extend(item, updates);
                     }
                 });
 
