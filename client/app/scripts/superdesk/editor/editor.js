@@ -807,34 +807,43 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                 ngModel.$viewChangeListeners.push(changeListener);
                 ngModel.$render = function () {
                     var editorConfig = angular.extend({}, EDITOR_CONFIG, scope.config || {});
-                    var EmbedButton = function(sdTextEditor) {
-                        angular.extend(this, {
-                            name: 'embed',
-                            contentDefault: '<b>Embed</b>', // default innerHTML of the button
-                            getButton: function () {
-                                this.button = document.createElement('button');
-                                this.button.classList.add('medium-editor-action');
-                                this.button.innerHTML = '<b>Embed</b>';
-                                this.button.onclick = this.handleClick.bind(this);
-                                return this.button;
-                            },
-                            handleClick: function() {
-                                var lastParagraph = extractBlockContentsFromCaret();
-                                var lastParagraphDiv = document.createElement('div');
-                                lastParagraphDiv.appendChild(lastParagraph.cloneNode(true));
-                                var indexWhereToAddNewBlock = sdTextEditor.getBlockPosition(scope.sdTextEditorBlockText) + 1;
-                                // add new text block for the remaining text
-                                sdTextEditor.insertNewBlock(indexWhereToAddNewBlock, {
-                                    body: lastParagraphDiv.innerHTML
-                                }, true);
-                                // hide the toolbar
-                                this.base.getExtensionByName('toolbar').hideToolbarDefaultActions();
-                                // show the add-embed form
-                                scope.sdTextEditorBlockText.showAndFocusLowerAddAnEmbedBox();
-                                $timeout(updateModel, false);
+                    var EmbedButton = window.MediumEditor.extensions.button.extend({
+                        name: 'embed',
+                        contentDefault: '<b>Embed</b>', // default innerHTML of the button
+                        init: function() {
+                            window.MediumEditor.extensions.form.prototype.init.apply(this, arguments);
+                            this.subscribe('editableKeydown', this.handleKeydown.bind(this));
+                        },
+                        getButton: function () {
+                            this.button = document.createElement('button');
+                            this.button.classList.add('medium-editor-action');
+                            this.button.innerHTML = '<b>Embed</b>';
+                            this.button.onclick = this.handleClick.bind(this);
+                            return this.button;
+                        },
+                        handleClick: function() {
+                            var lastParagraph = extractBlockContentsFromCaret();
+                            var lastParagraphDiv = document.createElement('div');
+                            lastParagraphDiv.appendChild(lastParagraph.cloneNode(true));
+                            var indexWhereToAddNewBlock = sdTextEditor.getBlockPosition(scope.sdTextEditorBlockText) + 1;
+                            // add new text block for the remaining text
+                            sdTextEditor.insertNewBlock(indexWhereToAddNewBlock, {
+                                body: lastParagraphDiv.innerHTML
+                            }, true);
+                            // hide the toolbar
+                            this.base.getExtensionByName('toolbar').hideToolbarDefaultActions();
+                            // show the add-embed form
+                            scope.sdTextEditorBlockText.showAndFocusLowerAddAnEmbedBox();
+                            $timeout(updateModel, false);
+                        },
+                        // Called when user hits the defined shortcut (CTRL / COMMAND + e)
+                        handleKeydown: function (event) {
+                            if (window.MediumEditor.util.isKey(event, 69) &&
+                                window.MediumEditor.util.isMetaCtrlKey(event) && !event.shiftKey) {
+                                this.handleClick(event);
                             }
-                        });
-                    };
+                        }
+                    });
                     editorConfig.extensions = {
                         'embed': new EmbedButton(sdTextEditor)
                     };

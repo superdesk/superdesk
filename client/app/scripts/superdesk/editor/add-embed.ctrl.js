@@ -108,6 +108,14 @@ function SdAddEmbedController (embedService, $element, $timeout, $q, _, EMBED_PR
             vm.createFigureBlock('Image', html, item.description);
         }
     });
+    $element.bind('keyup', function(e) {
+        if (e.keyCode === 27) { // escape
+            $timeout(function() {
+                vm.extended = false;
+            });
+        }
+    });
+
     // toggle when the `extended` directive attribute changes
     $scope.$watch(function() {
         return vm.extended;
