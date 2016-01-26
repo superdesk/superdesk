@@ -1,6 +1,10 @@
 <div class="article-versions" ng-controller="HistoryWidgetCtrl">
     <ul class="history-list">
-        <li class="item" ng-class="{selected: selected === version}" ng-repeat="version in versions track by version._current_version">
+        <li class="item"
+            ng-class="{selected: selected === version}"
+            ng-repeat="version in versions track by version._current_version"
+            ng-disabled="!item._editable">
+
             <div ng-if="version.operation == 'create'" ng-click="openVersion(version)">
                 {{ :: version.typeName }} <b>{{ :: version.unique_id }}</b>
                 <span ng-if='version.stage'>({{version.desk}}/{{version.stage}})</span>

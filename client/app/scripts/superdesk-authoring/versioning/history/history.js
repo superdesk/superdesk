@@ -44,11 +44,13 @@ function HistoryController($scope, authoring, api, notify, desks, archiveService
      * If there is no autosave then last one will make item editable
      */
     $scope.openVersion = function(version) {
-        $scope.selected = version;
-        if (version === $scope.last && !$scope.item._autosave) {
-            $scope.closePreview();
-        } else {
-            $scope.preview(version);
+        if ($scope.item._editable) {
+            $scope.selected = version;
+            if (version === $scope.last && !$scope.item._autosave) {
+                $scope.closePreview();
+            } else {
+                $scope.preview(version);
+            }
         }
     };
 
