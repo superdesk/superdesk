@@ -805,7 +805,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                 var updateTimeout;
                 var renderTimeout;
                 ngModel.$viewChangeListeners.push(changeListener);
-                ngModel.$render = function () {
+                ngModel.$render = function() {
                     var editorConfig = angular.extend({}, EDITOR_CONFIG, scope.config || {});
                     var EmbedButton = window.MediumEditor.extensions.button.extend({
                         name: 'embed',
@@ -814,21 +814,45 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                             window.MediumEditor.extensions.form.prototype.init.apply(this, arguments);
                             this.subscribe('editableKeydown', this.handleKeydown.bind(this));
                         },
-                        getButton: function () {
-                            this.button = document.createElement('button');
-                            this.button.classList.add('medium-editor-action');
-                            this.button.innerHTML = '<b>Embed</b>';
-                            this.button.onclick = this.handleClick.bind(this);
+                        isAlreadyApplied: function (node) {
+                            var textContent = angular.isDefined(node.textContent) ? node.textContent : node.innerText;
+                            return node.nodeName.toLowerCase() === 'p' && textContent === '';
+                        },
+                        isActive: function() {
+                            return !this.button.classList.contains('medium-editor-button-disabled');
+                        },
+                        setInactive: function() {
+                            this.button.classList.add('medium-editor-button-disabled');
+                        },
+                        setActive: function() {
+                            this.button.classList.remove('medium-editor-button-disabled');
+                        },
+                        getButton: function() {
+                            if (!angular.isDefined(this.button)) {
+                                this.button = document.createElement('button');
+                                this.button.classList.add('medium-editor-action');
+                                this.button.innerHTML = '<b>Embed</b>';
+                                this.button.onclick = this.handleClick.bind(this);
+                            }
                             return this.button;
                         },
                         handleClick: function() {
-                            var lastParagraph = extractBlockContentsFromCaret();
-                            var lastParagraphDiv = document.createElement('div');
-                            lastParagraphDiv.appendChild(lastParagraph.cloneNode(true));
+                            // does nothing if embed must be inactive
+                            if (!this.isActive()) {
+                                return false;
+                            }
+                            var remainingElements = extractBlockContentsFromCaret();
+                            var remainingElementsContainer = document.createElement('div');
+                            remainingElementsContainer.appendChild(remainingElements.cloneNode(true));
+                            // remove the first line if empty
+                            var firstParagraph = $(remainingElementsContainer).find('p:first');
+                            if (firstParagraph.text() === '') {
+                                firstParagraph.remove();
+                            }
                             var indexWhereToAddNewBlock = sdTextEditor.getBlockPosition(scope.sdTextEditorBlockText) + 1;
                             // add new text block for the remaining text
                             sdTextEditor.insertNewBlock(indexWhereToAddNewBlock, {
-                                body: lastParagraphDiv.innerHTML
+                                body: remainingElementsContainer.innerHTML
                             }, true);
                             // hide the toolbar
                             this.base.getExtensionByName('toolbar').hideToolbarDefaultActions();
@@ -837,7 +861,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                             $timeout(updateModel, false);
                         },
                         // Called when user hits the defined shortcut (CTRL / COMMAND + e)
-                        handleKeydown: function (event) {
+                        handleKeydown: function(event) {
                             if (window.MediumEditor.util.isKey(event, 69) &&
                                 window.MediumEditor.util.isMetaCtrlKey(event) && !event.shiftKey) {
                                 this.handleClick(event);
