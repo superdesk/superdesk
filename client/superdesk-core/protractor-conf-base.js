@@ -21,7 +21,10 @@ var config = {
         password: 'admin'
     },
 
-    specs: ['spec/**/*[Ss]pec.js'],
+    specs: [
+        require('path').join(__dirname, '/spec/**/*[Ss]pec.js'),
+        'spec/**/*[Ss]pec.js' // make this editable
+    ],
 
     framework: 'jasmine2',
     jasmineNodeOpts: {

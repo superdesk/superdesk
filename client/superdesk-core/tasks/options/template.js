@@ -27,7 +27,12 @@ module.exports = function(grunt) {
             editor: {disableEditorToolbar: disableEditorToolbar}
         };
 
-        return {data: {config: config}};
+        var path = {
+            bower: 'scripts/bower_components',
+            core: 'scripts'
+        };
+
+        return {data: {config: config, path: path}};
     }
 
     var files = {'<%= distDir %>/index.html': '<%= appDir %>/index.html'};
