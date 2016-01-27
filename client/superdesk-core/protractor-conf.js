@@ -1,5 +1,7 @@
 'use strict';
 
+var path = require('path');
+
 function getChromeOptions() {
     var chromeOptions = {
         args: ['no-sandbox']
@@ -21,10 +23,11 @@ var config = {
         password: 'admin'
     },
 
-    specs: [
-        require('path').join(__dirname, '/spec/**/*[Ss]pec.js'),
-        'spec/**/*[Ss]pec.js' // make this editable
-    ],
+    suites: {
+        a: path.join(__dirname, '/spec/**/[a-f]*[Ss]pec.js'),
+        b: path.join(__dirname, '/spec/**/[g-m]*[Ss]pec.js'),
+        c: path.join(__dirname, '/spec/**/[n-z]*[Ss]pec.js')
+    },
 
     framework: 'jasmine2',
     jasmineNodeOpts: {
@@ -60,4 +63,4 @@ var config = {
     }
 };
 
-module.exports = config;
+exports.config = config;

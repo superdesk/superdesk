@@ -84,7 +84,7 @@ script:
     - if [ "${TARGET}" != "${TARGET/e2e_first/}" ]; then
         cd client &&
         ./node_modules/.bin/webdriver-manager update &&
-        ./node_modules/.bin/protractor-flake --node-bin node --max-attempts=3 -- protractor-conf-first.js
+        ./node_modules/.bin/protractor-flake --node-bin node --max-attempts=3 -- protractor-conf.js --suite=a
           --stackTrace --verbose
           --baseUrl 'http://127.0.0.1:9000'
           --params.baseBackendUrl 'http://127.0.0.1:5000/api'
@@ -96,7 +96,7 @@ script:
     - if [ "${TARGET}" != "${TARGET/e2e_second/}" ]; then
         cd client &&
         ./node_modules/.bin/webdriver-manager update &&
-        ./node_modules/.bin/protractor-flake --node-bin node --max-attempts=3 -- protractor-conf-second.js
+        ./node_modules/.bin/protractor-flake --node-bin node --max-attempts=3 -- protractor-conf.js --suite=b
           --stackTrace --verbose
           --baseUrl 'http://127.0.0.1:9000'
           --params.baseBackendUrl 'http://127.0.0.1:5000/api'
@@ -108,7 +108,7 @@ script:
     - if [ "${TARGET}" != "${TARGET/e2e_third/}" ]; then
         cd client &&
         ./node_modules/.bin/webdriver-manager update &&
-        ./node_modules/.bin/protractor-flake --node-bin node --max-attempts=3 -- protractor-conf-third.js
+        ./node_modules/.bin/protractor-flake --node-bin node --max-attempts=3 -- protractor-conf.js --suite=c
           --stackTrace --verbose
           --baseUrl 'http://127.0.0.1:9000'
           --params.baseBackendUrl 'http://127.0.0.1:5000/api'

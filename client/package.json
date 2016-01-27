@@ -2,5 +2,5 @@
   "name": "superdesk",
   "license": "GPL-3.0",
   "scripts": {"test": "grunt ci:travis"},
-  "dependencies": {"superdesk-core": "0.0.3"}
+  "dependencies": {"superdesk-core": "0.0.4"}
 }
