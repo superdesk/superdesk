@@ -10,8 +10,11 @@
 
 from superdesk.publish.formatters import Formatter
 import superdesk
+import re
+from eve.utils import config
 from superdesk.utils import json_serialize_datetime_objectId
 from superdesk.errors import FormatterError
+from superdesk.metadata.item import ITEM_TYPE, PACKAGE_TYPE
 from bs4 import BeautifulSoup
 from .field_mappers.locator_mapper import LocatorMapper
 
@@ -31,16 +34,26 @@ class AAPBulletinBuilderFormatter(Formatter):
             article['slugline'] = self.append_legal(article=article, truncate=True)
             pub_seq_num = superdesk.get_resource_service('subscribers').generate_sequence_number(subscriber)
             body_html = self.append_body_footer(article).strip('\r\n')
-            soup = BeautifulSoup(body_html, "html.parser")
-            for br in soup.find_all('br'):
-                # remove the <br> tag
-                br.replace_with(' {}'.format(br.get_text()))
+            soup = BeautifulSoup(body_html, 'html.parser')
+
+            if not len(soup.find_all('p')):
+                for br in soup.find_all('br'):
+                    # remove the <br> tag
+                    br.replace_with(' {}'.format(br.get_text()))
 
             for p in soup.find_all('p'):
                 # replace <p> tag with two carriage return
-                p.replace_with('{}\r\n\r\n'.format(p.get_text()))
+                for br in p.find_all('br'):
+                    # remove the <br> tag
+                    br.replace_with(' {}'.format(br.get_text()))
 
-            article['body_text'] = soup.get_text()
+                para_text = p.get_text().strip()
+                if para_text != '':
+                    p.replace_with('{}\r\n\r\n'.format(para_text))
+                else:
+                    p.replace_with('')
+
+            article['body_text'] = re.sub(' +', ' ', soup.get_text())
 
             # get the first category and derive the locator
             category = next((iter(article.get('anpa_category', []))), None)
@@ -49,7 +62,17 @@ class AAPBulletinBuilderFormatter(Formatter):
                 if locator:
                     article['place'] = [{'qcode': locator, 'name': locator}]
 
-            return [(pub_seq_num, superdesk.json.dumps(article, default=json_serialize_datetime_objectId))]
+            odbc_item = {
+                'id': article.get(config.ID_FIELD),
+                'version': article.get(config.VERSION),
+                ITEM_TYPE: article.get(ITEM_TYPE),
+                PACKAGE_TYPE: article.get(PACKAGE_TYPE, ''),
+                'headline': article.get('headline', ''),
+                'slugline': article.get('slugline', ''),
+                'data': superdesk.json.dumps(article, default=json_serialize_datetime_objectId)
+            }
+
+            return [(pub_seq_num, odbc_item)]
         except Exception as ex:
             raise FormatterError.bulletinBuilderFormatterError(ex, subscriber)
 

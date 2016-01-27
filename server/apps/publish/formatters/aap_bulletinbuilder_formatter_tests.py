@@ -9,12 +9,13 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 from superdesk.publish.subscribers import SUBSCRIBER_TYPES
-
+from eve.utils import config
 from test_factory import SuperdeskTestCase
 from apps.publish import init_app
 from apps.publish.formatters.aap_bulletinbuilder_formatter import AAPBulletinBuilderFormatter
 from superdesk.utils import json_serialize_datetime_objectId
 from superdesk import json
+from superdesk.metadata.item import ITEM_TYPE, PACKAGE_TYPE
 from superdesk.utc import utcnow
 from bson import ObjectId
 
@@ -35,6 +36,8 @@ class AapBulletinBuilderFormatterTest(SuperdeskTestCase):
 
     def test_bulletin_builder_formatter(self):
         article = {
+            config.ID_FIELD: '123',
+            config.VERSION: 2,
             'source': 'AAP',
             'anpa_category': [{'qcode': 'a'}],
             'headline': 'This is a test headline',
@@ -55,10 +58,19 @@ class AapBulletinBuilderFormatterTest(SuperdeskTestCase):
         subscriber = self.app.data.find('subscribers', None, None)[0]
         seq, item = self._formatter.format(article, subscriber)[0]
         self.assertGreater(int(seq), 0)
-        self.assertEqual(json.dumps(article, default=json_serialize_datetime_objectId), item)
+        self.assertEqual(article[config.ID_FIELD], item.get('id'))
+        self.assertEqual(article[config.VERSION], item.get('version'))
+        self.assertEqual(article[ITEM_TYPE], item.get(ITEM_TYPE))
+        self.assertEqual(article.get(PACKAGE_TYPE, ''), item.get(PACKAGE_TYPE))
+        self.assertEqual(article['headline'], item.get('headline'))
+        self.assertEqual(article['slugline'], item.get('slugline'))
+        self.assertEqual(json.dumps(article, default=json_serialize_datetime_objectId),
+                         item.get('data'))
 
     def test_strip_html(self):
         article = {
+            config.ID_FIELD: '123',
+            config.VERSION: 2,
             'source': 'AAP',
             'headline': 'This is a test headline',
             'type': 'text',
@@ -76,7 +88,52 @@ class AapBulletinBuilderFormatterTest(SuperdeskTestCase):
         subscriber = self.app.data.find('subscribers', None, None)[0]
         seq, item = self._formatter.format(article, subscriber)[0]
         self.assertGreater(int(seq), 0)
-        test_article = json.loads(item)
+        test_article = json.loads(item.get('data'))
+        self.assertEqual(test_article['body_text'], body_text)
+
+    def test_strip_html_case1(self):
+        article = {
+            config.ID_FIELD: '123',
+            config.VERSION: 2,
+            'source': 'AAP',
+            'headline': 'This is a test headline',
+            'type': 'text',
+            'body_html': ('<p>The story body line 1<br>Line 2</p>'
+                          '<p>abcdefghi abcdefghi abcdefghi abcdefghi abcdefghi'
+                          '<span> abcdefghi</span> abcdefghi abcdefghi more</p>'
+                          '<table><tr><td>test</td></tr></table>')
+        }
+
+        body_text = ('The story body line 1 Line 2\r\n\r\n'
+                     'abcdefghi abcdefghi abcdefghi abcdefghi abcdefghi'
+                     ' abcdefghi abcdefghi abcdefghi more\r\n\r\n'
+                     'test')
+
+        subscriber = self.app.data.find('subscribers', None, None)[0]
+        seq, item = self._formatter.format(article, subscriber)[0]
+        self.assertGreater(int(seq), 0)
+        test_article = json.loads(item.get('data'))
+        self.assertEqual(test_article['body_text'], body_text)
+
+    def test_strip_html_case2(self):
+        article = {
+            config.ID_FIELD: '123',
+            config.VERSION: 2,
+            'source': 'AAP',
+            'headline': 'This is a test headline',
+            'type': 'text',
+            'body_html': ('<p>This is third<br> take.</p><br><p>Correction in the third take.</p><br>'
+                          '<p>This is test.</p><br><p><br></p>')
+        }
+
+        body_text = ('This is third take.\r\n\r\n'
+                     'Correction in the third take.\r\n\r\n'
+                     'This is test.\r\n\r\n')
+
+        subscriber = self.app.data.find('subscribers', None, None)[0]
+        seq, item = self._formatter.format(article, subscriber)[0]
+        self.assertGreater(int(seq), 0)
+        test_article = json.loads(item.get('data'))
         self.assertEqual(test_article['body_text'], body_text)
 
     def test_locator(self):
@@ -102,14 +159,14 @@ class AapBulletinBuilderFormatterTest(SuperdeskTestCase):
         subscriber = self.app.data.find('subscribers', None, None)[0]
         seq, item = self._formatter.format(article, subscriber)[0]
         self.assertGreater(int(seq), 0)
-        test_article = json.loads(item)
+        test_article = json.loads(item.get('data'))
         self.assertEqual(test_article['headline'], 'This is a test headline')
         self.assertEqual(test_article['place'][0]['qcode'], 'CRIK')
         article['anpa_category'] = [{'qcode': 'a'}]
         article['place'] = [{'qcode': 'VIC', 'name': 'VIC'}]
         seq, item = self._formatter.format(article, subscriber)[0]
         self.assertGreater(int(seq), 0)
-        test_article = json.loads(item)
+        test_article = json.loads(item.get('data'))
         self.assertEqual(test_article['headline'], 'This is a test headline')
         self.assertEqual(test_article['place'][0]['qcode'], 'VIC')
 
@@ -136,6 +193,6 @@ class AapBulletinBuilderFormatterTest(SuperdeskTestCase):
         subscriber = self.app.data.find('subscribers', None, None)[0]
         seq, item = self._formatter.format(article, subscriber)[0]
 
-        formatted_article = json.loads(item)
+        formatted_article = json.loads(item.get('data'))
         self.assertEqual(formatted_article['body_text'],
                          'The story body call helpline 999 if you are planning to quit smoking')
