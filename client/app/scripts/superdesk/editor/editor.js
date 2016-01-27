@@ -534,7 +534,7 @@ function EditorService(spellcheck, $rootScope, $timeout, $q) {
         if (nodeValue !== scope.model.$viewValue) {
             scope.model.$setViewValue(nodeValue);
             self.storeSelection(scope.node);
-            scope.history.add(clean(scope.node).innerHTML, self.selection);
+            scope.history.add(clean(scope.node), self.selection);
             self.resetSelection(scope.node);
         }
     };
@@ -588,11 +588,16 @@ function EditorService(spellcheck, $rootScope, $timeout, $q) {
      * @param {Scope} scope
      */
     function useHistory(scope) {
+        var TYPING_CLASS = 'typing';
         var val = scope.history.get();
-        if (val != null) {
-            scope.node.innerHTML = val;
-            scope.model.$setViewValue(val);
+        var checkVal = val.innerHTML ? clearRangy(angular.copy(val)).innerHTML : val;
+        if (clean(scope.node).innerHTML !== checkVal) {
+            scope.node.innerHTML = val.innerHTML ? val.innerHTML : val;
+            scope.model.$setViewValue(val.innerHTML ? val.innerHTML : val);
             self.selection = scope.history.getSelection();
+        } else {
+            self.renderScope(scope);
+            scope.node.classList.remove(TYPING_CLASS);
         }
     }
 }
@@ -638,20 +643,20 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
                 keyboardManager.bind('ctrl+shift+d', render);
 
                 ngModel.$render = function () {
-                    var editorOptions = angular.extend({}, editorConfig, scope.config || {});
-
                     editorElem = elem.find('.editor-type-html');
                     editorElem.empty();
                     editorElem.html(ngModel.$viewValue || '');
 
-                    spellcheck.setLanguage(scope.language);
-
-                    scope.node = editorElem[0];
-                    scope.model = ngModel;
-
-                    scope.medium = new window.MediumEditor(scope.node, editorOptions);
-
                     if (!scope.rendered) {
+                        var editorOptions = angular.extend({}, editorConfig, scope.config || {});
+
+                        spellcheck.setLanguage(scope.language);
+
+                        scope.node = editorElem[0];
+                        scope.model = ngModel;
+
+                        scope.medium = new window.MediumEditor(scope.node, editorOptions);
+
                         editorElem.on('keydown', function(event) {
                             if (editor.shouldIgnore(event)) {
                                 return;
@@ -743,15 +748,11 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
                 };
 
                 function doUndo() {
-                    scope.$applyAsync(function() {
-                        editor.undo(scope);
-                    });
+                    editor.undo(scope);
                 }
 
                 function doRedo() {
-                    scope.$applyAsync(function() {
-                        editor.redo(scope);
-                    });
+                    editor.redo(scope);
                 }
 
                 function updateModel() {
@@ -760,7 +761,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
 
                 function changeListener() {
                     $timeout.cancel(renderTimeout);
-                    renderTimeout = $timeout(render, 500, false);
+                    renderTimeout = $timeout(render, 50, false);
                 }
             }
         };
