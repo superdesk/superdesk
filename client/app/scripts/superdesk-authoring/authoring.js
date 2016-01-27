@@ -169,8 +169,8 @@
         };
     }
 
-    AuthoringService.$inject = ['$q', 'api', 'lock', 'autosave', 'confirm', 'privileges', 'desks'];
-    function AuthoringService($q, api, lock, autosave, confirm, privileges, desks) {
+    AuthoringService.$inject = ['$q', 'api', 'lock', 'autosave', 'confirm', 'privileges', 'desks', 'superdeskFlags'];
+    function AuthoringService($q, api, lock, autosave, confirm, privileges, desks, superdeskFlags) {
         var self = this;
 
         this.limits = {
@@ -203,6 +203,7 @@
          * @param {string} repo - repository where an item whose identifier is _id can be found.
          */
         this.open = function openAuthoring(_id, read_only, repo) {
+            superdeskFlags.flags.authoring = true;
             if (_.contains(['legal_archive', 'archived'], repo)) {
                 return api.find(repo, _id).then(function(item) {
                     item._editable = false;
