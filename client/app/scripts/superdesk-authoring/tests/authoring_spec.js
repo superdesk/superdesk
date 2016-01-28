@@ -359,17 +359,22 @@ describe('cropImage', function() {
             cropData: {}
         };
 
+        expect($scope.preview[$scope.data.cropsizes[0].name]).toBe(undefined); //   expect loading indicator
+
         $scope.preview = {
             '4-3': {
                 cords: {x: 0, x2: 800, y: 0, y2: 600, w: 800, h: 600}
             }
         };
 
+        expect($scope.preview[$scope.data.cropsizes[0].name].cords).not.toBe(undefined); // expect Image loaded
+
         var toMatch = {'CropLeft': 0, 'CropRight': 800, 'CropTop': 0, 'CropBottom': 600};
 
         $scope.resolve = jasmine.createSpy('resolve');
         $scope.done();
         $rootScope.$digest();
+
         expect($scope.data.cropData['4-3']).toEqual(toMatch);
     }));
 
