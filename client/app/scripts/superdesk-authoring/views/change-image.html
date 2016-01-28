@@ -8,7 +8,7 @@
         <div id="dynBoxId2" class="preview">
           <div class="original">
             <div class="crop-area image">
-                <ul> 
+                <ul ng-class="{loading: !preview[data.cropsizes[0].name].cords}">
                     <li ng-repeat="cropsize in data.cropsizes track by cropsize.name">
                     <label class="field-label"><span translate>ASPECT RATIO</span>: {{cropsize.name.replace('-', '/') | translate}}</label>
                     <label class="cords-label">{{preview[cropsize.name].cords}}</label>
