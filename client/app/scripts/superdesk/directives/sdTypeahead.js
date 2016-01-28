@@ -71,10 +71,6 @@ define(['angular'], function(angular) {
                         }
                     };
 
-                    $scope.isVisible = function() {
-                        return !$scope.hide && ($scope.focused || $scope.mousedOver) && ($scope.items.length > 0);
-                    };
-
                     $scope.query = function() {
                         $scope.hide = false;
                         $scope.search({term: $scope.term});
@@ -133,6 +129,10 @@ define(['angular'], function(angular) {
                         }
                     });
 
+                    scope.isVisible = function() {
+                        return element && element.is(':visible');
+                    };
+
                     scope.$watch('items', function(items) {
                         controller.activate(items.length ? items[0] : null);
                     });
@@ -147,9 +147,15 @@ define(['angular'], function(angular) {
                         if (visible || scope.alwaysVisible) {
                             $list.show();
                             scope.hide = false;
+                            $timeout(function() {
+                                $input.focus();
+                            }, 0, false);
                         } else {
                             $list.hide();
                             scope.active = null;
+                            $timeout(function() {
+                                $input.blur();
+                            }, 0, false);
                         }
                     });
                 }

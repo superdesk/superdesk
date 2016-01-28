@@ -37,12 +37,14 @@
 
 <div class="field" ng-if="schema.byline">
   <label translate>By</label>
+  <!-- Placeholder text is temporary, ideally it should come from content type -->
   <input type="text"
          class="byline"
          id="byline"
          ng-model="item.byline"
          ng-change="autosave(item)"
-         ng-if="_editable">
+         ng-if="_editable"
+         placeholder="Add text here">
   <div ng-if="!_editable">{{item.byline}}</div>
 </div>
 

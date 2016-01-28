@@ -1,5 +1,19 @@
 @import 'variables.less';
 @import 'mixins.less';
+
+[contenteditable=true] {
+	&:before{
+		display: block; /* For Firefox */
+	}
+	&:empty:before{
+  		content: attr(placeholder);
+  		display: block; /* For Firefox */
+  		color: #ccc;
+	}
+	&:focus:before{
+		display: none;
+	}
+}
 .medium-editor-toolbar {
     z-index: 10;
     // disabled state for toolbar button
@@ -99,9 +113,6 @@
                     position: relative;
                 }
             }
-        }
-        .preview {
-            margin: 20px;
         }
     }
 }
