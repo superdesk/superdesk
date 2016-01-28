@@ -42,6 +42,7 @@ describe('monitoring', function() {
         expect(monitoring.getTextItem(3, 2)).toBe('item6');
         monitoring.actionOnItem('Edit', 3, 2);
         authoring.publish();
+        authoring.savePublish();
         expect(monitoring.getTextItem(5, 0)).toBe('item6');
     });
 
