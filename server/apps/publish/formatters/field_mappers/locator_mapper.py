@@ -94,7 +94,7 @@ class LocatorMapper(FieldMapper):
         :param dict kwargs: keyword args
         :return: if found then the locator as string else None
         """
-        if category == 'S':
+        if category == 'S' or category == 'T':
             mapped_value = self._map_locator_code(article, category, self.iptc_sports_locators)
         else:
             mapped_value = self._map_locator_code(article, category, self.iptc_locators)

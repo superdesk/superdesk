@@ -47,4 +47,5 @@ class SelectorcodeMapperTest(SuperdeskTestCase):
         self.assertEqual(f.map(article1, category1), 'TRAVI')
         self.assertEqual(f.map(article2, category2), 'TRAVD')
         self.assertEqual(f.map(article3, 'S'), 'TTEN')
+        self.assertEqual(f.map(article3, 'T'), 'TTEN')
         self.assertIsNone(f.map(article4, category2))
