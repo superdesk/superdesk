@@ -57,7 +57,10 @@ function Authoring() {
     };
 
     this.confirmSendTo = function() {
-        element(by.className('modal-content')).all(by.css('[ng-click="ok()"]')).click();
+        // no need to confirm if there is no spelling mistake
+        if (element(by.className('modal-content')).length) {
+            element(by.className('modal-content')).all(by.css('[ng-click="ok()"]')).click();
+        }
     };
 
     this.sendToSidebarOpened = function(desk, stage) {
