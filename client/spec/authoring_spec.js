@@ -330,4 +330,19 @@ describe('authoring', function() {
         monitoring.actionOnItem('Open', 4, 0);
         expect(authoring.getBodyFooterPreview()).not.toContain('<br>');
     });
+
+    it('maintains helpline first option always selected', function() {
+        expect(monitoring.getTextItem(1, 0)).toBe('item5');
+        monitoring.actionOnItem('Edit', 1, 0);
+        authoring.addHelpline('Suicide');
+        expect(authoring.getBodyFooter()).toMatch(/Readers seeking support and information about suicide*/);
+        expect(authoring.save_button.isEnabled()).toBe(true);
+        expect(authoring.getHelplineSelectedOption(0)).toBe('true');    // first option remained selected
+        expect(authoring.getHelplineSelectedOption(1)).toBe(null);      // Suicide not remained selected
+
+        //select another helpline
+        authoring.addHelpline('Children');
+        expect(authoring.getHelplineSelectedOption(0)).toBe('true');    // first option remained selected
+        expect(authoring.getHelplineSelectedOption(2)).toBe(null);      // Children not remained selected
+    });
 });
