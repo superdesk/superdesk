@@ -114,7 +114,7 @@ function TasksController($scope, $timeout, api, notify, desks, tasks, $filter, a
                     term: {'task.desk': desks.getCurrentDeskId()}
                 },
                 must_not: {
-                    terms: {state: ['published', 'spiked']}
+                    terms: {state: ['published', 'spiked', 'corrected', 'killed']}
                 }
             }};
 
