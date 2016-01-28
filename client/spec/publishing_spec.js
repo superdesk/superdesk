@@ -11,6 +11,7 @@ describe('publishing', function() {
         expect(monitoring.getTextItem(1, 0)).toBe('item5');
         monitoring.actionOnItem('Edit', 1, 0);
         authoring.publish();
+        authoring.savePublish();
         publishQueue.openPublishQueue();
     });
     it('publish using HTTP Push delivery type', function() {

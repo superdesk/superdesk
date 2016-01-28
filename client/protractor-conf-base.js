@@ -54,6 +54,7 @@ var config = {
             };
         }
         jasmine.getEnv().addReporter(new CustomReporter());
+        browser.driver.manage().timeouts().setScriptTimeout(60000);
     }
 };
 

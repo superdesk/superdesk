@@ -51,6 +51,7 @@ describe('authoring', function() {
         authoring.changeNormalTheme('dark-theme');
         expect(monitoring.hasClass(element(by.className('main-article')), 'dark-theme')).toBe(true);
         authoring.close();
+        authoring.ignore();
 
         //can change proofread theme
         expect(monitoring.getTextItem(2, 2)).toBe('item6');
@@ -58,11 +59,13 @@ describe('authoring', function() {
         authoring.changeProofreadTheme('dark-theme-mono');
         expect(monitoring.hasClass(element(by.className('main-article')), 'dark-theme-mono')).toBe(true);
         authoring.close();
+        authoring.ignore();
 
         //publish & kill item
         expect(monitoring.getTextItem(1, 0)).toBe('item5');
         monitoring.actionOnItem('Edit', 1, 0);
         authoring.publish();
+        authoring.savePublish();
         monitoring.showSearch();
         search.setListView();
         search.showCustomSearch();
@@ -77,6 +80,7 @@ describe('authoring', function() {
         expect(monitoring.getTextItem(2, 2)).toBe('item6');
         monitoring.actionOnItem('Edit', 2, 2);
         authoring.publish();
+        authoring.savePublish();
         monitoring.showSearch();
         search.setListView();
         search.showCustomSearch();
@@ -107,6 +111,7 @@ describe('authoring', function() {
         expect(authoring.getHistoryItems().count()).toBe(1);
         expect(authoring.getHistoryItem(0).getText()).toMatch(/Fetched as \d+ to Politic Desk\/two by.*/);
         authoring.close();
+        authoring.ignore();
 
         //view item history move operation
         expect(monitoring.getTextItem(1, 3)).toBe('item8');
@@ -124,6 +129,7 @@ describe('authoring', function() {
         expect(authoring.getHistoryItems().count()).toBe(3);
         expect(authoring.getHistoryItem(2).getText()).toMatch(/Moved to Politic Desk\/two by .*/);
         authoring.close();
+        authoring.ignore();
 
         //view item history create-update operations
         authoring.createTextItem();
@@ -141,6 +147,7 @@ describe('authoring', function() {
         expect(monitoring.getTextItem(2, 3)).toBe('item6');
         monitoring.actionOnItem('Edit', 2, 3);
         authoring.publish();
+        authoring.savePublish();
         monitoring.showSearch();
         search.setListView();
         search.showCustomSearch();
@@ -167,6 +174,7 @@ describe('authoring', function() {
         expect(authoring.getHistoryItem(1).getText()).toMatch(/Spiked from Politic Desk\/one by .*/);
         expect(authoring.getHistoryItem(2).getText()).toMatch(/Unspiked to Politic Desk\/one by .*/);
         authoring.close();
+        authoring.ignore();
 
         //view item history duplicate operation
         expect(monitoring.getTextItem(1, 0)).toBe('item5');
@@ -196,8 +204,9 @@ describe('authoring', function() {
         expect(authoring.getBodyText()).toBe('zitem5 text');
 
         element(by.cssContainingText('span', 'Headline')).click();
-        ctrlKey('q');
         browser.sleep(300);
+        ctrlKey('q');
+        authoring.ignore();
 
         expect(element(by.className('authoring-embedded')).isDisplayed()).toBe(false);
     });
@@ -214,6 +223,7 @@ describe('authoring', function() {
         expect(monitoring.getTextItem(1, 0)).toBe('item5');
         monitoring.actionOnItem('Edit', 1, 0);
         authoring.publish();
+        authoring.savePublish();
         monitoring.showSearch();
         search.setListView();
         search.showCustomSearch();
