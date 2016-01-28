@@ -1296,17 +1296,25 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
             }
         };
     }])
-    // FIXME: This is a demonstration about how to add a special handler.
-    // This is useless and must be removed.
     .run(['embedService', 'iframelyService', function(embedService, iframelyService) {
+        var pattern = 'https?:\/\/(?:www)\.playbuzz\.com(.*)$';
+        var loader = '//snappa.embed.pressassociation.io/playbuzz.js';
+        var html = [
+            '<script type="text/javascript" src="$_LOADER"></script>',
+            '<div class="pb_feed" data-game="$_URL" data-recommend="false" ',
+            'data-game-info="false" data-comments="false" data-shares="false" ></div>'
+        ].join('');
         embedService.registerHandler({
-            name: 'Twitter',
-            patterns: [
-                'https?://(?:www|mobile\\.)?twitter\\.com/(?:#!/)?[^/]+/status(?:es)?/(\\d+)/?$',
-                'https?://t\\.co/[a-zA-Z0-9]+'
-            ],
+            name: 'PlayBuzz',
+            patterns: [pattern],
             embed: function(url) {
-                return iframelyService.embed(url);
+                return iframelyService.embed(url)
+                    .then(function(result) {
+                        result.html = html
+                            .replace('$_LOADER', loader)
+                            .replace('$_URL', url.match(pattern)[1]);
+                        return result;
+                    });
             }
         });
     }])
