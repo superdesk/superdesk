@@ -543,12 +543,6 @@ function EditorService(spellcheck, $rootScope, $timeout, $q) {
      * @param {Scope} scope
      */
     this.commitScope = function(scope) {
-        // In case of Kill action, don't undo back to initial value (i.e: original article text) - [ref: SD-3917]
-        // Set initial value to kill template text at the beginning of history.
-        if (scope.$parent.action === 'kill' && scope.history.getIndex() === -1) {
-            scope.history.setInitialValue(scope.model.$viewValue);
-        }
-
         var nodeValue = clean(scope.node).innerHTML;
         if (nodeValue !== scope.model.$viewValue) {
             scope.model.$setViewValue(nodeValue);
