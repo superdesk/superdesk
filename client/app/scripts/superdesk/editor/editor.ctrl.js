@@ -150,6 +150,9 @@ function SdTextEditorController(_, EMBED_PROVIDERS) {
                     }
                 });
             } else {
+                if (vm.blocks[0].body.trim() === '<br>') {
+                    vm.blocks[0].body = '';
+                }
                 new_body = vm.blocks[0].body;
             }
             vm.model.$setViewValue(new_body);
