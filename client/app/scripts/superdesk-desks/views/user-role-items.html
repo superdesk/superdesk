@@ -15,20 +15,13 @@
         </div>
 	</li>
 </ul>
-<div sd-modal data-model="user" class="highlights-config-popup responsive-popup hide child-shadow" >
-    <section class="main-section user-profile-page">
-        <div class="form-content">
-            <div class="user-details-pane" >
-                <header>
-                    <div class="modal-header">
-                        <a href="" class="close" ng-click="closeEditUser()"><i class="icon-close-small"></i></a>
-                        <h3 translate>Edit user</h3>
-                    </div>
-                </header>
-                <div class="content">
-                    <div sd-user-edit data-user="user" data-oncancel="closeEditUser()" data-onsave="closeEditUser()"></div>
-                </div>
-            </div>
-        </div>
-    </section>
+
+<div sd-modal data-model="user" class="user-profile-page">
+    <div class="modal-header">
+        <a href="" class="close" ng-click="closeEditUser()"><i class="icon-close-small"></i></a>
+        <h3 translate>Edit user</h3>
+    </div>
+    <div class="modal-body">
+        <div class="user-details-pane" sd-user-edit data-user="user" data-oncancel="closeEditUser()" data-onsave="closeEditUser()"></div>
+    </div>
 </div>
