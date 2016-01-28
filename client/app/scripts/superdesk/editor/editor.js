@@ -195,7 +195,7 @@ function EditorService(spellcheck, $rootScope, $timeout) {
      */
     this.registerScope = function(scope) {
         scopes.push(scope);
-        scope.history = new HistoryStack(scope.model.$viewValue);
+        scope.history = new HistoryStack(scope.model.$viewValue || '');
         scope.$on('$destroy', function() {
             var index = scopes.indexOf(scope);
             scopes.splice(index, 1);
@@ -806,13 +806,13 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                 var ngModel = controllers[0];
                 var sdTextEditor = controllers[1];
                 scope.model = ngModel;
-                editor.registerScope(scope);
                 var TYPING_CLASS = 'typing';
                 var editorElem;
                 var updateTimeout;
                 var renderTimeout;
                 ngModel.$viewChangeListeners.push(changeListener);
                 ngModel.$render = function() {
+                    editor.registerScope(scope);
                     var editorConfig = angular.extend({}, EDITOR_CONFIG, scope.config || {});
                     var EmbedButton = window.MediumEditor.extensions.button.extend({
                         name: 'embed',
@@ -923,6 +923,25 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                     var ctrlOperations = {};
                     ctrlOperations[editor.KEY_CODES.Z] = doUndo;
                     ctrlOperations[editor.KEY_CODES.Y] = doRedo;
+
+                    editorElem.on('keydown', function(event) {
+                        if (editor.shouldIgnore(event)) {
+                            return;
+                        }
+                        cancelTimeout(event);
+                    });
+
+                    editorElem.on('keyup', function(event) {
+                        if (editor.shouldIgnore(event)) {
+                            return;
+                        }
+                        cancelTimeout(event);
+                        if (event.ctrlKey && ctrlOperations[event.keyCode]) {
+                            ctrlOperations[event.keyCode]();
+                            return;
+                        }
+                        updateTimeout = $timeout(updateModel, 800, false);
+                    });
 
                     editorElem.on('contextmenu', function(event) {
                         if (editor.isErrorNode(event.target)) {
