@@ -71,7 +71,7 @@ before_script:
 
 script:
     - if [ "${TARGET}" = "unit" ]; then
-        cd client && npm test && cd .. ;
+        cd client && grunt ci:travis test && cd .. ;
         cd server && flake8 && cd .. ;
         cd server && behave ./features/ --format progress2 --logging-level ERROR && cd .. ;
         cd server && nosetests --with-coverage --cover-package=superdesk,apps && cd .. ;

@@ -1,17 +1,30 @@
 module.exports = {
     assets: {
-        files: [{
-            expand: true,
-            dot: true,
-            cwd: '<%= appDir %>',
-            dest: '<%= distDir %>',
-            src: [
-                'fonts/*',
-                'images/**/*',
-                'styles/css/*.css',
-                'scripts/**/*.{html,css,jpg,jpeg,png,gif,svg,json}'
-            ]
-        }]
+        files: [
+            {
+                expand: true,
+                dot: true,
+                cwd: '<%= coreDir %>',
+                dest: '<%= distDir %>',
+                src: [
+                    'fonts/*',
+                    'images/**/*',
+                    'scripts/**/*.{html,css,jpg,jpeg,png,gif,svg,json}'
+                ]
+            },
+            {
+                expand: true,
+                dot: true,
+                cwd: '<%= appDir %>',
+                dest: '<%= distDir %>',
+                src: [
+                    'fonts/*',
+                    'images/**/*',
+                    'styles/css/*.css',
+                    'scripts/**/*.{html,css,jpg,jpeg,png,gif,svg,json}'
+                ]
+            }
+        ]
     },
     docs: {
         files: [{

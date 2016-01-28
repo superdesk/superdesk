@@ -17,6 +17,7 @@ module.exports = function(grunt) {
         specDir: 'spec',
         tasksDir: 'tasks',
         bowerDir: 'bower',
+        coreDir: 'node_modules/superdesk-core',
         poDir: 'po',
         livereloadPort: 35729
     };

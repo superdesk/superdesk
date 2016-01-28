@@ -2,7 +2,7 @@
 module.exports = function(grunt) {
     'use strict';
 
-    var base = ['<%= distDir %>', '<%= tmpDir %>', '<%= appDir %>'];
+    var base = ['<%= distDir %>', '<%= appDir %>', '<%= coreDir %>'];
 
     return {
         options: {
