@@ -61,6 +61,10 @@ class EnqueuePublishedService(EnqueueService):
         # Step 3
         if doc.get(ITEM_TYPE) in [CONTENT_TYPE.TEXT, CONTENT_TYPE.PREFORMATTED]:
             first_take = self.takes_package_service.get_first_take_in_takes_package(doc)
+            if doc['item_id'] == first_take:
+                # if the current document is the first take then continue
+                first_take = None
+
             if first_take:
                 # if first take is published then subsequent takes should to same subscribers.
                 query = {'$and': [{'item_id': first_take},

@@ -715,11 +715,14 @@ Feature: Auto Routing
         #routing_schemes._id#
         """
         When we get "/published"
-        Then we get list with 1 items
+        Then we get list with 2 items
         """
         {"_items": [
           {
-              "headline": "ASIA:Samsung sells defence, petrochemical units"
+              "headline": "ASIA:Samsung sells defence, petrochemical units", "type": "text"
+          },
+          {
+              "headline": "ASIA:Samsung sells defence, petrochemical units", "type": "composite"
           }
         ]}
         """

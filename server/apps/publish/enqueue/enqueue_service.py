@@ -16,9 +16,10 @@ from superdesk.metadata.item import CONTENT_TYPE, ITEM_TYPE, ITEM_STATE, EMBARGO
 from superdesk.metadata.packages import SEQUENCE, PACKAGE_TYPE
 from superdesk.notification import push_notification
 from superdesk.publish import SUBSCRIBER_TYPES
+from apps.publish.content.common import BasePublishService
 from superdesk.publish.formatters import get_formatter
 from superdesk.utc import utcnow
-
+from copy import deepcopy
 from eve.utils import config, ParsedRequest
 
 from apps.archive.common import get_user
@@ -48,13 +49,38 @@ class EnqueueService:
         if item[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE and item.get(PACKAGE_TYPE):
             self.publish(doc=item, target_media_type=SUBSCRIBER_TYPES.DIGITAL)
         elif item[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
-            subscriber_items = {}
-            subscribers, _ = self.get_subscribers(item, SUBSCRIBER_TYPES.DIGITAL)
-            subscribers.extend(self._get_subscribers_for_package_item(item))
-            self._extend_subscriber_items(subscriber_items, subscribers, item, item.get('digital_item_id'))
-            return self.publish_package(item, subscriber_items)
+            # subscriber_items = {}
+            # subscribers, _ = self.get_subscribers(item, SUBSCRIBER_TYPES.DIGITAL)
+            # subscribers.extend(self._get_subscribers_for_package_item(item))
+            # self._extend_subscriber_items(subscriber_items, subscribers, item, item.get('digital_item_id'))
+            # return self.publish_package(item, subscriber_items)
+            return self._publish_package_items(item)
         else:
             return self.publish(item, SUBSCRIBER_TYPES.WIRE if item.get('is_take_item') else None)
+
+    def _publish_package_items(self, package):
+        """
+        Publishes all items of a package recursively then publishes the package itself
+        :param package: package to publish
+        :param updates: payload
+        """
+        items = self.package_service.get_residrefs(package)
+        subscriber_items = {}
+
+        if items:
+            archive_service = get_resource_service('archive')
+            for guid in items:
+                package_item = archive_service.find_one(req=None, _id=guid)
+
+                if not package_item:
+                    raise SuperdeskApiError.badRequestError(
+                        "Package item with id: {} has not been published.".format(guid))
+
+                subscribers = self._get_subscribers_for_package_item(package_item)
+                digital_item_id = BasePublishService().get_digital_id_for_package_item(package_item)
+                self._extend_subscriber_items(subscriber_items, subscribers, package_item, digital_item_id)
+
+            self.publish_package(package, target_subscribers=subscriber_items)
 
     def enqueue_item(self, item):
         """
@@ -146,18 +172,19 @@ class EnqueueService:
         """
         all_items = self.package_service.get_residrefs(package)
         for items in target_subscribers.values():
+            updated = deepcopy(package)
             subscriber = items['subscriber']
             wanted_items = [item for item in items['items'] if items['items'].get(item, None)]
             unwanted_items = [item for item in all_items if item not in wanted_items]
             for i in unwanted_items:
-                still_items_left = self.package_service.remove_ref_from_inmem_package(package, i)
+                still_items_left = self.package_service.remove_ref_from_inmem_package(updated, i)
                 if not still_items_left and self.publish_type != 'correct':
                     # if nothing left in the package to be published and
                     # if not correcting then don't send the package
                     return
             for key in wanted_items:
-                self.package_service.replace_ref_in_package(package, key, items['items'][key])
-            self.queue_transmission(package, [subscriber])
+                self.package_service.replace_ref_in_package(updated, key, items['items'][key])
+            self.queue_transmission(updated, [subscriber])
 
     def queue_transmission(self, doc, subscribers):
         """

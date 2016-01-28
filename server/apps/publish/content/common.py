@@ -122,25 +122,26 @@ class BasePublishService(BaseService):
                         is_genre(original, BROADCAST_GENRE)):
                     # check if item is in a digital package
                     package = self.takes_package_service.get_take_package(original)
-                    if package:
-                        package_updates = self.process_takes(updates_of_take_to_be_published=updates,
-                                                             original_of_take_to_be_published=original,
-                                                             package=package)
 
-                        self._set_updates(package, package_updates, last_updated)
-                        package_updates.setdefault(ITEM_OPERATION, updates.get(ITEM_OPERATION, ITEM_PUBLISH))
-                        self._update_archive(package, package_updates)
-                        package.update(package_updates)
-                        self._import_into_legal_archive(package)
-                        package_id = package[config.ID_FIELD]
-                    else:
+                    if not package:
                         '''
                         If type of the item is text or preformatted then item need to be sent to
                         digital subscribers, so package the item as a take.
                         '''
                         package_id = self.takes_package_service.package_story_as_a_take(updated, {}, None)
-                    package_updated = {ITEM_STATE: self.published_state}
-                    self.update_published_collection(published_item_id=package_id, updated=package_updated)
+                        package = get_resource_service(ARCHIVE).find_one(req=None, _id=package_id)
+
+                    package_id = package[config.ID_FIELD]
+                    package_updates = self.process_takes(updates_of_take_to_be_published=updates,
+                                                         original_of_take_to_be_published=original,
+                                                         package=package)
+
+                    self._set_updates(package, package_updates, last_updated)
+                    package_updates.setdefault(ITEM_OPERATION, updates.get(ITEM_OPERATION, ITEM_PUBLISH))
+                    self._update_archive(package, package_updates)
+                    package.update(updates)
+                    self._import_into_legal_archive(package)
+                    self.update_published_collection(published_item_id=package_id)
                     """
                     This sequence is for test purposes, it will be removed once the feature is finished.
                     """
@@ -216,12 +217,12 @@ class BasePublishService(BaseService):
             # we raise error if correction is done on a empty package. Kill is fine.
             if len(removed_items) == len(items) and len(added_items) == 0 and self.publish_type == ITEM_CORRECT:
                 raise SuperdeskApiError.badRequestError("Corrected package cannot be empty!")
-        for guid in items:
-            package_item = super().find_one(req=None, _id=guid)
-            if not package_item:
-                raise SuperdeskApiError.badRequestError(
-                    "Package item with id: {} does not exist.".format(package_item[config.ID_FIELD]))
-            self._validate(package_item, updates)
+        # for guid in items:
+        #     package_item = super().find_one(req=None, _id=guid)
+        #     if not package_item:
+        #         raise SuperdeskApiError.badRequestError(
+        #             "Package item with id: {} does not exist.".format(package_item[config.ID_FIELD]))
+        #     self._validate(package_item, updates)
 
     def raise_if_not_marked_for_publication(self, original):
         if original.get('marked_for_not_publication', False):
@@ -233,7 +234,7 @@ class BasePublishService(BaseService):
                 "Can't {} as either package state or one of the items state is {}"
             raise InvalidStateTransitionError(error_message.format(self.publish_type, original[ITEM_STATE]))
 
-    def _get_digital_id_for_package_item(self, package_item):
+    def get_digital_id_for_package_item(self, package_item):
         """
         Finds the digital item id for a given item in a package
         :param package_item: item in a package
@@ -410,7 +411,7 @@ class BasePublishService(BaseService):
             published_item.update(updated)
         published_item['is_take_item'] = self._is_take_item(published_item)
         if not published_item.get('digital_item_id'):
-            published_item['digital_item_id'] = self._get_digital_id_for_package_item(published_item)
+            published_item['digital_item_id'] = self.get_digital_id_for_package_item(published_item)
         get_resource_service(PUBLISHED).update_published_items(published_item_id, LAST_PUBLISHED_VERSION, False)
         return get_resource_service(PUBLISHED).post([published_item])
 
@@ -432,8 +433,9 @@ class BasePublishService(BaseService):
         :param dict updates: updates related to the original document
         :param datetime last_updated: datetime of the updates.
         """
-        updates['publish_schedule'] = None
-        updates[ITEM_STATE] = self.published_state
+        self.set_state(original, updates)
+        # updates['publish_schedule'] = None
+        # updates[ITEM_STATE] = self.published_state
         updates.setdefault(config.LAST_UPDATED, last_updated)
 
         if original[config.VERSION] == updates.get(config.VERSION, original[config.VERSION]):
