@@ -2,10 +2,8 @@
 module.exports = {
     app: {
         src: [
-            '<%= appDir %>/scripts/**/*.js',
-            '!<%= appDir %>/scripts/bower_components/**/*',
-            '!<%= appDir %>/scripts/translations.js',
-            '!**/*spec.js'
+            '<%= appDir %>/*.js',
+            '<%= coreDir %>/apps/**/*.js'
         ],
         envs: ['browser', 'amd']
     },

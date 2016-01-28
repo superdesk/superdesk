@@ -27,12 +27,11 @@ module.exports = function(grunt) {
             editor: {disableEditorToolbar: disableEditorToolbar}
         };
 
-        var path = {
-            bower: 'scripts/bower_components',
-            core: 'scripts'
-        };
-
-        return {data: {config: config, path: path}};
+        return {data: {
+            config: config,
+            bower: 'bower_components',
+            core: 'node_modules/superdesk-core/apps'
+        }};
     }
 
     var files = {'<%= distDir %>/index.html': '<%= appDir %>/index.html'};

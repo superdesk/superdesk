@@ -53,9 +53,6 @@ install:
     - if [ "${TARGET}" = "unit" ] || [ "${TARGET}" != "${TARGET/e2e/}" ]; then
         cd client && bower install && cd .. ;
       fi
-    - if [ "${TARGET}" = "unit" ]; then
-        cd server && pip install coveralls==1.0a2 && cd .. ;
-      fi
 
 before_script:
     - if [ "${TARGET}" != "${TARGET/e2e/}" ]; then
@@ -74,7 +71,7 @@ script:
         cd client && grunt ci:travis test && cd .. ;
         cd server && flake8 && cd .. ;
         cd server && behave ./features/ --format progress2 --logging-level ERROR && cd .. ;
-        cd server && nosetests --with-coverage --cover-package=superdesk,apps && cd .. ;
+        cd server && nosetests && cd .. ;
       fi
     - if [ "${TARGET}" = "server_ldap" ]; then
         cd server &&
@@ -120,10 +117,3 @@ script:
 
 after_script:
     - killall -9 python
-
-after_success:
-    - if [ "${TARGET}" = "unit" ]; then
-        cd client && grunt coveralls && cd .. ;
-        cd server && coveralls --merge="../client/coveralls.json" ;
-      fi
-

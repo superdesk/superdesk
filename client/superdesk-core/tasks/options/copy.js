@@ -9,7 +9,7 @@ module.exports = {
                 src: [
                     'fonts/*',
                     'images/**/*',
-                    'scripts/**/*.{html,css,jpg,jpeg,png,gif,svg,json}'
+                    'scripts/**/*.{css,jpg,jpeg,png,gif,svg,json}'
                 ]
             },
             {

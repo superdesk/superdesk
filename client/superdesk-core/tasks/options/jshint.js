@@ -1,8 +1,6 @@
 
 module.exports = {
-    options: {
-        jshintrc: '.jshintrc'
-    },
+    options: {jshintrc: '.jshintrc'},
     all: require('./files').scripts,
     docs: ['<%= appDir %>/docs/**/*.js']
 };

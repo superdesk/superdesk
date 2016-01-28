@@ -5,31 +5,32 @@ module.exports = {
     less: {
         tasks: ['style'],
         files: [
-            '<%= appDir %>/styles/{,*/}*.less',
-            '<%= appDir %>/scripts/superdesk*/**/*.less'
+            '<%= coreDir %>/assets/styles/{,*/}*.less',
+            '<%= coreDir %>/apps/**/*.less',
+            '<%= appDir %>/**/*.less'
         ]
     },
     code: {
         options: {livereload: true},
         tasks: [],
         files: [
-            '<%= appDir %>/scripts/*.js',
-            '<%= appDir %>/scripts/superdesk*/**/*.js'
+            '<%= coreDir %>/apps/superdesk*/**/*.js',
+            '<%= appDir %>/**/*.js'
         ]
     },
     ngtemplates: {
         options: {livereload: true},
         tasks: [],
         files: [
-            '<%= appDir %>/scripts/superdesk*/views/*.html'
+            '<%= coreDir %>/apps/superdesk*/views/*.html',
+            '<%= appDir %>/templates/**/*.html'
         ]
     },
     assets: {
         options: {livereload: true},
         tasks: [],
         files: [
-            '<%= appDir %>/styles/**/*.css',
-            '<%= appDir %>/scripts/superdesk*/**/*.html',
+            '<%= distDir %>/*.css',
             '<%= appDir %>/docs/**/*.html'
         ]
     },

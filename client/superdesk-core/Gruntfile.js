@@ -17,6 +17,7 @@ module.exports = function(grunt) {
         specDir: 'spec',
         tasksDir: 'tasks',
         bowerDir: 'bower',
+        comDir: 'bower_components',
         coreDir: 'node_modules/superdesk-core',
         poDir: 'po',
         livereloadPort: 35729
@@ -55,7 +56,6 @@ module.exports = function(grunt) {
         'style',
         'template:test',
         'connect:test',
-        'open:test',
         'watch'
     ]);
 
@@ -96,7 +96,6 @@ module.exports = function(grunt) {
         'copy:js',
         'copy:docs',
         'template:test',
-        'nggettext_compile',
         'filerev',
         'usemin'
     ]);

@@ -2,7 +2,7 @@
 module.exports = function(grunt) {
     'use strict';
 
-    var base = ['<%= distDir %>', '<%= appDir %>', '<%= coreDir %>'];
+    var base = ['<%= distDir %>', '<%= appDir %>', '.', '<%= coreDir %>'];
 
     return {
         options: {
@@ -18,7 +18,7 @@ module.exports = function(grunt) {
 
                     // avoid 404 in dev server for templates
                     function mockTemplates(req, res, next) {
-                        if (req.url === '/scripts/templates-cache.js') {
+                        if (req.url === '/templates-cache.js') {
                             return res.end('');
                         } else {
                             return next();

@@ -1,11 +1,11 @@
 
 var files = [
     {
-        dest: '<%= distDir %>/styles/css/bootstrap.css',
+        dest: '<%= distDir %>/bootstrap.css',
         src: '<%= coreDir %>/styles/less/bootstrap.less'
     },
     {
-        dest: '<%= distDir %>/styles/css/app.css',
+        dest: '<%= distDir %>/app.css',
         src: '<%= appDir %>/index.less',
     },
     {
@@ -40,8 +40,9 @@ module.exports = {
     dev: {
         options: {
             paths: [
-                '<%= coreDir %>/styles/less',
-                '<%= appDir %>/scripts/'
+                '<%= coreDir %>/assets/styles/less',
+                '<%= coreDir %>/apps',
+                '<%= appDir %>/'
             ],
             compress: false,
             cleancss: true
@@ -58,7 +59,10 @@ module.exports = {
     },
     prod: {
         options: {
-            paths: ['<%= coreDir %>/styles/less'],
+            paths: [
+                '<%= coreDir %>/styles/less',
+                '<%= appDir %>/'
+            ],
             compress: false,
             cleancss: true
         },

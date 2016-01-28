@@ -1,4 +1,3 @@
 {
-    "cwd": "node_modules/superdesk-core",
-    "directory": "app/scripts/bower_components"
+    "directory": "bower_components"
 }
