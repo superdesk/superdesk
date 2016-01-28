@@ -160,14 +160,12 @@ module.exports = function(config) {
             'app/scripts/superdesk-settings/module.js',
 
             'app/scripts/superdesk-archive/controllers/baseList.js',
-            'app/scripts/superdesk-archive/archive-widget/baseWidget.js',
-            'app/scripts/superdesk-ingest/ingest-widget/ingest.js',
+            'app/scripts/superdesk-dashboard/baseWidget.js',
             'app/scripts/superdesk-ingest/ingest-stats-widget/stats.js',
             'app/scripts/superdesk-ingest/module.js',
 
             'app/scripts/superdesk-archive/module.js',
             'app/scripts/superdesk-archive/controllers/list.js',
-            'app/scripts/superdesk-archive/archive-widget/archive.js',
             'app/scripts/superdesk-archive/related-item-widget/relatedItem.js',
             'app/scripts/superdesk-archive/directives.js',
 
@@ -182,7 +180,6 @@ module.exports = function(config) {
             'app/scripts/superdesk-archive/family_spec.js',
             'app/scripts/superdesk-archive/tests/archive_spec.js',
             'app/scripts/superdesk-archive/related-item-widget/related-item-widget.spec.js',
-            'app/scripts/superdesk-archive/archive-widget/archive-widget.spec.js',
             'app/scripts/superdesk-authoring/comments/comments_spec.js',
             'app/scripts/superdesk-authoring/metadata/tests/MetadataWidgetCtrl_spec.js',
             'app/scripts/superdesk-authoring/multiedit/tests/multiedit_spec.js',

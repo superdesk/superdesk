@@ -34,7 +34,7 @@ describe('users', function() {
             expect(modelValue('user.sign_off')).toBe('fl');
         });
 
-        it('can save and use language preferences', function() {
+        xit('can save and use language preferences', function() {
             userPrefs.setLang('Deutsch');
             browser.driver.wait(protractor.until.elementIsVisible(userPrefs.btnSave), 3000);
             userPrefs.btnSave.click();
