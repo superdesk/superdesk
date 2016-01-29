@@ -3,7 +3,7 @@ module.exports = {
         configFile: 'karma.conf.js',
         singleRun: true,
         autoWatch: false,
-        reporters: ['dots', 'coverage']
+        reporters: ['dots']
     },
     single: {
         reporters: 'dots'
@@ -21,14 +21,7 @@ module.exports = {
     },
     travis: {
         browsers: ['PhantomJS'],
-        reporters: ['dots', 'coverage'],
-        coverageReporter: {
-            dir: '.',
-            includeAllSources: true,
-            reporters: [
-                {type: 'lcovonly', subdir: '.', file: 'lcov.info'}
-            ]
-        }
+        reporters: ['dots']
     },
     bamboo: {
         browsers: ['PhantomJS'],

@@ -1,5 +1,5 @@
 {
   "name": "superdesk",
   "license": "GPL-3.0",
-  "dependencies": {"superdesk-core": "0.0.7"}
+  "dependencies": {"superdesk-core": "0.0.10"}
 }

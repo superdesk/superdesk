@@ -40,8 +40,8 @@ module.exports = {
     dev: {
         options: {
             paths: [
-                '<%= coreDir %>/assets/styles/less',
-                '<%= coreDir %>/apps',
+                '<%= coreDir %>/styles/less',
+                '<%= coreDir %>/scripts',
                 '<%= appDir %>/'
             ],
             compress: false,
@@ -61,6 +61,7 @@ module.exports = {
         options: {
             paths: [
                 '<%= coreDir %>/styles/less',
+                '<%= coreDir %>/scripts',
                 '<%= appDir %>/'
             ],
             compress: false,
