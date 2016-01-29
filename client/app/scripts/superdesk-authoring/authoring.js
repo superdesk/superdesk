@@ -785,8 +785,7 @@
         this.unlock = function unlock(userId, headline) {
             api.find('users', userId).then(function(user) {
                 var itemHeading = headline ? 'Item <b>' + headline + '</b>' : 'This item';
-                var msg = gettext(itemHeading + ' was unlocked by <b>' + user + '</b>.').
-                    replace('{{ user }}', $filter('username')(user));
+                var msg = gettext(itemHeading + ' was unlocked by <b>' + $filter('username')(user) + '</b>.');
                 return modal.confirm(msg, gettext('Item Unlocked'), gettext('OK'), false);
             });
         };
@@ -798,8 +797,7 @@
          */
         this.lock = function lock(userId) {
             api.find('users', userId).then(function(user) {
-                var msg = gettext('This item was locked by <b>' +  user + '</b>.').
-                    replace('{{ user }}', $filter('username')(user));
+                var msg = gettext('This item was locked by <b>' +  $filter('username')(user) + '</b>.');
                 return modal.confirm(msg, gettext('Item locked'), gettext('OK'), false);
             });
         };

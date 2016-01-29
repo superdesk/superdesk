@@ -804,18 +804,6 @@
             backend: {rel: 'archived'}
         });
     }])
-    .config(['authoringWidgetsProvider', function(authoringWidgetsProvider) {
-        authoringWidgetsProvider
-            .widget('search', {
-                icon: 'view',
-                label: gettext('Search'),
-                template: 'scripts/superdesk-packaging/views/search.html',
-                order: 4,
-                side: 'left',
-                extended: true,
-                display: {authoring: false, packages: true, legalArchive: false, archive: false}
-            });
-    }])
     .controller('SearchWidgetCtrl', SearchWidgetCtrl);
 
     return app;

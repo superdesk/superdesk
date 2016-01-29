@@ -202,23 +202,6 @@ describe('content', function() {
         content.closePreview();
     });
 
-    it('cannot display embargo items in search widget of the package', function() {
-        workspace.editItem('item3', 'SPORTS');
-        authoring.sendToButton.click();
-
-        setEmbargo();
-
-        element(by.css('[ng-click="saveTopbar(item)"]')).click();
-        element(by.id('closeAuthoringBtn')).click();
-
-        element(by.className('sd-create-btn')).click();
-        element(by.id('create_package')).click();
-
-        element(by.id('Search')).click();
-        element(by.className('search-box')).element(by.model('query')).sendKeys('item3');
-        expect(element.all(by.repeater('pitem in contentItems')).count()).toBe(0);
-    });
-
     it('can enable/disable send and continue based on emabrgo', function() {
         // Initial steps before proceeding, to get initial state of send buttons.
         workspace.editItem('item3', 'SPORTS');
