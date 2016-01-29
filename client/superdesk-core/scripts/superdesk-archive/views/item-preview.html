@@ -4,20 +4,19 @@
         <div class="composite-nav" ng-if="item.type === 'composite'">
            <div class="top">
                <span><i class="filetype-icon-large-composite"></i> {{ 'Package preview' | translate }}</span>
-           </div> 
+           </div>
         </div>
-
-        <p class="title" ng-if="item.headline">{{ item.headline }}</p>
 
         <div class="state-label state-{{item.state}}" ng-class="{state_embargo: item.embargo}">{{item.state | removeLodash}}</div>
         <div class="state-label legal" ng-if="item.flags.marked_for_legal" translate>Legal</div>
 
-        <div class="core-content">
+        <p class="title" ng-if="item.headline">{{ item.headline }}</p>
 
-			<p ng-if="item.is_spiked" class="alert alert-warning expires">
-                <span translate>expires</span> <time sd-datetime data-date="item.expiry"></time>
-			</p>
-            
+        <div class="core-content">
+    			<p ng-if="item.is_spiked" class="alert alert-warning expires">
+              <span translate>expires</span>
+              <time sd-datetime data-date="item.expiry"></time>
+    			</p>
             <div ng-if="item.type == 'picture'" class="picture-preview">
                 <div>
                     <span translate>Original</span>

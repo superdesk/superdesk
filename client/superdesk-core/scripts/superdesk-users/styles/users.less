@@ -504,6 +504,31 @@
 
 } //end of user detail pane
 
+
+// USER PROFILE PAGE IN MODAL
+.modal.user-profile-page {
+    .modal-body {
+        height: calc(~'100vh - 180px');
+    }
+    .user-details-pane {
+        position: static;
+        ::-webkit-scrollbar {
+            border-left: 9px solid #f8f8f8;
+        }
+        ::-webkit-scrollbar-thumb {
+            border-left: 8px solid #f8f8f8;
+        }
+    }
+    .details-info {
+        bottom: 58px;
+    }
+    .action-bar {
+        top: auto !important;
+        bottom: 0;
+        border-top: 1px solid #e4e4e4;
+    }
+}
+
 /*
 ==============================================
 Profile page styles

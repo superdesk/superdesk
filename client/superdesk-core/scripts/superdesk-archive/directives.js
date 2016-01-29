@@ -103,7 +103,7 @@
                 scope: {
                     item: '='
                 },
-                templateUrl: 'scripts/superdesk-archive/archive-widget/item-preview.html'
+                templateUrl: 'scripts/superdesk-archive/views/item-preview.html'
             };
         }])
         .directive('sdItemPreviewContainer', function() {

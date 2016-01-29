@@ -452,7 +452,7 @@
         'superdesk.search',
         'superdesk.archive.directives',
         'superdesk.dashboard',
-        'superdesk.widgets.archive',
+        'superdesk.widgets.base',
         'superdesk.widgets.relatedItem'
     ])
 

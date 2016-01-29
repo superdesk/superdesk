@@ -15,7 +15,7 @@ describe('dashboard', function() {
     it('add a widget to a desk', function() {
         expect(dashboard.getWidgets().count()).toBe(0);
         dashboard.showDashboardSettings();
-        dashboard.addWidget(0);
+        dashboard.addWidget(1);
         dashboard.doneAction();
         expect(dashboard.getWidgets().count()).toBe(1);
         workspace.selectDesk('Sports Desk');
@@ -26,8 +26,8 @@ describe('dashboard', function() {
 
     it('add multiple monitoring widgets', function() {
         dashboard.showDashboardSettings();
-        dashboard.addWidget(3);  // the monitoring widget
-        dashboard.addWidget(3);  // the monitoring widget
+        dashboard.addWidget(1);  // the monitoring widget
+        dashboard.addWidget(1);  // the monitoring widget
         dashboard.doneAction();
         expect(dashboard.getWidgets().count()).toBe(2);
         expect(dashboard.getGroups(0).count()).toBe(6);
@@ -54,7 +54,7 @@ describe('dashboard', function() {
 
     it('configure a label for the view', function() {
         dashboard.showDashboardSettings();
-        dashboard.addWidget(3);  // the monitoring widget
+        dashboard.addWidget(1);  // the monitoring widget
         dashboard.doneAction();
 
         dashboard.showMonitoringSettings(0);
@@ -69,7 +69,7 @@ describe('dashboard', function() {
 
     it('search in monitoring widget', function() {
         dashboard.showDashboardSettings();
-        dashboard.addWidget(3);  // the monitoring widget
+        dashboard.addWidget(1);  // the monitoring widget
         dashboard.doneAction();
         expect(dashboard.getWidgets().count()).toBe(1);
         expect(dashboard.getGroupItems(0, 2).count()).toBe(4);
@@ -89,7 +89,7 @@ describe('dashboard', function() {
 
         dashboard.openDashboard();
         dashboard.showDashboardSettings();
-        dashboard.addWidget(3);  // the monitoring widget
+        dashboard.addWidget(1);  // the monitoring widget
         dashboard.doneAction();
 
         expect(dashboard.getTextItem(0, 5, 1)).toBe('item6');

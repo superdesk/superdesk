@@ -169,8 +169,8 @@
         };
     }
 
-    AuthoringService.$inject = ['$q', 'api', 'lock', 'autosave', 'confirm', 'privileges', 'desks'];
-    function AuthoringService($q, api, lock, autosave, confirm, privileges, desks) {
+    AuthoringService.$inject = ['$q', 'api', 'lock', 'autosave', 'confirm', 'privileges', 'desks', 'superdeskFlags'];
+    function AuthoringService($q, api, lock, autosave, confirm, privileges, desks, superdeskFlags) {
         var self = this;
 
         this.limits = {
@@ -203,6 +203,7 @@
          * @param {string} repo - repository where an item whose identifier is _id can be found.
          */
         this.open = function openAuthoring(_id, read_only, repo) {
+            superdeskFlags.flags.authoring = true;
             if (_.contains(['legal_archive', 'archived'], repo)) {
                 return api.find(repo, _id).then(function(item) {
                     item._editable = false;
@@ -2128,7 +2129,7 @@
     function ArticleEditDirective(autosave, authoring, metadata, $filter, superdesk) {
         return {
             templateUrl: 'scripts/superdesk-authoring/views/article-edit.html',
-            link: function(scope) {
+            link: function(scope, elem) {
                 var DEFAULT_ASPECT_RATIO = 4 / 3;
                 scope.limits = authoring.limits;
                 scope.toggleDetails = true;
@@ -2282,14 +2283,24 @@
                  * Adds the selected Helpline to the item allowing user for further edit.
                  */
                 scope.addHelplineToFooter = function() {
-                    if (!scope.item.body_footer) {
+                    //determine and ignore if footer text have empty tags
+                    var container = document.createElement('div');
+                    container.innerHTML = scope.item.body_footer;
+
+                    if (!scope.item.body_footer || container.textContent === '') {
                         scope.item.body_footer = '';
                     }
 
                     if (scope.item.body_footer_value) {
-                        scope.item.body_footer = scope.item.body_footer + scope.item.body_footer_value.value + '<br>';
+                        scope.item.body_footer = scope.item.body_footer + scope.item.body_footer_value.value;
                         autosave.save(scope.item);
                     }
+
+                    //first option should always be selected, as multiple helplines could be added in footer
+                    _.defer (function() {
+                        var ddlHelpline = elem.find('#helplines');
+                        ddlHelpline[0].options[0].selected = true;
+                    });
                 };
             }
         };

@@ -612,8 +612,8 @@ function MetadataService(api, $q) {
                 _.each(result._items, function(vocabulary) {
                     self.values[vocabulary._id] = vocabulary.items;
                 });
-
-                self.values.targeted_for = _.union(self.values.geographical_restrictions, self.values.subscriber_types);
+                self.values.targeted_for = _.sortBy(_.union(self.values.geographical_restrictions, self.values.subscriber_types),
+                    function(target) { return target.value.toLowerCase() === 'all' ? '' : target.name; });
             });
         },
         fetchSubjectcodes: function(code) {

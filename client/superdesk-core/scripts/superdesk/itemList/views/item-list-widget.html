@@ -7,14 +7,14 @@
 <div class="main-list" ng-class="{wrap: selected}">
 
     <div class="search-box" ng-class="{blank: similar}" ng-show="options.searchEnabled">
-        
+
         <input type="text" placeholder="{{ :: 'Search' | translate }}"
             ng-show="!options.similar"
             ng-model="itemListOptions.search"
             ng-model-options="{debounce: 500}">
-        
+
         <div ng-if="options.similar" class="text" translate>Displaying similar items</div>
-        
+
         <div class="dropdown more-actions" dropdown ng-if="options.item">
             <button class="dropdown-toggle" dropdown-toggle><i class="icon-dots-vertical"></i></button>
             <div class="dropdown-menu pull-right">
@@ -26,16 +26,16 @@
                     </li>
                 </ul>
             </div>
-        </div> 
+        </div>
 
     </div>
 
-    
+
     <div class="filter-box" ng-show="options.mode === 'detailed'">
         <span class="text" translate>View</span>
-        <button class="btn btn-light pull-left" 
+        <button class="btn btn-light pull-left"
             ng-if="options.itemTypeEnabled"
-            ng-repeat="itemType in options.itemTypes" 
+            ng-repeat="itemType in options.itemTypes"
             ng-click="toggleItemType(itemType)"
             ng-class="{active: isItemTypeEnabled(itemType)}">
                 <i class="filetype-icon-{{itemType}}"></i>
@@ -65,18 +65,15 @@
                             </ul>
                         </div>
                     </div>
-                    <div ng-if="options.mode === 'basic'" class="basic item-block urgency-{{ item.urgency }}" 
-                        ng-class="{pinned: options.pinEnabled && isPinned(item), 'pinned-instance': options.pinEnabled && item.pinnedInstance}" ng-click="view(item)">
+                    <div ng-if="options.mode === 'basic'" class="basic item-block urgency-{{ item.urgency }}" ng-class="{pinned: options.pinEnabled && isPinned(item), 'pinned-instance': options.pinEnabled && item.pinnedInstance}" ng-click="view(item)">
+                        <i class="filetype-icon-{{item.type}}"></i>
                         <div class="content">
-                            <p>
-                                <i class="filetype-icon-{{item.type}}"></i>
-                                <span class="keyword" ng-if="item.slugline">{{ item.slugline }}</span> <span>{{item.headline || item.type}}</span>
-                                <span ng-if="item.flags.marked_for_legal" class="state-label legal" translate>Legal</span>
-                            </p>
-
+                            <span class="keyword" ng-if="item.slugline">{{ item.slugline }}</span>
+                            <span class="headline">{{item.headline || item.type}}</span>
+                            <span ng-if="item.flags.marked_for_legal" class="state-label legal" translate>Legal</span>
                         </div>
                     </div>
-                    <div ng-if="options.mode === 'detailed'" class="item-block urgency-{{ item.urgency }}" 
+                    <div ng-if="options.mode === 'detailed'" class="item-block urgency-{{ item.urgency }}"
                         ng-class="{pinned: options.pinEnabled && isPinned(item), 'pinned-instance': options.pinEnabled && item.pinnedInstance}" ng-click="view(item)">
                         <div class="content">
                             <ul class="top-line clearfix">

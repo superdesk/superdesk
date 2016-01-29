@@ -4,6 +4,12 @@
 @import 'mixins.less';
 @import 'variables.less';
 
+#main-container.authoring {
+    .authoring-embedded {
+        background: url('../../images/loading-large.gif') no-repeat center;
+    }
+}
+
 .auth-screen {
 	position: absolute;
 	top: 0; right: 0; left: 0; bottom: 0;
@@ -133,7 +139,7 @@
 	top:0;
 	left: @tablist-width + @article-tabpane-padding;
 	right: @tablist-width + @article-tabpane-padding;
-	bottom: 0;
+	bottom: 30px;
 	overflow-y: auto;
 }
 
