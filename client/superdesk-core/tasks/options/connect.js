@@ -19,7 +19,8 @@ module.exports = function(grunt) {
                     // avoid 404 in dev server for templates
                     function mockTemplates(req, res, next) {
                         if (req.url === '/templates-cache.js') {
-                            return res.end('');
+                            // return empty cache module
+                            return res.end('angular.module(\'superdesk.templates-cache\', []);');
                         } else {
                             return next();
                         }

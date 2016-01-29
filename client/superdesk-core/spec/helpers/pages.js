@@ -1,6 +1,7 @@
 'use strict';
 
 exports.login = LoginModal;
+exports.logout = logout;
 exports.workspace = require('./workspace');
 exports.content = require('./content');
 exports.authoring = require('./authoring');
@@ -155,4 +156,17 @@ function IngestSettings() {
         timezoneInput: $('[term="tzSearchTerm"]').element(by.model('term')),
         timezoneList: $('.item-list').all(by.tagName('li'))
     };
+}
+
+function logout() {
+    var signOutBtn = element(by.buttonText('SIGN OUT'));
+    element(by.css('button.current-user')).click();
+
+    browser.wait(function() {
+        return signOutBtn.isDisplayed();
+    }, 200);
+
+    signOutBtn.click();
+    browser.sleep(500);
+    browser.refresh();
 }

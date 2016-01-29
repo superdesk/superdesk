@@ -11,16 +11,6 @@
     'use strict';
 
     window.bootstrapSuperdesk = function bootstrap(config, apps) {
-
-        // make sure there is a templates-cache module defined
-        try {
-            angular.modules('superdesk.templates-cache');
-        } catch (e) {
-            angular.module('superdesk.templates-cache', []);
-        } finally {
-            apps.push('superdesk.templates-cache');
-        }
-
         angular.module('superdesk')
         .constant('config', config)
         // setup default route for superdesk - set it here to avoid it being used in unit tests

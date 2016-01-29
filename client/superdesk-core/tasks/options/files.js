@@ -1,7 +1,7 @@
 
 exports.scripts = [
     '*.js',
-    '<%= appDir %>/*.js',
+    '<%= appDir %>/main.js',
     '<%= appDir %>/docs/**/*.js',
     '<%= coreDir %>/spec/**/*.js',
     '<%= coreDir %>/tasks/**/*.js',

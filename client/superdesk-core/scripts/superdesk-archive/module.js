@@ -453,7 +453,8 @@
         'superdesk.archive.directives',
         'superdesk.dashboard',
         'superdesk.widgets.base',
-        'superdesk.widgets.relatedItem'
+        'superdesk.widgets.relatedItem',
+        'superdesk.archive.list'
     ])
 
         .service('spike', SpikeService)
