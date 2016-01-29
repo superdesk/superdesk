@@ -68,7 +68,7 @@
 
                         <div class="field article-type">
                             <label for="provider-content-types" translate>Article Type(s)</label>
-                            <ul class="filter-type pull-left">
+                            <ul class="filter-type">
                                 <li ng-repeat="fileType in fileTypes" title="{{fileType}}" ng-click="addOrRemoveFileType(fileType)" class="filter-type__item" ng-class="{'filter-type__item--active': hasFileType(fileType)}">
                                     <i class="filetype-icon-{{fileType}}"></i>
                                 </li>

@@ -20,8 +20,8 @@
 					       <h6>{{ dictionary.name }}</h6>&nbsp;<em><strong>({{ :: dictionary.language_id }})</strong></em>
 					    </div>
 						<div ng-if="dictionary.user">
-                           <h6 id="{{dictionary.language_id}}">{{ :: 'Personal' | translate }}</h6>&nbsp;<em><strong>({{ :: dictionary.language_id }})</strong></em>
-                        </div>
+		            <h6 id="{{dictionary.language_id}}">{{ :: 'Personal' | translate }}</h6>&nbsp;<em><strong>({{ :: dictionary.language_id }})</strong></em>
+            </div>
 						<div class="actions">
 							<button ng-click="openDictionary(dictionary)" title="{{:: 'Edit dictionary' | translate }}"><i class="icon-pencil"></i></button>
 							<button ng-click="remove(dictionary)" title="{{:: 'Remove dictionary' | translate }}"><i class="icon-trash"></i></button>
