@@ -14,11 +14,23 @@
 		display: none;
 	}
 }
-
+.medium-editor-toolbar {
+    z-index: 10;
+    // disabled state for toolbar button
+    li .medium-editor-button-disabled {
+        background-color: gray;
+        cursor: default;
+        pointer-events: none;
+    }
+}
 .block {
     &__container {
         position: relative;
-        .text-editor {padding: 0;}
+        .text-editor {
+            padding: 0;
+            // leave the space for the `add-embed` when the toolbar is shown
+            &.toolbar-visible {margin-top: 45px;}
+        }
         .preview--caption, .editor--caption {
             margin: 20px 0px;
         }
@@ -26,6 +38,7 @@
             border: 1px solid @sd-blue;
             .border-radius(3px);
             padding: 5px;
+            min-height: 18px;
         }
         .editor--embed {
             min-height: 200px;
@@ -46,7 +59,6 @@
         border: 2px dashed #CFCFCF;
         background-color: #F7F7F7;
         width: 100%;
-
     }
     &__plus {
         display: block;
