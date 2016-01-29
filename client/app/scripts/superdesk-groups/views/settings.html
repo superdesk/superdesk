@@ -12,7 +12,7 @@
 	    	<div sd-shadow>
 				<ul class="pills-list" >
 					<li ng-repeat="group in groups._items">
-						<h6 class="pull-left">{{ group.name }}</h6>
+						<h6>{{ group.name }}</h6>
 						<div class="actions">
 							<button ng-click="openGroup('general', group)" title="{{:: 'Edit group' | translate }}"><i class="icon-pencil"></i></button>
 							<button ng-click="remove(group)" title="{{:: 'Remove group' | translate }}"><i class="icon-trash"></i></button>
