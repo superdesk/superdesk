@@ -2,17 +2,17 @@
 @import 'mixins.less';
 
 [contenteditable=true] {
-	&:before{
-		display: block; /* For Firefox */
-	}
-	&:empty:before{
-  		content: attr(placeholder);
-  		display: block; /* For Firefox */
-  		color: #ccc;
-	}
-	&:focus:before{
-		display: none;
-	}
+    &:before{
+        display: block; /* For Firefox */
+    }
+    &:empty:before{
+          content: attr(placeholder);
+          display: block; /* For Firefox */
+          color: #ccc;
+    }
+    &:focus:before{
+        display: none;
+    }
 }
 .medium-editor-toolbar {
     z-index: 10;
@@ -51,6 +51,12 @@
         top: 0;
         cursor: pointer;
         opacity: .1;
+    }
+    &__move {
+        display: inline-block;
+        background-color: #5ea9c8;
+        padding: 1px 6px;
+        color: white;
     }
 }
 .add-embed {

@@ -3,8 +3,8 @@
 
 angular.module('superdesk.editor').controller('SdTextEditorController', SdTextEditorController);
 
-SdTextEditorController.$inject = ['lodash', 'EMBED_PROVIDERS'];
-function SdTextEditorController(_, EMBED_PROVIDERS) {
+SdTextEditorController.$inject = ['lodash', 'EMBED_PROVIDERS', 'dragulaService', '$scope', '$timeout'];
+function SdTextEditorController(_, EMBED_PROVIDERS, dragulaService, $scope, $timeout) {
     var vm = this;
     function Block(attrs) {
         angular.extend(this, {
@@ -174,7 +174,7 @@ function SdTextEditorController(_, EMBED_PROVIDERS) {
             if (!unprocess) {
                 vm.renderBlocks();
             }
-            vm.commitChanges();
+            $timeout(vm.commitChanges);
             return this;
         },
         /**
@@ -193,7 +193,7 @@ function SdTextEditorController(_, EMBED_PROVIDERS) {
                 block.body = '';
             }
             vm.renderBlocks();
-            vm.commitChanges();
+            $timeout(vm.commitChanges);
         },
         getPreviousBlock: function(block) {
             var pos = vm.getBlockPosition(block);
@@ -202,6 +202,17 @@ function SdTextEditorController(_, EMBED_PROVIDERS) {
                 return vm.blocks[pos - 1];
             }
         }
+    });
+    var dragulaBagName = 'blocks';
+    dragulaService.options($scope, dragulaBagName, {
+        revertOnSpill: true,
+        moves: function (el, container, handle) {
+            return handle.className === 'block__move';
+        }
+    });
+    $scope.$on(dragulaBagName + '.drop-model', function (el, target, source) {
+        // vm.renderBlocks();
+        vm.commitChanges();
     });
 }
 })();

@@ -1,29 +1,34 @@
-<div ng-repeat="block in vm.blocks" class="block__container">
-    <div ng-if="vm.config.multiBlockEdition" class="block__remove" ng-click="vm.removeBlock(block)">
-        <i class="icon-close-small"></i>
-    </div>
-    <sd-add-embed ng-if="vm.config.multiBlockEdition && $first"
-                  add-to-position="$index"
-                  class="block__add-embed">
-    </sd-add-embed>
-    <div ng-switch="block.blockType">
-        <div ng-switch-when="embed"
-             sd-text-editor-block-embed="block"
-             on-block-change="vm.commitChanges()">
+<div dragula="'blocks'"
+     dragula-model="vm.blocks">
+    <div ng-repeat="block in vm.blocks"
+         class="block__container">
+        <div class="block__move">+</div>
+        <div ng-if="vm.config.multiBlockEdition" class="block__remove" ng-click="vm.removeBlock(block)">
+            <i class="icon-close-small"></i>
         </div>
-        <div ng-switch-when="text"
-             sd-text-editor-block-text="block"
-             type="vm.type"
-             config="vm.config"
-             language="vm.language"
-             ng-change="vm.commitChanges()"
-             ng-model="block.body">
+        <sd-add-embed ng-if="vm.config.multiBlockEdition && $first"
+                      add-to-position="$index"
+                      class="block__add-embed">
+        </sd-add-embed>
+        <div ng-switch="block.blockType">
+            <div ng-switch-when="embed"
+                 sd-text-editor-block-embed="block"
+                 on-block-change="vm.commitChanges()">
+            </div>
+            <div ng-switch-when="text"
+                 sd-text-editor-block-text="block"
+                 type="vm.type"
+                 config="vm.config"
+                 language="vm.language"
+                 ng-change="vm.commitChanges()"
+                 ng-model="block.body">
+            </div>
         </div>
+        <sd-add-embed ng-if="vm.config.multiBlockEdition"
+                      extended="block.lowerAddEmbedIsExtented"
+                      add-to-position="$index + 1"
+                      on-close="vm.renderBlocks()"
+                      class="block__add-embed">
+        </sd-add-embed>
     </div>
-    <sd-add-embed ng-if="vm.config.multiBlockEdition"
-                  extended="block.lowerAddEmbedIsExtented"
-                  add-to-position="$index + 1"
-                  on-close="vm.renderBlocks()"
-                  class="block__add-embed">
-    </sd-add-embed>
 </div>
