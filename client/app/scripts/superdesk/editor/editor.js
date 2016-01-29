@@ -594,7 +594,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
         twitter: 'Twitter',
         youtube: 'YouTube'
     })
-    .directive('sdAddEmbed', function() {
+    .directive('sdAddEmbed', ['$timeout', function($timeout) {
         return {
             scope: {addToPosition: '=', extended: '=', onClose: '&'},
             require: ['sdAddEmbed', '^sdTextEditor'],
@@ -603,12 +603,21 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
             controller: 'SdAddEmbedController',
             bindToController: true,
             link: function(scope, element, attrs, controllers) {
-                angular.extend(controllers[0], {
+                var vm = controllers[0];
+                angular.extend(vm, {
                     editorCtrl: controllers[1]
+                });
+                // listen to the escape touch to close the field when pressed
+                element.bind('keyup', function(e) {
+                    if (e.keyCode === 27) { // escape
+                        $timeout(function() {
+                            vm.extended = false;
+                        });
+                    }
                 });
             }
         };
-    })
+    }])
     .directive('sdTextEditorDropZone', ['superdesk', 'api', function (superdesk, api) {
         return {
             scope: true,
