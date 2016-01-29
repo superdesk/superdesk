@@ -394,9 +394,7 @@ function MetadataListEditingDirective(metadata, $filter) {
                 scope.terms = items;
                 scope.tree = tree;
                 scope.activeTree = tree[null];
-                if (scope.item[scope.field]) {
-                    scope.combinedList = _.union(scope.list, scope.item[scope.field]);
-                }
+                scope.combinedList = _.union(scope.list, scope.item[scope.field] ? scope.item[scope.field] : []);
             });
 
             scope.$on('$destroy', function() {
