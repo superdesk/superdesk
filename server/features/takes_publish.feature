@@ -586,6 +586,7 @@ Feature: Take Package Publishing
       Then we get list with 3 items
       When we publish "123" with "publish" type and "published" state
       Then we get OK response
+      When we enqueue published
       When we get "/publish_queue"
       Then we get list with 2 items
       """
@@ -625,6 +626,7 @@ Feature: Take Package Publishing
       """
       When we publish "#TAKE2#" with "publish" type and "published" state
       Then we get OK response
+      When we enqueue published
       When we get "/publish_queue"
       Then we get list with 4 items
       """
@@ -665,6 +667,7 @@ Feature: Take Package Publishing
       """
       When we publish "#TAKE2#" with "correct" type and "corrected" state
       Then we get OK response
+      When we enqueue published
       When we get "/publish_queue"
       Then we get list with 6 items
       """
@@ -1330,6 +1333,7 @@ Feature: Take Package Publishing
         Then we get OK response
         When we publish "123" with "publish" type and "published" state
         Then we get OK response
+        When we enqueue published
         When we get "/publish_queue"
         Then we get list with 1 items
         """
@@ -1348,6 +1352,7 @@ Feature: Take Package Publishing
         """
         When we publish "#TAKE2#" with "publish" type and "published" state
         Then we get OK response
+        When we enqueue published
         When we get "/publish_queue"
         Then we get list with 3 items
         """
@@ -1416,6 +1421,7 @@ Feature: Take Package Publishing
         Then we get OK response
         When we publish "#TAKE3#" with "publish" type and "published" state
         Then we get OK response
+        When we enqueue published
         When we get "/publish_queue"
         Then we get list with 5 items
         """
@@ -1467,7 +1473,7 @@ Feature: Take Package Publishing
         """
 
   @auth @vocabulary
-    Scenario: After correcting  a Take digital package stays as corrected
+    Scenario: After correcting a take digital package stays as corrected
       Given the "validators"
       """
         [{"_id": "publish_text", "act": "publish", "type": "text", "schema":{}},

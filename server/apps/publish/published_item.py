@@ -8,31 +8,43 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-import logging
+from collections import namedtuple
 import json
-
-from eve.utils import ParsedRequest, config
-from bson.objectid import ObjectId
-from flask import current_app as app
+import logging
+from superdesk import get_resource_service
 import superdesk
-from apps.packages import TakesPackageService
+from superdesk.celery_app import update_key
 from superdesk.errors import SuperdeskApiError
+from superdesk.metadata.item import not_analyzed, ITEM_STATE, PUBLISH_STATES, EMBARGO
+from superdesk.metadata.utils import aggregations
 from superdesk.resource import Resource
 from superdesk.services import BaseService
-from superdesk.metadata.item import not_analyzed, ITEM_STATE, PUBLISH_STATES, EMBARGO
-from apps.archive.common import handle_existing_data, item_schema, remove_media_files, get_expiry
-from superdesk.metadata.utils import aggregations
-from apps.archive.archive import SOURCE as ARCHIVE
 from superdesk.utc import utcnow
-from superdesk import get_resource_service
+
+from bson.objectid import ObjectId
+from eve.utils import ParsedRequest, config
+from flask import current_app as app
+
+from apps.archive.archive import SOURCE as ARCHIVE
+from apps.archive.common import handle_existing_data, item_schema, remove_media_files, get_expiry
+from apps.packages import TakesPackageService
+
 
 logger = logging.getLogger(__name__)
+
+PUBLISHED = 'published'
 LAST_PUBLISHED_VERSION = 'last_published_version'
+QUEUE_STATE = 'queue_state'
+queue_states = ['pending', 'in_progress', 'queued']
+PUBLISH_STATE = namedtuple('PUBLISH_STATE', ['PENDING', 'IN_PROGRESS', 'QUEUED'])(*queue_states)
 
 published_item_fields = {
     'item_id': {
         'type': 'string',
         'mapping': not_analyzed
+    },
+    'publish_state': {
+        'type': 'string'
     },
 
     # last_published_version field is set to true for last published version of the item in the published collection
@@ -46,6 +58,25 @@ published_item_fields = {
         'type': 'string',
         'mapping': not_analyzed,
         'nullable': True
+    },
+    QUEUE_STATE: {
+        'type': 'string',
+        'default': 'pending',
+        'allowed': queue_states,
+    },
+    'is_take_item': {
+        'type': 'boolean',
+        'default': False,
+    },
+    'digital_item_id': {
+        'type': 'string'
+    },
+    'publish_sequence_no': {
+        'type': 'integer',
+        'readonly': True
+    },
+    'last_queue_event': {
+        'type': 'datetime'
     }
 }
 
@@ -76,6 +107,8 @@ class PublishedItemService(BaseService):
     """
     PublishedItemService class is the base class for ArchivedService.
     """
+    SEQ_KEY_NAME = 'published_item_sequence_no'
+
     def on_fetched(self, docs):
         """
         Overriding this to enhance the published article with the one in archive collection
@@ -116,6 +149,7 @@ class PublishedItemService(BaseService):
     def set_defaults(self, doc):
         doc['item_id'] = doc[config.ID_FIELD]
         doc['versioncreated'] = utcnow()
+        doc['publish_sequence_no'] = update_key(self.SEQ_KEY_NAME, flag=True)
 
         self.__set_published_item_expiry(doc)
 

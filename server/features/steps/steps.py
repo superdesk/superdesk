@@ -468,7 +468,7 @@ def step_impl_when_post_url(context, url):
 
 
 @when('we post to "{url}" with delay')
-def step_impl_when_post_url(context, url):
+def step_impl_when_post_url_delay(context, url):
     time.sleep(1)
     post_data(context, url)
 
@@ -822,7 +822,7 @@ def step_impl_then_get_formatted_output(context, value):
 
 
 @then('we get "{value}" in formatted output as "{group}" story for subscriber "{sub}"')
-def step_impl_then_get_formatted_output(context, value, group, sub):
+def step_impl_then_get_formatted_output_as_story(context, value, group, sub):
     assert_200(context.response)
     value = apply_placeholders(context, value)
     data = get_json_data(context.response)
@@ -865,7 +865,7 @@ def step_impl_then_get_formatted_output_pck(context, value, group, sub, pck):
 
 
 @then('we get "{value}" as "{group}" story for subscriber "{sub}" not in package "{pck}" version "{v}"')
-def step_impl_then_get_formatted_output_pck(context, value, group, sub, pck, v):
+def step_impl_then_get_formatted_output_pck_version(context, value, group, sub, pck, v):
     assert_200(context.response)
     value = apply_placeholders(context, value)
     data = get_json_data(context.response)
@@ -1457,7 +1457,7 @@ def get_content_expiry(context, minutes):
 
 
 @then('we get expiry for schedule and embargo content {minutes} minutes after "{future_date}"')
-def get_content_expiry(context, minutes, future_date):
+def get_content_expiry_schedule(context, minutes, future_date):
     future_date = parse_date(apply_placeholders(context, future_date))
     validate_expired_content(context, minutes, future_date)
 
@@ -1657,7 +1657,7 @@ def then_field_is_not_populated(context, field_name):
 
 
 @then('we get "{field_name}" not populated in results')
-def then_field_is_not_populated(context, field_name):
+def then_field_is_not_populated_in_results(context, field_name):
     resps = parse_json_response(context.response)
     for resp in resps['_items']:
         assert resp[field_name] is None, 'item is not populated'
@@ -1877,7 +1877,7 @@ def broadcast_key_has_value(context, key, value):
 
 
 @then('there is no "{key}" in "{namespace}" preferences')
-def there_is_no_key_in_preferences(context, key, namespace):
+def there_is_no_key_in_namespace_preferences(context, key, namespace):
     data = get_json_data(context.response)['user_preferences']
     assert key not in data[namespace], 'key "%s" is in %s' % (key, data[namespace])
 

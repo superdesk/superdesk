@@ -68,6 +68,7 @@ Feature: Publish content to the public API
         """
         {"_current_version": 2, "state": "published", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
         """
+    When we enqueue published
     When we get "/publish_queue"
     Then we get existing resource
         """
@@ -181,6 +182,7 @@ Feature: Publish content to the public API
         """
         {"_current_version": 2, "state": "published", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
         """
+    When we enqueue published
     When we get "/publish_queue"
     Then we get existing resource
         """
@@ -390,6 +392,7 @@ Feature: Publish content to the public API
         """
         {"_current_version": 2, "state": "published", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
         """
+    When we enqueue published
     When we get "/publish_queue"
     Then we get existing resource
         """

@@ -297,6 +297,7 @@ Feature: Link content in takes
         """
         And we publish "#TAKE#" with "publish" type and "published" state
         Then we get OK response
+	    When we enqueue published
         When we get "/publish_queue"
         Then we get "Take-1 headline=2" in formatted output
 

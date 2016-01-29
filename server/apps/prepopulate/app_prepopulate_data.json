@@ -513,7 +513,8 @@
             "_current_version" : 1,
             "unique_name": "item1",
             "unique_id": 1,
-            "original_creator": "-id user admin-"
+            "original_creator": "-id user admin-",
+            "anpa_category": [{"qcode": "A", "name": "General News"}]
         }
     },
 
@@ -526,7 +527,8 @@
             "guid": "item2",
             "versioncreated": "2015-01-06T10:10:10+0000",
             "_current_version" : 1,
-            "original_creator": "-id user admin-"
+            "original_creator": "-id user admin-",
+            "anpa_category": [{"qcode": "A", "name": "General News"}]
         }
     },
 
@@ -542,6 +544,7 @@
             "versioncreated": "2015-01-01T10:10:10+0000",
             "_current_version" : 1,
             "original_creator": "-id user admin-",
+            "anpa_category": [{"qcode": "A", "name": "General News"}],
             "task" : {
 		        "desk" : "-id desk Sports Desks-",
 		        "user" : "-id user admin-",
@@ -562,6 +565,7 @@
             "versioncreated": "2015-01-01T10:10:10+0000",
             "_current_version" : 1,
             "original_creator": "-id user admin-",
+            "anpa_category": [{"qcode": "A", "name": "General News"}],
             "task" : {
 		        "desk" : "-id desk Sports Desks-",
 		        "user" : "-id user admin1-",
@@ -591,6 +595,7 @@
             "urgency": 1,
             "operation": "create",
             "subject": [{"name": "university", "parent": "05000000", "qcode": "05007000"}],
+            "anpa_category": [{"qcode": "A", "name": "General News"}],
             "task" : {
 		        "desk" : "-id desk Politic Desks-",
 		        "user" : "-id user admin1-",
@@ -618,6 +623,7 @@
             "urgency": 1,
             "operation": "create",
             "subject": [{"name": "university", "parent": "05000000", "qcode": "05007000"}],
+            "anpa_category": [{"qcode": "A", "name": "General News"}],
             "task" : {
 		        "desk" : "-id desk Politic Desks-",
 		        "user" : "-id user admin1-",
@@ -645,11 +651,28 @@
             "urgency": 1,
             "operation": "create",
             "subject": [{"name": "university", "parent": "05000000", "qcode": "05007000"}],
+            "anpa_category": [{"qcode": "A", "name": "General News"}],
             "task" : {
 		        "desk" : "-id desk Politic Desks-",
 		        "user" : "-id user admin1-",
 		        "status": "todo",
 		        "stage": "-id stage one Politic Desks-"
+		    },
+		    "dateline" : {
+		        "located" : {
+		            "city" : "Sydney",
+		            "alt_name" : "",
+		            "state_code" : "NSW",
+		            "dateline" : "city",
+		            "tz" : "Australia/Sydney",
+		            "state" : "New South Wales",
+		            "city_code" : "Sydney",
+		            "country" : "Australia",
+		            "country_code" : "AU"
+		        },
+		        "date" : "2015-01-03T10:10:10+0000",
+		        "source" : "SAP",
+		        "text" : "SYDNEY, Jan 03 SAP -"
 		    }
         }
     },
@@ -672,6 +695,7 @@
             "urgency": 1,
             "operation": "create",
             "subject": [{"name": "university", "parent": "05000000", "qcode": "05007000"}],
+            "anpa_category": [{"qcode": "A", "name": "General News"}],
             "task" : {
 		        "desk" : "-id desk Politic Desks-",
 		        "user" : "-id user admin1-",
@@ -699,6 +723,7 @@
             "urgency": 1,
             "operation": "fetch",
             "subject": [{"name": "university", "parent": "05000000", "qcode": "05007000"}],
+            "anpa_category": [{"qcode": "A", "name": "General News"}],
             "task" : {
 		        "desk" : "-id desk Politic Desks-",
 		        "user" : "-id user admin2-",
@@ -760,6 +785,7 @@
 		    "pubstatus": "usable",
 		    "subject": [{"name": "archaeology", "parent": "01000000", "qcode": "01001000"}],
 		    "language": "en",
+            "anpa_category": [{"qcode": "A", "name": "General News"}],
             "task" : {
                 "desk" : "-id desk Politic Desks-",
                 "user" : "-id user admin2-",
