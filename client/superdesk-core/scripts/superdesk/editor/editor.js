@@ -90,7 +90,6 @@ function HistoryStack(initialValue) {
     var stack = [];
     var selectionStack = [];
     var index = -1;
-
     /**
      * Add a new value to stack and remove all furhter redo values
      * so after manual change there is no way to redo.
@@ -117,6 +116,20 @@ function HistoryStack(initialValue) {
      */
     this.selectNext = function() {
         index = stack[index + 1] != null ? index + 1 : index;
+    };
+
+    /**
+     * Get current index position
+     */
+    this.getIndex = function() {
+        return index;
+    };
+
+    /**
+     * Set initial value
+     */
+    this.setInitialValue = function(value) {
+        initialValue = value;
     };
 
     /**
@@ -756,6 +769,12 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
                 }
 
                 function updateModel() {
+                    // In case of Kill action, don't undo back to initial value (i.e: original article text) - [ref: SD-3917]
+                    // Set initial value to kill template text at the beginning of history.
+                    if (scope.$parent.action === 'kill' && scope.history.getIndex() === -1) {
+                        scope.history.setInitialValue(scope.model.$viewValue);
+                    }
+
                     editor.commitScope(scope);
                 }
 
