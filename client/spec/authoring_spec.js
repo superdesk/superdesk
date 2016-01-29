@@ -345,4 +345,47 @@ describe('authoring', function() {
         expect(authoring.getHelplineSelectedOption(0)).toBe('true');    // first option remained selected
         expect(authoring.getHelplineSelectedOption(2)).toBe(null);      // Children not remained selected
     });
+
+    it('Not be able to Ctrl-z to the original, actionable text when killing an item', function() {
+        expect(monitoring.getTextItem(1, 0)).toBe('item5');
+        monitoring.actionOnItem('Edit', 1, 0);
+        expect(authoring.getHeadlineText()).toBe('item5');  // original, actionable headline text
+        expect(authoring.getBodyText()).toBe('item5 text'); // original, actionable body text
+
+        authoring.publish();
+        monitoring.filterAction('text');
+        monitoring.actionOnItem('Kill item', 4, 0);
+
+        // Body
+        expect(authoring.getBodyText()).toBe('This is kill template. Slugged item5 slugline one/two.');
+        authoring.writeText('Edit kill notice body text:');
+        expect(authoring.getBodyText())
+            .toBe('Edit kill notice body text:This is kill template. Slugged item5 slugline one/two.');
+
+        //undo edited body text
+        ctrlKey('z');
+        expect(authoring.getBodyText()).toBe('This is kill template. Slugged item5 slugline one/two.');
+
+        //undo one more time and expect body text not to be the original body text.
+        ctrlKey('z');
+        expect(authoring.getBodyText()).not.toBe('item5 text');
+        expect(authoring.getBodyText()).toBe('This is kill template. Slugged item5 slugline one/two.');
+
+        // Headline
+        expect(authoring.getHeadlineText()).toBe('KILL NOTICE');
+        authoring.writeTextToHeadline('Edit kill headline:');
+        expect(authoring.getHeadlineText()).toBe('Edit kill headline:KILL NOTICE');
+
+        //undo edited headline text
+        ctrlKey('z');
+        expect(authoring.getHeadlineText()).toBe('KILL NOTICE');
+
+        //undo one more time and expect headline text not to be the original headline text.
+        ctrlKey('z');
+        expect(authoring.getHeadlineText()).not.toBe('item5');
+        expect(authoring.getHeadlineText()).toBe('KILL NOTICE');
+
+        authoring.sendToButton.click();
+        expect(authoring.kill_button.isDisplayed()).toBe(true);
+    });
 });
