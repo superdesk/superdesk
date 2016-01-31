@@ -68,6 +68,7 @@ class MarkedForHighlightsService(BaseService):
     def create(self, docs, **kwargs):
         """Toggle highlight status for given highlight and item."""
         service = get_resource_service('archive')
+        publishedService = get_resource_service('published')
         ids = []
         for doc in docs:
             item = service.find_one(req=None, guid=doc['marked_item'])
@@ -92,6 +93,15 @@ class MarkedForHighlightsService(BaseService):
                 '_etag': item['_etag']
             }
             service.update(item['_id'], updates, item)
+
+            publishedItems = publishedService.find({'item_id': item['_id']})
+            for publishedItem in publishedItems:
+                updates = {
+                    'highlights': highlights,
+                    '_updated': publishedItem['_updated'],
+                    '_etag': publishedItem['_etag']
+                }
+                publishedService.update(publishedItem['_id'], updates, publishedItem)
 
             push_notification(
                 'item:highlight',

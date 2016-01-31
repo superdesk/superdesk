@@ -154,7 +154,7 @@
             var criteria = {source: query.getCriteria()};
             if (card.type === 'search' && card.search && card.search.filter.query.repo) {
                 criteria.repo = card.search.filter.query.repo;
-            } else if (card.type === 'deskOutput') {
+            } else if (card.type === 'deskOutput' || card.type === 'highlights') {
                 criteria.repo = 'archive,published';
             }
 
@@ -570,7 +570,7 @@
                  */
                 function apiquery() {
                     var provider = 'search';
-                    if (scope.group.type === 'search' || scope.group.type === 'deskOutput') {
+                    if (scope.group.type === 'search' || scope.group.type === 'deskOutput' || scope.group.type === 'highlights') {
                         if (criteria.repo && criteria.repo.indexOf(',') === -1) {
                             provider = criteria.repo;
                             if (!angular.isDefined(criteria.source.size)) {

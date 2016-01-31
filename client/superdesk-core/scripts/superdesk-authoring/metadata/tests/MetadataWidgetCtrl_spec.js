@@ -199,6 +199,28 @@ describe('metadata list editing directive', function() {
         expect(iScope.combinedList.length).toBe(6);
     }));
 
+    it('search a metadata term if field not set', inject(function() {
+        var elmHtml = '<div sd-meta-terms ng-disabled="!_editable" ' +
+                      'data-item="item" data-field="anpa_category" data-unique="qcode" ' +
+                      'data-list="availableCategories" data-header="true" data-reload-list="false"></div>';
+
+        var iScope;
+        var scopeValues = {
+            item: {},
+            _editable: true,
+            availableCategories: availableCategories
+        };
+
+        var elm = compileDirective(elmHtml, scopeValues);
+        $rootScope.$digest();
+        iScope = elm.isolateScope();
+        iScope.searchTerms('racing');
+        expect(iScope.terms.length).toBe(2);
+        expect(iScope.activeTree.length).toBe(4);
+        expect(iScope.activeList).toBe(true);
+        expect(iScope.combinedList.length).toBe(4);
+    }));
+
     it('remove a metadata term', inject(function() {
         var elmHtml = '<div sd-meta-terms ng-disabled="!_editable" ' +
                       'data-item="item" data-field="anpa_category" data-unique="qcode" ' +
