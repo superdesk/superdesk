@@ -139,7 +139,7 @@ class BasePublishService(BaseService):
                     self._set_updates(package, package_updates, last_updated)
                     package_updates.setdefault(ITEM_OPERATION, updates.get(ITEM_OPERATION, ITEM_PUBLISH))
                     self._update_archive(package, package_updates)
-                    package.update(updates)
+                    package.update(package_updates)
                     self._import_into_legal_archive(package)
                     self.update_published_collection(published_item_id=package_id)
                     """
@@ -148,6 +148,7 @@ class BasePublishService(BaseService):
 #                     package = get_resource_service('published').find_one(req=None, item_id=package_id)
 #                     enqueue_item(package)
 
+                self._update_archive(original, updated, should_insert_into_versions=auto_publish)
                 self.update_published_collection(published_item_id=original[config.ID_FIELD], updated=updated)
                 """
                 This sequence is for test purposes, it will be removed once the feature is finished.
@@ -156,7 +157,7 @@ class BasePublishService(BaseService):
 #                 enqueue_item(item)
 
             self._process_publish_updates(original, updates)
-            self._update_archive(original=original, updates=updates, should_insert_into_versions=auto_publish)
+            #self._update_archive(original=original, updates=updates, should_insert_into_versions=auto_publish)
             push_notification('item:publish', item=str(id), unique_name=original['unique_name'],
                               desk=str(original.get('task', {}).get('desk', '')),
                               user=str(user.get(config.ID_FIELD, '')))
@@ -225,7 +226,7 @@ class BasePublishService(BaseService):
         #     self._validate(package_item, updates)
 
     def raise_if_not_marked_for_publication(self, original):
-        if original.get('marked_for_not_publication', False):
+        if original.get('flags', {}).get('marked_for_not_publication', False):
             raise SuperdeskApiError.badRequestError('Cannot publish an item which is marked as Not for Publication')
 
     def raise_if_invalid_state_transition(self, original):

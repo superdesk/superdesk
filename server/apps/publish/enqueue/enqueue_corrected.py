@@ -19,6 +19,10 @@ from apps.publish.enqueue.enqueue_service import EnqueueService
 
 
 class EnqueueCorrectedService(EnqueueService):
+
+    publish_type = 'correct'
+    published_state = 'corrected'
+
     def get_subscribers(self, doc, target_media_type):
         """
         Get the subscribers for this document based on the target_media_type for article Correction.

@@ -12,7 +12,7 @@ from functools import partial
 import logging
 from superdesk import get_resource_service
 from superdesk.errors import SuperdeskApiError
-from superdesk.metadata.item import CONTENT_TYPE, ITEM_TYPE, ITEM_STATE, EMBARGO
+from superdesk.metadata.item import CONTENT_TYPE, ITEM_TYPE, ITEM_STATE, EMBARGO, CONTENT_STATE
 from superdesk.metadata.packages import SEQUENCE, PACKAGE_TYPE
 from superdesk.notification import push_notification
 from superdesk.publish import SUBSCRIBER_TYPES
@@ -21,7 +21,6 @@ from superdesk.publish.formatters import get_formatter
 from superdesk.utc import utcnow
 from copy import deepcopy
 from eve.utils import config, ParsedRequest
-
 from apps.archive.common import get_user
 from apps.packages import TakesPackageService
 from apps.packages.package_service import PackageService
@@ -230,11 +229,12 @@ class EnqueueService:
                             publish_queue_item['content_type'] = doc.get('type', None)
                             publish_queue_item['headline'] = doc.get('headline', None)
 
-                            if publish_queue_item.get(ITEM_STATE):
-                                publish_queue_item['publishing_action'] = publish_queue_item.get(ITEM_STATE)
-                                del publish_queue_item[ITEM_STATE]
+                            if doc.get('publish_schedule', None):
+                                publish_queue_item['publishing_action'] = CONTENT_STATE.SCHEDULED
                             else:
                                 publish_queue_item['publishing_action'] = self.published_state
+
+                            publish_queue_item.pop(ITEM_STATE, None)
 
                             get_resource_service('publish_queue').post([publish_queue_item])
                             queued = True

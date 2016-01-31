@@ -120,15 +120,15 @@ Feature: Embargo Date and Time on an Article (User Story: https://dev.sourcefabr
     {"_items": [{"subscriber_id": "123", "publishing_action": "published", "content_type": "text", "destination":{"name":"email"}}]}
     """
     When embargo lapses for "#archive._id#"
+    When we enqueue published
     And we publish "#archive._id#" with "correct" type and "corrected" state
     Then we get OK response
     When we enqueue published
     When we get "/publish_queue"
-    Then we get list with 3 items
+    Then we get list with 2 items
     """
     {"_items": [{"subscriber_id": "123", "publishing_action": "published", "content_type": "text", "destination":{"name":"email"}},
-                {"subscriber_id": "123", "publishing_action": "corrected", "content_type": "text", "destination":{"name":"email"}},
-                {"subscriber_id": "321", "publishing_action": "published", "content_type": "composite", "destination":{"name":"email"}}]}
+                {"subscriber_id": "123", "publishing_action": "corrected", "content_type": "text", "destination":{"name":"email"}}]}
     """
     When we get "/archive/#archive.123.take_package#"
     Then we check if article has Embargo and Ed. Note of the article has embargo indication

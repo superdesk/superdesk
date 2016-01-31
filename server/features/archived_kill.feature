@@ -115,13 +115,13 @@ Feature: Kill a content item in the (dusty) archive
     Then we get OK response
     When we get "/published"
     Then we get list with 2 items
-    """
-    {"_items" : [
-      {"package_type": "takes", "item_id": "#archive.123.take_package#", "state": "published", "type": "composite", "_current_version": 2},
-      {"item_id": "123", "state": "published", "type": "text", "_current_version": 2}
-      ]
-    }
-    """
+#    """
+#    {"_items" : [
+#      {"item_id": "#archive.123.take_package#", "package_type": "takes", "state": "published", "type": "composite", "_current_version": 2},
+#      {"item_id": "123", "state": "published", "type": "text", "_current_version": 2}
+#      ]
+#    }
+#    """
     When we enqueue published
     When we get "/publish_queue"
     Then we get list with 2 items
