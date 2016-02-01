@@ -3,12 +3,9 @@ language: python
 sudo: false
 
 env:
-    - TARGET=unit
-    - TARGET=server_ldap
     - TARGET=e2e_first_chrome
     - TARGET=e2e_second_chrome
     - TARGET=e2e_third_chrome
-#    - TARGET=e2e_firefox
 
 python:
     - "3.4"
@@ -29,58 +26,32 @@ cache:
     - $HOME/.cache/bower
 
 before_install:
-    - if [ "${TARGET}" = "unit" ] || [ "${TARGET}" != "${TARGET/e2e/}" ]; then
-        npm install -g grunt-cli bower ;
-      fi
-    - if [ "${TARGET}" != "${TARGET/e2e/}" ]; then
-        pip install requests &&
-        export DISPLAY=:99.0 &&
-        /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1920x1080x24 ;
-        ./scripts/get-chrome-url | wget -N --no-verbose -i - && unzip chrome-linux.zip &&
-        export CHROME_BIN=`pwd`/chrome-linux/chrome &&
-        $CHROME_BIN --version ;
-      fi
+    - npm install -g grunt-cli bower
+    - pip install requests
+    - export DISPLAY=:99.0
+    - /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1920x1080x24
+    - ./scripts/get-chrome-url | wget -N --no-verbose -i - && unzip chrome-linux.zip && export CHROME_BIN=`pwd`/chrome-linux/chrome
+    - $CHROME_BIN --version ;
 
 install:
-    - if [ "${TARGET}" = "unit" ] || [ "${TARGET}" != "${TARGET/server/}" ] || [ "${TARGET}" != "${TARGET/e2e/}" ]; then
-        cd server &&
-        pip install -r requirements.txt &&
-        cd .. ;
-      fi
-    - if [ "${TARGET}" = "unit" ] || [ "${TARGET}" != "${TARGET/e2e/}" ]; then
-        cd client && npm install && cd .. ;
-      fi
-    - if [ "${TARGET}" = "unit" ] || [ "${TARGET}" != "${TARGET/e2e/}" ]; then
-        cd client && bower install && cd .. ;
-      fi
-    - if [ "${TARGET}" = "unit" ]; then
-        cd server && pip install coveralls==1.0a2 && cd .. ;
-      fi
+    - cd server && pip install -r requirements.txt && cd ..
+    - cd client && npm install && bower install && cd ..
 
 before_script:
-    - if [ "${TARGET}" != "${TARGET/e2e/}" ]; then
-        cd server ;
-        (nohup env SUPERDESK_URL='http://127.0.0.1:5000/api' SUPERDESK_CLIENT_URL='http://127.0.0.1:9000' WEB_CONCURRENCY=3 WEB_TIMEOUT=8 SUPERDESK_TESTING='True' honcho start & );
-        cd ../client ;
-        grunt build --server='http://127.0.0.1:5000/api' --ws='ws://127.0.0.1:5100' ;
-        cd dist ;
-        while [ ! -f index.html ]; do sleep .5; done ;
-        (nohup python3 -m http.server 9000 & );
-        cd ../.. ;
-      fi
+    - cd server
+    - (nohup env SUPERDESK_URL='http://127.0.0.1:5000/api' SUPERDESK_CLIENT_URL='http://127.0.0.1:9000' WEB_CONCURRENCY=3 WEB_TIMEOUT=8 SUPERDESK_TESTING='True' honcho start & )
+    - cd ../client
+    - grunt build --server='http://127.0.0.1:5000/api' --ws='ws://127.0.0.1:5100'
+    - cd dist
+    - while [ ! -f index.html ]; do sleep .5; done
+    - (nohup python3 -m http.server 9000 & )
+    - cd ../..
 
 script:
-    - if [ "${TARGET}" = "unit" ]; then
-        cd client && npm test && cd .. ;
-      fi
-    - if [ "${TARGET}" = "server_ldap" ]; then
-        cd server &&
-        cd .. ;
-      fi
     - if [ "${TARGET}" != "${TARGET/e2e_first/}" ]; then
         cd client &&
         ./node_modules/.bin/webdriver-manager update &&
-        ./node_modules/.bin/protractor-flake --node-bin node --max-attempts=3 -- protractor-conf-first.js
+        ./node_modules/.bin/protractor-flake --node-bin node --max-attempts=3 -- protractor-conf.js --suite=a
           --stackTrace --verbose
           --baseUrl 'http://127.0.0.1:9000'
           --params.baseBackendUrl 'http://127.0.0.1:5000/api'
@@ -92,7 +63,7 @@ script:
     - if [ "${TARGET}" != "${TARGET/e2e_second/}" ]; then
         cd client &&
         ./node_modules/.bin/webdriver-manager update &&
-        ./node_modules/.bin/protractor-flake --node-bin node --max-attempts=3 -- protractor-conf-second.js
+        ./node_modules/.bin/protractor-flake --node-bin node --max-attempts=3 -- protractor-conf.js --suite=b
           --stackTrace --verbose
           --baseUrl 'http://127.0.0.1:9000'
           --params.baseBackendUrl 'http://127.0.0.1:5000/api'
@@ -104,7 +75,7 @@ script:
     - if [ "${TARGET}" != "${TARGET/e2e_third/}" ]; then
         cd client &&
         ./node_modules/.bin/webdriver-manager update &&
-        ./node_modules/.bin/protractor-flake --node-bin node --max-attempts=3 -- protractor-conf-third.js
+        ./node_modules/.bin/protractor-flake --node-bin node --max-attempts=3 -- protractor-conf.js --suite=c
           --stackTrace --verbose
           --baseUrl 'http://127.0.0.1:9000'
           --params.baseBackendUrl 'http://127.0.0.1:5000/api'
@@ -116,10 +87,3 @@ script:
 
 after_script:
     - killall -9 python
-
-after_success:
-    - if [ "${TARGET}" = "unit" ]; then
-        cd client && grunt coveralls && cd .. ;
-        cd server && coveralls --merge="../client/coveralls.json" ;
-      fi
-

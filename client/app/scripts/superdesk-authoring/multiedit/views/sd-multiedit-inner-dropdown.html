@@ -1,7 +1,0 @@
-<li ng-repeat="item in items" ng-if="items.length">
-    <button ng-click="open(item._id);">
-        <span ng-show="item.headline">{{ item.headline }}</span>
-        <span ng-show="!item.headline">{{ :: 'Untitled' | translate }}</span>
-    </button>
-</li>
-<li ng-if="!items.length" class="msg" translate>No items to add!</li>

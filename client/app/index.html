@@ -7,12 +7,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-    <link rel="stylesheet" href="styles/css/bootstrap.css">
-    <link rel="stylesheet" href="styles/css/app.css">
+    <link rel="stylesheet" href="app.css">
 
-    <!-- build:css styles/css/vendor.css -->
-    <link rel="stylesheet" href="scripts/bower_components/jcrop/css/jquery.Jcrop.css">
-    <link rel="stylesheet" href="scripts/bower_components/jquery-ui/themes/smoothness/jquery-ui.min.css">
+    <!-- build:css vendor.css -->
+    <link rel="stylesheet" href="bower_components/jcrop/css/jquery.Jcrop.css">
+    <link rel="stylesheet" href="bower_components/jquery-ui/themes/smoothness/jquery-ui.css">
     <!-- endbuild -->
 
   </head>
@@ -20,203 +19,206 @@
 
     <div sd-superdesk-view></div>
 
-    <!-- build:js scripts/vendor.js -->
-    <script src="scripts/bower_components/jquery/dist/jquery.js"></script>
-    <script src="scripts/bower_components/lodash/lodash.js"></script>
-    <script src="scripts/bower_components/jquery-ui/jquery-ui.js"></script>
-    <script src="scripts/bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <!-- build:js vendor.js -->
+    <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="bower_components/lodash/lodash.js"></script>
+    <script src="bower_components/jquery-ui/jquery-ui.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
 
-    <script src="scripts/bower_components/react/react.js"></script>
-    <script src="scripts/bower_components/react/react-dom.js"></script>
-    <script src="scripts/bower_components/classnames/index.js"></script>
+    <script src="bower_components/react/react.js"></script>
+    <script src="bower_components/react/react-dom.js"></script>
+    <script src="bower_components/classnames/index.js"></script>
 
-    <script src="scripts/bower_components/angular/angular.js"></script>
-    <script src="scripts/bower_components/gridster/dist/jquery.gridster.with-extras.js"></script>
-    <script src="scripts/bower_components/medium-editor/dist/js/medium-editor.js"></script>
-    <script src="scripts/bower_components/ment.io/dist/mentio.js"></script>
-    <script src="scripts/bower_components/rangy/rangy-core.js"></script>
-    <script src="scripts/bower_components/rangy/rangy-selectionsaverestore.js"></script>
-    <script src="scripts/bower_components/momentjs/moment.js"></script>
-    <script src="scripts/bower_components/moment-timezone/builds/moment-timezone-with-data-2010-2020.js"></script>
-    <script src="scripts/bower_components/langmap/language-mapping-list.js"></script>
-    <script src="scripts/bower_components/angular-moment/angular-moment.js"></script>
-    <script src="scripts/bower_components/d3/d3.js"></script>
-    <script src="scripts/bower_components/jcrop/js/jquery.Jcrop.js"></script>
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/gridster/dist/jquery.gridster.with-extras.js"></script>
+    <script src="bower_components/medium-editor/dist/js/medium-editor.js"></script>
+    <script src="bower_components/ment.io/dist/mentio.js"></script>
+    <script src="bower_components/rangy/rangy-core.js"></script>
+    <script src="bower_components/rangy/rangy-selectionsaverestore.js"></script>
+    <script src="bower_components/momentjs/moment.js"></script>
+    <script src="bower_components/moment-timezone/builds/moment-timezone-with-data-2010-2020.js"></script>
+    <script src="bower_components/langmap/language-mapping-list.js"></script>
+    <script src="bower_components/angular-moment/angular-moment.js"></script>
+    <script src="bower_components/d3/d3.js"></script>
+    <script src="bower_components/jcrop/js/jquery.Jcrop.js"></script>
 
-    <script src="scripts/bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script> 
-    <script src="scripts/bower_components/angular-resource/angular-resource.js"></script> 
-    <script src="scripts/bower_components/angular-route/angular-route.js"></script> 
-    <script src="scripts/bower_components/angular-gettext/dist/angular-gettext.js"></script> 
-    <script src="scripts/bower_components/angular-mocks/angular-mocks.js"></script> 
-    <script src="scripts/bower_components/angular-animate/angular-animate.js"></script> 
-    <script src="scripts/bower_components/ng-file-upload/angular-file-upload.js"></script> 
-    <script src="scripts/bower_components/ng-file-upload/angular-file-upload-shim.js"></script> 
-    <script src="scripts/bower_components/raven-js/dist/raven.js"></script> 
+    <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script> 
+    <script src="bower_components/angular-resource/angular-resource.js"></script> 
+    <script src="bower_components/angular-route/angular-route.js"></script> 
+    <script src="bower_components/angular-gettext/dist/angular-gettext.js"></script> 
+    <script src="bower_components/angular-mocks/angular-mocks.js"></script> 
+    <script src="bower_components/angular-animate/angular-animate.js"></script> 
+    <script src="bower_components/ng-file-upload/angular-file-upload.js"></script> 
+    <script src="bower_components/ng-file-upload/angular-file-upload-shim.js"></script> 
+    <script src="bower_components/raven-js/dist/raven.js"></script> 
     <!-- endbuild -->
 
-    <!-- build:js scripts/superdesk-core.js -->
-    <script src="scripts/gettext.js"></script>
+    <!-- build:js superdesk-core.js -->
+    <script src="node_modules/superdesk-core/scripts/superdesk/gettext.js"></script>
 
-    <script src="scripts/superdesk/activity/activity.js"></script>
-    <script src="scripts/superdesk/activity/activity-chooser-directive.js"></script>
-    <script src="scripts/superdesk/activity/activity-list-directive.js"></script>
-    <script src="scripts/superdesk/activity/activity-modal-directive.js"></script>
-    <script src="scripts/superdesk/analytics/analytics.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/activity/activity.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/activity/activity-chooser-directive.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/activity/activity-list-directive.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/activity/activity-modal-directive.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/analytics/analytics.js"></script>
 
-    <script src="scripts/superdesk/api/api.js"></script>
-    <script src="scripts/superdesk/api/api-service.js"></script>
-    <script src="scripts/superdesk/api/http-endpoint-factory.js"></script>
-    <script src="scripts/superdesk/api/request-service.js"></script>
-    <script src="scripts/superdesk/api/timeout-interceptor.js"></script>
-    <script src="scripts/superdesk/api/url-resolver-service.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/api/api.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/api/api-service.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/api/http-endpoint-factory.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/api/request-service.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/api/timeout-interceptor.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/api/url-resolver-service.js"></script>
 
-    <script src="scripts/superdesk/auth/auth.js"></script>
-    <script src="scripts/superdesk/auth/auth-service.js"></script> 
-    <script src="scripts/superdesk/auth/session-service.js"></script> 
-    <script src="scripts/superdesk/auth/basic-auth-adapter.js"></script> 
-    <script src="scripts/superdesk/auth/login-modal-directive.js"></script> 
+    <script src="node_modules/superdesk-core/scripts/superdesk/auth/auth.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/auth/auth-service.js"></script> 
+    <script src="node_modules/superdesk-core/scripts/superdesk/auth/session-service.js"></script> 
+    <script src="node_modules/superdesk-core/scripts/superdesk/auth/basic-auth-adapter.js"></script> 
+    <script src="node_modules/superdesk-core/scripts/superdesk/auth/login-modal-directive.js"></script> 
 
-    <script src="scripts/superdesk/beta/beta.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/beta/beta.js"></script>
 
-    <script src="scripts/superdesk/datetime/datetime.js"></script>
-    <script src="scripts/superdesk/datetime/group-dates-directive.js"></script>
-    <script src="scripts/superdesk/datetime/reldate-directive.js"></script>
-    <script src="scripts/superdesk/datetime/reldate-directive-complex.js"></script>
-    <script src="scripts/superdesk/datetime/absdate-directive.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/datetime/datetime.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/datetime/group-dates-directive.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/datetime/reldate-directive.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/datetime/reldate-directive-complex.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/datetime/absdate-directive.js"></script>
 
-    <script src="scripts/superdesk/error/error.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/error/error.js"></script>
 
-    <script src="scripts/superdesk/elastic/elastic.js"></script>
-    <script src="scripts/superdesk/elastic/es.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/elastic/elastic.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/elastic/es.js"></script>
 
-    <script src="scripts/superdesk/filters.js"></script>
-    <script src="scripts/superdesk/config/config.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/filters.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/config/config.js"></script>
 
-    <script src="scripts/superdesk/services/translate.js"></script>
-    <script src="scripts/translations.js"></script>
-    <script src="scripts/superdesk/services/preferencesService.js"></script>
-    <script src="scripts/superdesk/services/permissionsService.js"></script>
-    <script src="scripts/superdesk/services/data.js"></script>
-    <script src="scripts/superdesk/services/entity.js"></script>
-    <script src="scripts/superdesk/services/server.js"></script>
-    <script src="scripts/superdesk/services/storage.js"></script>
-    <script src="scripts/superdesk/services/dragDropService.js"></script>
-    <script src="scripts/superdesk/services/modalService.js"></script>
-    <script src="scripts/superdesk/services/workflowService.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/services/translate.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/services/preferencesService.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/services/permissionsService.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/services/data.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/services/entity.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/services/server.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/services/storage.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/services/dragDropService.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/services/modalService.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/services/workflowService.js"></script>
 
-    <script src="scripts/superdesk/directives/sdAutofocus.js"></script>
-    <script src="scripts/superdesk/directives/sdCheck.js"></script>
-    <script src="scripts/superdesk/directives/sdConfirm.js"></script>
-    <script src="scripts/superdesk/directives/sdDebounceThrottle.js"></script>
-    <script src="scripts/superdesk/directives/sdDragDrop.js"></script>
-    <script src="scripts/superdesk/directives/sdPermissions.js"></script>
-    <script src="scripts/superdesk/directives/sdSearch.js"></script>
-    <script src="scripts/superdesk/directives/sdSearchList.js"></script>
-    <script src="scripts/superdesk/directives/sdSelect.js"></script>
-    <script src="scripts/superdesk/directives/sdSlider.js"></script>
-    <script src="scripts/superdesk/directives/sdSort.js"></script>
-    <script src="scripts/superdesk/directives/sdTypeahead.js"></script>
-    <script src="scripts/superdesk/directives/sdUserAvatar.js"></script>
-    <script src="scripts/superdesk/directives/sdWithParams.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/directives/sdAutofocus.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/directives/sdCheck.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/directives/sdConfirm.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/directives/sdDebounceThrottle.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/directives/sdDragDrop.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/directives/sdPermissions.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/directives/sdSearch.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/directives/sdSearchList.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/directives/sdSelect.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/directives/sdSlider.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/directives/sdSort.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/directives/sdTypeahead.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/directives/sdUserAvatar.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/directives/sdWithParams.js"></script>
 
-    <script src="scripts/superdesk/editor/editor.js"></script>
-    <script src="scripts/superdesk/features/features.js"></script>
-    <script src="scripts/superdesk/services/asset.js"></script>
-    <script src="scripts/superdesk/services/image-factory.js"></script>
-    <script src="scripts/superdesk/list/list.js"></script>
-    <script src="scripts/superdesk/keyboard/keyboard.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/editor/editor.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/features/features.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/services/asset.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/services/image-factory.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/list/list.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/keyboard/keyboard.js"></script>
 
-    <script src="scripts/superdesk/privileges/privileges.js"></script>
-    <script src="scripts/superdesk/notification/notification.js"></script>
-    <script src="scripts/superdesk/itemList/itemList.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/privileges/privileges.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/notification/notification.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/itemList/itemList.js"></script>
 
-    <script src="scripts/superdesk/menu/menu.js"></script>
-    <script src="scripts/superdesk/menu/notifications/notifications.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/menu/menu.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/menu/notifications/notifications.js"></script>
 
-    <script src="scripts/superdesk/notify/notify.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/notify/notify.js"></script>
 
-    <script src="scripts/superdesk/ui/ui.js"></script>
-    <script src="scripts/superdesk/ui/autoheight-directive.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/ui/ui.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/ui/autoheight-directive.js"></script>
 
-    <script src="scripts/superdesk/upload/upload.js"></script>
-    <script src="scripts/superdesk/upload/upload-service.js"></script>
-    <script src="scripts/superdesk/upload/image-preview-directive.js"></script>
-    <script src="scripts/superdesk/upload/video-capture-directive.js"></script>
-    <script src="scripts/superdesk/upload/crop-directive.js"></script>
-    <script src="scripts/superdesk/upload/image-crop-directive.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/upload/upload.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/upload/upload-service.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/upload/image-preview-directive.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/upload/video-capture-directive.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/upload/crop-directive.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/upload/image-crop-directive.js"></script>
 
-    <script src="scripts/superdesk/superdesk.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/superdesk.js"></script>
 
-    <script src="scripts/superdesk-workspace/content/content.js"></script>
-    <script src="scripts/superdesk-dashboard/workspace-tasks/tasks.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk-workspace/content/content.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk-dashboard/workspace-tasks/tasks.js"></script>
 
-    <script src="scripts/superdesk-users/users.js"></script>
-    <script src="scripts/superdesk-users/profile.js"></script>
-    <script src="scripts/superdesk-users/activity/activity.js"></script>
-    <script src="scripts/superdesk-users/import/import.js"></script>
-    <script src="scripts/superdesk-groups/groups.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk-users/users.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk-users/profile.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk-users/activity/activity.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk-users/import/import.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk-groups/groups.js"></script>
 
-    <script src="scripts/superdesk-publish/publish.js"></script>
-    <script src="scripts/superdesk-templates/templates.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk-publish/publish.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk-templates/templates.js"></script>
     <!-- endbuild -->
 
-    <script src="scripts/templates-cache.js"></script>
+    <!-- build:js superdesk-apps.js -->
+    <script src="node_modules/superdesk-core/scripts/superdesk-desks/desks.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk-authoring/authoring.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk-authoring/widgets/widgets.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk-authoring/comments/comments.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk-authoring/versioning/versioning.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk-authoring/versioning/versions/versions.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk-authoring/versioning/history/history.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk-authoring/metadata/metadata.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk-authoring/workqueue/workqueue.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk-authoring/packages/packages.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk-authoring/editor/find-replace.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk-authoring/multiedit/multiedit.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk-authoring/macros/macros.js"></script>
 
-    <!-- build:js scripts/superdesk-apps.js -->
-    <script src="scripts/superdesk-desks/desks.js"></script>
-    <script src="scripts/superdesk-authoring/authoring.js"></script>
-    <script src="scripts/superdesk-authoring/widgets/widgets.js"></script>
-    <script src="scripts/superdesk-authoring/comments/comments.js"></script>
-    <script src="scripts/superdesk-authoring/versioning/versioning.js"></script>
-    <script src="scripts/superdesk-authoring/versioning/versions/versions.js"></script>
-    <script src="scripts/superdesk-authoring/versioning/history/history.js"></script>
-    <script src="scripts/superdesk-authoring/metadata/metadata.js"></script>
-    <script src="scripts/superdesk-authoring/workqueue/workqueue.js"></script>
-    <script src="scripts/superdesk-authoring/packages/packages.js"></script>
-    <script src="scripts/superdesk-authoring/editor/find-replace.js"></script>
-    <script src="scripts/superdesk-authoring/multiedit/multiedit.js"></script>
-    <script src="scripts/superdesk-authoring/macros/macros.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk-search/search.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk-legal-archive/legal_archive.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk-stream/stream.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk-packaging/packaging.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk-highlights/highlights.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk-content-filters/content-filters.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk-dictionaries/dictionaries.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk-vocabularies/vocabularies.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk-archive/directives.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/editor/spellcheck/spellcheck.js"></script>
 
-    <script src="scripts/superdesk-search/search.js"></script>
-    <script src="scripts/superdesk-legal-archive/legal_archive.js"></script>
-    <script src="scripts/superdesk-stream/stream.js"></script>
-    <script src="scripts/superdesk-packaging/packaging.js"></script>
-    <script src="scripts/superdesk-highlights/highlights.js"></script>
-    <script src="scripts/superdesk-content-filters/content-filters.js"></script>
-    <script src="scripts/superdesk-dictionaries/dictionaries.js"></script>
-    <script src="scripts/superdesk-vocabularies/vocabularies.js"></script>
-    <script src="scripts/superdesk-archive/directives.js"></script>
-    <script src="scripts/superdesk/editor/spellcheck/spellcheck.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk-monitoring/monitoring.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk-monitoring/aggregate.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk-monitoring/aggregate-widget/aggregate.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk-workspace/workspace.js"></script>
 
-    <script src="scripts/superdesk-monitoring/monitoring.js"></script>
-    <script src="scripts/superdesk-monitoring/aggregate.js"></script>
-    <script src="scripts/superdesk-monitoring/aggregate-widget/aggregate.js"></script>
-    <script src="scripts/superdesk-workspace/workspace.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk-settings/module.js"></script>
 
-    <script src="scripts/superdesk-settings/module.js"></script>
-
-    <script src="scripts/superdesk-archive/controllers/baseList.js"></script>
-    <script src="scripts/superdesk-dashboard/baseWidget.js"></script>
-    <script src="scripts/superdesk-ingest/ingest-stats-widget/stats.js"></script>
-    <script src="scripts/superdesk-ingest/module.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk-archive/controllers/baseList.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk-ingest/ingest-stats-widget/stats.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk-ingest/module.js"></script>
 
 
-    <script src="scripts/superdesk-archive/module.js"></script>
-    <script src="scripts/superdesk-archive/controllers/list.js"></script>
-    <script src="scripts/superdesk-archive/related-item-widget/relatedItem.js"></script>
-    <script src="scripts/superdesk-archive/directives.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk-archive/module.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk-archive/controllers/list.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk-archive/related-item-widget/relatedItem.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk-archive/directives.js"></script>
 
-    <script src="scripts/superdesk-dashboard/widgets-provider.js"></script>
-    <script src="scripts/superdesk-dashboard/world-clock/world-clock.js"></script>
-    <script src="scripts/superdesk-dashboard/module.js"></script>
-    <script src="scripts/superdesk-dashboard/sd-widget-directive.js"></script>
-    <script src="scripts/superdesk-dashboard/grid/grid.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk-dashboard/baseWidget.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk-dashboard/widgets-provider.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk-dashboard/world-clock/world-clock.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk-dashboard/module.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk-dashboard/sd-widget-directive.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk-dashboard/grid/grid.js"></script>
 
-    <script src="scripts/superdesk-search-providers/module.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk-search-providers/module.js"></script>
     <!-- endbuild -->
 
-    <!-- build:js scripts/main.js -->
-    <script src="scripts/main.js"></script>
+    <!-- build:js translations.js -->
+    <script src="app/translations.js"></script>
+    <!-- endbuild -->
+
+    <script src="templates-cache.js"></script>
+
+    <!-- build:js main.js -->
+    <script src="app/main.js"></script>
     <!-- endbuild -->
 
     <script>
