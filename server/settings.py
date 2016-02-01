@@ -34,13 +34,7 @@ def env(variable, fallback_value=None):
             return env_value
 
 ABS_PATH = os.path.abspath(os.path.dirname(__file__))
-BEHAVE_TESTS_FIXTURES_PATH = os.path.join(ABS_PATH,  # default value: `features/steps/fixtures`
-                                          'features', 'steps', 'fixtures')
-XML = False
-IF_MATCH = True
-BANDWIDTH_SAVER = False
-DATE_FORMAT = '%Y-%m-%dT%H:%M:%S+0000'
-PAGINATION_LIMIT = 200
+INIT_DATA_PATH = os.path.join(ABS_PATH, 'data')
 
 LOG_CONFIG_FILE = env('LOG_CONFIG_FILE', 'logging_config.yml')
 
@@ -52,15 +46,6 @@ SERVER_NAME = server_url.netloc or None
 URL_PREFIX = server_url.path.lstrip('/') or ''
 if SERVER_NAME.endswith(':80'):
     SERVER_NAME = SERVER_NAME[:-3]
-
-VALIDATION_ERROR_STATUS = 400
-JSON_SORT_KEYS = True
-
-CACHE_CONTROL = 'max-age=0, no-cache'
-
-X_DOMAINS = '*'
-X_MAX_AGE = 24 * 3600
-X_HEADERS = ['Content-Type', 'Authorization', 'If-Match']
 
 MONGO_DBNAME = env('MONGO_DBNAME', 'superdesk')
 MONGO_URI = env('MONGO_URI', 'mongodb://localhost/%s' % MONGO_DBNAME)
@@ -75,27 +60,6 @@ ELASTICSEARCH_URL = env('ELASTICSEARCH_URL', 'http://localhost:9200')
 ELASTICSEARCH_INDEX = env('ELASTICSEARCH_INDEX', 'superdesk')
 if env('ELASTIC_PORT'):
     ELASTICSEARCH_URL = env('ELASTIC_PORT').replace('tcp:', 'http:')
-
-ELASTICSEARCH_SETTINGS = {
-    'settings': {
-        'analysis': {
-            'filter': {
-                'remove_hyphen': {
-                    'pattern': '[-]',
-                    'type': 'pattern_replace',
-                    'replacement': ' '
-                }
-            },
-            'analyzer': {
-                'phrase_prefix_analyzer': {
-                    'type': 'custom',
-                    'filter': ['remove_hyphen', 'lowercase'],
-                    'tokenizer': 'keyword'
-                }
-            }
-        }
-    }
-}
 
 REDIS_URL = env('REDIS_URL', 'redis://localhost:6379')
 if env('REDIS_PORT'):
@@ -272,7 +236,6 @@ INSTALLED_APPS.extend([
     'apps.content_filters',
     'apps.dictionaries',
     'apps.duplication',
-    'apps.aap.import_text_archive',
     'apps.spellcheck',
     'apps.templates',
     'apps.archived',
@@ -282,15 +245,11 @@ INSTALLED_APPS.extend([
     'apps.macros',
     'apps.archive_broadcast',
     'apps.search_providers',
-    'apps.search_providers.aap_mm',
     'apps.feature_preview',
-])
 
-RESOURCE_METHODS = ['GET', 'POST']
-ITEM_METHODS = ['GET', 'PATCH', 'PUT', 'DELETE']
-EXTENDED_MEDIA_INFO = ['content_type', 'name', 'length']
-RETURN_MEDIA_AS_BASE64_STRING = False
-VERSION = '_current_version'
+    'aap.import_text_archive',
+    'aap_mm',
+])
 
 AMAZON_CONTAINER_NAME = env('AMAZON_CONTAINER_NAME', '')
 AMAZON_ACCESS_KEY_ID = env('AMAZON_ACCESS_KEY_ID', '')
@@ -317,16 +276,6 @@ BCRYPT_GENSALT_WORK_FACTOR = 12
 RESET_PASSWORD_TOKEN_TIME_TO_LIVE = int(env('RESET_PASS_TTL', 1))  # The number of days a token is valid
 # The number of days an activation token is valid
 ACTIVATE_ACCOUNT_TOKEN_TIME_TO_LIVE = int(env('ACTIVATE_TTL', 7))
-
-# email server
-MAIL_SERVER = env('MAIL_SERVER', 'smtp.googlemail.com')
-MAIL_PORT = int(env('MAIL_PORT', 465))
-MAIL_USE_TLS = json.loads(env('MAIL_USE_TLS', 'False').lower())
-MAIL_USE_SSL = json.loads(env('MAIL_USE_SSL', 'False').lower())
-MAIL_USERNAME = env('MAIL_USERNAME', 'admin@sourcefabric.org')
-MAIL_PASSWORD = env('MAIL_PASSWORD', '')
-ADMINS = [MAIL_USERNAME]
-SUPERDESK_TESTING = (env('SUPERDESK_TESTING', 'false').lower() == 'true')
 
 # Default TimeZone
 DEFAULT_TIMEZONE = env('DEFAULT_TIMEZONE', 'Europe/Prague')
@@ -381,6 +330,6 @@ ODBC_TEST_CONNECTION_STRING = env('ODBC_TEST_CONNECTION_STRING',
                                   'DRIVER=FreeTDS;DSN=NEWSDB;UID=???;PWD=???;DATABASE=News')
 
 # This value gets injected into NewsML 1.2 and G2 output documents.
-NEWSML_PROVIDER_ID = env('NEWSML_PROVIDER_ID', 'sourcefabric.org')
-ORGANIZATION_NAME = env('ORGANIZATION_NAME', 'Superdesk Associated Press')
-ORGANIZATION_NAME_ABBREVIATION = env('ORGANIZATION_NAME_ABBREVIATION', 'SAP')
+NEWSML_PROVIDER_ID = env('NEWSML_PROVIDER_ID', 'aap.com.au')
+ORGANIZATION_NAME = env('ORGANIZATION_NAME', 'Australian Associated Press')
+ORGANIZATION_NAME_ABBREVIATION = env('ORGANIZATION_NAME_ABBREVIATION', 'AAP')
