@@ -187,7 +187,16 @@ TASK PAGE
 					overflow: hidden;
 					color: @sd-text;
 					min-height: 24px;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
 				}
+
+                &:hover {
+                    .title {
+                        padding: 0 45px 0 10px;
+                    }
+                }
+
 				.action {
 					.item-field {
 						a {
@@ -217,7 +226,7 @@ TASK PAGE
 			p {
 				line-height: @nav-height;
 				color: @grayLight;
-				max-width: 375px;
+				max-width: 345px;
 				overflow: hidden;
 				text-overflow: ellipsis;
 				white-space: nowrap;
@@ -275,6 +284,10 @@ TASK PAGE
 		.task-labels {
 			margin-top: 0;
 			margin-bottom: 15px;
+
+            .icon-desk-time {
+                vertical-align: middle;
+            }
 		}
 
 		.time-edit {
