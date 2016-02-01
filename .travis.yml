@@ -48,7 +48,7 @@ install:
         cd .. ;
       fi
     - if [ "${TARGET}" = "unit" ] || [ "${TARGET}" != "${TARGET/e2e/}" ]; then
-        cd client && npm install && ls -R ./node_modules/superdesk-core/scripts/superdesk/ && cd .. ;
+        cd client && npm install && cd .. ;
       fi
     - if [ "${TARGET}" = "unit" ] || [ "${TARGET}" != "${TARGET/e2e/}" ]; then
         cd client && bower install && cd .. ;
@@ -68,7 +68,6 @@ before_script:
 
 script:
     - if [ "${TARGET}" = "unit" ]; then
-        cd client && grunt ci:travis && cd .. ;
         cd server && flake8 && cd .. ;
         cd server && behave ./features/ --format progress2 --logging-level ERROR && cd .. ;
         cd server && nosetests && cd .. ;
