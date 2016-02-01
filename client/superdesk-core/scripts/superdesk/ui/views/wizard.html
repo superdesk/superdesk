@@ -1,6 +1,0 @@
-<ul class="nav nav-tabs">
-	<li ng-repeat="step in steps" ng-class="{active: step.selected}">
-        <button ng-click="goTo(step)" ng-disabled="step.disabled">{{ step.title | translate}}</button>
-    </li>
-</ul>
-<div class="steps" ng-transclude></div>
