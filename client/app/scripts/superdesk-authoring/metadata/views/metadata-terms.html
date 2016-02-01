@@ -34,9 +34,12 @@
     </ul>
 </div>
 
-<div class="terms-list" ng-if="item[field].length">
+<div class="terms-list" ng-if="selectedItems.length">
     <ul>
-        <li ng-if="!disabled" class="pull-left" ng-repeat="t in item[field]" ng-click="removeTerm(t)">{{ :: t.name}}<i class="icon-close-small"></i></li>
-        <li ng-if="disabled" class="pull-left disabled" ng-repeat="t in item[field]">{{ :: t.name}}</li>
+        <li ng-if="!disabled" class="pull-left"
+            ng-repeat="t in selectedItems"
+            ng-click="removeTerm(t)">{{ :: t.name}}<i class="icon-close-small"></i></li>
+        <li ng-if="disabled" class="pull-left disabled"
+            ng-repeat="t in selectedItems">{{ :: t.name}}</li>
     </ul>
 </div>

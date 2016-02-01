@@ -9,36 +9,20 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-
 import os
 import settings
 from superdesk.factory import get_app as superdesk_app
 
 
-def get_app(config=None):
-    """App factory.
-
-    :param config: configuration that can override config from `settings.py`
-    :return: a new SuperdeskEve app instance
-    """
-    if config is None:
-        config = {}
-
-    config['APP_ABSPATH'] = os.path.abspath(os.path.dirname(__file__))
-
-    for key in dir(settings):
-        if key.isupper():
-            config.setdefault(key, getattr(settings, key))
-
+def get_app():
     media_storage = None
-    if config['AMAZON_CONTAINER_NAME']:
+    if getattr(settings, 'AMAZON_CONTAINER_NAME'):
         from superdesk.storage.amazon.amazon_media_storage import AmazonMediaStorage
         media_storage = AmazonMediaStorage
 
-    config['DOMAIN'] = {}
-
-    app = superdesk_app(config, media_storage)
+    app = superdesk_app(settings, media_storage)
     return app
+
 
 if __name__ == '__main__':
     debug = True

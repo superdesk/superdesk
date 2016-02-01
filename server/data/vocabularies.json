@@ -1,0 +1,430 @@
+[
+    {
+        "_id": "categories",
+        "display_name": "Categories",
+        "type": "manageable",
+        "items": [
+            {"is_active": true, "name": "News", "qcode": "n"},
+            {"is_active": true, "name": "Sport", "qcode": "s"},
+            {"is_active": true, "name": "Real Life", "qcode": "r"},
+            {"is_active": true, "name": "Motoring", "qcode": "m"}
+        ]
+    },
+    {
+        "_id": "default_categories",
+        "display_name": "Default Categories",
+        "type": "manageable",
+        "items": [
+            {"is_active": true, "qcode": "a"},
+            {"is_active": true, "qcode": "e"},
+            {"is_active": true, "qcode": "f"},
+            {"is_active": true, "qcode": "i"},
+            {"is_active": true, "qcode": "s"},
+            {"is_active": true, "qcode": "t"},
+            {"is_active": true, "qcode": "v"}
+        ]
+    },
+    {
+        "_id": "genre",
+        "display_name": "Genre",
+        "type": "manageable",
+        "items": [
+            {"is_active": true, "name": "Article (news)", "qcode": "Article"},
+            {"is_active": true, "name": "Sidebar", "qcode": "Sidebar"},
+            {"is_active": true, "name": "Factbox", "qcode": "Factbox"},
+            {"is_active": true, "name": "Feature", "qcode": "Feature"},
+            {"is_active": true, "name": "Newsfeature", "qcode": "Newsfeature"},
+            {"is_active": true, "name": "Backgrounder", "qcode": "Backgrounder"},
+            {"is_active": true, "name": "Opinion", "qcode": "Opinion"},
+            {"is_active": true, "name": "View (incl parly sketch)", "qcode": "View"},
+            {"is_active": true, "name": "Modular", "qcode": "Modular"},
+            {"is_active": true, "name": "Broadcast Script", "qcode": "Broadcast Script"},
+            {"is_active": true, "name": "Briefs", "qcode": "Briefs"},
+            {"is_active": true, "name": "Colour piece", "qcode": "Colour piece"},
+            {"is_active": true, "name": "Obituary", "qcode": "Obituary"},
+            {"is_active": true, "name": "Analysis", "qcode": "Analysis"},
+            {"is_active": true, "name": "Timeline", "qcode": "Timeline"},
+            {"is_active": true, "name": "Chronology", "qcode": "Chronology"},
+            {"is_active": true, "name": "Interview", "qcode": "Interview"},
+            {"is_active": true, "name": "Results (sport)", "qcode": "Results (sport)"},
+            {"is_active": true, "name": "Market Open", "qcode": "Market Open"},
+            {"is_active": true, "name": "Market Close", "qcode": "Market Close"},
+            {"is_active": true, "name": "Market Report", "qcode": "Market Report"},
+            {"is_active": true, "name": "Review", "qcode": "Review"},
+            {"is_active": true, "name": "Preview", "qcode": "Preview"}
+        ]
+    },
+    {
+        "_id": "urgency",
+        "display_name": "Urgency",
+        "type": "manageable",
+        "items": [
+            {"is_active": true, "name": "1", "qcode": 1},
+            {"is_active": true, "name": "2", "qcode": 2},
+            {"is_active": true, "name": "3", "qcode": 3},
+            {"is_active": true, "name": "4", "qcode": 4},
+            {"is_active": true, "name": "5", "qcode": 5}
+        ]
+    },
+    {
+        "_id": "priority",
+        "display_name": "Priority",
+        "type": "unmanageable",
+        "items": [
+            {"is_active": true, "name": "1", "qcode": 1},
+            {"is_active": true, "name": "2", "qcode": 2},
+            {"is_active": true, "name": "3", "qcode": 3},
+            {"is_active": true, "name": "4", "qcode": 4},
+            {"is_active": true, "name": "5", "qcode": 5},
+            {"is_active": true, "name": "6", "qcode": 6},
+            {"is_active": false, "name": "7", "qcode": 7},
+            {"is_active": false, "name": "8", "qcode": 8},
+            {"is_active": false, "name": "9", "qcode": 9}
+        ]
+    },
+    {
+        "_id": "type",
+        "display_name": "Article Type",
+        "type": "unmanageable",
+        "items": [
+            {"is_active": true, "name": "text", "qcode": "text"},
+            {"is_active": true, "name": "preformatted", "qcode": "preformatted"},
+            {"is_active": true, "name": "audio", "qcode": "audio"},
+            {"is_active": true, "name": "video", "qcode": "video"},
+            {"is_active": true, "name": "picture", "qcode": "picture"},
+            {"is_active": true, "name": "graphic", "qcode": "graphic"},
+            {"is_active": true, "name": "composite", "qcode": "composite"}
+        ]
+    },
+    {
+        "_id": "signal",
+        "display_name": "Signal",
+        "type": "unmanageable",
+        "items": [
+            {"is_active": true, "name": "Correction", "qcode": "Correction"},
+            {"is_active": true, "name": "Update", "qcode": "Update"},
+            {"is_active": true, "name": "Add", "qcode": "Add"},
+            {"is_active": true, "name": "Repeat", "qcode": "Repeat"},
+            {"is_active": true, "name": "Content Warning", "qcode": "Content Warning"}
+        ]
+    },
+    {
+        "_id": "rightsinfo",
+        "display_name": "Copyrights",
+        "type": "manageable",
+        "items": [
+            {
+                "is_active": true,
+                "name": "AAP",
+                "copyrightHolder": "Australian Associated Press",
+                "copyrightNotice": "AAP content is owned by or licensed to Australian Associated Press Pty Limited (AAP) and is\r\ncopyright protected.  AAP content is published on an \"as is\" basis for personal use only and\r\nmust not be copied, republished, rewritten, resold or redistributed, whether by caching,\r\nframing or similar means, without AAP's prior written permission.  AAP and its licensors\r\nare not liable for any loss, through negligence or otherwise, resulting from errors or\r\nomissions in or reliance on AAP content.  The globe symbol and \"AAP\" are registered trade marks.\r\nFurther this AAP content is supplied to the direct recipient pursuant to an Information Supply\r\nAgreement with AAP (AAP Information Supply Agreement).  The direct recipient has a non-exclusive,\r\nnon-transferable right to display this AAP content in accordance with and subject to the\r\nterms of the AAP Information Supply Agreement.",
+                "usageTerms": "The direct recipient must comply with the limitations specified in the AAP Information\r\nSupply Agreement relating to the AAP content including, without limitation, not permitting\r\nredistribution and storage of the content (outside the terms of the Agreement) and not\r\npermitting deep hyperlinking to the content, framing of the content on a web site,\r\nposting the content to usenet newsgroups or facilitating such actions."
+            },
+            {
+                "is_active": true,
+                "name": "default",
+                "copyrightHolder": "Australian Associated Press",
+                "copyrightNotice": "AAP content is owned by or licensed to Australian Associated Press Pty Limited (AAP) and is\r\ncopyright protected.  AAP content is published on an \"as is\" basis for personal use only and\r\nmust not be copied, republished, rewritten, resold or redistributed, whether by caching,\r\nframing or similar means, without AAP's prior written permission.  AAP and its licensors\r\nare not liable for any loss, through negligence or otherwise, resulting from errors or\r\nomissions in or reliance on AAP content.  The globe symbol and \"AAP\" are registered trade marks.\r\nFurther this AAP content is supplied to the direct recipient pursuant to an Information Supply\r\nAgreement with AAP (AAP Information Supply Agreement).  The direct recipient has a non-exclusive,\r\nnon-transferable right to display this AAP content in accordance with and subject to the\r\nterms of the AAP Information Supply Agreement.",
+                "usageTerms": "The direct recipient must comply with the limitations specified in the AAP Information\r\nSupply Agreement relating to the AAP content including, without limitation, not permitting\r\nredistribution and storage of the content (outside the terms of the Agreement) and not\r\npermitting deep hyperlinking to the content, framing of the content on a web site,\r\nposting the content to usenet newsgroups or facilitating such actions."
+            }
+        ]
+    },
+    {
+        "_id": "geographical_restrictions",
+        "display_name": "Geographical Restrictions",
+        "type": "manageable",
+        "items": [
+            {"is_active": true, "name": "New South Wales", "qcode": "NSW"},
+            {"is_active": true, "name": "Victoria", "qcode": "VIC"},
+            {"is_active": true, "name": "Queensland", "qcode": "QLD"},
+            {"is_active": true, "name": "Tasmania", "qcode": "TAS"},
+            {"is_active": true, "name": "South Australia", "qcode": "SA"},
+            {"is_active": true, "name": "Western Australia", "qcode": "WA"},
+            {"is_active": true, "name": "Northern Territory", "qcode": "NT"},
+            {"is_active": true, "name": "New Zealand", "qcode": "NZ"}
+        ]
+    },
+    {
+        "_id": "subscriber_types",
+        "display_name": "Subscriber Types",
+        "type": "unmanageable",
+        "items": [
+            {"is_active": true, "name": "All", "qcode": "all",
+                "formats": [{"name": "NINJS", "qcode": "ninjs"}, {"name": "AAP NewsML 1.2", "value": "newsml12"}, {"name": "NewsML G2", "value": "newsmlg2"}]},
+            {"is_active": true, "name": "Digital/Internet", "qcode": "digital",
+                "formats": [{"name": "NINJS", "qcode": "ninjs"}, {"name": "AAP NewsML 1.2", "value": "newsml12"}, {"name": "NewsML G2", "value": "newsmlg2"},
+                            {"name": "AAP Bulletin Builder", "qcode": "AAP BULLETIN BUILDER"}]},
+            {"is_active": true, "name": "Wire/Paper", "qcode": "wire",
+                "formats": [{"name": "AAP ANPA", "qcode": "AAP ANPA"}, {"name": "NITF", "value": "nitf"}, {"name": "AAP IPNEWS", "value": "AAP IPNEWS"},
+                            {"name": "AAP SMS", "qcode": "AAP SMS"}]}
+        ]
+    },
+    {
+        "_id": "locators",
+        "display_name": "Locators",
+        "type": "unmanageable",
+        "items": [
+            {"is_active": true, "name": "ACT", "qcode": "ACT", "state": "Australian Capital Territory", "country": "Australia", "world_region": "Oceania", "group": "Australia"},
+            {"is_active": true, "name": "ADV", "qcode": "ADV", "group": ""},
+            {"is_active": true, "name": "AFR", "qcode": "AFR", "state": "", "country": "", "world_region": "Africa", "group": "Rest Of World"},
+            {"is_active": true, "name": "ASIA", "qcode": "ASIA", "state": "", "country": "", "world_region": "Asia", "group": "Rest Of World"},
+            {"is_active": true, "name": "CAN", "qcode": "CAN", "state": "", "country": "Canada", "world_region": "North America", "group": "Rest Of World"},
+            {"is_active": true, "name": "CHN", "qcode": "CHN", "state": "", "country": "China", "world_region": "Asia", "group": "Rest Of World"},
+            {"is_active": true, "name": "CIS", "qcode": "CIS", "state": "", "country": "", "world_region": "Commonwealth of Independent States", "group": "Rest Of World"},
+            {"is_active": true, "name": "EUR", "qcode": "EUR", "state": "", "country": "", "world_region": "Europe", "group": "Rest Of World"},
+            {"is_active": true, "name": "FED", "qcode": "FED", "state": "", "country": "Australia", "world_region": "Oceania", "group": "Australia"},
+            {"is_active": true, "name": "IRE", "qcode": "IRE", "state": "", "country": "Ireland", "world_region": "Europe", "group": "Rest Of World"},
+            {"is_active": true, "name": "JPN", "qcode": "JPN", "state": "", "country": "Japan", "world_region": "Asia", "group": "Rest Of World"},
+            {"is_active": true, "name": "MID", "qcode": "MID", "state": "", "country": "", "world_region": "Middle East", "group": "Rest Of World"},
+            {"is_active": true, "name": "NSW", "qcode": "NSW", "state": "New South Wales", "country": "Australia", "world_region": "Oceania", "group": "Australia"},
+            {"is_active": true, "name": "NT", "qcode": "NT", "state": "Northern Territory", "country": "Australia", "world_region": "Oceania", "group": "Australia"},
+            {"is_active": true, "name": "NZ", "qcode": "NZ", "state": "", "country": "New Zealand", "world_region": "Oceania", "group": "Rest Of World"},
+            {"is_active": true, "name": "PAC", "qcode": "PAC", "state": "", "country": "", "world_region": "Pacific Island Nations", "group": "Rest Of World"},
+            {"is_active": true, "name": "QLD", "qcode": "QLD", "state": "Queensland", "country": "Australia", "world_region": "Oceania", "group": "Australia"},
+            {"is_active": true, "name": "SA", "qcode": "SA", "state": "South Australia", "country": "Australia", "world_region": "Oceania", "group": "Australia"},
+            {"is_active": true, "name": "SAM", "qcode": "SAM", "group": "Rest Of World"},
+            {"is_active": true, "name": "TAS", "qcode": "TAS", "state": "Tasmania", "country": "Australia", "world_region": "Oceania", "group": "Australia"},
+            {"is_active": true, "name": "UK", "qcode": "UK", "state": "", "country": "", "world_region": "Europe", "group": "Rest Of World"},
+            {"is_active": true, "name": "US", "qcode": "US", "state": "", "country": "United States Of America", "world_region": "North America", "group": "Rest Of World"},
+            {"is_active": true, "name": "VIC", "qcode": "VIC", "state": "Victoria", "country": "Australia", "world_region": "Oceania", "group": "Australia"},
+            {"is_active": true, "name": "WA", "qcode": "WA", "state": "Western Australia", "country": "Australia", "world_region": "Oceania", "group": "Australia"}
+        ]
+    },
+    {
+        "_id": "crop_sizes",
+        "display_name": "Image Crop Sizes",
+        "type": "manageable",
+        "items": [
+            {"is_active": true, "name": "thumbnail", "width": 300, "height": 300},
+            {"is_active": true, "name": "preview", "width": 1024, "height": 768},
+            {"is_active": true, "name": "wide-720", "width": 1280, "height": 720},
+            {"is_active": true, "name": "wide-1080", "width": 1920, "height": 1080}
+        ]
+    },
+    {
+        "_id": "keywords",
+        "display_name": "Keywords for Articles",
+        "type": "manageable",
+        "items": [
+            {
+                "is_active": true,
+                "name": "Science and Technology",
+                "qcode": "SciTech"
+            },
+            {
+                "is_active": true,
+                "name": "International Health Stories",
+                "qcode": "Medicine"
+            },
+            {
+                "is_active": true,
+                "name": "Health",
+                "qcode": "Health"
+            },
+            {
+                "is_active": true,
+                "name": "Motoring",
+                "qcode": "Motoring"
+            },
+            {
+                "is_active": true,
+                "name": "Soccer",
+                "qcode": "Soccer"
+            },
+            {
+                "is_active": true,
+                "name": "Property",
+                "qcode": "Property"
+            }
+        ]
+    },
+    {
+        "_id": "desk_types",
+        "display_name": "Desk Types",
+        "type": "unmanageable",
+        "items": [
+            {"is_active": true, "name": "authoring", "qcode": "authoring"},
+            {"is_active": true, "name": "production", "qcode": "production"}
+        ]
+    },
+    {
+        "_id": "iptc_category_map",
+        "display_name": "Ingest map between IPTC codes and ANPA Categories",
+        "type": "manageable",
+        "items": [
+            {"name" : "Sport", "category" : "s", "subject" : "15000000", "is_active" : true},
+            {"name" : "Finance", "category" : "f", "subject" : "04000000", "is_active" : true},
+            {"name" : "Entertainment", "category" : "e", "subject" : "01000000", "is_active" : true},
+            {"name" : "News", "category" : "i", "subject" : "02000000", "is_active" : true},
+            {"name" : "News 2", "category" : "i", "subject" : "03000000", "is_active" : true},
+            {"name" : "News 3", "category" : "i", "subject" : "05000000", "is_active" : true},
+            {"name" : "News 4", "category" : "i", "subject" : "06000000", "is_active" : true},
+            {"name" : "Features", "category" : "c", "subject" : "07000000", "is_active" : true},
+            {"name" : "Features 2", "category" : "c", "subject" : "08000000", "is_active" : true},
+            {"name" : "News 5", "category" : "i", "subject" : "09000000", "is_active" : true},
+            {"name" : "Features 3", "category" : "c", "subject" : "10000000", "is_active" : true},
+            {"name" : "News 5", "category" : "i", "subject" : "11000000", "is_active" : true},
+            {"name" : "News 6", "category" : "i", "subject" : "12000000", "is_active" : true},
+            {"name" : "News 7", "category" : "i", "subject" : "13000000", "is_active" : true},
+            {"name" : "News 8", "category" : "i", "subject" : "14000000", "is_active" : true},
+            {"name" : "News 9", "category" : "i", "subject" : "16000000", "is_active" : true},
+            {"name" : "Weather", "category" : "b", "subject" : "17000000", "is_active" : true}
+        ]
+    },
+    {
+        "_id": "topics_real_life",
+        "display_name": "Topics",
+        "type": "manageable",
+        "service": {"r": 1},
+        "priority": 1,
+        "items": [
+            {"is_active": true, "name": "Seasonal", "qcode": "seasonal"},
+            {"is_active": true, "name": "Crime", "qcode": "crime"},
+            {"is_active": true, "name": "Shocks", "qcode": "shocks"},
+            {"is_active": true, "name": "Parenting", "qcode": "parenting"},
+            {"is_active": true, "name": "Family", "qcode": "family"},
+            {"is_active": true, "name": "Quirky", "qcode": "quirky"},
+            {"is_active": true, "name": "Health", "qcode": "health"},
+            {"is_active": true, "name": "Body Image", "qcode": "body-image"},
+            {"is_active": true, "name": "Love & Relationships", "qcode": "love-relationships"},
+            {"is_active": true, "name": "Sex", "qcode": "sex"}
+        ]
+    },
+    {
+        "_id": "topics_motoring",
+        "display_name": "Topics",
+        "type": "manageable",
+        "service": {"m": 1},
+        "priority": 2,
+        "items": [
+            {"is_active": true, "name": "News", "qcode": "news"},
+            {"is_active": true, "name": "Features", "qcode": "features"},
+            {"is_active": true, "name": "Road Tests", "qcode": "road-tests"}
+        ]
+    },
+    {
+        "_id": "age_range",
+        "display_name": "Age Range",
+        "type": "manageable",
+        "service": {"n": 1, "s": 1, "r": 1, "m": 1},
+        "priority": 10,
+        "items": [
+            {"is_active": true, "name": "18-24", "qcode": "18-24"},
+            {"is_active": true, "name": "25-34", "qcode": "25-34"},
+            {"is_active": true, "name": "35-49", "qcode": "35-49"},
+            {"is_active": true, "name": "50 plus", "qcode": "50 plus"}
+        ]
+    },
+    {
+        "_id": "territory_long",
+        "display_name": "Territory",
+        "type": "manageable",
+        "service": {"n": 1, "s": 1},
+        "priority": 20,
+        "items": [
+            {"is_active": true, "name": "International", "qcode": "international"},
+            {"is_active": true, "name": "UK", "qcode": "uk"},
+            {"is_active": true, "name": "East Anglia", "qcode": "ean_uk"},
+            {"is_active": true, "name": "East Midlands", "qcode": "emi_uk"},
+            {"is_active": true, "name": "England", "qcode": "eng_uk"},
+            {"is_active": true, "name": "London", "qcode": "lon_uk"},
+            {"is_active": true, "name": "North East", "qcode": "nea_uk"},
+            {"is_active": true, "name": "North West", "qcode": "nwe_uk"},
+            {"is_active": true, "name": "Northern Ireland", "qcode": "nir_uk"},
+            {"is_active": true, "name": "Republic of Ireland", "qcode": "roi_uk"},
+            {"is_active": true, "name": "Scotland", "qcode": "sco_uk"},
+            {"is_active": true, "name": "South East", "qcode": "se_uk"},
+            {"is_active": true, "name": "South West", "qcode": "sw_uk"},
+            {"is_active": true, "name": "Wales", "qcode": "wa_uk"},
+            {"is_active": true, "name": "West Midlands", "qcode": "wm_uk"},
+            {"is_active": true, "name": "Yorks and Humber", "qcode": "yh_uk"}
+        ]
+    },
+    {
+        "_id": "territory_short",
+        "display_name": "Territory",
+        "type": "manageable",
+        "service": {"r": 1, "m": 1},
+        "priority": 20,
+        "items": [
+            {"is_active": true, "name": "International", "qcode": "international"},
+            {"is_active": true, "name": "UK", "qcode": "uk"},
+            {"is_active": true, "name": "Europe", "qcode": "europe"},
+            {"is_active": true, "name": "Australia", "qcode": "australia"},
+            {"is_active": true, "name": "USA", "qcode": "usa"}
+        ]
+    },
+    {
+        "_id": "reader_type",
+        "display_name": "Reader Type",
+        "type": "manageable",
+        "service": {"n": 1, "s": 1, "r": 1, "m": 1},
+        "priority": 30,
+        "items": [
+            {"is_active": true, "name": "Female", "qcode": "female"},
+            {"is_active": true, "name": "Male", "qcode": "male"},
+            {"is_active": true, "name": "Parent", "qcode": "parent"}
+        ]
+    },
+    {
+        "_id": "desired_response",
+        "display_name": "Response",
+        "type": "manageable",
+        "service": {"n": 1, "s": 1, "r": 1, "m": 1},
+        "priority": 40,
+        "items": [
+            {"is_active": true, "name": "Uplifting", "qcode": "uplifting"},
+            {"is_active": true, "name": "Inspirational", "qcode": "inspirational"},
+            {"is_active": true, "name": "Shock", "qcode": "shock"},
+            {"is_active": true, "name": "Sharing", "qcode": "sharing"},
+            {"is_active": true, "name": "Cute", "qcode": "cute"},
+            {"is_active": true, "name": "Controversial", "qcode": "controversial"},
+            {"is_active": true, "name": "Laughter", "qcode": "laughter"}
+        ]
+    },
+    {
+        "_id": "assets",
+        "display_name": "Assets",
+        "type": "manageable",
+        "service": {"n": 1, "s": 1, "r": 1, "m": 1},
+        "priority": 50,
+        "items": [
+            {"is_active": true, "name": "Images", "qcode": "images"},
+            {"is_active": true, "name": "Video", "qcode": "video"},
+            {"is_active": true, "name": "Graphics", "qcode": "graphics"},
+            {"is_active": true, "name": "Social", "qcode": "social"}
+        ]
+    },
+    {
+        "_id": "top5",
+        "display_name": "Top 5",
+        "type": "manageable",
+        "service": {"n": 1, "s": 1},
+        "priority": 41,
+        "items": [
+            {"is_active": true, "name": "Top 5", "qcode": "top5"}
+        ]
+    },
+    {
+        "_id": "featured",
+        "display_name": "Featured",
+        "type": "manageable",
+        "service": {"r": 1, "m": 1},
+        "priority": 41,
+        "items": [
+            {"is_active": true, "name": "Featured", "qcode": "featured"}
+        ]
+    },
+    {
+        "_id": "credit_level",
+        "display_name": "Credit Level",
+        "type": "manageable",
+        "service": {"r": 1},
+        "priority": 51,
+        "items": [
+            {"is_active": true, "name": "Standard Tier", "qcode": "credit:5"},
+            {"is_active": true, "name": "Article with Video", "qcode": "credit:10"},
+            {"is_active": true, "name": "Premium", "qcode": "credit:15"}
+        ]
+    }
+]
