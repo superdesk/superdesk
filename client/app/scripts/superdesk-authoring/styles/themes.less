@@ -4,7 +4,7 @@
 @import 'mixins.less';
 @import 'variables.less';
 
-@main-article-padding : 60px 60px @bottom-view-padding + 40;
+@main-article-padding : 35px 60px @bottom-view-padding + 40;
 
 // Themes color config
 //-----------------------------------------------------------
@@ -447,6 +447,16 @@ body, html {
 		}
 		p:last-child {
 			margin-bottom: 0 !important;
+		}
+	}
+
+	#body_footer {
+		.text-editor {
+			padding: 0 !important;
+			margin-bottom: 10px !important;
+			font-size:16px !important;
+			line-height: 150% !important;
+			.text-light();
 		}
 	}
 

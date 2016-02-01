@@ -10,7 +10,7 @@ function clearStorage() {
 }
 
 function openBaseUrl() {
-    return browser.driver.get(browser.baseUrl);
+    return browser.get(browser.baseUrl);
 }
 
 function resize(width, height) {

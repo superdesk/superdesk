@@ -4,6 +4,12 @@
 @import 'mixins.less';
 @import 'variables.less';
 
+#main-container.authoring {
+    .authoring-embedded {
+        background: url('../../images/loading-large.gif') no-repeat center;
+    }
+}
+
 .auth-screen {
 	position: absolute;
 	top: 0; right: 0; left: 0; bottom: 0;
@@ -133,7 +139,7 @@
 	top:0;
 	left: @tablist-width + @article-tabpane-padding;
 	right: @tablist-width + @article-tabpane-padding;
-	bottom: 0;
+	bottom: 30px;
 	overflow-y: auto;
 }
 
@@ -485,24 +491,26 @@
     z-index: 2;
     .box-sizing(border-box);
     .box-shadow(0px 2px 4px -1px rgba(0,0,0,0.2));
-		max-height: 1px;
-    .transition(max-height 1s);
+		max-height: 0;
+    //.transition(max-height 0.3s ease-in);
 
     > .authoring-header__holder {
         height: 0px;
 				opacity: 0;
         overflow: hidden;
-				.transition(opacity 0.3s 0.4s);
+				//.transition(opacity 0.3s 0.4s);
+				.transition(opacity 0.4s 0.1s);
     }
 
     &.active {
 			max-height: 500px;
-			.transition(max-height 0.3s ease-in);
+			//.transition(max-height 0.3s ease-in);
         > .authoring-header__holder {
             height: auto;
 						opacity: 1;
             overflow: visible;
-						.transition(opacity 0.3s 0.4s);
+						//.transition(opacity 0.3s 0.4s);
+						.transition(opacity 0.4s 0.1s);
         }
     }
 

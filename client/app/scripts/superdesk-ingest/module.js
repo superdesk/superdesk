@@ -13,7 +13,7 @@
     var app = angular.module('superdesk.ingest', [
         'superdesk.search',
         'superdesk.dashboard',
-        'superdesk.widgets.ingest',
+        'superdesk.widgets.base',
         'superdesk.widgets.ingeststats',
         'superdesk.ingest.send'
     ]);

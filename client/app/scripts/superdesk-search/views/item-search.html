@@ -5,10 +5,10 @@
             In Superdesk
         </label>
         <div class="superdeskRepos" ng-show="repo.search == 'local'">
-            <button id="ingest-collection" class="toggle-button" ng-click="repo.ingest=!repo.ingest" ng-class="{'toggle-button--active': repo.ingest}">{{:: 'Ingest' | translate}}</button>
-            <button id="archive-collection" class="toggle-button" ng-click="repo.archive=!repo.archive" ng-class="{'toggle-button--active': repo.archive}">{{:: 'Production' | translate}}</button>
-            <button id="published-collection" class="toggle-button" ng-click="repo.published=!repo.published" ng-class="{'toggle-button--active': repo.published}">{{:: 'Published' | translate}}</button>
-            <button id="archived-collection" class="toggle-button" ng-click="repo.archived=!repo.archived" ng-class="{'toggle-button--active': repo.archived}">{{:: 'Archived' | translate}}</button>
+            <button type="button" id="ingest-collection" class="toggle-button" ng-click="repo.ingest=!repo.ingest" ng-class="{'toggle-button--active': repo.ingest}">{{:: 'Ingest' | translate}}</button>
+            <button type="button" id="archive-collection" class="toggle-button" ng-click="repo.archive=!repo.archive" ng-class="{'toggle-button--active': repo.archive}">{{:: 'Production' | translate}}</button>
+            <button type="button" id="published-collection" class="toggle-button" ng-click="repo.published=!repo.published" ng-class="{'toggle-button--active': repo.published}">{{:: 'Published' | translate}}</button>
+            <button type="button" id="archived-collection" class="toggle-button" ng-click="repo.archived=!repo.archived" ng-class="{'toggle-button--active': repo.archived}">{{:: 'Archived' | translate}}</button>
         </div>
         <div ng-repeat="provider in providers">
             <label>

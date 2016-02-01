@@ -394,9 +394,7 @@ function MetadataListEditingDirective(metadata, $filter) {
                 scope.terms = items;
                 scope.tree = tree;
                 scope.activeTree = tree[null];
-                if (scope.item[scope.field]) {
-                    scope.combinedList = _.union(scope.list, scope.item[scope.field]);
-                }
+                scope.combinedList = _.union(scope.list, scope.item[scope.field] ? scope.item[scope.field] : []);
             });
 
             scope.$on('$destroy', function() {
@@ -521,7 +519,7 @@ function MetadataLocatorsDirective($timeout) {
 
             $timeout(function() {
                 if (scope.item) {
-                    if (scope.fieldprefix && scope.item[scope.fieldprefix][scope.field]) {
+                    if (scope.fieldprefix && scope.item[scope.fieldprefix] && scope.item[scope.fieldprefix][scope.field]) {
                         scope.selectedTerm = scope.item[scope.fieldprefix][scope.field].city;
                     } else if (scope.item[scope.field]) {
                         scope.selectedTerm = scope.item[scope.field].city;
@@ -575,6 +573,10 @@ function MetadataLocatorsDirective($timeout) {
 
                 if (locator) {
                     if (angular.isDefined(scope.fieldprefix)) {
+                        if (!angular.isDefined(scope.item[scope.fieldprefix]))
+                        {
+                            _.extend(scope.item, {dateline: {}});
+                        }
                         updates[scope.fieldprefix] = scope.item[scope.fieldprefix];
                         updates[scope.fieldprefix][scope.field] = locator;
                     } else {
@@ -608,8 +610,8 @@ function MetadataService(api, $q) {
                 _.each(result._items, function(vocabulary) {
                     self.values[vocabulary._id] = vocabulary.items;
                 });
-
-                self.values.targeted_for = _.union(self.values.geographical_restrictions, self.values.subscriber_types);
+                self.values.targeted_for = _.sortBy(_.union(self.values.geographical_restrictions, self.values.subscriber_types),
+                    function(target) { return target.value.toLowerCase() === 'all' ? '' : target.name; });
             });
         },
         fetchSubjectcodes: function(code) {

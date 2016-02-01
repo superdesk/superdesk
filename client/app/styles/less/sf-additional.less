@@ -1276,7 +1276,7 @@ header .sortbar {
 	.border-radius(2px);
 	margin-bottom: 7px;
 	position: relative;
-	&:hover {
+	&:not([disabled]):hover {
 		cursor: pointer;
 		.box-shadow(0px 1px 3px 0 rgba(0,0,0,0.35));
 		.action {
@@ -1290,6 +1290,10 @@ header .sortbar {
 			.box-shadow(0px 1px 3px 0 rgba(0,0,0,0.45));
 		}
 	}
+    &[disabled] {
+        cursor: default !important;
+        background-color: rgba(255,255,255,0.45);
+    }
 	.action {
 		display: none;
 		position: absolute;
@@ -1327,18 +1331,20 @@ header .sortbar {
 // Pils list
 // ---------------------------------------------
 .pills-list {
-	max-width: 450px;
+	max-width: 650px;
 	> li {
 		.user-select(none);
-		background: #f4f4f4;
+		background: #fff;
 		margin-bottom: 6px;
-		.border-radius(3px);
-		padding: 6px 8px;
+		.border-radius(2px);
+		padding: 10px 16px;
 		min-height: 18px;
 		color: #444;
 		position: relative;
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 1px rgba(0, 0, 0, 0.08);
 		&:hover {
-			background: #e8e8e8;
+			//background: #e8e8e8;
+			box-shadow: 0 0px 3px rgba(0, 0, 0, 0.3), 0 0 1px rgba(0, 0, 0, 0.2);
 		}
 		&.active {
 			background: @sd-blue;
@@ -1355,22 +1361,22 @@ header .sortbar {
 			display: none;
 			position: absolute;
 			top: 0px;
-			right: 0px;
+			right: 4px;
 			button {
 				border: 0;
 				height: 30px;
 				width: 30px;
-				background: rgba( 0, 0, 0, 0.1);
+				margin: 3px;
+				background: none;
 				text-align: center;
 				display: block;
 				float: left;
 				line-height: 0;
-				&:last-child {
-					.border-radius(0 3px 3px 0);
-				}
+				opacity: 0.4;
 				&:hover {
 					cursor: pointer;
-					background: rgba( 0, 0, 0, 0.05);
+					opacity: 1;
+
 				}
 				i {
 					margin-top: -2px;
@@ -1378,22 +1384,31 @@ header .sortbar {
 			}
 		}
 		h6 {
-			text-transform: uppercase;
-			font-size: 13px;
+			text-transform: none;
+			font-size: 14px;
 			color: @sd-text;
-			.text-normal();
+			.text-light();
 			float: left;
-            max-width: 430px;
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
+      max-width: 99%;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+		}
+		.label {
+			font-size: 9px;
+			.text-bold();
+			padding: 2px 5px;
+			line-height: 12px;
+			margin-left: 5px;
+			letter-spacing: 0.1em;
+			text-transform: uppercase;
 		}
 		&:hover {
 			.actions {
 				display: block !important;
 			}
             h6 {
-                max-width: 370px;
+                max-width: 550px;
             }
 		}
 	}

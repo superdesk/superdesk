@@ -53,12 +53,14 @@ function VersioningController($scope, authoring, api, notify, lock, desks, archi
      *
      * If there is no autosave then last one will make item editable
      */
-    $scope.openVersion = function(version) {
-        $scope.selected = version;
-        if (version === $scope.last && !$scope.item._autosave) {
-            $scope.closePreview();
-        } else {
-            $scope.preview(version);
+    $scope.openVersion = function (version) {
+        if ($scope.item._editable) {
+            $scope.selected = version;
+            if (version === $scope.last && !$scope.item._autosave) {
+                $scope.closePreview();
+            } else {
+                $scope.preview(version);
+            }
         }
     };
 

@@ -338,40 +338,37 @@
         return {
             require: 'dropdown',
             link: function(scope, elem, attrs, dropdown) {
-                var icon = elem.find('.icon-dots-vertical');
+                var icon = elem.find('[class*="icon-"]');
                 // ported from bootstrap 0.13.1
                 scope.$watch(dropdown.isOpen, function(isOpen) {
                     if (isOpen) {
-                        var pos = $position.positionElements(
-                            icon,
-                            dropdown.dropdownMenu,
-                            'bottom-right',
-                            true
-                        );
+                        var pos = $position.positionElements(icon, dropdown.dropdownMenu, 'bottom-right', true),
+                            windowHeight = window.innerHeight - 30; // Substracting 30 is for submenu bar
 
                         var css = {
                             top: pos.top + 'px',
                             display: isOpen ? 'block' : 'none',
-                            opacity: '1'
+                            opacity: '1',
+                            left: 'auto',
+                            right: Math.max(5, window.innerWidth - pos.left)
                         };
 
-                        css.left = 'auto';
-                        css.right = Math.max(5, window.innerWidth - pos.left);
-
-                        dropdown.dropdownMenu.css({opacity: '0'}); // avoid flickering
+                        scope.$evalAsync(function () {
+                            // Hide it to avoid flickering
+                            dropdown.dropdownMenu.css({opacity: '0', left: 'auto'});
+                        });
 
                         scope.$applyAsync(function () {
-                            dropdown.dropdownMenu.css(css);
-
                             /*
                              * Calculate if there is enough space for showing after the icon
                              * if not, show it above the icon
                              */
-                            var windowHeight = window.innerHeight - 30, //Subracting 30 is for submenu bar
-                                dropdownHeight = dropdown.dropdownMenu.outerHeight();
+                            var dropdownHeight = dropdown.dropdownMenu.outerHeight(),
+                                    dropdownWidth = dropdown.dropdownMenu.outerWidth();
 
                             if ((windowHeight - pos.top) < dropdownHeight) {
-                                if ((pos.top - 110) < dropdownHeight) { //Substracting 110 is for topmenu and submenu bar
+                                if ((pos.top - 110) < dropdownHeight) {
+                                    // Substracting 110 is for topmenu and submenu bar
                                     css = {
                                         top: '110px',
                                         right: css.right + 30
@@ -379,14 +376,19 @@
                                     };
                                 } else {
                                     css.top = pos.top - dropdownHeight - icon.outerHeight() - 15;
-                                    //Subtracting 15 so the dropdown is not stick to the icon
+                                    // Subtracting 15 so the dropdown is not stick to the icon
                                 }
-
-                                dropdown.dropdownMenu.css({
-                                    top: css.top,
-                                    right: css.right
-                                });
                             }
+
+                            /*
+                             * Calculate if there is enough space for opening on left side of icon,
+                             * if not, move it to the right side
+                             */
+                            if ((pos.left - 48) < dropdownWidth) {
+                                css.right -= dropdownWidth;
+                            }
+
+                            dropdown.dropdownMenu.css(css);
                         });
                     }
                 });
@@ -1188,7 +1190,6 @@
                 }
 
                 workspace.resizable({
-                    autoHide: true,
                     handles: 'e',
                     minWidth: 400,
                     start: function(e, ui) {

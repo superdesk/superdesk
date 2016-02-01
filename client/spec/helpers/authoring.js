@@ -349,6 +349,10 @@ function Authoring() {
         element(by.id('helplines')).element(by.css('option[label="' + helplineLabel + '"]')).click();
     };
 
+    this.getHelplineSelectedOption = function (option) {
+        return element(by.id('helplines')).all(by.tagName('option')).get(option).getAttribute('selected');
+    };
+
     this.getBodyFooter = function () {
         return bodyFooter.getText();
     };
