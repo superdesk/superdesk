@@ -22,8 +22,7 @@
     "medium-editor": "~5.13.0",
     "ment.io": "0.9.22",
     "angular-embed": "~3.0.1",
-    "angular-contenteditable": "~0.3.8",
-    "angular-dragula": "1.2.2"
+    "angular-contenteditable": "~0.3.8"
   },
   "ignore": [
     "**/.*",

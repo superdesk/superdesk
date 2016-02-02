@@ -587,7 +587,7 @@ function SdTextEditorBlockEmbedController($timeout, $element, $scope) {
 }
 
 angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embed',
-                                    'superdesk.config', window.angularDragula(angular)])
+                                    'superdesk.config'])
     .service('editor', EditorService)
     .constant('EMBED_PROVIDERS', { // see http://noembed.com/#supported-sites
         custom: 'Custom',

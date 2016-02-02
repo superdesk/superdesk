@@ -24,6 +24,9 @@
     }
 }
 .block {
+    &--selected {
+        border: 2px dashed #CFCFCF;
+    }
     &__container {
         position: relative;
         .text-editor {
@@ -43,20 +46,28 @@
         .editor--embed {
             min-height: 200px;
         }
-        &:hover .block__remove {opacity: 1;}
+        &:hover .block__actions {opacity: 1;}
     }
-    &__remove {
+    &__actions {
         position: absolute;
-        right: -17px;
+        right: -38px;
         top: 0;
         cursor: pointer;
         opacity: .1;
+        & > div {
+            display: inline-block;
+        }
     }
     &__move {
-        display: inline-block;
-        background-color: #5ea9c8;
-        padding: 1px 6px;
-        color: white;
+        // right: -41px;
+        // top: -3px;
+        &__dropzone {
+            border: 2px dashed #CFCFCF;
+            background-color: #F7F7F7;
+            width: 100%;
+            text-align: center;
+            cursor: pointer;
+        }
     }
 }
 .add-embed {

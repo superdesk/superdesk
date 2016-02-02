@@ -1,12 +1,24 @@
 <div dragula="'blocks'"
      dragula-model="vm.blocks">
+    <a ng-click="vm.disableReorderingMode()" ng-if="vm.reorderingMode">Cancel reorder</a>
     <div ng-repeat="block in vm.blocks"
-         class="block__container">
-        <div class="block__move">+</div>
-        <div ng-if="vm.config.multiBlockEdition" class="block__remove" ng-click="vm.removeBlock(block)">
-            <i class="icon-close-small"></i>
+         class="block__container"
+         ng-class="{'block--selected': vm.blockToMoveIndex === $index}">
+        <div class="block__actions" ng-if="vm.config.multiBlockEdition && !vm.reorderingMode">
+            <div class="block__remove" ng-click="vm.removeBlock(block)">
+                <i class="icon-close-small"></i>
+            </div>
+            <div class="block__move" ng-click="vm.enableReorderingMode($index)">
+                <i class="svg-icon-move"></i>
+            </div>
         </div>
-        <sd-add-embed ng-if="vm.config.multiBlockEdition && $first"
+        <div ng-if="$first && vm.reorderingMode && vm.blockToMoveIndex !== $index"
+             ng-click="vm.reorderToPosition($index)"
+             class="block__move__dropzone"
+             trans>
+            Click to move the block here
+        </div>
+        <sd-add-embed ng-if="vm.config.multiBlockEdition && $first && !vm.reorderingMode"
                       add-to-position="$index"
                       class="block__add-embed">
         </sd-add-embed>
@@ -24,11 +36,17 @@
                  ng-model="block.body">
             </div>
         </div>
-        <sd-add-embed ng-if="vm.config.multiBlockEdition"
+        <sd-add-embed ng-if="vm.config.multiBlockEdition && !vm.reorderingMode"
                       extended="block.lowerAddEmbedIsExtented"
                       add-to-position="$index + 1"
                       on-close="vm.renderBlocks()"
                       class="block__add-embed">
         </sd-add-embed>
+        <div ng-if="vm.reorderingMode && vm.blockToMoveIndex !== ($index + 1) && vm.blockToMoveIndex !== $index"
+             ng-click="vm.reorderToPosition($index + 1)"
+             class="block__move__dropzone"
+             trans>
+            Click to move the block here
+        </div>
     </div>
 </div>
