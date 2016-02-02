@@ -4,12 +4,12 @@ Feature: Vocabularies
   Scenario: List category vocabulary
     Given the "vocabularies"
       """
-      [{"_id": "categories", "items": [{"name": "National", "value": "A", "is_active": true}, {"name": "Domestic Sports", "value": "T", "is_active": false}], "service": {"news": 1}}]
+      [{"_id": "categories", "items": [{"name": "National", "value": "A", "is_active": true}, {"name": "Domestic Sports", "value": "T", "is_active": false}]}]
       """
     When we get "/vocabularies/categories"
     Then we get existing resource
       """
-      {"_id": "categories", "items": [{"name": "National", "value": "A"}], "service": {"news": 1}}
+      {"_id": "categories",  "items": [{"name": "National", "value": "A"}]}
       """
 
   @auth
