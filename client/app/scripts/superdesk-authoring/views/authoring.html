@@ -5,7 +5,23 @@
             <div class="page-content-container"
                  ng-click="views.send = false">
                 <div class="theme-controls">
-                    <button class="proofread-toggle btn"
+                    <div sd-modal data-model="fullPreviewItem" data-full="true" class="add-scheme-modal modal-strech modal-big">
+                        <div class="modal-header">
+                            <button class="close" ng-click="closeFullPreview()"><i class="icon-close-small"></i></button>
+                        </div>
+                        <div class="modal-body">
+                            <div>
+                                {{fullPreviewItem.body_html}}
+                            </div>
+                        </div>
+                        <div class="modal-footer">zxc</div>
+                    </div>
+                    <button class="toggle preview-toggle btn"
+                            ng-click="openFullPreview(item)"
+                            title="{{:: 'Preview' | translate}}">
+                        <i class="icon-fullscreen"></i>
+                    </button>
+                    <button class="toggle proofread-toggle btn"
                             ng-class="{active: proofread}"
                             ng-click="proofread = !proofread"
                             title="{{:: 'Toggle theme' | translate}}">
@@ -37,5 +53,4 @@
         data-action="action"
         data-mode="authoring">
     </div>
-
 </div>
