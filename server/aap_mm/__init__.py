@@ -8,13 +8,24 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
+from apps.search_providers import register_search_provider
 from superdesk import intrinsic_privilege
-from .aap_mm_datalayer import AAPMMDatalayer
-from apps.io.search_ingest import SearchIngestService, SearchIngestResource
+
+PROVIDER_NAME = 'aapmm'
 
 
 def init_app(app):
+    # Must be imported here as the constant PROVIDER_NAME is referenced by the below modules
+    from .aap_mm_datalayer import AAPMMDatalayer
+    from .resource import AAPMMResource
+    from .service import AAPMMService
+
     app.data.aapmm = AAPMMDatalayer(app)
-    service = SearchIngestService(datasource=None, backend=app.data.aapmm, source='aapmm')
-    SearchIngestResource(endpoint_name='aapmm', app=app, service=service)
-    intrinsic_privilege(resource_name='aapmm', method=['GET', 'POST'])
+
+    aapmm_service = AAPMMService(datasource=None, backend=app.data.aapmm)
+    AAPMMResource(endpoint_name=PROVIDER_NAME, app=app, service=aapmm_service)
+
+    intrinsic_privilege(resource_name=PROVIDER_NAME, method=['GET', 'POST'])
+
+
+register_search_provider(name=PROVIDER_NAME, fetch_endpoint=PROVIDER_NAME)

@@ -1,6 +1,6 @@
 Feature: AAP Multimedia Feature
 
-    @auth
+    @auth @test
     Scenario: Can search multimedia
         Given "search_providers"
 	    """
