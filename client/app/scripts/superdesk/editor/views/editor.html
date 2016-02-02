@@ -1,6 +1,8 @@
 <div dragula="'blocks'"
      dragula-model="vm.blocks">
-    <a ng-click="vm.disableReorderingMode()" ng-if="vm.reorderingMode">Cancel reorder</a>
+    <a class="btn btn-default" ng-click="vm.disableReorderingMode()" ng-if="vm.reorderingMode" trans>
+        Cancel reordering
+    </a>
     <div ng-repeat="block in vm.blocks"
          class="block__container"
          ng-class="{'block--selected': vm.blockToMoveIndex === $index}">
