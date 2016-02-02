@@ -902,6 +902,7 @@
                     }
                 });
 
+                $scope.fullPreview = false;
                 $scope.fullPreviewItem = null;
                 $scope.proofread = false;
                 $scope.referrerUrl = referrer.getReferrerUrl();
@@ -1236,10 +1237,12 @@
                 };
 
                 $scope.openFullPreview = function(item) {
+                    $scope.fullPreview = true;
                     $scope.fullPreviewItem = item;
                 };
 
                 $scope.closeFullPreview = function() {
+                    $scope.fullPreview = false;
                     $scope.fullPreviewItem = null;
                 };
 

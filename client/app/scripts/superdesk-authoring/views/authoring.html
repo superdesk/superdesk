@@ -5,7 +5,7 @@
             <div class="page-content-container"
                  ng-click="views.send = false">
                 <div class="theme-controls">
-                    <div sd-modal data-model="fullPreviewItem" data-full="true" class="add-scheme-modal modal-strech modal-big">
+                    <div sd-modal data-model="fullPreview" data-full="true" class="add-scheme-modal modal-strech modal-big">
                         <div class="modal-header">
                             <button class="close" ng-click="closeFullPreview()"><i class="icon-close-small"></i></button>
                         </div>
@@ -25,6 +25,14 @@
                             </div>
                             <div>{{fullPreviewItem.headline}}</div>
                             <div>{{fullPreviewItem.byline}}</div>
+                            <div>
+                                <div ng-repeat="association in fullPreviewItem.associations">
+                                    <img src="{{association.renditions.viewImage.href}}">
+                                </div>
+                            </div>
+                            <div ng-if="fullPreviewItem.associations && fullPreviewItem.associations.feature_image">
+                                <img src="{{fullPreviewItem.associations.feature_image.renditions.viewImage.href}}">
+                            </div>
                             <div sd-html-preview="fullPreviewItem.body_html"></div>
                             <div><!-- tags -->
                                 <span ng-repeat="keyword in fullPreviewItem.keywords">
@@ -35,6 +43,7 @@
                         <div class="modal-footer">zxc</div>
                     </div>
                     <button class="toggle preview-toggle btn"
+                            ng-if="item.type === 'text'"
                             ng-click="openFullPreview(item)"
                             title="{{:: 'Preview' | translate}}">
                         <i class="icon-fullscreen"></i>
