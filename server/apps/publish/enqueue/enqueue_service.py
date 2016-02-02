@@ -49,11 +49,6 @@ class EnqueueService:
         if item[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE and item.get(PACKAGE_TYPE):
             self.publish(doc=item, target_media_type=SUBSCRIBER_TYPES.DIGITAL)
         elif item[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
-            # subscriber_items = {}
-            # subscribers, _ = self.get_subscribers(item, SUBSCRIBER_TYPES.DIGITAL)
-            # subscribers.extend(self._get_subscribers_for_package_item(item))
-            # self._extend_subscriber_items(subscriber_items, subscribers, item, item.get('digital_item_id'))
-            # return self.publish_package(item, subscriber_items)
             return self._publish_package_items(item)
         elif item[ITEM_TYPE] not in [CONTENT_TYPE.TEXT, CONTENT_TYPE.PREFORMATTED]:
             return self.publish(item, SUBSCRIBER_TYPES.DIGITAL)
@@ -107,12 +102,12 @@ class EnqueueService:
         """
         published_service = get_resource_service('published')
         req = ParsedRequest()
-        query = {'query': {'filtered': {'filter': {'and':[{'term': {QUEUE_STATE: PUBLISH_STATE.QUEUED}},
-                                                         {'term': {'item_id': package['item_id']}}]}}},
-             'sort': [{'publish_sequence_no': 'desc'}]}
+        query = {'query': {'filtered': {'filter': {'and': [{'term': {QUEUE_STATE: PUBLISH_STATE.QUEUED}},
+                                                           {'term': {'item_id': package['item_id']}}]}}},
+                 'sort': [{'publish_sequence_no': 'desc'}]}
         req.args = {'source': json.dumps(query)}
         req.max_results = 1000
-        previously_published_packages =  published_service.get(req=req, lookup=None)
+        previously_published_packages = published_service.get(req=req, lookup=None)
         previously_published_package = previously_published_packages[0]
 
         if 'groups' in previously_published_package:

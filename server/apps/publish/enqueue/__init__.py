@@ -25,7 +25,6 @@ from apps.publish.enqueue.enqueue_corrected import EnqueueCorrectedService
 from apps.publish.enqueue.enqueue_killed import EnqueueKilledService
 from apps.publish.enqueue.enqueue_published import EnqueuePublishedService
 from apps.publish.published_item import PUBLISH_STATE, QUEUE_STATE, PUBLISHED
-from superdesk.metadata.item import EMBARGO
 
 
 logger = logging.getLogger(__name__)

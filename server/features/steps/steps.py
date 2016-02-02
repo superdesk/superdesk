@@ -1918,7 +1918,8 @@ def embargo_lapses(context, item_id):
         get_resource_service('archive').system_update(id=item['_id'], original=item, updates=updates)
         if len(linked_packages) > 0 and linked_packages[0]['package_type'] == 'takes':
             package = get_resource_service('archive').find_one(req=None, _id=linked_packages[0]['package'])
-            get_resource_service('archive').system_update(id=linked_packages[0]['package'], original=package, updates=updates)
+            get_resource_service('archive').system_update(id=linked_packages[0]['package'],
+                                                          original=package, updates=updates)
 
 
 @then('we validate the published item expiry to be after publish expiry set in desk settings {publish_expiry_in_desk}')

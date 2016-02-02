@@ -1111,7 +1111,7 @@ Feature: Package Publishing
 	    When we enqueue published
         When we get "/publish_queue"
         Then we get list with 5 items
-        #Then we get "#archive.123.take_package#" in formatted output as "main" story for subscriber "sub-2"
+        Then we get "#archive.123.take_package#" in formatted output as "main" story for subscriber "sub-2"
 
 
 
@@ -1566,7 +1566,7 @@ Feature: Package Publishing
       When we enqueue published
       When we get "/publish_queue"
       Then we get list with 4 items
-      #Then we get "#archive.123.take_package#" in formatted output as "main" story for subscriber "sub-2"
+      Then we get "#archive.123.take_package#" in formatted output as "main" story for subscriber "sub-2"
 
 
 
@@ -1852,8 +1852,8 @@ Feature: Package Publishing
                    {"headline": "test package", "content_type": "composite", "state": "pending"}]
       }
       """
-      #Then we get "#archive.123.take_package#" in formatted output as "main" story for subscriber "sub-2"
-      #Then we get "#archive.456.take_package#" in formatted output as "sidebars" story for subscriber "sub-2"
+      Then we get "#archive.123.take_package#" in formatted output as "main" story for subscriber "sub-2"
+      Then we get "#archive.456.take_package#" in formatted output as "sidebars" story for subscriber "sub-2"
 
 
 

@@ -9,9 +9,6 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 from superdesk.metadata.item import CONTENT_STATE
-
-from eve.utils import config
-
 from apps.publish.enqueue.enqueue_service import EnqueueService
 
 

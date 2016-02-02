@@ -199,7 +199,6 @@ class ArchivedService(BaseService):
         updated.update(updates)
 
         for article in articles_to_kill:
-            #article['item_id'] = article[config.ID_FIELD]
             # Step 2(i)
             self._remove_and_set_kill_properties(article, articles_to_kill, updated)
             logger.info('Removing and setting properties for article: {}'.format(article[config.ID_FIELD]))
@@ -291,12 +290,7 @@ class ArchivedService(BaseService):
         :param updates: updates to be applied on the article before saving
         :type updates: dict
         """
-<<<<<<< HEAD
-=======
 
-        #article[config.ID_FIELD] = article.pop('item_id', article['item_id'])
-
->>>>>>> fixes for async-publishing
         article.pop('archived_id', None)
         article.pop('_type', None)
         article.pop('_links', None)

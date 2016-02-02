@@ -119,8 +119,9 @@ class BasePublishService(BaseService):
                 updated = deepcopy(original)
                 updated.update(updates)
                 # if target_for is set the we don't to digital client.
+                targeted_for = updates.get('targeted_for', original.get('targeted_for'))
                 if original[ITEM_TYPE] in {CONTENT_TYPE.TEXT, CONTENT_TYPE.PREFORMATTED} \
-                        and not (updates.get('targeted_for', original.get('targeted_for')) or is_genre(original, BROADCAST_GENRE)):
+                        and not (targeted_for or is_genre(original, BROADCAST_GENRE)):
 
                     # check if item is in a digital package
                     package = self.takes_package_service.get_take_package(original)
@@ -164,7 +165,6 @@ class BasePublishService(BaseService):
 #                 enqueue_item(item)
 
             self._process_publish_updates(original, updates)
-            #self._update_archive(original=original, updates=updates, should_insert_into_versions=auto_publish)
             push_notification('item:publish', item=str(id), unique_name=original['unique_name'],
                               desk=str(original.get('task', {}).get('desk', '')),
                               user=str(user.get(config.ID_FIELD, '')))
@@ -225,12 +225,6 @@ class BasePublishService(BaseService):
             # we raise error if correction is done on a empty package. Kill is fine.
             if len(removed_items) == len(items) and len(added_items) == 0 and self.publish_type == ITEM_CORRECT:
                 raise SuperdeskApiError.badRequestError("Corrected package cannot be empty!")
-        # for guid in items:
-        #     package_item = super().find_one(req=None, _id=guid)
-        #     if not package_item:
-        #         raise SuperdeskApiError.badRequestError(
-        #             "Package item with id: {} does not exist.".format(package_item[config.ID_FIELD]))
-        #     self._validate(package_item, updates)
 
     def raise_if_not_marked_for_publication(self, original):
         if original.get('flags', {}).get('marked_for_not_publication', False):
@@ -442,8 +436,6 @@ class BasePublishService(BaseService):
         """
         if not preserve_state:
             self.set_state(original, updates)
-        # updates['publish_schedule'] = None
-        # updates[ITEM_STATE] = self.published_state
         updates.setdefault(config.LAST_UPDATED, last_updated)
 
         if original[config.VERSION] == updates.get(config.VERSION, original[config.VERSION]):
