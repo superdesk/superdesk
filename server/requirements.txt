@@ -2,6 +2,7 @@ gunicorn==19.3.0
 honcho==0.6.6
 pymongo==2.8
 Eve==0.6.0
+raven[flask]==5.3.1
 
 git+git://github.com/superdesk/superdesk-core.git@3b3b2fa#egg=Superdesk-Core
 
