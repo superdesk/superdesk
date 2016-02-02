@@ -9,7 +9,7 @@ Feature: Vocabularies
     When we get "/vocabularies/categories"
     Then we get existing resource
       """
-      {"_id": "categories", "items": [{"name": "National", "value": "A"}]}
+      {"_id": "categories",  "items": [{"name": "National", "value": "A"}]}
       """
 
   @auth

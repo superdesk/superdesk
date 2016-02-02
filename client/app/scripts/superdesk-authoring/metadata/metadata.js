@@ -405,16 +405,15 @@ function MetadataListEditingDirective(metadata) {
             unique: '@',
             postprocessing: '&',
             change: '&',
-            header: '@'
+            header: '@',
+            cv: '='
         },
         templateUrl: 'scripts/superdesk-authoring/metadata/views/metadata-terms.html',
         link: function(scope) {
             metadata.subjectScope = scope;
 
             scope.$watch('list', function(items) {
-                if (
-                    !items || items.length === 0
-                ) {
+                if (!items || items.length === 0) {
                     return;
                 }
 
@@ -427,9 +426,20 @@ function MetadataListEditingDirective(metadata) {
                     }
                 });
 
-                scope.terms = items;
+                scope.terms = filterSelected(items);
                 scope.tree = tree;
                 scope.activeTree = tree[null];
+            });
+
+            scope.$watch('item[field]', function(selected) {
+                if (scope.cv) { // filter out items from current cv
+                    scope.terms = filterSelected(scope.list);
+                    scope.selectedItems = _.filter(selected, function(term) {
+                        return term.scheme === scope.cv._id;
+                    });
+                } else {
+                    scope.selectedItems = selected;
+                }
             });
 
             scope.$on('$destroy', function() {
@@ -453,10 +463,10 @@ function MetadataListEditingDirective(metadata) {
 
             scope.searchTerms = function(term) {
                 if (!term) {
-                    scope.terms = scope.list;
+                    scope.terms = filterSelected(scope.list);
                     scope.activeList = false;
                 } else {
-                    scope.terms = _.filter(scope.list, function(t) {
+                    scope.terms = _.filter(filterSelected(scope.list), function(t) {
                         var searchObj = {};
                         searchObj[uniqueField] = t[uniqueField];
                         scope.activeList = true;
@@ -467,12 +477,25 @@ function MetadataListEditingDirective(metadata) {
                 return scope.terms;
             };
 
+            function filterSelected(terms) {
+                var selected = {};
+                _.forEach(scope.item[scope.field], function(term) {
+                    selected[term[scope.unique]] = 1;
+                });
+
+                return _.filter(terms, function(term) {
+                    return !selected[term[scope.unique]];
+                });
+            }
+
             scope.selectTerm = function(term) {
                 if (term) {
 
                     //instead of simple push, extend the item[field] in order to trigger dirty $watch
                     var t = _.clone(scope.item[scope.field]) || [];
-                    t.push(term);
+                    t.push(angular.extend({}, term, {
+                        scheme: scope.cv ? scope.cv._id : null
+                    }));
 
                     //build object
                     var o = {};
@@ -601,16 +624,18 @@ function MetadataService(api, $q) {
 
     var service = {
         values: {},
+        cvs: [],
         subjectScope: null,
         loaded: null,
         fetchMetadataValues: function() {
             var self = this;
 
-            return api('vocabularies').query().then(function(result) {
+            return api.query('vocabularies', {max_results: 50}).then(function(result) {
                 _.each(result._items, function(vocabulary) {
                     self.values[vocabulary._id] = vocabulary.items;
                 });
 
+                self.cvs = result._items;
                 self.values.targeted_for = _.union(self.values.geographical_restrictions, self.values.subscriber_types);
             });
         },
