@@ -1150,7 +1150,7 @@ Feature: Content Publishing
       Then we get OK response
       And we get existing resource
       """
-      {"_current_version": 2, "source": "Superdesk Sports", "state": "published", "task":{"desk": "#desks._id#"}}
+      {"_current_version": 2, "source": "AAP", "state": "published", "task":{"desk": "#desks._id#"}}
       """
 
     @auth

@@ -50,7 +50,7 @@ class EnqueuePublishedService(EnqueueService):
 
         if doc.get(ITEM_TYPE) in [CONTENT_TYPE.COMPOSITE] and doc.get(PACKAGE_TYPE) == TAKES_PACKAGE:
             # Step 1a
-            query = {'$and': [{'item_id': doc[config.ID_FIELD]},
+            query = {'$and': [{'item_id': doc['item_id']},
                               {'publishing_action': {'$in': [CONTENT_STATE.PUBLISHED, CONTENT_STATE.CORRECTED]}}]}
             takes_subscribers = self._get_subscribers_for_previously_sent_items(query)
 

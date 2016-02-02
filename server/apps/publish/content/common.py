@@ -114,12 +114,14 @@ class BasePublishService(BaseService):
 
             if original[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
                 self._publish_package_items(original, updates)
+                self._update_archive(original, updates, should_insert_into_versions=auto_publish)
             else:
                 updated = deepcopy(original)
                 updated.update(updates)
                 # if target_for is set the we don't to digital client.
-                if not (updates.get('targeted_for', original.get('targeted_for')) or
-                        is_genre(original, BROADCAST_GENRE)):
+                if original[ITEM_TYPE] in {CONTENT_TYPE.TEXT, CONTENT_TYPE.PREFORMATTED} \
+                        and not (updates.get('targeted_for', original.get('targeted_for')) or is_genre(original, BROADCAST_GENRE)):
+
                     # check if item is in a digital package
                     package = self.takes_package_service.get_take_package(original)
 
@@ -136,7 +138,12 @@ class BasePublishService(BaseService):
                                                          original_of_take_to_be_published=original,
                                                          package=package)
 
-                    self._set_updates(package, package_updates, last_updated)
+                    # If the original package is corrected then the next take shouldn't change it
+                    # back to 'published'
+                    preserve_state = package.get(ITEM_STATE, '') == CONTENT_STATE.CORRECTED and \
+                        updates.get(ITEM_OPERATION, ITEM_PUBLISH) == ITEM_PUBLISH
+
+                    self._set_updates(package, package_updates, last_updated, preserve_state)
                     package_updates.setdefault(ITEM_OPERATION, updates.get(ITEM_OPERATION, ITEM_PUBLISH))
                     self._update_archive(package, package_updates)
                     package.update(package_updates)
@@ -379,7 +386,6 @@ class BasePublishService(BaseService):
                         self._publish_package_items(package_item, sub_updates)
                         self._update_archive(original=package_item, updates=sub_updates,
                                              should_insert_into_versions=False)
-                        self.update_published_collection(published_item_id=package_item[config.ID_FIELD])
                     else:
                         # publish the item
                         archive_publish.patch(id=package_item.pop(config.ID_FIELD), updates=package_item)
@@ -425,7 +431,7 @@ class BasePublishService(BaseService):
         updates['publish_schedule'] = None
         updates[ITEM_STATE] = self.published_state
 
-    def _set_updates(self, original, updates, last_updated):
+    def _set_updates(self, original, updates, last_updated, preserve_state=False):
         """
         Sets config.VERSION, config.LAST_UPDATED, ITEM_STATE in updates document.
         If item is being published and embargo is available then append Editorial Note with 'Embargoed'.
@@ -434,7 +440,8 @@ class BasePublishService(BaseService):
         :param dict updates: updates related to the original document
         :param datetime last_updated: datetime of the updates.
         """
-        self.set_state(original, updates)
+        if not preserve_state:
+            self.set_state(original, updates)
         # updates['publish_schedule'] = None
         # updates[ITEM_STATE] = self.published_state
         updates.setdefault(config.LAST_UPDATED, last_updated)

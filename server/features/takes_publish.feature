@@ -896,7 +896,7 @@ Feature: Take Package Publishing
       [{"task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
       """
       And we get "/archive"
-      Then we get list with 2 items
+      Then we get list with 1 items
       When we publish "#TAKE#" with "publish" type and "published" state
       Then we get OK response
       When we get "/published"
@@ -910,7 +910,7 @@ Feature: Take Package Publishing
                   "body_html": "Take-1"
               },
               {
-                  "_current_version": 2,
+                  "_current_version": 4,
                   "type": "composite",
                   "package_type": "takes",
                   "body_html": "Take-1<br>Take-2"
@@ -1212,7 +1212,7 @@ Feature: Take Package Publishing
       """
 
     @auth @test @vocabulary
-    Scenario: Publishing of Takes with different metadata should go to atleast subscribers that received first take
+    Scenario: Publishing of Takes with different metadata should go to at least subscribers that received first take
         Given the "validators"
         """
         [{"_id": "publish_text", "act": "publish", "type": "text", "schema":{}},

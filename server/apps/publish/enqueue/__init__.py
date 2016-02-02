@@ -94,8 +94,9 @@ def get_published_items():
     """
     req = ParsedRequest()
     query = {'query': {'filtered': {'filter': {'term': {QUEUE_STATE: PUBLISH_STATE.PENDING}}}},
-             'sort': [{'_created': 'asc'}]}
+             'sort': [{'publish_sequence_no': 'asc'}]}
     req.args = {'source': json.dumps(query)}
+    req.max_results = 1000
     return get_resource_service(PUBLISHED).get(req=req, lookup=None)
 
 
