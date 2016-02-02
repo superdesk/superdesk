@@ -64,17 +64,6 @@
 
         <div class="item-wrapper" ng-if="metadata.locators && schema.place">
             <div class="item">
-                <label translate>PLACE</label>
-                <div sd-meta-dropdown
-                     class="data"
-                     data-item="item"
-                     data-field="place"
-                     data-list="metadata.locators"
-                     ng-disabled="!_editable"
-                     data-change="autosave(item)">
-                </div>
-            </div>
-            <div class="item">
                 <div class="item" ng-if="schema.priority">
                     <label translate>PRIORITY</label>
                     <div sd-meta-dropdown
@@ -117,21 +106,21 @@
             </div>
         </div>
 
-        <div class="item-wrapper" ng-if="metadata.subjectcodes && schema.subject">
-            <label translate>SUBJECT</label>
+        <div class="item-wrapper" ng-repeat="cv in cvs track by cv._id">
+            <label>{{ cv.display_name }}</label>
             <div sd-meta-terms
-                 class="data"
-                 data-item="item" 
-                 data-field="subject" 
-                 data-unique="qcode" 
-                 data-list="metadata.subjectcodes" 
-                 ng-disabled="!_editable" 
-                 data-header="true" 
-                 data-change="autosave(item)">
-            </div>
+                class="data"
+                data-item="item"
+                data-field="subject"
+                data-unique="qcode"
+                data-list="cv.items"
+                data-cv="cv"
+                ng-disabled="!_editable"
+                data-header="true"
+                data-change="autosave(item)"></div>
         </div>
 
-        <div class="item" ng-if="schema.slugline">
+        <div class="item-wrapper" ng-if="schema.slugline">
             <label translate>SLUGLINE</label>
             <input type="text"
                    sd-autofocus
