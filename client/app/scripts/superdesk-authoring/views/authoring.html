@@ -10,8 +10,26 @@
                             <button class="close" ng-click="closeFullPreview()"><i class="icon-close-small"></i></button>
                         </div>
                         <div class="modal-body">
-                            <div>
-                                {{fullPreviewItem.body_html}}
+                            <div><!-- services -->
+                                <span ng-repeat="service in fullPreviewItem.anpa_category">
+                                    {{service.name}}
+                                </span>
+                            </div>
+                            <div><!-- topics -->
+                                <span ng-repeat="topic in fullPreviewItem.subject">
+                                    {{topic.name}}
+                                </span>
+                            </div>
+                            <div><!-- keyword -->
+                                <span>{{fullPreviewItem.slugline}}</span>
+                            </div>
+                            <div>{{fullPreviewItem.headline}}</div>
+                            <div>{{fullPreviewItem.byline}}</div>
+                            <div sd-html-preview="fullPreviewItem.body_html"></div>
+                            <div><!-- tags -->
+                                <span ng-repeat="keyword in fullPreviewItem.keywords">
+                                    {{keyword}}
+                                </span>
                             </div>
                         </div>
                         <div class="modal-footer">zxc</div>
