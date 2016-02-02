@@ -8,4 +8,4 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-from features.steps.steps import *  # noqa
+from superdesk.tests.steps import *  # noqa

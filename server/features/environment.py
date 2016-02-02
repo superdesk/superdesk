@@ -9,8 +9,8 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 
-from features.environment import before_feature, before_step, after_scenario   # noqa
-from features.environment import setup_before_all, setup_before_scenario
+from superdesk.tests.environment import before_feature, before_step, after_scenario   # noqa
+from superdesk.tests.environment import setup_before_all, setup_before_scenario
 from app import get_app
 from settings import INSTALLED_APPS
 
