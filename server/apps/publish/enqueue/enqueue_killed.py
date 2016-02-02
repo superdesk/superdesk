@@ -9,13 +9,14 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 from superdesk.metadata.item import CONTENT_STATE
-
-from eve.utils import config
-
 from apps.publish.enqueue.enqueue_service import EnqueueService
 
 
 class EnqueueKilledService(EnqueueService):
+
+    publish_type = 'kill'
+    published_state = 'killed'
+
     def get_subscribers(self, doc, target_media_type):
         """
         Get the subscribers for this document based on the target_media_type for kill.
@@ -29,7 +30,7 @@ class EnqueueKilledService(EnqueueService):
         """
 
         subscribers, subscribers_yet_to_receive = [], []
-        query = {'$and': [{'item_id': doc[config.ID_FIELD]},
+        query = {'$and': [{'item_id': doc['item_id']},
                           {'publishing_action': {'$in': [CONTENT_STATE.PUBLISHED, CONTENT_STATE.CORRECTED]}}]}
         subscribers = self._get_subscribers_for_previously_sent_items(query)
 

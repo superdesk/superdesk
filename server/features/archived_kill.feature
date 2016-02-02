@@ -82,7 +82,7 @@ Feature: Kill a content item in the (dusty) archive
     When we get "/published"
     Then we get list with 1 items
     When we enqueue published
-    And we get "/publish_queue"
+    When we get "/publish_queue"
     Then we get list with 1 items
     When we get "/archived"
     Then we get list with 0 items
@@ -117,8 +117,15 @@ Feature: Kill a content item in the (dusty) archive
     Then we get list with 2 items
     """
     {"_items" : [
-      {"package_type": "takes", "item_id": "#archive.123.take_package#", "state": "published", "type": "composite", "_current_version": 2},
-      {"item_id": "123", "state": "published", "type": "text", "_current_version": 2}
+      {"sequence": 1,
+       "package_type": "takes",
+       "state": "published",
+       "type": "composite",
+       "_current_version": 2
+      },
+      {"state": "published",
+       "type": "text",
+       "_current_version": 2}
       ]
     }
     """
@@ -173,7 +180,7 @@ Feature: Kill a content item in the (dusty) archive
     {"_id": "#archive.123.take_package#", "type": "composite", "_current_version": 3, "state": "killed", "pubstatus": "canceled", "operation": "kill"}
     """
     When we get "/legal_archive/#archive.123.take_package#?version=all"
-    Then we get list with 3 items
+    Then we get list with 2 items
     When we expire items
     """
     ["123", "#archive.123.take_package#"]
@@ -215,7 +222,7 @@ Feature: Kill a content item in the (dusty) archive
     """
     {"abstract": "Take 2", "headline": "Take 2", "body_html": "Take 2"}
     """
-    And we publish "123" with "publish" type and "published" state
+    When we publish "123" with "publish" type and "published" state
     Then we get OK response
     When we publish "123" with "correct" type and "corrected" state
     """

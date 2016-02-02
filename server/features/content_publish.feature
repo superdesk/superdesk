@@ -131,12 +131,10 @@ Feature: Content Publishing
       }
       """
       When we get "/legal_archive/#archive.123.take_package#?version=all"
-      Then we get list with 2 items
+      Then we get list with 1 items
       """
       {"_items" : [
-        {"_id": "#archive.123.take_package#", "headline": "test", "_current_version": 1,
-         "type": "composite", "package_type": "takes", "state": "draft",
-         "task": {"desk": "Sports", "stage": "Incoming Stage", "user": "test_user"}},
+
         {"_id": "#archive.123.take_package#", "headline": "test", "_current_version": 2,
          "state": "published", "type": "composite", "package_type": "takes",
          "task": {"desk": "Sports", "stage": "Incoming Stage", "user": "test_user"}}
@@ -741,6 +739,7 @@ Feature: Content Publishing
       """
       And we publish "#archive._id#" with "publish" type and "published" state
       Then we get OK response
+      When we enqueue published
       When we get "/legal_archive/123"
       Then we get OK response
       And we get existing resource
@@ -763,6 +762,7 @@ Feature: Content Publishing
       """
       {"_current_version": 2, "state": "corrected", "operation": "correct", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
       """
+      When we enqueue published
       When we post to "/archive/#archive._id#/unlock"
       """
       {}
@@ -809,6 +809,7 @@ Feature: Content Publishing
       """
       And we publish "#archive._id#" with "publish" type and "published" state
       Then we get OK response
+      When we enqueue published
       When we get "/legal_archive/123"
       Then we get OK response
       And we get existing resource
@@ -846,6 +847,7 @@ Feature: Content Publishing
       """
       {"_current_version": 3, "state": "corrected", "operation": "correct", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
       """
+      When we enqueue published
       When we post to "/archive/#archive._id#/unlock"
       """
       {}
@@ -890,6 +892,7 @@ Feature: Content Publishing
       """
       {"_current_version": 4, "state": "killed", "operation": "kill", "pubstatus": "canceled", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
       """
+      When we enqueue published
       When we post to "/archive/#archive._id#/unlock"
       """
       {}
@@ -1147,7 +1150,7 @@ Feature: Content Publishing
       Then we get OK response
       And we get existing resource
       """
-      {"_current_version": 2, "source": "Superdesk Sports", "state": "published", "task":{"desk": "#desks._id#"}}
+      {"_current_version": 2, "source": "AAP", "state": "published", "task":{"desk": "#desks._id#"}}
       """
 
     @auth

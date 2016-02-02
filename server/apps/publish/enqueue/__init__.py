@@ -92,8 +92,10 @@ def get_published_items():
     Returns a list of items marked for publishing.
     """
     req = ParsedRequest()
-    query = {'query': {'filtered': {'filter': {'term': {QUEUE_STATE: PUBLISH_STATE.PENDING}}}}}
+    query = {'query': {'filtered': {'filter': {'term': {QUEUE_STATE: PUBLISH_STATE.PENDING}}}},
+             'sort': [{'publish_sequence_no': 'asc'}]}
     req.args = {'source': json.dumps(query)}
+    req.max_results = 1000
     return get_resource_service(PUBLISHED).get(req=req, lookup=None)
 
 

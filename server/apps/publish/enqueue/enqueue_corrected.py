@@ -19,6 +19,10 @@ from apps.publish.enqueue.enqueue_service import EnqueueService
 
 
 class EnqueueCorrectedService(EnqueueService):
+
+    publish_type = 'correct'
+    published_state = 'corrected'
+
     def get_subscribers(self, doc, target_media_type):
         """
         Get the subscribers for this document based on the target_media_type for article Correction.
@@ -39,7 +43,7 @@ class EnqueueCorrectedService(EnqueueService):
         """
         subscribers, subscribers_yet_to_receive = [], []
         # step 1
-        query = {'$and': [{'item_id': doc[config.ID_FIELD]},
+        query = {'$and': [{'item_id': doc['item_id']},
                           {'publishing_action': {'$in': [CONTENT_STATE.PUBLISHED, CONTENT_STATE.CORRECTED]}}]}
 
         subscribers = self._get_subscribers_for_previously_sent_items(query)

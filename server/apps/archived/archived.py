@@ -290,6 +290,7 @@ class ArchivedService(BaseService):
         :param updates: updates to be applied on the article before saving
         :type updates: dict
         """
+
         article.pop('archived_id', None)
         article.pop('_type', None)
         article.pop('_links', None)

@@ -50,7 +50,7 @@ class EnqueuePublishedService(EnqueueService):
 
         if doc.get(ITEM_TYPE) in [CONTENT_TYPE.COMPOSITE] and doc.get(PACKAGE_TYPE) == TAKES_PACKAGE:
             # Step 1a
-            query = {'$and': [{'item_id': doc[config.ID_FIELD]},
+            query = {'$and': [{'item_id': doc['item_id']},
                               {'publishing_action': {'$in': [CONTENT_STATE.PUBLISHED, CONTENT_STATE.CORRECTED]}}]}
             takes_subscribers = self._get_subscribers_for_previously_sent_items(query)
 
@@ -61,6 +61,10 @@ class EnqueuePublishedService(EnqueueService):
         # Step 3
         if doc.get(ITEM_TYPE) in [CONTENT_TYPE.TEXT, CONTENT_TYPE.PREFORMATTED]:
             first_take = self.takes_package_service.get_first_take_in_takes_package(doc)
+            if str(doc['item_id']) == str(first_take):
+                # if the current document is the first take then continue
+                first_take = None
+
             if first_take:
                 # if first take is published then subsequent takes should to same subscribers.
                 query = {'$and': [{'item_id': first_take},

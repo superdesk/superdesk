@@ -31,6 +31,9 @@ from apps.archive.archive import SOURCE as ARCHIVE
 from superdesk.metadata.item import TAKES_PACKAGE, PACKAGE_TYPE, ITEM_STATE, CONTENT_STATE, ITEM_TYPE, CONTENT_TYPE
 from apps.publish.published_item import LAST_PUBLISHED_VERSION
 from unittest import mock
+from apps.publish.enqueue.enqueue_service import EnqueueService
+from apps.publish.enqueue.enqueue_published import EnqueuePublishedService
+from apps.publish.enqueue import enqueue_published
 
 ARCHIVE_PUBLISH = 'archive_publish'
 ARCHIVE_CORRECT = 'archive_correct'
@@ -480,6 +483,8 @@ class ArchivePublishTestCase(SuperdeskTestCase):
         self.assertEqual(article_in_production[ITEM_STATE], CONTENT_STATE.PUBLISHED)
         self.assertEqual(article_in_production[config.VERSION], published_version_number)
 
+        enqueue_published()
+
         lookup = {'item_id': original[config.ID_FIELD], 'item_version': published_version_number}
         queue_items = list(get_resource_service(PUBLISH_QUEUE).get(req=None, lookup=lookup))
         assert len(queue_items) > 0, \
@@ -494,9 +499,11 @@ class ArchivePublishTestCase(SuperdeskTestCase):
         self._is_publish_queue_empty()
 
         doc = copy(self.articles[9])
+        doc['item_id'] = doc['_id']
         schedule_date = utcnow() + timedelta(hours=2)
         get_resource_service(ARCHIVE).patch(id=doc['_id'], updates={'publish_schedule': schedule_date})
         get_resource_service(ARCHIVE_PUBLISH).patch(id=doc['_id'], updates={ITEM_STATE: CONTENT_STATE.SCHEDULED})
+        enqueue_published()
         queue_items = self.app.data.find(PUBLISH_QUEUE, None, None)
         self.assertEqual(7, queue_items.count())
 
@@ -506,10 +513,12 @@ class ArchivePublishTestCase(SuperdeskTestCase):
     def test_queue_transmission_for_digital_channels(self):
         self._is_publish_queue_empty()
 
-        archive_publish = get_resource_service(ARCHIVE_PUBLISH)
         doc = copy(self.articles[1])
-        subscribers, subscribers_yet_to_receive = archive_publish.get_subscribers(doc, SUBSCRIBER_TYPES.DIGITAL)
-        archive_publish.queue_transmission(doc, subscribers)
+        doc['item_id'] = doc['_id']
+
+        subscribers, subscribers_yet_to_receive = \
+            EnqueuePublishedService().get_subscribers(doc, SUBSCRIBER_TYPES.DIGITAL)
+        EnqueueService().queue_transmission(doc, subscribers)
 
         queue_items = self.app.data.find(PUBLISH_QUEUE, None, None)
         self.assertEqual(2, queue_items.count())
@@ -518,10 +527,11 @@ class ArchivePublishTestCase(SuperdeskTestCase):
     def test_queue_transmission_for_wire_channels(self):
         self._is_publish_queue_empty()
 
-        archive_publish = get_resource_service(ARCHIVE_PUBLISH)
         doc = copy(self.articles[1])
-        subscribers, subscribers_yet_to_receive = archive_publish.get_subscribers(doc, SUBSCRIBER_TYPES.WIRE)
-        archive_publish.queue_transmission(doc, subscribers)
+        doc['item_id'] = doc['_id']
+
+        subscribers, subscribers_yet_to_receive = EnqueuePublishedService().get_subscribers(doc, SUBSCRIBER_TYPES.WIRE)
+        EnqueueService().queue_transmission(doc, subscribers)
         queue_items = self.app.data.find(PUBLISH_QUEUE, None, None)
 
         self.assertEqual(5, queue_items.count())
@@ -534,18 +544,19 @@ class ArchivePublishTestCase(SuperdeskTestCase):
         self._is_publish_queue_empty()
 
         doc = copy(self.articles[0])
+        doc['item_id'] = doc['_id']
         doc[ITEM_TYPE] = CONTENT_TYPE.PICTURE
 
-        archive_publish = get_resource_service(ARCHIVE_PUBLISH)
-        subscribers, subscribers_yet_to_receive = archive_publish.get_subscribers(doc, SUBSCRIBER_TYPES.DIGITAL)
-        no_formatters, queued = archive_publish.queue_transmission(doc, subscribers)
+        subscribers, subscribers_yet_to_receive = \
+            EnqueuePublishedService().get_subscribers(doc, SUBSCRIBER_TYPES.DIGITAL)
+        no_formatters, queued = EnqueueService().queue_transmission(doc, subscribers)
         queue_items = self.app.data.find(PUBLISH_QUEUE, None, None)
         self.assertEqual(1, queue_items.count())
         self.assertEqual(1, len(no_formatters))
         self.assertTrue(queued)
 
-        subscribers, subscribers_yet_to_receive = archive_publish.get_subscribers(doc, SUBSCRIBER_TYPES.WIRE)
-        no_formatters, queued = archive_publish.queue_transmission(doc, subscribers)
+        subscribers, subscribers_yet_to_receive = EnqueuePublishedService().get_subscribers(doc, SUBSCRIBER_TYPES.WIRE)
+        no_formatters, queued = EnqueueService().queue_transmission(doc, subscribers)
         queue_items = self.app.data.find(PUBLISH_QUEUE, None, None)
         self.assertEqual(2, queue_items.count())
         self.assertEqual(0, len(no_formatters))
@@ -555,10 +566,12 @@ class ArchivePublishTestCase(SuperdeskTestCase):
         self._is_publish_queue_empty()
 
         doc = copy(self.articles[7])
+        doc['item_id'] = doc['_id']
 
         archive_publish = get_resource_service(ARCHIVE_PUBLISH)
         archive_publish.patch(id=doc['_id'], updates={ITEM_STATE: CONTENT_STATE.PUBLISHED})
 
+        enqueue_published()
         queue_items = self.app.data.find(PUBLISH_QUEUE, None, None)
         self.assertEqual(4, queue_items.count())
 
@@ -570,12 +583,11 @@ class ArchivePublishTestCase(SuperdeskTestCase):
         subscriber = self.subscribers[0]
         self._add_content_filters(subscriber, is_global=False)
 
-        archive_publish_service = get_resource_service(ARCHIVE_PUBLISH)
-        can_it = archive_publish_service.conforms_content_filter(subscriber, self.articles[8])
+        can_it = EnqueueService().conforms_content_filter(subscriber, self.articles[8])
         self.assertFalse(can_it)
         subscriber['content_filter']['filter_type'] = 'permitting'
 
-        can_it = archive_publish_service.conforms_content_filter(subscriber, self.articles[8])
+        can_it = EnqueueService().conforms_content_filter(subscriber, self.articles[8])
         self.assertTrue(can_it)
         subscriber.pop('content_filter')
 
@@ -588,12 +600,11 @@ class ArchivePublishTestCase(SuperdeskTestCase):
         req.args = {'is_global': True}
         global_filters = service.get(req=req, lookup=None)
 
-        publish_service = get_resource_service(ARCHIVE_PUBLISH)
-        can_it = publish_service.conforms_global_filter(subscriber, global_filters, self.articles[8])
+        can_it = EnqueueService().conforms_global_filter(subscriber, global_filters, self.articles[8])
         self.assertFalse(can_it)
 
         subscriber['global_filters'] = {'1': False}
-        can_it = publish_service.conforms_global_filter(subscriber, global_filters, self.articles[8])
+        can_it = EnqueueService().conforms_global_filter(subscriber, global_filters, self.articles[8])
         self.assertTrue(can_it)
 
         subscriber.pop('content_filter')
@@ -605,7 +616,7 @@ class ArchivePublishTestCase(SuperdeskTestCase):
         get_resource_service(ARCHIVE).patch(id=doc_id, updates=updates)
 
         get_resource_service(ARCHIVE_PUBLISH).patch(id=doc_id, updates={ITEM_STATE: CONTENT_STATE.PUBLISHED})
-
+        enqueue_published()
         queue_items = self.app.data.find(PUBLISH_QUEUE, None, None)
         self.assertEqual(4, queue_items.count())
         expected_subscribers = ['1', '2']
@@ -630,6 +641,8 @@ class ArchivePublishTestCase(SuperdeskTestCase):
         get_resource_service(ARCHIVE_PUBLISH).patch(id=doc[config.ID_FIELD],
                                                     updates={ITEM_STATE: CONTENT_STATE.PUBLISHED})
 
+        enqueue_published()
+
         queue_items = self.app.data.find(PUBLISH_QUEUE, None, None)
         self.assertEqual(7, queue_items.count())
         published_items = self.app.data.find(PUBLISHED, None, None)
@@ -643,6 +656,9 @@ class ArchivePublishTestCase(SuperdeskTestCase):
 
         get_resource_service(ARCHIVE_CORRECT).patch(id=doc[config.ID_FIELD],
                                                     updates={ITEM_STATE: CONTENT_STATE.CORRECTED})
+
+        enqueue_published()
+
         queue_items = self.app.data.find(PUBLISH_QUEUE, None, None)
         self.assertEqual(14, queue_items.count())
         published_items = self.app.data.find(PUBLISHED, None, None)

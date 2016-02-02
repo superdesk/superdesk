@@ -1086,7 +1086,6 @@ Feature: Archive Broadcast
       "headline": "headline",
       "slugline": "comics",
       "anpa_take_key": "take key=3",
-      "state": "published",
       "priority": 3,
       "urgency": 1,
       "linked_in_packages": [{"package_type" : "takes","package" : "#TAKE_PACKAGE#"}]
