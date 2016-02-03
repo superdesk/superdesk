@@ -3,6 +3,7 @@ language: python
 sudo: false
 
 env:
+    - TARGET=unit
     - TARGET=e2e_first_chrome
     - TARGET=e2e_second_chrome
     - TARGET=e2e_third_chrome
@@ -26,28 +27,43 @@ cache:
     - $HOME/.cache/bower
 
 before_install:
-    - npm install -g grunt-cli bower
-    - pip install requests
-    - export DISPLAY=:99.0
-    - /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1920x1080x24
-    - ./scripts/get-chrome-url | wget -N --no-verbose -i - && unzip chrome-linux.zip && export CHROME_BIN=`pwd`/chrome-linux/chrome
-    - $CHROME_BIN --version ;
+    - if [ "${TARGET}" = "unit" ] || [ "${TARGET}" != "${TARGET/e2e/}" ]; then
+        npm install -g grunt-cli bower ;
+      fi
+    - if [ "${TARGET}" != "${TARGET/e2e/}" ]; then
+        pip install requests &&
+        export DISPLAY=:99.0 &&
+        /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1920x1080x24 ;
+        ./scripts/get-chrome-url | wget -N --no-verbose -i - && unzip chrome-linux.zip &&
+        export CHROME_BIN=`pwd`/chrome-linux/chrome &&
+        $CHROME_BIN --version ;
+      fi
 
 install:
-    - cd server && pip install -r requirements.txt && cd ..
-    - cd client && npm install && bower install && cd ..
+    - cd server && pip install -r dev-requirements.txt && cd .. ;
+    - cd client && npm install && bower install && cd .. ;
+    - if [ "${TARGET}" = "unit" ]; then
+        cd server && pip install coveralls==1.0a2 && cd .. ;
+      fi
 
 before_script:
-    - cd server
-    - (nohup env SUPERDESK_URL='http://127.0.0.1:5000/api' SUPERDESK_CLIENT_URL='http://127.0.0.1:9000' WEB_CONCURRENCY=3 WEB_TIMEOUT=8 SUPERDESK_TESTING='True' honcho start & )
-    - cd ../client
-    - grunt build --server='http://127.0.0.1:5000/api' --ws='ws://127.0.0.1:5100'
-    - cd dist
-    - while [ ! -f index.html ]; do sleep .5; done
-    - (nohup python3 -m http.server 9000 & )
-    - cd ../..
+    - if [ "${TARGET}" != "${TARGET/e2e/}" ]; then
+        cd server ;
+        (nohup env SUPERDESK_URL='http://127.0.0.1:5000/api' SUPERDESK_CLIENT_URL='http://127.0.0.1:9000' WEB_CONCURRENCY=3 WEB_TIMEOUT=8 SUPERDESK_TESTING='True' honcho start & );
+        cd ../client ;
+        grunt build --server='http://127.0.0.1:5000/api' --ws='ws://127.0.0.1:5100' ;
+        cd dist ;
+        while [ ! -f index.html ]; do sleep .5; done ;
+        (nohup python3 -m http.server 9000 & );
+        cd ../.. ;
+      fi
 
 script:
+    - if [ "${TARGET}" = "unit" ]; then
+        cd client && npm test && cd .. ;
+        cd server && flake8 && cd .. ;
+        cd server && behave ./features/ --format progress2 --logging-level ERROR && cd .. ;
+      fi
     - if [ "${TARGET}" != "${TARGET/e2e_first/}" ]; then
         cd client &&
         ./node_modules/.bin/webdriver-manager update &&
@@ -87,3 +103,9 @@ script:
 
 after_script:
     - killall -9 python
+
+after_success:
+    - if [ "${TARGET}" = "unit" ]; then
+        cd client && grunt coveralls && cd .. ;
+        cd server && coveralls --merge="../client/coveralls.json" ;
+      fi
