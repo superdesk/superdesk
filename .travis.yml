@@ -40,17 +40,8 @@ before_install:
       fi
 
 install:
-    - if [ "${TARGET}" = "unit" ] || [ "${TARGET}" != "${TARGET/server/}" ] || [ "${TARGET}" != "${TARGET/e2e/}" ]; then
-        cd server &&
-        pip install -r dev-requirements.txt &&
-        cd .. ;
-      fi
-    - if [ "${TARGET}" = "unit" ] || [ "${TARGET}" != "${TARGET/e2e/}" ]; then
-        cd client && npm install && cd .. ;
-      fi
-    - if [ "${TARGET}" = "unit" ] || [ "${TARGET}" != "${TARGET/e2e/}" ]; then
-        cd client && bower install && cd .. ;
-      fi
+    - cd server && pip install -r dev-requirements.txt && cd .. ;
+    - cd client && npm install && bower install && cd .. ;
     - if [ "${TARGET}" = "unit" ]; then
         cd server && pip install coveralls==1.0a2 && cd .. ;
       fi
