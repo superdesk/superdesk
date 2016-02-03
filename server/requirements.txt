@@ -1,4 +1,4 @@
-gunicorn==19.3.0
+gunicorn==19.4.5
 honcho==0.6.6
 pymongo==2.8
 Eve==0.6.0
