@@ -325,7 +325,34 @@ body:not(:-moz-handler-blocked) .modal{
 					.preview-content {
 						width: 100%;
 						max-width: 540px;
-						margin: 40px auto;
+						margin: 0 auto;
+						.metadata {
+							margin: 30px 0 40px;
+							> div {
+								min-height: 24px;
+								overflow: hidden;
+								margin-bottom: 10px; 
+							}
+							.preview-label {
+								float: left;
+								min-width: 80px;
+								vertical-align: top;
+							}
+							.preview-data {
+								float: left;
+								max-width: 450px;
+								span {
+		    						font-size: 12px;
+			    					color: #000;
+			    					background-color: #f5f5f5;
+			    					margin-right: 3px;
+								    margin-bottom: 3px;
+			    					padding: 3px 6px;
+			    					border-radius: 2px;
+			    					display: inline-block;
+		    					}
+		    				}
+						}
 						.headline {
 							min-height: 33px;
     						font-size: 28px;
@@ -341,6 +368,9 @@ body:not(:-moz-handler-blocked) .modal{
 						}
 						.association {
 							margin-bottom: 40px;
+						}
+						.body {
+							margin-bottom: 30px;
 						}
 						p {
 							font-size: 16px;
@@ -365,6 +395,15 @@ body:not(:-moz-handler-blocked) .modal{
 				}
 			}
 		}
+	}
+	label {
+	    display: inline-block;
+	    min-width: 75px;
+	    font-size: 11px;
+	    line-height: 26px;
+	    margin: 0;
+	    color: #c0c0c0;
+	    text-transform: uppercase;
 	}
 }
 

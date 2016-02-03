@@ -788,11 +788,16 @@
 }
 
 .preview-modal-control { // toggle for preview dialog
-    position: absolute;
-    top: 12px;
-    right: 90px;
-    z-index: 100;
+    position: relative;
+    width: auto;
+    max-width: 900px;
+    margin: 0 auto;
+    z-index: 4;
     .btn {
+        position: absolute;
+        top: 12px;
+        right: 90px;
+        z-index: 100;
         background-color: transparent;
         height: 22px;
         padding: 0px 6px;
