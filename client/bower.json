@@ -15,7 +15,7 @@
     "gridster": "0.5.6",
     "d3": "3.5.3",
     "jcrop": "0.9.12",
-    "ng-file-upload": "1.6.12",
+    "ng-file-upload": "11.2.3",
     "raven-js": "1.1.11",
     "jquery-ui": "1.11.2",
     "medium-editor": "4.9.0",
