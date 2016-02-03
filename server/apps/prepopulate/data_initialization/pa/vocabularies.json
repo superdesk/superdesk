@@ -301,6 +301,21 @@
         ]
     },
     {
+        "_id": "topics_sport",
+        "display_name": "Topics",
+        "type": "manageable",
+        "service": {"s": 1},
+        "priority": 3,
+        "items": [
+            {"is_active": true, "name": "Football", "qcode": "football"},
+            {"is_active": true, "name": "Rugby", "qcode": "rugby"},
+            {"is_active": true, "name": "Cricket", "qcode": "cricket"},
+            {"is_active": true, "name": "Tennis", "qcode": "tennis"},
+            {"is_active": true, "name": "F1", "qcode": "f1"},
+            {"is_active": true, "name": "Olympics", "qcode": "olympics"}
+        ]
+    },
+    {
         "_id": "age_range",
         "display_name": "Age Range",
         "type": "manageable",
