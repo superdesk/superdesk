@@ -48,11 +48,15 @@ define(['angular'], function(angular) {
             return {
                 template: [
                     '<div class="modal">',
-                    '<div class="modal-dialog" ng-if="model"><div class="modal-content" ng-transclude></div></div>',
+                    '<div class="modal-dialog" ng-if="model">',
+                    '<div class="modal-content" ng-if="!full" ng-transclude></div>',
+                    '<div class="modal-content" ng-if="full" ng-transclude></div>',
+                    '</div>',
                     '</div>'].join(''),
                 transclude: true,
                 scope: {
-                    model: '='
+                    model: '=',
+                    full: '='
                 },
                 link: function(scope, element, attrs) {
 
