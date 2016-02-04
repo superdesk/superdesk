@@ -210,6 +210,11 @@ function SdTextEditorController(_, EMBED_PROVIDERS, $timeout, $element) {
             }
         },
         reorderingMode: false,
+        hideHeader: function(hide) {
+            hide = angular.isDefined(hide) ? hide : true;
+            hide = hide ? 0 : 1;
+            angular.element('.authoring-header, .preview-modal-control, .theme-controls').css('opacity', hide);
+        },
         enableReorderingMode: function(position, event) {
             var blockToMove = vm.blocks[position];
             var before = vm.serializeBlock(vm.blocks.slice(0, position));
@@ -222,6 +227,8 @@ function SdTextEditorController(_, EMBED_PROVIDERS, $timeout, $element) {
             newBlocks = newBlocks.concat(splitIntoBlock(after));
             // save the vertical scroll position
             var offsetTop = angular.element(event.currentTarget).offset().top;
+            // hide the header
+            vm.hideHeader();
             // update the view model
             angular.extend(vm, {
                 // save the new blocks (texts are a splited per paragraph)
@@ -242,8 +249,10 @@ function SdTextEditorController(_, EMBED_PROVIDERS, $timeout, $element) {
         reorderToPosition: function(position) {
             // adjust the position. Remove one if the moved element was before the wanted position
             position = position > vm.blockToMoveIndex ? position - 1 : position;
-            // move the slected block to the given position
+            // move the selected block to the given position
             vm.blocks.splice(position, 0, vm.blocks.splice(vm.blockToMoveIndex, 1)[0]);
+            // save new position
+            vm.blockToMoveIndex = position;
             // exit the reordering mode
             vm.disableReorderingMode();
         },
@@ -252,6 +261,9 @@ function SdTextEditorController(_, EMBED_PROVIDERS, $timeout, $element) {
                 blockToMoveIndex: undefined,
                 reorderingMode: false
             });
+            // show the header
+            vm.hideHeader(false);
+            // reset reorder mode state in vm
             vm.renderBlocks();
             $timeout(vm.commitChanges);
         }
