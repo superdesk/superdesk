@@ -300,17 +300,14 @@
                 template: '{{name}}',
                 link: function(scope) {
                     scope.$watch('item', function() {
-                        scope.name = '';
-
-                        if (!scope.item.ingest_provider && 'source' in scope.item) {
-                            scope.name = scope.item.source;
+                        scope.name = scope.item.source;
+                        if (!scope.name) {
+                            ingestSources.initialize().then(function() {
+                                if (scope.item.ingest_provider && scope.item.ingest_provider in ingestSources.providersLookup) {
+                                    scope.name = ingestSources.providersLookup[scope.item.ingest_provider].name;
+                                }
+                            });
                         }
-
-                        ingestSources.initialize().then(function() {
-                            if (scope.item.ingest_provider && scope.item.ingest_provider in ingestSources.providersLookup) {
-                                scope.name = ingestSources.providersLookup[scope.item.ingest_provider].name;
-                            }
-                        });
                     });
                 }
             };
