@@ -319,7 +319,7 @@
         "_id": "age_range",
         "display_name": "Age Range",
         "type": "manageable",
-        "service": {"n": 1, "s": 1, "r": 1, "m": 1},
+        "service": {"paservice:news": 1, "paservice:sport": 1, "paservice:real-life": 1, "paservice:motoring": 1},
         "priority": 10,
         "items": [
             {"is_active": true, "name": "18-24", "qcode": "paaudience:18-24"},
@@ -332,7 +332,7 @@
         "_id": "territory_long",
         "display_name": "Territory",
         "type": "manageable",
-        "service": {"n": 1, "s": 1},
+        "service": {"paservice:news": 1, "paservice:sport": 1},
         "priority": 20,
         "items": [
             {"is_active": true, "name": "International", "qcode": "paterritory:international"},
@@ -357,7 +357,7 @@
         "_id": "territory_short",
         "display_name": "Territory",
         "type": "manageable",
-        "service": {"r": 1, "m": 1},
+        "service": {"paservice:real-life": 1, "paservice:motoring": 1},
         "priority": 20,
         "items": [
             {"is_active": true, "name": "International", "qcode": "paterritory:international"},
@@ -371,7 +371,7 @@
         "_id": "reader_type",
         "display_name": "Reader Type",
         "type": "manageable",
-        "service": {"n": 1, "s": 1, "r": 1, "m": 1},
+        "service": {"paservice:news": 1, "paservice:sport": 1, "paservice:real-life": 1, "paservice:motoring": 1},
         "priority": 30,
         "items": [
             {"is_active": true, "name": "Female", "qcode": "pareader:female"},
@@ -383,7 +383,7 @@
         "_id": "desired_response",
         "display_name": "Response",
         "type": "manageable",
-        "service": {"n": 1, "s": 1, "r": 1, "m": 1},
+        "service": {"paservice:news": 1, "paservice:sport": 1, "paservice:real-life": 1, "paservice:motoring": 1},
         "priority": 40,
         "items": [
             {"is_active": true, "name": "Uplifting", "qcode": "paresponse:uplifting"},
@@ -399,7 +399,7 @@
         "_id": "assets",
         "display_name": "Assets",
         "type": "manageable",
-        "service": {"n": 1, "s": 1, "r": 1, "m": 1},
+        "service": {"paservice:news": 1, "paservice:sport": 1, "paservice:real-life": 1, "paservice:motoring": 1},
         "priority": 50,
         "items": [
             {"is_active": true, "name": "Images", "qcode": "images"},
@@ -412,7 +412,7 @@
         "_id": "top5",
         "display_name": "Top 5",
         "type": "manageable",
-        "service": {"n": 1, "s": 1},
+        "service": {"paservice:news": 1, "paservice:sport": 1},
         "priority": 41,
         "items": [
             {"is_active": true, "name": "Top 5", "qcode": "paselection:top-5"}
@@ -422,7 +422,7 @@
         "_id": "featured",
         "display_name": "Featured",
         "type": "manageable",
-        "service": {"r": 1, "m": 1},
+        "service": {"paservice:real-life": 1, "paservice:motoring": 1},
         "priority": 41,
         "items": [
             {"is_active": true, "name": "Featured", "qcode": "paselection:featured"}
@@ -432,7 +432,7 @@
         "_id": "credit_level",
         "display_name": "Credit Level",
         "type": "manageable",
-        "service": {"r": 1},
+        "service": {"paservice:real-life": 1},
         "priority": 51,
         "items": [
             {"is_active": true, "name": "Standard Tier", "qcode": "pacredit:5"},
