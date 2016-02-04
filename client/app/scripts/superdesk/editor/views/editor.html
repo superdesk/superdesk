@@ -1,7 +1,10 @@
 <div dragula="'blocks'"
      dragula-model="vm.blocks">
-    <a class="btn btn-default" ng-click="vm.disableReorderingMode()" ng-if="vm.reorderingMode" trans>
-        Cancel reordering
+    <a class="btn btn-default block__move__cancel"
+       ng-click="vm.disableReorderingMode()"
+       ng-show="vm.reorderingMode"
+       trans>
+        <i class="svg-icon-move"></i> Cancel reordering
     </a>
     <div ng-repeat="block in vm.blocks"
          class="block__container"

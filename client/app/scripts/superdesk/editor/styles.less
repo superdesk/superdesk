@@ -25,7 +25,7 @@
 }
 .block {
     &--selected {
-        border: 2px dashed #CFCFCF;
+        border: 1px solid #5EA9C8;
     }
     &__container {
         position: relative;
@@ -63,12 +63,32 @@
             width: 15px;
             height: 15px;
         }
+        &__cancel {
+            padding-left: 32px;
+            position: fixed;
+            right: 80px;
+            top: 120px;
+            z-index: 4;
+            background-color: #D9D9D9;
+            .transition(top linear 0.25s);
+            &.ng-hide {
+                top: 60px;
+                display: block !important;
+            }
+            i {
+                position: absolute;
+                left: 6px;
+                top: 4px;
+            }
+        }
         &__dropzone {
-            border: 2px dashed #CFCFCF;
+            border: 1px dashed #CFCFCF;
             background-color: #F7F7F7;
-            width: 100%;
+            color: #666;
             text-align: center;
             cursor: pointer;
+            margin: 10px 0;
+            padding: 10px 0;
         }
     }
 }
