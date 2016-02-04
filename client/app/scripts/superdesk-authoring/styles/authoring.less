@@ -787,6 +787,30 @@
     }
 }
 
+.preview-modal-control { // toggle for preview dialog
+    position: relative;
+    width: auto;
+    max-width: 900px;
+    margin: 0 auto;
+    z-index: 4;
+    .btn {
+        position: absolute;
+        top: 12px;
+        right: 90px;
+        z-index: 100;
+        background-color: transparent;
+        height: 22px;
+        padding: 0px 6px;
+        .border-radius(0);
+        &:hover {
+            background-color: rgba(152,152,152,.3);
+            .box-shadow(none);
+        }
+        [class^="icon-"], .btn [class*=" icon-"] {
+            margin: 0;
+        }
+    }
+}
 .preview-pane {
     .pane-holder {
         width: @sidepreview-width;

@@ -96,32 +96,37 @@ body, html {
             background-color: @grayLighter;
         }
     }
+    .toggle {
+        position: absolute;
+        top: 12px;
+        color: #666;
+        height: 22px;
+        padding: 4px 6px;
+        font-size: 11px;
+        letter-spacing: 0.06em;
+        box-shadow: none;
+        border-radius: 0px;
+        background-color: transparent;
+        z-index: 10;
+        line-height: 0;
+        i {
+            margin-top: -3px;
+            margin-right: 0;
+        }
+        &:hover {
+            background-color: rgba(152, 152, 152, 0.3);
+        }
+        &.active {
+            .box-shadow(inset 0 2px 0 rgba(55, 55, 55, 0.1));
+            background-color: rgba(152, 152, 152, 0.3);
+        }
+    }
+    .preview-toggle {
+        right: 90px;
+    }
     .proofread-toggle {
-            position: absolute;
-            top: 12px;
-            right: 52px;
-            color: #666;
-            height: 22px;
-            padding: 4px 6px;
-            font-size: 11px;
-            letter-spacing: 0.06em;
-            box-shadow: none;
-            border-radius: 0px;
-            background-color: transparent;
-            z-index: 10;
-            line-height: 0;
-            i {
-                margin-top: -3px;
-                margin-right: 0;
-            }
-            &:hover {
-                background-color: rgba(152, 152, 152, 0.3);
-            }
-            &.active {
-                .box-shadow(inset 0 2px 0 rgba(55, 55, 55, 0.1));
-                background-color: rgba(152, 152, 152, 0.3);
-            }
-	}
+        right: 52px;
+    }
 
 	.theme-select {
 		position: absolute;
