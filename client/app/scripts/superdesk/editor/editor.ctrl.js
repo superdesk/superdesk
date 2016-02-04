@@ -3,8 +3,8 @@
 
 angular.module('superdesk.editor').controller('SdTextEditorController', SdTextEditorController);
 
-SdTextEditorController.$inject = ['lodash', 'EMBED_PROVIDERS', '$timeout'];
-function SdTextEditorController(_, EMBED_PROVIDERS, $timeout) {
+SdTextEditorController.$inject = ['lodash', 'EMBED_PROVIDERS', '$timeout', '$element'];
+function SdTextEditorController(_, EMBED_PROVIDERS, $timeout, $element) {
     var vm = this;
     function Block(attrs) {
         angular.extend(this, {
@@ -210,7 +210,7 @@ function SdTextEditorController(_, EMBED_PROVIDERS, $timeout) {
             }
         },
         reorderingMode: false,
-        enableReorderingMode: function(position) {
+        enableReorderingMode: function(position, event) {
             var blockToMove = vm.blocks[position];
             var before = vm.serializeBlock(vm.blocks.slice(0, position));
             var after = vm.serializeBlock(vm.blocks.slice(position + 1));
@@ -220,7 +220,9 @@ function SdTextEditorController(_, EMBED_PROVIDERS, $timeout) {
             newBlocks.push(blockToMove);
             // split into blocks what is after the selected block
             newBlocks = newBlocks.concat(splitIntoBlock(after));
-            // save the selected block, and the new blocks
+            // save the vertical scroll position
+            var offsetTop = angular.element(event.currentTarget).offset().top;
+            // update the view model
             angular.extend(vm, {
                 // save the new blocks (texts are a splited per paragraph)
                 blocks: newBlocks,
@@ -229,6 +231,13 @@ function SdTextEditorController(_, EMBED_PROVIDERS, $timeout) {
                 // used in template to show the reordering UI
                 reorderingMode: true
             });
+            // restore the scroll postion at the new element level
+            $timeout(function() {
+                var el = $element.find('.block__container').get(vm.blockToMoveIndex);
+                var container = angular.element('.page-content-container');
+                var offset = container.scrollTop() + angular.element(el).offset().top - offsetTop;
+                container.scrollTop(offset);
+            }, 200, false); // wait after transitions
         },
         reorderToPosition: function(position) {
             // adjust the position. Remove one if the moved element was before the wanted position
