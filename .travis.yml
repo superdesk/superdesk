@@ -28,6 +28,14 @@ cache:
 
 before_install:
     - if [ "${TARGET}" = "unit" ] || [ "${TARGET}" != "${TARGET/e2e/}" ]; then
+        pip install jinja2
+        mv INSTALL.md INSTALL.md.orig ;
+        ./scripts/generate-install-docs.sh ;
+        if [ $(diff INSTALL.md.orig INSTALL.md | wc -l) -ne 0 ]; then
+            echo "Install docs are not up-to-date" ;
+            echo "Run ./scripts/generate-install-docs.sh and commit the changes." ;
+            exit 3 ;
+        fi ;
         npm install -g grunt-cli bower ;
       fi
     - if [ "${TARGET}" != "${TARGET/e2e/}" ]; then
