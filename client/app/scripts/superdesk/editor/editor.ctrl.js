@@ -212,8 +212,19 @@ function SdTextEditorController(_, EMBED_PROVIDERS, $timeout, $element) {
         reorderingMode: false,
         hideHeader: function(hide) {
             hide = angular.isDefined(hide) ? hide : true;
-            hide = hide ? 0 : 1;
-            angular.element('.authoring-header, .preview-modal-control, .theme-controls').css('opacity', hide);
+            var prop;
+            if (hide) {
+                prop = {
+                    opacity: 0.4,
+                    pointerEvents: 'none'
+                };
+            } else {
+                prop = {
+                    opacity: 1,
+                    pointerEvents: 'auto'
+                };
+            }
+            angular.element('.authoring-header, .preview-modal-control, .theme-controls').css(prop);
         },
         enableReorderingMode: function(position, event) {
             var blockToMove = vm.blocks[position];
