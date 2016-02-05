@@ -1,8 +1,8 @@
 <div dragula="'blocks'"
      dragula-model="vm.blocks">
-    <a class="btn btn-default block__move__cancel"
+    <a class="btn btn-default block__move__cancel ng-cloak"
        ng-click="vm.disableReorderingMode()"
-       ng-show="vm.reorderingMode"
+       ng-show="!vm.reorderingMode"
        trans>
         <i class="svg-icon-move"></i> Cancel reordering
     </a>

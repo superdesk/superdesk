@@ -67,11 +67,11 @@
             padding-left: 32px;
             position: fixed;
             right: 80px;
-            top: 120px;
             z-index: 4;
             .transition(top 0.25s ease 1s);
-            &.ng-hide {
-                top: 60px;
+            top: 60px;
+            &.ng-hide { // shows the button (reversed in order to have it hidden as initial state)
+                top: 120px;
                 display: block !important;
             }
             i {
@@ -88,6 +88,9 @@
             cursor: pointer;
             margin: 10px 0;
             padding: 10px 0;
+            &:hover {
+                background-color: #F0F0F0;
+            }
         }
     }
 }
