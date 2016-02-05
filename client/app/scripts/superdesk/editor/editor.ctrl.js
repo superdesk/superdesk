@@ -257,14 +257,16 @@ function SdTextEditorController(_, EMBED_PROVIDERS, $timeout, $element) {
             vm.disableReorderingMode();
         },
         disableReorderingMode: function() {
+            // reset reorder mode state in vm
             angular.extend(vm, {
                 blockToMoveIndex: undefined,
                 reorderingMode: false
             });
             // show the header
             vm.hideHeader(false);
-            // reset reorder mode state in vm
+            // merge the text blocks together
             vm.renderBlocks();
+            // save changes
             $timeout(vm.commitChanges);
         }
     });
