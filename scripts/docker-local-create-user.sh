@@ -1,6 +1,6 @@
 #!/bin/sh
-SCRIPT_DIR=$(readlink -e $(dirname "$0"))
-(test -d $SCRIPT_DIR/env || virtualenv -p python2 $SCRIPT_DIR/env ) &&
+SCRIPT_DIR="$(echo $(cd -P -- "$(dirname -- "$0")" && pwd -P))"
+(test -d $SCRIPT_DIR/env || virtualenv $SCRIPT_DIR/env ) &&
 . $SCRIPT_DIR/env/bin/activate
 set -ue
 pip install -r $SCRIPT_DIR/../docker/requirements.txt

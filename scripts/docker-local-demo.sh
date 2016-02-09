@@ -6,10 +6,8 @@ function dcs() {
 	docker-compose -p sddemo -f ./docker-compose-prebuilt.yml $@
 }
 
-
-WORK_DIR=$(readlink -e $(dirname "$0"))
-
-(test -d $WORK_DIR/env || virtualenv -p python2 $WORK_DIR/env )
+WORK_DIR="$(echo $(cd -P -- "$(dirname -- "$0")" && pwd -P))"
+(test -d $WORK_DIR/env || virtualenv $WORK_DIR/env )
 set +u
 . $WORK_DIR/env/bin/activate
 set -u

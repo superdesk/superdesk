@@ -24,7 +24,7 @@ RUN_FRONTEND_UNIT=${bamboo_RUN_FRONTEND_UNIT:=1}
 RUN_E2E=${bamboo_RUN_E2E:=1}
 
 # install script requirements
-virtualenv -p python2 $SCRIPT_DIR/env
+virtualenv $SCRIPT_DIR/env
 set +u
 . $SCRIPT_DIR/env/bin/activate
 set -u
