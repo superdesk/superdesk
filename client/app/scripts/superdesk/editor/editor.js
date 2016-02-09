@@ -713,7 +713,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                             'data-custom-attr': 'attr-value-h2'
                         }
                     },
-                    'bold', 'italic', 'underline', 'quote', 'anchor', 'embed', 'picture'
+                    'bold', 'italic', 'underline', 'quote', 'anchor'
                 ]
             },
             anchor: {
@@ -824,106 +824,110 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                 ngModel.$render = function() {
                     editor.registerScope(scope);
                     var editorConfig = angular.extend({}, EDITOR_CONFIG, scope.config || {});
-                    var EmbedButton = window.MediumEditor.extensions.button.extend({
-                        name: 'embed',
-                        contentDefault: '<b>Embed</b>', // default innerHTML of the button
-                        init: function() {
-                            window.MediumEditor.extensions.form.prototype.init.apply(this, arguments);
-                            this.subscribe('editableKeydown', this.handleKeydown.bind(this));
-                        },
-                        isAlreadyApplied: function (node) {
-                            var textContent = angular.isDefined(node.textContent) ? node.textContent : node.innerText;
-                            return node.nodeName.toLowerCase() === 'p' && textContent === '';
-                        },
-                        isActive: function() {
-                            return !this.button.classList.contains('medium-editor-button-disabled');
-                        },
-                        setInactive: function() {
-                            this.button.classList.add('medium-editor-button-disabled');
-                        },
-                        setActive: function() {
-                            this.button.classList.remove('medium-editor-button-disabled');
-                        },
-                        extractEndOfBlock: function() {
-                            // save caret position
-                            scope.sdTextEditorBlockText.caretPosition = this.base.exportSelection();
-                            // extract the text after the cursor
-                            var remainingElementsContainer = document.createElement('div');
-                            remainingElementsContainer.appendChild(extractBlockContentsFromCaret().cloneNode(true));
-                            // remove the first line if empty
-                            $(remainingElementsContainer).find('p:first').each(function() {
-                                if ($(this).text() === '') {
-                                    this.remove();
-                                }
-                            });
-                            return remainingElementsContainer;
-                        },
-                        handleClick: function() {
-                            // does nothing if embed must be inactive
-                            if (!this.isActive()) {
-                                return false;
-                            }
-                            var indexWhereToAddNewBlock = sdTextEditor.getBlockPosition(scope.sdTextEditorBlockText) + 1;
-                            // add new text block for the remaining text
-                            sdTextEditor.insertNewBlock(indexWhereToAddNewBlock, {
-                                body: this.extractEndOfBlock().innerHTML
-                            }, true);
-                            // hide the toolbar
-                            this.base.getExtensionByName('toolbar').hideToolbarDefaultActions();
-                            // show the add-embed form
-                            scope.sdTextEditorBlockText.showAndFocusLowerAddAnEmbedBox();
-                            // save the blocks (with removed leading text)
-                            $timeout(updateModel, false);
-                        },
-                        // Called when user hits the defined shortcut (CTRL / COMMAND + e)
-                        handleKeydown: function(event) {
-                            if (window.MediumEditor.util.isKey(event, 'E'.charCodeAt(0)) &&
-                                window.MediumEditor.util.isMetaCtrlKey(event) && !event.shiftKey) {
-                                this.handleClick(event);
-                                event.preventDefault();
-                            }
-                        }
-                    });
-                    var PictureButton = EmbedButton.extend({
-                        name: 'picture',
-                        contentDefault: '<b>Picture</b>', // default innerHTML of the button
-                        init: function() {
-                            window.MediumEditor.extensions.form.prototype.init.apply(this, arguments);
-                        },
-                        handleClick: function() {
-                            var self = this;
-                            // does nothing if inactive
-                            if (!self.isActive()) {
-                                return false;
-                            }
-                            // extract text after cursor
-                            var textAfterCursor = self.extractEndOfBlock().innerHTML;
-                            var indexWhereToAddBlock = sdTextEditor.getBlockPosition(scope.sdTextEditorBlockText) + 1;
-                            superdesk.intent('upload', 'media').then(function(images) {
-                                images.forEach(function(image) {
-                                    sdTextEditor.insertNewBlock(indexWhereToAddBlock, {
-                                        blockType: 'embed',
-                                        embedType: 'Image',
-                                        body: '<img alt="' + (image.description || '') + '" src="' +
-                                            image.renditions.viewImage.href + '"/>\n',
-                                        caption: image.description
-                                    }, true);
-                                    indexWhereToAddBlock++;
+                    // if config.multiBlockEdition is true, add Embed and Image button to the toolbar
+                    if (scope.config.multiBlockEdition) {
+                        var EmbedButton = window.MediumEditor.extensions.button.extend({
+                            name: 'embed',
+                            contentDefault: '<b>Embed</b>', // default innerHTML of the button
+                            init: function() {
+                                window.MediumEditor.extensions.form.prototype.init.apply(this, arguments);
+                                this.subscribe('editableKeydown', this.handleKeydown.bind(this));
+                            },
+                            isAlreadyApplied: function (node) {
+                                var textContent = angular.isDefined(node.textContent) ? node.textContent : node.innerText;
+                                return node.nodeName.toLowerCase() === 'p' && textContent === '';
+                            },
+                            isActive: function() {
+                                return !this.button.classList.contains('medium-editor-button-disabled');
+                            },
+                            setInactive: function() {
+                                this.button.classList.add('medium-editor-button-disabled');
+                            },
+                            setActive: function() {
+                                this.button.classList.remove('medium-editor-button-disabled');
+                            },
+                            extractEndOfBlock: function() {
+                                // save caret position
+                                scope.sdTextEditorBlockText.caretPosition = this.base.exportSelection();
+                                // extract the text after the cursor
+                                var remainingElementsContainer = document.createElement('div');
+                                remainingElementsContainer.appendChild(extractBlockContentsFromCaret().cloneNode(true));
+                                // remove the first line if empty
+                                $(remainingElementsContainer).find('p:first').each(function() {
+                                    if ($(this).text() === '') {
+                                        this.remove();
+                                    }
                                 });
+                                return remainingElementsContainer;
+                            },
+                            handleClick: function() {
+                                // does nothing if embed must be inactive
+                                if (!this.isActive()) {
+                                    return false;
+                                }
+                                var indexWhereToAddNewBlock = sdTextEditor.getBlockPosition(scope.sdTextEditorBlockText) + 1;
                                 // add new text block for the remaining text
-                            }).finally(function() {
-                                sdTextEditor.insertNewBlock(indexWhereToAddBlock, {
-                                    body: textAfterCursor
+                                sdTextEditor.insertNewBlock(indexWhereToAddNewBlock, {
+                                    body: this.extractEndOfBlock().innerHTML
                                 }, true);
+                                // hide the toolbar
+                                this.base.getExtensionByName('toolbar').hideToolbarDefaultActions();
+                                // show the add-embed form
+                                scope.sdTextEditorBlockText.showAndFocusLowerAddAnEmbedBox();
                                 // save the blocks (with removed leading text)
                                 $timeout(updateModel, false);
-                            });
-                        }
-                    });
-                    editorConfig.extensions = {
-                        'embed': new EmbedButton(),
-                        'upload': new PictureButton()
-                    };
+                            },
+                            // Called when user hits the defined shortcut (CTRL / COMMAND + e)
+                            handleKeydown: function(event) {
+                                if (window.MediumEditor.util.isKey(event, 'E'.charCodeAt(0)) &&
+                                    window.MediumEditor.util.isMetaCtrlKey(event) && !event.shiftKey) {
+                                    this.handleClick(event);
+                                    event.preventDefault();
+                                }
+                            }
+                        });
+                        var PictureButton = EmbedButton.extend({
+                            name: 'picture',
+                            contentDefault: '<b>Picture</b>', // default innerHTML of the button
+                            init: function() {
+                                window.MediumEditor.extensions.form.prototype.init.apply(this, arguments);
+                            },
+                            handleClick: function() {
+                                var self = this;
+                                // does nothing if inactive
+                                if (!self.isActive()) {
+                                    return false;
+                                }
+                                // extract text after cursor
+                                var textAfterCursor = self.extractEndOfBlock().innerHTML;
+                                var indexWhereToAddBlock = sdTextEditor.getBlockPosition(scope.sdTextEditorBlockText) + 1;
+                                superdesk.intent('upload', 'media').then(function(images) {
+                                    images.forEach(function(image) {
+                                        sdTextEditor.insertNewBlock(indexWhereToAddBlock, {
+                                            blockType: 'embed',
+                                            embedType: 'Image',
+                                            body: '<img alt="' + (image.description || '') + '" src="' +
+                                                image.renditions.viewImage.href + '"/>\n',
+                                            caption: image.description
+                                        }, true);
+                                        indexWhereToAddBlock++;
+                                    });
+                                    // add new text block for the remaining text
+                                }).finally(function() {
+                                    sdTextEditor.insertNewBlock(indexWhereToAddBlock, {
+                                        body: textAfterCursor
+                                    }, true);
+                                    // save the blocks (with removed leading text)
+                                    $timeout(updateModel, false);
+                                });
+                            }
+                        });
+                        editorConfig.toolbar.buttons.push('embed', 'picture');
+                        editorConfig.extensions = {
+                            'embed': new EmbedButton(),
+                            'upload': new PictureButton()
+                        };
+                    }
                     // FIXME: create unwanted cursor moves
                     // spellcheck.setLanguage(scope.language);
                     editorElem = elem.find(scope.type === 'preformatted' ?  '.editor-type-text' : '.editor-type-html');
