@@ -679,7 +679,8 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
             controller: SdTextEditorBlockEmbedController
         };
     }])
-    .directive('sdTextEditorBlockText', ['editor', 'spellcheck', '$timeout', function (editor, spellcheck, $timeout) {
+    .directive('sdTextEditorBlockText', ['editor', 'spellcheck', '$timeout', 'superdesk',
+    function (editor, spellcheck, $timeout, superdesk) {
         var EDITOR_CONFIG = {
             toolbar: {
                 static: true,
@@ -712,7 +713,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                             'data-custom-attr': 'attr-value-h2'
                         }
                     },
-                    'bold', 'italic', 'underline', 'quote', 'anchor', 'embed'
+                    'bold', 'italic', 'underline', 'quote', 'anchor', 'embed', 'picture'
                 ]
             },
             anchor: {
@@ -843,20 +844,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                         setActive: function() {
                             this.button.classList.remove('medium-editor-button-disabled');
                         },
-                        getButton: function() {
-                            if (!angular.isDefined(this.button)) {
-                                this.button = document.createElement('button');
-                                this.button.classList.add('medium-editor-action');
-                                this.button.innerHTML = '<b>Embed</b>';
-                                this.button.onclick = this.handleClick.bind(this);
-                            }
-                            return this.button;
-                        },
-                        handleClick: function() {
-                            // does nothing if embed must be inactive
-                            if (!this.isActive()) {
-                                return false;
-                            }
+                        extractEndOfBlock: function() {
                             // save caret position
                             scope.sdTextEditorBlockText.caretPosition = this.base.exportSelection();
                             // extract the text after the cursor
@@ -868,15 +856,23 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                                     this.remove();
                                 }
                             });
+                            return remainingElementsContainer;
+                        },
+                        handleClick: function() {
+                            // does nothing if embed must be inactive
+                            if (!this.isActive()) {
+                                return false;
+                            }
                             var indexWhereToAddNewBlock = sdTextEditor.getBlockPosition(scope.sdTextEditorBlockText) + 1;
                             // add new text block for the remaining text
                             sdTextEditor.insertNewBlock(indexWhereToAddNewBlock, {
-                                body: remainingElementsContainer.innerHTML
+                                body: this.extractEndOfBlock().innerHTML
                             }, true);
                             // hide the toolbar
                             this.base.getExtensionByName('toolbar').hideToolbarDefaultActions();
                             // show the add-embed form
                             scope.sdTextEditorBlockText.showAndFocusLowerAddAnEmbedBox();
+                            // save the blocks (with removed leading text)
                             $timeout(updateModel, false);
                         },
                         // Called when user hits the defined shortcut (CTRL / COMMAND + e)
@@ -888,8 +884,45 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                             }
                         }
                     });
+                    var PictureButton = EmbedButton.extend({
+                        name: 'picture',
+                        contentDefault: '<b>Picture</b>', // default innerHTML of the button
+                        init: function() {
+                            window.MediumEditor.extensions.form.prototype.init.apply(this, arguments);
+                        },
+                        handleClick: function() {
+                            var self = this;
+                            // does nothing if inactive
+                            if (!self.isActive()) {
+                                return false;
+                            }
+                            // extract text after cursor
+                            var textAfterCursor = self.extractEndOfBlock().innerHTML;
+                            var indexWhereToAddBlock = sdTextEditor.getBlockPosition(scope.sdTextEditorBlockText) + 1;
+                            superdesk.intent('upload', 'media').then(function(images) {
+                                images.forEach(function(image) {
+                                    sdTextEditor.insertNewBlock(indexWhereToAddBlock, {
+                                        blockType: 'embed',
+                                        embedType: 'Image',
+                                        body: '<img alt="' + (image.description || '') + '" src="' +
+                                            image.renditions.viewImage.href + '"/>\n',
+                                        caption: image.description
+                                    }, true);
+                                    indexWhereToAddBlock++;
+                                });
+                                // add new text block for the remaining text
+                            }).finally(function() {
+                                sdTextEditor.insertNewBlock(indexWhereToAddBlock, {
+                                    body: textAfterCursor
+                                }, true);
+                                // save the blocks (with removed leading text)
+                                $timeout(updateModel, false);
+                            });
+                        }
+                    });
                     editorConfig.extensions = {
-                        'embed': new EmbedButton(sdTextEditor)
+                        'embed': new EmbedButton(),
+                        'upload': new PictureButton()
                     };
                     // FIXME: create unwanted cursor moves
                     // spellcheck.setLanguage(scope.language);

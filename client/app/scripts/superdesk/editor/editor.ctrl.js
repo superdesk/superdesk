@@ -178,10 +178,10 @@ function SdTextEditorController(_, EMBED_PROVIDERS, $timeout, $element) {
         insertNewBlock: function(position, attrs, unprocess) {
             var new_block = new Block(attrs);
             vm.blocks.splice(position, 0, new_block);
-            if (!unprocess) {
-                vm.renderBlocks();
-            }
             $timeout(vm.commitChanges);
+            if (!unprocess) {
+                $timeout(vm.renderBlocks);
+            }
             return this;
         },
         /**
