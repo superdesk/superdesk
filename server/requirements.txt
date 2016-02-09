@@ -4,5 +4,5 @@ pymongo==2.8
 Eve==0.6.0
 raven[flask]==5.3.1
 
-git+git://github.com/superdesk/superdesk-core.git@62787795#egg=Superdesk-Core
+git+git://github.com/superdesk/superdesk-core.git@e98439fb#egg=Superdesk-Core
 
