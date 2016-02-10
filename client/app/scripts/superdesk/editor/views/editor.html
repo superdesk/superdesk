@@ -1,57 +1,29 @@
-<div dragula="'blocks'"
-     dragula-model="vm.blocks">
-    <a class="btn btn-default block__move__cancel ng-cloak"
-       ng-click="vm.disableReorderingMode()"
-       ng-show="!vm.reorderingMode"
-       trans>
-        <i class="svg-icon-move"></i> Cancel reordering
-    </a>
-    <div ng-repeat="block in vm.blocks"
-         class="block__container"
-         ng-class="{'block--selected': vm.blockToMoveIndex === $index}">
-        <div class="block__actions" ng-if="vm.config.multiBlockEdition && !vm.reorderingMode">
-            <div class="block__remove" ng-click="vm.removeBlock(block)">
-                <i class="icon-close-small"></i>
-            </div>
-            <div class="block__move" ng-click="vm.enableReorderingMode($index, $event)">
-                <i class="svg-icon-move"></i>
-            </div>
+<div ng-repeat="block in vm.blocks" class="block__container">
+    <div ng-if="vm.config.multiBlockEdition" class="block__remove" ng-click="vm.removeBlock(block)">
+        <i class="icon-close-small"></i>
+    </div>
+    <sd-add-embed ng-if="vm.config.multiBlockEdition && $first"
+                  add-to-position="$index"
+                  class="block__add-embed">
+    </sd-add-embed>
+    <div ng-switch="block.blockType">
+        <div ng-switch-when="embed"
+             sd-text-editor-block-embed="block"
+             on-block-change="vm.commitChanges()">
         </div>
-        <div ng-if="$first && vm.reorderingMode && vm.blockToMoveIndex !== $index"
-             ng-click="vm.reorderToPosition($index)"
-             class="block__move__dropzone"
-             trans>
-            Click to move the block here
-        </div>
-        <sd-add-embed ng-if="vm.config.multiBlockEdition && $first && !vm.reorderingMode"
-                      add-to-position="$index"
-                      class="block__add-embed">
-        </sd-add-embed>
-        <div ng-switch="block.blockType">
-            <div ng-switch-when="embed"
-                 sd-text-editor-block-embed="block"
-                 on-block-change="vm.commitChanges()">
-            </div>
-            <div ng-switch-when="text"
-                 sd-text-editor-block-text="block"
-                 type="vm.type"
-                 config="vm.config"
-                 language="vm.language"
-                 ng-change="vm.commitChanges()"
-                 ng-model="block.body">
-            </div>
-        </div>
-        <sd-add-embed ng-if="vm.config.multiBlockEdition && !vm.reorderingMode"
-                      extended="block.lowerAddEmbedIsExtented"
-                      add-to-position="$index + 1"
-                      on-close="vm.renderBlocks()"
-                      class="block__add-embed">
-        </sd-add-embed>
-        <div ng-if="vm.reorderingMode && vm.blockToMoveIndex !== ($index + 1) && vm.blockToMoveIndex !== $index"
-             ng-click="vm.reorderToPosition($index + 1)"
-             class="block__move__dropzone"
-             trans>
-            Click to move the block here
+        <div ng-switch-when="text"
+             sd-text-editor-block-text="block"
+             type="vm.type"
+             config="vm.config"
+             language="vm.language"
+             ng-change="vm.commitChanges()"
+             ng-model="block.body">
         </div>
     </div>
+    <sd-add-embed ng-if="vm.config.multiBlockEdition"
+                  extended="block.lowerAddEmbedIsExtented"
+                  add-to-position="$index + 1"
+                  on-close="vm.renderBlocks()"
+                  class="block__add-embed">
+    </sd-add-embed>
 </div>
