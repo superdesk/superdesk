@@ -881,10 +881,9 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                         },
                         // Called when user hits the defined shortcut (CTRL / COMMAND + e)
                         handleKeydown: function(event) {
-                            if (window.MediumEditor.util.isKey(event, 'E'.charCodeAt(0)) &&
+                            if (window.MediumEditor.util.isKey(event, 69) &&
                                 window.MediumEditor.util.isMetaCtrlKey(event) && !event.shiftKey) {
                                 this.handleClick(event);
-                                event.preventDefault();
                             }
                         }
                     });
