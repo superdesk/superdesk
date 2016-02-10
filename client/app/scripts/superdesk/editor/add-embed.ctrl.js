@@ -118,8 +118,8 @@ function SdAddEmbedController (embedService, $element, $timeout, $q, _, EMBED_PR
             if (extended) {
                 $timeout(function() {
                     angular.element($element).find('input').focus();
-                });
-                // on leave, clear field
+                }, 500, false); // positive timeout because of a chrome issue
+            // on leave, clear field
             } else {
                 vm.input = '';
                 vm.onClose();
