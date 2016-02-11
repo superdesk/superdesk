@@ -5,72 +5,20 @@
             <div class="page-content-container"
                  ng-click="views.send = false">
                  <div class="preview-modal-control">
-                     <div sd-modal data-model="fullPreview" data-full="true" class="modal-preview">
-                        <div class="modal-header">
-                            <div class="btn-group">
-                                <button ng-click="" title="Print"><i class="icon-print"></i></button>
-                                <button ng-click="closeFullPreview()" title="Close"><i class="icon-close-small"></i></button>
-                            </div>
-                        </div>
-                        <div class="modal-body" sd-shadow>
-                            <div class="preview-content">
-                                <div class="metadata">
-                                    <div>
-                                        <div class="preview-label">
-                                            <label translate>Service</label>
-                                        </div>
-                                        <div class="preview-data">
-                                            <span ng-repeat="service in fullPreviewItem.anpa_category">
-                                                {{service.name}}
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="preview-label">
-                                            <label translate>Topic</label>
-                                        </div>
-                                        <div class="preview-data">
-                                            <span ng-repeat="topic in fullPreviewItem.subject">
-                                                {{topic.name}}
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="preview-label">
-                                            <label translate>Keyword</label>
-                                        </div>
-                                        <div class="preview-data">
-                                            <span>{{fullPreviewItem.slugline}}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="headline">{{fullPreviewItem.headline}}</div>
-                                <div ng-repeat="association in fullPreviewItem.associations" class="association">
-                                    <img src="{{association.renditions.viewImage.href}}">
-                                </div>
-                                <div class="byline">{{fullPreviewItem.byline}}</div>
-                                <div sd-html-preview="fullPreviewItem.body_html" class="body"></div>
-                                <div class="metadata">
-                                    <div>
-                                        <div class="preview-label">
-                                            <label translate>Tag</label>
-                                        </div>
-                                        <div class="preview-data">
-                                            <span ng-repeat="keyword in fullPreviewItem.keywords">
-                                                {{keyword}}
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>                        
-                    </div>
-                    <button class="toggle preview-toggle btn"
+                    <div sd-full-preview ng-if="fullPreview" data-item="item" data-close-action="closeFullPreview"></div>
+                    <!--<button class="toggle preview-toggle btn"
                             ng-if="item.type === 'text'"
                             ng-click="openFullPreview(item)"
                             title="{{:: 'Preview' | translate}}">
                         <i class="icon-eye-open"></i>
-                    </button>
+                    </button>-->
+                    <a class="toggle preview-toggle btn"
+                            ng-if="item.type === 'text'"
+                            title="{{:: 'Preview' | translate}}"
+                            ng-click="openFullPreview($event)"
+                            ng-href="{{fullPreviewUrl}}">
+                        <i class="icon-eye-open"></i>
+                    </a>
                  </div>
                 <div class="theme-controls">                    
                     <button class="toggle proofread-toggle btn"
