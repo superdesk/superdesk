@@ -11,21 +11,16 @@ Feature: Keywords
         Then we get existing resource
         """
         {"_id": 0,
-         "keywords": [{"relevance": "0.991938", "text": "Prime Minister Alexis"}, 
-                      {"relevance": "0.906433", "text": "easier visa terms"}, 
-                      {"relevance": "0.781422", "text": "re-energized consideration"}, 
-                      {"relevance": "0.77959", "text": "EU Summit"}, 
-                      {"relevance": "0.725234", "text": "EU leaders"}, 
-                      {"relevance": "0.718816", "text": "Ankara cash"}, 
-                      {"relevance": "0.664191", "text": "membership bid"}, 
-                      {"relevance": "0.654447", "text": "national issues"}, 
+         "keywords": [{"relevance": "0.943564", "text": "Prime Minister Alexis Tsipras"}, 
+                      {"relevance": "0.915151", "text": "EU"}, 
+                      {"relevance": "0.775952", "text": "Turkey"}, 
+                      {"relevance": "0.542216", "text": "Reuters"}, 
+                      {"relevance": "0.490861", "text": "ATHENS"}, 
+                      {"relevance": "0.47575", "text": "Brussels"}, 
+                      {"relevance": "0.458178", "text": "Ankara"}, 
+                      {"relevance": "0.455677", "text": "Greece"}, 
                       {"relevance": "0.505621", "text": "Reuters"}, 
-                      {"relevance": "0.478386", "text": "Brussels"}, 
-                      {"relevance": "0.47406", "text": "migration"}, 
-                      {"relevance": "0.473135", "text": "ATHENS"}, 
-                      {"relevance": "0.472956", "text": "Friday"}, 
-                      {"relevance": "0.454427", "text": "Turkey"}, 
-                      {"relevance": "0.438753", "text": "Greece"}
+                      {"relevance": "0.478386", "text": "Brussels"}
                    ]
          }
         """
