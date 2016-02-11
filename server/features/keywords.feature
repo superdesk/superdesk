@@ -18,9 +18,7 @@ Feature: Keywords
                       {"relevance": "0.490861", "text": "ATHENS"}, 
                       {"relevance": "0.47575", "text": "Brussels"}, 
                       {"relevance": "0.458178", "text": "Ankara"}, 
-                      {"relevance": "0.455677", "text": "Greece"}, 
-                      {"relevance": "0.505621", "text": "Reuters"}, 
-                      {"relevance": "0.478386", "text": "Brussels"}
+                      {"relevance": "0.455677", "text": "Greece"}
                    ]
          }
         """
