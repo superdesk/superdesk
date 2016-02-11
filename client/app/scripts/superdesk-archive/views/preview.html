@@ -35,6 +35,12 @@
                 <div>
                     <span translate>Original</span>
                     <div sd-item-rendition data-item="selected.preview" data-rendition="viewImage"></div>
+                    <p class="nav-space" ng-if="
+                        selected.preview.headline !== selected.preview.description_text &&
+                        selected.preview.description_text
+                    ">
+                        {{selected.preview.description_text}}
+                    </p>
                 </div>
                 <div sd-item-crops data-item="selected.preview"></div>
             </div>
