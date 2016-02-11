@@ -1247,6 +1247,41 @@
                     return authoring.autosave(item);
                 };
 
+                $scope.openFullPreview = function(item) {
+                    $scope.fullPreview = true;
+                    $scope.fullPreviewItem = item;
+                };
+
+                $scope.closeFullPreview = function() {
+                    $scope.fullPreview = false;
+                    $scope.fullPreviewItem = null;
+                };
+
+                $scope.printPreview = function () {
+                    angular.element('body').addClass('prepare-print');
+
+                    var afterPrint = function () {
+                        angular.element('body').removeClass('prepare-print');
+                    };
+
+                    if (window.matchMedia) {
+                        var mediaQueryList = window.matchMedia('print');
+                        mediaQueryList.addListener(function (mql) {
+                            if (!mql.matches) {
+                                afterPrint();
+                            }
+                        });
+                    }
+
+                    window.onafterprint = afterPrint;
+
+                    $timeout(function () {
+                        window.print();
+                    }, 200, false);
+
+                    return false;
+                };
+
                 function refreshItem() {
                     authoring.open($scope.item._id, true)
                         .then(function(item) {
