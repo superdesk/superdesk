@@ -906,9 +906,9 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                                         sdTextEditor.insertNewBlock(indexWhereToAddBlock, {
                                             blockType: 'embed',
                                             embedType: 'Image',
-                                            body: '<img alt="' + (image.description || '') + '" src="' +
+                                            body: '<img alt="' + (image.description_text || '') + '" src="' +
                                                 image.renditions.viewImage.href + '"/>\n',
-                                            caption: image.description
+                                            caption: image.description_text
                                         }, true);
                                         indexWhereToAddBlock++;
                                     });
