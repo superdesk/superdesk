@@ -400,6 +400,7 @@ function MetadataListEditingDirective(metadata) {
         scope: {
             item: '=',
             field: '@',
+            dependent: '@',
             disabled: '=ngDisabled',
             list: '=',
             unique: '@',
@@ -432,8 +433,8 @@ function MetadataListEditingDirective(metadata) {
             });
 
             scope.$watch('item[field]', function(selected) {
+                scope.terms = filterSelected(scope.list);
                 if (scope.cv) { // filter out items from current cv
-                    scope.terms = filterSelected(scope.list);
                     scope.selectedItems = _.filter(selected, function(term) {
                         return term.scheme === scope.cv._id;
                     });
@@ -490,19 +491,49 @@ function MetadataListEditingDirective(metadata) {
 
             scope.selectTerm = function(term) {
                 if (term) {
-
                     //instead of simple push, extend the item[field] in order to trigger dirty $watch
-                    var t = _.clone(scope.item[scope.field]) || [];
+                    var t = [];
+
+                    if (!term.single_value) {
+                        t = _.clone(scope.item[scope.field]) || [];
+                    }
+
+                    if (scope.cv && scope.cv.single_value) {
+                        t = _.filter(t, function(term) {
+                            return term.scheme !== scope.cv._id;
+                        });
+                    }
+
+                    //build object
+                    var o = {};
+
+                    // dependent is set only for category
+                    if (scope.dependent) {
+                        if (term.single_value) {
+                            // if only single selection supported -> reset all selected values on dependent CVs
+                            o[scope.dependent] = [];
+                        } else {
+                            //delete if already selected a service with single value
+                            _.forEach(scope.item[scope.field], function(service) {
+                                if (service.single_value) {
+                                    o[scope.dependent] = [];
+                                    t = [];
+                                }
+                            });
+                        }
+                    }
+
                     t.push(angular.extend({}, term, {
                         scheme: scope.cv ? scope.cv._id : null
                     }));
 
-                    //build object
-                    var o = {};
                     o[scope.field] = t;
                     _.extend(scope.item, o);
 
+                    scope.activeTerm = '';
                     scope.selectedTerm = '';
+                    scope.searchTerms();
+                    scope.activeTree = scope.tree[null];
 
                     scope.postprocessing();
                     scope.change({item: scope.item});
@@ -519,6 +550,10 @@ function MetadataListEditingDirective(metadata) {
                 }
 
                 tempItem[scope.field] = filteredArray;
+                if (scope.dependent && term.single_value) {
+                    tempItem[scope.dependent] = [];
+                }
+
                 _.extend(scope.item, tempItem);
                 scope.change({item: scope.item});
             };
