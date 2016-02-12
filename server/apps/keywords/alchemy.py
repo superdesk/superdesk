@@ -34,7 +34,7 @@ class AlchemyKeywordsProvider():
                   'outputMode': 'json'}
 
         url = app.config['KEYWORDS_BASE_URL'] + '/text/TextGetRankedNamedEntities' + \
-                '?' + urllib.parse.urlencode(params)
+            '?' + urllib.parse.urlencode(params)
 
         values = {'text': text}
 
