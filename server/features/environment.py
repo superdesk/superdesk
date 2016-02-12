@@ -17,13 +17,15 @@ from settings import INSTALLED_APPS
 
 def before_all(context):
     config = {
-        'INSTALLED_APPS': INSTALLED_APPS
+        'INSTALLED_APPS': INSTALLED_APPS,
+        'ELASTICSEARCH_FORCE_REFRESH': True,
     }
     setup_before_all(context, config, app_factory=get_app)
 
 
 def before_scenario(context, scenario):
     config = {
-        'INSTALLED_APPS': INSTALLED_APPS
+        'INSTALLED_APPS': INSTALLED_APPS,
+        'ELASTICSEARCH_FORCE_REFRESH': True,
     }
     setup_before_scenario(context, scenario, config, app_factory=get_app)

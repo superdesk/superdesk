@@ -1,5 +1,8 @@
 language: python
 
+python:
+    - "3.4"
+
 sudo: false
 
 env:
@@ -7,9 +10,6 @@ env:
     - TARGET=e2e_first_chrome
     - TARGET=e2e_second_chrome
     - TARGET=e2e_third_chrome
-
-python:
-    - "3.4"
 
 matrix:
     allow_failures:
@@ -19,6 +19,13 @@ services:
     - mongodb
     - elasticsearch
     - redis-server
+
+addons:
+  apt:
+    sources:
+    - mongodb-3.0-precise
+    packages:
+    - mongodb-org-server
 
 cache:
   directories:
@@ -103,9 +110,3 @@ script:
 
 after_script:
     - killall -9 python
-
-after_success:
-    - if [ "${TARGET}" = "unit" ]; then
-        cd client && grunt coveralls && cd .. ;
-        cd server && coveralls --merge="../client/coveralls.json" ;
-      fi
