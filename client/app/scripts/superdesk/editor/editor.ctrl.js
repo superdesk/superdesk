@@ -279,6 +279,26 @@ function SdTextEditorController(_, EMBED_PROVIDERS, $timeout, $element) {
             vm.renderBlocks();
             // save changes
             $timeout(vm.commitChanges);
+        },
+        /**
+        * Compute an id for the block with its content and its position.
+        * Used as `track by` value, it allows the blocks to be well rendered.
+        */
+        generateBlockId: function(block) {
+            function hashCode(string) {
+                var hash = 0, i, chr, len;
+                if (string.length === 0) {
+                    return hash;
+                }
+                for (i = 0, len = string.length; i < len; i++) {
+                    chr   = string.charCodeAt(i);
+                    /*jshint bitwise: false */
+                    hash  = ((hash << 5) - hash) + chr;
+                    hash |= 0; // Convert to 32bit integer
+                }
+                return hash;
+            }
+            return String(hashCode(block.body)) + String(vm.getBlockPosition(block));
         }
     });
 }

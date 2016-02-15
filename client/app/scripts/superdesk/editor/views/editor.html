@@ -6,7 +6,7 @@
        trans>
         <i class="svg-icon-move"></i> Cancel reordering
     </a>
-    <div ng-repeat="block in vm.blocks"
+    <div ng-repeat="block in vm.blocks track by vm.generateBlockId(block)"
          class="block__container"
          ng-class="{'block--selected': vm.blockToMoveIndex === $index}">
         <div class="block__actions" ng-if="vm.config.multiBlockEdition && !vm.reorderingMode">
