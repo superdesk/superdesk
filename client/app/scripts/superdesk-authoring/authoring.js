@@ -2599,6 +2599,17 @@
                     var data = updateItemAssociation(null);
                     scope.onchange({item: scope.item, data: data});
                 };
+
+                scope.upload = function() {
+                    if (scope.editable) {
+                        superdesk.intent('upload', 'media').then(function(images) {
+                            if (images) {
+                                var data = updateItemAssociation(images[0]);
+                                scope.onchange({item: scope.item, data: data});
+                            }
+                        });
+                    }
+                };
             }
         };
     }

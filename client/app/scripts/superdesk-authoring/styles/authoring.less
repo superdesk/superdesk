@@ -828,14 +828,15 @@
     width: 100%;
     height: 65px;
     position: relative;
-
 	[contenteditable] {
 		border: 1px solid @sd-blue;
 		.border-radius(3px);
 		padding: 5px;
 		min-height: 18px;
 	}
-
+	&:not(.preview) {
+		cursor: pointer;
+	}
     &.preview {
         border: none;
         background-color: transparent;

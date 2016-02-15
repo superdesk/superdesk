@@ -2,17 +2,17 @@
 @import 'mixins.less';
 
 [contenteditable=true] {
-	&:before{
-		display: block; /* For Firefox */
-	}
-	&:empty:before{
-  		content: attr(placeholder);
-  		display: block; /* For Firefox */
-  		color: #ccc;
-	}
-	&:focus:before{
-		display: none;
-	}
+    &:before{
+        display: block; /* For Firefox */
+    }
+    &:empty:before{
+          content: attr(placeholder);
+          display: block; /* For Firefox */
+          color: #ccc;
+    }
+    &:focus:before{
+        display: none;
+    }
 }
 .medium-editor-toolbar {
     z-index: 10;
@@ -24,6 +24,9 @@
     }
 }
 .block {
+    &--selected {
+        border: 1px solid #5EA9C8;
+    }
     &__container {
         position: relative;
         .text-editor {
@@ -43,21 +46,59 @@
         .editor--embed {
             min-height: 200px;
         }
-        &:hover .block__remove {opacity: 1;}
+        &:hover .block__actions {opacity: 1;}
     }
-    &__remove {
+    &__actions {
         position: absolute;
-        right: -17px;
+        right: -38px;
         top: 0;
         cursor: pointer;
         opacity: .1;
+        & > div {
+            display: inline-block;
+        }
+    }
+    &__move {
+        i {
+            width: 15px;
+            height: 15px;
+        }
+        &__cancel {
+            padding-left: 32px;
+            position: fixed;
+            right: 80px;
+            z-index: 4;
+            .transition(top 0.25s ease 1s);
+            top: 60px;
+            &.ng-hide { // shows the button (reversed in order to have it hidden as initial state)
+                top: 120px;
+                display: block !important;
+            }
+            i {
+                position: absolute;
+                left: 6px;
+                top: 4px;
+            }
+        }
+        &__dropzone {
+            border: 1px dashed #CFCFCF;
+            background-color: #F7F7F7;
+            color: #666;
+            text-align: center;
+            cursor: pointer;
+            margin: 10px 0;
+            padding: 10px 0;
+            &:hover {
+                background-color: #F0F0F0;
+            }
+        }
     }
 }
 .add-embed {
     &__drop-zone {
-        display: none;
-        border: 2px dashed #CFCFCF;
-        background-color: #F7F7F7;
+        height: 0;
+        background-color: white;
+        border: 2px dashed white;
         width: 100%;
     }
     &__plus {
@@ -67,17 +108,22 @@
         cursor: pointer;
         opacity: .1;
         transition-duration: .25s;
-        transition-property: .25s;
+        transition-property: opacity;
         &:hover, &.drag-active {
             opacity: 1;
         }
         &.drag-active {
             .add-embed__drop-zone {
-                display: block;
                 height: 60px;
+                background-color: #F7F7F7;
+                border: 2px dashed #CFCFCF;
             }
         }
-        &::after {
+         > i { // + icon
+            z-index: 1;
+            position: relative;
+         }
+        &::before {
             content: '';
             background-color: #5EA9C8;
             height: 3px;
@@ -86,7 +132,7 @@
             left: 0;
             right: 0;
             top: 8px;
-            z-index: -1;
+            z-index: 0;
         }
     }
     &__body {

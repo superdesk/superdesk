@@ -104,8 +104,8 @@ function SdAddEmbedController (embedService, $element, $timeout, $q, _, EMBED_PR
             });
         },
         createBlockFromSdPicture: function(img, item) {
-            var html = vm.pictureToHtml(img.href, item.description);
-            vm.createFigureBlock('Image', html, item.description);
+            var html = vm.pictureToHtml(img.href, item.description_text);
+            vm.createFigureBlock('Image', html, item.description_text);
         }
     });
 
@@ -118,8 +118,8 @@ function SdAddEmbedController (embedService, $element, $timeout, $q, _, EMBED_PR
             if (extended) {
                 $timeout(function() {
                     angular.element($element).find('input').focus();
-                });
-                // on leave, clear field
+                }, 500, false); // positive timeout because of a chrome issue
+            // on leave, clear field
             } else {
                 vm.input = '';
                 vm.onClose();

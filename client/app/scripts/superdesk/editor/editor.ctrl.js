@@ -3,8 +3,8 @@
 
 angular.module('superdesk.editor').controller('SdTextEditorController', SdTextEditorController);
 
-SdTextEditorController.$inject = ['lodash', 'EMBED_PROVIDERS'];
-function SdTextEditorController(_, EMBED_PROVIDERS) {
+SdTextEditorController.$inject = ['lodash', 'EMBED_PROVIDERS', '$timeout', '$element'];
+function SdTextEditorController(_, EMBED_PROVIDERS, $timeout, $element) {
     var vm = this;
     function Block(attrs) {
         angular.extend(this, {
@@ -45,6 +45,78 @@ function SdTextEditorController(_, EMBED_PROVIDERS) {
         }
         return newBlocks;
     }
+    function splitIntoBlock(bodyHtml) {
+        var blocks = [], block;
+        /**
+        * push the current block into the blocks collection if it is not empty
+        */
+        function commitBlock() {
+            if (block !== undefined && block.body.trim() !== '') {
+                blocks.push(block);
+                block = undefined;
+            }
+        }
+        $('<div>' + bodyHtml + '</div>')
+        .contents()
+        .toArray()
+        .forEach(function(element) {
+            // if we get a <p>, we push the current block and create a new one
+            // for the paragraph content
+            if (element.nodeName === 'P') {
+                commitBlock();
+                if (angular.isDefined(element.innerHTML) && element.textContent !== '' && element.textContent !== '\n') {
+                    blocks.push(new Block({body: element.outerHTML.trim()}));
+                }
+                // detect if it's an embed
+            } else if (element.nodeName === '#comment') {
+                if (element.nodeValue.indexOf('EMBED START') > -1) {
+                    commitBlock();
+                    // retrieve the embed type following the comment
+                    var embed_type = angular.copy(element.nodeValue).replace(' EMBED START ', '').trim();
+                    if (embed_type === '') {
+                        embed_type = EMBED_PROVIDERS.custom;
+                    }
+                    // create the embed block
+                    block = new Block({blockType: 'embed', embedType: embed_type});
+                }
+                if (element.nodeValue.indexOf('EMBED END') > -1) {
+                    commitBlock();
+                }
+                // if it's not a paragraph or an embed, we update the current block
+            } else {
+                if (block === undefined) {
+                    block = new Block();
+                }
+                // we want the outerHTML (ex: '<b>text</b>') or the node value for text and comment
+                block.body += (element.outerHTML || element.nodeValue || '').trim();
+            }
+        });
+        // at the end of the loop, we push the last current block
+        if (block !== undefined && block.body.trim() !== '') {
+            blocks.push(block);
+        }
+        // extract body and caption from embed block
+        blocks.forEach(function(block) {
+            if (block.blockType === 'embed') {
+                var original_body = angular.element(angular.copy(block.body));
+                if (original_body.get(0).nodeName === 'FIGURE') {
+                    block.body = '';
+                    original_body.contents().toArray().forEach(function(element) {
+                        if (element.nodeName === 'FIGCAPTION') {
+                            block.caption = element.innerHTML;
+                        } else {
+                            block.body += element.outerHTML || element.nodeValue || '';
+                        }
+                    });
+                }
+            }
+        });
+        // if no block, create an empty one to start
+        if (blocks.length === 0) {
+            blocks.push(new Block());
+        }
+        return blocks;
+    }
     angular.extend(vm, {
         blocks: [],
         initEditorWithOneBlock: function(model) {
@@ -52,87 +124,19 @@ function SdTextEditorController(_, EMBED_PROVIDERS) {
             vm.blocks = [new Block({body: model.$modelValue})];
         },
         initEditorWithMultipleBlock: function(model) {
-            var blocks = [], block;
-            /**
-             * push the current block into the blocks collection if it is not empty
-             */
-            function commitBlock() {
-                if (block !== undefined && block.body.trim() !== '') {
-                    blocks.push(block);
-                    block = undefined;
-                }
-            }
             // save the model to update it later
             vm.model = model;
             // parse the given model and create blocks per paragraph and embed
             var content = model.$modelValue || '';
-            $('<div>' + content + '</div>')
-            .contents()
-            .toArray()
-            .forEach(function(element) {
-                // if we get a <p>, we push the current block and create a new one
-                // for the paragraph content
-                if (element.nodeName === 'P') {
-                    commitBlock();
-                    if (angular.isDefined(element.innerHTML) && element.textContent !== '' && element.textContent !== '\n') {
-                        blocks.push(new Block({body: element.outerHTML.trim()}));
-                    }
-                // detect if it's an embed
-                } else if (element.nodeName === '#comment') {
-                    if (element.nodeValue.indexOf('EMBED START') > -1) {
-                        commitBlock();
-                        // retrieve the embed type following the comment
-                        var embed_type = angular.copy(element.nodeValue).replace(' EMBED START ', '').trim();
-                        if (embed_type === '') {
-                            embed_type = EMBED_PROVIDERS.custom;
-                        }
-                        // create the embed block
-                        block = new Block({blockType: 'embed', embedType: embed_type});
-                    }
-                    if (element.nodeValue.indexOf('EMBED END') > -1) {
-                        commitBlock();
-                    }
-                // if it's not a paragraph or an embed, we update the current block
-                } else {
-                    if (block === undefined) {
-                        block = new Block();
-                    }
-                    // we want the outerHTML (ex: '<b>text</b>') or the node value for text and comment
-                    block.body += (element.outerHTML || element.nodeValue || '').trim();
-                }
-            });
-            // at the end of the loop, we push the last current block
-            if (block !== undefined && block.body.trim() !== '') {
-                blocks.push(block);
-            }
-            // extract body and caption from embed block
-            blocks.forEach(function(block) {
-                if (block.blockType === 'embed') {
-                    var original_body = angular.element(angular.copy(block.body));
-                    if (original_body.get(0).nodeName === 'FIGURE') {
-                        block.body = '';
-                        original_body.contents().toArray().forEach(function(element) {
-                            if (element.nodeName === 'FIGCAPTION') {
-                                block.caption = element.innerHTML;
-                            } else {
-                                block.body += element.outerHTML || element.nodeValue || '';
-                            }
-                        });
-                    }
-                }
-            });
-            // if no block, create an empty one to start
-            if (blocks.length === 0) {
-                blocks.push(new Block());
-            }
             // update the actual blocks value at the end to prevent more digest cycle as needed
-            vm.blocks = blocks;
+            vm.blocks = splitIntoBlock(content);
             vm.renderBlocks();
         },
-        commitChanges: function() {
+        serializeBlock: function(blocks) {
+            blocks = angular.isDefined(blocks) ? blocks : vm.blocks;
             var new_body = '';
             if (vm.config.multiBlockEdition) {
-                vm.blocks.forEach(function(block) {
+                blocks.forEach(function(block) {
                     if (angular.isDefined(block.body) && block.body.trim() !== '') {
                         if (block.blockType === 'embed') {
                             new_body += [
@@ -150,12 +154,15 @@ function SdTextEditorController(_, EMBED_PROVIDERS) {
                     }
                 });
             } else {
-                if (vm.blocks[0].body.trim() === '<br>') {
-                    vm.blocks[0].body = '';
+                if (blocks[0].body.trim() === '<br>') {
+                    blocks[0].body = '';
                 }
-                new_body = vm.blocks[0].body;
+                new_body = blocks[0].body;
             }
-            vm.model.$setViewValue(new_body);
+            return new_body;
+        },
+        commitChanges: function() {
+            vm.model.$setViewValue(vm.serializeBlock());
         },
         getBlockPosition: function(block) {
             return _.indexOf(vm.blocks, block);
@@ -171,10 +178,10 @@ function SdTextEditorController(_, EMBED_PROVIDERS) {
         insertNewBlock: function(position, attrs, unprocess) {
             var new_block = new Block(attrs);
             vm.blocks.splice(position, 0, new_block);
+            $timeout(vm.commitChanges);
             if (!unprocess) {
-                vm.renderBlocks();
+                $timeout(vm.renderBlocks);
             }
-            vm.commitChanges();
             return this;
         },
         /**
@@ -193,7 +200,7 @@ function SdTextEditorController(_, EMBED_PROVIDERS) {
                 block.body = '';
             }
             vm.renderBlocks();
-            vm.commitChanges();
+            $timeout(vm.commitChanges);
         },
         getPreviousBlock: function(block) {
             var pos = vm.getBlockPosition(block);
@@ -201,6 +208,97 @@ function SdTextEditorController(_, EMBED_PROVIDERS) {
             if (pos > 0) {
                 return vm.blocks[pos - 1];
             }
+        },
+        reorderingMode: false,
+        hideHeader: function(hide) {
+            hide = angular.isDefined(hide) ? hide : true;
+            var prop;
+            if (hide) {
+                prop = {
+                    opacity: 0.4,
+                    pointerEvents: 'none'
+                };
+            } else {
+                prop = {
+                    opacity: 1,
+                    pointerEvents: 'auto'
+                };
+            }
+            angular.element('.authoring-header, .preview-modal-control, .theme-controls').css(prop);
+        },
+        enableReorderingMode: function(position, event) {
+            var blockToMove = vm.blocks[position];
+            var before = vm.serializeBlock(vm.blocks.slice(0, position));
+            var after = vm.serializeBlock(vm.blocks.slice(position + 1));
+            // split into blocks what is before the selected block
+            var newBlocks = splitIntoBlock(before);
+            // add the selected block in one piece
+            newBlocks.push(blockToMove);
+            // split into blocks what is after the selected block
+            newBlocks = newBlocks.concat(splitIntoBlock(after));
+            // save the vertical scroll position
+            var offsetTop = angular.element(event.currentTarget).offset().top;
+            // hide the header
+            vm.hideHeader();
+            // update the view model
+            angular.extend(vm, {
+                // save the new blocks (texts are a splited per paragraph)
+                blocks: newBlocks,
+                // save the index of the selected block
+                blockToMoveIndex: newBlocks.indexOf(blockToMove),
+                // used in template to show the reordering UI
+                reorderingMode: true
+            });
+            // restore the scroll postion at the new element level
+            $timeout(function() {
+                var el = $element.find('.block__container').get(vm.blockToMoveIndex);
+                var container = angular.element('.page-content-container');
+                var offset = container.scrollTop() + angular.element(el).offset().top - offsetTop;
+                container.scrollTop(offset);
+            }, 200, false); // wait after transitions
+        },
+        reorderToPosition: function(position) {
+            // adjust the position. Remove one if the moved element was before the wanted position
+            position = position > vm.blockToMoveIndex ? position - 1 : position;
+            // move the selected block to the given position
+            vm.blocks.splice(position, 0, vm.blocks.splice(vm.blockToMoveIndex, 1)[0]);
+            // save new position
+            vm.blockToMoveIndex = position;
+            // exit the reordering mode
+            vm.disableReorderingMode();
+        },
+        disableReorderingMode: function() {
+            // reset reorder mode state in vm
+            angular.extend(vm, {
+                blockToMoveIndex: undefined,
+                reorderingMode: false
+            });
+            // show the header
+            vm.hideHeader(false);
+            // merge the text blocks together
+            vm.renderBlocks();
+            // save changes
+            $timeout(vm.commitChanges);
+        },
+        /**
+        * Compute an id for the block with its content and its position.
+        * Used as `track by` value, it allows the blocks to be well rendered.
+        */
+        generateBlockId: function(block) {
+            function hashCode(string) {
+                var hash = 0, i, chr, len;
+                if (string.length === 0) {
+                    return hash;
+                }
+                for (i = 0, len = string.length; i < len; i++) {
+                    chr   = string.charCodeAt(i);
+                    /*jshint bitwise: false */
+                    hash  = ((hash << 5) - hash) + chr;
+                    hash |= 0; // Convert to 32bit integer
+                }
+                return hash;
+            }
+            return String(hashCode(block.body)) + String(vm.getBlockPosition(block));
         }
     });
 }
