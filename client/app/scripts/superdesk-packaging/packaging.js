@@ -32,9 +32,9 @@
             var idRef = 'main';
             var item = items[0];
             var new_package = {
-                headline: item.headline || item.description || '',
+                headline: item.headline || item.description_text || '',
                 slugline: item.slugline || '',
-                description: item.description || '',
+                description_text: item.description_text || '',
                 state: 'draft',
                 type: 'composite',
                 version: 0
@@ -57,7 +57,7 @@
             var new_package = {
                 headline: '',
                 slugline: '',
-                description: '',
+                description_text: '',
                 type: 'composite',
                 groups: [
                     {

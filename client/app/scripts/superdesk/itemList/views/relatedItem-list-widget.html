@@ -9,13 +9,13 @@
 <div class="main-list" ng-class="{wrap: selected}">
 
     <div class="search-box" ng-class="{blank: related}" ng-show="options.searchEnabled">
-        
+
         <input type="text" placeholder="{{ :: 'Search' | translate }}"
             ng-model="itemListOptions.keyword"
             ng-model-options="{debounce: 1000}">
-        
+
       <!--   <div ng-if="options.related" class="text" translate>Displaying related items</div>
-        
+
         <div class="dropdown more-actions" dropdown ng-if="options.item">
             <button class="dropdown-toggle" dropdown-toggle><i class="icon-dots-vertical"></i></button>
             <div class="dropdown-menu pull-right">
@@ -31,12 +31,12 @@
 
     </div>
 
-    
+
    <!--  <div class="filter-box" ng-show="options.mode === 'detailed'">
         <span class="text" translate>View</span>
-        <button class="btn btn-light pull-left" 
+        <button class="btn btn-light pull-left"
             ng-if="options.itemTypeEnabled"
-            ng-repeat="itemType in options.itemTypes" 
+            ng-repeat="itemType in options.itemTypes"
             ng-click="toggleItemType(itemType)"
             ng-class="{active: isItemTypeEnabled(itemType)}">
                 <i class="filetype-icon-{{itemType}}"></i>
@@ -66,13 +66,13 @@
                             </ul>
                         </div>
                     </div>
-                    <div class="basic item-block" 
+                    <div class="basic item-block"
                         ng-click="view(item)">
                         <div class="content">
                             <p><i class="filetype-icon-{{item.type}}"></i><span class="keyword" ng-if="item.slugline">{{ item.slugline }}</span> {{item.headline || item.type}} {{item.anpa_take_key}}</p>
                         </div>
                     </div>
-                   <!--  <div ng-if="options.mode === 'detailed'" class="item-block urgency-{{ item.urgency }}" 
+                   <!--  <div ng-if="options.mode === 'detailed'" class="item-block urgency-{{ item.urgency }}"
                         ng-class="{pinned: options.pinEnabled && isPinned(item), 'pinned-instance': options.pinEnabled && item.pinnedInstance}"
                         ng-click="view(item)">
                         <div class="content">
@@ -89,7 +89,7 @@
 
                             <div class="main-line clearfix">
                                 <figure class="media" ng-if="item.renditions.thumbnail">
-                                    <img ng-src="{{ item.renditions.thumbnail.href }}" title="{{ item.description }}" />
+                                    <img ng-src="{{ item.renditions.thumbnail.href }}" title="{{ item.description_text }}" />
                                 </figure>
                                 <h5 title="{{ item.headline }}">{{ item.headline }}</h5>
                             </div>

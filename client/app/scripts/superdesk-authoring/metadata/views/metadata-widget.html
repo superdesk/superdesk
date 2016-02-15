@@ -76,7 +76,7 @@
 					</div>
 				</div>
 			</li>
-			
+
 			<li ng-if="item.ingest_provider_sequence">
 				<label translate>Provider sequence</label>
 				<div class="data">{{item.ingest_provider_sequence}}</div>
@@ -103,9 +103,9 @@
 					<label translate>Title</label>
 					<div class="data">{{item.slugline}}</div>
 				</li>
-				<li ng-if="item.description" class="auto">
+				<li ng-if="item.description_text" class="auto">
 					<label translate>Description</label>
-					<div>{{item.description}}</div>
+					<div>{{item.description_text}}</div>
 				</li>
 				<li ng-if="item.task.status">
 					<label translate>Status</label>

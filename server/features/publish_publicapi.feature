@@ -148,7 +148,7 @@ Feature: Publish content to the public API
                 "type" : "picture",
                 "pubstatus" : "usable",
                 "source" : "AAP",
-                "description" : "The most amazing picture you will ever see",
+                "description_text" : "The most amazing picture you will ever see",
                 "guid" : "20150723001158606583",
                 "expiry" : "2015-09-02T16:15:01.000Z",
                 "more_coming" : false,
@@ -227,7 +227,7 @@ Feature: Publish content to the public API
       """
       [{
             "original_source" : "AAP Image/AAP",
-            "description" : "A test picture",
+            "description_text" : "A test picture",
             "state" : "submitted",
             "headline" : "ABC SHOP CLOSURES",
             "byline" : "PAUL MILLER",
