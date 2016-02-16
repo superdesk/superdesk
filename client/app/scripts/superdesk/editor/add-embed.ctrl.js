@@ -83,7 +83,7 @@ function SdAddEmbedController (embedService, $element, $timeout, $q, _, EMBED_PR
         updatePreview: function() {
             vm.previewLoading = true;
             vm.retrieveEmbed().then(function(embed) {
-                angular.element($element).find('.preview').html(embed.body);
+                angular.element($element).find('.preview').html(embed.body.replace('\\n', ''));
                 vm.previewLoading = false;
             });
         },
