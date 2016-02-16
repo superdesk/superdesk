@@ -835,7 +835,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                             },
                             isAlreadyApplied: function (node) {
                                 var textContent = angular.isDefined(node.textContent) ? node.textContent : node.innerText;
-                                return node.nodeName.toLowerCase() === 'p' && textContent === '';
+                                return ['p', 'div'].indexOf(node.nodeName.toLowerCase()) > -1 && textContent === '';
                             },
                             isActive: function() {
                                 return !this.button.classList.contains('medium-editor-button-disabled');
