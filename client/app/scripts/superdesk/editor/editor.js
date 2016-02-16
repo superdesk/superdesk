@@ -634,6 +634,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                         })
                         .then(function(image) {
                             ctrl.createBlockFromSdPicture(image, item);
+                        }).finally(function() {
                             element.removeClass('drag-active');
                         });
                 })
