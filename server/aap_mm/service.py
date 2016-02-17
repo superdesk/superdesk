@@ -14,7 +14,7 @@ from eve.utils import config
 from flask import json
 
 import superdesk
-from aap_mm import PROVIDER_NAME
+from . import PROVIDER_NAME
 from apps.archive.archive import SOURCE as ARCHIVE
 from apps.archive.common import generate_unique_id_and_name, ITEM_OPERATION
 from apps.archive.common import insert_into_versions, remove_unwanted, set_original_creator
