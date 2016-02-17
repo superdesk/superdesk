@@ -18,14 +18,15 @@ import urllib3
 from eve.io.base import DataLayer
 from eve_elastic.elastic import ElasticCursor
 from flask import url_for
+import pytz
 
-from aap_mm import PROVIDER_NAME
+from . import PROVIDER_NAME
 from superdesk.errors import SuperdeskApiError
 from superdesk.io.iptc import subject_codes
 from superdesk.media.media_operations import process_file_from_stream, decode_metadata
 from superdesk.media.renditions import generate_renditions, delete_file_on_error
 from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE
-from superdesk.utc import utc, utcnow
+from superdesk.utc import utcnow
 
 urllib3.disable_warnings()
 
@@ -230,7 +231,8 @@ class AAPMMDatalayer(DataLayer):
 
     def _datetime(self, string):
         try:
-            dt = datetime.datetime.strptime(string, '%Y-%m-%dT%H:%M:%S').replace(tzinfo=utc)
+            dt = datetime.datetime.strptime(string[0:19] + string[19:25].replace(':', ''),
+                                            '%Y-%m-%dT%H:%M:%S%z').astimezone(pytz.utc)
         except:
             dt = utcnow()
         return dt
