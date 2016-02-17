@@ -147,7 +147,7 @@ RENDITIONS = {
 
 SERVER_DOMAIN = 'localhost'
 
-MACROS_MODULE = env('MACROS_MODULE', 'macros')
+MACROS_MODULE = env('MACROS_MODULE', 'superdesk.macros')
 
 WS_HOST = env('WSHOST', '0.0.0.0')
 WS_PORT = env('WSPORT', '5100')
