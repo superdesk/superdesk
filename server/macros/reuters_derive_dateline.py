@@ -67,6 +67,5 @@ def reuters_derive_dateline(item, **kwargs):
 
 
 name = 'Derive dateline from article text for Reuters'
-label = 'Reuters dateline derivation'
-shortcut = '$'
 callback = reuters_derive_dateline
+access_type = 'backend'

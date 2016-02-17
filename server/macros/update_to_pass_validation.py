@@ -52,6 +52,5 @@ def update_to_pass_validation(item, **kwargs):
 
 
 name = 'update to pass validation'
-label = 'Update to pass validation'
-shortcut = '$'
 callback = update_to_pass_validation
+access_type = 'backend'

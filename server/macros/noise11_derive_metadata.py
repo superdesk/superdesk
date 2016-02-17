@@ -53,6 +53,5 @@ def noise11_derive_metadata(item, **kwargs):
 
 
 name = 'Derive metadata for Noise11'
-label = 'Noise11 metadata derivation'
-shortcut = '$'
 callback = noise11_derive_metadata
+access_type = 'backend'

@@ -36,3 +36,4 @@ label = 'Populate Abstract'
 shortcut = 'a'
 callback = populate
 desks = ['POLITICS']
+access_type = 'frontend'
