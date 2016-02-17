@@ -74,7 +74,7 @@ class PaImgDatalayer(DataLayer):
         :return:
         """
 
-        url = self._app.config['PAIMG_SEARCH_URL']
+        url = self._app.config['PAIMG_SEARCH_URL'] + '/search'
         fields = {}
         if 'query' in req['query']['filtered']:
             query = req['query']['filtered']['query']['query_string']['query'] \
@@ -117,12 +117,9 @@ class PaImgDatalayer(DataLayer):
                         fields['photos'] = 'true'
 
         if not fields:
-            url += '/latest'
-            fields['ck'] = 'public'
-            fields['days_since'] = 5
-        else:
-            url += '/search'
-            fields['ck'] = 'superdesk'
+            fields['days_since'] = 1
+
+        fields['ck'] = 'sd'
 
         offset, limit = int(req.get('from', '0')), max(10, int(req.get('size', '25')))
         fields['limit'] = limit
