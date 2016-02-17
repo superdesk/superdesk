@@ -27,3 +27,4 @@ name = 'dollar_AUD_character_replace'
 label = '$ -> AUD'
 shortcut = '$'
 callback = find_and_replace
+access_type = 'frontend'

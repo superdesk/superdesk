@@ -37,3 +37,4 @@ name = 'usd_to_cad'
 label = 'Convert USD to CAD'
 shortcut = 'd'
 callback = usd_to_cad
+access_type = 'frontend'
