@@ -38,7 +38,7 @@
             'profile',
             'urgency',
             'pubstatus',
-            'description',
+            'description_text',
             'body_html',
             'body_text',
             'place',

@@ -22,7 +22,7 @@
         language: null,
         unique_name: '',
         keywords: [],
-        description: null,
+        description_text: null,
         sign_off: null,
         publish_schedule: null,
         marked_for_not_publication: false,

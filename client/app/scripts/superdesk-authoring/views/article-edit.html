@@ -99,11 +99,11 @@
   <label translate>Description</label>
   <textarea class="abstract"
         sd-auto-height
-        ng-model="item.description"
+        ng-model="item.description_text"
         ng-change="autosave(item)"
         ng-if="_editable"
         ng-trim="false"></textarea>
-  <div class="abstract" ng-if="!_editable">{{item.description}}</div>
+  <div class="abstract" ng-if="!_editable">{{item.description_text}}</div>
 </div>
 <div class="field" ng-if="isMediaType">
 
