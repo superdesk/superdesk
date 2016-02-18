@@ -111,5 +111,41 @@
         }, {
             "user": "a21a621c4c8847b085fe2d78"
         }]
+    },
+
+    {
+        "_id": "56c5dd686c1fcd304c314eeb",
+        "name": "Motoring Desk",
+        "spike_expiry": 1440,
+        "incoming_stage": "56c5dd686c1fcd304c314eea",
+        "description": "The Motoring Desk",
+        "desk_type": "production",
+        "members": [{
+            "user": "5640a5eef40235008465242b"
+        }, {
+            "user": "270efdd804f94b5fbda27cf0"
+        }, {
+            "user": "45d4565b4985446680b3c500"
+        }, {
+            "user": "a21a621c4c8847b085fe2d78"
+        }]
+    },
+
+    {
+        "_id": "56c5e03e6c1fcd31170d2990",
+        "name": "Real Life Desk",
+        "spike_expiry": 1440,
+        "incoming_stage": "56c5e03e6c1fcd31170d298f",
+        "description": "The Real Life Desk",
+        "desk_type": "production",
+        "members": [{
+            "user": "5640a5eef40235008465242b"
+        }, {
+            "user": "270efdd804f94b5fbda27cf0"
+        }, {
+            "user": "45d4565b4985446680b3c500"
+        }, {
+            "user": "a21a621c4c8847b085fe2d78"
+        }]
     }    
 ]

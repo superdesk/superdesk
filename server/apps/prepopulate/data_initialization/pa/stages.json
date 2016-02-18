@@ -99,5 +99,31 @@
         "content_expiry": 60000,
         "default_incomming": true,
         "default_incoming": false
+    },
+
+    {
+        "_id": "56c5dd686c1fcd304c314eea",
+        "desk_order": 1,
+        "task_status": "todo",
+        "name": "Draft",
+        "desk": "56c5dd686c1fcd304c314eeb",
+        "is_visible": true,
+        "description": "Stories that have just been created or are being worked on",
+        "content_expiry": 60000,
+        "default_incomming": true,
+        "default_incoming": false
+    },
+
+    {
+        "_id": "56c5e03e6c1fcd31170d298f",
+        "desk_order": 1,
+        "task_status": "todo",
+        "name": "Draft",
+        "desk": "56c5e03e6c1fcd31170d2990",
+        "is_visible": true,
+        "description": "Stories that have just been created or are being worked on",
+        "content_expiry": 60000,
+        "default_incomming": true,
+        "default_incoming": false
     }
 ]
