@@ -29,6 +29,13 @@ a:hover {
 	text-decoration: underline;
 }
 
+@page {
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 1.5cm;
+    margin-bottom: 1.5cm;
+}
+
 
 
 // Layouts
@@ -1041,4 +1048,47 @@ a:hover {
 			}
 		}
 	}
+}
+
+// PREPARE MODAL FOR PRINT
+body.prepare-print {
+    margin-left: 1.5cm;
+    margin-right: 1.5cm;
+
+    background: none! important;
+    overflow: visible !important;
+    color: black;
+    > * {
+        display: none !important;
+    }
+    > .modal-preview {
+        position: static !important;
+        display: block !important;
+        width: 100%;
+        margin: 0; padding: 0;
+        background: none;
+
+        .modal-dialog {
+            display: block !important;
+        }
+
+        .modal-content {
+            display: block !important;
+            > * {
+                display: none !important;
+            }
+
+            > .modal-body {
+                display: block !important;
+            }
+
+            .preview-content {
+                max-width: 100% !important;
+            }
+
+            .metadata {
+                margin-top: 0 !important;
+            }
+        }
+    }
 }

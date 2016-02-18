@@ -481,39 +481,3 @@ body:not(:-moz-handler-blocked) .modal{
 		.box-shadow(inset 0 1px 0 #707070);
 	}
 }
-
-// PREPARE MODAL FOR PRINT
-body.prepare-print {
-    background: none! important;
-    overflow: visible !important;
-    color: black;
-    > * {
-        display: none !important;
-    }
-    > .modal-preview {
-        position: static !important;
-        display: block !important;
-        width: 100%;
-        margin: 0; padding: 0;
-        background: none;
-
-        .modal-dialog {
-            display: block !important;
-        }
-
-        .modal-content {
-            display: block !important;
-            > * {
-                display: none !important;
-            }
-
-            > .modal-body {
-                display: block !important;
-            }
-
-            .preview-content {
-                max-width: 100% !important;
-            }
-        }
-    }
-}
