@@ -23,7 +23,7 @@
                         <label translate>Topic</label>
                     </div>
                     <div class="preview-data">
-                        <span ng-repeat="topic in item.subject">
+                        <span ng-repeat="topic in item.subject|filter:'patopic'">
                             {{topic.name}}
                         </span>
                     </div>
@@ -32,7 +32,7 @@
                     <div class="preview-label">
                         <label translate>Keyword</label>
                     </div>
-                    <div class="preview-data">
+                    <div class="preview-data" ng-if="item.slugline">
                         <span>{{item.slugline}}</span>
                     </div>
                 </div>
