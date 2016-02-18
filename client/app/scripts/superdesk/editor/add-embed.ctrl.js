@@ -87,25 +87,29 @@ function SdAddEmbedController (embedService, $element, $timeout, $q, _, EMBED_PR
                 vm.previewLoading = false;
             });
         },
-        createFigureBlock: function(embedType, body, caption) {
+        createFigureBlock: function(data) {
             // create a new block containing the embed
-            return vm.editorCtrl.insertNewBlock(vm.addToPosition, {
-                blockType: 'embed',
-                embedType: embedType,
-                body: body,
-                caption: caption
-            });
+            data.blockType = 'embed';
+            return vm.editorCtrl.insertNewBlock(vm.addToPosition, data);
         },
         createBlockFromEmbed: function() {
             vm.retrieveEmbed().then(function(embed) {
-                vm.createFigureBlock(embed.provider, embed.body);
+                vm.createFigureBlock({
+                    embedType: embed.provider,
+                    body: embed.body
+                });
                 // close the addEmbed form
                 vm.toggle(true);
             });
         },
-        createBlockFromSdPicture: function(img, item) {
-            var html = vm.pictureToHtml(img.href, item.description_text);
-            vm.createFigureBlock('Image', html, item.description_text);
+        createBlockFromSdPicture: function(img) {
+            var html = vm.pictureToHtml(img.href, img.item.description_text);
+            vm.createFigureBlock({
+                embedType: 'Image',
+                body: html,
+                caption: img.item.description_text,
+                association: img
+            });
         }
     });
 
