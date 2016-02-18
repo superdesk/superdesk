@@ -1,7 +1,7 @@
 <a class="btn btn-default block__move__cancel ng-cloak"
    ng-click="vm.disableReorderingMode()"
    ng-show="!vm.reorderingMode"
-   trans>
+   translate>
     <i class="svg-icon-move"></i> Cancel reordering
 </a>
 <div ng-repeat="block in vm.blocks track by vm.generateBlockId(block)"
@@ -18,7 +18,7 @@
     <div ng-if="$first && vm.reorderingMode && vm.blockToMoveIndex !== $index"
          ng-click="vm.reorderToPosition($index)"
          class="block__move__dropzone"
-         trans>
+         translate>
         Click to move the block here
     </div>
     <sd-add-embed ng-if="vm.config.multiBlockEdition && $first && !vm.reorderingMode"
@@ -48,7 +48,7 @@
     <div ng-if="vm.reorderingMode && vm.blockToMoveIndex !== ($index + 1) && vm.blockToMoveIndex !== $index"
          ng-click="vm.reorderToPosition($index + 1)"
          class="block__move__dropzone"
-         trans>
+         translate>
         Click to move the block here
     </div>
 </div>
