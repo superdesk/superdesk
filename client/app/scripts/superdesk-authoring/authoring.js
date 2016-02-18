@@ -1568,9 +1568,9 @@
         };
     }
     SendItem.$inject = ['$q', 'api', 'desks', 'notify', 'authoringWorkspace', 'superdeskFlags',
-        '$location', 'macros', '$rootScope', 'authoring', 'send', 'spellcheck', 'confirm', 'archiveService'];
+        '$location', 'macros', '$rootScope', 'authoring', 'send', 'spellcheck', 'confirm', 'archiveService', 'moment'];
     function SendItem($q, api, desks, notify, authoringWorkspace, superdeskFlags,
-        $location, macros, $rootScope, authoring, send, spellcheck, confirm, archiveService) {
+        $location, macros, $rootScope, authoring, send, spellcheck, confirm, archiveService, moment) {
         return {
             scope: {
                 item: '=',
@@ -1593,8 +1593,22 @@
                 scope.selectedMacro = null;
                 scope.beforeSend = scope._beforeSend || $q.when;
 
+                //these should later be settings somewhere.
+                //scope.viewDateFormat = 'DD/MM/YYYY';
+                scope.viewTimeFormat = 'HH:mm';
+                scope.modelTimeFormat = 'HH:mm:ss';
+
                 scope.$watch('item', activateItem);
                 scope.$watch(send.getConfig, activateConfig);
+
+                scope.$watch('item.embargo_date', function(newVal, oldVal) {
+                    //date just selected
+                    if (newVal && oldVal === undefined) {
+                        scope.item.embargo_time = moment('00:01', scope.viewTimeFormat)
+                            .utc()
+                            .format(scope.modelTimeFormat);
+                    }
+                });
 
                 function activateConfig(config, oldConfig) {
                     if (config !== oldConfig) {
