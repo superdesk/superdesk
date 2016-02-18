@@ -1,7 +1,7 @@
 <form>
     <fieldset ng-if="context">
-        <label> 
-            <input type="radio" value="local" ng-model="repo.search"> 
+        <label>
+            <input type="radio" value="local" ng-model="repo.search">
             In Superdesk
         </label>
         <div ng-show="repo.search == 'local'">
@@ -33,8 +33,8 @@
     </fieldset>
     <fieldset ng-if="context">
         <div ng-repeat="provider in providers">
-            <label ng-if="provider.type == 'search'"> 
-                <input type="radio" ng-value="provider.source" ng-model="repo.search"> 
+            <label ng-if="provider.type == 'search'">
+                <input type="radio" ng-value="provider.source" ng-model="repo.search">
                 {{:: provider.name}}
             </label>
         </div>
@@ -119,7 +119,7 @@
         </div>
 
     </fieldset>
-        <fieldset ng-show="repo.search === 'paimg'">      
+        <fieldset ng-show="repo.search === 'paimg'">
         <div class="field">
             <label for="search-headline">
                 {{:: 'Headline' | translate}}
@@ -127,7 +127,7 @@
             <div class="control">
                 <input type="text" id="search-headline" ng-model="meta.headline">
             </div>
-        </div>       
+        </div>
         <div class="field">
             <label for="search-slugline">
                 {{:: 'Slugline(keywords)' | translate}}
@@ -135,9 +135,9 @@
             <div class="control">
                 <input type="text" id="search-slugline" ng-model="meta.slugline">
             </div>
-        </div>      
-    </fieldset> 
-    <fieldset ng-show="repo.search === 'aapmm'">      
+        </div>
+    </fieldset>
+    <fieldset ng-show="repo.search === 'aapmm'">
         <div class="field">
             <label for="search-slugline">
                 {{:: 'Slugline' | translate}}
@@ -145,13 +145,13 @@
             <div class="control">
                 <input type="text" id="search-slugline" ng-model="meta.slugline">
             </div>
-        </div>       
+        </div>
         <div class="field">
             <label for="search-decsription">
                 {{:: 'Description' | translate}}
             </label>
             <div class="control">
-                <input type="text" id="search-description" ng-model="meta.description">
+                <input type="text" id="search-description" ng-model="meta.description_text">
             </div>
         </div>
             <div class="field">
@@ -161,8 +161,8 @@
             <div class="control">
                 <input type="text" id="search-aapkeyword" ng-model="meta.aapkeyword">
             </div>
-        </div>       
-    </fieldset>    
+        </div>
+    </fieldset>
 </form>
 <div class="actions">
     <button class="btn btn-info pull-right" ng-click="search()" ng-disabled="!isSearchEnabled()" translate>Go</button>

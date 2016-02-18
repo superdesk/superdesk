@@ -19,7 +19,7 @@
     <div class="upload-edit" ng-show="items.length" ng-class="{compact: dragshow, error: failed}">
         <div class="upload-error" ng-if="errorMessage">
             <span class="action" translate>Error: {{ :: errorMessage}}</span>
-        </div>        
+        </div>
         <ul class="upload-thumbs">
             <li ng-repeat="item in items">
                 <div class="thumb" sd-image-preview="item.url" data-file="item.file">
@@ -38,11 +38,11 @@
 
                     <div class="row"><input type="text" placeholder="Add a headline *" ng-model="item.meta.headline"></div>
                     <div class="other-info">
-                        <div class="row"><input type="text" placeholder="Add a description *" ng-model="item.meta.description"></div>
+                        <div class="row"><input type="text" placeholder="Add a description *" ng-model="item.meta.description_text"></div>
                         <div class="row"><input type="text" placeholder="Add a slugline *" ng-model="item.meta.slugline"></div>
                         <div class="row"><input type="text" placeholder="Add author / photographer" ng-model="item.meta.byline"></div>
                     </div>
-                    
+
                 </div>
             </li>
         </ul>

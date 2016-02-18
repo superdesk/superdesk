@@ -10,7 +10,7 @@ define(['lodash'], function(_) {
         $scope.enableSave = false;
         $scope.currentUser =  session.identity;
 
-        var requiredFields = ['headline', 'description', 'slugline'];
+        var requiredFields = ['headline', 'description_text', 'slugline'];
 
         var uploadFile = function(item) {
             var handleError = function(reason) {

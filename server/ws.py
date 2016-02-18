@@ -17,7 +17,7 @@ from superdesk.ws import create_server
 if __name__ == '__main__':
     config = {
         'WS_HOST': WS_HOST,
-        'WS_PORT': WS_PORT,
+        'WS_PORT': int(WS_PORT),
         'LOG_SERVER_ADDRESS': LOG_SERVER_ADDRESS,
         'LOG_SERVER_PORT': LOG_SERVER_PORT
     }

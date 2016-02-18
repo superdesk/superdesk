@@ -9,11 +9,10 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import arrow
-import json
 import logging
 import re
 import math
-import urllib3
+import requests
 
 from io import BytesIO
 from eve.io.base import DataLayer
@@ -26,9 +25,8 @@ from superdesk.media.renditions import generate_renditions, delete_file_on_error
 from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE
 from superdesk.utc import utcnow
 
-urllib3.disable_warnings()
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('pa:img')
 
 
 def extract_params(query, names):
@@ -47,11 +45,14 @@ class PaImgDatalayer(DataLayer):
         self._token = user
 
     def init_app(self, app):
-        app.config.setdefault('PAIMG_SEARCH_URL', 'https://images.api.press.net/api/v2')
+        app.config.setdefault('PAIMG_SEARCH_URL', 'https://images-uat.api.press.net/api/v2')
+        app.config.setdefault('PAIMG_AUTH_SERVICE', 'news-api')
         self._app = app
         self._token = None
-        self._headers = {'Content-Type': 'application/json'}
-        self._http = urllib3.PoolManager()
+        self._headers = {
+            'Content-Type': 'application/json',
+            'x-auth-service': app.config['PAIMG_AUTH_SERVICE'],
+        }
 
     def fetch_file(self, url):
         """Get file stream for given image url.
@@ -74,7 +75,7 @@ class PaImgDatalayer(DataLayer):
         :return:
         """
 
-        url = self._app.config['PAIMG_SEARCH_URL']
+        url = self._app.config['PAIMG_SEARCH_URL'] + '/search'
         fields = {}
         if 'query' in req['query']['filtered']:
             query = req['query']['filtered']['query']['query_string']['query'] \
@@ -117,24 +118,32 @@ class PaImgDatalayer(DataLayer):
                         fields['photos'] = 'true'
 
         if not fields:
-            url += '/latest'
-            fields['ck'] = 'public'
-            fields['days_since'] = 5
-        else:
-            url += '/search'
-            fields['ck'] = 'superdesk'
+            fields['days_since'] = 1
+
+        fields['ck'] = 'sd'
 
         offset, limit = int(req.get('from', '0')), max(10, int(req.get('size', '25')))
         fields['limit'] = limit
         fields['page'] = math.ceil((offset + 1) / limit)
 
+        r = self._request(url, fields)
+        hits = self._parse_hits(r.json())
+        return ElasticCursor(docs=hits['docs'], hits={'hits': hits})
+
+    def _request(self, url, fields):
+        """Perform GET request to given url.
+
+        It adds predefined headers and auth token if available.
+
+        :param url
+        :param fields
+        """
         if self._token:
             fields['token'] = self._token
-
-        r = self._http.request_encode_url('GET', url,
-                                          fields=fields, headers=self._headers)
-        hits = self._parse_hits(json.loads(r.data.decode('UTF-8')))
-        return ElasticCursor(docs=hits['docs'], hits={'hits': hits})
+        r = requests.get(url, params=fields, headers=self._headers)
+        if r.status_code < 200 or r.status_code >= 300:
+            logger.error('error fetching url=%s status=%s content=%s' % (url, r.status_code, r.content or ''))
+        return r
 
     def _parse_doc(self, doc):
         new_doc = {}
@@ -197,12 +206,9 @@ class PaImgDatalayer(DataLayer):
 
     def find_one_raw(self, resource, _id):
         fields = {}
-        if self._token:
-            fields['token'] = self._token
-
         url = self._app.config['PAIMG_SEARCH_URL'] + '/meta/{}'.format(_id)
-        r = self._http.request_encode_url('GET', url, fields=fields, headers=self._headers)
-        doc = json.loads(r.data.decode('UTF-8'))
+        r = self._request(url, fields)
+        doc = r.json()
         self._parse_doc(doc)
 
         if 'fetch_endpoint' in doc:
@@ -220,8 +226,8 @@ class PaImgDatalayer(DataLayer):
         if not url or not doc['renditions']['original'].get('downloadable', False):
             raise SuperdeskApiError('original not downloadable', payload={'no_original': True})
 
-        r = self._http.request_encode_url('GET', url, fields=fields, headers=self._headers)
-        out = BytesIO(r.data)
+        r = self._request(url, fields)
+        out = BytesIO(r.content)
         file_name, content_type, metadata = process_file_from_stream(out, mime_type)
 
         inserted = []
