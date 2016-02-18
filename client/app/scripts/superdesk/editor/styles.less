@@ -96,7 +96,7 @@
 }
 .add-embed {
     &__drop-zone {
-        height: 0;
+        height: 5px;
         background-color: white;
         border: 2px dashed white;
         width: 100%;
@@ -106,13 +106,13 @@
         text-align: center;
         position: relative;
         cursor: pointer;
-        opacity: .1;
+        opacity: .4;
         transition-duration: .25s;
         transition-property: opacity;
-        &:hover, &.drag-active {
+        &.drag-active {
             opacity: 1;
         }
-        &.drag-active {
+        .drag-active &, &.drag-active {
             .add-embed__drop-zone {
                 height: 60px;
                 background-color: #F7F7F7;
@@ -123,17 +123,6 @@
             z-index: 1;
             position: relative;
          }
-        &::before {
-            content: '';
-            background-color: #5EA9C8;
-            height: 3px;
-            width: 100%;
-            position: absolute;
-            left: 0;
-            right: 0;
-            top: 8px;
-            z-index: 0;
-        }
     }
     &__body {
         margin: 10px 0;
@@ -142,23 +131,22 @@
         .border-radius(3px);
         form {
             position: relative;
-            // input
-            .form-group:nth-child(1) {
-                // leave place for action buttons on the right
-                margin-right: 80px;
-            }
-            // action buttons
-            .form-group:nth-child(2) {
-                // align right
-                position: absolute;
-                top: 0;
-                right: 0;
-                // centers icons
-                i {
-                    left: 2px;
-                    position: relative;
-                }
-            }
+        }
+    }
+    &__input {
+        // leave place for action buttons on the sides
+        margin-right: 80px;
+    }
+    // action buttons
+    &__actions {
+        // align right
+        position: absolute;
+        top: 0;
+        right: 0;
+        // centers icons
+        i {
+            left: 2px;
+            position: relative;
         }
     }
 }

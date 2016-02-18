@@ -634,6 +634,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                         })
                         .then(function(image) {
                             ctrl.createBlockFromSdPicture(image, item);
+                        }).finally(function() {
                             element.removeClass('drag-active');
                         });
                 })
@@ -835,7 +836,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                             },
                             isAlreadyApplied: function (node) {
                                 var textContent = angular.isDefined(node.textContent) ? node.textContent : node.innerText;
-                                return node.nodeName.toLowerCase() === 'p' && textContent === '';
+                                return ['p', 'div'].indexOf(node.nodeName.toLowerCase()) > -1 && textContent === '';
                             },
                             isActive: function() {
                                 return !this.button.classList.contains('medium-editor-button-disabled');
@@ -866,16 +867,17 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                                     return false;
                                 }
                                 var indexWhereToAddNewBlock = sdTextEditor.getBlockPosition(scope.sdTextEditorBlockText) + 1;
+                                var remainingText = this.extractEndOfBlock().innerHTML;
+                                // save the blocks (with removed leading text)
+                                updateModel();
                                 // add new text block for the remaining text
                                 sdTextEditor.insertNewBlock(indexWhereToAddNewBlock, {
-                                    body: this.extractEndOfBlock().innerHTML
+                                    body: remainingText
                                 }, true);
                                 // hide the toolbar
                                 this.base.getExtensionByName('toolbar').hideToolbarDefaultActions();
                                 // show the add-embed form
                                 scope.sdTextEditorBlockText.showAndFocusLowerAddAnEmbedBox();
-                                // save the blocks (with removed leading text)
-                                $timeout(updateModel, false);
                             },
                             // Called when user hits the defined shortcut (CTRL / COMMAND + e)
                             handleKeydown: function(event) {
@@ -900,6 +902,8 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                                 }
                                 // extract text after cursor
                                 var textAfterCursor = self.extractEndOfBlock().innerHTML;
+                                // save the blocks (with removed leading text)
+                                updateModel();
                                 var indexWhereToAddBlock = sdTextEditor.getBlockPosition(scope.sdTextEditorBlockText) + 1;
                                 superdesk.intent('upload', 'media').then(function(images) {
                                     images.forEach(function(image) {
@@ -917,8 +921,6 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                                     sdTextEditor.insertNewBlock(indexWhereToAddBlock, {
                                         body: textAfterCursor
                                     }, true);
-                                    // save the blocks (with removed leading text)
-                                    $timeout(updateModel, false);
                                 });
                             }
                         });
