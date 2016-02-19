@@ -85,7 +85,7 @@ function SdTextEditorController(_, EMBED_PROVIDERS, $timeout, $element) {
                     var association;
                     var embedAssoKey = /{id: "(_embedded_\d+)"}/;
                     if ((match = embedAssoKey.exec(angular.copy(element.nodeValue).trim())) !== null) {
-                        association = vm.associations[match[1]];
+                        association = vm.associations && vm.associations[match[1]];
                     }
                     // create the embed block
                     block = new Block({blockType: 'embed', embedType: embedType, association: association});
@@ -178,6 +178,9 @@ function SdTextEditorController(_, EMBED_PROVIDERS, $timeout, $element) {
             return new_body;
         },
         commitChanges: function() {
+            if (typeof vm.associations !== 'object') {
+                vm.associations = {};
+            }
             // remove older associations
             angular.forEach(vm.associations, function(value, key) {
                 if (_.startsWith(key, '_embedded_')) {
