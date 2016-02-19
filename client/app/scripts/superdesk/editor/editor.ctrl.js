@@ -12,6 +12,7 @@ function SdTextEditorController(_, EMBED_PROVIDERS, $timeout, $element) {
             caption: attrs && attrs.caption || undefined,
             blockType: attrs && attrs.blockType || 'text',
             embedType: attrs && attrs.embedType || undefined,
+            association: attrs && attrs.association || {},
             lowerAddEmbedIsExtented: undefined,
             showAndFocusLowerAddAnEmbedBox: function() {
                 this.lowerAddEmbedIsExtented = true;
@@ -72,12 +73,22 @@ function SdTextEditorController(_, EMBED_PROVIDERS, $timeout, $element) {
                 if (element.nodeValue.indexOf('EMBED START') > -1) {
                     commitBlock();
                     // retrieve the embed type following the comment
-                    var embed_type = angular.copy(element.nodeValue).replace(' EMBED START ', '').trim();
-                    if (embed_type === '') {
-                        embed_type = EMBED_PROVIDERS.custom;
+                    var embedType;
+                    var embedTypeRegex = /EMBED START ([\w-]+)/;
+                    var match;
+                    if ((match = embedTypeRegex.exec(angular.copy(element.nodeValue).trim())) !== null) {
+                        embedType = match[1];
+                    } else {
+                        embedType = EMBED_PROVIDERS.custom;
+                    }
+                    // retrieve the association reference
+                    var association;
+                    var embedAssoKey = /{id: "(_embedded_\d+)"}/;
+                    if ((match = embedAssoKey.exec(angular.copy(element.nodeValue).trim())) !== null) {
+                        association = vm.associations && vm.associations[match[1]];
                     }
                     // create the embed block
-                    block = new Block({blockType: 'embed', embedType: embed_type});
+                    block = new Block({blockType: 'embed', embedType: embedType, association: association});
                 }
                 if (element.nodeValue.indexOf('EMBED END') > -1) {
                     commitBlock();
@@ -139,15 +150,20 @@ function SdTextEditorController(_, EMBED_PROVIDERS, $timeout, $element) {
                 blocks.forEach(function(block) {
                     if (angular.isDefined(block.body) && block.body.trim() !== '') {
                         if (block.blockType === 'embed') {
+                            var blockName = block.embedType.trim();
+                            // add an id to the image in order to retrieve it in `assocations` field
+                            if (block.embedType === 'Image') {
+                                blockName += ' {id: "_embedded_' + vm.generateBlockId(block) + '"}';
+                            }
                             new_body += [
-                                '<!-- EMBED START ' + block.embedType.trim() + ' -->\n',
+                                '<!-- EMBED START ' + blockName + ' -->\n',
                                 '<figure>',
                                 block.body,
                                 '<figcaption>',
                                 block.caption,
                                 '</figcaption>',
                                 '</figure>',
-                                '\n<!-- EMBED END ' + block.embedType.trim() + ' -->\n'].join('');
+                                '\n<!-- EMBED END ' + blockName + ' -->\n'].join('');
                         } else {
                             new_body += block.body + '\n';
                         }
@@ -162,7 +178,30 @@ function SdTextEditorController(_, EMBED_PROVIDERS, $timeout, $element) {
             return new_body;
         },
         commitChanges: function() {
+            if (typeof vm.associations !== 'object') {
+                vm.associations = {};
+            }
+            // remove older associations
+            angular.forEach(vm.associations, function(value, key) {
+                if (_.startsWith(key, '_embedded_')) {
+                    delete vm.associations[key];
+                }
+            });
+            // update associations
+            angular.extend(vm.associations, vm.getAssociations());
             vm.model.$setViewValue(vm.serializeBlock());
+        },
+        /**
+        * Return an object that contains the embedded images in the story
+        */
+        getAssociations: function() {
+            var association = {};
+            vm.blocks.forEach(function(block) {
+                if (block.embedType === 'Image') {
+                    association['_embedded_' + vm.generateBlockId(block)] = angular.copy(block.association);
+                }
+            });
+            return association;
         },
         getBlockPosition: function(block) {
             return _.indexOf(vm.blocks, block);
@@ -298,7 +337,7 @@ function SdTextEditorController(_, EMBED_PROVIDERS, $timeout, $element) {
                 }
                 return hash;
             }
-            return String(hashCode(block.body)) + String(vm.getBlockPosition(block));
+            return String(Math.abs(hashCode(block.body))) + String(vm.getBlockPosition(block));
         }
     });
 }

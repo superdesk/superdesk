@@ -481,7 +481,7 @@
                     "text": {"type": "string", "required": true}
                 }
             },
-            "description": {
+            "description_text": {
                 "type": "string",
                 "required": true,
                 "nullable": false,
@@ -565,7 +565,7 @@
                     "text": {"type": "string", "required": true}
                 }
             },
-            "description": {
+            "description_text": {
                 "type": "string",
                 "required": true,
                 "nullable": false,
@@ -649,7 +649,7 @@
                     "text": {"type": "string", "required": true}
                 }
             },
-            "description": {
+            "description_text": {
                 "type": "string",
                 "required": false,
                 "nullable": false,
@@ -733,7 +733,7 @@
                     "text": {"type": "string", "required": true}
                 }
             },
-            "description": {
+            "description_text": {
                 "type": "string",
                 "required": true,
                 "nullable": false,
@@ -809,7 +809,7 @@
                     "text": {"type": "string", "required": true}
                 }
             },
-            "description": {
+            "description_text": {
                 "type": "string",
                 "required": true,
                 "nullable": false,
@@ -885,7 +885,7 @@
                     "text": {"type": "string", "required": true}
                 }
             },
-            "description": {
+            "description_text": {
                 "type": "string",
                 "required": true,
                 "nullable": false,
@@ -961,7 +961,7 @@
                     "text": {"type": "string", "required": true}
                 }
             },
-            "description": {
+            "description_text": {
                 "type": "string",
                 "required": true,
                 "nullable": false,
@@ -1037,7 +1037,7 @@
                     "text": {"type": "string", "required": true}
                 }
             },
-            "description": {
+            "description_text": {
                 "type": "string",
                 "required": true,
                 "nullable": false,
@@ -1113,7 +1113,7 @@
                     "text": {"type": "string", "required": true}
                 }
             },
-            "description": {
+            "description_text": {
                 "type": "string",
                 "required": true,
                 "nullable": false,

@@ -633,7 +633,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                             return api.save('picture_crop', {item: item, crop: cropData.embed});
                         })
                         .then(function(image) {
-                            ctrl.createBlockFromSdPicture(image, item);
+                            ctrl.createBlockFromSdPicture(image);
                         }).finally(function() {
                             element.removeClass('drag-active');
                         });
@@ -652,7 +652,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
     }])
     .directive('sdTextEditor', ['$timeout', function ($timeout) {
         return {
-            scope: {type: '=', config: '=', language: '='},
+            scope: {type: '=', config: '=', language: '=', associations: '='},
             require: ['sdTextEditor', 'ngModel'],
             templateUrl: 'scripts/superdesk/editor/views/editor.html',
             controllerAs: 'vm',
@@ -912,7 +912,8 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                                             embedType: 'Image',
                                             body: '<img alt="' + (image.description_text || '') + '" src="' +
                                                 image.renditions.viewImage.href + '"/>\n',
-                                            caption: image.description_text
+                                            caption: image.description_text,
+                                            association: image
                                         }, true);
                                         indexWhereToAddBlock++;
                                     });
