@@ -22,7 +22,7 @@
         language: null,
         unique_name: '',
         keywords: [],
-        description: null,
+        description_text: null,
         sign_off: null,
         publish_schedule: null,
         marked_for_not_publication: false,
@@ -903,7 +903,7 @@
                 });
 
                 $scope.fullPreview = false;
-                $scope.fullPreviewItem = null;
+                $scope.fullPreviewUrl = '/#/preview/' + $scope.origItem._id;
                 $scope.proofread = false;
                 $scope.referrerUrl = referrer.getReferrerUrl();
 
@@ -936,6 +936,17 @@
                  */
                 $scope.edit = function edit() {
                     authoringWorkspace.edit($scope.origItem);
+                };
+
+                $scope.openFullPreview = function($event) {
+                    if ($event.button === 0 && !$event.ctrlKey) {
+                        $event.preventDefault();
+                        $scope.fullPreview = true;
+                    }
+                };
+
+                $scope.closeFullPreview = function() {
+                    $scope.fullPreview = false;
                 };
 
                 /**
@@ -1234,16 +1245,6 @@
                 $scope.autosave = function(item) {
                     $scope.dirty = true;
                     return authoring.autosave(item);
-                };
-
-                $scope.openFullPreview = function(item) {
-                    $scope.fullPreview = true;
-                    $scope.fullPreviewItem = item;
-                };
-
-                $scope.closeFullPreview = function() {
-                    $scope.fullPreview = false;
-                    $scope.fullPreviewItem = null;
                 };
 
                 function refreshItem() {
@@ -2154,6 +2155,7 @@
         .directive('sdAuthoringEmbedded', AuthoringEmbeddedDirective)
         .directive('sdHeaderInfo', headerInfoDirective)
         .directive('sdItemAssociation', ItemAssociationDirective)
+        .directive('sdFullPreview', FullPreviewDirective)
 
         .config(['superdeskProvider', function(superdesk) {
             superdesk
@@ -2174,6 +2176,19 @@
                         action: [function() {return 'edit';}]
                     },
                     authoring: true
+                })
+                .activity('preview', {
+                    href: '/preview/:_id',
+                    when: '/preview/:_id',
+                    template: '<div sd-full-preview data-item="item"></div>',
+                    controller: ['$scope', 'item', function ($scope, item) {
+                        $scope.item = item;
+                    }],
+                    resolve: {
+                        item: ['$route', 'api', function($route, api) {
+                            return api.find('archive', $route.current.params._id);
+                        }]
+                    }
                 })
                 .activity('edit.item', {
                     label: gettext('Edit'),
@@ -2518,6 +2533,17 @@
         init();
     }
 
+    FullPreviewDirective.$inject = ['api'];
+    function FullPreviewDirective(api) {
+        return {
+            scope: {
+                item: '=',
+                closeAction: '='
+            },
+            templateUrl: 'scripts/superdesk-authoring/views/full-preview.html'
+        };
+    }
+
     ItemAssociationDirective.$inject = ['superdesk', 'renditions'];
     function ItemAssociationDirective(superdesk, renditions) {
         return {
@@ -2598,6 +2624,17 @@
                 scope.remove = function(item) {
                     var data = updateItemAssociation(null);
                     scope.onchange({item: scope.item, data: data});
+                };
+
+                scope.upload = function() {
+                    if (scope.editable) {
+                        superdesk.intent('upload', 'media').then(function(images) {
+                            if (images) {
+                                var data = updateItemAssociation(images[0]);
+                                scope.onchange({item: scope.item, data: data});
+                            }
+                        });
+                    }
                 };
             }
         };

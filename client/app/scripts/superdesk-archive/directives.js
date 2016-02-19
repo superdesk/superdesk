@@ -63,6 +63,15 @@
                 }
             };
         }])
+        .directive('sdItemState', function() {
+            return {
+                templateUrl: 'scripts/superdesk-archive/views/item-state.html',
+                scope: {
+                    'state': '=',
+                    'embargo': '='
+                }
+            };
+        })
         .directive('sdInlineMeta', function() {
             return {
                 templateUrl: 'scripts/superdesk-archive/views/inline-meta.html',

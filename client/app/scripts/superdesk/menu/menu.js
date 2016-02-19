@@ -9,7 +9,6 @@
     }
 
     angular.module('superdesk.menu', ['superdesk.menu.notifications', 'superdesk.asset', 'superdesk.api'])
-
         .service('superdeskFlags', SuperdeskFlagsService)
 
         // set flags for other directives

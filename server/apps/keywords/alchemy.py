@@ -33,7 +33,9 @@ class AlchemyKeywordsProvider():
         params = {'apikey': app.config['KEYWORDS_KEY_API'],
                   'outputMode': 'json'}
 
-        url = app.config['KEYWORDS_BASE_URL'] + '/text/TextGetRankedKeywords' + '?' + urllib.parse.urlencode(params)
+        url = app.config['KEYWORDS_BASE_URL'] + '/text/TextGetRankedNamedEntities' + \
+            '?' + urllib.parse.urlencode(params)
+
         values = {'text': text}
 
         result = ""
@@ -44,6 +46,6 @@ class AlchemyKeywordsProvider():
 
         try:
             keywords = result.json()
-            return keywords.get('keywords', [])
+            return keywords.get('entities', [])
         except Exception:
             raise SuperdeskApiError.notFoundError('Fail to parse the response from Alchemy service')
