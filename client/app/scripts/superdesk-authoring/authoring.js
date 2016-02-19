@@ -1247,41 +1247,6 @@
                     return authoring.autosave(item);
                 };
 
-                $scope.openFullPreview = function(item) {
-                    $scope.fullPreview = true;
-                    $scope.fullPreviewItem = item;
-                };
-
-                $scope.closeFullPreview = function() {
-                    $scope.fullPreview = false;
-                    $scope.fullPreviewItem = null;
-                };
-
-                $scope.printPreview = function () {
-                    angular.element('body').addClass('prepare-print');
-
-                    var afterPrint = function () {
-                        angular.element('body').removeClass('prepare-print');
-                    };
-
-                    if (window.matchMedia) {
-                        var mediaQueryList = window.matchMedia('print');
-                        mediaQueryList.addListener(function (mql) {
-                            if (!mql.matches) {
-                                afterPrint();
-                            }
-                        });
-                    }
-
-                    window.onafterprint = afterPrint;
-
-                    $timeout(function () {
-                        window.print();
-                    }, 200, false);
-
-                    return false;
-                };
-
                 function refreshItem() {
                     authoring.open($scope.item._id, true)
                         .then(function(item) {
@@ -2568,14 +2533,41 @@
         init();
     }
 
-    FullPreviewDirective.$inject = ['api'];
-    function FullPreviewDirective(api) {
+    FullPreviewDirective.$inject = ['api', '$timeout'];
+    function FullPreviewDirective(api, $timeout) {
         return {
             scope: {
                 item: '=',
                 closeAction: '='
             },
-            templateUrl: 'scripts/superdesk-authoring/views/full-preview.html'
+            templateUrl: 'scripts/superdesk-authoring/views/full-preview.html',
+            link: function (scope, elem, attr, ctrl) {
+                scope.hide_images = true;
+
+                scope.printPreview = function () {
+                    angular.element('body').addClass('prepare-print');
+
+                    var afterPrint = function () {
+                        angular.element('body').removeClass('prepare-print');
+                    };
+
+                    if (window.matchMedia) {
+                        var mediaQueryList = window.matchMedia('print');
+                        mediaQueryList.addListener(function (mql) {
+                            if (!mql.matches) {
+                                afterPrint();
+                            }
+                        });
+                    }
+
+                    window.onafterprint = afterPrint;
+
+                    $timeout(function () {
+                        window.print();
+                    }, 200, false);
+                    return false;
+                };
+            }
         };
     }
 

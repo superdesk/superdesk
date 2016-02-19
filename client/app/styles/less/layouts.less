@@ -1067,27 +1067,60 @@ body.prepare-print {
         width: 100%;
         margin: 0; padding: 0;
         background: none;
-
         .modal-dialog {
             display: block !important;
         }
-
+        .association {
+            margin-bottom: 16px !important;
+        }
+        p {
+            font-size: 9pt !important;
+            line-height: 140% !important;
+            margin-bottom: 12px !important;
+        }
+        h2 {
+            font-size: 13pt !important;
+        }
+        h3 {
+            font-size: 10pt !important;
+        }
+        .headline {
+            font-size: 16pt !important;
+            margin-bottom: 16px !important;
+        }
         .modal-content {
             display: block !important;
             > * {
                 display: none !important;
             }
-
+            .byline {
+                font-size: 10pt !important;
+                margin-bottom: 20px !important;
+            }
             > .modal-body {
                 display: block !important;
+                padding: 0 !important;
             }
-
             .preview-content {
                 max-width: 100% !important;
             }
-
             .metadata {
                 margin-top: 0 !important;
+                margin-bottom: 15px !important;
+                > div {
+                    margin-bottom: 0 !important;
+                }
+                .preview-label label {
+                    color: black;
+                }
+                .preview-data span {
+                    border-radius: 0 !important;
+                    background-color: transparent !important;
+                    border-right: 1px solid black;
+                    &:last-of-type {
+                        border-right: 0 !important;
+                    }
+                }
             }
         }
     }
