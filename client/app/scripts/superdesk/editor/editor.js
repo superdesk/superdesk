@@ -912,7 +912,8 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                                             embedType: 'Image',
                                             body: '<img alt="' + (image.description_text || '') + '" src="' +
                                                 image.renditions.viewImage.href + '"/>\n',
-                                            caption: image.description_text
+                                            caption: image.description_text,
+                                            association: image
                                         }, true);
                                         indexWhereToAddBlock++;
                                     });

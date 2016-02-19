@@ -108,7 +108,7 @@ function SdAddEmbedController (embedService, $element, $timeout, $q, _, EMBED_PR
                 embedType: 'Image',
                 body: html,
                 caption: img.item.description_text,
-                association: img
+                association: img.item
             });
         }
     });
