@@ -1,8 +1,0 @@
-<div class="flat-searchbar" ng-class="{extended: flags.extended}">
-    <div class="search-handler">
-        <label for="search-input" class="trigger-icon" ng-click="flags.extended = !flags.extended"></label>
-        <input id="search-input" type="text" placeholder="{{ :: 'Search' | translate }}" ng-model="q" ng-model-options="{debounce: 500}" ng-change="search()">
-        <button class="search-close" ng-click="close()" ng-class="{visible: q}"><i class="icon-close-small"></i></button>
-    </div>
-    <div class="separator-handler"></div>
-</div>

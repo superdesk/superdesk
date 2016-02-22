@@ -9,6 +9,7 @@ dist
 *.swn
 .tmp
 .sass-cache
+bower_components
 app/scripts/bower_components
 app/styles/css/bootstrap.css
 po/

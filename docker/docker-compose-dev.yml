@@ -58,6 +58,7 @@ superdesk:
   volumes:
    - ../server:/opt/superdesk/
    - ../client:/opt/superdesk/client/
+   - ../client-core:/opt/superdesk/client-core/
    - ./Procfile-dev:/opt/superdesk/Procfile
    - ./start-dev.sh:/opt/superdesk/start.sh
 

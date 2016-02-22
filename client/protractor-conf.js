@@ -1,3 +1,3 @@
 'use strict';
-var config = require('./protractor-conf-base.js');
-exports.config = config;
+
+exports.config = require('superdesk-core/protractor-conf').config;
