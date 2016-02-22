@@ -1,4 +1,5 @@
 app/scripts/bower_components
+bower_components
 coverage/
 dist
 .git/
