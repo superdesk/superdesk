@@ -5,7 +5,7 @@ var openUrl = require('./helpers/utils').open,
     workspace = require('./helpers/pages').workspace,
     content = require('./helpers/content'),
     authoring = require('./helpers/authoring'),
-    moment = require('moment');
+    moment = require('../app/scripts/bower_components/moment/moment');
 
 describe('content', function() {
 
@@ -187,7 +187,7 @@ describe('content', function() {
         element(by.id('closeAuthoringBtn')).click();
     });
 
-    fit('can display embargo in metadata when set', function() {
+    it('can display embargo in metadata when set', function() {
         workspace.editItem('item3', 'SPORTS');
         authoring.sendToButton.click();
 
@@ -219,7 +219,7 @@ describe('content', function() {
         expect(element.all(by.repeater('pitem in contentItems')).count()).toBe(0);
     });
 
-    it('can enable/disable send and continue based on emabrgo', function() {
+    it('can enable/disable send and continue based on embargo', function() {
         workspace.editItem('item3', 'SPORTS');
         authoring.sendToButton.click();
 
