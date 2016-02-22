@@ -24,6 +24,9 @@ module.exports = function(grunt) {
                 ga: {
                     id: process.env.TRACKING_ID || ''
                 }
+            },
+            view: {
+                timeformat: process.env.VIEW_TIME_FORMAT || 'HH:mm'
             }
         };
 

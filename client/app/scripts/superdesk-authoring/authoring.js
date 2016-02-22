@@ -1568,9 +1568,9 @@
         };
     }
     SendItem.$inject = ['$q', 'api', 'desks', 'notify', 'authoringWorkspace', 'superdeskFlags',
-        '$location', 'macros', '$rootScope', 'authoring', 'send', 'spellcheck', 'confirm', 'archiveService', 'moment'];
+        '$location', 'macros', '$rootScope', 'authoring', 'send', 'spellcheck', 'confirm', 'archiveService', 'moment', 'config'];
     function SendItem($q, api, desks, notify, authoringWorkspace, superdeskFlags,
-        $location, macros, $rootScope, authoring, send, spellcheck, confirm, archiveService, moment) {
+        $location, macros, $rootScope, authoring, send, spellcheck, confirm, archiveService, moment, config) {
         return {
             scope: {
                 item: '=',
@@ -1593,10 +1593,8 @@
                 scope.selectedMacro = null;
                 scope.beforeSend = scope._beforeSend || $q.when;
 
-                //these should later be settings somewhere.
-                //scope.viewDateFormat = 'DD/MM/YYYY';
-                scope.viewTimeFormat = 'HH:mm';
-                scope.modelTimeFormat = 'HH:mm:ss';
+                scope.modelTimeFormat = "HH:mm:ss";
+                scope.viewTimeFormat = config.view.timeformat;
 
                 scope.$watch('item', activateItem);
                 scope.$watch(send.getConfig, activateConfig);
@@ -2146,6 +2144,7 @@
             'superdesk.authoring.find-replace',
             'superdesk.authoring.macros',
             'superdesk.desks',
+            'superdesk.config',
             'contenteditable'
         ])
 
