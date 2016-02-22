@@ -1382,9 +1382,17 @@
         };
     }
 
+    /**
+    * Clean the given html by removing tags and embeds, in order to count words and characters later
+    */
     var cleanHtml = function(data) {
-        return data.replace(/<br[^>]*>/gi, '&nbsp;').replace(/<\/?[^>]+><\/?[^>]+>/gi, ' ')
-            .replace(/<\/?[^>]+>/gi, '').trim().replace(/&nbsp;/g, ' ');
+        return data
+        // remove embeds by using the comments around them. Embeds don't matter for word counters
+        .replace(/<!-- EMBED START [\s\S]+?<!-- EMBED END .* -->/g, '')
+        .replace(/<br[^>]*>/gi, '&nbsp;')
+        .replace(/<\/?[^>]+><\/?[^>]+>/gi, ' ')
+        .replace(/<\/?[^>]+>/gi, '').trim()
+        .replace(/&nbsp;/g, ' ');
     };
 
     CharacterCount.$inject = [];
@@ -1419,11 +1427,9 @@
             link: function wordCountLink(scope, elem, attrs) {
                 scope.html = scope.html || false;
                 scope.numWords = 0;
-
                 scope.$watch('item', function() {
                     var input = scope.item || '';
                     input = scope.html ? cleanHtml(input) : input;
-
                     scope.numWords = _.compact(input.split(/\s+/)).length || 0;
                 });
             }
