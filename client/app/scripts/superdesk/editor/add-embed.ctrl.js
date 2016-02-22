@@ -22,7 +22,7 @@ function SdAddEmbedController (embedService, $element, $timeout, $q, _, EMBED_PR
          * @return {string} html
          */
         pictureToHtml: function(url, description) {
-            var html = '<img alt="' + (description || '') + '" src="' + url + '">\n';
+            var html = '<img alt="' + (_.escape(description) || '') + '" src="' + url + '">\n';
             return html;
         },
         /**
