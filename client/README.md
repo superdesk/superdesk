@@ -54,10 +54,19 @@ $ grunt test
 ```
 
 To run end-to-end tests:
+
+First in the server folder run:
+```
+scripts/start_e2e_server.sh
+```
+
+Then in the client folder run:
 ```
 $ scripts/test_e2e.sh
 ```
 NOTE: the end-to-end tests might take quite some time to run.
+
+- To run just certain e2e tests replace 'it' with 'fit'
 
 
 ## Info for contributors
