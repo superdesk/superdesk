@@ -30,7 +30,7 @@
             <label translate>RELATED</label>
             <div class="data"><a href="" ng-click="activateWidget()">{{relatedItems._items.length}}</a></div>
         </div>
-        <div ng-if="schema.genre">
+        <div ng-if="schema.genre && schema.genre.length">
             <label translate>GENRE</label>
             <div sd-meta-dropdown
                  class="data"
@@ -98,7 +98,8 @@
                  class="data"
                  ng-disabled="!_editable"
                  data-item="item" 
-                 data-field="anpa_category" 
+                 data-field="anpa_category"
+                 data-dependent="subject" 
                  data-unique="qcode"
                  data-list="metadata.categories" 
                  data-header="true"
@@ -113,7 +114,7 @@
                 data-item="item"
                 data-field="subject"
                 data-unique="qcode"
-                data-list="cv.items"
+                data-list="cv.terms"
                 data-cv="cv"
                 ng-disabled="!_editable"
                 data-header="true"
