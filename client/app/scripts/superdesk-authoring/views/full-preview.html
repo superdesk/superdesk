@@ -1,14 +1,26 @@
 <div sd-modal data-model="item" data-full="true" class="modal-preview">
     <div class="modal-header">
-        <div class="btn-group">
-            <button ng-click="" title="{{'Print'|translate}}"><i class="icon-print"></i></button>
+        <div class="btn-group pull-left">
+            <span sd-check ng-model="hide_images" name="hide_images"></span>
+            <label translate>Hide images</label>
+        </div>
+        <div class="btn-group pull-right">
+            <button ng-click="printPreview()" title="{{'Print'|translate}}"><i class="icon-print"></i></button>
             <button ng-if="closeAction" ng-click="closeAction()" title="{{'Close'|translate}}"><i class="icon-close-small"></i></button>
         </div>
     </div>
     <div class="modal-body" sd-shadow>
-        <div class="preview-content">
+        <div class="preview-content" ng-class="{'hide-images': hide_images}">
             <div class="metadata">
-                <div>
+                <div ng-if="item.versioncreated">
+                    <div class="preview-label">
+                        <label translate>Last Modified</label>
+                    </div>
+                    <div class="preview-data">
+                        <div sd-reldate-complex ng-model="item.versioncreated"></div>
+                    </div>
+                </div>
+                <div ng-if="item.anpa_category.length">
                     <div class="preview-label">
                         <label translate>Service</label>
                     </div>
@@ -23,38 +35,41 @@
                         <label translate>Topic</label>
                     </div>
                     <div class="preview-data">
-                        <span ng-repeat="topic in item.subject|filter:'patopic'">
+                        <span ng-repeat="topic in item.subject">
                             {{topic.name}}
                         </span>
                     </div>
                 </div>
-                <div>
+                <div ng-if="item.slugline">
                     <div class="preview-label">
                         <label translate>Keyword</label>
                     </div>
-                    <div class="preview-data" ng-if="item.slugline">
+                    <div class="preview-data">
                         <span>{{item.slugline}}</span>
                     </div>
                 </div>
-            </div>
-            <div class="headline">{{item.headline}}</div>
-            <div ng-repeat="association in item.associations" class="association">
-                <img src="{{association.renditions.viewImage.href}}">
-            </div>
-            <div class="byline">{{item.byline}}</div>
-            <div sd-html-preview="item.body_html" class="body"></div>
-            <div class="metadata">
-                <div>
+                <div ng-if="item.ednote">
                     <div class="preview-label">
-                        <label translate>Tag</label>
+                        <label translate>Ed. Note</label>
                     </div>
                     <div class="preview-data">
-                        <span ng-repeat="keyword in item.keywords">
-                            {{keyword}}
-                        </span>
+                        <span>{{item.ednote}}</span>
                     </div>
                 </div>
             </div>
+
+            <div class="headline">{{item.headline}}</div>
+
+            <div ng-repeat="association in item.associations" class="association">
+                <img src="{{association.renditions.viewImage.href}}" ng-if="!hide_images">
+                <p><i class="icon-picture" ng-if="hide_images"></i>{{association.description_text}}</p>
+            </div>
+
+            <div class="abstract">{{item.abstract}}</div>
+
+            <div class="byline">{{item.byline}}</div>
+
+            <div sd-html-preview="item.body_html" class="body"></div>
         </div>
     </div>
 </div>
