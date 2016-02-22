@@ -555,7 +555,6 @@ function SdTextEditorBlockEmbedController($timeout, $element, $scope) {
     var vm = this;
     angular.extend(vm, {
         embedCode: undefined,  // defined below
-        caption: undefined,  // defined below
         editable: false,
         toggleEdition: function() {
             vm.editable = !vm.editable;
@@ -567,8 +566,7 @@ function SdTextEditorBlockEmbedController($timeout, $element, $scope) {
         save: function() {
             // update the block's model
             angular.extend(vm.model, {
-                body: vm.embedCode,
-                caption: vm.caption
+                body: vm.embedCode
             });
             vm.updateEmbedPreview();
             // on change callback
@@ -576,13 +574,11 @@ function SdTextEditorBlockEmbedController($timeout, $element, $scope) {
         },
         cancel: function() {
             vm.embedCode = vm.model.body;
-            vm.caption = vm.model.caption;
         }
     });
     $timeout(function() {
         vm.updateEmbedPreview();
         vm.embedCode = vm.model.body;
-        vm.caption = vm.model.caption;
     });
 }
 
