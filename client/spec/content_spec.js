@@ -4,7 +4,8 @@
 var openUrl = require('./helpers/utils').open,
     workspace = require('./helpers/pages').workspace,
     content = require('./helpers/content'),
-    authoring = require('./helpers/authoring');
+    authoring = require('./helpers/authoring'),
+    moment = require('moment');
 
 describe('content', function() {
 
@@ -33,11 +34,10 @@ describe('content', function() {
     }
 
     function setEmbargo() {
-        var embargoTS = new Date();
-        embargoTS.setDate(embargoTS.getDate() + 2);
-        var embargoDate = embargoTS.getDate() + '/' + (embargoTS.getMonth() + 1) + '/' +
-            embargoTS.getFullYear();
-        var embargoTime = embargoTS.toTimeString().slice(0, 8);
+        //embargo one week from now.
+        var embargoTS = moment().add(7, 'd');
+        var embargoDate = embargoTS.format('DD/MM/YYYY');
+        var embargoTime = embargoTS.format('HH:mm');
 
         element(by.model('item.embargo_date')).element(by.tagName('input')).sendKeys(embargoDate);
         element(by.model('item.embargo_time')).element(by.tagName('input')).sendKeys(embargoTime);
@@ -187,7 +187,7 @@ describe('content', function() {
         element(by.id('closeAuthoringBtn')).click();
     });
 
-    it('can display embargo in metadata when set', function() {
+    fit('can display embargo in metadata when set', function() {
         workspace.editItem('item3', 'SPORTS');
         authoring.sendToButton.click();
 
