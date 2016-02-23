@@ -617,7 +617,9 @@ define([
         return {
             scope: {
                 tt: '=ngModel',
-                disabled: '=ngDisabled'
+                disabled: '=ngDisabled',
+                modelTimeFormat: '=',
+                viewTimeFormat: '='
             },
             templateUrl: 'scripts/superdesk/ui/views/sd-timepicker.html',
             link: function(scope) {
@@ -628,23 +630,27 @@ define([
     TimepickerInnerDirective.$inject = ['$compile', '$document', 'popupService', 'datetimeHelper'];
     function TimepickerInnerDirective($compile, $document, popupService, datetimeHelper) {
         var popupTpl = '<div sd-timepicker-popup ' +
+            'data-model-time-format="modelTimeFormat" data-view-time-format="viewTimeFormat"' +
             'data-open="open" data-time="time" data-select="timeSelection({time: time})" data-keydown="keydown(e)">' +
             '</div>';
         return {
             scope: {
-                open: '=opened'
+                open: '=opened',
+                modelTimeFormat: '=',
+                viewTimeFormat: '='
             },
             require: 'ngModel',
             link: function(scope, element, attrs, ctrl) {
 
-                var TIME_FORMAT = 'HH:mm:ss',
-                    ESC = 27,
-                    DOWN_ARROW = 40;
+                var MODEL_TIME_FORMAT = scope.modelTimeFormat || 'HH:mm:ss';
+                var VIEW_TIME_FORMAT = scope.viewTimeFormat || MODEL_TIME_FORMAT;
+                var ESC = 27;
+                var DOWN_ARROW = 40;
                 var popup = angular.element(popupTpl);
 
-                function viewFormat(time) {
+                function viewFormat(modelTime) {
                     //convert from utc time to local time
-                    return moment(time, TIME_FORMAT).add(moment().utcOffset(), 'minutes').format(TIME_FORMAT);
+                    return moment(modelTime, MODEL_TIME_FORMAT).add(moment().utcOffset(), 'minutes').format(VIEW_TIME_FORMAT);
                 }
 
                 ctrl.$parsers.unshift(function parseDate(viewValue) {
@@ -657,9 +663,9 @@ define([
                             return viewValue.tptime;
                         } else {
                             //value validation
-                            if (datetimeHelper.isValidTime(viewValue)) {
+                            if (datetimeHelper.isValidTime(viewValue, VIEW_TIME_FORMAT)) {
                                 ctrl.$setValidity('time', true);
-                                scope.time = moment(viewValue, TIME_FORMAT).utc().format(TIME_FORMAT);
+                                scope.time = moment(viewValue, VIEW_TIME_FORMAT).utc().format(MODEL_TIME_FORMAT);
                                 return scope.time;
                             } else {
                                 //regex not passing
@@ -691,7 +697,7 @@ define([
                         viewtime = 'Invalid Time';
 
                     if (modelValue) {
-                        if (datetimeHelper.isValidTime(modelValue)) {
+                        if (datetimeHelper.isValidTime(modelValue, MODEL_TIME_FORMAT)) {
                             //formatter pass fine
                             tptime = modelValue;
                             viewtime =  viewFormat(modelValue);
@@ -767,12 +773,13 @@ define([
                 open: '=',
                 select: '&',
                 keydown: '&',
-                time: '='
+                time: '=',
+                viewTimeFormat: '=',
+                modelTimeFormat: '='
             },
             link: function(scope, element) {
 
-                var TIME_FORMAT = 'HH:mm:ss';
-
+                var MODEL_TIME_FORMAT = scope.modelTimeFormat || 'HH:mm:ss';
                 var POPUP = '.timepicker-popup';
 
                 var focusElement = function() {
@@ -795,24 +802,25 @@ define([
                     var local;
                     if (newVal) {
                         //convert from utc to local
-                        local = moment(newVal, TIME_FORMAT).add(moment().utcOffset(), 'minutes');
+                        local = moment(newVal, MODEL_TIME_FORMAT).add(moment().utcOffset(), 'minutes');
                     } else {
                         local = moment();
                     }
                     scope.hour = local.hour();
-                    scope.minute = local.minute() - local.minute() % 5 + 5;
+                    scope.minute = local.minute() - local.minute() % 5;
                     scope.second = local.second();
                 });
 
                 scope.submit = function(offset) {
                     var local, utc_time;
+                    //keep the HH:mm:ss here for now for compatibility.
                     if (offset) {
-                        local = moment().add(offset, 'minutes').format(TIME_FORMAT);
+                        local = moment().add(offset, 'minutes').format(MODEL_TIME_FORMAT);
                     } else {
                         local = scope.hour + ':' + scope.minute + ':' + scope.second;
                     }
                     //convert from local to utc
-                    utc_time = moment(local, TIME_FORMAT).utc().format(TIME_FORMAT);
+                    utc_time = moment(local, MODEL_TIME_FORMAT).utc().format(MODEL_TIME_FORMAT);
                     scope.select({time: utc_time});
                 };
 
@@ -990,44 +998,23 @@ define([
         };
     }
 
-    DateTimeHelperService.$inject = [];
-    function DateTimeHelperService() {
+    DateTimeHelperService.$inject = ['moment'];
+    function DateTimeHelperService(moment) {
 
-        this.isValidTime = function(value) {
-            //checking if the given value is a time in a format 'hh:mm:ss'
-            var colonCount = 0;
-            var hh, mm, ss;
+        this.isValidTime = function(value, format) {
+            var timeFormat = format || 'HH:mm:ss';
 
-            for (var i = 0; i < value.length; i++) {
-                var ch = value.substring(i, i + 1);
-                if (((ch < '0') || (ch > '9')) && (ch !== ':')) {
-                    return false;
-                }
-                if (ch === ':') { colonCount++; }
-            }
-
-            if (colonCount !== 2) {return false;}
-
-            hh = value.substring(0, value.indexOf(':'));
-            if (hh.length !== 2 || (parseFloat(hh) < 0) || (parseFloat(hh) > 23)) {return false;}
-
-            mm = value.substring(value.indexOf(':') + 1, value.lastIndexOf(':'));
-            if (mm.length !== 2 || (parseFloat(mm) < 0) || (parseFloat(mm) > 59)) {return false;}
-
-            ss = value.substring(value.lastIndexOf(':') + 1, value.length);
-            if (ss.length !== 2 || (parseFloat(ss) < 0) || (parseFloat(ss) > 59)) {return false;}
-
-            return true;
+            return moment(value, timeFormat, true).isValid();
         };
 
-        this.isValidDate = function(value) {
-            //checking if the given value is a date in a format '31/01/2000'
-            var pattern = /^(0?[1-9]|[12][0-9]|3[01])\/(0?[1-9]|1[012])\/(19\d{2}|[2-9]\d{3})$/;
-            var regex = new RegExp(pattern);
-            return regex.test(value);
+        this.isValidDate = function(value, format) {
+            var dateFormat = format || 'DD/MM/YYYY';
+
+            return moment(value, dateFormat, true).isValid();
         };
 
         this.mergeDateTime = function(date, time) {
+
             var date_str = moment(date).format('YYYY-MM-DD');
             var time_str = moment(time, 'HH:mm:ss').add(moment().utcOffset(), 'minute').format('HH:mm:ss');
             var merge_str = date_str + ' ' + time_str;

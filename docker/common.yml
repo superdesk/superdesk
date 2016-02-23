@@ -60,6 +60,7 @@ superdesk:
    - SUPERDESK_CLIENT_URL=http://127.0.0.1
    - SUPERDESK_TESTING=True
    - IFRAMELY_KEY
+   - VIEW_TIME_FORMAT=HH:mm
   volumes:
    - ../results/server/unit:/opt/superdesk/results-unit/
    - ../results/server/behave:/opt/superdesk/results-behave/
