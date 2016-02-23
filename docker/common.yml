@@ -15,6 +15,7 @@ logstash:
   - ./logstash:/usr/share/logstash
 
 kibana:
+  #image: sourcefabric/kibana:master
   build: kibana
   restart: always
 
@@ -28,6 +29,9 @@ postfix:
   environment:
   - maildomain=mail.sourcefabric.org
   - smtp_user=user:pwd
+
+protractor:
+  image: caltha/protractor:latest
 
 superdesk:
   build: ../
