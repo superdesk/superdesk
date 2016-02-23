@@ -1415,6 +1415,13 @@ describe('send item directive', function() {
     beforeEach(module('superdesk.authoring'));
     beforeEach(module('templates'));
 
+    beforeEach(module(function($provide) {
+        $provide.constant('config', {
+            view: {timeformat: 'HH:mm:ss'},
+            server: {url: undefined}
+        });
+    }));
+
     beforeEach(inject(function($templateCache) {
         $templateCache.put('scripts/superdesk-authoring/views/send-item.html', '');
     }));

@@ -5,7 +5,7 @@ var openUrl = require('./helpers/utils').open,
     workspace = require('./helpers/pages').workspace,
     content = require('./helpers/content'),
     authoring = require('./helpers/authoring'),
-    moment = require('../app/scripts/bower_components/moment/moment');
+    testMoment = require('../app/scripts/bower_components/moment/moment');
 
 describe('content', function() {
 
@@ -35,7 +35,7 @@ describe('content', function() {
 
     function setEmbargo() {
         //embargo one week from now.
-        var embargoTS = moment().add(7, 'd');
+        var embargoTS = testMoment().add(7, 'd');
         var embargoDate = embargoTS.format('DD/MM/YYYY');
         var embargoTime = embargoTS.format('HH:mm');
 

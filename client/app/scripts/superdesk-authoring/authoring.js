@@ -1593,7 +1593,7 @@
                 scope.selectedMacro = null;
                 scope.beforeSend = scope._beforeSend || $q.when;
 
-                scope.modelTimeFormat = "HH:mm:ss";
+                scope.modelTimeFormat = 'HH:mm:ss';
                 scope.viewTimeFormat = config.view.timeformat;
 
                 scope.$watch('item', activateItem);
