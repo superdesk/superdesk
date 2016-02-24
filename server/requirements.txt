@@ -2,6 +2,5 @@ gunicorn==19.4.5
 honcho==0.6.6
 pymongo==2.8
 Eve==0.6.0
-python3-ldap==0.9.8.4
 
--e git+git://github.com/superdesk/superdesk-core@0fdeca7#egg=Superdesk-Core==0.0.1-dev
+-e git+git://github.com/superdesk/superdesk-core@19c4e3e#egg=Superdesk-Core==0.1-dev

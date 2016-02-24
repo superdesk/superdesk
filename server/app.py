@@ -15,30 +15,19 @@ import settings
 from superdesk.factory import get_app as superdesk_app
 
 
-def get_app(config=None):
+def get_app():
     """App factory.
 
     :param config: configuration that can override config from `settings.py`
     :return: a new SuperdeskEve app instance
     """
-    if config is None:
-        config = {}
-
-    config['APP_ABSPATH'] = os.path.abspath(os.path.dirname(__file__))
+    config = {'APP_ABSPATH': os.path.abspath(os.path.dirname(__file__))}
 
     for key in dir(settings):
         if key.isupper():
             config.setdefault(key, getattr(settings, key))
 
-    media_storage = None
-    if config['AMAZON_CONTAINER_NAME']:
-        from superdesk.storage.amazon.amazon_media_storage import AmazonMediaStorage
-        media_storage = AmazonMediaStorage
-
-    config['DOMAIN'] = {}
-
-    app = superdesk_app(config, media_storage)
-    return app
+    return superdesk_app(config)
 
 if __name__ == '__main__':
     debug = True
