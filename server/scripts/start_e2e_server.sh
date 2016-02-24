@@ -9,6 +9,7 @@ ARCHIVED_DBNAME=superdesk_e2e_archived
 REDIS_URL=redis://localhost:6379/2
 WEB_CONCURRENCY=3
 WEB_TIMEOUT=5
+
 EOF
 
 honcho -e /tmp/testenv run python manage.py # this will create elastic index - once

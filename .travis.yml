@@ -6,7 +6,6 @@ python:
 sudo: false
 
 env:
-    - TARGET=unit
     - TARGET=e2e_first_chrome
     - TARGET=e2e_second_chrome
     - TARGET=e2e_third_chrome
