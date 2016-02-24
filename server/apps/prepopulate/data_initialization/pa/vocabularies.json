@@ -402,10 +402,10 @@
         "service": {"paservice:news": 1, "paservice:sport": 1, "paservice:real-life": 1, "paservice:motoring": 1},
         "priority": 50,
         "items": [
-            {"is_active": true, "name": "Images", "qcode": "images"},
-            {"is_active": true, "name": "Video", "qcode": "video"},
-            {"is_active": true, "name": "Graphics", "qcode": "graphics"},
-            {"is_active": true, "name": "Social", "qcode": "social"}
+            {"is_active": true, "name": "Image", "qcode": "paasset:image"},
+            {"is_active": true, "name": "Video", "qcode": "paasset:video"},
+            {"is_active": true, "name": "Graphic", "qcode": "paasset:graphic"},
+            {"is_active": true, "name": "Social", "qcode": "paasset:social"}
         ]
     },
     {
