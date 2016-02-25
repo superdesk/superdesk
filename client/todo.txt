@@ -1,0 +1,4 @@
+- move editor folder as editor2 into core
+- add draggable behaviour to react lists
+- check authoring specs (ignore)
+

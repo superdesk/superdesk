@@ -11,15 +11,15 @@
 
 
 import logging
+
 from logging.handlers import SysLogHandler
-
 from app import get_app
-from settings import LOG_SERVER_ADDRESS, LOG_SERVER_PORT
 
 
-logging.basicConfig(handlers=[logging.StreamHandler(), SysLogHandler(address=(LOG_SERVER_ADDRESS, LOG_SERVER_PORT))])
+_app = get_app()
+celery = _app.celery
+
+log_address = (_app.config['LOG_SERVER_ADDRESS'], _app.config['LOG_SERVER_PORT'])
+logging.basicConfig(handlers=[logging.StreamHandler(), SysLogHandler(address=log_address)])
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-
-
-celery = get_app().celery

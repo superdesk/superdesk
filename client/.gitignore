@@ -26,3 +26,4 @@ e2e-test-results/
 nbproject/
 coveralls.json
 lcov.info
+bower_components

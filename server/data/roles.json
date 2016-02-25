@@ -1,0 +1,65 @@
+[
+    {
+        "_id": "66e1761443374b4294223699",
+        "description": "A user that will check a story that was submitted for revision. They will publish the stories.",
+        "privileges": {
+            "correct": 1,
+            "unlock": 1,
+            "kill": 1,
+            "publish": 1,
+            "archive": 1,
+            "fetch": 1
+        },
+        "name": "SubEditor"
+    },
+
+    {
+        "_id": "68535061bfbf493c9b0a43ea",
+        "description": "A user that creates stories from scratch & submits them for revision",
+        "privileges": {
+            "unlock": 1,
+            "kill": 1,
+            "archive": 1,
+            "fetch": 1
+        },
+        "name": "Journalist"
+    },
+
+    {
+        "_id": "a04edcc968a04e5cb6d81af6",
+        "description": "A Default role that has no permissions",
+        "name": "Guest"
+    },
+
+    {
+        "_id": "b9dec11d06d2448186f76492",
+        "description": "An Editor of a desk that has access to all parts of the system.",
+        "privileges": {
+            "hold": 1,
+            "kill": 1,
+            "publish": 1,
+            "highlights": 1,
+            "rule_sets": 1,
+            "planning": 1,
+            "groups": 1,
+            "archive": 1,
+            "tasks": 1,
+            "users": 1,
+            "roles": 1,
+            "ingest": 1,
+            "correct": 1,
+            "unlock": 1,
+            "ingest_providers": 1,
+            "unspike": 1,
+            "desks": 1,
+            "vocabularies": 1,
+            "metadata_uniquename": 1,
+            "fetch": 1,
+            "saved_searches": 1,
+            "mark_for_highlights": 1,
+            "restore": 1,
+            "spike": 1
+        },
+        "name": "Editor"
+    }
+]

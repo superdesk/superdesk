@@ -1,0 +1,33 @@
+[
+    {
+        "_id": "5640beec60fcab002a65f05b",
+        "content_filter": {
+            "filter_type": "blocking"
+        },
+        "name": "test",
+        "subscriber_type": "all",
+        "sequence_num_settings": {
+            "min": 1,
+            "max": 10000
+        },
+        "global_filters": {},
+        "destinations": [{
+            "config": {
+                "assets_url": "http://api.master.dev.superdesk.org/assets",
+                "resource_url": "http://52.31.63.137:10000/pipeline/superdesk/content/v0.1/route/receiver"
+            },
+            "format": "ninjs",
+            "delivery_type": "http_push",
+            "name": "capi"
+        }, {
+            "config": {
+                "recipients": "test@example.com"
+            },
+            "delivery_type": "email",
+            "format": "ninjs",
+            "name": "Email"
+        }],
+        "email": "test@example.com",
+        "is_active": true
+    }
+]
