@@ -371,7 +371,7 @@
         "_id": "reader_type",
         "display_name": "Reader Type",
         "type": "manageable",
-        "service": {"paservice:news": 1, "paservice:sport": 1, "paservice:real-life": 1, "paservice:motoring": 1},
+        "service": {"paservice:real-life": 1},
         "priority": 30,
         "items": [
             {"is_active": true, "name": "Female", "qcode": "pareader:female"},
@@ -383,7 +383,7 @@
         "_id": "desired_response",
         "display_name": "Response",
         "type": "manageable",
-        "service": {"paservice:news": 1, "paservice:sport": 1, "paservice:real-life": 1, "paservice:motoring": 1},
+        "service": {"paservice:real-life": 1},
         "priority": 40,
         "items": [
             {"is_active": true, "name": "Uplifting", "qcode": "paresponse:uplifting"},
