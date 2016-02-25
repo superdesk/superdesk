@@ -350,7 +350,10 @@
             {"is_active": true, "name": "South West", "qcode": "paterritory:sw_uk"},
             {"is_active": true, "name": "Wales", "qcode": "paterritory:wa_uk"},
             {"is_active": true, "name": "West Midlands", "qcode": "paterritory:wm_uk"},
-            {"is_active": true, "name": "Yorks and Humber", "qcode": "paterritory:yh_uk"}
+            {"is_active": true, "name": "Yorks and Humber", "qcode": "paterritory:yh_uk"},
+            {"is_active": true, "name": "Europe", "qcode": "paterritory:europe"},
+            {"is_active": true, "name": "Austrailia", "qcode": "paterritory:austrailia"},
+            {"is_active": true, "name": "USA", "qcode": "paterritory:usa"}
         ]
     },
     {
@@ -363,7 +366,7 @@
             {"is_active": true, "name": "International", "qcode": "paterritory:international"},
             {"is_active": true, "name": "UK", "qcode": "paterritory:uk"},
             {"is_active": true, "name": "Europe", "qcode": "paterritory:europe"},
-            {"is_active": true, "name": "Australia", "qcode": "paterritory:australia"},
+            {"is_active": true, "name": "Austrailia", "qcode": "paterritory:austrailia"},
             {"is_active": true, "name": "USA", "qcode": "paterritory:usa"}
         ]
     },
