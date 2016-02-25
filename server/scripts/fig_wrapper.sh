@@ -1,26 +1,52 @@
 #!/bin/sh
 
-TIMEOUT=2
+get_hostname() {
+	echo $1 | sed -r 's/.*:\/\/([^:\/]*)[:\/].*/\1/g' 2>/dev/null
+}
 
-MONGO=0
-REDIS=0
-ELASTIC=0
-while [ $MONGO -eq 0 ] || [ $ELASTIC -eq 0 ] || [ $REDIS -eq 0 ]
+get_port() {
+	result=$(
+		echo $1 | sed -r '/.*:\/\/.*:(.*)(\/.*|$)/,${s//\1/;b};$q1' 2>/dev/null
+	) && echo $result || echo "$2"
+}
+
+get_addr() {
+	echo $(get_hostname "$1")":"$(get_port "$1" "$2")
+}
+
+global_timeout=120
+ping_timeout=2
+
+mongo_addr=$(get_addr "$MONGO_URI" 27017)
+redis_addr=$(get_addr "$REDIS_URL" 6379)
+elastic_addr=$(get_addr "$ELASTICSEARCH_URL" 9200)
+
+mongo_is_listening=0
+redis_is_listening=0
+elastic_is_listening=0
+
+start_time=$(date +%s)
+
+while [ $mongo_is_listening -eq 0 ] || [ $elastic_is_listening -eq 0 ] || [ $redis_is_listening -eq 0 ]
 do
-	if [ $MONGO -eq 0 ] ; then
-		curl -s -m $TIMEOUT mongodb:27017 2>&1 > /dev/null &&
-		MONGO=1 ||
-		echo "waiting for mongo..."
+	if [ $mongo_is_listening -eq 0 ] ; then
+		curl -s -m $ping_timeout $mongo_addr 2>&1 > /dev/null &&
+		mongo_is_listening=1 ||
+		echo "waiting for mongo on $mongo_addr ..."
 	fi
-	if [ $REDIS -eq 0 ] ; then
-		curl -# -m $TIMEOUT redis:6379 2>&1 | grep "wrong number of arguments for 'get' command"  2>&1 > /dev/null &&
-		REDIS=1 ||
-		echo "waiting for redis..."
+	if [ $redis_is_listening -eq 0 ] ; then
+		curl -# -m $ping_timeout $redis_addr 2>&1 | grep "wrong number of arguments for 'get' command"  2>&1 > /dev/null &&
+		redis_is_listening=1 ||
+		echo "waiting for redis on $redis_addr ..."
 	fi
-	if [ $ELASTIC -eq 0 ] ; then
-		curl -s -m $TIMEOUT -o /dev/null elastic:9200  2>&1 > /dev/null &&
-		ELASTIC=1 ||
-		echo "waiting for elastic..."
+	if [ $elastic_is_listening -eq 0 ] ; then
+		curl -s -m $ping_timeout -o /dev/null $elastic_addr 2>&1 > /dev/null &&
+		elastic_is_listening=1 ||
+		echo "waiting for elastic on $elastic_addr ..."
+	fi
+	if [ $(expr $(date +%s) - $start_time) -gt $global_timeout ] ; then
+		echo "Timeout ($global_timeout sec) exceeded."
+		exit 1
 	fi
 	sleep 0.2
 done
