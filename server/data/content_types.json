@@ -39,6 +39,7 @@
             "subject": {},
             "anpa_category": {},
             "ednote": {},
+            "urgency": {},
 
             "feature_image": {"type": "picture"}
         }

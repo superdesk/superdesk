@@ -97,3 +97,5 @@ INSTALLED_APPS = [
     'pa.topics',
     'pa.pa_img',
 ]
+
+DEFAULT_URGENCY_VALUE_FOR_MANUAL_ARTICLES = None
