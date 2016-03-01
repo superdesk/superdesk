@@ -30,11 +30,14 @@ logger = logging.getLogger('pa:img')
 
 
 def extract_params(query, names):
-    findall = re.findall('([\w]+):\(([\w\s]+)\)', query)
+    findall = re.findall('([\w]+):\(([\w\s-]+)\)', query)
     params = {name: value for (name, value) in findall if name in names}
     for name, value in findall:
         query = query.replace('%s:(%s)' % (name, value), '')
     query = query.strip()
+    # escape dashes
+    for name, value in params.items():
+        params[name] = value.replace('-', '\-')
     if query:
         params['q'] = query
     return params
@@ -81,8 +84,7 @@ class PaImgDatalayer(DataLayer):
             query = req['query']['filtered']['query']['query_string']['query'] \
                 .replace('slugline:', 'keywords:') \
                 .replace('description:', 'caption:')
-            fields.update(extract_params(query, ('headline', 'keywords', 'caption')))
-
+            fields.update(extract_params(query, ('headline', 'keywords', 'caption', 'text')))
         for criterion in req.get('post_filter', {}).get('and', {}):
             # parse out the date range if possible
             if 'range' in criterion:
