@@ -11,8 +11,11 @@
     'use strict';
 
     window.bootstrapSuperdesk = function bootstrap(config, apps) {
+
+        angular.module('superdesk.config').constant('config', config);
+        angular.module('superdesk').constant('lodash', _);
+
         angular.module('superdesk')
-        .constant('config', config)
         // setup default route for superdesk - set it here to avoid it being used in unit tests
         .config(['$routeProvider', function($routeProvider) {
             $routeProvider.when('/', {redirectTo: '/workspace'});
