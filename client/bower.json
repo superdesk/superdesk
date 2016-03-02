@@ -25,7 +25,10 @@
     "react": "~0.14.3",
     "protractor": "~3.0.0",
     "langmap": "~0.0.10",
-    "angular-animate": "1.4.8"
+    "angular-animate": "1.4.8",
+    "angular-embed": "~3.0.1",
+    "angular-contenteditable": "~0.3.8",
+    "angular-vs-repeat": "^1.1.4"
   },
   "ignore": [
     "**/.*",
