@@ -1,129 +1,471 @@
 [
     {
-        "_id": "1e7d899b7b3048d5a5aec30a",
+        "_id": "1e7d899b7b3048d5a5aec301",
         "desk_order": 1,
-        "task_status": "todo",
-        "name": "Draft",
+        "name": "Innsendt",
         "desk": "1e7d899b7b3048d5a5aec30a",
         "is_visible": true,
-        "description": "Stories that have just been created or are being worked on",
         "content_expiry": 60000,
-        "default_incomming": true,
-        "default_incoming": false
+        "default_incoming": true
     },
-
     {
-        "_id": "5640bd5160fcab002c4e4c60",
+        "_id": "5640bd5160fcab002c4e4c61",
+        "desk_order": 2,
+        "name": "Forberedt",
+        "desk": "1e7d899b7b3048d5a5aec30a",
+        "is_visible": true,
         "content_expiry": 43200,
         "default_incoming": false,
-        "name": "test",
-        "is_visible": true,
-        "task_status": "todo",
-        "desk_order": 2,
-        "desk": "5640bd4c60fcab002a65f059"
+        "working_stage": true
     },
-
     {
-        "_id": "5e6ec157371a469390220b1a",
-        "desk_order": 1,
-        "task_status": "check",
-        "name": "Revised",
-        "desk": "2b702ea5de13465696ef44c2",
-        "is_visible": true,
-        "description": "Stories that are ready to be checked",
-        "content_expiry": 60000,
-        "default_incomming": true,
-        "default_incoming": false
-    },
-
-    {
-        "_id": "98cf9f4310734e46ac5bd7bd",
-        "desk_order": 1,
-        "task_status": "check",
-        "name": "Revised",
-        "desk": "ab22f45e8dfd4fa2a1fab31d",
-        "is_visible": true,
-        "description": "Stories that are ready to be checked",
-        "content_expiry": 60000,
-        "default_incomming": true,
-        "default_incoming": false
-    },
-
-    {
-        "_id": "a2b0747712fd45c79af2a89f",
-        "desk_order": 1,
-        "task_status": "todo",
-        "name": "Draft",
-        "desk": "2b702ea5de13465696ef44c2",
-        "is_visible": true,
-        "description": "Stories that have just been created or are being worked on",
-        "content_expiry": 60000,
-        "default_incomming": true,
-        "default_incoming": false
-    },
-
-    {
-        "_id": "e8345490fe084f5886b32166",
-        "desk_order": 1,
-        "task_status": "todo",
-        "name": "Draft",
-        "desk": "ab22f45e8dfd4fa2a1fab31d",
-        "is_visible": true,
-        "description": "Stories that have just been created or are being worked on",
-        "content_expiry": 60000,
-        "default_incomming": true,
-        "default_incoming": false
-    },
-
-    {
-        "_id": "fafbc17b1f7b445fb9f7b693",
-        "desk_order": 1,
-        "task_status": "check",
-        "name": "Revised",
+        "_id": "5e6ec157371a469390220b11",
+        "desk_order": 3,
+        "name": "Levert",
         "desk": "1e7d899b7b3048d5a5aec30a",
         "is_visible": true,
-        "description": "Stories that are ready to be checked",
-        "content_expiry": 60000,
-        "default_incomming": true,
+        "content_expiry": 43200,
         "default_incoming": false
     },
-
     {
-        "_id": "ffde46d68dd949888ef0f8d1",
-        "desk_order": 1,
-        "task_status": "new",
-        "name": "New",
-        "desk": "1535983d9d114c19acf9945a",
+        "_id": "98cf9f4310734e46ac5bd7b1",
+        "desk_order": 4,
+        "name": "Hold",
+        "desk": "1e7d899b7b3048d5a5aec30a",
         "is_visible": true,
-        "description": "Stories that are being created for SNAPPA",
-        "content_expiry": 60000,
-        "default_incomming": true,
+        "content_expiry": 43200,
+        "default_incoming": false
+    },
+    {
+        "_id": "a2b0747712fd45c79af2a891",
+        "desk_order": 5,
+        "name": "Publisert",
+        "desk": "1e7d899b7b3048d5a5aec30a",
+        "is_visible": true,
+        "content_expiry": 43200,
         "default_incoming": false
     },
 
     {
-        "_id": "56c5dd686c1fcd304c314eea",
+        "_id": "1e7d899b7b3048d5a5aec302",
         "desk_order": 1,
-        "task_status": "todo",
-        "name": "Draft",
+        "name": "Innsendt",
+        "desk": "5640bd4c60fcab002a65f059",
+        "is_visible": true,
+        "content_expiry": 60000,
+        "default_incoming": true
+    },
+    {
+        "_id": "5640bd5160fcab002c4e4c62",
+        "desk_order": 2,
+        "name": "Forberedt",
+        "desk": "5640bd4c60fcab002a65f059",
+        "is_visible": true,
+        "content_expiry": 43200,
+        "default_incoming": false,
+        "working_stage": true
+    },
+    {
+        "_id": "5e6ec157371a469390220b12",
+        "desk_order": 3,
+        "name": "Levert",
+        "desk": "5640bd4c60fcab002a65f059",
+        "is_visible": true,
+        "content_expiry": 43200,
+        "default_incoming": false
+    },
+    {
+        "_id": "98cf9f4310734e46ac5bd7b2",
+        "desk_order": 4,
+        "name": "Hold",
+        "desk": "5640bd4c60fcab002a65f059",
+        "is_visible": true,
+        "content_expiry": 43200,
+        "default_incoming": false
+    },
+    {
+        "_id": "a2b0747712fd45c79af2a892",
+        "desk_order": 5,
+        "name": "Publisert",
+        "desk": "5640bd4c60fcab002a65f059",
+        "is_visible": true,
+        "content_expiry": 43200,
+        "default_incoming": false
+    },
+
+    {
+        "_id": "1e7d899b7b3048d5a5aec303",
+        "desk_order": 1,
+        "name": "Innsendt",
+        "desk": "2b702ea5de13465696ef44c2",
+        "is_visible": true,
+        "content_expiry": 60000,
+        "default_incoming": true
+    },
+    {
+        "_id": "5640bd5160fcab002c4e4c63",
+        "desk_order": 2,
+        "name": "Forberedt",
+        "desk": "2b702ea5de13465696ef44c2",
+        "is_visible": true,
+        "content_expiry": 43200,
+        "default_incoming": false,
+        "working_stage": true
+    },
+    {
+        "_id": "5e6ec157371a469390220b13",
+        "desk_order": 3,
+        "name": "Levert",
+        "desk": "2b702ea5de13465696ef44c2",
+        "is_visible": true,
+        "content_expiry": 43200,
+        "default_incoming": false
+    },
+    {
+        "_id": "98cf9f4310734e46ac5bd7b3",
+        "desk_order": 4,
+        "name": "Hold",
+        "desk": "2b702ea5de13465696ef44c2",
+        "is_visible": true,
+        "content_expiry": 43200,
+        "default_incoming": false
+    },
+    {
+        "_id": "a2b0747712fd45c79af2a893",
+        "desk_order": 5,
+        "name": "Publisert",
+        "desk": "2b702ea5de13465696ef44c2",
+        "is_visible": true,
+        "content_expiry": 43200,
+        "default_incoming": false
+    },
+
+    {
+        "_id": "1e7d899b7b3048d5a5aec304",
+        "desk_order": 1,
+        "name": "Innsendt",
+        "desk": "67a7b9bc8a6d44b9b4bc50f6",
+        "is_visible": true,
+        "content_expiry": 60000,
+        "default_incoming": true
+    },
+    {
+        "_id": "5640bd5160fcab002c4e4c64",
+        "desk_order": 2,
+        "name": "Forberedt",
+        "desk": "67a7b9bc8a6d44b9b4bc50f6",
+        "is_visible": true,
+        "content_expiry": 43200,
+        "default_incoming": false,
+        "working_stage": true
+    },
+    {
+        "_id": "5e6ec157371a469390220b14",
+        "desk_order": 3,
+        "name": "Levert",
+        "desk": "67a7b9bc8a6d44b9b4bc50f6",
+        "is_visible": true,
+        "content_expiry": 43200,
+        "default_incoming": false
+    },
+    {
+        "_id": "98cf9f4310734e46ac5bd7b4",
+        "desk_order": 4,
+        "name": "Hold",
+        "desk": "67a7b9bc8a6d44b9b4bc50f6",
+        "is_visible": true,
+        "content_expiry": 43200,
+        "default_incoming": false
+    },
+    {
+        "_id": "a2b0747712fd45c79af2a894",
+        "desk_order": 5,
+        "name": "Publisert",
+        "desk": "67a7b9bc8a6d44b9b4bc50f6",
+        "is_visible": true,
+        "content_expiry": 43200,
+        "default_incoming": false
+    },
+
+    {
+        "_id": "1e7d899b7b3048d5a5aec305",
+        "desk_order": 1,
+        "name": "Innsendt",
+        "desk": "ab22f45e8dfd4fa2a1fab31e",
+        "is_visible": true,
+        "content_expiry": 60000,
+        "default_incoming": true
+    },
+    {
+        "_id": "5640bd5160fcab002c4e4c65",
+        "desk_order": 2,
+        "name": "Forberedt",
+        "desk": "ab22f45e8dfd4fa2a1fab31e",
+        "is_visible": true,
+        "content_expiry": 43200,
+        "default_incoming": false,
+        "working_stage": true
+    },
+    {
+        "_id": "5e6ec157371a469390220b15",
+        "desk_order": 3,
+        "name": "Levert",
+        "desk": "ab22f45e8dfd4fa2a1fab31e",
+        "is_visible": true,
+        "content_expiry": 43200,
+        "default_incoming": false
+    },
+    {
+        "_id": "98cf9f4310734e46ac5bd7b5",
+        "desk_order": 4,
+        "name": "Hold",
+        "desk": "ab22f45e8dfd4fa2a1fab31e",
+        "is_visible": true,
+        "content_expiry": 43200,
+        "default_incoming": false
+    },
+    {
+        "_id": "a2b0747712fd45c79af2a895",
+        "desk_order": 5,
+        "name": "Publisert",
+        "desk": "ab22f45e8dfd4fa2a1fab31e",
+        "is_visible": true,
+        "content_expiry": 43200,
+        "default_incoming": false
+    },
+
+    {
+        "_id": "1e7d899b7b3048d5a5aec306",
+        "desk_order": 1,
+        "name": "Innsendt",
         "desk": "56c5dd686c1fcd304c314eeb",
         "is_visible": true,
-        "description": "Stories that have just been created or are being worked on",
         "content_expiry": 60000,
-        "default_incomming": true,
+        "default_incoming": true
+    },
+    {
+        "_id": "5640bd5160fcab002c4e4c66",
+        "desk_order": 2,
+        "name": "Forberedt",
+        "desk": "56c5dd686c1fcd304c314eeb",
+        "is_visible": true,
+        "content_expiry": 43200,
+        "default_incoming": false,
+        "working_stage": true
+    },
+    {
+        "_id": "5e6ec157371a469390220b16",
+        "desk_order": 3,
+        "name": "Levert",
+        "desk": "56c5dd686c1fcd304c314eeb",
+        "is_visible": true,
+        "content_expiry": 43200,
+        "default_incoming": false
+    },
+    {
+        "_id": "98cf9f4310734e46ac5bd7b6",
+        "desk_order": 4,
+        "name": "Hold",
+        "desk": "56c5dd686c1fcd304c314eeb",
+        "is_visible": true,
+        "content_expiry": 43200,
+        "default_incoming": false
+    },
+    {
+        "_id": "a2b0747712fd45c79af2a896",
+        "desk_order": 5,
+        "name": "Publisert",
+        "desk": "56c5dd686c1fcd304c314eeb",
+        "is_visible": true,
+        "content_expiry": 43200,
         "default_incoming": false
     },
 
     {
-        "_id": "56c5e03e6c1fcd31170d298f",
+        "_id": "1e7d899b7b3048d5a5aec307",
         "desk_order": 1,
-        "task_status": "todo",
-        "name": "Draft",
+        "name": "Innsendt",
         "desk": "56c5e03e6c1fcd31170d2990",
         "is_visible": true,
-        "description": "Stories that have just been created or are being worked on",
         "content_expiry": 60000,
-        "default_incomming": true,
+        "default_incoming": true
+    },
+    {
+        "_id": "5640bd5160fcab002c4e4c67",
+        "desk_order": 2,
+        "name": "Forberedt",
+        "desk": "56c5e03e6c1fcd31170d2990",
+        "is_visible": true,
+        "content_expiry": 43200,
+        "default_incoming": false,
+        "working_stage": true
+    },
+    {
+        "_id": "5e6ec157371a469390220b17",
+        "desk_order": 3,
+        "name": "Levert",
+        "desk": "56c5e03e6c1fcd31170d2990",
+        "is_visible": true,
+        "content_expiry": 43200,
+        "default_incoming": false
+    },
+    {
+        "_id": "98cf9f4310734e46ac5bd7b7",
+        "desk_order": 4,
+        "name": "Hold",
+        "desk": "56c5e03e6c1fcd31170d2990",
+        "is_visible": true,
+        "content_expiry": 43200,
+        "default_incoming": false
+    },
+    {
+        "_id": "a2b0747712fd45c79af2a897",
+        "desk_order": 5,
+        "name": "Publisert",
+        "desk": "56c5e03e6c1fcd31170d2990",
+        "is_visible": true,
+        "content_expiry": 43200,
+        "default_incoming": false
+    },
+
+    {
+        "_id": "1e7d899b7b3048d5a5aec308",
+        "desk_order": 1,
+        "name": "Innsendt",
+        "desk": "ab22f45e8dfd4fa2a1fab31d",
+        "is_visible": true,
+        "content_expiry": 60000,
+        "default_incoming": true
+    },
+    {
+        "_id": "5640bd5160fcab002c4e4c68",
+        "desk_order": 2,
+        "name": "Forberedt",
+        "desk": "ab22f45e8dfd4fa2a1fab31d",
+        "is_visible": true,
+        "content_expiry": 43200,
+        "default_incoming": false,
+        "working_stage": true
+    },
+    {
+        "_id": "5e6ec157371a469390220b18",
+        "desk_order": 3,
+        "name": "Levert",
+        "desk": "ab22f45e8dfd4fa2a1fab31d",
+        "is_visible": true,
+        "content_expiry": 43200,
+        "default_incoming": false
+    },
+    {
+        "_id": "98cf9f4310734e46ac5bd7b8",
+        "desk_order": 4,
+        "name": "Hold",
+        "desk": "ab22f45e8dfd4fa2a1fab31d",
+        "is_visible": true,
+        "content_expiry": 43200,
+        "default_incoming": false
+    },
+    {
+        "_id": "a2b0747712fd45c79af2a898",
+        "desk_order": 5,
+        "name": "Publisert",
+        "desk": "ab22f45e8dfd4fa2a1fab31d",
+        "is_visible": true,
+        "content_expiry": 43200,
+        "default_incoming": false
+    },
+
+    {
+        "_id": "1e7d899b7b3048d5a5aec309",
+        "desk_order": 1,
+        "name": "Innsendt",
+        "desk": "56c5dd686c1fcd304c314eee",
+        "is_visible": true,
+        "content_expiry": 60000,
+        "default_incoming": true
+    },
+    {
+        "_id": "5640bd5160fcab002c4e4c69",
+        "desk_order": 2,
+        "name": "Forberedt",
+        "desk": "56c5dd686c1fcd304c314eee",
+        "is_visible": true,
+        "content_expiry": 43200,
+        "default_incoming": false,
+        "working_stage": true
+    },
+    {
+        "_id": "5e6ec157371a469390220b19",
+        "desk_order": 3,
+        "name": "Levert",
+        "desk": "56c5dd686c1fcd304c314eee",
+        "is_visible": true,
+        "content_expiry": 43200,
+        "default_incoming": false
+    },
+    {
+        "_id": "98cf9f4310734e46ac5bd7b9",
+        "desk_order": 4,
+        "name": "Hold",
+        "desk": "56c5dd686c1fcd304c314eee",
+        "is_visible": true,
+        "content_expiry": 43200,
+        "default_incoming": false
+    },
+    {
+        "_id": "a2b0747712fd45c79af2a899",
+        "desk_order": 5,
+        "name": "Publisert",
+        "desk": "56c5dd686c1fcd304c314eee",
+        "is_visible": true,
+        "content_expiry": 43200,
+        "default_incoming": false
+    },
+
+    {
+        "_id": "1e7d899b7b3048d5a5aec310",
+        "desk_order": 1,
+        "name": "Innsendt",
+        "desk": "56c5e03e6c1fcd31170d2c90",
+        "is_visible": false,
+        "content_expiry": -1,
+        "default_incoming": true
+    },
+    {
+        "_id": "5640bd5160fcab002c4e4c10",
+        "desk_order": 2,
+        "name": "Forberedt",
+        "desk": "56c5e03e6c1fcd31170d2c90",
+        "is_visible": false,
+        "content_expiry": -1,
+        "default_incoming": false,
+        "working_stage": true
+    },
+    {
+        "_id": "5e6ec157371a469390220b10",
+        "desk_order": 3,
+        "name": "Levert",
+        "desk": "56c5e03e6c1fcd31170d2c90",
+        "is_visible": false,
+        "content_expiry": -1,
+        "default_incoming": false
+    },
+    {
+        "_id": "98cf9f4310734e46ac5bd710",
+        "desk_order": 4,
+        "name": "Hold",
+        "desk": "56c5e03e6c1fcd31170d2c90",
+        "is_visible": false,
+        "content_expiry": -1,
+        "default_incoming": false
+    },
+    {
+        "_id": "a2b0747712fd45c79af2a810",
+        "desk_order": 5,
+        "name": "Publisert",
+        "desk": "56c5e03e6c1fcd31170d2c90",
+        "is_visible": false,
+        "content_expiry": -1,
         "default_incoming": false
     }
 ]

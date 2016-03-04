@@ -1,10 +1,28 @@
 [
      {
-         "_id": "1535983d9d114c19acf9945a",
-         "name": "SNAPPA",
-         "spike_expiry": 1440,
-         "incoming_stage": "ffde46d68dd949888ef0f8d1",
-         "description": "The SNAPPA Desk",
+         "_id": "1e7d899b7b3048d5a5aec30a",
+         "name": "Nyhetsdesk",
+         "content_expiry": 1440,
+         "incoming_stage": "1e7d899b7b3048d5a5aec301",
+         "working_stage": "5640bd5160fcab002c4e4c61",
+         "description": "Nyhetsdesk Desk",
+         "source": "Nyhetsdesk Desk",
+         "desk_type": "production",
+         "members": [{
+             "user": "7f138bb30d964df1988c438e"
+         }, {
+             "user": "a21a621c4c8847b085fe2d78"
+         }]
+     },
+
+     {
+         "_id": "5640bd4c60fcab002a65f059",
+         "name": "Uvakt",
+         "content_expiry": 1440,
+         "incoming_stage": "1e7d899b7b3048d5a5aec302",
+         "working_stage": "5640bd5160fcab002c4e4c62",
+         "description": "Uvakt Desk",
+         "source": "Uvakt Desk",
          "desk_type": "production",
          "members": [{
              "user": "7f138bb30d964df1988c438e"
@@ -15,10 +33,12 @@
  
      {
         "_id": "2b702ea5de13465696ef44c2",
-        "name": "Sports Desk",
-        "spike_expiry": 1440,
-        "incoming_stage": "a2b0747712fd45c79af2a89f",
-        "description": "The main Sports Desk",
+        "name": "Sporten",
+        "content_expiry": 1440,
+        "incoming_stage": "1e7d899b7b3048d5a5aec303",
+        "working_stage": "5640bd5160fcab002c4e4c63",
+        "description": "Sporten Desk",
+        "source": "Sporten Desk",
         "desk_type": "production",
         "members": [{
             "user": "2be17602bca44f53825086cf"
@@ -26,36 +46,17 @@
             "user": "1d5f748c79134f35841670c3"
         }, {
             "user": "a21a621c4c8847b085fe2d78"
-        }],
-        "monitoring_settings": [{
-            "max_items": 10,
-            "_id": "a2b0747712fd45c79af2a89f",
-            "type": "stage"
-        }, {
-            "max_items": 10,
-            "_id": "5e6ec157371a469390220b1a",
-            "type": "stage"
-        }, {
-            "max_items": 10,
-            "_id": "5641b0ec015149002643921b",
-            "type": "search"
         }]
     },
 
     {
-        "_id": "5640bd4c60fcab002a65f059",
-        "incoming_stage": "5640bd4c60fcab002a65f058",
-        "desk_type": "authoring",
-        "spike_expiry": 0,
-        "name": "test desk by petr"
-    },
-
-    {
         "_id": "67a7b9bc8a6d44b9b4bc50f6",
-        "name": "News Desk",
-        "spike_expiry": 1440,
-        "incoming_stage": "1e7d899b7b3048d5a5aec30a",
-        "description": "The central News Desk",
+        "name": "Repdesk",
+        "content_expiry": 1440,
+        "incoming_stage": "1e7d899b7b3048d5a5aec304",
+        "working_stage": "5640bd5160fcab002c4e4c64",
+        "description": "Repdesk Desk",
+        "source": "Repdesk Desk",
         "desk_type": "production",
         "members": [{
             "user": "94f9453b9a5f4eeabeb36769"
@@ -63,44 +64,17 @@
             "user": "b5c91b8150294394af1c44cc"
         }, {
             "user": "a21a621c4c8847b085fe2d78"
-        }],
-        "monitoring_settings": [{
-            "max_items": 10,
-            "_id": "personal",
-            "type": "personal"
-        }, {
-            "max_items": 10,
-            "_id": "e8345490fe084f5886b32166",
-            "type": "stage"
-        }, {
-            "max_items": 10,
-            "_id": "98cf9f4310734e46ac5bd7bd",
-            "type": "stage"
-        }, {
-            "max_items": 10,
-            "_id": "ffde46d68dd949888ef0f8d1",
-            "type": "stage"
-        }, {
-            "max_items": 10,
-            "_id": "a2b0747712fd45c79af2a89f",
-            "type": "stage"
-        }, {
-            "max_items": 10,
-            "_id": "5e6ec157371a469390220b1a",
-            "type": "stage"
-        }, {
-            "max_items": 10,
-            "_id": "5641b0ec015149002643921b",
-            "type": "search"
         }]
     },
 
     {
-        "_id": "ab22f45e8dfd4fa2a1fab31d",
-        "name": "Features Desk",
-        "spike_expiry": 1440,
-        "incoming_stage": "e8345490fe084f5886b32166",
-        "description": "The Features Desk",
+        "_id": "ab22f45e8dfd4fa2a1fab31e",
+        "name": "Kultur",
+        "content_expiry": 1440,
+        "incoming_stage": "1e7d899b7b3048d5a5aec305",
+        "working_stage": "5640bd5160fcab002c4e4c65",
+        "description": "Kultur Desk",
+        "source": "Kultur Desk",
         "desk_type": "production",
         "members": [{
             "user": "5640a5eef40235008465242b"
@@ -115,10 +89,12 @@
 
     {
         "_id": "56c5dd686c1fcd304c314eeb",
-        "name": "Motoring Desk",
-        "spike_expiry": 1440,
-        "incoming_stage": "56c5dd686c1fcd304c314eea",
-        "description": "The Motoring Desk",
+        "name": "Tema",
+        "content_expiry": 1440,
+        "incoming_stage": "1e7d899b7b3048d5a5aec306",
+        "working_stage": "5640bd5160fcab002c4e4c66",
+        "description": "Tema Desk",
+        "source": "Tema Desk",
         "desk_type": "production",
         "members": [{
             "user": "5640a5eef40235008465242b"
@@ -133,10 +109,72 @@
 
     {
         "_id": "56c5e03e6c1fcd31170d2990",
-        "name": "Real Life Desk",
-        "spike_expiry": 1440,
-        "incoming_stage": "56c5e03e6c1fcd31170d298f",
-        "description": "The Real Life Desk",
+        "name": "NPK",
+        "content_expiry": 1440,
+        "incoming_stage": "1e7d899b7b3048d5a5aec307",
+        "working_stage": "5640bd5160fcab002c4e4c67",
+        "description": "NPK Desk",
+        "source": "NPK Desk",
+        "desk_type": "production",
+        "members": [{
+            "user": "5640a5eef40235008465242b"
+        }, {
+            "user": "270efdd804f94b5fbda27cf0"
+        }, {
+            "user": "45d4565b4985446680b3c500"
+        }, {
+            "user": "a21a621c4c8847b085fe2d78"
+        }]
+    },
+
+    {
+        "_id": "ab22f45e8dfd4fa2a1fab31d",
+        "name": "Personalia",
+        "content_expiry": 1440,
+        "incoming_stage": "1e7d899b7b3048d5a5aec308",
+        "working_stage": "5640bd5160fcab002c4e4c68",
+        "description": "Personalia Desk",
+        "source": "Personalia Desk",
+        "desk_type": "production",
+        "members": [{
+            "user": "5640a5eef40235008465242b"
+        }, {
+            "user": "270efdd804f94b5fbda27cf0"
+        }, {
+            "user": "45d4565b4985446680b3c500"
+        }, {
+            "user": "a21a621c4c8847b085fe2d78"
+        }]
+    },
+
+    {
+        "_id": "56c5dd686c1fcd304c314eee",
+        "name": "Forskning",
+        "content_expiry": 1440,
+        "incoming_stage": "1e7d899b7b3048d5a5aec309",
+        "working_stage": "5640bd5160fcab002c4e4c69",
+        "description": "Forskning Desk",
+        "source": "Forskning Desk",
+        "desk_type": "production",
+        "members": [{
+            "user": "5640a5eef40235008465242b"
+        }, {
+            "user": "270efdd804f94b5fbda27cf0"
+        }, {
+            "user": "45d4565b4985446680b3c500"
+        }, {
+            "user": "a21a621c4c8847b085fe2d78"
+        }]
+    },
+
+    {
+        "_id": "56c5e03e6c1fcd31170d2c90",
+        "name": "Nekrologer",
+        "content_expiry": -1,
+        "incoming_stage": "1e7d899b7b3048d5a5aec310",
+        "working_stage": "5640bd5160fcab002c4e4c10",
+        "description": "Nekrologer Desk",
+        "source": "Nekrologer Desk",
         "desk_type": "production",
         "members": [{
             "user": "5640a5eef40235008465242b"
