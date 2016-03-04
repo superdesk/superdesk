@@ -27,7 +27,8 @@
     "angular-animate": "1.4.8",
     "angular-embed": "~3.0.1",
     "angular-contenteditable": "~0.3.8",
-    "angular-vs-repeat": "^1.1.4"
+    "angular-vs-repeat": "^1.1.4",
+    "medium-editor-tables": "~0.5.0"
   },
   "ignore": [
     "**/.*",
