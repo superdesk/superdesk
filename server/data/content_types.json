@@ -17,7 +17,6 @@
             "urgency": {"required": true},
             "anpa_category": {"required": true},
             "subject": {"required": true},
-            "genre": {"required": true},
             "place": {"required": true},
             "ednote": {}
         }
@@ -40,7 +39,6 @@
             "urgency": {"required": true},
             "anpa_category": {"required": true},
             "subject": {"required": true},
-            "genre": {"required": true},
             "place": {},
             "ednote": {}
         }
@@ -63,7 +61,6 @@
             "urgency": {},
             "anpa_category": {"required": true},
             "subject": {"required": true},
-            "genre": {"required": true},
             "place": {},
             "ednote": {}
         }
