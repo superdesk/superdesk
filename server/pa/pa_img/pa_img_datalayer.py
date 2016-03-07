@@ -176,6 +176,7 @@ class PaImgDatalayer(DataLayer):
                     'original': renditions.get('full'),
                     'thumbnail': renditions.get('thumbnail_lrg'),
                     'viewImage': renditions.get('sample'),
+                    'baseImage': renditions.get('full'),
                 }
 
         if 'byline' in doc:
