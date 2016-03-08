@@ -8,7 +8,7 @@
         "is_enabled": true,
         "display_name": "Sport Sub",
         "first_name": "Sport",
-        "role": "66e1761443374b4294223699",
+        "role": "54e655e31024542de76d6636",
         "username": "sportsub",
         "user_type": "sub",
         "needs_activation": false,
@@ -23,44 +23,11 @@
         "is_enabled": true,
         "display_name": "Feature Journalist",
         "first_name": "Feature",
-        "role": "68535061bfbf493c9b0a43ea",
+        "role": "54e650f31024542de2649bea",
         "username": "featurejournalist",
         "user_type": "user",
         "needs_activation": false,
         "sign_off": "FJ"
-    },
-
-    {
-        "_id": "2be17602bca44f53825086cf",
-        "last_name": "Journalist",
-        "password": "$2a$12$HrFJX1yWZYVNp15L3F7GmOdW/Pxd7t1/ns4x0KPjQpVIvLyxa/Y1C",
-        "is_active": true,
-        "email": "sportjournalist@example.com",
-        "is_enabled": true,
-        "display_name": "Sport Journalist",
-        "first_name": "Sport",
-        "role": "68535061bfbf493c9b0a43ea",
-        "username": "sportjournalist",
-        "user_type": "journalist",
-        "needs_activation": false,
-        "sign_off": "SJ"
-    },
-
-    {
-        "_id": "45d4565b4985446680b3c500",
-        "last_name": "Sub",
-        "password": "$2a$12$8pFsa9SpxWRBhTulAmZbbOoKsvBN/WYLy6s1XOuJIQTmDvb9y8.D2",
-        "is_active": true,
-        "email": "featuresub@example.com",
-        "name": "Feature Sub",
-        "is_enabled": true,
-        "display_name": "Feature Sub",
-        "first_name": "Feature",
-        "role": "66e1761443374b4294223699",
-        "username": "featuresub",
-        "user_type": "user",
-        "needs_activation": false,
-        "sign_off": "FS"
     },
 
     {
@@ -77,39 +44,6 @@
     },
 
     {
-        "_id" : "7f138bb30d964df1988c438e",
-        "last_name" : "PA",
-        "password" : "$2a$12$2Ukfv1FFnU/pRbaCpgg2UuwTNeGZKbbqAf2H5WTvo5vG4b3vsqy9a",
-        "is_active" : true,
-        "email" : "snappa@example.com",
-        "name" : "SNAPPA",
-        "is_enabled" : true,
-        "display_name" : "SNAP PA",
-        "first_name" : "SNAP",
-        "role" : "66e1761443374b4294223699",
-        "username" : "snappa",
-        "user_type" : "user",
-        "needs_activation" : false,
-        "sign_off" : "SP"
-    },
-
-    {
-        "_id" : "94f9453b9a5f4eeabeb36769",
-        "last_name" : "Journalist",
-        "password" : "$2a$12$ri987Fp.BvIQXq204AL5R.G1LOaUfqQe675juhrBAMTW2eRqZPbZS",
-        "is_active" : true,
-        "email" : "newsjournalist@example.com",
-        "is_enabled" : true,
-        "display_name" : "News Journalist",
-        "first_name" : "News",
-        "role" : "68535061bfbf493c9b0a43ea",
-        "username" : "newsjournalist",
-        "user_type" : "journalist",
-        "needs_activation" : false,
-        "sign_off" : "NJ"
-    },
-
-    {
         "_id": "a21a621c4c8847b085fe2d78",
         "last_name": "Itor",
         "password": "$2a$12$lU/uNueNgFew4uELbLemgubnsLOKsj1SstCz/6GrwVZ7r63iYz.Ze",
@@ -118,26 +52,10 @@
         "is_enabled": true,
         "display_name": "Editor",
         "first_name": "Ed",
-        "role": "b9dec11d06d2448186f76492",
+        "role": "54e651ef1024542de2649bed",
         "username": "editor",
         "user_type": "editor",
         "needs_activation": false,
         "sign_off": "EI"
-    },
-
-    {
-        "_id": "b5c91b8150294394af1c44cc",
-        "last_name": "Sub",
-        "password": "$2a$12$peLTCix4pwhjeyP.Jb0W/.S2hK4F0KbdNQ0wUogpLvQmmUx/cGGGK",
-        "is_active": true,
-        "email": "newssub@example.com",
-        "is_enabled": true,
-        "display_name": "News Sub",
-        "first_name": "News",
-        "role": "66e1761443374b4294223699",
-        "username": "newssub",
-        "user_type": "sub",
-        "needs_activation": false,
-        "sign_off": "NS"
     }
 ]
