@@ -90,17 +90,20 @@
               </div>
             </div>
           </div>
-          <div class="authoring-header__item" ng-if="schema.urgency">
-            <label class="authoring-header__item-label" translate>URGENCY</label>
-            <div class="authoring-header__input-holder">
-              <div sd-meta-dropdown
-                   data-item="item"
-                   data-field="urgency"
-                   data-list="metadata.urgency"
-                   data-icon="urgency-label urgency-label-"
-                   data-label="Urgency"
-                   ng-disabled="!_editable"
-                   data-change="autosave(item)">
+          <div class="authoring-header__row authoring-header__row--2" ng-if="schema.urgency">
+            <div class="authoring-header__item" ng-if="schema.urgency">
+              <label class="authoring-header__item-label" translate>RANKING</label>
+              <div class="authoring-header__input-holder">
+                <div sd-meta-dropdown
+                     data-item="item"
+                     data-field="urgency"
+                     data-list="metadata.urgency"
+                     data-icon="urgency-label urgency-label-"
+                     data-label="Ranking"
+                     data-key="qcode"
+                     ng-disabled="!_editable"
+                     data-change="autosave(item)">
+                </div>
               </div>
             </div>
           </div>
