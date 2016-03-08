@@ -124,24 +124,6 @@
           </div>
         </div>
 
-        <div class="authoring-header__row" ng-if="metadata.subjectcodes && schema.subject && !metadata.subjects">
-          <div class="authoring-header__item">
-            <label class="authoring-header__item-label" translate>SUBJECT</label>
-            <div id="subjects"
-                 sd-meta-terms
-                 class="data"
-                 data-item="item"
-                 data-field="subject"
-                 data-unique="qcode"
-                 data-list="metadata.subjectcodes"
-                 ng-disabled="!_editable"
-                 data-header="true"
-                 data-change="autosave(item)"
-                 data-reload-list="true">
-            </div>
-          </div>
-        </div>
-
         <div class="authoring-header__row" ng-if="schema.slugline">
           <div class="authoring-header__item">
             <label class="authoring-header__item-label" translate>SLUGLINE</label>
