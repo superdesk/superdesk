@@ -27,24 +27,6 @@
         "content_expiry": 43200,
         "default_incoming": false
     },
-    {
-        "_id": "98cf9f4310734e46ac5bd7b1",
-        "desk_order": 4,
-        "name": "Hold",
-        "desk": "1e7d899b7b3048d5a5aec30a",
-        "is_visible": true,
-        "content_expiry": 43200,
-        "default_incoming": false
-    },
-    {
-        "_id": "a2b0747712fd45c79af2a891",
-        "desk_order": 5,
-        "name": "Publisert",
-        "desk": "1e7d899b7b3048d5a5aec30a",
-        "is_visible": true,
-        "content_expiry": 43200,
-        "default_incoming": false
-    },
 
     {
         "_id": "1e7d899b7b3048d5a5aec302",
@@ -69,24 +51,6 @@
         "_id": "5e6ec157371a469390220b12",
         "desk_order": 3,
         "name": "Levert",
-        "desk": "5640bd4c60fcab002a65f059",
-        "is_visible": true,
-        "content_expiry": 43200,
-        "default_incoming": false
-    },
-    {
-        "_id": "98cf9f4310734e46ac5bd7b2",
-        "desk_order": 4,
-        "name": "Hold",
-        "desk": "5640bd4c60fcab002a65f059",
-        "is_visible": true,
-        "content_expiry": 43200,
-        "default_incoming": false
-    },
-    {
-        "_id": "a2b0747712fd45c79af2a892",
-        "desk_order": 5,
-        "name": "Publisert",
         "desk": "5640bd4c60fcab002a65f059",
         "is_visible": true,
         "content_expiry": 43200,
@@ -121,24 +85,6 @@
         "content_expiry": 43200,
         "default_incoming": false
     },
-    {
-        "_id": "98cf9f4310734e46ac5bd7b3",
-        "desk_order": 4,
-        "name": "Hold",
-        "desk": "2b702ea5de13465696ef44c2",
-        "is_visible": true,
-        "content_expiry": 43200,
-        "default_incoming": false
-    },
-    {
-        "_id": "a2b0747712fd45c79af2a893",
-        "desk_order": 5,
-        "name": "Publisert",
-        "desk": "2b702ea5de13465696ef44c2",
-        "is_visible": true,
-        "content_expiry": 43200,
-        "default_incoming": false
-    },
 
     {
         "_id": "1e7d899b7b3048d5a5aec304",
@@ -163,24 +109,6 @@
         "_id": "5e6ec157371a469390220b14",
         "desk_order": 3,
         "name": "Levert",
-        "desk": "67a7b9bc8a6d44b9b4bc50f6",
-        "is_visible": true,
-        "content_expiry": 43200,
-        "default_incoming": false
-    },
-    {
-        "_id": "98cf9f4310734e46ac5bd7b4",
-        "desk_order": 4,
-        "name": "Hold",
-        "desk": "67a7b9bc8a6d44b9b4bc50f6",
-        "is_visible": true,
-        "content_expiry": 43200,
-        "default_incoming": false
-    },
-    {
-        "_id": "a2b0747712fd45c79af2a894",
-        "desk_order": 5,
-        "name": "Publisert",
         "desk": "67a7b9bc8a6d44b9b4bc50f6",
         "is_visible": true,
         "content_expiry": 43200,
@@ -215,24 +143,6 @@
         "content_expiry": 43200,
         "default_incoming": false
     },
-    {
-        "_id": "98cf9f4310734e46ac5bd7b5",
-        "desk_order": 4,
-        "name": "Hold",
-        "desk": "ab22f45e8dfd4fa2a1fab31e",
-        "is_visible": true,
-        "content_expiry": 43200,
-        "default_incoming": false
-    },
-    {
-        "_id": "a2b0747712fd45c79af2a895",
-        "desk_order": 5,
-        "name": "Publisert",
-        "desk": "ab22f45e8dfd4fa2a1fab31e",
-        "is_visible": true,
-        "content_expiry": 43200,
-        "default_incoming": false
-    },
 
     {
         "_id": "1e7d899b7b3048d5a5aec306",
@@ -257,24 +167,6 @@
         "_id": "5e6ec157371a469390220b16",
         "desk_order": 3,
         "name": "Levert",
-        "desk": "56c5dd686c1fcd304c314eeb",
-        "is_visible": true,
-        "content_expiry": 43200,
-        "default_incoming": false
-    },
-    {
-        "_id": "98cf9f4310734e46ac5bd7b6",
-        "desk_order": 4,
-        "name": "Hold",
-        "desk": "56c5dd686c1fcd304c314eeb",
-        "is_visible": true,
-        "content_expiry": 43200,
-        "default_incoming": false
-    },
-    {
-        "_id": "a2b0747712fd45c79af2a896",
-        "desk_order": 5,
-        "name": "Publisert",
         "desk": "56c5dd686c1fcd304c314eeb",
         "is_visible": true,
         "content_expiry": 43200,
@@ -309,24 +201,6 @@
         "content_expiry": 43200,
         "default_incoming": false
     },
-    {
-        "_id": "98cf9f4310734e46ac5bd7b7",
-        "desk_order": 4,
-        "name": "Hold",
-        "desk": "56c5e03e6c1fcd31170d2990",
-        "is_visible": true,
-        "content_expiry": 43200,
-        "default_incoming": false
-    },
-    {
-        "_id": "a2b0747712fd45c79af2a897",
-        "desk_order": 5,
-        "name": "Publisert",
-        "desk": "56c5e03e6c1fcd31170d2990",
-        "is_visible": true,
-        "content_expiry": 43200,
-        "default_incoming": false
-    },
 
     {
         "_id": "1e7d899b7b3048d5a5aec308",
@@ -351,24 +225,6 @@
         "_id": "5e6ec157371a469390220b18",
         "desk_order": 3,
         "name": "Levert",
-        "desk": "ab22f45e8dfd4fa2a1fab31d",
-        "is_visible": true,
-        "content_expiry": 43200,
-        "default_incoming": false
-    },
-    {
-        "_id": "98cf9f4310734e46ac5bd7b8",
-        "desk_order": 4,
-        "name": "Hold",
-        "desk": "ab22f45e8dfd4fa2a1fab31d",
-        "is_visible": true,
-        "content_expiry": 43200,
-        "default_incoming": false
-    },
-    {
-        "_id": "a2b0747712fd45c79af2a898",
-        "desk_order": 5,
-        "name": "Publisert",
         "desk": "ab22f45e8dfd4fa2a1fab31d",
         "is_visible": true,
         "content_expiry": 43200,
@@ -403,34 +259,7 @@
         "content_expiry": 43200,
         "default_incoming": false
     },
-    {
-        "_id": "98cf9f4310734e46ac5bd7b9",
-        "desk_order": 4,
-        "name": "Hold",
-        "desk": "56c5dd686c1fcd304c314eee",
-        "is_visible": true,
-        "content_expiry": 43200,
-        "default_incoming": false
-    },
-    {
-        "_id": "a2b0747712fd45c79af2a899",
-        "desk_order": 5,
-        "name": "Publisert",
-        "desk": "56c5dd686c1fcd304c314eee",
-        "is_visible": true,
-        "content_expiry": 43200,
-        "default_incoming": false
-    },
 
-    {
-        "_id": "1e7d899b7b3048d5a5aec310",
-        "desk_order": 1,
-        "name": "Innsendt",
-        "desk": "56c5e03e6c1fcd31170d2c90",
-        "is_visible": false,
-        "content_expiry": -1,
-        "default_incoming": true
-    },
     {
         "_id": "5640bd5160fcab002c4e4c10",
         "desk_order": 2,
@@ -440,32 +269,5 @@
         "content_expiry": -1,
         "default_incoming": false,
         "working_stage": true
-    },
-    {
-        "_id": "5e6ec157371a469390220b10",
-        "desk_order": 3,
-        "name": "Levert",
-        "desk": "56c5e03e6c1fcd31170d2c90",
-        "is_visible": false,
-        "content_expiry": -1,
-        "default_incoming": false
-    },
-    {
-        "_id": "98cf9f4310734e46ac5bd710",
-        "desk_order": 4,
-        "name": "Hold",
-        "desk": "56c5e03e6c1fcd31170d2c90",
-        "is_visible": false,
-        "content_expiry": -1,
-        "default_incoming": false
-    },
-    {
-        "_id": "a2b0747712fd45c79af2a810",
-        "desk_order": 5,
-        "name": "Publisert",
-        "desk": "56c5e03e6c1fcd31170d2c90",
-        "is_visible": false,
-        "content_expiry": -1,
-        "default_incoming": false
     }
 ]
