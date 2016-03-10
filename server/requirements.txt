@@ -3,4 +3,4 @@ honcho==0.6.6
 pymongo==2.8
 Eve==0.6.0
 
--e git+git://github.com/superdesk/superdesk-core@16e37ce482e35b3c0b0b496966a69204d314081f#egg=Superdesk-Core==0.1-dev
+-e git+git://github.com/superdesk/superdesk-core@e6b93eb9299909d25a48d7b9e89f880ccd7e66a6#egg=Superdesk-Core==0.1-dev
