@@ -38,4 +38,4 @@ If you can't log in then you probably need to run `./scripts/docker-local-create
 
 If you're going to assign some hostname to the instance, you should also set it in the config file  [common.yml](./docker/common.yml) instead of `127.0.0.1`.
 
-For manual installation just follow the steps described in the [Dockerfile](./Dockerfile).
+Manual installation described [here](./INSTALL.md).
