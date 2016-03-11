@@ -84,7 +84,7 @@ class PaImgDatalayer(DataLayer):
             query = req['query']['filtered']['query']['query_string']['query'] \
                 .replace('slugline:', 'keywords:') \
                 .replace('description:', 'caption:')
-            fields.update(extract_params(query, ('headline', 'keywords', 'caption', 'text')))
+            fields.update(extract_params(query, ('headline', 'keywords', 'caption', 'text', 'starred')))
         for criterion in req.get('post_filter', {}).get('and', {}):
             # parse out the date range if possible
             if 'range' in criterion:

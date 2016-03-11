@@ -8,16 +8,16 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 from test_factory import SuperdeskTestCase
-from apps.pa_img.pa_img_datalayer import extract_params
+from pa.pa_img.pa_img_datalayer import extract_params
 
 
 class PaImgDatalayer(SuperdeskTestCase):
 
     def test_validate_query_all_first_succeeds(self):
-        query = 'all headline:(head one) caption:(capt) keywords:(key)'
-        names = ['headline', 'keywords']
+        query = 'all headline:(head one) caption:(capt) keywords:(key) starred:(1)'
+        names = ['headline', 'keywords', 'starred']
         result = extract_params(query, names)
-        self.assertDictEqual(result, {'q': 'all', 'headline': 'head one', 'keywords': 'key'},
+        self.assertDictEqual(result, {'q': 'all', 'headline': 'head one', 'keywords': 'key', 'starred': '1'},
                              msg='Fail to parse text query all first')
 
     def test_validate_query_all_middle_succeeds(self):
