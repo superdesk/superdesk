@@ -81,7 +81,7 @@ class AAPMMDatalayer(DataLayer):
         if 'query' in req['query']['filtered']:
             query_keywords = req['query']['filtered']['query']['query_string']['query']
             query_keywords = query_keywords.replace('slugline:', 'objectname:')
-            query_keywords = query_keywords.replace('description:', 'captionabstract:')
+            query_keywords = query_keywords.replace('description_text:', 'captionabstract:')
 
         fields = {}
         for criterion in req.get('post_filter', {}).get('and', {}):
@@ -136,7 +136,7 @@ class AAPMMDatalayer(DataLayer):
 
     def _parse_doc(self, doc):
         new_doc = {'_id': doc['AssetId'], 'guid': doc['AssetId'], 'headline': doc['Title'],
-                   'description': doc['Description'], 'source': doc['Credit']}
+                   'description_text': doc['Description'], 'source': doc['Credit']}
         if 'Source' in doc:
             new_doc['original_source'] = doc['Credit'] + '/' + str(doc.get('Source', ''))
         else:
@@ -317,7 +317,7 @@ class AAPMMDatalayer(DataLayer):
 
         return doc
 
-    def url_for_media(self, media_id):
+    def url_for_media(self, media_id, mimetype=None):
         return url_for('upload_raw.get_upload_as_data_uri', media_id=media_id,
                        _external=True, _schema=self._app.config['URL_PROTOCOL'])
 
