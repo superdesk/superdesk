@@ -9,29 +9,73 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
+
 import os
+import json
 
 
-APPLICATION_NAME = 'Superdesk'
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse
 
-MACROS_MODULE = 'superdesk.macros'
 
-NEWSML_PROVIDER_ID = 'pressassociation.com'
-ORGANIZATION_NAME = 'Press Association'
-ORGANIZATION_NAME_ABBREVIATION = 'PA'
+def env(variable, fallback_value=None):
+    env_value = os.environ.get(variable, '')
+    if len(env_value) == 0:
+        return fallback_value
+    else:
+        if env_value == "__EMPTY__":
+            return ''
+        else:
+            return env_value
 
-KEYWORDS_PROVIDER = 'Alchemy'
-KEYWORDS_BASE_URL = 'http://access.alchemyapi.com/calls'
-KEYWORDS_KEY_API = os.environ.get('KEYWORDS_KEY_API', 'ea87a0a0a219d55492ffa706dc878ee03aadc4c7')
+ABS_PATH = os.path.abspath(os.path.dirname(__file__))
+INIT_DATA_PATH = os.path.join(ABS_PATH, 'data')
 
-INIT_DATA_PATH = 'data'
+LOG_CONFIG_FILE = env('LOG_CONFIG_FILE', 'logging_config.yml')
+
+APPLICATION_NAME = env('APP_NAME', 'Superdesk')
+server_url = urlparse(env('SUPERDESK_URL', 'http://localhost:5000/api'))
+CLIENT_URL = env('SUPERDESK_CLIENT_URL', 'http://localhost:9000')
+URL_PROTOCOL = server_url.scheme or None
+SERVER_NAME = server_url.netloc or None
+URL_PREFIX = server_url.path.lstrip('/') or ''
+if SERVER_NAME.endswith(':80'):
+    SERVER_NAME = SERVER_NAME[:-3]
 
 INSTALLED_APPS = [
     'apps.auth',
     'superdesk.roles',
-    'superdesk.users',
-    'apps.auth.db',
+]
 
+# LDAP settings
+LDAP_SERVER = env('LDAP_SERVER', '')  # Ex: ldap://sourcefabric.org
+LDAP_SERVER_PORT = env('LDAP_SERVER_PORT', 389)
+
+# Fully Qualified Domain Name. Ex: sourcefabric.org
+LDAP_FQDN = env('LDAP_FQDN', '')
+
+# LDAP_BASE_FILTER limit the base filter to the security group. Ex: OU=Superdesk Users,dc=sourcefabric,dc=org
+LDAP_BASE_FILTER = env('LDAP_BASE_FILTER', '')
+
+# change the user depending on the LDAP directory structure
+LDAP_USER_FILTER = env('LDAP_USER_FILTER', "(&(objectCategory=user)(objectClass=user)(sAMAccountName={}))")
+
+# LDAP User Attributes to fetch. Keys would be LDAP Attribute Name and Value would be Supderdesk Model Attribute Name
+LDAP_USER_ATTRIBUTES = json.loads(env('LDAP_USER_ATTRIBUTES',
+                                      '{"givenName": "first_name", "sn": "last_name", '
+                                      '"displayName": "display_name", "mail": "email", '
+                                      '"ipPhone": "phone"}'))
+
+if LDAP_SERVER:
+    INSTALLED_APPS.append('apps.ldap')
+else:
+    INSTALLED_APPS.append('superdesk.users')
+    INSTALLED_APPS.append('apps.auth.db')
+
+
+INSTALLED_APPS.extend([
     'superdesk.upload',
     'superdesk.sequences',
     'superdesk.notification',
@@ -44,7 +88,6 @@ INSTALLED_APPS = [
     'superdesk.io.feed_parsers',
     'superdesk.io.subjectcodes',
     'superdesk.io.iptc',
-
     'apps.io',
     'apps.io.feeding_services',
     'superdesk.publish',
@@ -69,6 +112,7 @@ INSTALLED_APPS = [
     'apps.rules',
     'apps.highlights',
     'apps.publish',
+    'apps.publish.enqueue',
     'apps.publish.formatters',
     'apps.content_filters',
     'apps.content_types',
@@ -86,16 +130,49 @@ INSTALLED_APPS = [
     'apps.feature_preview',
     'apps.workqueue',
     'apps.picture_crop',
+])
 
-    'superdesk.io.subjectcodes',
-    'apps.archive_broadcast',
+RENDITIONS = {
+    'picture': {
+        'thumbnail': {'width': 220, 'height': 120},
+        'viewImage': {'width': 640, 'height': 640},
+        'baseImage': {'width': 1400, 'height': 1400},
+    },
+    'avatar': {
+        'thumbnail': {'width': 60, 'height': 60},
+        'viewImage': {'width': 200, 'height': 200},
+    }
+}
 
-    'apps.keywords',
-    'apps.content_types',
-    'apps.picture_crop',
+SERVER_DOMAIN = 'localhost'
 
-    'pa.topics',
-    'pa.pa_img',
-]
+MACROS_MODULE = env('MACROS_MODULE', 'superdesk.macros')
 
-DEFAULT_URGENCY_VALUE_FOR_MANUAL_ARTICLES = None
+WS_HOST = env('WSHOST', '0.0.0.0')
+WS_PORT = env('WSPORT', '5100')
+
+# Determines if the ODBC publishing mechanism will be used, If enabled then pyodbc must be installed along with it's
+# dependencies
+ODBC_PUBLISH = env('ODBC_PUBLISH', None)
+# ODBC test server connection string
+ODBC_TEST_CONNECTION_STRING = env('ODBC_TEST_CONNECTION_STRING',
+                                  'DRIVER=FreeTDS;DSN=NEWSDB;UID=???;PWD=???;DATABASE=News')
+
+DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES = 'AAP'
+DEFAULT_URGENCY_VALUE_FOR_MANUAL_ARTICLES = 3
+
+# This value gets injected into NewsML 1.2 and G2 output documents.
+NEWSML_PROVIDER_ID = 'aap.com.au'
+ORGANIZATION_NAME = 'Australian Associated Press'
+ORGANIZATION_NAME_ABBREVIATION = 'AAP'
+
+AMAZON_CONTAINER_NAME = env('AMAZON_CONTAINER_NAME', '')
+AMAZON_ACCESS_KEY_ID = env('AMAZON_ACCESS_KEY_ID', '')
+AMAZON_SECRET_ACCESS_KEY = env('AMAZON_SECRET_ACCESS_KEY', '')
+AMAZON_REGION = env('AMAZON_REGION', 'us-east-1')
+AMAZON_SERVE_DIRECT_LINKS = env('AMAZON_SERVE_DIRECT_LINKS', False)
+AMAZON_S3_USE_HTTPS = env('AMAZON_S3_USE_HTTPS', False)
+
+is_testing = os.environ.get('SUPERDESK_TESTING', '').lower() == 'true'
+ELASTICSEARCH_FORCE_REFRESH = is_testing
+ELASTICSEARCH_AUTO_AGGREGATIONS = False
