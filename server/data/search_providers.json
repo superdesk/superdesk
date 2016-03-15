@@ -1,0 +1,12 @@
+[
+    { 
+        "_id" : "56d6d97c1b0852475d52cc25",
+        "source" : "paimg",
+        "search_provider" : "paimg",
+        "is_closed" : false,
+        "config" : {
+            "password" : "#ENV_PA_IMG_TOKEN#",
+            "username" : "#ENV_PA_IMG_TOKEN#"
+        }
+    }
+]
