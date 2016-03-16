@@ -33,8 +33,8 @@
         "schema": {
             "headline": {},
             "slugline": {"required": true},
-            "body_html": {"required": true},
-            "abstract": {},
+            "body_html": {"required": true, "editor": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]},
+            "abstract": {"editor": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]},
             "byline": {},
             "subject": {},
             "anpa_category": {},
@@ -52,8 +52,8 @@
         "schema": {
             "headline": {},
             "slugline": {"required": true},
-            "body_html": {"required": true},
-            "abstract": {},
+            "body_html": {"required": true, "editor": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]},
+            "abstract": {"editor": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]},
             "byline": {},
             "subject": {},
             "anpa_category": {},

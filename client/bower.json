@@ -18,7 +18,7 @@
     "ng-file-upload": "11.2.3",
     "raven-js": "1.1.11",
     "jquery-ui": "1.11.2",
-    "medium-editor": "~5.13.0",
+    "medium-editor": "~5.15.0",
     "ment.io": "0.9.22",
     "angular-moment": "~0.10.3",
     "classnames": "~2.2.0",
