@@ -87,7 +87,6 @@ INSTALLED_APPS.extend([
     'superdesk.io.feeding_services',
     'superdesk.io.feed_parsers',
     'superdesk.io.subjectcodes',
-    'superdesk.io.iptc',
     'apps.io',
     'apps.io.feeding_services',
     'superdesk.publish',
@@ -130,6 +129,8 @@ INSTALLED_APPS.extend([
     'apps.feature_preview',
     'apps.workqueue',
     'apps.picture_crop',
+
+    'ntb.subjects',
 ])
 
 RENDITIONS = {
