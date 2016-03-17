@@ -40,6 +40,7 @@
             "_id": "5641b0ec015149002643921b",
             "type": "search"
         }],
+        "source": "Press Association",
         "desk_metadata": {
             "anpa_category": [
                 {"name": "Sport", "qcode": "paservice:sport", "scheme": null}
@@ -98,6 +99,7 @@
             "_id": "5641b0ec015149002643921b",
             "type": "search"
         }],
+        "source": "Press Association",
         "desk_metadata": {
             "anpa_category": [
                 {"name": "News", "qcode": "paservice:news", "scheme": null}
@@ -139,6 +141,7 @@
         }, {
             "user": "a21a621c4c8847b085fe2d78"
         }],
+        "source": "Press Association",
         "desk_metadata": {
             "anpa_category": [
                 {"name": "Motoring", "qcode": "paservice:motoring", "scheme": null}
@@ -162,6 +165,7 @@
         }, {
             "user": "a21a621c4c8847b085fe2d78"
         }],
+        "source": "Press Association",
         "desk_metadata": {
             "anpa_category": [
                 {"name": "Real Life", "qcode": "paservice:real-life", "scheme": null}
