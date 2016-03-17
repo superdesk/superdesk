@@ -24,21 +24,21 @@ cache:
     - $HOME/.cache/bower
 
 before_install:
-    - npm install -g grunt-cli bower ;
-    - pip install requests &&
-    - export DISPLAY=:99.0 &&
-    - /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1920x1080x24 ;
-    - ./scripts/get-chrome-url | wget -N --no-verbose -i - && unzip chrome-linux.zip &&
-    - export CHROME_BIN=`pwd`/chrome-linux/chrome &&
-    - $CHROME_BIN --version ;
+    - npm install -g grunt-cli bower
+    - pip install requests
+    - export DISPLAY=:99.0
+    - /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1920x1080x24
+    - ./scripts/get-chrome-url | wget -N --no-verbose -i - && unzip chrome-linux.zip
+    - export CHROME_BIN=`pwd`/chrome-linux/chrome
+    - $CHROME_BIN --version
 
 install:
-    - cd server && pip install -r dev-requirements.txt && cd .. ;
-    - cd client && npm install && bower install && cd .. ;
+    - cd server && pip install -r dev-requirements.txt && cd ..
+    - cd client && npm install && bower install && cd ..
 
 script:
-    - cd client && npm test && cd .. ;
-    - cd server && flake8 && cd .. ;
-    - cd server && behave ./features/ --format progress2 --logging-level ERROR && cd .. ;
+    - cd client && npm test && cd ..
+    - cd server && flake8 && cd ..
+    - cd server && behave ./features/ --format progress2 --logging-level ERROR && cd ..
     - cd client && grunt build && cd ..
     - cd server && python manage.py users:create -u test -p test -e test@localhost --admin && cd ..
