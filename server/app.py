@@ -15,13 +15,13 @@ import settings
 from superdesk.factory import get_app as superdesk_app
 
 
-def get_app():
+def get_app(config=None):
     """App factory.
 
     :param config: configuration that can override config from `settings.py`
     :return: a new SuperdeskEve app instance
     """
-    config = {'APP_ABSPATH': os.path.abspath(os.path.dirname(__file__))}
+    config = config or {'APP_ABSPATH': os.path.abspath(os.path.dirname(__file__))}
 
     for key in dir(settings):
         if key.isupper():
