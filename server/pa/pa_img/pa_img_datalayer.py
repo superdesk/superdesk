@@ -13,6 +13,7 @@ import logging
 import re
 import math
 import requests
+from datetime import datetime
 
 from io import BytesIO
 from eve.io.base import DataLayer
@@ -41,6 +42,12 @@ def extract_params(query, names):
     if query:
         params['q'] = query
     return params
+
+
+# Images API is looking for param like dd-mm-yyyy
+def extract_date(date):
+    date_object = datetime.strptime(date, '%d/%m/%Y')
+    return date_object.strftime('%d-%m-%Y')
 
 
 class PaImgDatalayer(DataLayer):
@@ -80,22 +87,44 @@ class PaImgDatalayer(DataLayer):
 
         url = self._app.config['PAIMG_SEARCH_URL'] + '/search'
         fields = {}
+
         if 'query' in req['query']['filtered']:
             query = req['query']['filtered']['query']['query_string']['query'] \
                 .replace('slugline:', 'keywords:') \
                 .replace('description:', 'caption:')
-            fields.update(extract_params(query, ('headline', 'keywords', 'caption', 'text', 'starred')))
+
+            params = extract_params(query, ('starred'))
+            if 'starred' in params:
+                fields.update({'starred': params['starred']})
+
+            text_params = extract_params(query, ('headline', 'keywords', 'caption', 'text'))
+            # combine all possible text params to use the q field.
+            fields.update({'q': ' '.join(text_params.values())})
+
         for criterion in req.get('post_filter', {}).get('and', {}):
             # parse out the date range if possible
             if 'range' in criterion:
                 start = None
                 end = None
+                modified_since = None
+                modified_before = None
                 daterange = None
-                if 'firstcreated' in criterion.get('range', {}):
-                    if 'gte' in criterion['range']['firstcreated']:
-                        start = criterion['range']['firstcreated']['gte'][0:10]
-                    if 'lte' in criterion['range']['firstcreated']:
-                        end = criterion['range']['firstcreated']['lte'][0:10]
+                data = criterion.get('range', {})
+
+                if 'firstcreated' in data:
+                    created = criterion['range']['firstcreated']
+                    if 'gte' in created:
+                        start = created['gte'][0:10]
+                    if 'lte' in created:
+                        end = created['lte'][0:10]
+
+                if 'firstmodified' in data:
+                    modified = criterion['range']['firstmodified']
+                    if 'gte' in modified:
+                        modified_since = modified['gte'][0:10]
+                    if 'lte' in modified:
+                        modified_before = modified['lte'][0:10]
+
                 # if there is a special start and no end it's one of the date buttons
                 if start and not end:
                     if start == 'now-24H':
@@ -107,22 +136,29 @@ class PaImgDatalayer(DataLayer):
                 # we've got something but no daterange set above
                 if (start or end) and not daterange:
                     if start:
-                        fields['created_since'] = start
+                        fields['created_since'] = extract_date(start)
                     if end:
-                        fields['created_before'] = end
+                        fields['created_before'] = extract_date(end)
                 if daterange:
                     fields['days_since'] = daterange
+                if modified_since:
+                    fields['modified_since'] = extract_date(modified_since)
+                if modified_before:
+                    fields['modified_before'] = extract_date(modified_before)
 
             if 'terms' in criterion:
                 if 'type' in criterion.get('terms', {}):
                     type = criterion['terms']['type']
                     if type == CONTENT_TYPE.PICTURE:
-                        fields['photos'] = 'true'
+                        fields['photos'] = 1
 
         if not fields:
             fields['days_since'] = 1
 
         fields['ck'] = 'sd'
+
+        # copying Torch functionality
+        fields['order'] = 'modified'
 
         offset, limit = int(req.get('from', '0')), max(10, int(req.get('size', '25')))
         fields['limit'] = limit
@@ -142,7 +178,9 @@ class PaImgDatalayer(DataLayer):
         """
         if self._token:
             fields['token'] = self._token
+
         r = requests.get(url, params=fields, headers=self._headers)
+
         if r.status_code < 200 or r.status_code >= 300:
             logger.error('error fetching url=%s status=%s content=%s' % (url, r.status_code, r.content or ''))
         return r

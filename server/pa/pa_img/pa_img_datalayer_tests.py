@@ -8,7 +8,7 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 from test_factory import SuperdeskTestCase
-from pa.pa_img.pa_img_datalayer import extract_params
+from pa.pa_img.pa_img_datalayer import extract_params, extract_date
 
 
 class PaImgDatalayer(SuperdeskTestCase):
@@ -33,3 +33,7 @@ class PaImgDatalayer(SuperdeskTestCase):
         result = extract_params(query, names)
         self.assertDictEqual(result, {'q': 'all', 'headline': 'head one', 'keywords': 'key'},
                              msg='Fail to parse text query all end')
+
+    def test_date_param_format_is_correct(self):
+        date = '29/02/2016'
+        self.assertEqual('29-02-2016', extract_date(date))
