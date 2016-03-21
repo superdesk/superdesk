@@ -14,7 +14,7 @@ import os
 
 APPLICATION_NAME = 'Superdesk'
 
-MACROS_MODULE = 'superdesk.macros'
+MACROS_MODULE = 'macros'
 
 NEWSML_PROVIDER_ID = 'pressassociation.com'
 ORGANIZATION_NAME = 'Press Association'
