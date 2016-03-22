@@ -416,16 +416,6 @@
         ]
     },
     {
-        "_id": "top5",
-        "display_name": "Top 5",
-        "type": "manageable",
-        "service": {"paservice:news": 1, "paservice:sport": 1},
-        "priority": 41,
-        "items": [
-            {"is_active": true, "name": "Top 5", "qcode": "paselection:top-5"}
-        ]
-    },
-    {
         "_id": "featured",
         "display_name": "Featured",
         "type": "manageable",
