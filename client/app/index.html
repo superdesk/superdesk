@@ -20,7 +20,7 @@
     <!-- endbuild -->
 
   </head>
-  <body>
+  <body ng-class="config.bodyClass">
 
     <div sd-superdesk-view></div>
 
@@ -236,6 +236,10 @@
 
     <script>
         var config = <%= grunt.toJSON(config) %>;
+
+        config.bodyClass = {
+            'indent-article': 1
+        };
 
         config.features = {
             preview: 1,
