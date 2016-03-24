@@ -8,7 +8,7 @@ TO_BE_UPDATED = [
     {
         'feed_url': 'https://github.com/superdesk/superdesk-core/commits/master.atom',
         'file_name': 'server/requirements.txt',
-        'pattern': 'superdesk-core@([a-f0-9]*)'
+        'pattern': 'superdesk-core.git@([a-f0-9]*)'
     },
     # superdesk-client-core
     {
@@ -20,7 +20,7 @@ TO_BE_UPDATED = [
 
 def get_last_commit(url):
     feed = feedparser.parse(url)
-    return feed['entries'][0]['id'].split('/')[1]
+    return feed['entries'][0]['id'].split('/')[1][:9]
 
 
 def replace_in_file(filename, search, new_value):
