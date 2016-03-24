@@ -69,6 +69,7 @@ INSTALLED_APPS = [
     'apps.rules',
     'apps.highlights',
     'apps.publish',
+    'apps.publish.enqueue',
     'apps.publish.formatters',
     'apps.content_filters',
     'apps.content_types',
