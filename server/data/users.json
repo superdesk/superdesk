@@ -11,8 +11,7 @@
         "role": "54e655e31024542de76d6636",
         "username": "sportsub",
         "user_type": "sub",
-        "needs_activation": false,
-        "sign_off": "SS"
+        "needs_activation": false
     },
     
     {
@@ -26,8 +25,7 @@
         "role": "54e650f31024542de2649bea",
         "username": "featurejournalist",
         "user_type": "user",
-        "needs_activation": false,
-        "sign_off": "FJ"
+        "needs_activation": false
     },
 
     {
@@ -35,7 +33,6 @@
         "password": "$2a$12$3qgobovZq9pHb.Z6.JgwROkE09y1QMQdqfFQZCsbWJscguabVkzSm",
         "user_type": "administrator",
         "email": "admin@example.com",
-        "sign_off": "ADM",
         "username": "admin",
         "display_name": "admin",
         "is_active": true,
@@ -55,7 +52,6 @@
         "role": "54e651ef1024542de2649bed",
         "username": "editor",
         "user_type": "editor",
-        "needs_activation": false,
-        "sign_off": "EI"
+        "needs_activation": false
     }
 ]
