@@ -2,4 +2,4 @@ gunicorn==19.4.5
 honcho==0.6.6
 Eve==0.6.3
 
--e git+git://github.com/superdesk/superdesk-core@aabd267445f14686a9f3c51efee5803f1923eba2#egg=Superdesk-Core==0.1-dev
+-e git+git://github.com/superdesk/superdesk-core@4d573e12fc4dde1c333d2f7def76a5ecaf0795d0#egg=Superdesk-Core==0.1-dev
