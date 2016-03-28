@@ -5,9 +5,9 @@
         "priority": 80,
         "enabled": true,
         "schema": {
-            "headline": {"required": true, "maxlength": 64, "editor": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]},
-            "abstract": {"required": true, "maxlength": 160, "editor": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]},
-            "body_html": {"required": true, "editor": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor", "embed", "picture", "table"]},
+            "headline": {"required": true, "maxlength": 64},
+            "abstract": {"required": true, "maxlength": 160},
+            "body_html": {"required": true},
             "feature_image": {"type": "picture"},
             "byline": {"required": true},
             "dateline": {"required": true},
@@ -19,6 +19,11 @@
             "subject": {"required": true},
             "place": {"required": true},
             "ednote": {}
+        },
+        "editor": {
+            "headline": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"],
+            "abstract": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"],
+            "body_html": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor", "embed", "picture", "table"]
         }
     },
     {
@@ -27,9 +32,9 @@
         "priority": 50,
         "enabled": true,
         "schema": {
-            "headline": {"required": true, "maxlength": 64, "editor": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]},
-            "abstract": {"maxlength": 160, "editor": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]},
-            "body_html": {"editor": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor", "embed", "picture", "table"]},
+            "headline": {"required": true, "maxlength": 64},
+            "abstract": {"maxlength": 160},
+            "body_html": {},
             "feature_image": {"type": "picture"},
             "byline": {},
             "dateline": {},
@@ -41,6 +46,11 @@
             "subject": {"required": true},
             "place": {},
             "ednote": {}
+        },
+        "editor": {
+            "headline": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"],
+            "abstract": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"],
+            "body_html": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor", "embed", "picture", "table"]
         }
     },
     {
@@ -49,9 +59,9 @@
         "priority": 30,
         "enabled": true,
         "schema": {
-            "headline": {"required": true, "maxlength": 64, "editor": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]},
-            "abstract": {"maxlength": 160, "editor": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]},
-            "body_html": {"editor": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor", "embed", "picture", "table"]},
+            "headline": {"required": true, "maxlength": 64},
+            "abstract": {"maxlength": 160},
+            "body_html": {},
             "feature_image": {"type": "picture"},
             "byline": {},
             "dateline": {},
@@ -63,6 +73,11 @@
             "subject": {"required": true},
             "place": {},
             "ednote": {}
+        },
+        "editor": {
+            "headline": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"],
+            "abstract": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"],
+            "body_html": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor", "embed", "picture", "table"]
         }
     },
     {
@@ -71,16 +86,20 @@
         "priority": 30,
         "enabled": false,
         "schema": {
-            "headline": {"maxlength": 64, "editor": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]},
-            "slugline": {"required": true, "maxlength": 30, "editor": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]},
-            "body_html": {"required": true, "editor": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor", "embed", "picture", "table"]},
+            "headline": {"maxlength": 64},
+            "slugline": {"required": true, "maxlength": 30},
+            "body_html": {"required": true},
             "abstract": {"maxlength": 160},
             "byline": {},
             "subject": {},
             "anpa_category": {},
             "ednote": {},
-
             "feature_image": {"type": "picture"}
+        },
+        "editor": {
+            "headline": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"],
+            "slugline": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"],
+            "body_html": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor", "embed", "picture", "table"]
         }
     }
 ]
