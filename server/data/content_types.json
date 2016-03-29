@@ -21,9 +21,30 @@
             "ednote": {}
         },
         "editor": {
-            "headline": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"],
-            "abstract": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"],
-            "body_html": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor", "embed", "picture", "table"]
+            "slugline": {"order": 1, "sdWidth": "full"},
+            "genre": {"order": 2, "sdWidth": "half"},
+            "anpa_take_key": {"order": 3, "sdWidth": "half"},
+            "place": {"order": 4, "sdWidth": "half"},
+            "priority": {"order": 5, "sdWidth": "quarter"},
+            "urgency": {"order": 6, "sdWidth": "quarter"},
+            "anpa_category": {"order": 7, "sdWidth": "full"},
+            "subject": {"order": 8, "sdWidth": "full"},
+            "company_codes": {"order": 10, "sdWidth": "full"},
+            "ednote": {"order": 11, "sdWidth": "full"},
+            "headline": {"order": 1, "formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor", "removeFormat"]},
+            "abstract": {"order": 2, "formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor", "removeFormat"]},
+            "body_html": {
+                "order": 5,
+                "formatOptions":["h1", "h2", "bold", "italic", "underline", "quote", "anchor", "embed", "picture", "table", "removeFormat"]
+            },
+            "byline": {"order": 3},
+            "dateline": {"order": 4},
+            "located": {},
+            "sign_off": {"order": 8},
+            "footer": {"order": 6},
+            "body_footer": {"order": 7},
+            "media": {"order": 5},
+            "media_description": {"order": 6}
         }
     },
     {
@@ -48,9 +69,30 @@
             "ednote": {}
         },
         "editor": {
-            "headline": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"],
-            "abstract": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"],
-            "body_html": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor", "embed", "picture", "table"]
+            "slugline": {"order": 1, "sdWidth": "full"},
+            "genre": {"order": 2, "sdWidth": "half"},
+            "anpa_take_key": {"order": 3, "sdWidth": "half"},
+            "place": {"order": 4, "sdWidth": "half"},
+            "priority": {"order": 5, "sdWidth": "quarter"},
+            "urgency": {"order": 6, "sdWidth": "quarter"},
+            "anpa_category": {"order": 7, "sdWidth": "full"},
+            "subject": {"order": 8, "sdWidth": "full"},
+            "company_codes": {"order": 10, "sdWidth": "full"},
+            "ednote": {"order": 11, "sdWidth": "full"},
+            "headline": {"order": 1, "formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor", "removeFormat"]},
+            "abstract": {"order": 2, "formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor", "removeFormat"]},
+            "body_html": {
+                "order": 5,
+                "formatOptions":["h1", "h2", "bold", "italic", "underline", "quote", "anchor", "embed", "picture", "table", "removeFormat"]
+            },
+            "byline": {"order": 3},
+            "dateline": {"order": 4},
+            "located": {},
+            "sign_off": {"order": 8},
+            "footer": {"order": 6},
+            "body_footer": {"order": 7},
+            "media": {"order": 5},
+            "media_description": {"order": 6}
         }
     },
     {
@@ -75,9 +117,30 @@
             "ednote": {}
         },
         "editor": {
-            "headline": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"],
-            "abstract": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"],
-            "body_html": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor", "embed", "picture", "table"]
+            "slugline": {"order": 1, "sdWidth": "full"},
+            "genre": {"order": 2, "sdWidth": "half"},
+            "anpa_take_key": {"order": 3, "sdWidth": "half"},
+            "place": {"order": 4, "sdWidth": "half"},
+            "priority": {"order": 5, "sdWidth": "quarter"},
+            "urgency": {"order": 6, "sdWidth": "quarter"},
+            "anpa_category": {"order": 7, "sdWidth": "full"},
+            "subject": {"order": 8, "sdWidth": "full"},
+            "company_codes": {"order": 10, "sdWidth": "full"},
+            "ednote": {"order": 11, "sdWidth": "full"},
+            "headline": {"order": 1, "formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor", "removeFormat"]},
+            "abstract": {"order": 2, "formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor", "removeFormat"]},
+            "body_html": {
+                "order": 5,
+                "formatOptions":["h1", "h2", "bold", "italic", "underline", "quote", "anchor", "embed", "picture", "table", "removeFormat"]
+            },
+            "byline": {"order": 3},
+            "dateline": {"order": 4},
+            "located": {},
+            "sign_off": {"order": 8},
+            "footer": {"order": 6},
+            "body_footer": {"order": 7},
+            "media": {"order": 5},
+            "media_description": {"order": 6}
         }
     },
     {
@@ -97,9 +160,30 @@
             "feature_image": {"type": "picture"}
         },
         "editor": {
-            "headline": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"],
-            "slugline": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"],
-            "body_html": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor", "embed", "picture", "table"]
+            "slugline": {"order": 1, "sdWidth": "full"},
+            "genre": {"order": 2, "sdWidth": "half"},
+            "anpa_take_key": {"order": 3, "sdWidth": "half"},
+            "place": {"order": 4, "sdWidth": "half"},
+            "priority": {"order": 5, "sdWidth": "quarter"},
+            "urgency": {"order": 6, "sdWidth": "quarter"},
+            "anpa_category": {"order": 7, "sdWidth": "full"},
+            "subject": {"order": 8, "sdWidth": "full"},
+            "company_codes": {"order": 10, "sdWidth": "full"},
+            "ednote": {"order": 11, "sdWidth": "full"},
+            "headline": {"order": 1, "formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor", "removeFormat"]},
+            "abstract": {"order": 2, "formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor", "removeFormat"]},
+            "body_html": {
+                "order": 5,
+                "formatOptions":["h1", "h2", "bold", "italic", "underline", "quote", "anchor", "embed", "picture", "table", "removeFormat"]
+            },
+            "byline": {"order": 3},
+            "dateline": {"order": 4},
+            "located": {},
+            "sign_off": {"order": 8},
+            "footer": {"order": 6},
+            "body_footer": {"order": 7},
+            "media": {"order": 5},
+            "media_description": {"order": 6}
         }
     }
 ]
