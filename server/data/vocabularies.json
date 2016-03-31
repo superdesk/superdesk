@@ -195,9 +195,9 @@
         "display_name": "Image Crop Sizes",
         "type": "manageable",
         "items": [
-            {"is_active": true, "name": "thumbnail", "width": 300, "height": 300},
             {"is_active": true, "name": "preview3x2", "width": 1440, "height": 960},
             {"is_active": true, "name": "preview4x3", "width": 1440, "height": 1080},
+            {"is_active": true, "name": "thumbnail", "width": 300, "height": 300},
             {"is_active": true, "name": "wide360", "width": 640, "height": 360},
             {"is_active": true, "name": "wide720", "width": 1280, "height": 720},
             {"is_active": true, "name": "wide1080", "width": 1920, "height": 1080}
