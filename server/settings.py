@@ -111,6 +111,7 @@ INSTALLED_APPS.extend([
     'apps.privilege',
     'apps.rules',
     'apps.highlights',
+    'apps.products',
     'apps.publish',
     'apps.publish.enqueue',
     'apps.publish.formatters',
