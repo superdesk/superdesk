@@ -32,6 +32,11 @@ postfix:
 superdesk:
   build: ../
   environment:
+   - SUPERDESK_URL=http://127.0.0.1/api
+   - SUPERDESK_WS_URL=ws://127.0.0.1/ws
+   - PUBLICAPI_URL=http://127.0.0.1/pubapi
+   - SUPERDESK_CLIENT_URL=http://127.0.0.1
+   - SUPERDESK_TESTING=True
    - MONGO_URI=mongodb://mongodb/test
    - PUBLICAPI_MONGO_URI=mongodb://mongodb/test_pa
    - LEGAL_ARCHIVE_URI=mongodb://mongodb/test_la
@@ -55,11 +60,8 @@ superdesk:
    - MAIL_USERNAME=user
    - MAIL_PASSWORD=pwd
    - SENTRY_DSN
-   - SUPERDESK_URL=http://127.0.0.1/api
-   - SUPERDESK_WS_URL=ws://127.0.0.1/ws
-   - PUBLICAPI_URL=http://127.0.0.1/pubapi
-   - SUPERDESK_CLIENT_URL=http://127.0.0.1
-   - SUPERDESK_TESTING=True
+   - VIEW_DATE_FORMAT
+   - VIEW_TIME_FORMAT
   volumes:
    - ../results/server/unit:/opt/superdesk/results-unit/
    - ../results/server/behave:/opt/superdesk/results-behave/
