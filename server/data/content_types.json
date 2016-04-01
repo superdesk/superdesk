@@ -5,11 +5,19 @@
         "priority": 80,
         "enabled": true,
         "schema": {
-            "slugline": {"required": true},
-            "body_html": {"required": true},
             "anpa_category": {},
             "subject": {},
-            "ednote": {}
+            "slugline": {"required": true},
+            "ednote": {},
+
+            "body_html": {"required": true}
+        },
+        "editor": {
+            "anpa_category": {"order": 2, "sdWidth": "full"},
+            "cvs": {"order": 3, "sdWidth": "full"},
+            "subject": {"order": 4, "sdWidth": "full"},
+            "slugline": {"order": 5, "sdWidth": "full"},
+            "ednote": {"order": 6, "sdWidth": "full"}
         }
     },
     {
@@ -18,11 +26,19 @@
         "priority": 50,
         "enabled": true,
         "schema": {
-            "slugline": {"required": true},
-            "body_html": {"required": true},
-            "subject": {},
             "anpa_category": {},
-            "ednote": {}
+            "subject": {},
+            "slugline": {"required": true},
+            "ednote": {},
+
+            "body_html": {"required": true}
+        },
+        "editor": {
+            "anpa_category": {"order": 2, "sdWidth": "full"},
+            "cvs": {"order": 3, "sdWidth": "full"},
+            "subject": {"order": 4, "sdWidth": "full"},
+            "slugline": {"order": 5, "sdWidth": "full"},
+            "ednote": {"order": 6, "sdWidth": "full"}
         }
     },
     {
@@ -31,17 +47,28 @@
         "priority": 30,
         "enabled": true,
         "schema": {
-            "headline": {},
-            "slugline": {"required": true},
-            "body_html": {"required": true, "editor": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]},
-            "abstract": {"editor": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]},
-            "byline": {},
-            "subject": {},
-            "anpa_category": {},
-            "ednote": {},
             "urgency": {"nullable": true},
+            "anpa_category": {},
+            "subject": {},
+            "slugline": {"required": true},
+            "ednote": {},
 
+            "headline": {},
+            "body_html": {"required": true},
+            "abstract": {},
+            "byline": {},
             "feature_image": {"type": "picture"}
+        },
+        "editor": {
+            "urgency": {"order": 1, "sdWidth": "full"},
+            "anpa_category": {"order": 2, "sdWidth": "full"},
+            "cvs": {"order": 3, "sdWidth": "full"},
+            "subject": {"order": 4, "sdWidth": "full"},
+            "slugline": {"order": 5, "sdWidth": "full"},
+            "ednote": {"order": 6, "sdWidth": "full"},
+
+            "body_html": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]},
+            "abstract": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]}
         }
     },
     {
@@ -50,16 +77,26 @@
         "priority": 30,
         "enabled": false,
         "schema": {
-            "headline": {},
-            "slugline": {"required": true},
-            "body_html": {"required": true, "editor": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]},
-            "abstract": {"editor": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]},
-            "byline": {},
-            "subject": {},
             "anpa_category": {},
+            "subject": {},
+            "slugline": {"required": true},
             "ednote": {},
 
+            "headline": {},
+            "body_html": {"required": true},
+            "abstract": {},
+            "byline": {},
             "feature_image": {"type": "picture"}
+        },
+        "editor": {
+            "anpa_category": {"order": 2, "sdWidth": "full"},
+            "cvs": {"order": 3, "sdWidth": "full"},
+            "subject": {"order": 4, "sdWidth": "full"},
+            "slugline": {"order": 5, "sdWidth": "full"},
+            "ednote": {"order": 6, "sdWidth": "full"},
+
+            "body_html": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]},
+            "abstract": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]}
         }
     }
 ]
