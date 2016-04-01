@@ -60,12 +60,13 @@
             "feature_image": {"type": "picture"}
         },
         "editor": {
-            "urgency": {"order": 1, "sdWidth": "full"},
-            "anpa_category": {"order": 2, "sdWidth": "full"},
-            "cvs": {"order": 3, "sdWidth": "full"},
-            "subject": {"order": 4, "sdWidth": "full"},
-            "slugline": {"order": 5, "sdWidth": "full"},
-            "ednote": {"order": 6, "sdWidth": "full"},
+            "urgency": {"order": 1, "sdWidth": "half"},
+            "urgency_dummy": {"order": 2, "sdWidth": "half"},
+            "anpa_category": {"order": 3, "sdWidth": "full"},
+            "cvs": {"order": 4, "sdWidth": "full"},
+            "subject": {"order": 5, "sdWidth": "full"},
+            "slugline": {"order": 6, "sdWidth": "full"},
+            "ednote": {"order": 7, "sdWidth": "full"},
 
             "body_html": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]},
             "abstract": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]}
