@@ -177,3 +177,4 @@ is_testing = os.environ.get('SUPERDESK_TESTING', '').lower() == 'true'
 ELASTICSEARCH_FORCE_REFRESH = is_testing
 ELASTICSEARCH_AUTO_AGGREGATIONS = False
 SIGN_OFF_MAPPING = 'email'
+DEFAULT_CONTENT_TYPE = 'Standard'
