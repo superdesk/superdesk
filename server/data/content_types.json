@@ -16,9 +16,10 @@
             "anpa_category": {"required": true},
             "priority": {"required": true},
             "urgency": {"required": true},
-            "genre" : {},
-            "subject": {"required": true},
-            "place": {"required": true},
+            "category": {},
+            "subjects": {"required": true},
+            "genre_service" : {},
+            "places": {"required": true},
             "ednote": {}
         },
         "editor": {
@@ -36,10 +37,11 @@
             "anpa_category": {"order": 2, "sdWidth": "half"},
             "priority": {"order": 3, "sdWidth": "quarter"},
             "urgency": {"order": 4, "sdWidth": "quarter"},
-            "genre": {"order": 5, "sdWidth": "half"},
-            "subject": {"order": 6, "sdWidth": "full"},
-            "place": {"order": 7, "sdWidth": "full"},
-            "ednote": {"order": 8, "sdWidth": "full"}
+            "category": {"order": 5, "sdWidth": "half"},
+            "subjects": {"order": 6, "sdWidth": "full"},
+            "genre_service": {"order": 7, "sdWidth": "half"},
+            "places": {"order": 8, "sdWidth": "full"},
+            "ednote": {"order": 9, "sdWidth": "full"}
         }
     },
     {
@@ -59,9 +61,10 @@
             "anpa_category": {"required": true},
             "priority": {"required": true},
             "urgency": {"required": true},
-            "genre" : {},
-            "subject": {"required": true},
-            "place": {"required": true},
+            "category": {},
+            "subjects": {"required": true},
+            "genre_service" : {},
+            "places": {"required": true},
             "ednote": {}
         },
         "editor": {
@@ -79,10 +82,11 @@
             "anpa_category": {"order": 2, "sdWidth": "half"},
             "priority": {"order": 3, "sdWidth": "quarter"},
             "urgency": {"order": 4, "sdWidth": "quarter"},
-            "genre": {"order": 5, "sdWidth": "half"},
-            "subject": {"order": 6, "sdWidth": "full"},
-            "place": {"order": 7, "sdWidth": "full"},
-            "ednote": {"order": 8, "sdWidth": "full"}
+            "category": {"order": 5, "sdWidth": "half"},
+            "subjects": {"order": 6, "sdWidth": "full"},
+            "genre_service": {"order": 7, "sdWidth": "half"},
+            "places": {"order": 8, "sdWidth": "full"},
+            "ednote": {"order": 9, "sdWidth": "full"}
         }
     },
     {
@@ -102,9 +106,10 @@
             "anpa_category": {"required": true},
             "priority": {"required": true},
             "urgency": {"required": true},
-            "genre" : {},
-            "subject": {"required": true},
-            "place": {"required": true},
+            "category": {},
+            "subjects": {"required": true},
+            "genre_service" : {},
+            "places": {"required": true},
             "ednote": {}
         },
         "editor": {
@@ -122,10 +127,11 @@
             "anpa_category": {"order": 2, "sdWidth": "half"},
             "priority": {"order": 3, "sdWidth": "quarter"},
             "urgency": {"order": 4, "sdWidth": "quarter"},
-            "genre": {"order": 5, "sdWidth": "half"},
-            "subject": {"order": 6, "sdWidth": "full"},
-            "place": {"order": 7, "sdWidth": "full"},
-            "ednote": {"order": 8, "sdWidth": "full"}
+            "category": {"order": 5, "sdWidth": "half"},
+            "subjects": {"order": 6, "sdWidth": "full"},
+            "genre_service": {"order": 7, "sdWidth": "half"},
+            "places": {"order": 8, "sdWidth": "full"},
+            "ednote": {"order": 9, "sdWidth": "full"}
         }
     },
     {
@@ -145,9 +151,10 @@
             "anpa_category": {"required": true},
             "priority": {"required": true},
             "urgency": {"required": true},
-            "genre" : {},
-            "subject": {"required": true},
-            "place": {"required": true},
+            "category": {},
+            "subjects": {"required": true},
+            "genre_service" : {},
+            "places": {"required": true},
             "ednote": {}
         },
         "editor": {
@@ -165,10 +172,11 @@
             "anpa_category": {"order": 2, "sdWidth": "half"},
             "priority": {"order": 3, "sdWidth": "quarter"},
             "urgency": {"order": 4, "sdWidth": "quarter"},
-            "genre": {"order": 5, "sdWidth": "half"},
-            "subject": {"order": 6, "sdWidth": "full"},
-            "place": {"order": 7, "sdWidth": "full"},
-            "ednote": {"order": 8, "sdWidth": "full"}
+            "category": {"order": 5, "sdWidth": "half"},
+            "subjects": {"order": 6, "sdWidth": "full"},
+            "genre_service": {"order": 7, "sdWidth": "half"},
+            "places": {"order": 8, "sdWidth": "full"},
+            "ednote": {"order": 9, "sdWidth": "full"}
         }
     }
 ]
