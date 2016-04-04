@@ -47,7 +47,7 @@
         "priority": 30,
         "enabled": true,
         "schema": {
-            "urgency": {"nullable": true},
+            "ranking": {"nullable": true},
             "anpa_category": {},
             "subject": {},
             "slugline": {"required": true},
@@ -60,7 +60,7 @@
             "feature_image": {"type": "picture"}
         },
         "editor": {
-            "urgency": {"order": 1, "sdWidth": "full"},
+            "ranking": {"order": 1, "sdWidth": "full"},
             "anpa_category": {"order": 2, "sdWidth": "full"},
             "cvs": {"order": 3, "sdWidth": "full"},
             "subject": {"order": 4, "sdWidth": "full"},
