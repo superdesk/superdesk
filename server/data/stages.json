@@ -2,272 +2,200 @@
     {
         "_id": "1e7d899b7b3048d5a5aec301",
         "desk_order": 1,
-        "name": "Innsendt",
+        "name": "PÅBEGYNT",
         "desk": "1e7d899b7b3048d5a5aec30a",
         "is_visible": true,
         "content_expiry": 60000,
-        "default_incoming": true
+        "default_incoming": true,
+        "working_stage": true
     },
     {
         "_id": "5640bd5160fcab002c4e4c61",
         "desk_order": 2,
-        "name": "Forberedt",
+        "name": "KLART",
         "desk": "1e7d899b7b3048d5a5aec30a",
         "is_visible": true,
         "content_expiry": 43200,
         "default_incoming": false,
         "working_stage": true
-    },
-    {
-        "_id": "5e6ec157371a469390220b11",
-        "desk_order": 3,
-        "name": "Levert",
-        "desk": "1e7d899b7b3048d5a5aec30a",
-        "is_visible": true,
-        "content_expiry": 43200,
-        "default_incoming": false
     },
 
     {
         "_id": "1e7d899b7b3048d5a5aec302",
         "desk_order": 1,
-        "name": "Innsendt",
+        "name": "PÅBEGYNT",
         "desk": "5640bd4c60fcab002a65f059",
         "is_visible": true,
         "content_expiry": 60000,
-        "default_incoming": true
+        "default_incoming": true,
+        "working_stage": true
     },
     {
         "_id": "5640bd5160fcab002c4e4c62",
         "desk_order": 2,
-        "name": "Forberedt",
+        "name": "KLART",
         "desk": "5640bd4c60fcab002a65f059",
         "is_visible": true,
         "content_expiry": 43200,
         "default_incoming": false,
         "working_stage": true
-    },
-    {
-        "_id": "5e6ec157371a469390220b12",
-        "desk_order": 3,
-        "name": "Levert",
-        "desk": "5640bd4c60fcab002a65f059",
-        "is_visible": true,
-        "content_expiry": 43200,
-        "default_incoming": false
     },
 
     {
         "_id": "1e7d899b7b3048d5a5aec303",
         "desk_order": 1,
-        "name": "Innsendt",
+        "name": "PÅBEGYNT",
         "desk": "2b702ea5de13465696ef44c2",
         "is_visible": true,
         "content_expiry": 60000,
-        "default_incoming": true
+        "default_incoming": true,
+        "working_stage": true
     },
     {
         "_id": "5640bd5160fcab002c4e4c63",
         "desk_order": 2,
-        "name": "Forberedt",
+        "name": "KLART",
         "desk": "2b702ea5de13465696ef44c2",
         "is_visible": true,
         "content_expiry": 43200,
         "default_incoming": false,
         "working_stage": true
-    },
-    {
-        "_id": "5e6ec157371a469390220b13",
-        "desk_order": 3,
-        "name": "Levert",
-        "desk": "2b702ea5de13465696ef44c2",
-        "is_visible": true,
-        "content_expiry": 43200,
-        "default_incoming": false
     },
 
     {
         "_id": "1e7d899b7b3048d5a5aec304",
         "desk_order": 1,
-        "name": "Innsendt",
+        "name": "PÅBEGYNT",
         "desk": "67a7b9bc8a6d44b9b4bc50f6",
         "is_visible": true,
         "content_expiry": 60000,
-        "default_incoming": true
+        "default_incoming": true,
+        "working_stage": true
     },
     {
         "_id": "5640bd5160fcab002c4e4c64",
         "desk_order": 2,
-        "name": "Forberedt",
+        "name": "KLART",
         "desk": "67a7b9bc8a6d44b9b4bc50f6",
         "is_visible": true,
         "content_expiry": 43200,
         "default_incoming": false,
         "working_stage": true
-    },
-    {
-        "_id": "5e6ec157371a469390220b14",
-        "desk_order": 3,
-        "name": "Levert",
-        "desk": "67a7b9bc8a6d44b9b4bc50f6",
-        "is_visible": true,
-        "content_expiry": 43200,
-        "default_incoming": false
     },
 
     {
         "_id": "1e7d899b7b3048d5a5aec305",
         "desk_order": 1,
-        "name": "Innsendt",
+        "name": "PÅBEGYNT",
         "desk": "ab22f45e8dfd4fa2a1fab31e",
         "is_visible": true,
         "content_expiry": 60000,
-        "default_incoming": true
+        "default_incoming": true,
+        "working_stage": true
     },
     {
         "_id": "5640bd5160fcab002c4e4c65",
         "desk_order": 2,
-        "name": "Forberedt",
+        "name": "KLART",
         "desk": "ab22f45e8dfd4fa2a1fab31e",
         "is_visible": true,
         "content_expiry": 43200,
         "default_incoming": false,
         "working_stage": true
-    },
-    {
-        "_id": "5e6ec157371a469390220b15",
-        "desk_order": 3,
-        "name": "Levert",
-        "desk": "ab22f45e8dfd4fa2a1fab31e",
-        "is_visible": true,
-        "content_expiry": 43200,
-        "default_incoming": false
     },
 
     {
         "_id": "1e7d899b7b3048d5a5aec306",
         "desk_order": 1,
-        "name": "Innsendt",
+        "name": "PÅBEGYNT",
         "desk": "56c5dd686c1fcd304c314eeb",
         "is_visible": true,
         "content_expiry": 60000,
-        "default_incoming": true
+        "default_incoming": true,
+        "working_stage": true
     },
     {
         "_id": "5640bd5160fcab002c4e4c66",
         "desk_order": 2,
-        "name": "Forberedt",
+        "name": "KLART",
         "desk": "56c5dd686c1fcd304c314eeb",
         "is_visible": true,
         "content_expiry": 43200,
         "default_incoming": false,
         "working_stage": true
-    },
-    {
-        "_id": "5e6ec157371a469390220b16",
-        "desk_order": 3,
-        "name": "Levert",
-        "desk": "56c5dd686c1fcd304c314eeb",
-        "is_visible": true,
-        "content_expiry": 43200,
-        "default_incoming": false
     },
 
     {
         "_id": "1e7d899b7b3048d5a5aec307",
         "desk_order": 1,
-        "name": "Innsendt",
+        "name": "PÅBEGYNT",
         "desk": "56c5e03e6c1fcd31170d2990",
         "is_visible": true,
         "content_expiry": 60000,
-        "default_incoming": true
+        "default_incoming": true,
+        "working_stage": true
     },
     {
         "_id": "5640bd5160fcab002c4e4c67",
         "desk_order": 2,
-        "name": "Forberedt",
+        "name": "KLART",
         "desk": "56c5e03e6c1fcd31170d2990",
         "is_visible": true,
         "content_expiry": 43200,
         "default_incoming": false,
         "working_stage": true
-    },
-    {
-        "_id": "5e6ec157371a469390220b17",
-        "desk_order": 3,
-        "name": "Levert",
-        "desk": "56c5e03e6c1fcd31170d2990",
-        "is_visible": true,
-        "content_expiry": 43200,
-        "default_incoming": false
     },
 
     {
         "_id": "1e7d899b7b3048d5a5aec308",
         "desk_order": 1,
-        "name": "Innsendt",
+        "name": "PÅBEGYNT",
         "desk": "ab22f45e8dfd4fa2a1fab31d",
         "is_visible": true,
         "content_expiry": 60000,
-        "default_incoming": true
+        "default_incoming": true,
+        "working_stage": true
     },
     {
         "_id": "5640bd5160fcab002c4e4c68",
         "desk_order": 2,
-        "name": "Forberedt",
+        "name": "KLART",
         "desk": "ab22f45e8dfd4fa2a1fab31d",
         "is_visible": true,
         "content_expiry": 43200,
         "default_incoming": false,
         "working_stage": true
-    },
-    {
-        "_id": "5e6ec157371a469390220b18",
-        "desk_order": 3,
-        "name": "Levert",
-        "desk": "ab22f45e8dfd4fa2a1fab31d",
-        "is_visible": true,
-        "content_expiry": 43200,
-        "default_incoming": false
     },
 
     {
         "_id": "1e7d899b7b3048d5a5aec309",
         "desk_order": 1,
-        "name": "Innsendt",
+        "name": "PÅBEGYNT",
         "desk": "56c5dd686c1fcd304c314eee",
         "is_visible": true,
         "content_expiry": 60000,
-        "default_incoming": true
+        "default_incoming": true,
+        "working_stage": true
     },
     {
         "_id": "5640bd5160fcab002c4e4c69",
         "desk_order": 2,
-        "name": "Forberedt",
+        "name": "KLART",
         "desk": "56c5dd686c1fcd304c314eee",
         "is_visible": true,
         "content_expiry": 43200,
         "default_incoming": false,
         "working_stage": true
-    },
-    {
-        "_id": "5e6ec157371a469390220b19",
-        "desk_order": 3,
-        "name": "Levert",
-        "desk": "56c5dd686c1fcd304c314eee",
-        "is_visible": true,
-        "content_expiry": 43200,
-        "default_incoming": false
     },
 
     {
         "_id": "5640bd5160fcab002c4e4c10",
-        "desk_order": 2,
-        "name": "Forberedt",
+        "desk_order": 1,
+        "name": "PÅBEGYNT",
         "desk": "56c5e03e6c1fcd31170d2c90",
         "is_visible": false,
         "content_expiry": -1,
-        "default_incoming": false,
+        "default_incoming": true,
         "working_stage": true
-    }
+     }
 ]
