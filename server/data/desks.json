@@ -2,7 +2,7 @@
      {
          "_id": "1e7d899b7b3048d5a5aec30a",
          "name": "Nyhetsdesk",
-         "content_expiry": 1440,
+         "content_expiry": -1,
          "incoming_stage": "1e7d899b7b3048d5a5aec301",
          "working_stage": "5640bd5160fcab002c4e4c61",
          "description": "Nyhetsdesk Desk",
@@ -16,7 +16,7 @@
      {
          "_id": "5640bd4c60fcab002a65f059",
          "name": "Uvakt",
-         "content_expiry": 1440,
+         "content_expiry": -1,
          "incoming_stage": "1e7d899b7b3048d5a5aec302",
          "working_stage": "5640bd5160fcab002c4e4c62",
          "description": "Uvakt Desk",
@@ -30,7 +30,7 @@
      {
         "_id": "2b702ea5de13465696ef44c2",
         "name": "Sporten",
-        "content_expiry": 1440,
+        "content_expiry": -1,
         "incoming_stage": "1e7d899b7b3048d5a5aec303",
         "working_stage": "5640bd5160fcab002c4e4c63",
         "description": "Sporten Desk",
@@ -46,7 +46,7 @@
     {
         "_id": "67a7b9bc8a6d44b9b4bc50f6",
         "name": "Repdesk",
-        "content_expiry": 1440,
+        "content_expiry": -1,
         "incoming_stage": "1e7d899b7b3048d5a5aec304",
         "working_stage": "5640bd5160fcab002c4e4c64",
         "description": "Repdesk Desk",
@@ -60,7 +60,7 @@
     {
         "_id": "ab22f45e8dfd4fa2a1fab31e",
         "name": "Kultur",
-        "content_expiry": 1440,
+        "content_expiry": -1,
         "incoming_stage": "1e7d899b7b3048d5a5aec305",
         "working_stage": "5640bd5160fcab002c4e4c65",
         "description": "Kultur Desk",
@@ -78,7 +78,7 @@
     {
         "_id": "56c5dd686c1fcd304c314eeb",
         "name": "Tema",
-        "content_expiry": 1440,
+        "content_expiry": -1,
         "incoming_stage": "1e7d899b7b3048d5a5aec306",
         "working_stage": "5640bd5160fcab002c4e4c66",
         "description": "Tema Desk",
@@ -96,7 +96,7 @@
     {
         "_id": "56c5e03e6c1fcd31170d2990",
         "name": "NPK",
-        "content_expiry": 1440,
+        "content_expiry": -1,
         "incoming_stage": "1e7d899b7b3048d5a5aec307",
         "working_stage": "5640bd5160fcab002c4e4c67",
         "description": "NPK Desk",
@@ -114,7 +114,7 @@
     {
         "_id": "ab22f45e8dfd4fa2a1fab31d",
         "name": "Personalia",
-        "content_expiry": 1440,
+        "content_expiry": -1,
         "incoming_stage": "1e7d899b7b3048d5a5aec308",
         "working_stage": "5640bd5160fcab002c4e4c68",
         "description": "Personalia Desk",
@@ -132,7 +132,7 @@
     {
         "_id": "56c5dd686c1fcd304c314eee",
         "name": "Forskning",
-        "content_expiry": 1440,
+        "content_expiry": -1,
         "incoming_stage": "1e7d899b7b3048d5a5aec309",
         "working_stage": "5640bd5160fcab002c4e4c69",
         "description": "Forskning Desk",
