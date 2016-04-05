@@ -5,7 +5,7 @@
         "name": "PÅBEGYNT",
         "desk": "1e7d899b7b3048d5a5aec30a",
         "is_visible": true,
-        "content_expiry": 60000,
+        "content_expiry": -1,
         "default_incoming": true,
         "working_stage": true
     },
@@ -15,7 +15,7 @@
         "name": "KLART",
         "desk": "1e7d899b7b3048d5a5aec30a",
         "is_visible": true,
-        "content_expiry": 43200,
+        "content_expiry": -1,
         "default_incoming": false,
         "working_stage": true
     },
@@ -26,7 +26,7 @@
         "name": "PÅBEGYNT",
         "desk": "5640bd4c60fcab002a65f059",
         "is_visible": true,
-        "content_expiry": 60000,
+        "content_expiry": -1,
         "default_incoming": true,
         "working_stage": true
     },
@@ -36,7 +36,7 @@
         "name": "KLART",
         "desk": "5640bd4c60fcab002a65f059",
         "is_visible": true,
-        "content_expiry": 43200,
+        "content_expiry": -1,
         "default_incoming": false,
         "working_stage": true
     },
@@ -47,7 +47,7 @@
         "name": "PÅBEGYNT",
         "desk": "2b702ea5de13465696ef44c2",
         "is_visible": true,
-        "content_expiry": 60000,
+        "content_expiry": -1,
         "default_incoming": true,
         "working_stage": true
     },
@@ -57,7 +57,7 @@
         "name": "KLART",
         "desk": "2b702ea5de13465696ef44c2",
         "is_visible": true,
-        "content_expiry": 43200,
+        "content_expiry": -1,
         "default_incoming": false,
         "working_stage": true
     },
@@ -68,7 +68,7 @@
         "name": "PÅBEGYNT",
         "desk": "67a7b9bc8a6d44b9b4bc50f6",
         "is_visible": true,
-        "content_expiry": 60000,
+        "content_expiry": -1,
         "default_incoming": true,
         "working_stage": true
     },
@@ -78,7 +78,7 @@
         "name": "KLART",
         "desk": "67a7b9bc8a6d44b9b4bc50f6",
         "is_visible": true,
-        "content_expiry": 43200,
+        "content_expiry": -1,
         "default_incoming": false,
         "working_stage": true
     },
@@ -89,7 +89,7 @@
         "name": "PÅBEGYNT",
         "desk": "ab22f45e8dfd4fa2a1fab31e",
         "is_visible": true,
-        "content_expiry": 60000,
+        "content_expiry": -1,
         "default_incoming": true,
         "working_stage": true
     },
@@ -99,7 +99,7 @@
         "name": "KLART",
         "desk": "ab22f45e8dfd4fa2a1fab31e",
         "is_visible": true,
-        "content_expiry": 43200,
+        "content_expiry": -1,
         "default_incoming": false,
         "working_stage": true
     },
@@ -110,7 +110,7 @@
         "name": "PÅBEGYNT",
         "desk": "56c5dd686c1fcd304c314eeb",
         "is_visible": true,
-        "content_expiry": 60000,
+        "content_expiry": -1,
         "default_incoming": true,
         "working_stage": true
     },
@@ -120,7 +120,7 @@
         "name": "KLART",
         "desk": "56c5dd686c1fcd304c314eeb",
         "is_visible": true,
-        "content_expiry": 43200,
+        "content_expiry": -1,
         "default_incoming": false,
         "working_stage": true
     },
@@ -131,7 +131,7 @@
         "name": "PÅBEGYNT",
         "desk": "56c5e03e6c1fcd31170d2990",
         "is_visible": true,
-        "content_expiry": 60000,
+        "content_expiry": -1,
         "default_incoming": true,
         "working_stage": true
     },
@@ -141,7 +141,7 @@
         "name": "KLART",
         "desk": "56c5e03e6c1fcd31170d2990",
         "is_visible": true,
-        "content_expiry": 43200,
+        "content_expiry": -1,
         "default_incoming": false,
         "working_stage": true
     },
@@ -152,7 +152,7 @@
         "name": "PÅBEGYNT",
         "desk": "ab22f45e8dfd4fa2a1fab31d",
         "is_visible": true,
-        "content_expiry": 60000,
+        "content_expiry": -1,
         "default_incoming": true,
         "working_stage": true
     },
@@ -162,7 +162,7 @@
         "name": "KLART",
         "desk": "ab22f45e8dfd4fa2a1fab31d",
         "is_visible": true,
-        "content_expiry": 43200,
+        "content_expiry": -1,
         "default_incoming": false,
         "working_stage": true
     },
@@ -173,7 +173,7 @@
         "name": "PÅBEGYNT",
         "desk": "56c5dd686c1fcd304c314eee",
         "is_visible": true,
-        "content_expiry": 60000,
+        "content_expiry": -1,
         "default_incoming": true,
         "working_stage": true
     },
@@ -183,7 +183,7 @@
         "name": "KLART",
         "desk": "56c5dd686c1fcd304c314eee",
         "is_visible": true,
-        "content_expiry": 43200,
+        "content_expiry": -1,
         "default_incoming": false,
         "working_stage": true
     },
