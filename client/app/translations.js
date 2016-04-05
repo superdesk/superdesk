@@ -3,6 +3,7 @@ angular.module('gettext').run(['gettextCatalog', function (gettextCatalog) {
         "URGENCY": "NEWS VALUE",
         "Urgency": "News Value",
         "urgency": "news value",
-        "Urgency stats": "News Value stats"
+        "Urgency stats": "News Value stats",
+        "SERVICE": "CATEGORY"
     });
 }]);
