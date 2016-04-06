@@ -14,6 +14,7 @@ curl libfontconfig nodejs npm nginx \
 && rm /etc/nginx/sites-enabled/default \
 && ln --symbolic /usr/bin/nodejs /usr/bin/node
 
+RUN npm install -g npm
 RUN npm -g install grunt-cli bower
 
 # Set the locale
