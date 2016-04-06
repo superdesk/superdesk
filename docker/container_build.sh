@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eu
+set -eux
 
 INSTANCE="${1:-}"
 
@@ -98,10 +98,21 @@ if [[ $RUN_E2E = 1 ]] ; then
 		docker build -f ${BAMBOO_DIR}/docker/protractor.Dockerfile -t protractor_${INSTANCE} ./
 		docker run --link build$(sed 's/[-_/.:]//g' <<< $INSTANCE)_superdesk_1:superdesk -d -v $CLIENT_RESULTS_DIR:/opt/superdesk-client/e2e-test-results --name=protractor_${INSTANCE}_run protractor_${INSTANCE}
 		set +e
-		docker exec protractor_${INSTANCE}_run bash -c "cd /opt/superdesk-client && xvfb-run ./node_modules/.bin/protractor-flake --node-bin node --max-attempts=3 -- protractor-conf.js --stackTrace --verbose --baseUrl 'http://superdesk' --params.baseBackendUrl 'http://superdesk/api' --params.username 'admin' --params.password 'admin' --specs=./node_modules/superdesk-core/spec/workspace_spec.js" || sleep 10000
+		docker exec protractor_${INSTANCE}_run bash -c "\
+			cd /opt/superdesk-client \
+			&& xvfb-run ./node_modules/.bin/protractor-flake \
+				--node-bin node --max-attempts=3 -- protractor-conf.js \
+				--stackTrace --verbose \
+				--baseUrl 'http://superdesk' \
+				--params.baseBackendUrl 'http://superdesk/api' \
+				--params.username 'admin' \
+				--params.password 'admin' \
+				--specs=./node_modules/superdesk-core/spec/workspace_spec.js" \
+		|| sleep 10000
 		CODE="$?"
 		set -e
-		docker rm -fv protractor_${INSTANCE}_run
+		docker kill protractor_${INSTANCE}_run || true
+		docker rm -fv protractor_${INSTANCE}_run || true
 		#mv $BAMBOO_DIR/client/screenshots $SCREENSHOTS_DIR
 			#echo "!!! Screenshots were saved to $SCREENSHOTS_DIR"
 		#true
