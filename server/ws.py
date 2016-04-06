@@ -16,12 +16,4 @@ from app import get_app
 
 if __name__ == '__main__':
     app = get_app()
-
-    config = {
-        'WS_HOST': app.config['WS_HOST'],
-        'WS_PORT': int(app.config['WS_PORT']),
-        'LOG_SERVER_ADDRESS': app.config['LOG_SERVER_ADDRESS'],
-        'LOG_SERVER_PORT': app.config['LOG_SERVER_PORT']
-    }
-
-    create_server(config)
+    create_server(app.config)
