@@ -10,7 +10,7 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import logging
-from settings import WS_HOST, WS_PORT, LOG_CONFIG_FILE
+from settings import WS_HOST, WS_PORT, LOG_CONFIG_FILE, BROKER_URL
 from superdesk.ws import create_server
 from superdesk.logging import configure_logging
 
@@ -19,7 +19,8 @@ logger = logging.getLogger(__name__)
 if __name__ == '__main__':
     config = {
         'WS_HOST': WS_HOST,
-        'WS_PORT': WS_PORT
+        'WS_PORT': WS_PORT,
+        'BROKER_URL': BROKER_URL
     }
     configure_logging(LOG_CONFIG_FILE)
     create_server(config)

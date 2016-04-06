@@ -152,6 +152,11 @@ MACROS_MODULE = env('MACROS_MODULE', 'superdesk.macros')
 WS_HOST = env('WSHOST', '0.0.0.0')
 WS_PORT = env('WSPORT', '5100')
 
+REDIS_URL = env('REDIS_URL', 'redis://localhost:6379')
+if env('REDIS_PORT'):
+    REDIS_URL = env('REDIS_PORT').replace('tcp:', 'redis:')
+BROKER_URL = env('CELERY_BROKER_URL', REDIS_URL)
+
 # Determines if the ODBC publishing mechanism will be used, If enabled then pyodbc must be installed along with it's
 # dependencies
 ODBC_PUBLISH = env('ODBC_PUBLISH', None)
