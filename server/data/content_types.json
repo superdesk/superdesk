@@ -36,10 +36,10 @@
             "slugline": {"order": 1, "sdWidth": "half"},
             "priority": {"order": 2, "sdWidth": "quarter"},
             "urgency": {"order": 3, "sdWidth": "quarter"},
-            "anpa_category": {"order": 4, "sdWidth": "half"},
+            "anpa_category": {"order": 4, "sdWidth": "full"},
             "category": {"order": 5, "sdWidth": "half"},
-            "subjects": {"order": 6, "sdWidth": "half"},
-            "genre_service": {"order": 7, "sdWidth": "half"},
+            "genre_service": {"order": 6, "sdWidth": "half"},
+            "subjects": {"order": 7, "sdWidth": "full"},
             "places": {"order": 8, "sdWidth": "full"},
             "ednote": {"order": 9, "sdWidth": "full"}
         }
@@ -81,10 +81,10 @@
             "slugline": {"order": 1, "sdWidth": "half"},
             "priority": {"order": 2, "sdWidth": "quarter"},
             "urgency": {"order": 3, "sdWidth": "quarter"},
-            "anpa_category": {"order": 4, "sdWidth": "half"},
+            "anpa_category": {"order": 4, "sdWidth": "full"},
             "category": {"order": 5, "sdWidth": "half"},
-            "subjects": {"order": 6, "sdWidth": "half"},
-            "genre_service": {"order": 7, "sdWidth": "half"},
+            "genre_service": {"order": 6, "sdWidth": "half"},
+            "subjects": {"order": 7, "sdWidth": "full"},
             "places": {"order": 8, "sdWidth": "full"},
             "ednote": {"order": 9, "sdWidth": "full"}
         }
@@ -126,10 +126,10 @@
             "slugline": {"order": 1, "sdWidth": "half"},
             "priority": {"order": 2, "sdWidth": "quarter"},
             "urgency": {"order": 3, "sdWidth": "quarter"},
-            "anpa_category": {"order": 4, "sdWidth": "half"},
+            "anpa_category": {"order": 4, "sdWidth": "full"},
             "category": {"order": 5, "sdWidth": "half"},
-            "subjects": {"order": 6, "sdWidth": "half"},
-            "genre_service": {"order": 7, "sdWidth": "half"},
+            "genre_service": {"order": 6, "sdWidth": "half"},
+            "subjects": {"order": 7, "sdWidth": "full"},   
             "places": {"order": 8, "sdWidth": "full"},
             "ednote": {"order": 9, "sdWidth": "full"}
         }
@@ -171,10 +171,10 @@
             "slugline": {"order": 1, "sdWidth": "half"},
             "priority": {"order": 2, "sdWidth": "quarter"},
             "urgency": {"order": 3, "sdWidth": "quarter"},
-            "anpa_category": {"order": 4, "sdWidth": "half"},
+            "anpa_category": {"order": 4, "sdWidth": "full"},
             "category": {"order": 5, "sdWidth": "half"},
-            "subjects": {"order": 6, "sdWidth": "half"},
-            "genre_service": {"order": 7, "sdWidth": "half"},
+            "genre_service": {"order": 6, "sdWidth": "half"},
+            "subjects": {"order": 7, "sdWidth": "full"},
             "places": {"order": 8, "sdWidth": "full"},
             "ednote": {"order": 9, "sdWidth": "full"}
         }
