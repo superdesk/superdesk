@@ -4,9 +4,9 @@
          "name": "Nyhetsdesk",
          "content_expiry": -1,
          "incoming_stage": "1e7d899b7b3048d5a5aec301",
-         "working_stage": "5640bd5160fcab002c4e4c61",
+         "working_stage": "1e7d899b7b3048d5a5aec301",
          "description": "Nyhetsdesk Desk",
-         "source": "Nyhetsdesk Desk",
+         "source": "NTB",
          "desk_type": "production",
          "members": [{
              "user": "a21a621c4c8847b085fe2d78"
@@ -18,9 +18,9 @@
          "name": "Uvakt",
          "content_expiry": -1,
          "incoming_stage": "1e7d899b7b3048d5a5aec302",
-         "working_stage": "5640bd5160fcab002c4e4c62",
+         "working_stage": "1e7d899b7b3048d5a5aec302",
          "description": "Uvakt Desk",
-         "source": "Uvakt Desk",
+         "source": "NTB",
          "desk_type": "production",
          "members": [{
              "user": "a21a621c4c8847b085fe2d78"
@@ -32,9 +32,9 @@
         "name": "Sporten",
         "content_expiry": -1,
         "incoming_stage": "1e7d899b7b3048d5a5aec303",
-        "working_stage": "5640bd5160fcab002c4e4c63",
+        "working_stage": "1e7d899b7b3048d5a5aec303",
         "description": "Sporten Desk",
-        "source": "Sporten Desk",
+        "source": "NTB",
         "desk_type": "production",
         "members": [{
             "user": "1d5f748c79134f35841670c3"
@@ -48,9 +48,9 @@
         "name": "Repdesk",
         "content_expiry": -1,
         "incoming_stage": "1e7d899b7b3048d5a5aec304",
-        "working_stage": "5640bd5160fcab002c4e4c64",
+        "working_stage": "1e7d899b7b3048d5a5aec304",
         "description": "Repdesk Desk",
-        "source": "Repdesk Desk",
+        "source": "NTB",
         "desk_type": "production",
         "members": [{
             "user": "a21a621c4c8847b085fe2d78"
@@ -62,9 +62,9 @@
         "name": "Kultur",
         "content_expiry": -1,
         "incoming_stage": "1e7d899b7b3048d5a5aec305",
-        "working_stage": "5640bd5160fcab002c4e4c65",
+        "working_stage": "1e7d899b7b3048d5a5aec305",
         "description": "Kultur Desk",
-        "source": "Kultur Desk",
+        "source": "NTB",
         "desk_type": "production",
         "members": [{
             "user": "5640a5eef40235008465242b"
@@ -80,9 +80,9 @@
         "name": "Tema",
         "content_expiry": -1,
         "incoming_stage": "1e7d899b7b3048d5a5aec306",
-        "working_stage": "5640bd5160fcab002c4e4c66",
+        "working_stage": "1e7d899b7b3048d5a5aec306",
         "description": "Tema Desk",
-        "source": "Tema Desk",
+        "source": "NTB",
         "desk_type": "production",
         "members": [{
             "user": "5640a5eef40235008465242b"
@@ -98,9 +98,9 @@
         "name": "NPK",
         "content_expiry": -1,
         "incoming_stage": "1e7d899b7b3048d5a5aec307",
-        "working_stage": "5640bd5160fcab002c4e4c67",
+        "working_stage": "1e7d899b7b3048d5a5aec307",
         "description": "NPK Desk",
-        "source": "NPK Desk",
+        "source": "NPK",
         "desk_type": "production",
         "members": [{
             "user": "5640a5eef40235008465242b"
@@ -116,9 +116,9 @@
         "name": "Personalia",
         "content_expiry": -1,
         "incoming_stage": "1e7d899b7b3048d5a5aec308",
-        "working_stage": "5640bd5160fcab002c4e4c68",
+        "working_stage": "1e7d899b7b3048d5a5aec308",
         "description": "Personalia Desk",
-        "source": "Personalia Desk",
+        "source": "NTB",
         "desk_type": "production",
         "members": [{
             "user": "5640a5eef40235008465242b"
@@ -134,9 +134,9 @@
         "name": "Forskning",
         "content_expiry": -1,
         "incoming_stage": "1e7d899b7b3048d5a5aec309",
-        "working_stage": "5640bd5160fcab002c4e4c69",
+        "working_stage": "1e7d899b7b3048d5a5aec309",
         "description": "Forskning Desk",
-        "source": "Forskning Desk",
+        "source": "NTB",
         "desk_type": "production",
         "members": [{
             "user": "5640a5eef40235008465242b"
@@ -152,9 +152,9 @@
         "name": "Nekrologer",
         "content_expiry": -1,
         "incoming_stage": "1e7d899b7b3048d5a5aec310",
-        "working_stage": "5640bd5160fcab002c4e4c10",
+        "working_stage": "1e7d899b7b3048d5a5aec310",
         "description": "Nekrologer Desk",
-        "source": "Nekrologer Desk",
+        "source": "NTB",
         "desk_type": "production",
         "members": [{
             "user": "5640a5eef40235008465242b"
