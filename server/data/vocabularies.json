@@ -274,7 +274,7 @@
         ]
     },
     {
-        "_id": "topics_real_life",
+        "_id": "subservice_real_life",
         "display_name": "Real Life sub-service",
         "type": "manageable",
         "service": {"paservice:real-life": 1},
@@ -293,7 +293,7 @@
         ]
     },
     {
-        "_id": "topics_motoring",
+        "_id": "subservice_motoring",
         "display_name": "Motoring sub-service",
         "type": "manageable",
         "service": {"paservice:motoring": 1},
@@ -305,8 +305,8 @@
         ]
     },
     {
-        "_id": "topics_sport",
-        "display_name": "Sports sub-service",
+        "_id": "subservice_sport",
+        "display_name": "Sport sub-service",
         "type": "manageable",
         "service": {"paservice:sport": 1},
         "priority": 3,
@@ -425,8 +425,8 @@
         ]
     },
     {
-        "_id": "topics_news",
-        "display_name": "News Topic",
+        "_id": "topic_news",
+        "display_name": "News Topics",
         "type": "manageable",
         "service": {"paservice:news": 1},
         "priority": 5,
@@ -530,8 +530,8 @@
         ]
     },
     {
-        "_id": "topics_sports",
-        "display_name": "Sports Topic",
+        "_id": "topic_sport",
+        "display_name": "Sport Topics",
         "type": "manageable",
         "service": {"paservice:sport": 1},
         "priority": 6,
