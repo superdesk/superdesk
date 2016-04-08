@@ -9,7 +9,7 @@
             "dateline": {"required": true},
             "byline": {"required": true},
             "abstract": {"required": true, "maxlength": 160},
-            "body_html": {"required": true},
+            "body_html": {},
             "sign_off": {"required": true},
             "feature_image": {"type": "picture"},
             "slugline": {"required": true, "maxlength": 30},
