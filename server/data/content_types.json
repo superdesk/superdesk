@@ -136,7 +136,6 @@
             "topic_news": {"order": 2, "sdWidth": "half"},
             "ranking": {"order": 4, "sdWidth": "half"},
             "slugline": {"order": 5, "sdWidth": "half"},
-
             "age_range": {"order": 6, "sdWidth": "half"},
             "credit_level": {"order": 7, "sdWidth": "half"},
             "territory": {"order": 8, "sdWidth": "half"},
@@ -145,8 +144,9 @@
             "assets": {"order": 11, "sdWidth": "half"},
             "featured": {"order": 12, "sdWidth": "half"},
             "credit_level": {"order": 13, "sdWidth": "half"},
-
-            "ednote": {"order": 14, "sdWidth": "full"}
+            "ednote": {"order": 14, "sdWidth": "full"},
+            "body_html": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]},
+            "abstract": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]}
         }
     },
     {
@@ -188,7 +188,6 @@
             "topic_sport": {"order": 3, "sdWidth": "quarter"},
             "topic_news": {"order": 2, "sdWidth": "half"},
             "slugline": {"order": 5, "sdWidth": "full"},
-
             "age_range": {"order": 6, "sdWidth": "half"},
             "credit_level": {"order": 7, "sdWidth": "half"},
             "territory": {"order": 8, "sdWidth": "half"},
@@ -197,8 +196,9 @@
             "assets": {"order": 11, "sdWidth": "half"},
             "featured": {"order": 12, "sdWidth": "half"},
             "credit_level": {"order": 13, "sdWidth": "half"},
-
-            "ednote": {"order": 14, "sdWidth": "full"}
+            "ednote": {"order": 14, "sdWidth": "full"},
+            "body_html": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]},
+            "abstract": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]}
         }
     }
 ]
