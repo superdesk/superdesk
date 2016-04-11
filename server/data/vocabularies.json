@@ -55,8 +55,8 @@
         ]
     },
     {
-        "_id": "ranking",
-        "display_name": "Ranking",
+        "_id": "urgency",
+        "display_name": "Urgency",
         "type": "manageable",
         "items": [
             {"is_active": true, "name": "1", "qcode": 1},

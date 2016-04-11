@@ -101,7 +101,7 @@
         "priority": 30,
         "enabled": true,
         "schema": {
-            "ranking": {"nullable": true},
+            "urgency": {"nullable": true},
             "anpa_category": {},
             "subject": {},
             "slugline": {"required": true},
@@ -134,7 +134,7 @@
             "subservice_sport": {"order": 2, "sdWidth": "quarter"},
             "topic_sport": {"order": 3, "sdWidth": "quarter"},
             "topic_news": {"order": 2, "sdWidth": "half"},
-            "ranking": {"order": 4, "sdWidth": "half"},
+            "urgency": {"order": 4, "sdWidth": "half"},
             "slugline": {"order": 5, "sdWidth": "half"},
             "age_range": {"order": 6, "sdWidth": "half"},
             "credit_level": {"order": 7, "sdWidth": "half"},
