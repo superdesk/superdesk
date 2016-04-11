@@ -4,6 +4,11 @@ angular.module('gettext').run(['gettextCatalog', function (gettextCatalog) {
         "Urgency": "News Value",
         "urgency": "news value",
         "Urgency stats": "News Value stats",
-        "SERVICE": "CATEGORY"
+        "SERVICE": "CATEGORY",
+        "Mar": "March",
+        "Apr": "April",
+        "Jun": "June",
+        "Jul": "July",
+        "Sep": "Sept"        
     });
 }]);
