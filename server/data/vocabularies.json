@@ -195,12 +195,15 @@
         "display_name": "Image Crop Sizes",
         "type": "manageable",
         "items": [
-            {"is_active": true, "name": "preview3x2", "width": 1440, "height": 960},
-            {"is_active": true, "name": "preview4x3", "width": 1440, "height": 1080},
-            {"is_active": true, "name": "small", "width": 300, "height": 300},
-            {"is_active": true, "name": "wide360", "width": 640, "height": 360},
-            {"is_active": true, "name": "wide720", "width": 1280, "height": 720},
-            {"is_active": true, "name": "wide1080", "width": 1920, "height": 1080}
+            {"is_active": true, "name": "1x1", "ratio": "1:1"},
+            {"is_active": true, "name": "2x1", "ratio": "2:1"},
+            {"is_active": true, "name": "3x2", "ratio": "3:2"},
+            {"is_active": true, "name": "4x3", "ratio": "4:3"},
+            {"is_active": true, "name": "5x4", "ratio": "5:4"},
+            {"is_active": true, "name": "16x9", "ratio": "16:9"},
+            {"is_active": true, "name": "small", "width": 360},
+            {"is_active": true, "name": "medium", "width": 720},
+            {"is_active": true, "name": "large", "width": 1080}
         ]
     },
     {
