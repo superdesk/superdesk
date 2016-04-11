@@ -9,7 +9,9 @@ angular.module('gettext').run(['gettextCatalog', function (gettextCatalog) {
         "SLUGLINE": "KEYWORD",
         "Slugline": "Keyword",
         "KEYWORDS": "TAGS",
-        "Keywords": "Tags"
+        "Keywords": "Tags",
+        "URGENCY": "RANKING",
+        "Urgency": "Ranking"
     });
 /* jshint +W100 */
 }]);
