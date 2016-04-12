@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     'superdesk.io.feed_parsers',
     'superdesk.io.subjectcodes',
     'superdesk.io.iptc',
-
     'apps.io',
     'apps.io.feeding_services',
     'superdesk.publish',
@@ -87,6 +86,7 @@ INSTALLED_APPS = [
     'apps.feature_preview',
     'apps.workqueue',
     'apps.picture_crop',
+    'apps.products',
 
     'superdesk.io.subjectcodes',
     'apps.archive_broadcast',
