@@ -402,7 +402,8 @@
             {"is_active": true, "name": "Image", "qcode": "paasset:image"},
             {"is_active": true, "name": "Video", "qcode": "paasset:video"},
             {"is_active": true, "name": "Graphic", "qcode": "paasset:graphic"},
-            {"is_active": true, "name": "Social", "qcode": "paasset:social"}
+            {"is_active": true, "name": "Social", "qcode": "paasset:social"},
+            {"is_active": true, "name": "Quiz", "qcode": "paasset:quiz"}
         ]
     },
     {
