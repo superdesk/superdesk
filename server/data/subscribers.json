@@ -1,6 +1,6 @@
 [
     {
-        "_id": "5640beec60fcab002a65f05b",
+        "_id": "5640beec60fcab002a65f05a",
         "content_filter": {
             "filter_type": "blocking"
         },
@@ -27,6 +27,7 @@
             "format": "ninjs",
             "name": "Email"
         }],
+        "products": ["5710bf514ae823110f83cc2c"],
         "email": "test@example.com",
         "is_active": true
     }
