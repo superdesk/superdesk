@@ -29,9 +29,15 @@ INIT_DATA_PATH = 'data'
 INSTALLED_APPS = [
     'apps.auth',
     'superdesk.roles',
-    'superdesk.users',
-    'apps.auth.db',
+]
 
+if os.environ.get('LDAP_SERVER'):
+    INSTALLED_APPS.append('apps.ldap')
+else:
+    INSTALLED_APPS.append('superdesk.users')
+    INSTALLED_APPS.append('apps.auth.db')
+
+INSTALLED_APPS.extend([
     'superdesk.upload',
     'superdesk.sequences',
     'superdesk.notification',
@@ -97,7 +103,7 @@ INSTALLED_APPS = [
 
     'pa.topics',
     'pa.pa_img',
-]
+])
 
 DEFAULT_URGENCY_VALUE_FOR_MANUAL_ARTICLES = None
 DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES = 'PA'
