@@ -22,7 +22,7 @@ from superdesk.upload import url_for_media
 
 from superdesk.errors import SuperdeskApiError
 from superdesk.media.media_operations import process_file_from_stream, decode_metadata, download_file_from_url
-from superdesk.media.renditions import generate_renditions, delete_file_on_error
+from superdesk.media.renditions import generate_renditions, delete_file_on_error, get_renditions_spec
 from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE
 from superdesk.utc import utcnow
 
@@ -283,8 +283,7 @@ class PaImgDatalayer(DataLayer):
             doc['versioncreated'] = utcnow()
             inserted = [file_id]
             file_type = content_type.split('/')[0]
-            rendition_spec = self._app.config['RENDITIONS']['picture']
-
+            rendition_spec = get_renditions_spec()
             renditions = generate_renditions(out, file_id, inserted, file_type,
                                              content_type, rendition_spec,
                                              url_for_media, insert_metadata=False)
