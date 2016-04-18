@@ -231,6 +231,13 @@
 
     <script>
         var config = <%= grunt.toJSON(config) %>;
+
+        // enable ingest/content view in workspace sidebar
+        config.workspace = {
+            ingest: 1,
+            content: 1
+        };
+
         var modules = [
             'superdesk',
             'superdesk.settings',
