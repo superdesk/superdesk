@@ -6,7 +6,8 @@
         "headline": "Kill\/Takedown notice ~~~ Kill\/Takedown notice",
         "template_name": "kill",
         "template_type": "kill",
-        "anpa_take_key": "KILL\/TAKEDOWN"
+        "anpa_take_key": "KILL\/TAKEDOWN",
+        "is_public": true
     },
 
     {
