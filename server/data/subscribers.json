@@ -13,7 +13,7 @@
         "global_filters": {},
         "destinations": [{
             "config": {
-                "assets_url": "http://api.master.dev.superdesk.org/assets",
+                "assets_url": "http://api-papoc.dev.superdesk.org/assets",
                 "resource_url": "http://52.31.63.137:10000/pipeline/superdesk/content/v0.1/route/receiver"
             },
             "format": "ninjs",
