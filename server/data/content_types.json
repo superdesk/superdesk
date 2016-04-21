@@ -44,11 +44,7 @@
             "featured": {"order": 12, "sdWidth": "half"},
             "credit_level": {"order": 13, "sdWidth": "half"},
 
-            "ednote": {"order": 14, "sdWidth": "full"},
-
-            "headline": {"formatOptions": ["underline", "bold", "removeFormat"]},
-            "abstract": {"formatOptions": ["bold", "italic", "underline", "removeFormat"]},
-            "body_html": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote"]}
+            "ednote": {"order": 14, "sdWidth": "full"}
         }
     },
     {
@@ -96,11 +92,7 @@
             "featured": {"order": 12, "sdWidth": "half"},
             "credit_level": {"order": 13, "sdWidth": "half"},
 
-            "ednote": {"order": 14, "sdWidth": "full"},
-
-            "headline": {"formatOptions": ["underline", "bold", "removeFormat"]},
-            "abstract": {"formatOptions": ["bold", "italic", "underline", "removeFormat"]},
-            "body_html": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote"]}
+            "ednote": {"order": 14, "sdWidth": "full"}
         }
     },
     {
@@ -153,10 +145,8 @@
             "featured": {"order": 12, "sdWidth": "half"},
             "credit_level": {"order": 13, "sdWidth": "half"},
             "ednote": {"order": 14, "sdWidth": "full"},
-            "body_html": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote"]},
-            "abstract": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote"]},
-
-            "headline": {"formatOptions": ["underline", "bold", "removeFormat"]}
+            "body_html": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]},
+            "abstract": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]}
         }
     },
     {
@@ -207,10 +197,8 @@
             "featured": {"order": 12, "sdWidth": "half"},
             "credit_level": {"order": 13, "sdWidth": "half"},
             "ednote": {"order": 14, "sdWidth": "full"},
-            "body_html": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote"]},
-            "abstract": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote"]},
-
-            "headline": {"formatOptions": ["underline", "bold", "removeFormat"]}
+            "body_html": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]},
+            "abstract": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]}
         }
     }
 ]
