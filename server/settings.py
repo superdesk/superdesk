@@ -131,6 +131,8 @@ INSTALLED_APPS.extend([
     'apps.feature_preview',
     'apps.workqueue',
     'apps.picture_crop',
+
+    'ntb.macros',
 ])
 
 RENDITIONS = {

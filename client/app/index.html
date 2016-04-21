@@ -260,6 +260,13 @@
                 'scheduled': true
         };
 
+       // enable ingest/content view in workspace sidebar
+       config.workspace = {
+            ingest: 0,
+            content: 0
+        };
+
+
         var modules = [
             'superdesk',
             'superdesk.settings',
