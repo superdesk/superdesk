@@ -121,7 +121,6 @@
     <script src="node_modules/superdesk-core/scripts/superdesk/directives/sdUserAvatar.js"></script>
     <script src="node_modules/superdesk-core/scripts/superdesk/directives/sdWithParams.js"></script>
 
-    <script src="node_modules/superdesk-core/scripts/superdesk/editor/editor.js"></script>
     <script src="node_modules/superdesk-core/scripts/superdesk/features/features.js"></script>
     <script src="node_modules/superdesk-core/scripts/superdesk/services/asset.js"></script>
     <script src="node_modules/superdesk-core/scripts/superdesk/services/image-factory.js"></script>
@@ -216,6 +215,11 @@
     <script src="node_modules/superdesk-core/scripts/superdesk-dashboard/grid/grid.js"></script>
 
     <script src="node_modules/superdesk-core/scripts/superdesk-search-providers/module.js"></script>
+
+    <script src="node_modules/superdesk-core/scripts/superdesk/editor2/editor.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/editor2/editor.ctrl.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/editor2/add-embed.ctrl.js"></script>
+    <script src="node_modules/superdesk-core/scripts/superdesk/editor2/add-content.js"></script>
     <!-- endbuild -->
 
     <!-- build:js translations.js -->
@@ -232,11 +236,6 @@
     <script>
         var config = <%= grunt.toJSON(config) %>;
 
-        // enable ingest/content view in workspace sidebar
-        config.workspace = {
-            ingest: 1,
-            content: 1
-        };
 
         var modules = [
             'superdesk',
@@ -252,7 +251,7 @@
             'superdesk.authoring',
             'superdesk.authoring.multiedit',
             'superdesk.packaging',
-            'superdesk.editor',
+            'superdesk.editor2',
             'superdesk.editor.spellcheck',
             'superdesk.notification',
             'superdesk.highlights',
