@@ -10,6 +10,13 @@ distribution and publishing platform developed and maintained by Sourcefabric
 with the sole purpose of making the best possible software for journalism. It
 is scaleable to suit news organizations of any size.
 
+The Superdesk server provides the API to process all client requests. The client 
+provides the user interface. Server and client are separate applications using 
+different technologies.
+
+Find more information about the client configuration in the README file of the repo:
+[https://github.com/superdesk/superdesk-client-core](https://github.com/superdesk/superdesk-client-core "") 
+
 ### Installation
 
 Use [docker-compose](http://docs.docker.com/compose/ "") and the config from the `docker` folder or build docker images manually from `Dockerfile`s from `client` and `server` folders accordingly.
