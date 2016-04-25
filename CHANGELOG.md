@@ -1,8 +1,8 @@
 
-## [unreleased]
+## Superdesk Changelog
 
 
-## [0.1] - 2015-09-04
+## [Version 1.0 beta-1] - 2016-04-25
 
-- here be dragons. we start to populate this since now on.
+First official public release.
 
