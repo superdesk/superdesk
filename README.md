@@ -8,7 +8,9 @@
 Superdesk is an open source end-to-end news creation, production, curation,
 distribution and publishing platform developed and maintained by Sourcefabric
 with the sole purpose of making the best possible software for journalism. It
-is scaleable to suit news organizations of any size.
+is scaleable to suit news organizations of any size. See the [Superdesk website] (http://www.superdesk.org) for more information.
+
+Looking to stay up to date on the latest news? [Subscribe] (http://eepurl.com/bClQlD) to our monthly newsletter. 
 
 ### Installation
 
@@ -39,3 +41,23 @@ If you can't log in then you probably need to run `./scripts/docker-local-create
 If you're going to assign some hostname to the instance, you should also set it in the config file  [common.yml](./docker/common.yml) instead of `127.0.0.1`.
 
 For manual installation just follow the steps described in the [Dockerfile](./Dockerfile).
+
+###Contribute
+
+In general, contributing code to the Superdesk project – whether it is a new feature or a bug fix – is simple and follows this general path:
+
+1) Get a copy of the project source code 
+<P>2) Work on the code changes</P>
+<P>3) Submit a Pull Request whenever you are ready</P>
+
+###Questions and issues
+
+Our [issue tracker] (https://dev.sourcefabric.org/projects/SD) is only for bug reports and feature requests. Anything else, such as questions or general feedback, should be posted in the [forum] (https://forum.sourcefabric.org/categories/superdesk-dev).
+
+###A special thanks to...
+
+Users, developers and development partners that have contributed to the Superdesk project. Also, to all the other amazing open-source projects that make Superdesk possible!
+
+###License
+
+Superdesk is available under the [AGPL version 3] (https://www.gnu.org/licenses/agpl-3.0.html) open source license.
