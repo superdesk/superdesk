@@ -1,19 +1,5 @@
 [
-     {
-         "_id": "1535983d9d114c19acf9945a",
-         "name": "SNAPPA",
-         "spike_expiry": 1440,
-         "incoming_stage": "ffde46d68dd949888ef0f8d1",
-         "description": "The SNAPPA Desk",
-         "desk_type": "production",
-         "members": [{
-             "user": "7f138bb30d964df1988c438e"
-         }, {
-             "user": "a21a621c4c8847b085fe2d78"
-         }]
-     },
- 
-     {
+    {
         "_id": "2b702ea5de13465696ef44c2",
         "name": "Sports Desk",
         "spike_expiry": 1440,
@@ -27,19 +13,6 @@
         }, {
             "user": "a21a621c4c8847b085fe2d78"
         }],
-        "monitoring_settings": [{
-            "max_items": 10,
-            "_id": "a2b0747712fd45c79af2a89f",
-            "type": "stage"
-        }, {
-            "max_items": 10,
-            "_id": "5e6ec157371a469390220b1a",
-            "type": "stage"
-        }, {
-            "max_items": 10,
-            "_id": "5641b0ec015149002643921b",
-            "type": "search"
-        }],
         "source": "Press Association",
         "desk_metadata": {
             "anpa_category": [
@@ -48,13 +21,6 @@
         }
     },
 
-    {
-        "_id": "5640bd4c60fcab002a65f059",
-        "incoming_stage": "5640bd4c60fcab002a65f058",
-        "desk_type": "authoring",
-        "spike_expiry": 0,
-        "name": "test desk by petr"
-    },
 
     {
         "_id": "67a7b9bc8a6d44b9b4bc50f6",
@@ -69,35 +35,6 @@
             "user": "b5c91b8150294394af1c44cc"
         }, {
             "user": "a21a621c4c8847b085fe2d78"
-        }],
-        "monitoring_settings": [{
-            "max_items": 10,
-            "_id": "personal",
-            "type": "personal"
-        }, {
-            "max_items": 10,
-            "_id": "e8345490fe084f5886b32166",
-            "type": "stage"
-        }, {
-            "max_items": 10,
-            "_id": "98cf9f4310734e46ac5bd7bd",
-            "type": "stage"
-        }, {
-            "max_items": 10,
-            "_id": "ffde46d68dd949888ef0f8d1",
-            "type": "stage"
-        }, {
-            "max_items": 10,
-            "_id": "a2b0747712fd45c79af2a89f",
-            "type": "stage"
-        }, {
-            "max_items": 10,
-            "_id": "5e6ec157371a469390220b1a",
-            "type": "stage"
-        }, {
-            "max_items": 10,
-            "_id": "5641b0ec015149002643921b",
-            "type": "search"
         }],
         "source": "Press Association",
         "desk_metadata": {
