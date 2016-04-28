@@ -5,20 +5,46 @@
         "priority": 80,
         "enabled": true,
         "schema": {
-            "headline": {"required": true, "maxlength": 64},
-            "dateline": {"required": true},
-            "byline": {"required": true},
-            "abstract": {"required": true, "maxlength": 160},
+            "headline": {"type": "string", "required": true, "maxlength": 64, "minlength": 1},
+            "dateline": {
+               "type": "dict",
+               "required": true,
+               "schema": {
+                    "source": {},
+                    "text": {"type": "string", "required": true, "minlength": 1},
+                    "date": {},
+                    "location": {}
+                  }
+            },
+            "byline": {"type": "string", "required": true, "minlength": 1},
+            "abstract": {"type": "string", "required": true, "maxlength": 160, "minlength": 1},
             "body_html": {},
-            "sign_off": {"required": true},
+            "sign_off": {"type": "string", "required": true, "minlength": 1},
             "feature_image": {"type": "picture"},
-            "slugline": {"required": true, "maxlength": 30},
+            "slugline": {"type": "string", "required": true, "maxlength": 30, "minlength": 1},
             "priority": {"required": true},
             "urgency": {"required": true},
-            "anpa_category": {"required": true},
-            "subject": {"required": true},
-            "genre" : {"required": true},
-            "place": {"required": true},
+            "anpa_category": {"type": "list", "required": true, "minlength": 1},
+            "subject": {
+              "type": "list",
+              "minlength": 2,
+              "schema": {
+                 "type": "dict",
+                 "schema": {
+                    "name": {},
+                    "qcode": {},
+                    "scheme": {
+                       "type": "string",
+                       "required": true,
+                       "allowed": ["subject_custom", "category"]
+                    },
+                    "service": {},
+                    "parent": {}
+                  }
+              }
+            },
+            "genre" : {"type": "list", "minlength": 1},
+            "place": {"type": "list", "minlength": 1},
             "ednote": {}
         },
         "editor": {
@@ -49,20 +75,37 @@
         "priority": 50,
         "enabled": true,
         "schema": {
-            "headline": {"required": true, "maxlength": 64},
+            "headline": {"type": "string", "required": true, "maxlength": 64, "minlength": 1},
             "dateline": {},
-            "byline": {},
-            "abstract": {"maxlength": 160},
+            "byline": {"type": "string"},
+            "abstract": {"type": "string", "maxlength": 160},
             "body_html": {},
-            "sign_off": {},
+            "sign_off": {"type": "string"},
             "feature_image": {"type": "picture"},
-            "slugline": {"required": true, "maxlength": 30},
+            "slugline": {"type": "string", "required": true, "maxlength": 30, "minlength": 1},
             "priority": {"required": true},
             "urgency": {"required": true},
-            "anpa_category": {"required": true},
-            "subject": {"required": true},
-            "genre" : {"required": true},
-            "place": {},
+            "anpa_category": {"type": "list", "required": true, "minlength": 1},
+            "subject": {
+              "type": "list",
+              "minlength": 1,
+              "schema": {
+                 "type": "dict",
+                 "schema": {
+                    "name": {},
+                    "qcode": {},
+                    "scheme": {
+                       "type": "string",
+                       "required": true,
+                       "allowed": ["subject_custom", "category"]
+                    },
+                    "service": {},
+                    "parent": {}
+                  }
+              }
+            },
+            "genre" : {"type": "list", "minlength": 1},
+            "place": {"type": "list"},
             "ednote": {}
         },
         "editor": {
@@ -93,19 +136,36 @@
         "priority": 30,
         "enabled": true,
         "schema": {
-            "headline": {"required": true, "maxlength": 64},
+            "headline": {"type": "string", "required": true, "maxlength": 64, "minlength": 1},
             "dateline": {},
-            "byline": {},
-            "abstract": {"maxlength": 160},
+            "byline": {"type": "string"},
+            "abstract": {"type": "string", "maxlength": 160},
             "body_html": {},
-            "sign_off": {},
+            "sign_off": {"type": "string"},
             "feature_image": {"type": "picture"},
-            "slugline": {"required": true, "maxlength": 30},
+            "slugline": {"type": "string", "required": true, "maxlength": 30, "minlength": 1},
             "priority": {},
             "urgency": {},
-            "anpa_category": {"required": true},
-            "subject": {"required": true},
-            "genre" : {"required": true},
+            "anpa_category": {"type": "list", "required": true, "minlength": 1},
+            "subject": {
+              "type": "list",
+              "minlength": 1,
+              "schema": {
+                 "type": "dict",
+                 "schema": {
+                    "name": {},
+                    "qcode": {},
+                    "scheme": {
+                       "type": "string",
+                       "required": true,
+                       "allowed": ["subject_custom", "category"]
+                    },
+                    "service": {},
+                    "parent": {}
+                  }
+              }
+            },
+            "genre" : {"type": "list", "minlength": 1},
             "place": {},
             "ednote": {}
         },
@@ -118,50 +178,6 @@
             "genre_custom": {"order": 6, "sdWidth": "half", "required": true},
             "subject_custom": {"order": 7, "sdWidth": "full"},
             "place_custom": {"order": 8, "sdWidth": "full"},
-            "ednote": {"order": 9, "sdWidth": "full"},
-            "headline": {"order": 10},
-            "dateline": {"order": 11},
-            "byline": {"order": 12},
-            "abstract": {"order": 13},
-            "body_html": {
-                "order": 14,
-                "formatOptions":["h1", "h2", "bold", "italic", "underline", "quote", "anchor", "embed", "picture", "table", "removeFormat"]
-            },
-            "sign_off": {"order": 15},
-            "feature_image": {"order": 16}
-        }
-    },
-    {
-        "_id": "article",
-        "label": "Article",
-        "priority": 30,
-        "enabled": false,
-        "schema": {
-            "headline": {"required": true, "maxlength": 64},
-            "dateline": {"required": true},
-            "byline": {"required": true},
-            "abstract": {"required": true, "maxlength": 160},
-            "body_html": {"required": true},
-            "sign_off": {"required": true},
-            "feature_image": {"type": "picture"},
-            "slugline": {"required": true, "maxlength": 30},
-            "priority": {"required": true},
-            "urgency": {"required": true},
-            "anpa_category": {"required": true},
-            "subject": {"required": true},
-            "genre" : {},
-            "place": {"required": true},
-            "ednote": {}
-        },
-        "editor": {
-            "slugline": {"order": 1, "sdWidth": "half"},
-            "priority": {"order": 2, "sdWidth": "quarter"},
-            "urgency": {"order": 3, "sdWidth": "quarter"},
-            "anpa_category": {"order": 4, "sdWidth": "full"},
-            "category": {"order": 5, "sdWidth": "half"},
-            "genre_custom": {"order": 6, "sdWidth": "half"},
-            "subject_custom": {"order": 7, "sdWidth": "full", "required": true},
-            "place_custom": {"order": 8, "sdWidth": "full", "required": true},
             "ednote": {"order": 9, "sdWidth": "full"},
             "headline": {"order": 10},
             "dateline": {"order": 11},
