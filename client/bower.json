@@ -25,7 +25,7 @@
     "react": "~0.14.3",
     "langmap": "~0.0.10",
     "angular-animate": "1.4.8",
-    "angular-embed": "~3.0.1",
+    "angular-embed": "~3.0.2",
     "angular-contenteditable": "~0.3.8",
     "angular-vs-repeat": "^1.1.4",
     "exif-js": "^2.1.1"
