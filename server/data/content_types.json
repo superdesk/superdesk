@@ -24,7 +24,8 @@
             "desired_response": {},
             "assets": {},
             "featured": {},
-            "credit_level": {}
+            "credit_level": {},
+            "relatedItems": {}
         },
         "editor": {
             "anpa_category": {"order": 1, "sdWidth": "half"},
@@ -72,7 +73,8 @@
             "desired_response": {},
             "assets": {},
             "featured": {},
-            "credit_level": {}
+            "credit_level": {},
+            "relatedItems": {}
         },
         "editor": {
             "anpa_category": {"order": 1, "sdWidth": "half"},
@@ -125,7 +127,8 @@
             "desired_response": {},
             "assets": {},
             "featured": {},
-            "credit_level": {}
+            "credit_level": {},
+            "relatedItems": {}
         },
         "editor": {
             "anpa_category": {"order": 1, "sdWidth": "half"},
@@ -178,7 +181,8 @@
             "desired_response": {},
             "assets": {},
             "featured": {},
-            "credit_level": {}
+            "credit_level": {},
+            "relatedItems": {}
         },
         "editor": {
             "anpa_category": {"order": 1, "sdWidth": "half"},
