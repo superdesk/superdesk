@@ -1,7 +1,7 @@
 [
     {
         "_id": "categories",
-        "display_name": "Categories",
+        "display_name": "Service",
         "type": "manageable",
         "items": [
             {"is_active": true, "name": "Nyhetstjenesten", "qcode": "n", "single_value": false},
@@ -22,7 +22,7 @@
     },
     {
         "_id": "default_categories",
-        "display_name": "Default Categories",
+        "display_name": "Default Services",
         "type": "manageable",
         "items": [
             {"is_active": true, "qcode": "n"},
