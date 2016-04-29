@@ -27,6 +27,7 @@
             "anpa_category": {"type": "list", "required": true, "minlength": 1},
             "subject": {
               "type": "list",
+              "required": true,
               "mandatory_in_list": {"scheme": {"subject": "subject_custom", "category": "category"}},
               "schema": {
                  "type": "dict",
@@ -43,8 +44,8 @@
                   }
               }
             },
-            "genre" : {"type": "list", "minlength": 1},
-            "place": {"type": "list", "minlength": 1},
+            "genre" : {"type": "list", "required": true, "minlength": 1},
+            "place": {"type": "list", "required": true, "minlength": 1},
             "ednote": {}
         },
         "editor": {
@@ -104,7 +105,7 @@
                   }
               }
             },
-            "genre" : {"type": "list", "minlength": 1},
+            "genre" : {"type": "list", "required": true, "minlength": 1},
             "place": {"type": "list"},
             "ednote": {}
         },
@@ -165,7 +166,7 @@
                   }
               }
             },
-            "genre" : {"type": "list", "minlength": 1},
+            "genre" : {"type": "list", "required": true, "minlength": 1},
             "place": {},
             "ednote": {}
         },
