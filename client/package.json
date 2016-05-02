@@ -2,7 +2,7 @@
   "name": "superdesk-client",
   "license": "GPL-3.0",
   "dependencies": {
-    "superdesk-core": "superdesk/superdesk-client-core#a56925c2868285d8892e8d6669ffd94ce0ef5879",
+    "superdesk-core": "superdesk/superdesk-client-core#55973ebbce1a46ca4dd29e5790173397cc1a70cb",
     "btoa": "1.1.2",
     "grunt": "0.4.5",
     "grunt-angular-gettext": "2.1.3",
