@@ -13,7 +13,7 @@
         "global_filters": {},
         "destinations": [{
             "config": {
-                "resource_url": "http://52.31.63.137:10000/pipeline/superdesk/content/v0.1/route/receiver"
+                "resource_url": "http://46.101.81.31:8080/pipeline/content/v1/route/notification/receiver"
             },
             "format": "ninjs",
             "delivery_type": "http_push",
