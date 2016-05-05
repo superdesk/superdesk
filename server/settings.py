@@ -65,8 +65,7 @@ LDAP_USER_FILTER = env('LDAP_USER_FILTER', "(&(objectCategory=user)(objectClass=
 # LDAP User Attributes to fetch. Keys would be LDAP Attribute Name and Value would be Supderdesk Model Attribute Name
 LDAP_USER_ATTRIBUTES = json.loads(env('LDAP_USER_ATTRIBUTES',
                                       '{"givenName": "first_name", "sn": "last_name", '
-                                      '"displayName": "display_name", "mail": "email", '
-                                      '"ipPhone": "phone"}'))
+                                      '"displayName": "display_name", "mail": "email"}'))
 
 if LDAP_SERVER:
     INSTALLED_APPS.append('apps.ldap')
