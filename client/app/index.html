@@ -270,6 +270,12 @@
             italicAbstract: false
         };
 
+        config.search_cvs = [
+            {id: 'subject', name:'Subject', field: 'subject', list: 'subject_custom'},
+            {id: 'genre', name:'Genre', field: 'genre', list: 'genre_custom'},
+            {id: 'category', name:'Category', field: 'subject', list: 'category'}
+        ];
+
         var modules = [
             'superdesk',
             'superdesk.settings',
