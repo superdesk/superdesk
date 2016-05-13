@@ -312,7 +312,8 @@ class ScanpixDatalayer(DataLayer):
         self._parse_doc(doc)
 
         url = doc['renditions']['baseImage']['href']
-        mime_type = mimetypes.guess_type(url)
+        # if MIME type can't be guessed, we default to jpeg
+        mime_type = mimetypes.guess_type(url)[0] or 'image/jpeg'
 
         r = self._request(url, data)
         out = BytesIO(r.content)
