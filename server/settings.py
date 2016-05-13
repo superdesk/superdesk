@@ -10,6 +10,10 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import os
+from superdesk.factory.default_settings import CELERYBEAT_SCHEDULE
+from celery.schedules import crontab
+
+CELERYBEAT_SCHEDULE['content:gc']['schedule'] = crontab(minute=5)
 
 
 APPLICATION_NAME = 'Superdesk'
