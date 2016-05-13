@@ -47,6 +47,7 @@ if SERVER_NAME.endswith(':80'):
 INSTALLED_APPS = [
     'apps.auth',
     'superdesk.roles',
+    'ntb.scanpix',
 ]
 
 # LDAP settings
