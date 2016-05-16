@@ -132,7 +132,6 @@ class ScanpixDatalayer(DataLayer):
                 data['subscription'] = extract_params(query, 'subscription')['subscription']
             except KeyError:
                 data['subscription'] = 'subscription'  # this is requested as a default value
-            del data['subscription']
 
             text_params = extract_params(query, ('headline', 'keywords', 'caption', 'text'))
             # combine all possible text params to use the q field.
@@ -224,12 +223,18 @@ class ScanpixDatalayer(DataLayer):
         new_doc = {}
         new_doc['_id'] = doc['refPtr']
         new_doc['guid'] = doc['refPtr']
-        if 'description_text' in doc:
+        try:
             new_doc['description_text'] = doc['caption']
-        if 'headline' in doc:
+        except KeyError:
+            pass
+        try:
             new_doc['headline'] = doc['headline']
-        if 'credit' in doc:
+        except KeyError:
+            pass
+        try:
             new_doc['original_source'] = new_doc['source'] = doc['credit']
+        except KeyError:
+            pass
         new_doc['versioncreated'] = utcnow()
         new_doc['firstcreated'] = self._datetime(doc['archivedTime'])
         new_doc['pubstatus'] = 'usable'
