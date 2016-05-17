@@ -1,4 +1,4 @@
 gunicorn==19.4.5
 honcho==0.6.6
 
--e git+git://github.com/superdesk/superdesk-core@ff94828702161f152f56e806618e2cc299938264#egg=Superdesk-Core==0.1-dev
+-e git+git://github.com/superdesk/superdesk-core@ea07d0c9e026688f124d8f222a0e50e22073d43c#egg=Superdesk-Core==0.1-dev
