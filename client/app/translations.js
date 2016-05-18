@@ -5,6 +5,8 @@ angular.module('gettext').run(['gettextCatalog', function (gettextCatalog) {
         "urgency": "news value",
         "Urgency stats": "News Value stats",
         "SERVICE": "CATEGORY",
+        "SERVICES": "CATEGORIES",
+        "Services": "Categories",
         "Mar": "March",
         "Apr": "April",
         "Jun": "June",
