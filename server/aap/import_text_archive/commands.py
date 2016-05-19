@@ -20,7 +20,7 @@ from superdesk import config
 from superdesk.io.iptc import subject_codes
 from datetime import datetime
 import time
-from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE, ITEM_STATE, CONTENT_STATE
+from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE, ITEM_STATE, CONTENT_STATE, FORMAT, FORMATS
 from superdesk.io.commands.update_ingest import process_iptc_codes
 from superdesk.etree import get_text_word_count
 from apps.archive.common import generate_unique_id_and_name
@@ -222,15 +222,14 @@ class AppImportTextArchiveCommand(superdesk.Command):
                             break
                     item['anpa_category'] = [anpacategory]
 
-    #           self._addkeywords('CompanyCodes', doc, item)
+                self._addkeywords('CompanyCodes', doc, item)
 
-                type = self._get_head_value(doc, 'Format')
-                if type == 'x':
-                    item[ITEM_TYPE] = CONTENT_TYPE.TEXT
-                elif type == 't':
-                    item[ITEM_TYPE] = CONTENT_TYPE.PREFORMATTED
+                item[ITEM_TYPE] = CONTENT_TYPE.TEXT
+                format = self._get_head_value(doc, 'Format')
+                if format == 't':
+                    item[FORMAT] = FORMATS.PRESERVED
                 else:
-                    item[ITEM_TYPE] = CONTENT_TYPE.TEXT
+                    item[FORMAT] = FORMATS.HTML
 
                 item['keyword'] = self._get_head_value(doc, 'Keyword')
                 item['ingest_provider_sequence'] = self._get_head_value(doc, 'Sequence')
@@ -262,19 +261,19 @@ class AppImportTextArchiveCommand(superdesk.Command):
                 if take_key:
                     item['anpa_take_key'] = take_key
 
-    #            self._addkeywords('Topic', doc, item)
+                self._addkeywords('Topic', doc, item)
 
     #            self._addkeywords('Selectors', doc, item)
 
                 el = doc.find('dcdossier/document/body/BodyText')
                 if el is not None:
                     story = el.text
-                    if item[ITEM_TYPE] == CONTENT_TYPE.TEXT:
-                        story = story.replace('\n   ', '<br><br>')
+                    if item.get(FORMAT) == FORMATS.HTML:
+                        story = story.replace('\n   ', '<p></p>')
                         story = story.replace('\n', '<br>')
-                        item['body_html'] = story
+                        item['body_html'] = '<p>' + story + '</p>'
                     else:
-                        item['body_html'] = story
+                        item['body_html'] = '<pre>' + story + '</pre>'
                     try:
                         item['word_count'] = get_text_word_count(item['body_html'])
                     except:
