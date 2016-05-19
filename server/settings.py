@@ -166,6 +166,7 @@ ODBC_TEST_CONNECTION_STRING = env('ODBC_TEST_CONNECTION_STRING',
 
 DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES = 'AAP'
 DEFAULT_URGENCY_VALUE_FOR_MANUAL_ARTICLES = 3
+DEFAULT_GENRE_VALUE_FOR_MANUAL_ARTICLES = [{'qcode': 'Article', 'name': 'Article (news)'}]
 
 # This value gets injected into NewsML 1.2 and G2 output documents.
 NEWSML_PROVIDER_ID = 'aap.com.au'
