@@ -1570,6 +1570,7 @@
         <!-- endbuild -->
 
         <!-- build:js superdesk-docs-core.js -->
+        <script src="node_modules/superdesk-core/scripts/superdesk/keyboard/keyboard.js"></script>
         <script src="node_modules/superdesk-core/scripts/superdesk/auth/auth.js"></script>
         <script src="node_modules/superdesk-core/scripts/superdesk/auth/auth-service.js"></script>
         <script src="node_modules/superdesk-core/scripts/superdesk/auth/session-service.js"></script>
@@ -1609,14 +1610,18 @@
 
         <script src="templates-cache.js"></script>
 
-        <script src="//google-code-prettify.googlecode.com/svn/trunk/src/prettify.js"></script>
+	   <script src="//cdn.rawgit.com/google/code-prettify/master/loader/prettify.js"></script>
 
         <script>
+            angular.module('superdesk.config').constant('config', <%= grunt.toJSON(config) %>);
+
             var modules = [
                 'superdesk.docs.core',
                 'superdesk.docs',
-                'superdesk.templates-cache'
+                'superdesk.templates-cache',
+                'superdesk.config'
             ];
+
             var body = angular.element('body');
             body.ready(function () {
                 angular.bootstrap(body, modules);
