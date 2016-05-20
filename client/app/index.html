@@ -276,6 +276,20 @@
             {id: 'category', name:'Category', field: 'subject', list: 'category'}
         ];
 
+        config.list = {
+            priority: ['urgency'],
+            firstLine: [
+                'slugline',
+                'highlights',
+                'headline',
+                'provider',
+                'update',
+                'updated',
+                'state',
+                'versioncreated'
+            ]
+        };
+
         var modules = [
             'superdesk',
             'superdesk.settings',
