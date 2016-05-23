@@ -16,6 +16,11 @@
                 "required": false,
                 "maxlength": 160
             },
+            "sms_message": {
+                "type": "string",
+                "required": false,
+                "maxlength": 160
+            },
             "type": {
                 "type": "string",
                 "required": "true",
@@ -82,6 +87,11 @@
                 "maxlength": 64
             },
             "abstract": {
+                "type": "string",
+                "required": false,
+                "maxlength": 160
+            },
+            "sms_message": {
                 "type": "string",
                 "required": false,
                 "maxlength": 160
