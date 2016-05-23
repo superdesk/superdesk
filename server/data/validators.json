@@ -16,6 +16,11 @@
                 "required": false,
                 "maxlength": 160
             },
+            "sms_message": {
+                "type": "string",
+                "required": false,
+                "maxlength": 160
+            },
             "type": {
                 "type": "string",
                 "required": "true",
@@ -82,6 +87,11 @@
                 "maxlength": 64
             },
             "abstract": {
+                "type": "string",
+                "required": false,
+                "maxlength": 160
+            },
+            "sms_message": {
                 "type": "string",
                 "required": false,
                 "maxlength": 160
@@ -1370,6 +1380,68 @@
                 "type": "list",
                 "required": true,
                 "minlength": 1
+            }
+        }
+    },
+    {
+        "_id": "auto_publish_text",
+        "act": "auto_publish",
+        "type": "text",
+        "schema": {
+            "headline": {
+                "type": "string",
+                "required": true,
+                "nullable": false,
+                "empty": false,
+                "maxlength": 64
+            },
+            "abstract": {
+                "type": "string",
+                "required": false,
+                "maxlength": 160
+            },
+            "type": {
+                "type": "string",
+                "required": "true",
+                "allowed": ["text"]
+            },
+            "anpa_category": {
+                "type": "list",
+                "required": true,
+                "minlength": 1
+            },
+            "pubstatus": {
+                "type": "string",
+                "required": true,
+                "allowed": ["usable"]
+            },
+            "slugline": {
+                "type": "string",
+                "required": true,
+                "nullable": false,
+                "empty": false,
+                "maxlength": 24
+            },
+            "body_html": {
+                "type": "string",
+                "required": true,
+                "nullable": false,
+                "empty": false
+            },
+            "subject": {
+                "type": "list",
+                "required": true,
+                "minlength": 1
+            },
+            "urgency": {
+                "type": "integer",
+                "required": true,
+                "allowed": [1, 2, 3, 4, 5]
+            },
+            "priority": {
+                "type": "integer",
+                "required": true,
+                "allowed": [1, 2, 3, 4, 5, 6, 7, 8, 9]
             }
         }
     }
