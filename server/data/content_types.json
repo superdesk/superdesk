@@ -39,8 +39,8 @@
                        "required": true,
                        "allowed": ["subject_custom", "category"]
                     },
-                    "service": {},
-                    "parent": {}
+                    "service": {"nullable": true},
+                    "parent": {"nullable": true}
                   }
               }
             },
@@ -100,8 +100,8 @@
                        "required": true,
                        "allowed": ["subject_custom", "category"]
                     },
-                    "service": {},
-                    "parent": {}
+                    "service": {"nullable": true},
+                    "parent": {"nullable": true}
                   }
               }
             },
@@ -161,8 +161,8 @@
                        "required": true,
                        "allowed": ["subject_custom", "category"]
                     },
-                    "service": {},
-                    "parent": {}
+                    "service": {"nullable": true},
+                    "parent": {"nullable": true}
                   }
               }
             },
