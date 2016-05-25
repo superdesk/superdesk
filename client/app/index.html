@@ -271,10 +271,25 @@
         };
 
         config.search_cvs = [
-            {id: 'subject', name:'Subject', field: 'subject', list: 'subject_custom'},
+            {id: 'anpa_category', name:'Service', field: 'anpa_category', list: 'categories'},
+            {id: 'category', name:'Category', field: 'subject', list: 'category'},
             {id: 'genre', name:'Genre', field: 'genre', list: 'genre_custom'},
-            {id: 'category', name:'Category', field: 'subject', list: 'category'}
+            {id: 'subject', name:'Subject', field: 'subject', list: 'subject_custom'},
+            {id: 'priority', name:'Priority', field: 'priority', list: 'priority'},
+            {id: 'urgency', name:'Urgency', field: 'urgency', list: 'urgency'}
         ];
+
+        config.search = {
+        		'slugline': 1,
+        		'headline': 1,
+        		'unique_name': 1,
+        		'story_text': 1,
+                'byline': 1,
+                'keywords': 0,
+                'creator': 1,
+                'from_desk': 1,
+                'to_desk': 1
+        };
 
         config.list = {
             priority: ['urgency'],
