@@ -180,8 +180,7 @@ class AppImportTextArchiveCommand(superdesk.Command):
                     item[FORMAT] = FORMATS.PRESERVED
                 else:
                     item[FORMAT] = FORMATS.HTML
-                #item[FORMAT] = FORMATS.HTML
-
+                # item[FORMAT] = FORMATS.HTML
 
                 # if the item has been modified in the archive then it is due to a kill
                 # there is an argument that this item should not be imported at all
@@ -225,27 +224,32 @@ class AppImportTextArchiveCommand(superdesk.Command):
                         pass
 
                 item['source'] = self._get_head_value(doc, 'Agency')
+                # if the source document contains no agency then by definition it is unknown
                 if item['source'] is None:
                     item['source'] = 'UNKNOWN'
                 else:
+                    # check if the source of the document was Newscentre
                     dc_unique = doc.find('dcdossier').get('unique')
                     if dc_unique.startswith('NC.') and last_line is not None:
-                        if self._get_head_value(doc, 'Agency').isdigit():
+                        # The AFR summary articles all have agency values 25 chars long
+                        if len(item['source']) == 25:
+                            item['source'] = 'AAP'
+                        # is it a numeric Agency
+                        elif self._get_head_value(doc, 'Agency').isdigit():
                             sign_off = last_line.split(' ')
                             if len(sign_off) > 0:
                                 item['source'] = sign_off[0].upper()
-
                             else:
                                 item['source'] = sign_off.upper()
-                        else:
-                            if len(item['source']) == 25:
+                            # clean up what we have extracted
+                            if item['source'].startswith('AAP'):
                                 item['source'] = 'AAP'
-                        if item['source'].startswith('AAP'):
-                            item['source'] = 'AAP'
-                        if item['source'] not in ('AAP', 'AP', 'REUT', 'Asia Pulse', 'DPA', 'AFP', 'RAW', 'NZA', 'NZPA',
-                                                  'KRT', 'PA', 'PAA', 'SNI', 'REUTERS'):
-                            print('Source : {}'.format(item['source']))
-                            item['source'] = 'UNKNOWN'
+                            else:
+                                # make sure it is one of the known values
+                                if item['source'] not in {'AAP', 'AP', 'REUT', 'Asia Pulse', 'DPA', 'AFP', 'RAW', 'NZA',
+                                                          'NZPA', 'KRT', 'PA', 'PAA', 'SNI', 'REUTERS'}:
+                                    print('Source : {}'.format(item['source']))
+                                    item['source'] = 'UNKNOWN'
 
     #            self._addkeywords('AsiaPulseCodes', doc, item)
 
