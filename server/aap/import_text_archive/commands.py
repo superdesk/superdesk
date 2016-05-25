@@ -174,6 +174,14 @@ class AppImportTextArchiveCommand(superdesk.Command):
                         self._id = int(id)
                 item = {}
                 item['guid'] = doc.find('dcdossier').get('guid')
+                item[ITEM_TYPE] = CONTENT_TYPE.TEXT
+                format = self._get_head_value(doc, 'Format')
+                if format == 't':
+                    item[FORMAT] = FORMATS.PRESERVED
+                else:
+                    item[FORMAT] = FORMATS.HTML
+                #item[FORMAT] = FORMATS.HTML
+
 
                 # if the item has been modified in the archive then it is due to a kill
                 # there is an argument that this item should not be imported at all
@@ -198,7 +206,46 @@ class AppImportTextArchiveCommand(superdesk.Command):
                 generate_unique_id_and_name(item)
                 item['ingest_id'] = id
 
+                last_line = None
+                el = doc.find('dcdossier/document/body/BodyText')
+                if el is not None:
+                    story = el.text
+                    lines = story.split('\n')
+                    if len(lines) > 0:
+                        last_line = lines[-1]
+                    if item.get(FORMAT) == FORMATS.HTML:
+                        story = story.replace('\n   ', '<p></p>')
+                        story = story.replace('\n', '<br>')
+                        item['body_html'] = '<p>' + story + '</p>'
+                    else:
+                        item['body_html'] = '<pre>' + story + '</pre>'
+                    try:
+                        item['word_count'] = get_text_word_count(item['body_html'])
+                    except:
+                        pass
+
                 item['source'] = self._get_head_value(doc, 'Agency')
+                if item['source'] is None:
+                    item['source'] = 'UNKNOWN'
+                else:
+                    dc_unique = doc.find('dcdossier').get('unique')
+                    if dc_unique.startswith('NC.') and last_line is not None:
+                        if self._get_head_value(doc, 'Agency').isdigit():
+                            sign_off = last_line.split(' ')
+                            if len(sign_off) > 0:
+                                item['source'] = sign_off[0].upper()
+
+                            else:
+                                item['source'] = sign_off.upper()
+                        else:
+                            if len(item['source']) == 25:
+                                item['source'] = 'AAP'
+                        if item['source'].startswith('AAP'):
+                            item['source'] = 'AAP'
+                        if item['source'] not in ('AAP', 'AP', 'REUT', 'Asia Pulse', 'DPA', 'AFP', 'RAW', 'NZA', 'NZPA',
+                                                  'KRT', 'PA', 'PAA', 'SNI', 'REUTERS'):
+                            print('Source : {}'.format(item['source']))
+                            item['source'] = 'UNKNOWN'
 
     #            self._addkeywords('AsiaPulseCodes', doc, item)
 
@@ -223,13 +270,6 @@ class AppImportTextArchiveCommand(superdesk.Command):
                     item['anpa_category'] = [anpacategory]
 
                 self._addkeywords('CompanyCodes', doc, item)
-
-                item[ITEM_TYPE] = CONTENT_TYPE.TEXT
-                format = self._get_head_value(doc, 'Format')
-                if format == 't':
-                    item[FORMAT] = FORMATS.PRESERVED
-                else:
-                    item[FORMAT] = FORMATS.HTML
 
                 item['keyword'] = self._get_head_value(doc, 'Keyword')
                 item['ingest_provider_sequence'] = self._get_head_value(doc, 'Sequence')
@@ -264,20 +304,6 @@ class AppImportTextArchiveCommand(superdesk.Command):
                 self._addkeywords('Topic', doc, item)
 
     #            self._addkeywords('Selectors', doc, item)
-
-                el = doc.find('dcdossier/document/body/BodyText')
-                if el is not None:
-                    story = el.text
-                    if item.get(FORMAT) == FORMATS.HTML:
-                        story = story.replace('\n   ', '<p></p>')
-                        story = story.replace('\n', '<br>')
-                        item['body_html'] = '<p>' + story + '</p>'
-                    else:
-                        item['body_html'] = '<pre>' + story + '</pre>'
-                    try:
-                        item['word_count'] = get_text_word_count(item['body_html'])
-                    except:
-                        pass
 
                 item['pubstatus'] = 'usable'
                 # this is required for the archived service additional lookup
