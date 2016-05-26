@@ -10,7 +10,7 @@
 
 import json
 import os
-from superdesk.locators import locators
+import superdesk.locators
 
 
 def _load_json(file_path):
@@ -26,4 +26,4 @@ def _load_json(file_path):
 
 _dir_name = os.path.dirname(os.path.realpath(__file__))
 _locators_file_path = os.path.join(_dir_name, 'data', 'locators.json')
-locators = _load_json(_locators_file_path)
+superdesk.locators.locators = _load_json(_locators_file_path)
