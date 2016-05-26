@@ -1,0 +1,1162 @@
+[
+  {
+    "qcode": "NO",
+    "name": "Norway",
+    "states": [
+      {
+        "qcode": "NO.01",
+        "name": "Østfold",
+        "cities": [
+          {
+            "qcode": "Halden",
+            "name": "Halden",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              59.1246,
+              11.38738
+            ]
+          },
+          {
+            "qcode": "Moss",
+            "name": "Moss",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              59.43402,
+              10.65769
+            ]
+          },
+          {
+            "qcode": "Sarpsborg",
+            "name": "Sarpsborg",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              59.2767,
+              11.09954
+            ]
+          },
+          {
+            "qcode": "Fredrikstad",
+            "name": "Fredrikstad",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              59.21032,
+              10.94021
+            ]
+          },
+          {
+            "qcode": "Askim",
+            "name": "Askim",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              59.58378,
+              11.16338
+            ]
+          },
+          {
+            "qcode": "Askim",
+            "name": "Askim",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              59.58326,
+              11.16286
+            ]
+          },
+          {
+            "qcode": "Mysen",
+            "name": "Mysen",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              59.55354,
+              11.32578
+            ]
+          }
+        ]
+      },
+      {
+        "qcode": "NO.02",
+        "name": "Akershus",
+        "cities": [
+          {
+            "qcode": "Ski",
+            "name": "Ski",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              59.71949,
+              10.83576
+            ]
+          },
+          {
+            "qcode": "Drøbak",
+            "name": "Drøbak",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              59.66332,
+              10.62973
+            ]
+          },
+          {
+            "qcode": "Sandvika",
+            "name": "Sandvika",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              59.89073,
+              10.52774
+            ]
+          },
+          {
+            "qcode": "Lillestrøm",
+            "name": "Lillestrøm",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              59.95597,
+              11.04918
+            ]
+          }
+        ]
+      },
+      {
+        "qcode": "NO.03",
+        "name": "Oslo",
+        "cities": [
+          {
+            "qcode": "Oslo",
+            "name": "Oslo",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              59.91273,
+              10.74609
+            ]
+          }
+        ]
+      },
+      {
+        "qcode": "NO.04",
+        "name": "Hedmark",
+        "cities": [
+          {
+            "qcode": "Kongsvinger",
+            "name": "Kongsvinger",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              60.19047,
+              11.9977
+            ]
+          },
+          {
+            "qcode": "Hamar",
+            "name": "Hamar",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              60.7945,
+              11.06798
+            ]
+          },
+          {
+            "qcode": "Brumunddal",
+            "name": "Brumunddal",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              60.88362,
+              10.94489
+            ]
+          },
+          {
+            "qcode": "Moelv",
+            "name": "Moelv",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              60.92827,
+              10.70103
+            ]
+          },
+          {
+            "qcode": "Elverum",
+            "name": "Elverum",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              60.88138,
+              11.56694
+            ]
+          },
+          {
+            "qcode": "Elverum",
+            "name": "Elverum",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              60.88191,
+              11.56231
+            ]
+          }
+        ]
+      },
+      {
+        "qcode": "NO.05",
+        "name": "Oppland",
+        "cities": [
+          {
+            "qcode": "Lillehammer",
+            "name": "Lillehammer",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              61.11514,
+              10.46628
+            ]
+          },
+          {
+            "qcode": "Gjøvik",
+            "name": "Gjøvik",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              60.79575,
+              10.69157
+            ]
+          },
+          {
+            "qcode": "Otta",
+            "name": "Otta",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              61.7712,
+              9.53529
+            ]
+          },
+          {
+            "qcode": "Fagernes",
+            "name": "Fagernes",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              60.98584,
+              9.23236
+            ]
+          }
+        ]
+      },
+      {
+        "qcode": "NO.06",
+        "name": "Buskerud",
+        "cities": [
+          {
+            "qcode": "Drammen",
+            "name": "Drammen",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              59.74389,
+              10.20449
+            ]
+          },
+          {
+            "qcode": "Kongsberg",
+            "name": "Kongsberg",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              59.66858,
+              9.65017
+            ]
+          },
+          {
+            "qcode": "Hønefoss",
+            "name": "Hønefoss",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              60.16804,
+              10.25647
+            ]
+          },
+          {
+            "qcode": "Hokksund",
+            "name": "Hokksund",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              59.76862,
+              9.9108
+            ]
+          },
+          {
+            "qcode": "Hokksund",
+            "name": "Hokksund",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              59.77077,
+              9.90987
+            ]
+          },
+          {
+            "qcode": "Nedre Eiker",
+            "name": "Nedre Eiker",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              59.75023,
+              10.00736
+            ]
+          }
+        ]
+      },
+      {
+        "qcode": "NO.07",
+        "name": "Vestfold",
+        "cities": [
+          {
+            "qcode": "Horten",
+            "name": "Horten",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              59.41721,
+              10.48343
+            ]
+          },
+          {
+            "qcode": "Åsgårdstrand",
+            "name": "Åsgårdstrand",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              59.355,
+              10.46417
+            ]
+          },
+          {
+            "qcode": "Holmestrand",
+            "name": "Holmestrand",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              59.48761,
+              10.31761
+            ]
+          },
+          {
+            "qcode": "Tønsberg",
+            "name": "Tønsberg",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              59.26754,
+              10.40762
+            ]
+          },
+          {
+            "qcode": "Sandefjord",
+            "name": "Sandefjord",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              59.13118,
+              10.21665
+            ]
+          },
+          {
+            "qcode": "Larvik",
+            "name": "Larvik",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              59.05328,
+              10.03517
+            ]
+          },
+          {
+            "qcode": "Svelvik",
+            "name": "Svelvik",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              59.6137,
+              10.40872
+            ]
+          }
+        ]
+      },
+      {
+        "qcode": "NO.08",
+        "name": "Telemark",
+        "cities": [
+          {
+            "qcode": "Brevik",
+            "name": "Brevik",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              59.05551,
+              9.69812
+            ]
+          },
+          {
+            "qcode": "Porsgrunn",
+            "name": "Porsgrunn",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              59.13166,
+              9.64665
+            ]
+          },
+          {
+            "qcode": "Skien",
+            "name": "Skien",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              59.20962,
+              9.60897
+            ]
+          },
+          {
+            "qcode": "Notodden",
+            "name": "Notodden",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              59.55936,
+              9.25853
+            ]
+          },
+          {
+            "qcode": "Langesund",
+            "name": "Langesund",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              59.0005,
+              9.74735
+            ]
+          },
+          {
+            "qcode": "Stathelle",
+            "name": "Stathelle",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              59.0451,
+              9.69814
+            ]
+          },
+          {
+            "qcode": "Kragerø",
+            "name": "Kragerø",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              58.8693,
+              9.41494
+            ]
+          },
+          {
+            "qcode": "Rjukan",
+            "name": "Rjukan",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              59.87891,
+              8.59411
+            ]
+          }
+        ]
+      },
+      {
+        "qcode": "NO.09",
+        "name": "Aust-Agder",
+        "cities": [
+          {
+            "qcode": "Risør",
+            "name": "Risør",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              58.71919,
+              9.22324
+            ]
+          },
+          {
+            "qcode": "Grimstad",
+            "name": "Grimstad",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              58.3415,
+              8.58713
+            ]
+          },
+          {
+            "qcode": "Arendal",
+            "name": "Arendal",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              58.46151,
+              8.77253
+            ]
+          },
+          {
+            "qcode": "Tvedestrand",
+            "name": "Tvedestrand",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              58.62205,
+              8.92663
+            ]
+          },
+          {
+            "qcode": "Lillesand",
+            "name": "Lillesand",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              58.25061,
+              8.37729
+            ]
+          }
+        ]
+      },
+      {
+        "qcode": "NO.10",
+        "name": "Vest-Agder",
+        "cities": [
+          {
+            "qcode": "Kristiansand",
+            "name": "Kristiansand",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              58.14615,
+              7.99573
+            ]
+          },
+          {
+            "qcode": "Mandal",
+            "name": "Mandal",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              58.0274,
+              7.45342
+            ]
+          },
+          {
+            "qcode": "Farsund",
+            "name": "Farsund",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              58.09479,
+              6.80468
+            ]
+          },
+          {
+            "qcode": "Flekkefjord",
+            "name": "Flekkefjord",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              58.29705,
+              6.66069
+            ]
+          },
+          {
+            "qcode": "Lyngdal",
+            "name": "Lyngdal",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              58.13706,
+              7.0661
+            ]
+          }
+        ]
+      },
+      {
+        "qcode": "NO.11",
+        "name": "Rogaland",
+        "cities": [
+          {
+            "qcode": "Egersund",
+            "name": "Egersund",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              58.4497,
+              6.00873
+            ]
+          },
+          {
+            "qcode": "Sandnes",
+            "name": "Sandnes",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              58.85091,
+              5.74079
+            ]
+          },
+          {
+            "qcode": "Stavanger",
+            "name": "Stavanger",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              58.96527,
+              5.71796
+            ]
+          },
+          {
+            "qcode": "Haugesund",
+            "name": "Haugesund",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              59.41378,
+              5.268
+            ]
+          },
+          {
+            "qcode": "Bryne",
+            "name": "Bryne",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              58.73536,
+              5.64766
+            ]
+          },
+          {
+            "qcode": "Bryne",
+            "name": "Bryne",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              58.73536,
+              5.64766
+            ]
+          },
+          {
+            "qcode": "Jørpeland",
+            "name": "Jørpeland",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              59.02251,
+              6.04081
+            ]
+          },
+          {
+            "qcode": "Sauda",
+            "name": "Sauda",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              59.65059,
+              6.35415
+            ]
+          },
+          {
+            "qcode": "Kopervik",
+            "name": "Kopervik",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              59.28354,
+              5.30669
+            ]
+          },
+          {
+            "qcode": "Skudeneshavn",
+            "name": "Skudeneshavn",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              59.1501,
+              5.25661
+            ]
+          },
+          {
+            "qcode": "Åkrehamn",
+            "name": "Åkrehamn",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              59.25852,
+              5.182
+            ]
+          }
+        ]
+      },
+      {
+        "qcode": "NO.12",
+        "name": "Hordaland",
+        "cities": [
+          {
+            "qcode": "Bergen",
+            "name": "Bergen",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              60.39825,
+              5.32905
+            ]
+          },
+          {
+            "qcode": "Stord",
+            "name": "Stord",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              59.78092,
+              5.4998
+            ]
+          },
+          {
+            "qcode": "Odda",
+            "name": "Odda",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              60.06912,
+              6.54563
+            ]
+          }
+        ]
+      },
+      {
+        "qcode": "NO.14",
+        "name": "Sogn og Fjordane",
+        "cities": [
+          {
+            "qcode": "Flora",
+            "name": "Flora",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              61.59994,
+              5.03144
+            ]
+          },
+          {
+            "qcode": "Førde",
+            "name": "Førde",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              61.45217,
+              5.85717
+            ]
+          },
+          {
+            "qcode": "Måløy",
+            "name": "Måløy",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              61.93535,
+              5.11362
+            ]
+          }
+        ]
+      },
+      {
+        "qcode": "NO.15",
+        "name": "Møre og Romsdal",
+        "cities": [
+          {
+            "qcode": "Molde",
+            "name": "Molde",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              62.73752,
+              7.15912
+            ]
+          },
+          {
+            "qcode": "Ålesund",
+            "name": "Ålesund",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              62.474,
+              6.15817
+            ]
+          },
+          {
+            "qcode": "Kristiansund",
+            "name": "Kristiansund",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              63.11045,
+              7.72795
+            ]
+          },
+          {
+            "qcode": "Fosnavåg",
+            "name": "Fosnavåg",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              62.34194,
+              5.63396
+            ]
+          },
+          {
+            "qcode": "Ulsteinvik",
+            "name": "Ulsteinvik",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              62.34317,
+              5.84866
+            ]
+          },
+          {
+            "qcode": "Åndalsnes",
+            "name": "Åndalsnes",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              62.56749,
+              7.68709
+            ]
+          }
+        ]
+      },
+      {
+        "qcode": "NO.16",
+        "name": "Sør-Trøndelag",
+        "cities": [
+          {
+            "qcode": "Trondheim",
+            "name": "Trondheim",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              63.43051,
+              10.39506
+            ]
+          },
+          {
+            "qcode": "Brekstad",
+            "name": "Brekstad",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              63.68698,
+              9.6654
+            ]
+          },
+          {
+            "qcode": "Røros",
+            "name": "Røros",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              62.57428,
+              11.38339
+            ]
+          }
+        ]
+      },
+      {
+        "qcode": "NO.17",
+        "name": "Nord-Trøndelag",
+        "cities": [
+          {
+            "qcode": "Steinkjer",
+            "name": "Steinkjer",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              64.01484,
+              11.49538
+            ]
+          },
+          {
+            "qcode": "Namsos",
+            "name": "Namsos",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              64.46558,
+              11.49785
+            ]
+          },
+          {
+            "qcode": "Stjørdal",
+            "name": "Stjørdal",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              63.46695,
+              10.91257
+            ]
+          },
+          {
+            "qcode": "Levanger",
+            "name": "Levanger",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              63.7465,
+              11.29873
+            ]
+          },
+          {
+            "qcode": "Verdal",
+            "name": "Verdal",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              63.79297,
+              11.48002
+            ]
+          },
+          {
+            "qcode": "Kolvereid",
+            "name": "Kolvereid",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              64.86549,
+              11.60465
+            ]
+          }
+        ]
+      },
+      {
+        "qcode": "NO.18",
+        "name": "Nordland",
+        "cities": [
+          {
+            "qcode": "Bodø",
+            "name": "Bodø",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              67.28267,
+              14.37513
+            ]
+          },
+          {
+            "qcode": "Narvik",
+            "name": "Narvik",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              68.43628,
+              17.39826
+            ]
+          },
+          {
+            "qcode": "Brønnøysund",
+            "name": "Brønnøysund",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              65.46248,
+              12.19982
+            ]
+          },
+          {
+            "qcode": "Sandnessjøen",
+            "name": "Sandnessjøen",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              66.02166,
+              12.63158
+            ]
+          },
+          {
+            "qcode": "Mosjøen",
+            "name": "Mosjøen",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              65.83599,
+              13.19076
+            ]
+          },
+          {
+            "qcode": "Mo i Rana",
+            "name": "Mo i Rana",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              66.31278,
+              14.14278
+            ]
+          },
+          {
+            "qcode": "Fauske",
+            "name": "Fauske",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              67.25945,
+              15.39333
+            ]
+          },
+          {
+            "qcode": "Leknes",
+            "name": "Leknes",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              68.14746,
+              13.61151
+            ]
+          },
+          {
+            "qcode": "Svolvær",
+            "name": "Svolvær",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              68.23525,
+              14.56363
+            ]
+          },
+          {
+            "qcode": "Stokmarknes",
+            "name": "Stokmarknes",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              68.56556,
+              14.90444
+            ]
+          },
+          {
+            "qcode": "Sortland",
+            "name": "Sortland",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              68.6982,
+              15.41382
+            ]
+          }
+        ]
+      },
+      {
+        "qcode": "NO.19",
+        "name": "Troms",
+        "cities": [
+          {
+            "qcode": "Tromsø",
+            "name": "Tromsø",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              69.6489,
+              18.95508
+            ]
+          },
+          {
+            "qcode": "Finnsnes",
+            "name": "Finnsnes",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              69.22959,
+              17.98114
+            ]
+          }
+        ]
+      },
+      {
+        "qcode": "NO.20",
+        "name": "Finnmark",
+        "cities": [
+          {
+            "qcode": "Vardø",
+            "name": "Vardø",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              70.37048,
+              31.11066
+            ]
+          },
+          {
+            "qcode": "Vadsø",
+            "name": "Vadsø",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              70.08029,
+              29.73151
+            ]
+          },
+          {
+            "qcode": "Hammerfest",
+            "name": "Hammerfest",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              70.66336,
+              23.68209
+            ]
+          },
+          {
+            "qcode": "Alta",
+            "name": "Alta",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              69.96887,
+              23.27165
+            ]
+          },
+          {
+            "qcode": "Honningsvåg",
+            "name": "Honningsvåg",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              70.97887,
+              25.97688
+            ]
+          },
+          {
+            "qcode": "Kirkenes",
+            "name": "Kirkenes",
+            "dateline_format": "city",
+            "timezone": "Europe/Oslo",
+            "coordinates": [
+              69.72706,
+              30.04578
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]
