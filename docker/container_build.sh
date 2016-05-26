@@ -99,7 +99,9 @@ if [[ $RUN_E2E = 1 ]] ; then
 		docker run --link build$(sed 's/[-_/.:]//g' <<< $INSTANCE)_superdesk_1:superdesk -d -v $CLIENT_RESULTS_DIR:/opt/superdesk-client/e2e-test-results --name=protractor_${INSTANCE}_run protractor_${INSTANCE}
 		set +e
 		docker exec protractor_${INSTANCE}_run bash -c "\
-			cd /opt/superdesk-client \
+			cd /opt/superdesk-client/node_modules/superdesk-core/spec/ \
+			&& bash ./fit_tests.sh \
+			&& cd /opt/superdesk-client \
 			&& xvfb-run ./node_modules/.bin/protractor-flake \
 				--node-bin node --max-attempts=3 -- protractor-conf.js \
 				--stackTrace --verbose \
@@ -107,7 +109,7 @@ if [[ $RUN_E2E = 1 ]] ; then
 				--params.baseBackendUrl 'http://superdesk/api' \
 				--params.username 'admin' \
 				--params.password 'admin' \
-				--specs=./node_modules/superdesk-core/spec/workspace_spec.js" \
+				--specs=./node_modules/superdesk-core/spec/*" \
 		|| sleep 10000
 		CODE="$?"
 		set -e
