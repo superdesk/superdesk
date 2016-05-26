@@ -182,3 +182,16 @@ ELASTICSEARCH_FORCE_REFRESH = is_testing
 ELASTICSEARCH_AUTO_AGGREGATIONS = False
 SIGN_OFF_MAPPING = 'email'
 DEFAULT_CONTENT_TYPE = 'Standard'
+
+
+NITF_MAPPING = {
+    'anpa_category': {'xpath': 'head/tobject[@tobject.type]',
+                      'filter': lambda e: [{'qcode': e.get('tobject.type'),
+                                           'name': e.get('tobject.type')}]},
+    'genre': {'xpath': 'head/tobject[@tobject.type]/tobject.property[@tobject.property.type]',
+                       'filter': lambda e: [{'qcode': e.get('tobject.property.type'),
+                                             'name': e.get('tobject.property.type')}]},
+    'slugline': 'head/docdata/du-key/@key',
+    'abstract': "body/body.content/p[@class='lead']",
+    'keywords': '',  # keywords are ignored on purpose
+}
