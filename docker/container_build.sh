@@ -108,8 +108,7 @@ if [[ $RUN_E2E = 1 ]] ; then
 				--baseUrl 'http://superdesk' \
 				--params.baseBackendUrl 'http://superdesk/api' \
 				--params.username 'admin' \
-				--params.password 'admin' " \
-		|| sleep 10000
+				--params.password 'admin' "
 		CODE="$?"
 		set -e
 		docker kill protractor_${INSTANCE}_run || true
