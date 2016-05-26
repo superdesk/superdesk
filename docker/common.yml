@@ -30,9 +30,6 @@ postfix:
   - maildomain=mail.sourcefabric.org
   - smtp_user=user:pwd
 
-protractor:
-  image: caltha/protractor:latest
-
 superdesk:
   build: ../
   environment:
