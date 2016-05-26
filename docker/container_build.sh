@@ -108,8 +108,7 @@ if [[ $RUN_E2E = 1 ]] ; then
 				--baseUrl 'http://superdesk' \
 				--params.baseBackendUrl 'http://superdesk/api' \
 				--params.username 'admin' \
-				--params.password 'admin' \
-				--specs=./node_modules/superdesk-core/spec/*" \
+				--params.password 'admin' " \
 		|| sleep 10000
 		CODE="$?"
 		set -e
