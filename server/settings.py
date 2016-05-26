@@ -93,7 +93,6 @@ INSTALLED_APPS.extend([
     'apps.io.feeding_services',
     'superdesk.publish',
     'superdesk.commands',
-    'superdesk.locators.locators',
 
     'apps.auth',
     'apps.archive',
@@ -134,6 +133,7 @@ INSTALLED_APPS.extend([
     'apps.picture_crop',
 
     'ntb.macros',
+    'ntb.locators'
 ])
 
 RENDITIONS = {
