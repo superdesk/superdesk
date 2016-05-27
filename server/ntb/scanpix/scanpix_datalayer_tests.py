@@ -15,10 +15,10 @@ class ScanpixDatalayer(SuperdeskTestCase):
 
     def test_validate_query_all_first_succeeds(self):
         query = 'all headline:(head one) caption:(capt) keywords:(key) bw:(1) clear_edge:(1)'
-        names = ['headline', 'keywords', 'starred']
+        names = ['headline', 'caption', 'keywords', 'starred', 'bw', 'clear_edge']
         result = extract_params(query, names)
-        self.assertDictEqual(result, {'q': 'all', 'headline': 'head one', 'keywords': 'key', 'bw': True,
-                                      'clearEdge': True, 'saturation': {'max': 1}},
+        self.assertDictEqual(result, {'q': 'all', 'headline': 'head one', 'caption': 'capt',
+                                      'keywords': 'key', 'bw': '1', 'clear_edge': '1'},
                              msg='Fail to parse text query all first')
 
     def test_validate_query_all_middle_succeeds(self):
@@ -29,7 +29,7 @@ class ScanpixDatalayer(SuperdeskTestCase):
                              msg='Fail to parse text query all middle')
 
     def test_validate_query_all_end_succeeds(self):
-        query = 'headline:(head one) caption:(capt) '
+        query = 'headline:(head one) caption:(capt) all'
         names = ['headline']
         result = extract_params(query, names)
         self.assertDictEqual(result, {'q': 'all', 'headline': 'head one'},
