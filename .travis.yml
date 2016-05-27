@@ -24,6 +24,7 @@ cache:
     - $HOME/.cache/bower
 
 before_install:
+    - cat /etc/issue ; which python2.7
     - npm install -g grunt-cli bower
     - pip install requests
     - export DISPLAY=:99.0

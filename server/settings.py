@@ -48,6 +48,7 @@ INSTALLED_APPS.extend([
     'superdesk.activity',
     'superdesk.vocabularies',
     'apps.comments',
+    'superdesk.profiling',
 
     'superdesk.io',
     'superdesk.io.feeding_services',
@@ -111,3 +112,5 @@ INSTALLED_APPS.extend([
 
 DEFAULT_URGENCY_VALUE_FOR_MANUAL_ARTICLES = None
 DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES = 'PA'
+
+ENABLE_PROFILING = True
