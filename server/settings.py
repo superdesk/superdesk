@@ -129,7 +129,8 @@ INSTALLED_APPS.extend([
     'apps.feature_preview',
     'apps.workqueue',
 
-    'aap.import_text_archive',
+    'aap.commands',
+    'aap.macros',
     'aap_mm',
 ])
 
@@ -147,7 +148,7 @@ RENDITIONS = {
 
 SERVER_DOMAIN = 'localhost'
 
-MACROS_MODULE = env('MACROS_MODULE', 'superdesk.macros')
+MACROS_MODULE = env('MACROS_MODULE', 'aap.macros')
 
 WS_HOST = env('WSHOST', '0.0.0.0')
 WS_PORT = env('WSPORT', '5100')
