@@ -24,6 +24,8 @@ cache:
     - $HOME/.cache/bower
 
 before_install:
+    - cat /etc/issue ; which python2.7
+    - npm config set python python2.7
     - npm install -g grunt-cli bower
     - pip install requests
     - export DISPLAY=:99.0
@@ -33,7 +35,7 @@ before_install:
     - $CHROME_BIN --version
 
 install:
-    - cd server && pip install -r dev-requirements.txt && cd ..
+    - cd server && pip install  -r dev-requirements.txt && cd ..
     - cd client && npm install && bower install && cd ..
 
 script:
