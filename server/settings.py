@@ -131,6 +131,7 @@ INSTALLED_APPS.extend([
 
     'aap.commands',
     'aap.macros',
+    'aap.publish.formatters',
     'aap_mm',
 ])
 
