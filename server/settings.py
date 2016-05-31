@@ -32,6 +32,7 @@ def env(variable, fallback_value=None):
 
 ABS_PATH = os.path.abspath(os.path.dirname(__file__))
 INIT_DATA_PATH = os.path.join(ABS_PATH, 'data')
+LOCATORS_DATA_FILE = os.path.join(ABS_PATH, 'data', 'locators.json')
 
 LOG_CONFIG_FILE = env('LOG_CONFIG_FILE', 'logging_config.yml')
 
@@ -93,6 +94,7 @@ INSTALLED_APPS.extend([
     'apps.io.feeding_services',
     'superdesk.publish',
     'superdesk.commands',
+    'superdesk.locators',
 
     'apps.auth',
     'apps.archive',
@@ -132,8 +134,7 @@ INSTALLED_APPS.extend([
     'apps.workqueue',
     'apps.picture_crop',
 
-    'ntb.macros',
-    'ntb.locators'
+    'ntb.macros'
 ])
 
 RENDITIONS = {
