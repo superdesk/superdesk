@@ -8,5 +8,10 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-from .commands import *  # noqa
-from .macros import *  # noqa
+
+class FieldMapper():
+    """Base mapper class can be used in all formatters"""
+
+    def map(self, article, category, **kwargs):
+        """Formats the article and returns the transformed string"""
+        raise NotImplementedError()

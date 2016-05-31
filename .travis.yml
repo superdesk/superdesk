@@ -40,5 +40,6 @@ script:
     - cd client && npm test && cd ..
     - cd server && flake8 && cd ..
     - cd server && behave ./features/ --format progress2 --logging-level ERROR && cd ..
+    - cd server && nosetests && cd ..
     - cd client && grunt build && cd ..
     - cd server && python manage.py users:create -u test -p test -e test@localhost --admin && cd ..

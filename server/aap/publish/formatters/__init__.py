@@ -8,5 +8,8 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-from .commands import *  # noqa
-from .macros import *  # noqa
+import aap.publish.formatters.aap_ipnews_formatter  # NOQA
+import aap.publish.formatters.anpa_formatter  # NOQA
+import aap.publish.formatters.aap_bulletinbuilder_formatter  # NOQA
+import aap.publish.formatters.aap_sms_formatter  # NOQA
+import aap.publish.formatters.aap_newscentre_formatter  # NOQA

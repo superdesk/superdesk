@@ -8,5 +8,8 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-from .commands import *  # noqa
-from .macros import *  # noqa
+import os
+from superdesk.macros import *  # noqa
+
+
+load_macros(os.path.realpath(os.path.dirname(__file__)), 'aap.macros')  # noqa

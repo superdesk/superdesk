@@ -182,7 +182,7 @@
                             {"name": "AAP Bulletin Builder", "qcode": "AAP BULLETIN BUILDER"}]},
             {"is_active": true, "name": "Wire/Paper", "qcode": "wire",
                 "formats": [{"name": "AAP ANPA", "qcode": "AAP ANPA"}, {"name": "AAP NewsML 1.2", "qcode": "newsml12"}, {"name": "NITF", "qcode": "nitf"}, {"name": "AAP IPNEWS", "qcode": "AAP IPNEWS"},
-                            {"name": "AAP SMS", "qcode": "AAP SMS"}]}
+                            {"name": "AAP SMS", "qcode": "AAP SMS"}, {"name": "AAP NEWSCENTRE", "qcode": "AAP NEWSCENTRE"}]}
         ]
     },
     {
