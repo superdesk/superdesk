@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<nitf xmlns:iptc="http://iptc.org/std/nar/2006-10-01/" xmlns:ntb="http://cv.ntb.no/ntbcodes/subjectcode/" version="-//IPTC//DTD NITF 3.2//EN" change.date="October 10, 2003" change.time="19:30" baselang="no-NO">
+  <head>
+    <title>*En 41-årig mand, der onsdag blev anholdt og sat i forbindel</title>
+    <meta name="subject" content="*En 41-årig mand, der onsdag blev anholdt og sat i forbindel" />
+    <meta name="foldername" content="NOTABENE\Byråmottak\Alle byråer:NOTABENE\Byråmottak\Alle nyheter (ikke sport):NOTABENE\Byråmottak\RB (full feed):NOTABENE\Byråmottak\Norden" />
+    <meta name="NTBMeldingsSign" />
+    <meta name="NTBPrioritet" content="3" />
+    <meta name="NTBStikkord" content="NU-FLASH-K" />
+    <meta name="NTBMeldingsType" content="Nyheter" />
+    <meta name="NTBID" content="RED_20160512_RTZ_8883_0" />
+    <meta name="NTBKilde" content="Ritzau" />
+    <meta name="NTBBeskrivelse" content="*En 41-årig mand, der onsdag blev anholdt og sat i forbindel" />
+    <tobject tobject.type="Utenriks">
+      <tobject.property tobject.property.type="Nyheter" />
+      <tobject.subject tobject.subject.code="KRE" tobject.subject.refnum="02000000" tobject.subject.type="Kriminalitet og rettsvesen" />
+    </tobject>
+    <docdata>
+      <doc-id regsrc="ritzau.dk" id-string="20160512:RTZ:8883:0" />
+      <urgency ed-urg="3" />
+      <date.issue norm="2016-05-12T00:05:13+02:00" />
+      <ed-msg info="" />
+      <du-key version="04" key="NU-FLASH-K" />
+      <doc.copyright year="2016" holder="Ritzau" />
+      <key-list />
+      <pubdata date.publication="2016-05-12T00:05:13+02:00" item-length="454" unit-of-measure="character" />
+      <revision-history name="norm" />
+    </docdata>
+  </head>
+  <body>
+    <body.head>
+      <hedline>
+        <hl1>*En 41-årig mand, der onsdag blev anholdt og sat i forbindel</hl1>
+      </hedline>
+      <distributor>
+        <org />
+      </distributor>
+    </body.head>
+    <body.content>
+      <p lede="true" class="lead">København /ritzau/: En 41-årig mand, der onsdag blev anholdt og sat i forbindelse med en mulig skudepisode nær en børnehave i Hvidovre ved København, er blevet løsladt.</p>
+      <p class="txt">En 53-årig mand, der er patient på et nærliggende psykiatrisk center, har erkendt at have affyret fyrværkeri i nærheden af børnehaven og i den forbindelse at have peget på en ansat med en pistollignende genstand. Han sigtes nu for trusler.</p>
+      <p class="txt-ind">Det oplyser Københavns Vestegns Politi.</p>
+      <p class="txt-ind">/ritzau/</p>
+    </body.content>
+  </body>
+</nitf>
