@@ -9,7 +9,7 @@
             {"is_active": true, "name": "Tikkertjenesten", "qcode": "t", "single_value": false, "language": "nb-NO"},
             {"is_active": true, "name": "Morgennyheter", "qcode": "m", "single_value": true, "language": "nb-NO"},
             {"is_active": true, "name": "NPKTjenesten", "qcode": "j", "single_value": true, "language": "nn-NO"},
-            {"is_active": true, "name": "NPKSisteNytt", "qcode": "s", "single_value": true, "language": "nb-NO"},
+            {"is_active": true, "name": "NPKSisteNytt", "qcode": "s", "single_value": true, "language": "nn-NO"},
             {"is_active": true, "name": "NTBTema", "qcode": "b", "single_value": true, "language": "nb-NO"},
             {"is_active": true, "name": "Kulturtjenesten", "qcode": "k", "single_value": true, "language": "nb-NO"},
             {"is_active": true, "name": "Dagen i Dag", "qcode": "d", "single_value": true, "language": "nb-NO"},
