@@ -8,12 +8,12 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-from superdesk.locators.locators import find_cities
 from bs4 import BeautifulSoup
 import logging
 from apps.archive.common import format_dateline_to_locmmmddsrc
 from superdesk.utc import get_date
 from superdesk.metadata.item import BYLINE
+from flask import current_app as app
 
 logger = logging.getLogger(__name__)
 
@@ -41,7 +41,7 @@ def reuters_derive_dateline(item, **kwargs):
                     city = city.split(',')[0]
                     if any(char.isdigit() for char in city):
                         return
-                    cities = find_cities()
+                    cities = app.locators.find_cities()
                     located = [c for c in cities if c['city'].lower() == city.lower()]
                     # if not dateline we create one
                     if 'dateline' not in item:
