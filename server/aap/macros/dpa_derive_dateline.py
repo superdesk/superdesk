@@ -8,7 +8,7 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-from superdesk.locators.locators import find_cities
+from flask import current_app as app
 
 
 def dpa_derive_dateline(item, **kwargs):
@@ -27,7 +27,7 @@ def dpa_derive_dateline(item, **kwargs):
             city, source, the_rest = lines[line_num].partition(' (dpa) - ')
             # test if we found a candidate and ensure that the city starts the line and is not crazy long
             if source and lines[line_num].find(city) == 0 and len(city) < 20:
-                cities = find_cities()
+                cities = app.locators.find_cities()
                 located = [c for c in cities if c['city'].lower() == city.lower()]
                 if 'dateline' not in item:
                     item['dateline'] = {}

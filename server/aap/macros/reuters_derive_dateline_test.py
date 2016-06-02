@@ -8,7 +8,7 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-from unittest import TestCase
+from superdesk.tests import TestCase
 from .reuters_derive_dateline import reuters_derive_dateline
 import datetime
 
