@@ -133,6 +133,7 @@ INSTALLED_APPS.extend([
     'aap.macros',
     'aap.publish.formatters',
     'aap_mm',
+    'aap.io.feed_parsers',
 ])
 
 RENDITIONS = {
