@@ -15,6 +15,11 @@ addons:
     - mongodb-3.0-precise
     packages:
     - mongodb-org-server
+    - unixodbc
+    - unixodbc-dev
+    - freetds-dev
+    - freetds-bin
+    - tdsodbc
 
 cache:
   directories:
