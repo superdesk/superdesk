@@ -116,6 +116,7 @@ INSTALLED_APPS.extend([
     'apps.publish.enqueue',
     'apps.publish.formatters',
     'apps.content_filters',
+    'apps.content_types',
     'apps.dictionaries',
     'apps.duplication',
     'apps.spellcheck',
