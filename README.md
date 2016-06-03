@@ -19,11 +19,44 @@ different technologies.
 Find more information about the client configuration in the README file of the repo:
 [https://github.com/superdesk/superdesk-client-core](https://github.com/superdesk/superdesk-client-core "") 
 
-### Installation
+## Installation
+
+### Client
+
+1. Clone the repository
+2. Navigate to the folder where you've cloned this repository (if it's the main repo, go inside the `client` folder).
+3. Run `npm install && bower install` to install dependencies.
+4. Run `grunt server` to run the web server.
+5. Open browser and navigate to `localhost:9000`.
+
+The `grunt server` attempts to resolve the API and websockets server to a local instance. In order to use a different instance, you may add the arguments `--server=<host:[port]>` and `--ws=<host:[port]>` to the command.
+
+### Server
+
+#### Dependencies (for non-Docker installations)
+
+* Pyton & Pyvenv 3+
+* MongoDB
+* ElasticSearch
+* Redis
+
+#### MacOS
+
+For the sake of this walkthrough, it is considered that your python binary is called `python3`. Please amend as needed for your own system.
+
+1. Install dependencies using `brew` (make sure you do a `brew update` first): `python3`, `mongodb`, `elasticsearch`, `redis`.
+2. Create a virtual envirnoment in a folder of your choice, for example `mkdir ~/pyvenv && pyvenv-3.5 ~/pyvenv`.
+3. Activate the environment by running its activation script: `. ~/pyvenv/bin/activate`. All of the following steps need to run under the virtual environment.
+4. Install _pip_ dependencies by running (inside repository root): `pip install -r server/requirements.txt`.
+5. Start all dependent services: `mongod`, `redis-server`, `elasticsearch`.
+6. For an initially empty database, you may initialize and pre-populate it by running (inside the `server` folder): `python3 manage.py app:initialize && python3 manage.py app:prepopulate`.
+7. Finally, start the server (inside the `server` folder) using `honcho start`.
+
+#### Linux (with Docker)
 
 Use [docker-compose](http://docs.docker.com/compose/ "") and the config from the `docker` folder or build docker images manually from `Dockerfile`s from `client` and `server` folders accordingly.
 
-##### install system-wide dependencies
+###### install system-wide dependencies
 
 ```sh
 $ sudo apt-get install python-virtualenv git
@@ -32,7 +65,7 @@ and install [the newest docker](https://docs.docker.com/installation/).
 and make sure you can run [docker without sudo](http://askubuntu.com/questions/477551/how-can-i-use-docker-without-sudo).
 
 
-##### install docker compose and run app
+###### install docker compose and run app
 
 ```sh
 $ git clone https://github.com/superdesk/superdesk.git
