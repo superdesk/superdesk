@@ -83,6 +83,7 @@ INSTALLED_APPS.extend([
     'superdesk.notification',
     'superdesk.activity',
     'superdesk.vocabularies',
+    'superdesk.profiling',
     'apps.comments',
 
     'superdesk.io',
@@ -196,3 +197,5 @@ NITF_MAPPING = {
     'abstract': "body/body.content/p[@class='lead']",
     'keywords': '',  # keywords are ignored on purpose
 }
+
+ENABLE_PROFILING = True
