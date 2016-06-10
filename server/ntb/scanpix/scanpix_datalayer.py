@@ -132,6 +132,8 @@ class ScanpixDatalayer(DataLayer):
                 data['subscription'] = extract_params(query, 'subscription')['subscription']
             except KeyError:
                 data['subscription'] = 'subscription'  # this is requested as a default value
+            if data['subscription'] == 'all':
+                del data['subscription']
 
             text_params = extract_params(query, ('headline', 'keywords', 'caption', 'text'))
             # combine all possible text params to use the q field.
