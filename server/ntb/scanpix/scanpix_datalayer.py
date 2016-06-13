@@ -33,7 +33,7 @@ import mimetypes
 REND2PREV = {
     'thumbnail': ('generated_jpg', 'thumbnail', 'thumbnail_big'),
     'viewImage': ('preview', 'thumbnail_big', 'thumbnail', 'preview_big'),
-    'baseImage': ('preview_big', 'preview', 'thumbnail_big', 'thumbnail')}
+    'baseImage': ('mp4_preview', 'mp4_thumbnail', 'preview_big', 'preview', 'thumbnail_big', 'thumbnail')}
 logger = logging.getLogger('ntb:scanpix')
 
 
