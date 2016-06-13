@@ -25,23 +25,15 @@ from superdesk.media.media_operations import process_file_from_stream, decode_me
 from superdesk.media.renditions import generate_renditions, delete_file_on_error, get_renditions_spec
 from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE
 from superdesk.utc import utcnow
-from collections import OrderedDict
 import mimetypes
 
 
-# Following dict MUST be kept ordered from smallet to biggest preview size
-PREVIEW_SIZES = OrderedDict(  # preview sizes from Scanpix API doc
-    (('thumbnail', (128, 128)),
-     ('mp4_thumbnail', (200, 200)),
-     ('thumbnail_big', (256, 256)),
-     ('mp4_preview', (468, 468)),
-     ('generated_jpg', (500, 500)),
-     ('preview', (512, 512)),
-     ('preview_big', (1024, 1024)),
-     ))
-
-RENDITIONS = ('thumbnail', 'viewImage', 'baseImage')
-
+# scanpix preview size to use (if available) for superdesk rendition
+# preview sizes are in order of preference, first found is used
+REND2PREV = {
+    'thumbnail': ('generated_jpg', 'thumbnail', 'thumbnail_big'),
+    'viewImage': ('preview', 'thumbnail_big', 'thumbnail', 'preview_big'),
+    'baseImage': ('preview_big', 'preview', 'thumbnail_big', 'thumbnail')}
 logger = logging.getLogger('ntb:scanpix')
 
 
@@ -80,7 +72,6 @@ class ScanpixDatalayer(DataLayer):
         self._headers = {
             'Content-Type': 'application/json',
         }
-        self._prev2rend = None
 
     def fetch_file(self, url):
         """Get file stream for given image url.
@@ -201,27 +192,7 @@ class ScanpixDatalayer(DataLayer):
             raise ProviderError.externalProviderError("Scanpix request can't be performed")
         return r
 
-    def _map_prev2rend(self):
-        # as superdesk Renditions can be modified in config
-        # we do a map here with Scanpix preview specs
-        rendition_specs = {k: v for k, v in get_renditions_spec().items() if k in RENDITIONS}
-        self._prev2rend = {}
-        # following loop associate the smalled superdesk rendition format
-        # that can contain the Scanpix preview format
-        for prev_name, (width, height) in PREVIEW_SIZES.items():
-            last = (2**32, 2**32)
-            for rend_name, rend_spec in rendition_specs.items():
-                r_width = rend_spec['width']
-                r_height = rend_spec['height']
-                if (width < r_width and height < r_height and
-                   r_width < last[0] and r_height < last[1]):
-                    last = (r_width, r_height)
-                    self._prev2rend[prev_name] = rend_name
-        self._rend2prev = {v: k for k, v in self._prev2rend.items()}
-
     def _parse_doc(self, doc):
-        if self._prev2rend is None:
-            self._map_prev2rend()
         new_doc = {}
         new_doc['_id'] = doc['refPtr']
         new_doc['guid'] = doc['refPtr']
@@ -261,29 +232,20 @@ class ScanpixDatalayer(DataLayer):
         else:
             new_doc[ITEM_TYPE] = CONTENT_TYPE.PICTURE
 
-        renditions = new_doc['renditions'] = {}
-
-        # we use best guess for mapping Scanpix preview size
-        # to superdesk renditions, and use smallest available
-        # preview size as default superdesk renditions
-        smallest = None
-        smallest_idx = None
-        for preview in doc.get('previews', []):
-            rend_name = self._prev2rend[preview['type']]
-            renditions[rend_name] = {"href": preview['url']}
-            size_names = list(PREVIEW_SIZES.keys())
-            if smallest is None:
-                smallest = renditions[rend_name]
-                smallest_idx = size_names.index(preview['type'])
-            else:
-                idx = size_names.index(preview['type'])
-                if idx < smallest_idx:
-                    smallest = renditions[rend_name]
-                    smallest_idx = idx
-        if smallest is not None:
-            for rend_name in RENDITIONS:
-                if rend_name not in renditions:
-                    renditions[rend_name] = smallest
+        try:
+            doc_previews = doc['previews']
+        except KeyError:
+            logger.warning('no preview found for item {}'.format(new_doc['_id']))
+        else:
+            # we look for best available scanpix preview
+            available_previews = [p['type'] for p in doc_previews]
+            renditions = new_doc['renditions'] = {}
+            for rend, previews in REND2PREV.items():
+                for prev in previews:
+                    if prev in available_previews:
+                        idx = available_previews.index(prev)
+                        renditions[rend] = {"href": doc_previews[idx]['url']}
+                        break
 
         new_doc['byline'] = doc['byline']
         doc.clear()
