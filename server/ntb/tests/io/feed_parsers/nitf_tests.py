@@ -37,14 +37,21 @@ class NTBTestCase(NITFTestCase):
 
     filename = 'nitf_test.xml'
 
+    def test_subject_update(self):
+        self.assertEqual(len(self.item.get('subject')), 2)
+
     def test_category(self):
-        self.assertEqual(self.item.get('anpa_category'), [{'qcode': 'Utenriks', 'name': 'Utenriks'}])
+        self.assertIn({'qcode': 'Utenriks', 'name': 'Utenriks', 'scheme': 'category'}, self.item.get('subject'))
 
     def test_genre(self):
-        self.assertEqual(self.item.get('genre'), [{'qcode': 'Nyheter', 'name': 'Nyheter'}])
+        self.assertEqual(self.item.get('genre'), [{'qcode': 'Nyheter', 'name': 'Nyheter', 'scheme': 'genre_custom'}])
 
     def test_slugline(self):
         self.assertEqual(self.item.get('slugline'), "NU-FLASH-K")
+
+    def test_subject(self):
+        self.assertIn({'qcode': '02000000', 'name': 'Kriminalitet og rettsvesen', 'scheme': 'subject_custom'},
+                      self.item.get('subject'))
 
     def test_abstract(self):
         self.assertEqual(
