@@ -186,13 +186,28 @@ SIGN_OFF_MAPPING = 'email'
 DEFAULT_CONTENT_TYPE = 'Standard'
 
 
+# NTB NITF specific behaviour
+# TODO: move this to a module once SD-4650 is fixed
+
+def add_subjects_scheme(subjects):
+    for subject in subjects:
+        subject['scheme'] = 'subject_custom'
+    return subjects
+
 NITF_MAPPING = {
-    'anpa_category': {'xpath': 'head/tobject[@tobject.type]',
-                      'filter': lambda e: [{'qcode': e.get('tobject.type'),
-                                           'name': e.get('tobject.type')}]},
+    'ntb_category': {'xpath': 'head/tobject[@tobject.type]',
+                     'filter': lambda e: [{'qcode': e.get('tobject.type'),
+                                           'name': e.get('tobject.type'),
+                                           'scheme': 'category'}],
+                     # category is stored in subject for NITF, so we need a key_hook
+                     'key_hook': lambda item, value: item.setdefault('subject', []).extend(value)},
     'genre': {'xpath': 'head/tobject[@tobject.type]/tobject.property[@tobject.property.type]',
                        'filter': lambda e: [{'qcode': e.get('tobject.property.type'),
-                                             'name': e.get('tobject.property.type')}]},
+                                             'name': e.get('tobject.property.type'),
+                                             'scheme': 'genre_custom'}]},
+    'subject': {'update': True,  # we use default subjects parsing
+                'filter_value': add_subjects_scheme,  # and add NTB scheme
+                'key_hook': lambda item, value: item.setdefault('subject', []).extend(value)},
     'slugline': 'head/docdata/du-key/@key',
     'abstract': "body/body.content/p[@class='lead']",
     'keywords': '',  # keywords are ignored on purpose
