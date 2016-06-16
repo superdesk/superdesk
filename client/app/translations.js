@@ -11,7 +11,8 @@ angular.module('gettext').run(['gettextCatalog', function (gettextCatalog) {
         "KEYWORDS": "TAGS",
         "Keywords": "Tags",
         "URGENCY": "RANKING",
-        "Urgency": "Ranking"
+        "Urgency": "Ranking",
+        "'SLUGLINE is a required field'": "Keyword is a required field"
     });
 /* jshint +W100 */
 }]);
