@@ -109,6 +109,7 @@ INSTALLED_APPS.extend([
 
     'pa.topics',
     'pa.pa_img',
+    'pa.vidible',
 ])
 
 DEFAULT_URGENCY_VALUE_FOR_MANUAL_ARTICLES = None
