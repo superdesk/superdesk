@@ -42,6 +42,7 @@ else:
     INSTALLED_APPS.append('apps.auth.db')
 
 INSTALLED_APPS.extend([
+    'superdesk.data_updates',
     'superdesk.upload',
     'superdesk.sequences',
     'superdesk.notification',
