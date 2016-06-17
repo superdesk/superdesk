@@ -195,6 +195,11 @@ def add_subjects_scheme(subjects):
     return subjects
 
 NITF_MAPPING = {
+    'anpa_category': {'xpath': "head/meta/[@name='NTBTjeneste']",
+                      'filter': lambda elem: [{'qcode': elem.get('content'), 'name': elem.get('content')}],
+                      },
+    'priority': {'update': True,
+                 'xpath': "head/meta/[@name='NTBPrioritet']"},
     'ntb_category': {'xpath': 'head/tobject[@tobject.type]',
                      'filter': lambda e: [{'qcode': e.get('tobject.type'),
                                            'name': e.get('tobject.type'),
