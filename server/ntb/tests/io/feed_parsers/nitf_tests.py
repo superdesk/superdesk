@@ -64,3 +64,9 @@ class NTBTestCase(NITFTestCase):
     def test_keywords(self):
         self.assertNotIn('keywords', self.item)
         self.assertEqual(self.item.get('guid'), self.item.get('uri'))
+
+    def test_service(self):
+        self.assertEqual(self.item.get('anpa_category'), [{'qcode': 'Nyhetstjenesten', 'name': 'Nyhetstjenesten'}])
+
+    def test_priority(self):
+        self.assertEqual(self.item.get('priority'), 3)
