@@ -98,6 +98,7 @@ INSTALLED_APPS.extend([
     'apps.feature_preview',
     'apps.workqueue',
     'apps.picture_crop',
+    'apps.picture_renditions',
     'apps.products',
 
     'superdesk.io.subjectcodes',
