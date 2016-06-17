@@ -261,6 +261,20 @@
         config.shortWeekFormat = 'dddd, HH:mm';
         config.shortDateFormat = 'DD/MM';
 
+        config.editorEmbedCodeParsers = ['EMBED_PROVIDERS', 'api', function(EMBED_PROVIDERS, api) {
+            return [
+                {
+                    pattern: /src=".*vidible\.tv.*pid=(.+)\/(.+).js/g,
+                    name: EMBED_PROVIDERS.vidible,
+                    callback: function(match) {
+                        return api.get('vidible/bcid/' + match[2] + '/pid/' + match[1])
+                        .then(function(data) {
+                            return {association: data};
+                        });
+                    }
+                }
+            ];
+        }];
         config.ui = {
             italicAbstract: false
         };
