@@ -49,7 +49,7 @@
                 <a ng-click="scrollTo('icon-font')">Icon font</a>
             </li>
             <li>
-                <a ng-click="scrollTo('authoring-header')">Authoring header</a>
+                <a ng-click="scrollTo('content-profiles')">Content Profiles</a>
             </li>
         </ul>
     </div>
@@ -1478,8 +1478,8 @@
                 </li>
 
                 <li>
-                    <a class="link-holder" id="authoring-header"></a>
-                    <div class="docs-title">Authoring Header</div>
+                    <a class="link-holder" id="content-profiles"></a>
+                    <div class="docs-title">Content Profiles</div>
 
                     <div class="docs-subtitle">Order</div>
                     <p>Order values are specified in <code>content_types.json</code> file.</p>
@@ -1491,7 +1491,7 @@
                         <pre class="prettyprint lang-html linenums">
                             <div class="authoring-header__item" order="{{editor.field.order}}">...</div>
                         </pre>
-                        <div class="preview-area">content_types.json</div>
+                        <div class="preview-area">Example of <code>content_types.json</code></div>
                         <pre class="prettyprint lang-html linenums">
                             "editor": {
                                 "headline": {"order": 1},
@@ -1511,7 +1511,7 @@
                         <pre class="prettyprint lang-html linenums">
                             <div class="authoring-header__item" sd-width="{{editor.field.sdWidth}}">...</div>
                         </pre>
-                        <div class="preview-area">content_types.json</div>
+                        <div class="preview-area">Example of <code>content_types.json</code></div>
                         <pre class="prettyprint lang-html linenums">
                             "editor": {
                                 "headline": {"sdWidth": "half"},
@@ -1522,6 +1522,50 @@
                             }
                         </pre>
                     </div>
+
+                    <div class="docs-subtitle">Editor Configuration</div>
+                    <p>To configure formating options in editor, you need to set desired buttons in <code>content_types.json</code> file for each field where formating options are required.</p>
+                    <p>Available buttons are:</p>
+                    <div class="docs-preview">
+                        <pre class="prettyprint lang-html linenums">
+                         bold
+                        italic
+                        underline
+                        strikethrough
+                        subscript
+                        superscript
+                        anchor
+                        image (this simply converts selected text to an image tag)
+                        quote
+                        pre
+                        orderedlist
+                        unorderedlist
+                        indent (moves the selected text up one level)
+                        outdent (moves the selected text down one level)
+                        justifyLeft
+                        justifyCenter
+                        justifyRight
+                        justifyFull
+                        h1
+                        h2
+                        h3
+                        h4
+                        h5
+                        h6
+                        removeFormat (clears inline style formatting, preserves blocks)
+                        </pre>
+                        <div class="preview-area">Example of <code>content_types.json</code></div>
+                        <pre class="prettyprint lang-html linenums">
+                            "editor": {
+                                "headline": {"formatOptions": ['bold', 'italic', 'underline', 'anchor', 'removeFormat']},
+                                "body": {"formatOptions":["h1", "h2", "bold", "italic", "underline", "quote", "anchor", "embed", "picture", "table", "removeFormat"]
+                                "byline": {},
+                                "abstract": {"formatOptions": ['bold', 'italic', 'underline', 'anchor', 'removeFormat']},
+                                ...
+                            }
+                        </pre>
+                    </div>
+                    <p><strong>Note:</strong>If <code>formatOptions</code> is not defined, formating toolbar will not be displayed.</p>
                 </li>
 
             </ul>
