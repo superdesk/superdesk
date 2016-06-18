@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eu
+set -eux
 
 INSTANCE="${1:-}"
 
@@ -18,9 +18,6 @@ CLIENT_RESULTS_DIR=$BAMBOO_DIR/results/client
 SCREENSHOTS_DIR=/opt/screenshots/$INSTANCE/$(date +%Y%m%d-%H%M%S)/
 
 # allow some bamboo values to be unfilled
-RUN_BACKEND_UNIT=${bamboo_RUN_BACKEND_UNIT:=1}
-RUN_BACKEND_BEHAVE=${bamboo_RUN_BACKEND_BEHAVE:=1}
-RUN_FRONTEND_UNIT=${bamboo_RUN_FRONTEND_UNIT:=1}
 RUN_E2E=${bamboo_RUN_E2E:=1}
 
 # install script requirements
@@ -47,11 +44,9 @@ sudo rm -r $BAMBOO_DIR/data/
 mkdir -p $BAMBOO_DIR/data/{mongodb,elastic,redis}
 
 sudo rm -r $BAMBOO_DIR/results/ ;
-mkdir -p $SERVER_RESULTS_DIR/{unit,behave} ;
-mkdir -p $CLIENT_RESULTS_DIR/unit ;
 
-sudo rm -r $SCREENSHOTS_DIR ;
-mkdir -p $SCREENSHOTS_DIR ;
+#sudo rm -r $SCREENSHOTS_DIR ;
+#mkdir -p $SCREENSHOTS_DIR ;
 
 set -e
 echo "+++pre clean-up done"
@@ -63,7 +58,7 @@ function post_clean_up {
 		docker-compose kill;
 		killall chromedriver;
 	set -e
-	test $CODE -gt 0 && (
+	test ${CODE:=0} -gt 0 && (
 		echo "===removing failed containers:"
 		docker-compose rm -fv;
 	) ;
@@ -89,24 +84,39 @@ docker-compose up -d
 # }}}
 
 # don't give if some of the tests failed:
-set +e
 
 if [[ $RUN_E2E = 1 ]] ; then
 	# create admin user:
-	docker-compose run superdesk ./scripts/fig_wrapper.sh python3 manage.py users:create -u admin -p admin -e 'admin@example.com' --admin &&
-	echo "+++ new user has been created" &&
+	docker-compose run superdesk ./scripts/fig_wrapper.sh python3 manage.py users:create -u admin -p admin -e 'admin@example.com' --admin
+	echo "+++ new user has been created"
 
 	# run e2e tests:
 	(
-		cd $BAMBOO_DIR/client &&
-		sh $SCRIPT_DIR/run_e2e_tests.sh ;
-		mv $BAMBOO_DIR/client/e2e-test-results $CLIENT_RESULTS_DIR/e2e
-		mv $BAMBOO_DIR/client/screenshots $SCREENSHOTS_DIR &&
-			echo "!!! Screenshots were saved to $SCREENSHOTS_DIR"
-		true
+		cd $BAMBOO_DIR
+		docker kill protractor_${INSTANCE}_run || true
+		docker rm -fv protractor_${INSTANCE}_run || true
+		docker build -f ${BAMBOO_DIR}/docker/protractor.Dockerfile -t protractor_${INSTANCE} ./
+		docker run --link build$(sed 's/[-_/.:]//g' <<< $INSTANCE)_superdesk_1:superdesk -d -v $CLIENT_RESULTS_DIR:/opt/superdesk-client/e2e-test-results --name=protractor_${INSTANCE}_run protractor_${INSTANCE}
+		set +e
+		docker exec protractor_${INSTANCE}_run bash -c "\
+			cd /opt/superdesk-client/node_modules/superdesk-core/spec/ \
+			&& bash ./fit_tests.sh \
+			&& cd /opt/superdesk-client \
+			&& xvfb-run ./node_modules/.bin/protractor-flake \
+				--node-bin node --max-attempts=3 -- protractor-conf.js \
+				--stackTrace --verbose \
+				--baseUrl 'http://superdesk' \
+				--params.baseBackendUrl 'http://superdesk/api' \
+				--params.username 'admin' \
+				--params.password 'admin' "
+		CODE="$?"
+		set -e
+		docker kill protractor_${INSTANCE}_run || true
+		docker rm -fv protractor_${INSTANCE}_run || true
+		#mv $BAMBOO_DIR/client/screenshots $SCREENSHOTS_DIR
+			#echo "!!! Screenshots were saved to $SCREENSHOTS_DIR"
+		#true
 	)
 fi
 
-CODE="$?"
-
-exit $CODE
+exit 0

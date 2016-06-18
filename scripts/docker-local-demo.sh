@@ -7,6 +7,7 @@ function dcs() {
 }
 
 WORK_DIR="$(echo $(cd -P -- "$(dirname -- "$0")" && pwd -P))"
+mkdir -p $WORK_DIR/data/{mongodb,elastic,redis}
 (test -d $WORK_DIR/env || virtualenv $WORK_DIR/env )
 set +u
 . $WORK_DIR/env/bin/activate

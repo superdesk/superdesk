@@ -15,6 +15,7 @@ logstash:
   - ./logstash:/usr/share/logstash
 
 kibana:
+  #image: sourcefabric/kibana:master
   build: kibana
   restart: always
 
