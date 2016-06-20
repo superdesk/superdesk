@@ -9,7 +9,6 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-
 import os
 import settings
 import logging
@@ -19,6 +18,14 @@ from superdesk.factory import get_app as superdesk_app
 from superdesk.logging import configure_logging
 
 logger = logging.getLogger(__name__)
+
+
+if os.environ.get('NEW_RELIC_LICENSE_KEY'):
+    try:
+        import newrelic.agent
+        newrelic.agent.initialize(os.path.abspath(os.path.join(os.path.dirname(__file__), 'newrelic.ini')))
+    except ImportError:
+        pass
 
 
 def get_app(config=None):
