@@ -16,12 +16,18 @@ from superdesk.tests import TestCase
 
 from superdesk.etree import etree
 from superdesk.io.feed_parsers.nitf import NITFFeedParser
+from superdesk.vocabularies.command import VocabulariesPopulateCommand
 
 
 class NITFTestCase(TestCase):
 
     def setUp(self):
         super().setUp()
+        # we need to prepopulate vocabularies to get qcodes
+        voc_file = os.path.join(os.path.abspath(os.path.dirname(settings.__file__)), "data/vocabularies.json")
+        VocabulariesPopulateCommand().run(voc_file)
+
+        # settings are needed in order to get into account NITF_MAPPING
         for key in dir(settings):
             if key.isupper():
                 setattr(config, key, getattr(settings, key))
@@ -66,7 +72,8 @@ class NTBTestCase(NITFTestCase):
         self.assertEqual(self.item.get('guid'), self.item.get('uri'))
 
     def test_service(self):
-        self.assertEqual(self.item.get('anpa_category'), [{'qcode': 'Nyhetstjenesten', 'name': 'Nyhetstjenesten'}])
+        self.assertEqual(self.item.get('anpa_category'),
+                         [{'qcode': 'n', 'name': 'Nyhetstjenesten', 'language': 'nb-NO'}])
 
     def test_priority(self):
         self.assertEqual(self.item.get('priority'), 3)
