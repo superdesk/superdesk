@@ -280,7 +280,8 @@
         // disable ingest/content view in workspace sidebar
         config.workspace = {
             ingest: 0,
-            content: 0
+            content: 0,
+            tasks: 0
         };
 
         config.ui = {
@@ -314,11 +315,10 @@
             priority: ['urgency'],
             firstLine: [
                 'slugline',
-                'takekey',
+                'update',
                 'highlights',
                 'headline',
                 'provider',
-                'update',
                 'updated',
                 'state',
                 'versioncreated'
