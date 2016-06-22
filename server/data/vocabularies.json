@@ -94,7 +94,7 @@
     {
         "_id": "priority",
         "display_name": "Priority",
-        "type": "unmanageable",
+        "type": "manageable",
         "items": [
             {"is_active": true, "name": "1", "qcode": 1},
             {"is_active": true, "name": "2", "qcode": 2},
