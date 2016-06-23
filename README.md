@@ -49,7 +49,7 @@ For the sake of this walkthrough, it is considered that your python binary is ca
 3. Activate the environment by running its activation script: `. ~/pyvenv/bin/activate`. All of the following steps need to run under the virtual environment.
 4. Install _pip_ dependencies by running (inside repository root): `pip install -r server/requirements.txt`.
 5. Start all dependent services: `mongod`, `redis-server`, `elasticsearch`.
-6. For an initially empty database, you may initialize and pre-populate it by running (inside the `server` folder): `python3 manage.py app:initialize && python3 manage.py app:prepopulate`.
+6. For an initially empty database, you may initialize and pre-populate it by running (inside the `server` folder): `python3 manage.py app:initialize_data && python3 manage.py app:prepopulate`.
 7. Finally, start the server (inside the `server` folder) using `honcho start`.
 
 #### Linux (with Docker)
