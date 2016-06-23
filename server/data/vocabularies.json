@@ -104,11 +104,11 @@
         "display_name": "Urgency",
         "type": "manageable",
         "items": [
-            {"is_active": true, "name": "1", "qcode": 1},
-            {"is_active": true, "name": "2", "qcode": 2},
-            {"is_active": true, "name": "3", "qcode": 3},
-            {"is_active": true, "name": "4", "qcode": 4},
-            {"is_active": true, "name": "5", "qcode": 5}
+            {"is_active": true, "name": "1", "qcode": 1, "color" : "#ff0000"},
+            {"is_active": true, "name": "2", "qcode": 2, "color" : "#ffa500"},
+            {"is_active": true, "name": "3", "qcode": 3, "color" : "#ffa500"},
+            {"is_active": true, "name": "4", "qcode": 4, "color" : "#808080"},
+            {"is_active": true, "name": "5", "qcode": 5, "color" : "#808080"}
         ]
     },
     {
