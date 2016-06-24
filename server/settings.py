@@ -12,6 +12,7 @@
 
 import os
 import json
+import superdesk
 
 
 try:
@@ -194,9 +195,30 @@ def add_subjects_scheme(subjects):
         subject['scheme'] = 'subject_custom'
     return subjects
 
+
+def build_service(elem):
+    """Fill service (anpa_category for NTB) according to vocabularies"""
+    category = elem.get('content')
+    voc_categories = superdesk.get_resource_service('vocabularies').find_one(req=None, _id='categories')['items']
+    service = [{'name': elem.get('content')}]
+    update = None
+    for voc_category in voc_categories:
+        if category == voc_category['name']:
+            try:
+                update = {'qcode': voc_category['qcode'], 'language': voc_category['language']}
+            except KeyError:
+                continue
+            else:
+                break
+    if update is not None:
+        service[0].update(update)
+    else:
+        service[0]['qcode'] = elem.get('content')
+    return service
+
 NITF_MAPPING = {
     'anpa_category': {'xpath': "head/meta/[@name='NTBTjeneste']",
-                      'filter': lambda elem: [{'qcode': elem.get('content'), 'name': elem.get('content')}],
+                      'filter': build_service,
                       },
     'priority': {'update': True,
                  'xpath': "head/meta/[@name='NTBPrioritet']"},
