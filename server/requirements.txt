@@ -3,4 +3,4 @@ honcho==0.6.6
 Eve==0.6.3
 newrelic>=2.66,<2.67
 
--e git+git://github.com/superdesk/superdesk-core@adfdb9d539b8ea10f8fe709704ab65063cf4ce78#egg=Superdesk-Core==0.1-dev
+-e git+git://github.com/superdesk/superdesk-core@f968022bfccf366c044dfaef9816a0a1f93f263b#egg=Superdesk-Core==0.1-dev
