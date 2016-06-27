@@ -9,7 +9,7 @@
                 "required": true,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 64
+                "maxlength": 42
             },
             "abstract": {
                 "type": "string",
@@ -84,7 +84,7 @@
                 "required": true,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 64
+                "maxlength": 42
             },
             "abstract": {
                 "type": "string",
@@ -159,7 +159,7 @@
                 "required": true,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 64
+                "maxlength": 42
             },
             "abstract": {
                 "type": "string",
@@ -229,7 +229,7 @@
                 "required": true,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 64
+                "maxlength": 42
             },
             "abstract": {
                 "type": "string",
@@ -299,7 +299,7 @@
                 "required": true,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 64
+                "maxlength": 42
             },
             "abstract": {
                 "type": "string",
@@ -369,7 +369,7 @@
                 "required": true,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 64
+                "maxlength": 42
             },
             "abstract": {
                 "type": "string",
@@ -439,7 +439,7 @@
                 "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 64
+                "maxlength": 42
             },
             "abstract": {
                 "type": "string",
@@ -523,7 +523,7 @@
                 "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 64
+                "maxlength": 42
             },
             "abstract": {
                 "type": "string",
@@ -607,7 +607,7 @@
                 "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 64
+                "maxlength": 42
             },
             "abstract": {
                 "type": "string",
@@ -691,7 +691,7 @@
                 "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 64
+                "maxlength": 42
             },
             "abstract": {
                 "type": "string",
@@ -767,7 +767,7 @@
                 "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 64
+                "maxlength": 42
             },
             "abstract": {
                 "type": "string",
@@ -843,7 +843,7 @@
                 "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 64
+                "maxlength": 42
             },
             "abstract": {
                 "type": "string",
@@ -919,7 +919,7 @@
                 "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 64
+                "maxlength": 42
             },
             "abstract": {
                 "type": "string",
@@ -995,7 +995,7 @@
                 "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 64
+                "maxlength": 42
             },
             "abstract": {
                 "type": "string",
@@ -1071,7 +1071,7 @@
                 "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 64
+                "maxlength": 42
             },
             "abstract": {
                 "type": "string",
@@ -1147,7 +1147,7 @@
                 "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 64
+                "maxlength": 42
             },
             "type": {
                 "type": "string",
@@ -1202,7 +1202,7 @@
                 "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 64
+                "maxlength": 42
             },
             "type": {
                 "type": "string",
@@ -1257,7 +1257,7 @@
                 "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 64
+                "maxlength": 42
             },
             "type": {
                 "type": "string",
@@ -1393,7 +1393,7 @@
                 "required": true,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 64
+                "maxlength": 42
             },
             "abstract": {
                 "type": "string",
