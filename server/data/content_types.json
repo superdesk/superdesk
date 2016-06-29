@@ -50,7 +50,7 @@
         },
         "editor": {
             "slugline": {"order": 1, "sdWidth": "half"},
-            "urgency": {"order": 2, "sdWidth": "quarter", "default": 5},
+            "urgency": {"order": 2, "sdWidth": "quarter", "default": 5, },
             "priority": {"order": 3, "sdWidth": "quarter", "default": 6},
             "anpa_category": {"order": 4, "sdWidth": "full"},
             "category": {"order": 5, "sdWidth": "half", "required": true},
