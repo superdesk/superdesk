@@ -204,5 +204,171 @@
             "body_html": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]},
             "abstract": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]}
         }
+    },
+    {
+        "_id": "news",
+        "label": "News",
+        "priority": 30,
+        "enabled": true,
+        "schema": {
+            "anpa_category": {},
+            "urgency": {"nullable": true},
+            "subject": {},
+            "slugline": {"required": true},
+            "ednote": {},
+
+            "headline": {"required": true},
+            "body_html": {"required": true},
+            "abstract": {"required": true},
+            "byline": {},
+            "feature_image": {"type": "picture", "required": true},
+
+            "topic_news": {"required": true},
+            "age_range": {},
+            "territory": {"required": true},
+            "reader_type": {},
+            "assets": {},
+            "relatedItems": {}
+        },
+        "editor": {
+            "anpa_category": {"order": 1, "sdWidth": "half"},
+            "topic_news": {"order": 2, "sdWidth": "half"},
+            "urgency": {"order": 4, "sdWidth": "half", "service": {"paservice:news": 1, "paservice:sport": 1}},
+            "slugline": {"order": 5, "sdWidth": "half"},
+            "age_range": {"order": 6, "sdWidth": "half"},
+            "territory": {"order": 8, "sdWidth": "half", "includeparent": true},
+            "reader_type": {"order": 9, "sdWidth": "half"},
+            "assets": {"order": 11, "sdWidth": "half"},
+            "ednote": {"order": 14, "sdWidth": "full"},
+            "body_html": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]},
+            "abstract": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]}
+        }
+    },
+    {
+        "_id": "sport",
+        "label": "Sport",
+        "priority": 30,
+        "enabled": true,
+        "schema": {
+            "anpa_category": {},
+            "urgency": {"nullable": true},
+            "subject": {},
+            "slugline": {"required": true},
+            "ednote": {},
+
+            "headline": {"required": true},
+            "body_html": {"required": true},
+            "abstract": {"required": true},
+            "byline": {},
+            "feature_image": {"type": "picture", "required": true},
+
+            "subservice_sport": {"required": true},
+            "topic_sport": {"required": true},
+            "age_range": {},
+            "territory": {"required": true},
+            "reader_type": {},
+            "assets": {},
+            "relatedItems": {}
+        },
+        "editor": {
+            "anpa_category": {"order": 1, "sdWidth": "half"},
+            "subservice_sport": {"order": 2, "sdWidth": "quarter"},
+            "topic_sport": {"order": 3, "sdWidth": "quarter"},
+            "urgency": {"order": 4, "sdWidth": "half", "service": {"paservice:news": 1, "paservice:sport": 1}},
+            "slugline": {"order": 5, "sdWidth": "half"},
+            "age_range": {"order": 6, "sdWidth": "half"},
+            "territory": {"order": 8, "sdWidth": "half", "includeparent": true},
+            "reader_type": {"order": 9, "sdWidth": "half"},
+            "assets": {"order": 11, "sdWidth": "half"},
+            "ednote": {"order": 14, "sdWidth": "full"},
+            "body_html": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]},
+            "abstract": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]}
+        }
+    },
+    {
+        "_id": "motoring",
+        "label": "Motoring",
+        "priority": 30,
+        "enabled": true,
+        "schema": {
+            "anpa_category": {},
+            "urgency": {"nullable": true},
+            "subject": {},
+            "slugline": {"required": true},
+            "ednote": {},
+
+            "headline": {"required": true},
+            "body_html": {"required": true},
+            "abstract": {"required": true},
+            "byline": {},
+            "feature_image": {"type": "picture", "required": true},
+
+            "subservice_motoring": {"required": true},
+            "age_range": {},
+            "territory": {"required": true},
+            "reader_type": {},
+            "assets": {},
+            "featured": {},
+            "relatedItems": {}
+        },
+        "editor": {
+            "anpa_category": {"order": 1, "sdWidth": "half"},
+            "subservice_motoring": {"order": 2, "sdWidth": "half"},
+            "urgency": {"order": 4, "sdWidth": "half", "service": {"paservice:news": 1, "paservice:sport": 1}},
+            "slugline": {"order": 5, "sdWidth": "half"},
+            "age_range": {"order": 6, "sdWidth": "half"},
+            "territory": {"order": 8, "sdWidth": "half", "includeparent": true},
+            "reader_type": {"order": 9, "sdWidth": "half"},
+            "assets": {"order": 11, "sdWidth": "half"},
+            "featured": {"order": 12, "sdWidth": "half"},
+            "ednote": {"order": 14, "sdWidth": "full"},
+            "body_html": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]},
+            "abstract": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]}
+        }
+    },
+    {
+        "_id": "real_life",
+        "label": "Real Life",
+        "priority": 30,
+        "enabled": true,
+        "schema": {
+            "anpa_category": {},
+            "urgency": {"nullable": true},
+            "subject": {},
+            "slugline": {"required": true},
+            "ednote": {},
+
+            "headline": {"required": true},
+            "body_html": {"required": true},
+            "abstract": {"required": true},
+            "byline": {},
+            "feature_image": {"type": "picture", "required": true},
+
+            "subservice_real_life": {"required": true},
+            "age_range": {},
+            "credit_level": {"required": true},
+            "territory": {"required": true},
+            "reader_type": {},
+            "desired_response": {},
+            "assets": {},
+            "featured": {},
+            "relatedItems": {}
+        },
+        "editor": {
+            "anpa_category": {"order": 1, "sdWidth": "half"},
+            "subservice_real_life": {"order": 2, "sdWidth": "half"},
+            "urgency": {"order": 4, "sdWidth": "half", "service": {"paservice:news": 1, "paservice:sport": 1}},
+            "slugline": {"order": 5, "sdWidth": "half"},
+            "age_range": {"order": 6, "sdWidth": "half"},
+            "credit_level": {"order": 7, "sdWidth": "half"},
+            "territory": {"order": 8, "sdWidth": "half", "includeparent": true},
+            "reader_type": {"order": 9, "sdWidth": "half"},
+            "desired_response": {"order": 10, "sdWidth": "half"},
+            "assets": {"order": 11, "sdWidth": "half"},
+            "featured": {"order": 12, "sdWidth": "half"},
+            "ednote": {"order": 14, "sdWidth": "full"},
+            "body_html": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]},
+            "abstract": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]}
+        }
     }
 ]
