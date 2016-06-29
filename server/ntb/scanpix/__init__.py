@@ -15,11 +15,20 @@ from ntb.scanpix.scanpix_datalayer import ScanpixDatalayer
 from apps.io.search_ingest import SearchIngestService, SearchIngestResource
 
 
+# instances are hardcoded as they are also hardcoded in the backend
+# FIXME: need to be refactored with SD-4448
+instances = ['ntbtema', 'ntbkultur', 'desk', 'npk']
+
+
 def init_app(app):
-    app.data.scanpix = ScanpixDatalayer(app)
-    service = SearchIngestService(datasource=None, backend=app.data.scanpix, source='scanpix')
-    SearchIngestResource(endpoint_name='scanpix', app=app, service=service)
-    intrinsic_privilege(resource_name='scanpix', method=['GET', 'POST'])
+    for instance_name in instances:
+        name = 'scanpix({})'.format(instance_name)
+        scanpix = ScanpixDatalayer(app)
+        service = SearchIngestService(datasource=None, backend=scanpix, source=name)
+        SearchIngestResource(endpoint_name=name, app=app, service=service)
+        intrinsic_privilege(resource_name=name, method=['GET', 'POST'])
 
 
-register_search_provider(name='scanpix', fetch_endpoint='scanpix')
+for instance_name in instances:
+    name = 'scanpix({})'.format(instance_name)
+    register_search_provider(name=name, fetch_endpoint=name)
