@@ -158,28 +158,29 @@
                     <div class="docs-subtitle">Nav buttons</div>
                     <p>Nav buttons are commonly used for second navigation level (page control). They are placed within <code>button-stack</code>.</p>
                     <p>For blue-colored button add class <code>navbtn-info</code>. </p>
-                    <p>Nav buttons have auto width, but for strict width (<i>currently 48px</i>) use class <code>strict</code>. This is useful when icon is used as button content.</p>
+                    <p>Nav buttons have fixed width (<i>currently 48px</i>, useful for button with icon), but for auto width use class <code>navbtn--with-text</code>. This is useful when custom text is used as button content.</p>
                     <div class="docs-preview">
                         <div class="preview-area clearfix docs-navbar" >
                             <div class="button-stack">
-                                <button class="navbtn">Sample nav button</button>
-                                <button class="navbtn strict"><i class="svg-icon-create-list"></i></button>
+                                <button class="navbtn navbtn--with-text">Sample nav button</button>
+                                <button class="navbtn"><i class="svg-icon-create-list"></i></button>
                             </div>
                             <div class="button-stack right-stack">
-                                <button class="navbtn navbtn-info strict"><i class="svg-icon-ok inverse"></i></button>
-                                <button class="navbtn strict"><i class="svg-icon-settings"></i></button>
-                                <button class="navbtn strict"><i class="svg-icon-right"></i></button>
+                                <button class="navbtn navbtn-info"><i class="svg-icon-ok inverse"></i></button>
+                                <button class="navbtn"><i class="svg-icon-settings"></i></button>
+                                <button class="navbtn"><i class="svg-icon-right"></i></button>
                             </div>
                         </div>
 
                         <pre class="prettyprint lang-html linenums">
                             <div class="button-stack">
-                                <button class="navbtn">Sample nav button</button>
+                                <button class="navbtn navbtn--with-text">Sample nav button</button>
+                                <button class="navbtn"><i class="svg-icon-create-list"></i></button>                                
                             </div>
                             <div class="button-stack right-stack">
-                                <button class="navbtn navbtn-info strict"><i class="svg-icon-ok inverse"></i></button>
-                                <button class="navbtn strict"><i class="svg-icon-settings"></i></button>
-                                <button class="navbtn strict"><i class="svg-icon-right"></i></button>
+                                <button class="navbtn navbtn-info"><i class="svg-icon-ok inverse"></i></button>
+                                <button class="navbtn"><i class="svg-icon-settings"></i></button>
+                                <button class="navbtn"><i class="svg-icon-right"></i></button>
                             </div>
                         </pre>
                     </div>
@@ -315,7 +316,7 @@
                                     <span class="caret"></span>
                                 </button>
                                 <ul class="dropdown-menu">
-                                    <li><button><i class="icon-remove"></i>Delete</button></li>
+                                    <li><button><i class="icon-trash"></i>Delete</button></li>
                                     <li><button><i class="icon-pencil"></i>Edit</button></li>
                                 </ul>
                             </div>
@@ -328,7 +329,7 @@
                                     <span class="caret"></span>
                                 </button>
                                 <ul class="dropdown-menu">
-                                    <li><button><i class="icon-remove"></i>Delete</button></li>
+                                    <li><button><i class="icon-trash"></i>Delete</button></li>
                                     <li><button><i class="icon-pencil"></i>Edit</button></li>
                                 </ul>
                             </div>
@@ -345,7 +346,7 @@
                                 </button>
                                 <ul class="dropdown-menu">
                                     <li><button><i class="icon-external"></i>Open link</button></li>
-                                    <li><button><i class="icon-remove"></i>Remove item</button></li>
+                                    <li><button><i class="icon-trash"></i>Remove item</button></li>
                                     <li><button><i class="icon-list-plus"></i>Add list of items</button></li>
                                     <li><button><i class="icon-archive"></i>Download item</button></li>
                                 </ul>
@@ -359,7 +360,7 @@
                                 </button>
                                 <ul class="dropdown-menu">
                                     <li><button><i class="icon-external"></i>Open link</button></li>
-                                    <li><button><i class="icon-remove"></i>Remove item</button></li>
+                                    <li><button><i class="icon-trash"></i>Remove item</button></li>
                                     <li><button><i class="icon-list-plus"></i>Add list of items</button></li>
                                     <li><button><i class="icon-archive"></i>Download item</button></li>
                                 </ul>
@@ -531,7 +532,7 @@
                     </div>
 
                     <p>Superdesk styled checkboxes with directive <code>sd-check</code></p>
-
+                    
                     <div class="docs-preview">
                         <div class="preview-area" ng-init="myCheckFancy = false">
                             <p><span sd-check ng-model="myCheckFancy"></span> Is checked: {{myCheckFancy}}</p>
@@ -541,6 +542,43 @@
                             <p ng-non-bindable><span sd-check ng-model="myCheckFancy"></span> Is checked: {{myCheckFancy}}</p>
                         </pre>
                     </div>
+
+                    <div class="docs-subtitle">Radio buttons</div>
+                    <p>Superdesk styled radio buttons:</p>
+                    
+                    <div class="docs-preview">
+                        <div class="preview-area" ng-init="myCheck = false">
+                            <form>
+                                <fieldset>
+                                    <div class="field">                                      
+                                        <label class="inline-label sd-radio">
+                                            <input type="radio" ng-model="myRadio" name="myRadio">Option 1<span class="check"></span>
+                                        </label>
+                                        <label class="inline-label sd-radio">
+                                            <input type="radio" ng-model="myRadio" name="myRadio">Option 2<span class="check"></span>
+                                        </label>
+                                    </div>
+                                </fieldset>
+                            </form>
+                        </div>
+
+                        <pre class="prettyprint lang-html linenums">
+                            <form>
+                                <fieldset>
+                                    <div class="field">
+                                        <label class="inline-label sd-radio" ng-non-bindable>
+                                            <input type="radio" ng-model="myRadio" name="myRadio">
+                                                Option 1<span class="check"></span>
+                                        </label>
+                                        <label class="inline-label sd-radio" ng-non-bindable>
+                                            <input type="radio" ng-model="myRadio" name="myRadio">
+                                                Option 2<span class="check"></span>
+                                        </label>
+                                    </div>
+                                </fieldset>
+                            </form>
+                        </pre>
+                    </div>                    
 
                     <div class="docs-subtitle">Toggle buttons</div>
                     <p>These are acting the same way as checkboxes:</p>
@@ -1138,7 +1176,7 @@
                 <li>
                     <a class="link-holder" id="icon-font"></a>
                     <div class="docs-title">Icon Font</div>
-                    <p>Icon is achieved with simple html call - use &lt;i&gt; tag and specify icon with a class.</p>
+                    <p>This font is suitable for small icons, it's 16px in size. If you need bigger icon, try to change font size to 32px (double size will not reduce quality). Icon is achieved with simple html call - use &lt;i&gt; tag and specify icon with a class.</p>
                     <p>Example: <code>&lt;i class="icon-text"&gt;&lt;/i&gt;</code></p>
                     <div class="docs-subtitle">Available icons</div>
                     <ul class="iconFont-list">
@@ -1474,13 +1512,39 @@
                         <li>
                             <i class="icon-graphic"></i><span>icon-graphic</span>
                         </li>
+                        <li>
+                            <i class="icon-close-thick"></i><span>icon-close-thick</span>
+                        </li>
+                        <li>
+                            <i class="icon-move"></i><span>icon-move</span>
+                        </li>
+                        <li>
+                            <i class="icon-takes-package"></i><span>icon-takes-package</span>
+                        </li>
+                        <li>
+                            <i class="icon-highlight-package"></i><span>icon-highlight-package</span>
+                        </li>
+                        <li>
+                            <i class="icon-preview-mode"></i><span>icon-preview-mode</span>
+                        </li>
+                        <li>
+                            <i class="icon-unlocked"></i><span>icon-unlocked</span>
+                        </li>
+                        <li>
+                            <i class="icon-code"></i><span>icon-code</span>
+                        </li>
+                        <li>
+                            <i class="icon-cut"></i><span>icon-cut</span>
+                        </li>
+                        <li>
+                            <i class="icon-paste"></i><span>icon-paste</span>
+                        </li>                    
                     </ul>
                 </li>
 
                 <li>
                     <a class="link-holder" id="content-profiles"></a>
                     <div class="docs-title">Content Profiles</div>
-
                     <div class="docs-subtitle">Order</div>
                     <p>Order values are specified in <code>content_types.json</code> file.</p>
                     <p><strong>Important!</strong> If one or more field don't have order value defined, that field will go on the bottom of container.</p>
@@ -1672,6 +1736,5 @@
             });
 
         </script>
-
     </body>
 </html>
