@@ -260,7 +260,9 @@
         config.shortTimeFormat = 'HH:mm';
         config.shortWeekFormat = 'dddd, HH:mm';
         config.shortDateFormat = 'DD/MM';
-
+        config.editor = {
+            imageDragging: true
+        };
         config.editorEmbedCodeParsers = ['EMBED_PROVIDERS', 'api', function(EMBED_PROVIDERS, api) {
             return [
                 {
