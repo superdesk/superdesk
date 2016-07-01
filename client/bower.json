@@ -28,7 +28,9 @@
     "angular-embed": "~3.0.1",
     "angular-contenteditable": "~0.3.8",
     "angular-vs-repeat": "^1.1.4",
-    "exif-js": "^2.1.1"
+    "exif-js": "^2.1.1",
+    "angular-history": "^0.8.1"
+
   },
   "ignore": [
     "**/.*",
