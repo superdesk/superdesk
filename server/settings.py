@@ -153,7 +153,7 @@ RENDITIONS = {
 
 SERVER_DOMAIN = 'localhost'
 
-MACROS_MODULE = env('MACROS_MODULE', 'superdesk.macros')
+MACROS_MODULE = env('MACROS_MODULE', 'ntb.macros')
 
 WS_HOST = env('WSHOST', '0.0.0.0')
 WS_PORT = env('WSPORT', '5100')
@@ -185,6 +185,7 @@ ELASTICSEARCH_FORCE_REFRESH = is_testing
 ELASTICSEARCH_AUTO_AGGREGATIONS = False
 SIGN_OFF_MAPPING = 'email'
 DEFAULT_CONTENT_TYPE = 'Standard'
+DEFAULT_LANGUAGE = 'nb-NO'
 
 
 # NTB NITF specific behaviour
