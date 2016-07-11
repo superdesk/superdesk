@@ -24,7 +24,6 @@
             "desired_response": {},
             "assets": {},
             "featured": {},
-            "credit_level": {},
             "relatedItems": {}
         },
         "editor": {
@@ -43,7 +42,6 @@
             "desired_response": {"order": 10, "sdWidth": "half"},
             "assets": {"order": 11, "sdWidth": "half"},
             "featured": {"order": 12, "sdWidth": "half"},
-            "credit_level": {"order": 13, "sdWidth": "half"},
 
             "ednote": {"order": 14, "sdWidth": "full"}
         }
@@ -73,7 +71,6 @@
             "desired_response": {},
             "assets": {},
             "featured": {},
-            "credit_level": {},
             "relatedItems": {}
         },
         "editor": {
@@ -92,7 +89,6 @@
             "desired_response": {"order": 10, "sdWidth": "half"},
             "assets": {"order": 11, "sdWidth": "half"},
             "featured": {"order": 12, "sdWidth": "half"},
-            "credit_level": {"order": 13, "sdWidth": "half"},
 
             "ednote": {"order": 14, "sdWidth": "full"}
         }
@@ -127,7 +123,6 @@
             "desired_response": {},
             "assets": {},
             "featured": {},
-            "credit_level": {},
             "relatedItems": {}
         },
         "editor": {
@@ -146,7 +141,6 @@
             "desired_response": {"order": 10, "sdWidth": "half"},
             "assets": {"order": 11, "sdWidth": "half"},
             "featured": {"order": 12, "sdWidth": "half"},
-            "credit_level": {"order": 13, "sdWidth": "half"},
             "ednote": {"order": 14, "sdWidth": "full"},
             "body_html": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]},
             "abstract": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]}
@@ -181,7 +175,6 @@
             "desired_response": {},
             "assets": {},
             "featured": {},
-            "credit_level": {},
             "relatedItems": {}
         },
         "editor": {
@@ -199,10 +192,308 @@
             "desired_response": {"order": 10, "sdWidth": "half"},
             "assets": {"order": 11, "sdWidth": "half"},
             "featured": {"order": 12, "sdWidth": "half"},
-            "credit_level": {"order": 13, "sdWidth": "half"},
             "ednote": {"order": 14, "sdWidth": "full"},
             "body_html": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]},
             "abstract": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]}
+        }
+    },
+    {
+        "_id": "newsstory",
+        "label": "News Story",
+        "priority": 30,
+        "enabled": true,
+        "schema": {
+            "urgency": {"nullable": true},
+            "anpa_category": {},
+            "slugline": {"required": true},
+            "ednote": {},
+
+            "headline": {"required": true},
+            "body_html": {"required": true},
+            "abstract": {"required": true},
+            "byline": {},
+
+            "feature_image": {"type": "picture"},
+            "associations":  {
+                "type": "dict",
+                "allow_unknown": true,
+                "mandatory_in_dictionary": ["featureimage"]
+            },
+
+            "relatedItems": {},
+            "subject": {
+                "type": "list",
+                "required": true,
+                "mandatory_in_list": {
+                    "scheme": {
+                        "topic_news": "topic_news",
+                        "territory": "territory"
+                    }
+                },
+                "schema": {
+                    "type": "dict",
+                    "schema": {
+                        "name": {},
+                        "qcode": {},
+                        "scheme": {
+                            "type": "string",
+                            "required": true,
+                            "allowed": [
+                                "age_range",
+                                "territory",
+                                "topic_news",
+                                "assets",
+                                "credit_level",
+                                "reader_type",
+                                "desired_response",
+                                "featured"
+                            ]
+                        },
+                        "service": {},
+                        "parent": {}
+                    }
+                }
+            }
+        },
+        "editor": {
+            "anpa_category": {"order": 1, "sdWidth": "half"},
+            "urgency": {"order": 4, "sdWidth": "half"},
+            "topic_news": {"order": 2, "sdWidth": "half", "required": true},
+            "slugline": {"order": 5, "sdWidth": "half", "required": true},
+            "age_range": {"order": 6, "sdWidth": "half"},
+            "territory": {"order": 8, "sdWidth": "half", "includeparent": true, "required": true},
+            "reader_type": {"order": 9, "sdWidth": "half"},
+            "assets": {"order": 11, "sdWidth": "half"},
+            "featured": {"order": 12, "sdWidth": "half"},
+            "ednote": {"order": 14, "sdWidth": "full"},
+            "body_html": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"], "required": true},
+            "abstract": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"], "required": true},
+            "feature_image": {"required": true},
+            "headline": {"required": true}
+        }
+    },
+    {
+        "_id": "sportsstory",
+        "label": "Sports Story",
+        "priority": 30,
+        "enabled": true,
+        "schema": {
+            "urgency": {"nullable": true},
+            "anpa_category": {},
+            "slugline": {"required": true},
+            "ednote": {},
+
+            "headline": {"required": true},
+            "body_html": {"required": true},
+            "abstract": {"required": true},
+            "byline": {},
+
+            "feature_image": {"type": "picture"},
+            "associations":  {
+                "type": "dict",
+                "allow_unknown": true,
+                "mandatory_in_dictionary": ["featureimage"]
+            },
+
+            "relatedItems": {},
+            "subject": {
+                "type": "list",
+                "required": true,
+                "mandatory_in_list": {
+                    "scheme": {
+                        "subservice_sport": "subservice_sport",
+                        "territory": "territory",
+                        "topic_sport": "topic_sport"
+                    }
+                },
+                "schema": {
+                    "type": "dict",
+                    "schema": {
+                        "name": {},
+                        "qcode": {},
+                        "scheme": {
+                            "type": "string",
+                            "required": true,
+                            "allowed": [
+                                "subservice_sport",
+                                "age_range",
+                                "territory",
+                                "topic_sport",
+                                "assets",
+                                "credit_level",
+                                "reader_type",
+                                "desired_response",
+                                "featured"
+                            ]
+                        },
+                        "service": {},
+                        "parent": {}
+                    }
+                }
+            }
+        },
+        "editor": {
+            "anpa_category": {"order": 1, "sdWidth": "half"},
+            "urgency": {"order": 4, "sdWidth": "half"},
+            "subservice_sport": {"order": 2, "sdWidth": "half", "required": true},
+            "topic_sport": {"order": 3, "sdWidth": "half", "required": true},
+            "slugline": {"order": 5, "sdWidth": "half", "required": true},
+            "age_range": {"order": 6, "sdWidth": "half", "required": true},
+            "territory": {"order": 8, "sdWidth": "half", "includeparent": true, "required": true},
+            "reader_type": {"order": 9, "sdWidth": "half"},
+            "assets": {"order": 11, "sdWidth": "half"},
+            "ednote": {"order": 14, "sdWidth": "full"},
+            "body_html": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"], "required": true},
+            "abstract": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"], "required": true},
+            "feature_image": {"required": true},
+            "headline": {"required": true}
+        }
+    },
+    {
+        "_id": "motoringstory",
+        "label": "Motoring Story",
+        "priority": 30,
+        "enabled": true,
+        "schema": {
+            "anpa_category": {},
+            "slugline": {"required": true},
+            "ednote": {},
+
+            "headline": {"required": true},
+            "body_html": {"required": true},
+            "abstract": {"required": true},
+            "byline": {},
+
+            "feature_image": {"type": "picture"},
+            "associations":  {
+                "type": "dict",
+                "allow_unknown": true,
+                "mandatory_in_dictionary": ["featureimage"]
+            },
+
+            "relatedItems": {},
+            "subject": {
+                "type": "list",
+                "required": true,
+                "mandatory_in_list": {
+                    "scheme": {
+                        "subservice_motoring": "subservice_motoring",
+                        "territory": "territory"
+                    }
+                },
+                "schema": {
+                    "type": "dict",
+                    "schema": {
+                        "name": {},
+                        "qcode": {},
+                        "scheme": {
+                            "type": "string",
+                            "required": true,
+                            "allowed": [
+                                "subservice_motoring",
+                                "age_range",
+                                "territory",
+                                "assets",
+                                "reader_type",
+                                "featured"
+                            ]
+                        },
+                        "service": {},
+                        "parent": {}
+                    }
+                }
+            }
+        },
+        "editor": {
+            "anpa_category": {"order": 1, "sdWidth": "half"},
+            "subservice_motoring": {"order": 2, "sdWidth": "half", "required": true},
+            "slugline": {"order": 5, "sdWidth": "half", "required": true},
+            "age_range": {"order": 6, "sdWidth": "half"},
+            "territory": {"order": 8, "sdWidth": "half", "includeparent": true, "required": true},
+            "reader_type": {"order": 9, "sdWidth": "half"},
+            "assets": {"order": 11, "sdWidth": "half"},
+            "featured": {"order": 12, "sdWidth": "half"},
+            "ednote": {"order": 14, "sdWidth": "full"},
+            "body_html": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"], "required": true},
+            "abstract": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"], "required": true},
+            "feature_image": {"required": true},
+            "headline": {"required": true}
+        }
+    },
+    {
+        "_id": "reallifestory",
+        "label": "Real Life Story",
+        "priority": 30,
+        "enabled": true,
+        "schema": {
+            "anpa_category": {},
+            "slugline": {"required": true},
+            "ednote": {},
+
+            "headline": {"required": true},
+            "body_html": {"required": true},
+            "abstract": {"required": true},
+            "byline": {},
+
+            "feature_image": {"type": "picture"},
+            "associations":  {
+                "type": "dict",
+                "allow_unknown": true,
+                "mandatory_in_dictionary": ["featureimage"]
+            },
+
+            "relatedItems": {},
+            "subject": {
+                "type": "list",
+                "required": true,
+                "mandatory_in_list": {
+                    "scheme": {
+                        "subservice_real_life": "subservice_real_life",
+                        "credit_level": "credit_level",
+                        "territory": "territory"
+                    }
+                },
+                "schema": {
+                    "type": "dict",
+                    "schema": {
+                        "name": {},
+                        "qcode": {},
+                        "scheme": {
+                            "type": "string",
+                            "required": true,
+                            "allowed": [
+                                "subservice_real_life",
+                                "age_range",
+                                "territory",
+                                "assets",
+                                "credit_level",
+                                "reader_type",
+                                "desired_response",
+                                "featured"
+                            ]
+                        },
+                        "service": {},
+                        "parent": {}
+                    }
+                }
+            }
+        },
+        "editor": {
+            "anpa_category": {"order": 1, "sdWidth": "half"},
+            "subservice_real_life": {"order": 2, "sdWidth": "half", "required": true},
+            "slugline": {"order": 5, "sdWidth": "half", "required": true},
+            "age_range": {"order": 6, "sdWidth": "half"},
+            "territory": {"order": 7, "sdWidth": "half", "includeparent": true, "required": true},
+            "reader_type": {"order": 8, "sdWidth": "half"},
+            "desired_response": {"order": 9, "sdWidth": "half"},
+            "assets": {"order": 10, "sdWidth": "half"},
+            "featured": {"order": 11, "sdWidth": "half"},
+            "credit_level": {"order": 12, "sdWidth": "half", "required": true},
+            "ednote": {"order": 13, "sdWidth": "full"},
+            "body_html": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"], "required": true},
+            "abstract": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"], "required": true},
+            "feature_image": {"required": true},
+            "headline": {"required": true}
         }
     }
 ]
