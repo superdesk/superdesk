@@ -14,6 +14,8 @@
             "user": "a21a621c4c8847b085fe2d78"
         }],
         "source": "Press Association",
+        "default_content_profile": "sportsstory",
+        "content_profiles": {"snap": 1, "live": 1, "sportsstory": 1},
         "desk_metadata": {
             "anpa_category": [
                 {"name": "Sport", "qcode": "paservice:sport", "scheme": null}
@@ -37,6 +39,8 @@
             "user": "a21a621c4c8847b085fe2d78"
         }],
         "source": "Press Association",
+        "default_content_profile": "newsstory",
+        "content_profiles": {"snap": 1, "live": 1, "newsstory": 1},
         "desk_metadata": {
             "anpa_category": [
                 {"name": "News", "qcode": "paservice:news", "scheme": null}
@@ -79,6 +83,8 @@
             "user": "a21a621c4c8847b085fe2d78"
         }],
         "source": "Press Association",
+        "default_content_profile": "motoringstory",
+        "content_profiles": {"snap": 1, "live": 1, "motoringstory": 1},
         "desk_metadata": {
             "anpa_category": [
                 {"name": "Motoring", "qcode": "paservice:motoring", "scheme": null}
@@ -103,6 +109,8 @@
             "user": "a21a621c4c8847b085fe2d78"
         }],
         "source": "Press Association",
+        "default_content_profile": "reallifestory",
+        "content_profiles": {"snap": 1, "live": 1, "reallifestory": 1},
         "desk_metadata": {
             "anpa_category": [
                 {"name": "Real Life", "qcode": "paservice:real-life", "scheme": null}
