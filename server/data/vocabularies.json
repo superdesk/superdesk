@@ -194,12 +194,12 @@
         "type": "unmanageable",
         "items": [
             {"is_active": true, "name": "All", "qcode": "all",
-                "formats": [{"name": "NINJS", "qcode": "ninjs"}, {"name": "AAP NewsML 1.2", "qcode": "newsml12"}, {"name": "NewsML G2", "qcode": "newsmlg2"}]},
+                "formats": [{"name": "NTBNITF", "qcode": "ntbnitf"}, {"name": "NINJS", "qcode": "ninjs"}, {"name": "AAP NewsML 1.2", "qcode": "newsml12"}, {"name": "NewsML G2", "qcode": "newsmlg2"}]},
             {"is_active": true, "name": "Digital/Internet", "qcode": "digital",
-                "formats": [{"name": "NINJS", "qcode": "ninjs"}, {"name": "AAP NewsML 1.2", "qcode": "newsml12"}, {"name": "NewsML G2", "qcode": "newsmlg2"},
+                "formats": [{"name": "NTBNITF", "qcode": "ntbnitf"}, {"name": "NINJS", "qcode": "ninjs"}, {"name": "AAP NewsML 1.2", "qcode": "newsml12"}, {"name": "NewsML G2", "qcode": "newsmlg2"},
                             {"name": "AAP Bulletin Builder", "qcode": "AAP BULLETIN BUILDER"}]},
             {"is_active": true, "name": "Wire/Paper", "qcode": "wire",
-                "formats": [{"name": "AAP ANPA", "qcode": "AAP ANPA"}, {"name": "NITF", "qcode": "nitf"}, {"name": "AAP IPNEWS", "qcode": "AAP IPNEWS"},
+                "formats": [{"name": "NTBNITF", "qcode": "ntbnitf"}, {"name": "AAP ANPA", "qcode": "AAP ANPA"}, {"name": "NITF", "qcode": "nitf"}, {"name": "AAP IPNEWS", "qcode": "AAP IPNEWS"},
                             {"name": "AAP SMS", "qcode": "AAP SMS"}]}
         ]
     },

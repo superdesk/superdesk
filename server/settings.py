@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'apps.auth',
     'superdesk.roles',
     'ntb.scanpix',
+    'ntb.publish',
 ]
 
 # LDAP settings
