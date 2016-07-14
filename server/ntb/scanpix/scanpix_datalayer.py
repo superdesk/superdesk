@@ -40,7 +40,7 @@ logger = logging.getLogger('ntb:scanpix')
 def extract_params(query, names):
     if isinstance(names, str):
         names = [names]
-    findall = re.findall('([\w]+):\(([\w\s-]+)\)', query)
+    findall = re.findall('([\w]+):\(([-\w\s*]+)\)', query)
     params = {name: value for (name, value) in findall if name in names}
     for name, value in findall:
         query = query.replace('%s:(%s)' % (name, value), '')
@@ -84,7 +84,7 @@ class ScanpixDatalayer(DataLayer):
 
     def find(self, resource, req, lookup):
         """
-        Called to execute a search against the PA Image API. It attempts to translate the search request
+        Called to execute a search against the Scanpix API. It attempts to translate the search request
         passed in req to a suitable form for a search request against the API. It parses the response into a
         suitable ElasticCursor.
         :param resource:
