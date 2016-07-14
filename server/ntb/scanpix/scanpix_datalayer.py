@@ -123,6 +123,11 @@ class ScanpixDatalayer(DataLayer):
                 data['subscription'] = extract_params(query, 'subscription')['subscription']
             except KeyError:
                 data['subscription'] = 'subscription'  # this is requested as a default value
+
+            if 'ntbtema' in resource and data['subscription'] == 'subscription':
+                # small hack for SDNTB-250
+                data['subscription'] = 'punchcard'
+
             if data['subscription'] == 'all':
                 del data['subscription']
 
