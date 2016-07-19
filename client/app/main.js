@@ -18,7 +18,7 @@
 
         // setup default route for superdesk - set it here to avoid it being used in unit tests
         angular.module('superdesk').config(['$routeProvider', function($routeProvider) {
-            $routeProvider.when('/', {redirectTo: '/workspace'});
+            $routeProvider.when('/', {redirectTo: '/workspace/monitoring'});
         }]);
 
         // load apps & bootstrap
