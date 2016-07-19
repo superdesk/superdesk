@@ -20,7 +20,7 @@
             "abstract": {"type": "string", "required": true, "maxlength": 160, "minlength": 1},
             "body_html": {},
             "sign_off": {"type": "string", "required": true, "minlength": 1},
-            "feature_image": {"type": "picture"},
+            "feature_media": {"type": "picture"},
             "slugline": {"type": "string", "required": true, "maxlength": 30, "minlength": 1},
             "priority": {"required": true},
             "urgency": {"required": true},
@@ -67,7 +67,7 @@
                 "formatOptions":["h1", "h2", "bold", "italic", "underline", "quote", "anchor", "embed", "picture", "table", "removeFormat"]
             },
             "sign_off": {"order": 15},
-            "feature_image": {"order": 16}
+            "feature_media": {"order": 16}
         }
     },
     {
@@ -82,7 +82,7 @@
             "abstract": {"type": "string", "maxlength": 160},
             "body_html": {},
             "sign_off": {"type": "string"},
-            "feature_image": {"type": "picture"},
+            "feature_media": {"type": "picture"},
             "slugline": {"type": "string", "required": true, "maxlength": 30, "minlength": 1},
             "priority": {"required": true},
             "urgency": {"required": true},
@@ -128,7 +128,7 @@
                 "formatOptions":["h1", "h2", "bold", "italic", "underline", "quote", "anchor", "embed", "picture", "table", "removeFormat"]
             },
             "sign_off": {"order": 15},
-            "feature_image": {"order": 16}
+            "feature_media": {"order": 16}
         }
     },
     {
@@ -143,7 +143,7 @@
             "abstract": {"type": "string", "maxlength": 160},
             "body_html": {},
             "sign_off": {"type": "string"},
-            "feature_image": {"type": "picture"},
+            "feature_media": {"type": "picture"},
             "slugline": {"type": "string", "required": true, "maxlength": 30, "minlength": 1},
             "priority": {},
             "urgency": {},
@@ -189,7 +189,7 @@
                 "formatOptions":["h1", "h2", "bold", "italic", "underline", "quote", "anchor", "embed", "picture", "table", "removeFormat"]
             },
             "sign_off": {"order": 15},
-            "feature_image": {"order": 16}
+            "feature_media": {"order": 16}
         }
     }
 ]
