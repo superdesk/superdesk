@@ -34,7 +34,7 @@ before_install:
 
 install:
     - cd server && pip install -r dev-requirements.txt && cd ..
-    - cd client && npm install && bower install && cd ..
+    - cd client && npm install --python=python2.7 && bower install && cd ..
 
 script:
     - cd client && npm test && cd ..
