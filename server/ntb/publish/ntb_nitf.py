@@ -11,8 +11,10 @@
 from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE
 from superdesk.publish.formatters.nitf_formatter import NITFFormatter
 from xml.etree.ElementTree import SubElement
-import logging
 import re
+from bs4 import BeautifulSoup
+from xml.etree import ElementTree as ET
+import logging
 logger = logging.getLogger(__name__)
 
 EMBED_RE = re.compile(r"<!-- EMBED START ([a-zA-Z]+ {id: \"(?P<id>.+?)\"}) -->.*"
@@ -82,9 +84,6 @@ class NTBNITFFormatter(NITFFormatter):
             p = SubElement(body_content, 'p', {'lede': "true", 'class': "lead"})
             self.map_html_to_xml(p, article.get('abstract'))
 
-        # regular content
-        super()._format_body_content(article, body_content)
-
         # media
         media_data = []
         try:
@@ -95,7 +94,10 @@ class NTBNITFFormatter(NITFFormatter):
         try:
             media_data.append(associations['featureimage'])
         except KeyError:
-            pass
+            try:
+                media_data.append(associations['featuremedia'])
+            except KeyError:
+                pass
 
         def repl_embedded(match):
             """embedded in body_html handling"""
@@ -111,18 +113,36 @@ class NTBNITFFormatter(NITFFormatter):
                 media_data.append(data)
             return ''
 
-        html = article['body_html']
-        EMBED_RE.sub(repl_embedded, html)
+        html = EMBED_RE.sub(repl_embedded, article['body_html'])
 
         # at this point we have media data filled in right order
+        # and no more embedded in html
 
+        # regular content
+
+        # we first convert the HTML to XML with BeautifulSoup
+        # then parse it again with ElementTree
+        # this is not optimal, but Beautiful Soup and etree are used
+        # and etree from stdlib doesn't have a proper HTML parser
+        soup = BeautifulSoup(html, 'html.parser')
+        html_elts = ET.fromstring('<div>{}</div>'.format(soup.decode(formatter='xml')))
+        body_content.extend(html_elts)
+
+        # media
         for data in media_data:
             if 'scanpix' in data.get('fetch_endpoint', ''):
                 # NTB request that Scanpix ID is used
                 # in source for Scanpix media (see SDNTB-229)
                 source = data['guid']
             else:
-                source = data['renditions']['original']['href']
+                try:
+                    source = data['renditions']['original']['href']
+                except KeyError:
+                    try:
+                        source = next(iter(data['renditions'].values()))['href']
+                    except (StopIteration, KeyError):
+                        logger.warning("Can't find source for media {}".format(data.get('guid', '')))
+                        continue
             type_ = 'image' if data['type'] == 'picture' else 'video'
             mime_type = data.get('mimetype')
             caption = data.get('description_text', '')
