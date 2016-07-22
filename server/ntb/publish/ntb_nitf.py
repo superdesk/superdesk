@@ -14,6 +14,7 @@ from xml.etree.ElementTree import SubElement
 import re
 from bs4 import BeautifulSoup
 from xml.etree import ElementTree as ET
+from superdesk.publish.publish_service import register_file_extension
 import logging
 logger = logging.getLogger(__name__)
 
@@ -147,3 +148,6 @@ class NTBNITFFormatter(NITFFormatter):
             mime_type = data.get('mimetype')
             caption = data.get('description_text', '')
             self._add_media(body_content, type_, mime_type, source, caption)
+
+
+register_file_extension('ntbnitf', 'xml')
