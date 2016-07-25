@@ -31,3 +31,5 @@ include/
 /server/.settings/org.eclipse.core.resources.prefs
 /results/
 /superdesk-content-api/
+client/index.html
+client/templates-cache.js
