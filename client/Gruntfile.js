@@ -23,10 +23,9 @@ module.exports = function(grunt) {
 
     grunt.registerTask('server', [
         'clean',
-        'style',
-        'template:test',
+        'template:dev',
         'configureProxies:test',
-        'connect:test',
-        'watch'
+        'ngtemplates:dev',
+        'webpack-dev-server:start'
     ]);
 };
