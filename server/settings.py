@@ -81,6 +81,7 @@ INSTALLED_APPS.extend([
     'superdesk.notification',
     'superdesk.activity',
     'superdesk.vocabularies',
+    'superdesk.backend_meta',
     'apps.comments',
 
     'superdesk.io',

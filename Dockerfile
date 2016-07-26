@@ -60,3 +60,7 @@ COPY ./server /opt/superdesk
 COPY ./client /opt/superdesk/client
 
 RUN cd ./client && grunt build
+
+# copy git revision informations (used in "about" screen)
+COPY .git/HEAD /opt/superdesk/.git/
+COPY .git/refs/ /opt/superdesk/.git/refs/
