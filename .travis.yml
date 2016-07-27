@@ -23,6 +23,7 @@ cache:
     - $HOME/.cache/bower
 
 before_install:
+    - rm -f .npm/*.lock
     - npm install -g grunt-cli bower
     - pip install requests
     - export DISPLAY=:99.0
@@ -41,6 +42,3 @@ script:
     - cd server && flake8 && cd ..
     - cd client && grunt build && cd ..
     - cd server && python manage.py users:create -u test -p test -e test@localhost --admin && cd ..
-
-after_script:
-    - rm .npm/*.lock
