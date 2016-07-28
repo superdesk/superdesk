@@ -65,15 +65,18 @@
 
     {
         "_id": "5640a5eef40235008465242b",
+        "last_name": "Last",
         "password": "$2a$12$3qgobovZq9pHb.Z6.JgwROkE09y1QMQdqfFQZCsbWJscguabVkzSm",
-        "user_type": "administrator",
-        "email": "admin@example.com",
-        "sign_off": "ADM",
-        "username": "admin",
-        "display_name": "admin",
         "is_active": true,
+        "email": "admin@example.com",
+        "name": "First Last",
+        "is_enabled": true,
+        "display_name": "admin",
+        "first_name": "First",
+        "username": "admin",
+        "user_type": "administrator",
         "needs_activation": false,
-        "is_enabled": true
+        "sign_off": "ADM"
     },
 
     {
