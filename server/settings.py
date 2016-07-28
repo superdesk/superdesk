@@ -86,6 +86,7 @@ INSTALLED_APPS.extend([
     'superdesk.activity',
     'superdesk.vocabularies',
     'superdesk.profiling',
+    'superdesk.backend_meta',
     'apps.comments',
 
     'superdesk.io',
