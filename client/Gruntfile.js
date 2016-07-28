@@ -23,7 +23,7 @@ module.exports = function(grunt) {
 
     grunt.registerTask('server', [
         'clean',
-        'template:dev',
+        'copy:index',
         'configureProxies:test',
         'ngtemplates:dev',
         'webpack-dev-server:start'
