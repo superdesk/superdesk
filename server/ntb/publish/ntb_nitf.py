@@ -44,6 +44,13 @@ class NTBNITFFormatter(NITFFormatter):
         super()._format_docdata(article, docdata)
         if 'slugline' in article:
             SubElement(docdata, 'du-key', attrib={'version': '1', 'key': article['slugline']})
+        for place in article.get('place', []):
+            evloc = SubElement(docdata, 'evloc')
+            for key, att in (('parent', 'state-prov'), ('qcode', 'county-dist')):
+                try:
+                    evloc.attrib[att] = place[key]
+                except KeyError:
+                    pass
 
     def _format_subjects(self, article, tobject):
         subjects = [s for s in article.get('subject', []) if s.get("scheme") == "subject_custom"]
