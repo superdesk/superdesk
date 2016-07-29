@@ -6,12 +6,6 @@
  */
 module.exports = function(grunt) {
     return {
-        spellcheckers: ['tansa'],
-
-        // when set to true, the app will also load app/translations.js
-        // from current working directory
-        localTranslations: true,
-
         bodyClass: {
             'indent-article': 1
         },
@@ -104,6 +98,10 @@ module.exports = function(grunt) {
             imageDragging: true
         },
 
-        defaultRoute: '/workspace/monitoring'
+        defaultRoute: '/workspace/monitoring',
+
+        langOverride: {
+            'de': {'My Profile': 'DE - My profile'}
+        }
     };
 };
