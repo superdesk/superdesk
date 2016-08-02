@@ -1,0 +1,242 @@
+<!doctype html>
+<html class="no-js">
+  <head>
+    <meta charset="utf-8">
+    <title>Superdesk</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    <!-- build:css custom.css -->
+    <link rel="stylesheet" href="app/custom.css">
+    <!-- endbuild -->
+
+    <!-- build:css vendor.css -->
+    <link rel="stylesheet" href="bower_components/jcrop/css/jquery.Jcrop.css">
+    <link rel="stylesheet" href="bower_components/jquery-ui/themes/base/slider.css">
+    <link rel="stylesheet" href="bower_components/jquery-ui/themes/base/resizable.css">
+    <link rel="stylesheet" href="bower_components/medium-editor-tables/dist/css/medium-editor-tables.css">
+    <!-- endbuild -->
+  </head>
+  <body ng-class="config.bodyClass">
+
+    <div sd-superdesk-view></div>
+
+    <!-- build:js scripts/vendor.js -->
+    <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="bower_components/lodash/lodash.js"></script>
+    <script src="bower_components/jquery-ui/jquery-ui.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+
+    <script src="bower_components/react/react.js"></script>
+    <script src="bower_components/react/react-dom.js"></script>
+    <script src="bower_components/classnames/index.js"></script>
+
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/angular-i18n/angular-locale_nb.js"></script>
+    <script src="bower_components/gridster/dist/jquery.gridster.with-extras.js"></script>
+    <script src="bower_components/medium-editor/dist/js/medium-editor.js"></script>
+    <script src="bower_components/medium-editor-tables/dist/js/medium-editor-tables.js"></script>
+    <script src="bower_components/ment.io/dist/mentio.js"></script>
+    <script src="bower_components/rangy/rangy-core.js"></script>
+    <script src="bower_components/rangy/rangy-selectionsaverestore.js"></script>
+    <script src="bower_components/momentjs/moment.js"></script>
+    <script src="bower_components/momentjs/locale/nb.js"></script>
+    <script src="bower_components/moment-timezone/builds/moment-timezone-with-data-2010-2020.js"></script>
+    <script src="bower_components/langmap/language-mapping-list.js"></script>
+    <script src="bower_components/angular-moment/angular-moment.js"></script>
+    <script src="bower_components/d3/d3.js"></script>
+
+    <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+    <script src="bower_components/angular-resource/angular-resource.js"></script>
+    <script src="bower_components/angular-route/angular-route.js"></script>
+    <script src="bower_components/angular-gettext/dist/angular-gettext.js"></script>
+    <script src="bower_components/angular-mocks/angular-mocks.js"></script>
+    <script src="bower_components/angular-animate/angular-animate.js"></script>
+    <script src="bower_components/ng-file-upload/ng-file-upload.js"></script>
+    <script src="bower_components/ng-file-upload/ng-file-upload-shim.js"></script>
+    <script src="bower_components/raven-js/dist/raven.js"></script>
+
+    <script src="bower_components/angular-embed/dist/angular-embed.js"></script>
+    <script src="bower_components/angular-contenteditable/angular-contenteditable.js"></script>
+    <script src="bower_components/angular-vs-repeat/src/angular-vs-repeat.js"></script>
+    <script src="bower_components/exif-js/exif.js"></script>
+    <!-- endbuild -->
+
+    <!-- build:js app.js -->
+    <script src='dist/index.bundle.js' /></script>
+    <!-- endbuild -->
+
+    <script src="templates-cache.js"></script>
+
+    <!-- build:dev-only -->
+    <script src='http://localhost:9000/webpack-dev-server.js' /></script>
+    <!-- endbuild -->
+
+    <script>
+        var config = <%= grunt.toJSON(config) %>;
+
+        config.bodyClass = {
+            'indent-article': 1
+        };
+
+        config.defaultTimezone = 'Europe/Oslo';
+        config.shortTimeFormat = 'HH:mm, DD.MM.YYYY';
+        config.shortDateFormat = 'HH:mm, DD.MM.YYYY';
+        config.shortWeekFormat = 'HH:mm, DD.MM.YYYY';
+        config.startingDay = '1';
+
+        config.view = {
+            timeformat: 'HH:mm',
+            dateformat: 'DD.MM.YYYY'
+        };
+
+        config.features = {
+            preview: 1,
+            alchemy: 1,
+            customAuthoringTopbar: true,
+            useTansaProofing: true,
+            editFeaturedImage: 0,
+            hideCreatePackage: true,
+            customMonitoringWidget: true,
+            scanpixSearchShortcut: true
+        };
+
+        config.user = {
+                'sign_off_mapping': 'email'
+        };
+
+        config.monitoring = {
+                'scheduled': true
+        };
+
+        // disable ingest/content view in workspace sidebar
+        config.workspace = {
+            ingest: 0,
+            content: 0,
+            tasks: 0
+        };
+
+        config.ui = {
+            publishEmbargo: false,
+            publishSendAdnContinue: false,
+            italicAbstract: false
+        };
+
+        config.search_cvs = [
+            {id: 'anpa_category', name:'Service', field: 'anpa_category', list: 'categories'},
+            {id: 'category', name:'Category', field: 'subject', list: 'category'},
+            {id: 'genre', name:'Genre', field: 'genre', list: 'genre_custom'},
+            {id: 'subject', name:'Subject', field: 'subject', list: 'subject_custom'},
+            {id: 'priority', name:'Priority', field: 'priority', list: 'priority'},
+            {id: 'urgency', name:'Urgency', field: 'urgency', list: 'urgency'}
+        ];
+
+        config.search = {
+                'slugline': 1,
+                'headline': 1,
+                'unique_name': 1,
+                'story_text': 1,
+                'byline': 1,
+                'keywords': 0,
+                'creator': 1,
+                'from_desk': 1,
+                'to_desk': 1
+        };
+
+        config.list = {
+            priority: ['urgency'],
+            firstLine: [
+                'slugline',
+                'takekey',
+                'highlights',
+                'headline',
+                'provider',
+                'update',
+                'updated',
+                'state',
+                'versioncreated'
+            ]
+        };
+
+        config.item_profile = {
+                change_profile: 1
+        };
+
+        config.editor = {
+            imageDragging: true
+        };
+
+        var tansa = {};
+        tansa.settings = {};
+       
+        // tansa server base urls e.g "http://localhost:8080/tansaclient/"
+        tansa.settings.baseUrl = location.protocol + "//" + location.host + "/tansaclient/";
+        tansa.settings.clientExtenstionJs = "tansa4ClientExtensionSimple.js";
+        //Need to populate dynamically 
+        tansa.settings.tansaUserId = 'tansa';
+        tansa.settings.checkboxPreference = false;
+        /*end configuration */
+        
+        var script = document.createElement('script');
+        script.src = tansa.settings.baseUrl + 'tansaLoader.js' + '?' + new Date().getTime();
+        document.write(script.outerHTML);
+
+        function afterProofing (isCancelled) {
+            var $rootScope = angular.element(document.body).injector().get('$rootScope');
+            
+            $rootScope.$apply(function () {
+                config.isCheckedByTansa = true;
+                $rootScope.publishAfterTansa();
+            });
+        }
+
+        var modules = [
+            'superdesk',
+            'superdesk.settings',
+            'superdesk.dashboard',
+            'superdesk.users',
+            'superdesk.archive',
+            'superdesk.archive.directives',
+            'superdesk.ingest',
+            'superdesk.desks',
+            'superdesk.groups',
+            'superdesk.products',
+            'superdesk.authoring',
+            'superdesk.authoring.multiedit',
+            'superdesk.packaging',
+            'superdesk.editor2',
+            'superdesk.editor.spellcheck',
+            'superdesk.notification',
+            'superdesk.highlights',
+            'superdesk.content_filters',
+            'superdesk.dictionaries',
+            'superdesk.vocabularies',
+            'superdesk.searchProviders',
+
+            'superdesk.users.import',
+            'superdesk.users.profile',
+            'superdesk.users.activity',
+            'superdesk.stream',
+            'superdesk.publish',
+            'superdesk.templates',
+            'superdesk.monitoring',
+
+            'superdesk.profiling',
+
+            'superdesk.loading',
+            'superdesk.templates-cache'
+        ];
+
+        window.bootstrapSuperdesk(config, modules);
+    </script>
+
+     <script type="text/javascript">
+        var pgwBrowser = tansaJQuery.pgwBrowser();      
+        tansa.settings.parentAppName = window.testPageParentAppName;
+        tansa.settings.platformName = pgwBrowser.os.name;
+        tansa.settings.platformVersion = pgwBrowser.os.fullVersion;
+     </script>
+
+  </body>
+</html>
