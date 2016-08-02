@@ -6,7 +6,6 @@
  */
 module.exports = function(grunt) {
     return {
-        defaultRoute: '/workspace/personal',
-        localTranslations: true
+        defaultRoute: '/workspace/personal'
     };
 };
