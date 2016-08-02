@@ -100,6 +100,7 @@ INSTALLED_APPS.extend([
     'apps.picture_crop',
     'apps.picture_renditions',
     'apps.products',
+    'apps.vidible',
 
     'superdesk.io.subjectcodes',
     'apps.archive_broadcast',
@@ -110,7 +111,6 @@ INSTALLED_APPS.extend([
 
     'pa.topics',
     'pa.pa_img',
-    'pa.vidible',
 ])
 
 DEFAULT_URGENCY_VALUE_FOR_MANUAL_ARTICLES = None
