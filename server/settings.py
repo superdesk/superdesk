@@ -129,6 +129,7 @@ INSTALLED_APPS.extend([
     'apps.macros',
     'apps.archive_broadcast',
     'apps.search_providers',
+    'apps.vidible',
     'apps.feature_preview',
     'apps.workqueue'
 ])
