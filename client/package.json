@@ -2,7 +2,7 @@
   "name": "superdesk-client",
   "license": "GPL-3.0",
   "dependencies": {
-    "superdesk-core": "superdesk/superdesk-client-core#8af4c2b33d59e885d2b5bc6d8aae5af14580b5c2",
+    "superdesk-core": "superdesk/superdesk-client-core#473695be028599a5ecb028a62ef26950aaa6e63f",
     "btoa": "1.1.2",
     "babel-core": "^6.10.4",
     "babel-loader": "^6.2.4",
