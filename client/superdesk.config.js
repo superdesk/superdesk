@@ -102,6 +102,8 @@ module.exports = function(grunt) {
 
         langOverride: {
             'de': {'My Profile': 'DE - My profile'}
-        }
+        },
+
+        requiredMediaMetadata: ['headline', 'description_text', 'alt_text']
     };
 };
