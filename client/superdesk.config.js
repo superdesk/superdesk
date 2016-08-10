@@ -47,6 +47,8 @@ module.exports = function(grunt) {
                 'Urgency': 'Ranking',
                 '\'SLUGLINE is a required field\'': 'Keyword is a required field'
             }
-        }
+        },
+
+        requiredMediaMetadata: ['headline', 'description_text', 'alt_text']
     };
 };
