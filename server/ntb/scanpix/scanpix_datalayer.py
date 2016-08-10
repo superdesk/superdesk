@@ -14,6 +14,7 @@ import re
 import requests
 import json
 from datetime import datetime
+from os.path import splitext
 
 from io import BytesIO
 from eve.io.base import DataLayer
@@ -222,14 +223,18 @@ class ScanpixDatalayer(DataLayer):
         new_doc['fetch_endpoint'] = 'scanpix'
 
         # mimetype is not directly found in Scanpix API
-        # so we use fileFormat to guess it
-        try:
-            mimetype = mimetypes.guess_type('_.{}'.format(doc['fileFormat']))[0]
-        except KeyError:
-            pass
-        else:
-            if mimetype is not None:
-                new_doc['mimetype'] = mimetype
+        # so we use original filename to guess it
+        mimetype = mimetypes.guess_type("_{}".format(splitext(doc.get('originalFileName', ''))[1]))[0]
+        if mimetype is None:
+            # nothing found with filename, we try out luck with fileFormat
+            try:
+                format_ = doc['fileFormat'].split()[0]
+            except (KeyError, IndexError):
+                mimetype = None
+            else:
+                mimetype = mimetypes.guess_type('_.{}'.format(format_))[0]
+        if mimetype is not None:
+            new_doc['mimetype'] = mimetype
 
         main_group = doc['mainGroup']
         if main_group == 'video':

@@ -10,13 +10,13 @@
 
 from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE
 from superdesk.publish.formatters.nitf_formatter import NITFFormatter
-from xml.etree.ElementTree import SubElement
 import re
 from bs4 import BeautifulSoup
 from xml.etree import ElementTree as ET
 from superdesk.publish.publish_service import register_file_extension
 from superdesk.errors import FormatterError
 import superdesk
+from datetime import datetime
 import logging
 logger = logging.getLogger(__name__)
 
@@ -39,8 +39,11 @@ class NTBNITFFormatter(NITFFormatter):
     def format(self, article, subscriber, codes=None, encoding="us-ascii"):
         try:
             pub_seq_num = superdesk.get_resource_service('subscribers').generate_sequence_number(subscriber)
-
             nitf = self.get_nitf(article, subscriber, pub_seq_num)
+            try:
+                nitf.attrib['baselang'] = article['language']
+            except KeyError:
+                pass
             return [{'published_seq_num': pub_seq_num,
                      'formatted_item': self.XML_ROOT + ET.tostring(nitf, "unicode"),
                      'item_encoding': 'iso-8859-1'}]
@@ -52,14 +55,32 @@ class NTBNITFFormatter(NITFFormatter):
         for s in article.get('subject', []):
             if s.get('scheme') == 'category':
                 category = s['qcode']
-        return SubElement(head, 'tobject', {'tobject.type': category})
+        return ET.SubElement(head, 'tobject', {'tobject.type': category})
+
+    def _format_docdata_dateissue(self, article, docdata):
+        ET.SubElement(
+            docdata,
+            'date.issue',
+            attrib={'norm': article['versioncreated'].astimezone().strftime("%Y-%m-%dT%H:%M:%S")})
+
+    def _format_docdata_doc_id(self, article, docdata):
+        doc_id = "NTB{item_id}_{version:02}".format(
+            article['item_id'],
+            article['version'] - 1)
+        ET.SubElement(docdata, 'doc-id', attrib={'regsrc': 'NTB', 'id-string': doc_id})
+
+    def _format_date_expire(self, article, docdata):
+        pass
 
     def _format_docdata(self, article, docdata):
         super()._format_docdata(article, docdata)
+
         if 'slugline' in article:
-            SubElement(docdata, 'du-key', attrib={'version': '1', 'key': article['slugline']})
+            key_list = ET.SubElement(docdata, 'key-list')
+            ET.SubElement(key_list, 'keyword', attrib={'key': article['slugline']})
+            ET.SubElement(docdata, 'du-key', attrib={'version': str(article['version']), 'key': article['slugline']})
         for place in article.get('place', []):
-            evloc = SubElement(docdata, 'evloc')
+            evloc = ET.SubElement(docdata, 'evloc')
             for key, att in (('parent', 'state-prov'), ('qcode', 'county-dist')):
                 try:
                     evloc.attrib[att] = place[key]
@@ -69,48 +90,104 @@ class NTBNITFFormatter(NITFFormatter):
     def _format_subjects(self, article, tobject):
         subjects = [s for s in article.get('subject', []) if s.get("scheme") == "subject_custom"]
         for subject in subjects:
-            SubElement(tobject, 'tobject.subject',
-                       {'tobject.subject.refnum': subject.get('qcode', ''),
-                        'tobject.subject.type': subject.get('name', '')})
+            ET.SubElement(
+                tobject,
+                'tobject.subject',
+                {'tobject.subject.refnum': subject.get('qcode', ''),
+                 'tobject.subject.matter': subject.get('name', '')})
 
-    def _append_meta_priority(self, article, head):
-        if 'priority' in article:
-            SubElement(head, 'meta', {'name': 'NTBPrioritet', 'content': str(article['priority'])})
+    def _format_datetimes(self, article, head):
+            created = article['versioncreated'].astimezone()
+            ET.SubElement(head, 'meta', {'name': 'timestamp', 'content': created.strftime("%Y.%m.%d %H:%M:%S")})
+            ET.SubElement(head, 'meta', {'name': 'ntb-dato', 'content': created.strftime("%d.%m.%Y %H:%M")})
+            ET.SubElement(head, 'meta', {'name': 'NTBUtDato', 'content': created.strftime("%d.%m.%Y")})
 
-    def _append_meta(self, article, head, destination, pub_seq_num):
-        super()._append_meta(article, head, destination, pub_seq_num)
+    def _format_meta(self, article, head, destination, pub_seq_num):
+        super()._format_meta(article, head, destination, pub_seq_num)
+        article['head'] = head  # needed to access head when formatting body content
+        ET.SubElement(head, 'meta', {'name': 'NTBEditor', 'content': 'Superdesk'})
         try:
             service = article['anpa_category'][0]
         except (KeyError, IndexError):
             pass
         else:
-            SubElement(head, 'meta', {'name': 'NTBTjeneste', 'content': service.get("name", "")})
+            ET.SubElement(head, 'meta', {'name': 'NTBTjeneste', 'content': service.get("name", "")})
+        self._format_datetimes(article, head)
+        if 'slugline' in article:
+            ET.SubElement(head, 'meta', {'name': 'NTBStikkord', 'content': article['slugline']})
+            ET.SubElement(head, 'meta', {'name': 'subject', 'content': article['slugline']})
+
+        ET.SubElement(head, 'meta', {'name': 'NTBID', 'content': 'NTB{}'.format(article['item_id'])})
+
+        # these static values never change
+        ET.SubElement(head, 'meta', {'name': 'NTBDistribusjonsKode', 'content': 'ALL'})
+        ET.SubElement(head, 'meta', {'name': 'NTBKanal', 'content': 'A'})
+
+        # daily counter
+        day_start = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        pub_queue = superdesk.get_resource_service("publish_queue")
+        daily_count = pub_queue.find({'transmit_started_at': {'$gte': day_start}}).count() + 1
+        ET.SubElement(head, 'meta', {'name': 'NTBIPTCSequence', 'content': str(daily_count)})
 
     def _format_body_head_abstract(self, article, body_head):
         # abstract is added in body_content for NTB NITF
         pass
 
+    def _format_body_head_dateline(self, article, body_head):
+        try:
+            dateline = article['dateline']['located']['city']
+        except KeyError:
+            pass
+        else:
+            dateline = ET.SubElement(body_head, 'dateline')
+            dateline.text = dateline
+
+    def _format_body_head(self, article, body_head):
+        super()._format_body_head(article, body_head)
+        distrib = ET.SubElement(body_head, 'distributor')
+        org = ET.SubElement(distrib, 'org')
+        language = article['language']
+        if language == 'nb-NO':
+            org.text = 'NTB'
+        elif language == 'nn-NO':
+            org.text = 'NPK'
+
     def _add_media(self, body_content, type_, mime_type, source, caption):
-        media = SubElement(body_content, 'media')
-        media.attrib['media_type'] = type_
-        media_reference = SubElement(media, 'media-reference')
+        media = ET.SubElement(body_content, 'media')
+        media.attrib['media-type'] = type_
+        media_reference = ET.SubElement(media, 'media-reference')
         if mime_type is not None:
             media_reference.attrib['mime-type'] = mime_type
         media_reference.attrib['source'] = source
-        media_caption = SubElement(media, 'media-caption')
+        media_caption = ET.SubElement(media, 'media-caption')
         media_caption.text = caption
 
+    def _add_meta_media_counter(self, head, counter):
+        # we need to add a <meta/> in header with the number of media
+        # we first check index of first meta element to group them
+        first_meta = head.find("meta")
+        if first_meta is not None:
+            index = list(head).index(first_meta)
+        else:
+            index = 1
+        elem = ET.Element('meta', {'name': 'NTBBilderAntall', 'content': str(counter)})
+        head.insert(index, elem)
+
     def _format_body_content(self, article, body_content):
+        head = article.pop('head')
+
         # abstract
         if 'abstract' in article:
-            p = SubElement(body_content, 'p', {'lede': "true", 'class': "lead"})
-            self.map_html_to_xml(p, article.get('abstract'))
+            p = ET.SubElement(body_content, 'p', {'lede': "true", 'class': "lead"})
+            abstract_txt = BeautifulSoup(article.get('abstract'), 'html.parser').getText()
+            p.text = abstract_txt
 
         # media
         media_data = []
         try:
             associations = article['associations']
         except KeyError:
+            self._add_meta_media_counter(head, 0)
             return
 
         try:
@@ -148,6 +225,16 @@ class NTBNITFFormatter(NITFFormatter):
         # and etree from stdlib doesn't have a proper HTML parser
         soup = BeautifulSoup(html, 'html.parser')
         html_elts = ET.fromstring('<div>{}</div>'.format(soup.decode(formatter='xml')))
+        # <p class="lead" lede="true"> is used by NTB for abstract
+        # and it may be existing in body_html (from ingested items ?)
+        # so we need to remove it here
+        p_lead = html_elts.find('p[@class="lead"]')
+        if p_lead is not None:
+            p_lead.attrib['class'] = "txt"
+            try:
+                del p_lead.attrib['lede']
+            except KeyError:
+                pass
         body_content.extend(html_elts)
 
         # media
@@ -165,10 +252,28 @@ class NTBNITFFormatter(NITFFormatter):
                     except (StopIteration, KeyError):
                         logger.warning("Can't find source for media {}".format(data.get('guid', '')))
                         continue
-            type_ = 'image' if data['type'] == 'picture' else 'video'
+
+            if data['type'] in (CONTENT_TYPE.PICTURE, CONTENT_TYPE.GRAPHIC):
+                type_ = 'image'
+            elif data['type'] == CONTENT_TYPE.VIDEO:
+                type_ = 'video'
+            else:
+                logger.warning("unhandled content type: {}".format(data['type']))
+                continue
             mime_type = data.get('mimetype')
+            if mime_type is None:
+                # these default values need to be used if mime_type is not found
+                mime_type = 'image/jpeg' if type_ == 'image' else 'video/mpeg'
             caption = data.get('description_text', '')
             self._add_media(body_content, type_, mime_type, source, caption)
+        self._add_meta_media_counter(head, len(media_data))
+
+    def _format_body_end(self, article, body_end):
+        super()._format_body_end(article, body_end)
+        if article.get('signoff'):
+            tagline = ET.SubElement(body_end, 'tagline')
+            a = ET.SubElement(tagline, 'a', {'href': article['signoff']})
+            a.text = article['signoff']
 
 
 register_file_extension('ntbnitf', 'xml')
