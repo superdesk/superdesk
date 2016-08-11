@@ -101,6 +101,10 @@ module.exports = function(grunt) {
         defaultRoute: '/workspace/monitoring',
 
         langOverride: {
+            'en': {
+                'Category': 'Service',
+                'CATEGORY': 'SERVICE'
+            },
             'de': {'My Profile': 'DE - My profile'}
         }
     };
