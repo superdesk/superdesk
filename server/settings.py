@@ -94,6 +94,7 @@ INSTALLED_APPS.extend([
     'superdesk.publish',
     'superdesk.commands',
     'superdesk.locators',
+    'superdesk.data_updates',
 
     'apps.auth',
     'apps.archive',
