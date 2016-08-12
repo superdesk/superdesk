@@ -25,7 +25,7 @@ Find more information about the client configuration in the README file of the r
 
 1. Clone the repository
 2. Navigate to the folder where you've cloned this repository (if it's the main repo, go inside the `client` folder).
-3. Run `npm install && bower install` to install dependencies.
+3. Run `npm install` to install dependencies.
 4. Run `grunt server` to run the web server.
 5. Open browser and navigate to `localhost:9000`.
 
