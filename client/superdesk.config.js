@@ -106,6 +106,8 @@ module.exports = function(grunt) {
                 'CATEGORY': 'SERVICE'
             },
             'de': {'My Profile': 'DE - My profile'}
-        }
+        },
+
+        requiredMediaMetadata: ['headline', 'description_text', 'alt_text']
     };
 };
