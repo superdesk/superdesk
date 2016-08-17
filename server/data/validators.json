@@ -66,10 +66,11 @@
             },
             "dateline": {
                 "type": "dict",
-                "required": true,
+                "required": false,
+                "nullable": true,
                 "schema": {
-                    "located": {"type": "dict", "required": true},
-                    "text": {"type": "string", "required": true}
+                    "located": {"type": "dict", "required": false, "nullable": true},
+                    "text": {"type": "string", "required": false, "nullable": true}
                 }
             }
         }
@@ -141,10 +142,11 @@
             },
             "dateline": {
                 "type": "dict",
-                "required": true,
+                "nullable": true,
+                "required": false,
                 "schema": {
-                    "located": {"type": "dict", "required": true},
-                    "text": {"type": "string", "required": true}
+                    "located": {"type": "dict", "required": false, "nullable": true},
+                    "text": {"type": "string", "required": false, "nullable": true}
                 }
             }
         }
@@ -211,10 +213,11 @@
             },
             "dateline": {
                 "type": "dict",
-                "required": true,
+                "required": false,
+                "nullable": true,
                 "schema": {
-                    "located": {"type": "dict", "required": true},
-                    "text": {"type": "string", "required": true}
+                    "located": {"type": "dict", "required": false, "nullable": true},
+                    "text": {"type": "string", "required": false, "nullable": true}
                 }
             }
         }
@@ -281,10 +284,11 @@
             },
             "dateline": {
                 "type": "dict",
-                "required": true,
+                "required": false,
+                "nullable": true,
                 "schema": {
-                    "located": {"type": "dict", "required": true},
-                    "text": {"type": "string", "required": true}
+                    "located": {"type": "dict", "required": false, "nullable": true},
+                    "text": {"type": "string", "required": false, "nullable": true}
                 }
             }
         }
@@ -351,10 +355,11 @@
             },
             "dateline": {
                 "type": "dict",
-                "required": true,
+                "required": false,
+                "nullable": true,
                 "schema": {
-                    "located": {"type": "dict", "required": true},
-                    "text": {"type": "string", "required": true}
+                    "located": {"type": "dict", "required": false, "nullable": true},
+                    "text": {"type": "string", "required": false, "nullable": true}
                 }
             }
         }
@@ -421,10 +426,11 @@
             },
             "dateline": {
                 "type": "dict",
-                "required": true,
+                "required": false,
+                "nullable": true,
                 "schema": {
-                    "located": {"type": "dict", "required": true},
-                    "text": {"type": "string", "required": true}
+                    "located": {"type": "dict", "required": false, "nullable": true},
+                    "text": {"type": "string", "required": false, "nullable": true}
                 }
             }
         }
@@ -486,9 +492,10 @@
             "dateline": {
                 "type": "dict",
                 "required": false,
+                "nullable": true,
                 "schema": {
-                    "located": {"type": "dict", "required": true},
-                    "text": {"type": "string", "required": true}
+                    "located": {"type": "dict", "required": false, "nullable": true},
+                    "text": {"type": "string", "required": false, "nullable": true}
                 }
             },
             "description_text": {
@@ -570,9 +577,10 @@
             "dateline": {
                 "type": "dict",
                 "required": false,
+                "nullable": true,
                 "schema": {
-                    "located": {"type": "dict", "required": true},
-                    "text": {"type": "string", "required": true}
+                    "located": {"type": "dict", "required": false, "nullable": true},
+                    "text": {"type": "string", "required": false, "nullable": true}
                 }
             },
             "description_text": {
@@ -653,10 +661,11 @@
             },
             "dateline": {
                 "type": "dict",
-                "required": true,
+                "required": false,
+                "nullable": true,
                 "schema": {
-                    "located": {"type": "dict", "required": true},
-                    "text": {"type": "string", "required": true}
+                    "located": {"type": "dict", "required": false, "nullable": true},
+                    "text": {"type": "string", "required": false, "nullable": true}
                 }
             },
             "description_text": {
@@ -738,9 +747,10 @@
             "dateline": {
                 "type": "dict",
                 "required": false,
+                "nullable": true,
                 "schema": {
-                    "located": {"type": "dict", "required": true},
-                    "text": {"type": "string", "required": true}
+                    "located": {"type": "dict", "required": false, "nullable": true},
+                    "text": {"type": "string", "required": false, "nullable": true}
                 }
             },
             "description_text": {
@@ -814,9 +824,10 @@
             "dateline": {
                 "type": "dict",
                 "required": false,
+                "nullable": true,
                 "schema": {
-                    "located": {"type": "dict", "required": true},
-                    "text": {"type": "string", "required": true}
+                    "located": {"type": "dict", "required": false, "nullable": true},
+                    "text": {"type": "string", "required": false, "nullable": true}
                 }
             },
             "description_text": {
@@ -890,9 +901,10 @@
             "dateline": {
                 "type": "dict",
                 "required": false,
+                "nullable": true,
                 "schema": {
-                    "located": {"type": "dict", "required": true},
-                    "text": {"type": "string", "required": true}
+                    "located": {"type": "dict", "required": false, "nullable": true},
+                    "text": {"type": "string", "required": false, "nullable": true}
                 }
             },
             "description_text": {
@@ -966,9 +978,10 @@
             "dateline": {
                 "type": "dict",
                 "required": false,
+                "nullable": true,
                 "schema": {
-                    "located": {"type": "dict", "required": true},
-                    "text": {"type": "string", "required": true}
+                    "located": {"type": "dict", "required": false, "nullable": true},
+                    "text": {"type": "string", "required": false, "nullable": true}
                 }
             },
             "description_text": {
@@ -1042,9 +1055,10 @@
             "dateline": {
                 "type": "dict",
                 "required": false,
+                "nullable": true,
                 "schema": {
-                    "located": {"type": "dict", "required": true},
-                    "text": {"type": "string", "required": true}
+                    "located": {"type": "dict", "required": false, "nullable": true},
+                    "text": {"type": "string", "required": false, "nullable": true}
                 }
             },
             "description_text": {
@@ -1118,9 +1132,10 @@
             "dateline": {
                 "type": "dict",
                 "required": false,
+                "nullable": true,
                 "schema": {
-                    "located": {"type": "dict", "required": true},
-                    "text": {"type": "string", "required": true}
+                    "located": {"type": "dict", "required": false, "nullable": true},
+                    "text": {"type": "string", "required": false, "nullable": true}
                 }
             },
             "description_text": {
