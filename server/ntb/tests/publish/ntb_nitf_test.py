@@ -165,7 +165,7 @@ class NTBNITFFormatterTest(TestCase):
         }
 
     def test_subject_and_category(self):
-        seq, doc = self.formatter.format(self.article, {'name': 'Test NTBNITF'})[0]
+        doc = self.formatter.format(self.article, {'name': 'Test NTBNITF'})[0]['formatted_item']
         nitf_xml = etree.fromstring(doc)
         tobject = nitf_xml.find('head/tobject')
         self.assertEqual(tobject.get('tobject.type'), 'Forskning')
@@ -174,19 +174,19 @@ class NTBNITFFormatterTest(TestCase):
         self.assertEqual(subject.get('tobject.subject.type'), 'tyveri og innbrudd')
 
     def test_priority(self):
-        seq, doc = self.formatter.format(self.article, {'name': 'Test NTBNITF'})[0]
+        doc = self.formatter.format(self.article, {'name': 'Test NTBNITF'})[0]['formatted_item']
         nitf_xml = etree.fromstring(doc)
         priority = nitf_xml.find("head/meta[@name='NTBPrioritet']")
         self.assertEqual(priority.get('content'), '2')
 
     def test_slugline(self):
-        seq, doc = self.formatter.format(self.article, {'name': 'Test NTBNITF'})[0]
+        doc = self.formatter.format(self.article, {'name': 'Test NTBNITF'})[0]['formatted_item']
         nitf_xml = etree.fromstring(doc)
         du_key = nitf_xml.find('head/docdata/du-key')
         self.assertEqual(du_key.get('key'), 'this is the slugline')
 
     def test_body(self):
-        seq, doc = self.formatter.format(self.article, {'name': 'Test NTBNITF'})[0]
+        doc = self.formatter.format(self.article, {'name': 'Test NTBNITF'})[0]['formatted_item']
         nitf_xml = etree.fromstring(doc)
 
         # body content
@@ -227,3 +227,11 @@ class NTBNITFFormatterTest(TestCase):
         self.assertEqual(video.find("media-reference").get("mime-type"), "video/mpeg")
         self.assertEqual(video.find("media-reference").get("source"), "tb42bf38")
         self.assertEqual(video.find("media-caption").text, "\n\nSCRIPT TO FOLLOW\n")
+
+    def test_encoding(self):
+        doc = self.formatter.format(self.article, {'name': 'Test NTBNITF'})[0]
+        encoding = doc['item_encoding']
+        self.assertEqual(encoding, 'iso-8859-1')
+        formatted = doc['formatted_item']
+        header = formatted[:formatted.find('>') + 1]
+        self.assertIn('encoding="iso-8859-1"', header)

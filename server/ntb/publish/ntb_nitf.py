@@ -15,6 +15,8 @@ import re
 from bs4 import BeautifulSoup
 from xml.etree import ElementTree as ET
 from superdesk.publish.publish_service import register_file_extension
+from superdesk.errors import FormatterError
+import superdesk
 import logging
 logger = logging.getLogger(__name__)
 
@@ -23,6 +25,7 @@ EMBED_RE = re.compile(r"<!-- EMBED START ([a-zA-Z]+ {id: \"(?P<id>.+?)\"}) -->.*
 
 
 class NTBNITFFormatter(NITFFormatter):
+    XML_ROOT = '<?xml version="1.0" encoding="iso-8859-1" standalone="yes"?>'
 
     def can_format(self, format_type, article):
         """
@@ -32,6 +35,17 @@ class NTBNITFFormatter(NITFFormatter):
         :return: True if article can formatted else False
         """
         return format_type == 'ntbnitf' and article[ITEM_TYPE] == CONTENT_TYPE.TEXT
+
+    def format(self, article, subscriber, codes=None, encoding="us-ascii"):
+        try:
+            pub_seq_num = superdesk.get_resource_service('subscribers').generate_sequence_number(subscriber)
+
+            nitf = self.get_nitf(article, subscriber, pub_seq_num)
+            return [{'published_seq_num': pub_seq_num,
+                     'formatted_item': self.XML_ROOT + ET.tostring(nitf, "unicode"),
+                     'item_encoding': 'iso-8859-1'}]
+        except Exception as ex:
+            raise FormatterError.nitfFormatterError(ex, subscriber)
 
     def _format_tobject(self, article, head):
         category = ''
