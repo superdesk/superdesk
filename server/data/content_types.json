@@ -46,7 +46,8 @@
             },
             "genre" : {"type": "list", "required": true, "minlength": 1},
             "place": {"type": "list", "required": true, "minlength": 1},
-            "ednote": {}
+            "ednote": {},
+            "body_footer": {"type": "string"}
         },
         "editor": {
             "slugline": {"order": 1, "sdWidth": "half"},
@@ -67,7 +68,8 @@
                 "formatOptions":["h1", "h2", "bold", "italic", "underline", "quote", "anchor", "embed", "picture", "table", "removeFormat"]
             },
             "sign_off": {"order": 15},
-            "feature_media": {"order": 16}
+            "feature_media": {"order": 16},
+            "body_footer": {"order": 17}
         }
     },
     {
