@@ -15,7 +15,7 @@ curl libfontconfig nodejs npm nginx \
 && ln --symbolic /usr/bin/nodejs /usr/bin/node
 
 RUN npm install -g npm
-RUN npm -g install grunt-cli bower
+RUN npm -g install grunt-cli
 
 # Set the locale
 RUN locale-gen en_US.UTF-8
@@ -49,9 +49,6 @@ RUN cd /tmp && pip3 install -U -r /tmp/requirements.txt
 # install client dependencies
 COPY ./client/package.json /opt/superdesk/client/
 RUN cd ./client && npm install
-COPY ./client/bower.json /opt/superdesk/client/
-COPY ./client/.bowerrc /opt/superdesk/client/
-RUN cd ./client && bower --allow-root install
 
 # copy server sources
 COPY ./server /opt/superdesk
