@@ -6,6 +6,7 @@
  */
 module.exports = function(grunt) {
     return {
-        defaultRoute: '/workspace/personal'
+        defaultRoute: '/workspace/personal',
+        requiredMediaMetadata: ['headline', 'description_text', 'alt_text']
     };
 };
