@@ -49,7 +49,7 @@ fi
 git push $force origin $use_branch
 
 if ! $quick; then
-    cd client && npm update && bower update
+    cd client && npm update
     cd ..
 
     cd server && pip install -r requirements.txt -U

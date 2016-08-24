@@ -66,10 +66,11 @@
             },
             "dateline": {
                 "type": "dict",
-                "required": true,
+                "required": false,
+                "nullable": true,
                 "schema": {
-                    "located": {"type": "dict", "required": true},
-                    "text": {"type": "string", "required": true}
+                    "located": {"type": "dict", "required": false, "nullable": true},
+                    "text": {"type": "string", "required": false, "nullable": true}
                 }
             }
         }
@@ -141,10 +142,11 @@
             },
             "dateline": {
                 "type": "dict",
-                "required": true,
+                "nullable": true,
+                "required": false,
                 "schema": {
-                    "located": {"type": "dict", "required": true},
-                    "text": {"type": "string", "required": true}
+                    "located": {"type": "dict", "required": false, "nullable": true},
+                    "text": {"type": "string", "required": false, "nullable": true}
                 }
             }
         }
@@ -211,10 +213,11 @@
             },
             "dateline": {
                 "type": "dict",
-                "required": true,
+                "required": false,
+                "nullable": true,
                 "schema": {
-                    "located": {"type": "dict", "required": true},
-                    "text": {"type": "string", "required": true}
+                    "located": {"type": "dict", "required": false, "nullable": true},
+                    "text": {"type": "string", "required": false, "nullable": true}
                 }
             }
         }
@@ -281,10 +284,11 @@
             },
             "dateline": {
                 "type": "dict",
-                "required": true,
+                "required": false,
+                "nullable": true,
                 "schema": {
-                    "located": {"type": "dict", "required": true},
-                    "text": {"type": "string", "required": true}
+                    "located": {"type": "dict", "required": false, "nullable": true},
+                    "text": {"type": "string", "required": false, "nullable": true}
                 }
             }
         }
@@ -351,10 +355,11 @@
             },
             "dateline": {
                 "type": "dict",
-                "required": true,
+                "required": false,
+                "nullable": true,
                 "schema": {
-                    "located": {"type": "dict", "required": true},
-                    "text": {"type": "string", "required": true}
+                    "located": {"type": "dict", "required": false, "nullable": true},
+                    "text": {"type": "string", "required": false, "nullable": true}
                 }
             }
         }
@@ -421,10 +426,11 @@
             },
             "dateline": {
                 "type": "dict",
-                "required": true,
+                "required": false,
+                "nullable": true,
                 "schema": {
-                    "located": {"type": "dict", "required": true},
-                    "text": {"type": "string", "required": true}
+                    "located": {"type": "dict", "required": false, "nullable": true},
+                    "text": {"type": "string", "required": false, "nullable": true}
                 }
             }
         }
@@ -486,9 +492,94 @@
             "dateline": {
                 "type": "dict",
                 "required": false,
+                "nullable": true,
                 "schema": {
-                    "located": {"type": "dict", "required": true},
-                    "text": {"type": "string", "required": true}
+                    "located": {"type": "dict", "required": false, "nullable": true},
+                    "text": {"type": "string", "required": false, "nullable": true}
+                }
+            },
+            "description_text": {
+                "type": "string",
+                "required": true,
+                "nullable": false,
+                "empty": false
+            },
+            "mimetype": {
+                "type": "string",
+                "required": true,
+                "nullable": false,
+                "empty": false
+            },
+            "renditions": {
+                "type": "dict",
+                "required": true,
+                "schema": {
+                    "4-3": {"type": "dict", "required": true},
+                    "16-9": {"type": "dict", "required": true}
+                }
+            }
+        }
+    },
+    {
+        "_id": "publish_embedded_picture",
+        "act": "publish",
+        "type": "picture",
+        "schema": {
+            "headline": {
+                "type": "string",
+                "required": false,
+                "nullable": false,
+                "empty": false,
+                "maxlength": 42
+            },
+            "abstract": {
+                "type": "string",
+                "required": false,
+                "maxlength": 160
+            },
+            "type": {
+                "type": "string",
+                "required": "true",
+                "allowed": ["picture"]
+            },
+            "anpa_category": {
+                "type": "list",
+                "required": false,
+                "minlength": 1
+            },
+            "pubstatus": {
+                "type": "string",
+                "required": true,
+                "allowed": ["usable"]
+            },
+            "slugline": {
+                "type": "string",
+                "required": true,
+                "nullable": false,
+                "empty": false,
+                "maxlength": 24
+            },
+            "subject": {
+                "type": "list",
+                "required": false,
+                "minlength": 1
+            },
+            "urgency": {
+                "type": "integer",
+                "required": false,
+                "allowed": [1, 2, 3, 4, 5]
+            },
+            "priority": {
+                "type": "integer",
+                "required": false,
+                "allowed": [1, 2, 3, 4, 5, 6, 7, 8, 9]
+            },
+            "dateline": {
+                "type": "dict",
+                "required": false,
+                "schema": {
+                    "located": {"type": "dict", "required": false, "nullable" : true},
+                    "text": {"type": "string", "required": false, "nullable" : true}
                 }
             },
             "description_text": {
@@ -570,9 +661,94 @@
             "dateline": {
                 "type": "dict",
                 "required": false,
+                "nullable": true,
                 "schema": {
-                    "located": {"type": "dict", "required": true},
-                    "text": {"type": "string", "required": true}
+                    "located": {"type": "dict", "required": false, "nullable": true},
+                    "text": {"type": "string", "required": false, "nullable": true}
+                }
+            },
+            "description_text": {
+                "type": "string",
+                "required": true,
+                "nullable": false,
+                "empty": false
+            },
+            "mimetype": {
+                "type": "string",
+                "required": true,
+                "nullable": false,
+                "empty": false
+            },
+            "renditions": {
+                "type": "dict",
+                "required": false,
+                "schema": {
+                    "4-3": {"type": "dict", "required": false},
+                    "16-9": {"type": "dict", "required": false}
+                }
+            }
+        }
+    },
+    {
+        "_id": "correct_embedded_picture",
+        "act": "correct",
+        "type": "picture",
+        "schema": {
+            "headline": {
+                "type": "string",
+                "required": false,
+                "nullable": false,
+                "empty": false,
+                "maxlength": 42
+            },
+            "abstract": {
+                "type": "string",
+                "required": false,
+                "maxlength": 160
+            },
+            "type": {
+                "type": "string",
+                "required": "true",
+                "allowed": ["picture"]
+            },
+            "anpa_category": {
+                "type": "list",
+                "required": false,
+                "minlength": 1
+            },
+            "pubstatus": {
+                "type": "string",
+                "required": true,
+                "allowed": ["usable"]
+            },
+            "slugline": {
+                "type": "string",
+                "required": true,
+                "nullable": false,
+                "empty": false,
+                "maxlength": 24
+            },
+            "subject": {
+                "type": "list",
+                "required": false,
+                "minlength": 1
+            },
+            "urgency": {
+                "type": "integer",
+                "required": false,
+                "allowed": [1, 2, 3, 4, 5]
+            },
+            "priority": {
+                "type": "integer",
+                "required": false,
+                "allowed": [1, 2, 3, 4, 5, 6, 7, 8, 9]
+            },
+            "dateline": {
+                "type": "dict",
+                "required": false,
+                "schema": {
+                    "located": {"type": "dict", "required": false, "nullable" : true},
+                    "text": {"type": "string", "required": false, "nullable" : true}
                 }
             },
             "description_text": {
@@ -653,10 +829,95 @@
             },
             "dateline": {
                 "type": "dict",
-                "required": true,
+                "required": false,
+                "nullable": true,
                 "schema": {
-                    "located": {"type": "dict", "required": true},
-                    "text": {"type": "string", "required": true}
+                    "located": {"type": "dict", "required": false, "nullable": true},
+                    "text": {"type": "string", "required": false, "nullable": true}
+                }
+            },
+            "description_text": {
+                "type": "string",
+                "required": false,
+                "nullable": false,
+                "empty": false
+            },
+            "mimetype": {
+                "type": "string",
+                "required": true,
+                "nullable": false,
+                "empty": false
+            },
+            "renditions": {
+                "type": "dict",
+                "required": false,
+                "schema": {
+                    "4-3": {"type": "dict", "required": false},
+                    "16-9": {"type": "dict", "required": false}
+                }
+            }
+        }
+    },
+    {
+        "_id": "kill_embed_picture",
+        "act": "kill",
+        "type": "picture",
+        "schema": {
+            "headline": {
+                "type": "string",
+                "required": false,
+                "nullable": false,
+                "empty": false,
+                "maxlength": 42
+            },
+            "abstract": {
+                "type": "string",
+                "required": false,
+                "maxlength": 160
+            },
+            "type": {
+                "type": "string",
+                "required": "true",
+                "allowed": ["picture"]
+            },
+            "anpa_category": {
+                "type": "list",
+                "required": false,
+                "minlength": 1
+            },
+            "pubstatus": {
+                "type": "string",
+                "required": true,
+                "allowed": ["canceled"]
+            },
+            "slugline": {
+                "type": "string",
+                "required": true,
+                "nullable": false,
+                "empty": false,
+                "maxlength": 24
+            },
+            "subject": {
+                "type": "list",
+                "required": false,
+                "minlength": 1
+            },
+            "urgency": {
+                "type": "integer",
+                "required": false,
+                "allowed": [1, 2, 3, 4, 5]
+            },
+            "priority": {
+                "type": "integer",
+                "required": false,
+                "allowed": [1, 2, 3, 4, 5, 6, 7, 8, 9]
+            },
+            "dateline": {
+                "type": "dict",
+                "required": false,
+                "schema": {
+                    "located": {"type": "dict", "required": false, "nullable" : true},
+                    "text": {"type": "string", "required": false, "nullable" : true}
                 }
             },
             "description_text": {
@@ -738,9 +999,10 @@
             "dateline": {
                 "type": "dict",
                 "required": false,
+                "nullable": true,
                 "schema": {
-                    "located": {"type": "dict", "required": true},
-                    "text": {"type": "string", "required": true}
+                    "located": {"type": "dict", "required": false, "nullable": true},
+                    "text": {"type": "string", "required": false, "nullable": true}
                 }
             },
             "description_text": {
@@ -814,9 +1076,10 @@
             "dateline": {
                 "type": "dict",
                 "required": false,
+                "nullable": true,
                 "schema": {
-                    "located": {"type": "dict", "required": true},
-                    "text": {"type": "string", "required": true}
+                    "located": {"type": "dict", "required": false, "nullable": true},
+                    "text": {"type": "string", "required": false, "nullable": true}
                 }
             },
             "description_text": {
@@ -890,9 +1153,10 @@
             "dateline": {
                 "type": "dict",
                 "required": false,
+                "nullable": true,
                 "schema": {
-                    "located": {"type": "dict", "required": true},
-                    "text": {"type": "string", "required": true}
+                    "located": {"type": "dict", "required": false, "nullable": true},
+                    "text": {"type": "string", "required": false, "nullable": true}
                 }
             },
             "description_text": {
@@ -966,9 +1230,10 @@
             "dateline": {
                 "type": "dict",
                 "required": false,
+                "nullable": true,
                 "schema": {
-                    "located": {"type": "dict", "required": true},
-                    "text": {"type": "string", "required": true}
+                    "located": {"type": "dict", "required": false, "nullable": true},
+                    "text": {"type": "string", "required": false, "nullable": true}
                 }
             },
             "description_text": {
@@ -1042,9 +1307,10 @@
             "dateline": {
                 "type": "dict",
                 "required": false,
+                "nullable": true,
                 "schema": {
-                    "located": {"type": "dict", "required": true},
-                    "text": {"type": "string", "required": true}
+                    "located": {"type": "dict", "required": false, "nullable": true},
+                    "text": {"type": "string", "required": false, "nullable": true}
                 }
             },
             "description_text": {
@@ -1118,9 +1384,10 @@
             "dateline": {
                 "type": "dict",
                 "required": false,
+                "nullable": true,
                 "schema": {
-                    "located": {"type": "dict", "required": true},
-                    "text": {"type": "string", "required": true}
+                    "located": {"type": "dict", "required": false, "nullable": true},
+                    "text": {"type": "string", "required": false, "nullable": true}
                 }
             },
             "description_text": {
