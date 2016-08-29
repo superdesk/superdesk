@@ -524,6 +524,7 @@
         "_id": "publish_embedded_picture",
         "act": "publish",
         "type": "picture",
+        "embedded": true,
         "schema": {
             "headline": {
                 "type": "string",
@@ -693,6 +694,7 @@
         "_id": "correct_embedded_picture",
         "act": "correct",
         "type": "picture",
+        "embedded": true,
         "schema": {
             "headline": {
                 "type": "string",
