@@ -55,12 +55,8 @@ module.exports = function(grunt) {
         },
 
         search_cvs: [
-            {id: 'anpa_category', name:'Service', field: 'anpa_category', list: 'categories'},
             {id: 'category', name:'Category', field: 'subject', list: 'category'},
-            {id: 'genre', name:'Genre', field: 'genre', list: 'genre_custom'},
-            {id: 'subject', name:'Subject', field: 'subject', list: 'subject_custom'},
-            {id: 'priority', name:'Priority', field: 'priority', list: 'priority'},
-            {id: 'urgency', name:'Urgency', field: 'urgency', list: 'urgency'}
+            {id: 'subject', name:'Subject', field: 'subject', list: 'subject_custom'}
         ],
 
         search: {
