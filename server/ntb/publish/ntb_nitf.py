@@ -263,6 +263,14 @@ class NTBNITFFormatter(NITFFormatter):
                 del p_lead.attrib['lede']
             except KeyError:
                 pass
+
+        try:
+            footer_txt = article['body_footer']
+        except KeyError:
+            pass
+        else:
+            body_footer = ET.SubElement(html_elts, 'p', {'class': 'txt'})
+            body_footer.text = footer_txt
         body_content.extend(html_elts)
 
         # media
