@@ -143,7 +143,7 @@ class NTBNITFFormatter(NITFFormatter):
         self._format_datetimes(article, head)
         if 'slugline' in article:
             ET.SubElement(head, 'meta', {'name': 'NTBStikkord', 'content': article['slugline']})
-            ET.SubElement(head, 'meta', {'name': 'subject', 'content': article['slugline']})
+        ET.SubElement(head, 'meta', {'name': 'subject', 'content': self._get_ntb_subject(article)})
 
         ET.SubElement(head, 'meta', {'name': 'NTBID', 'content': 'NTB{}'.format(article['item_id'])})
 
