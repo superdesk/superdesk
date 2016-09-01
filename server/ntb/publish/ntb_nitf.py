@@ -13,7 +13,7 @@ from superdesk.publish.formatters.nitf_formatter import NITFFormatter
 import re
 from bs4 import BeautifulSoup
 from xml.etree import ElementTree as ET
-from superdesk.publish.publish_service import register_file_extension
+from superdesk.publish.publish_service import PublishService
 from superdesk.errors import FormatterError
 import superdesk
 from datetime import datetime
@@ -50,12 +50,20 @@ class NTBNITFFormatter(NITFFormatter):
         except Exception as ex:
             raise FormatterError.nitfFormatterError(ex, subscriber)
 
-    def _format_tobject(self, article, head):
+    def _get_ntb_category(self, article):
         category = ''
         for s in article.get('subject', []):
             if s.get('scheme') == 'category':
                 category = s['qcode']
-        return ET.SubElement(head, 'tobject', {'tobject.type': category})
+        return category
+
+    def _get_ntb_subject(self, article):
+        update = article['version'] - 1
+        subject_prefix = "ny{}-".format(update) if update else ""
+        return subject_prefix + article.get('slugline', '')
+
+    def _format_tobject(self, article, head):
+        return ET.SubElement(head, 'tobject', {'tobject.type': self._get_ntb_category(article)})
 
     def _format_docdata_dateissue(self, article, docdata):
         ET.SubElement(
@@ -102,6 +110,24 @@ class NTBNITFFormatter(NITFFormatter):
             ET.SubElement(head, 'meta', {'name': 'ntb-dato', 'content': created.strftime("%d.%m.%Y %H:%M")})
             ET.SubElement(head, 'meta', {'name': 'NTBUtDato', 'content': created.strftime("%d.%m.%Y")})
 
+    def _get_filename(self, article):
+        """return filename as specified by NTB
+
+        filename pattern: date_time_service_category_subject.xml
+        example: 2016-08-16_11-07-46_Nyhetstjenesten_Innenriks_ny1-rygge-nedgang.xml
+        """
+        metadata = {}
+        metadata['date'] = article['versioncreated'].strftime("%Y-%m-%d_%H-%M-%S")
+        try:
+            metadata['service'] = article['anpa_category'][0]['name']
+        except (KeyError, IndexError):
+            metadata['service'] = ""
+        metadata['category'] = self._get_ntb_category(article)
+        metadata['subject'] = self._get_ntb_subject(article)
+        return "{date}_{service}_{category}_{subject}.{ext}".format(
+            ext="xml",
+            **metadata).replace(':', '-')
+
     def _format_meta(self, article, head, destination, pub_seq_num):
         super()._format_meta(article, head, destination, pub_seq_num)
         article['head'] = head  # needed to access head when formatting body content
@@ -112,6 +138,8 @@ class NTBNITFFormatter(NITFFormatter):
             pass
         else:
             ET.SubElement(head, 'meta', {'name': 'NTBTjeneste', 'content': service.get("name", "")})
+        ET.SubElement(head, 'meta', {'name': 'filename', 'content': self._get_filename(article)})
+
         self._format_datetimes(article, head)
         if 'slugline' in article:
             ET.SubElement(head, 'meta', {'name': 'NTBStikkord', 'content': article['slugline']})
@@ -276,4 +304,4 @@ class NTBNITFFormatter(NITFFormatter):
             a.text = article['signoff']
 
 
-register_file_extension('ntbnitf', 'xml')
+PublishService.register_file_extension('ntbnitf', 'xml')
