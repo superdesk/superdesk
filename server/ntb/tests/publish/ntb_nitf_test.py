@@ -14,9 +14,14 @@ from ntb.publish.ntb_nitf import NTBNITFFormatter
 from superdesk.publish.formatters import Formatter
 from superdesk.publish import init_app
 import xml.etree.ElementTree as etree
+import datetime
+import uuid
 
+TEST_ABSTRACT = "This is the abstract"
+TEST_NOT_LEAD = "This should not be lead"
+ITEM_ID = str(uuid.uuid4())
 TEST_BODY = """
-<p class="lead" lede="true">test lead</p>
+<p class="lead" lede="true">""" + TEST_NOT_LEAD + """</p>
 <p class="txt">line 1</p>
 <p class="txt-ind">line 2</p>
 <p class="txt-ind">line 3</p>
@@ -43,12 +48,17 @@ class NTBNITFFormatterTest(TestCase):
         init_app(self.app)
         self.article = {
             'headline': 'test headline',
+            'abstract': TEST_ABSTRACT,
             "body_html": TEST_BODY,
             'type': 'text',
             'priority': '2',
             '_id': 'urn:localhost.abc',
+            'item_id': ITEM_ID,
             "slugline": "this is the slugline",
             'urgency': 2,
+            'versioncreated': datetime.datetime.now(datetime.timezone.utc),
+            'version': 2,
+            'language': 'nb-NO',
             'subject': [
                 {"scheme": "category",
                  "qcode": "Forskning",
@@ -171,13 +181,7 @@ class NTBNITFFormatterTest(TestCase):
         self.assertEqual(tobject.get('tobject.type'), 'Forskning')
         subject = tobject.find('tobject.subject')
         self.assertEqual(subject.get('tobject.subject.refnum'), '02001003')
-        self.assertEqual(subject.get('tobject.subject.type'), 'tyveri og innbrudd')
-
-    def test_priority(self):
-        doc = self.formatter.format(self.article, {'name': 'Test NTBNITF'})[0]['formatted_item']
-        nitf_xml = etree.fromstring(doc)
-        priority = nitf_xml.find("head/meta[@name='NTBPrioritet']")
-        self.assertEqual(priority.get('content'), '2')
+        self.assertEqual(subject.get('tobject.subject.matter'), 'tyveri og innbrudd')
 
     def test_slugline(self):
         doc = self.formatter.format(self.article, {'name': 'Test NTBNITF'})[0]['formatted_item']
@@ -195,7 +199,13 @@ class NTBNITFFormatterTest(TestCase):
         p_elems = iter(body_content.findall('p'))
         lead = next(p_elems)
         self.assertEqual(lead.get("class"), "lead")
-        self.assertEqual(lead.text, "test lead")
+        self.assertEqual(lead.text, TEST_ABSTRACT)
+        not_lead = next(p_elems)
+        self.assertEqual(not_lead.get("class"), "txt")
+        self.assertEqual(not_lead.text, TEST_NOT_LEAD)
+
+        p_lead = body_content.findall('p[@class="lead"]')
+        self.assertEqual(len(p_lead), 1)
 
         for i in range(1, 4):
             p = next(p_elems)
@@ -212,18 +222,18 @@ class NTBNITFFormatterTest(TestCase):
 
         medias = body_content.findall("media")
         feature = medias[0]
-        self.assertEqual(feature.get("media_type"), "image")
+        self.assertEqual(feature.get("media-type"), "image")
         self.assertEqual(feature.find("media-reference").get("source"), "test_id")
         self.assertEqual(feature.find("media-caption").text, "test feature media")
 
         image = medias[1]
-        self.assertEqual(image.get("media_type"), "image")
+        self.assertEqual(image.get("media-type"), "image")
         self.assertEqual(image.find("media-reference").get("source"), "tb42bf43")
         self.assertEqual(image.find("media-caption").text,
                          "New parliament speaker Ana Pastor speaks on her phone during the first session of parliament"
                          " following a general election in Madrid, Spain, July 19, 2016. REUTERS/Andrea Comas")
         video = medias[2]
-        self.assertEqual(video.get("media_type"), "video")
+        self.assertEqual(video.get("media-type"), "video")
         self.assertEqual(video.find("media-reference").get("mime-type"), "video/mpeg")
         self.assertEqual(video.find("media-reference").get("source"), "tb42bf38")
         self.assertEqual(video.find("media-caption").text, "\n\nSCRIPT TO FOLLOW\n")
@@ -235,3 +245,19 @@ class NTBNITFFormatterTest(TestCase):
         formatted = doc['formatted_item']
         header = formatted[:formatted.find('>') + 1]
         self.assertIn('encoding="iso-8859-1"', header)
+
+    def test_meta(self):
+        doc = self.formatter.format(self.article, {'name': 'Test NTBNITF'})[0]['formatted_item']
+        nitf_xml = etree.fromstring(doc)
+        head = nitf_xml.find('head')
+
+        media_counter = head.find('meta[@name="NTBBilderAntall"]')
+        self.assertEqual(media_counter.get('content'), '3')
+        editor = head.find('meta[@name="NTBEditor"]')
+        self.assertEqual(editor.get('content'), 'Superdesk')
+        kode = head.find('meta[@name="NTBDistribusjonsKode"]')
+        self.assertEqual(kode.get('content'), 'ALL')
+        kanal = head.find('meta[@name="NTBKanal"]')
+        self.assertEqual(kanal.get('content'), 'A')
+        ntb_id = head.find('meta[@name="NTBID"]')
+        self.assertEqual(ntb_id.get('content'), 'NTB' + ITEM_ID)
