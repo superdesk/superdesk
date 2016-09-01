@@ -47,7 +47,7 @@
             "genre" : {"type": "list", "required": true, "minlength": 1},
             "place": {"type": "list", "required": true, "minlength": 1},
             "ednote": {},
-            "body_footer": {"type": "string"}
+            "body_footer": {"type": "string", "default": "©NTB"}
         },
         "editor": {
             "slugline": {"order": 1, "sdWidth": "half"},
