@@ -117,7 +117,7 @@ class NTBNITFFormatter(NITFFormatter):
         example: 2016-08-16_11-07-46_Nyhetstjenesten_Innenriks_ny1-rygge-nedgang.xml
         """
         metadata = {}
-        metadata['date'] = article['versioncreated'].strftime("%Y-%m-%d_%H-%M-%S")
+        metadata['date'] = article['versioncreated'].astimezone().strftime("%Y-%m-%d_%H-%M-%S")
         try:
             metadata['service'] = article['anpa_category'][0]['name']
         except (KeyError, IndexError):
