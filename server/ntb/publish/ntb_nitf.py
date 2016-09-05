@@ -73,8 +73,8 @@ class NTBNITFFormatter(NITFFormatter):
 
     def _format_docdata_doc_id(self, article, docdata):
         doc_id = "NTB{item_id}_{version:02}".format(
-            article['item_id'],
-            article['version'] - 1)
+            item_id=article['item_id'],
+            version=article['version'] - 1)
         ET.SubElement(docdata, 'doc-id', attrib={'regsrc': 'NTB', 'id-string': doc_id})
 
     def _format_date_expire(self, article, docdata):
@@ -269,7 +269,7 @@ class NTBNITFFormatter(NITFFormatter):
         except KeyError:
             pass
         else:
-            body_footer = ET.SubElement(html_elts, 'p', {'class': 'txt'})
+            body_footer = ET.SubElement(html_elts, 'p', {'class': 'txt-ind'})
             body_footer.text = footer_txt
         body_content.extend(html_elts)
 
@@ -305,11 +305,10 @@ class NTBNITFFormatter(NITFFormatter):
         self._add_meta_media_counter(head, len(media_data))
 
     def _format_body_end(self, article, body_end):
-        super()._format_body_end(article, body_end)
-        if article.get('signoff'):
+        if article.get('sign_off'):
             tagline = ET.SubElement(body_end, 'tagline')
-            a = ET.SubElement(tagline, 'a', {'href': article['signoff']})
-            a.text = article['signoff']
+            a = ET.SubElement(tagline, 'a', {'href': article['sign_off']})
+            a.text = article['sign_off']
 
 
 PublishService.register_file_extension('ntbnitf', 'xml')
