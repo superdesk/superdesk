@@ -513,8 +513,7 @@
                 "type": "string",
                 "required": false,
                 "nullable": false,
-                "empty": false,
-                "maxlength": 64
+                "empty": false
             },
             "abstract": {
                 "type": "string",
@@ -538,10 +537,9 @@
             },
             "slugline": {
                 "type": "string",
-                "required": true,
-                "nullable": false,
-                "empty": false,
-                "maxlength": 24
+                "required": false,
+                "nullable": true,
+                "empty": true
             },
             "subject": {
                 "type": "list",
@@ -551,6 +549,7 @@
             "urgency": {
                 "type": "integer",
                 "required": false,
+                "nullable": true,
                 "allowed": [1, 2, 3, 4, 5]
             },
             "priority": {
@@ -568,9 +567,9 @@
             },
             "description_text": {
                 "type": "string",
-                "required": true,
-                "nullable": false,
-                "empty": false
+                "required": false,
+                "nullable": true,
+                "empty": true
             },
             "mimetype": {
                 "type": "string",
@@ -682,8 +681,7 @@
                 "type": "string",
                 "required": false,
                 "nullable": false,
-                "empty": false,
-                "maxlength": 64
+                "empty": false
             },
             "abstract": {
                 "type": "string",
@@ -707,10 +705,9 @@
             },
             "slugline": {
                 "type": "string",
-                "required": true,
-                "nullable": false,
-                "empty": false,
-                "maxlength": 24
+                "required": false,
+                "nullable": true,
+                "empty": true
             },
             "subject": {
                 "type": "list",
@@ -720,6 +717,7 @@
             "urgency": {
                 "type": "integer",
                 "required": false,
+                "nullable": true,
                 "allowed": [1, 2, 3, 4, 5]
             },
             "priority": {
@@ -737,9 +735,9 @@
             },
             "description_text": {
                 "type": "string",
-                "required": true,
-                "nullable": false,
-                "empty": false
+                "required": false,
+                "nullable": true,
+                "empty": true
             },
             "mimetype": {
                 "type": "string",
@@ -842,7 +840,7 @@
         }
     },
     {
-        "_id": "kill_embed_picture",
+        "_id": "kill_embeded_picture",
         "act": "kill",
         "type": "picture",
         "embedded": true,
@@ -851,8 +849,7 @@
                 "type": "string",
                 "required": false,
                 "nullable": false,
-                "empty": false,
-                "maxlength": 64
+                "empty": false
             },
             "abstract": {
                 "type": "string",
@@ -876,10 +873,9 @@
             },
             "slugline": {
                 "type": "string",
-                "required": true,
-                "nullable": false,
-                "empty": false,
-                "maxlength": 24
+                "required": false,
+                "nullable": true,
+                "empty": true
             },
             "subject": {
                 "type": "list",
@@ -889,6 +885,7 @@
             "urgency": {
                 "type": "integer",
                 "required": false,
+                "nullable": true,
                 "allowed": [1, 2, 3, 4, 5]
             },
             "priority": {
@@ -907,8 +904,8 @@
             "description_text": {
                 "type": "string",
                 "required": false,
-                "nullable": false,
-                "empty": false
+                "nullable": true,
+                "empty": true
             },
             "mimetype": {
                 "type": "string",

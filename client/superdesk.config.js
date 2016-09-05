@@ -45,7 +45,8 @@ module.exports = function(grunt) {
                 'Keywords': 'Tags',
                 'URGENCY': 'RANKING',
                 'Urgency': 'Ranking',
-                '\'SLUGLINE is a required field\'': 'Keyword is a required field'
+                '\'SLUGLINE is a required field\'': 'KEYWORD is a required field',
+                '\'SLUGLINE empty values not allowed\'': '\'KEYWORD empty values not allowed\''
             }
         },
 
