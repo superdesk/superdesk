@@ -28,6 +28,8 @@ elastic:
   extends:
     file: common.yml
     service: elastic
+  ports:
+    - "9200:9200"
 
 postfix:
   extends:
