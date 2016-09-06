@@ -170,8 +170,7 @@ class NTBNITFFormatter(NITFFormatter):
             dateline = ET.SubElement(body_head, 'dateline')
             dateline.text = dateline
 
-    def _format_body_head(self, article, body_head):
-        super()._format_body_head(article, body_head)
+    def _format_body_head_distributor(self, article, body_head):
         distrib = ET.SubElement(body_head, 'distributor')
         org = ET.SubElement(distrib, 'org')
         language = article['language']
