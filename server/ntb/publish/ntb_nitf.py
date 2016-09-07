@@ -17,8 +17,10 @@ from superdesk.publish.publish_service import PublishService
 from superdesk.errors import FormatterError
 import superdesk
 from datetime import datetime
+import pytz
 import logging
 logger = logging.getLogger(__name__)
+tz = None
 
 EMBED_RE = re.compile(r"<!-- EMBED START ([a-zA-Z]+ {id: \"(?P<id>.+?)\"}) -->.*"
                       r"<!-- EMBED END \1 -->", re.DOTALL)
@@ -37,6 +39,9 @@ class NTBNITFFormatter(NITFFormatter):
         return format_type == 'ntbnitf' and article[ITEM_TYPE] == CONTENT_TYPE.TEXT
 
     def format(self, article, subscriber, codes=None, encoding="us-ascii"):
+        global tz
+        if tz is None:
+            tz = pytz.timezone(superdesk.app.config['DEFAULT_TIMEZONE'])
         try:
             pub_seq_num = superdesk.get_resource_service('subscribers').generate_sequence_number(subscriber)
             nitf = self.get_nitf(article, subscriber, pub_seq_num)
@@ -69,7 +74,7 @@ class NTBNITFFormatter(NITFFormatter):
         ET.SubElement(
             docdata,
             'date.issue',
-            attrib={'norm': article['versioncreated'].astimezone().strftime("%Y-%m-%dT%H:%M:%S")})
+            attrib={'norm': article['versioncreated'].astimezone(tz).strftime("%Y-%m-%dT%H:%M:%S")})
 
     def _format_docdata_doc_id(self, article, docdata):
         doc_id = "NTB{item_id}_{version:02}".format(
@@ -105,7 +110,7 @@ class NTBNITFFormatter(NITFFormatter):
                  'tobject.subject.matter': subject.get('name', '')})
 
     def _format_datetimes(self, article, head):
-            created = article['versioncreated'].astimezone()
+            created = article['versioncreated'].astimezone(tz)
             ET.SubElement(head, 'meta', {'name': 'timestamp', 'content': created.strftime("%Y.%m.%d %H:%M:%S")})
             ET.SubElement(head, 'meta', {'name': 'ntb-dato', 'content': created.strftime("%d.%m.%Y %H:%M")})
             ET.SubElement(head, 'meta', {'name': 'NTBUtDato', 'content': created.strftime("%d.%m.%Y")})
@@ -117,7 +122,7 @@ class NTBNITFFormatter(NITFFormatter):
         example: 2016-08-16_11-07-46_Nyhetstjenesten_Innenriks_ny1-rygge-nedgang.xml
         """
         metadata = {}
-        metadata['date'] = article['versioncreated'].strftime("%Y-%m-%d_%H-%M-%S")
+        metadata['date'] = article['versioncreated'].astimezone(tz).strftime("%Y-%m-%d_%H-%M-%S")
         try:
             metadata['service'] = article['anpa_category'][0]['name']
         except (KeyError, IndexError):
