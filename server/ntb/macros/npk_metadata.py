@@ -11,13 +11,14 @@ def npk_metadata_macro(item, **kwargs):
     item['byline'] = '(NPK-NTB)'
     item['sign_off'] = 'npk@npk.no'
     item['body_footer'] = '(©NPK)'
+    item['language'] = 'nn-NO'
     item['anpa_category'] = [
         {
-            "qcode": "s",
-            "single_value": True,
-            "name": "NPKSisteNytt",
-            "language": "nn-NO",
-            "scheme": None
+            'qcode': 's',
+            'single_value': True,
+            'name': 'NPKSisteNytt',
+            'language': 'nn-NO',
+            'scheme': None
         }
     ]
     return item
