@@ -9,6 +9,8 @@ mongodb:
   extends:
     file: common.yml
     service: mongodb
+  ports:
+    - "27017:27017"
 
 redis:
   extends:
