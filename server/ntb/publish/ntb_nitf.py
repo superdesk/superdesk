@@ -100,6 +100,10 @@ class NTBNITFFormatter(NITFFormatter):
                 except KeyError:
                     pass
 
+    def _format_pubdata(self, article, head):
+        pub_date = article['versioncreated'].astimezone(tz).strftime("%Y%m%dT%H%M%S")
+        ET.SubElement(head, 'pubdata', attrib={'date.publication': pub_date})
+
     def _format_subjects(self, article, tobject):
         subjects = [s for s in article.get('subject', []) if s.get("scheme") == "subject_custom"]
         for subject in subjects:
