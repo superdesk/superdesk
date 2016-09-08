@@ -7,11 +7,11 @@
 # For the full copyright and license information, please see the
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
-from test_factory import SuperdeskTestCase
 from ntb.scanpix.scanpix_datalayer import extract_params, extract_date
+from superdesk.tests import TestCase
 
 
-class ScanpixDatalayer(SuperdeskTestCase):
+class ScanpixDatalayer(TestCase):
 
     def test_validate_query_all_first_succeeds(self):
         query = 'all headline:(head one) caption:(capt) keywords:(key) bw:(1) clear_edge:(1)'
