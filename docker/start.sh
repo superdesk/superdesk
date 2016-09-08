@@ -5,7 +5,7 @@ sed -i \
  -e "s/ws:\/\/localhost:5100/$(echo $SUPERDESK_WS_URL | sed 's/\//\\\//g')/g" \
  -e "s/ws:\/\/0.0.0.0:5100/$(echo $SUPERDESK_WS_URL | sed 's/\//\\\//g')/g" \
  -e 's/"iframely":{"key":""}/"iframely":{"key":"'$IFRAMELY_KEY'"}/g' \
- index.html &&
+ app*.js &&
 nginx &
 
 cd /opt/superdesk &&
