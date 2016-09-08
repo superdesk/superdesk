@@ -23,6 +23,7 @@ cache:
     - $HOME/.cache/bower
 
 before_install:
+    - npm install -g npm@latest
     - npm install -g grunt-cli bower
     - pip install requests
     - export DISPLAY=:99.0
