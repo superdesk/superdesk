@@ -16,6 +16,7 @@ from superdesk.publish import init_app
 import xml.etree.ElementTree as etree
 import datetime
 import uuid
+import pytz
 
 TEST_ABSTRACT = "This is the abstract"
 TEST_NOT_LEAD = "This should not be lead"
@@ -37,6 +38,7 @@ following a general election in Madrid, Spain, July 19, 2016. REUTERS/Andrea Com
 <figcaption>SCRIPT TO FOLLOW</figcaption>
 </figure><!-- EMBED END Video {id: "embedded10005446043"} -->
 """
+NOW = datetime.datetime.now(datetime.timezone.utc)
 
 
 @mock.patch('superdesk.publish.subscribers.SubscribersService.generate_sequence_number', lambda self, subscriber: 1)
@@ -46,6 +48,7 @@ class NTBNITFFormatterTest(TestCase):
         self.formatter = NTBNITFFormatter()
         self.base_formatter = Formatter()
         init_app(self.app)
+        self.tz = pytz.timezone(self.app.config['DEFAULT_TIMEZONE'])
         self.article = {
             'headline': 'test headline',
             'abstract': TEST_ABSTRACT,
@@ -56,7 +59,7 @@ class NTBNITFFormatterTest(TestCase):
             'item_id': ITEM_ID,
             "slugline": "this is the slugline",
             'urgency': 2,
-            'versioncreated': datetime.datetime.now(datetime.timezone.utc),
+            'versioncreated': NOW,
             'version': 2,
             'language': 'nb-NO',
             'subject': [
@@ -92,7 +95,7 @@ class NTBNITFFormatterTest(TestCase):
                     "source": "feature_source",
                     "fetch_endpoint": "scanpix",
                     "type": "picture",
-                    "versioncreated": "2016-07-20T07:11:37+0000",
+                    "versioncreated": NOW,
                     "description_text": "test feature media"
                 },
 
@@ -116,7 +119,7 @@ class NTBNITFFormatterTest(TestCase):
                     "_etag": "85294f12036b2bb9f97cb9e421961dd330cd1d3d",
                     "pubstatus": "usable",
                     "source": "Reuters DV",
-                    "versioncreated": "2016-07-19T14:25:57+0000",
+                    "versioncreated": NOW,
                     "_created": "1970-01-01T00:00:00+0000",
                     "byline": None,
                     "fetch_endpoint": "scanpix",
@@ -150,7 +153,7 @@ class NTBNITFFormatterTest(TestCase):
                     "pubstatus": "usable",
                     "_etag": "238529c614736dc314165bca1f0da523b82a2d2a",
                     "source": "Reuters",
-                    "versioncreated": "2016-07-19T14:25:57+0000",
+                    "versioncreated": NOW,
                     "_created": "1970-01-01T00:00:00+0000",
                     "byline": "Andrea Comas",
                     "fetch_endpoint": "scanpix",
@@ -188,6 +191,13 @@ class NTBNITFFormatterTest(TestCase):
         nitf_xml = etree.fromstring(doc)
         du_key = nitf_xml.find('head/docdata/du-key')
         self.assertEqual(du_key.get('key'), 'this is the slugline')
+
+    def test_pubdata(self):
+        doc = self.formatter.format(self.article, {'name': 'Test NTBNITF'})[0]['formatted_item']
+        nitf_xml = etree.fromstring(doc)
+        pubdata = nitf_xml.find('head/pubdata')
+        expected = NOW.astimezone(self.tz).strftime("%Y%m%dT%H%M%S")
+        self.assertEqual(pubdata.get('date.publication'), expected)
 
     def test_body(self):
         doc = self.formatter.format(self.article, {'name': 'Test NTBNITF'})[0]['formatted_item']
