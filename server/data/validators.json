@@ -555,7 +555,7 @@
             },
             "slugline": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false,
                 "maxlength": 24
@@ -725,7 +725,7 @@
             },
             "slugline": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false,
                 "maxlength": 24
