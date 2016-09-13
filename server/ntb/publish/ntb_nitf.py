@@ -172,12 +172,12 @@ class NTBNITFFormatter(NITFFormatter):
 
     def _format_body_head_dateline(self, article, body_head):
         try:
-            dateline = article['dateline']['located']['city']
+            dateline_content = article['dateline']['located']['city']
         except KeyError:
             pass
         else:
             dateline = ET.SubElement(body_head, 'dateline')
-            dateline.text = dateline
+            dateline.text = dateline_content
 
     def _format_body_head_distributor(self, article, body_head):
         distrib = ET.SubElement(body_head, 'distributor')
