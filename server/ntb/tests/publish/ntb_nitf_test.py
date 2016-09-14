@@ -51,6 +51,7 @@ ARTICLE = {
     "slugline": "this is the slugline",
     'urgency': 2,
     'versioncreated': NOW,
+    '_current_version': 2,
     'version': 2,
     'language': 'nb-NO',
     'dateline': {

@@ -63,7 +63,7 @@ class NTBNITFFormatter(NITFFormatter):
         return category
 
     def _get_ntb_subject(self, article):
-        update = article['version'] - 1
+        update = article['_current_version'] - 1
         subject_prefix = "ny{}-".format(update) if update else ""
         return subject_prefix + article.get('slugline', '')
 
@@ -79,7 +79,7 @@ class NTBNITFFormatter(NITFFormatter):
     def _format_docdata_doc_id(self, article, docdata):
         doc_id = "NTB{item_id}_{version:02}".format(
             item_id=article['item_id'],
-            version=article['version'] - 1)
+            version=article['_current_version'] - 1)
         ET.SubElement(docdata, 'doc-id', attrib={'regsrc': 'NTB', 'id-string': doc_id})
 
     def _format_date_expire(self, article, docdata):
@@ -91,7 +91,10 @@ class NTBNITFFormatter(NITFFormatter):
         if 'slugline' in article:
             key_list = ET.SubElement(docdata, 'key-list')
             ET.SubElement(key_list, 'keyword', attrib={'key': article['slugline']})
-            ET.SubElement(docdata, 'du-key', attrib={'version': str(article['version']), 'key': article['slugline']})
+            ET.SubElement(
+                docdata,
+                'du-key',
+                attrib={'version': str(article['_current_version']), 'key': article['slugline']})
         for place in article.get('place', []):
             evloc = ET.SubElement(docdata, 'evloc')
             for key, att in (('parent', 'state-prov'), ('qcode', 'county-dist')):
