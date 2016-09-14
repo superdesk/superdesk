@@ -244,4 +244,4 @@ NITF_MAPPING = {
     'keywords': '',  # keywords are ignored on purpose
 }
 
-ENABLE_PROFILING = True
+ENABLE_PROFILING = False
