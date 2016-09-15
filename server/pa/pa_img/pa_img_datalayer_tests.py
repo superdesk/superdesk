@@ -7,11 +7,12 @@
 # For the full copyright and license information, please see the
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
-from test_factory import SuperdeskTestCase
+
 from pa.pa_img.pa_img_datalayer import extract_params, extract_date
+from superdesk.tests import TestCase
 
 
-class PaImgDatalayer(SuperdeskTestCase):
+class PaImgDatalayer(TestCase):
 
     def test_validate_query_all_first_succeeds(self):
         query = 'all headline:(head one) caption:(capt) keywords:(key) starred:(1)'

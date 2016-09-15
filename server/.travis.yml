@@ -8,7 +8,7 @@ services:
     - elasticsearch
     - redis-server
 
-install: "pip install --upgrade -r requirements.txt --use-mirrors"
+install: "pip install -r requirements.txt --use-mirrors"
 
 script:
     - nosetests
