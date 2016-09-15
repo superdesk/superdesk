@@ -11,6 +11,7 @@
 from superdesk.tests import TestCase
 from unittest import mock
 from ntb.publish.ntb_nitf import NTBNITFFormatter
+from ntb.publish.ntb_nitf import ENCODING
 from superdesk.publish.formatters import Formatter
 from superdesk.publish.subscribers import SubscribersService
 from superdesk.publish import init_app
@@ -28,6 +29,7 @@ TEST_BODY = """
 <p class="txt">line 1</p>
 <p class="txt-ind">line 2</p>
 <p class="txt-ind">line 3</p>
+<p class="txt-ind">test encoding: –</p>
 <!-- EMBED START Image {id: "embedded18237840351"} --><figure>
 <img src="http://scanpix.no/spWebApp/previewimage/sdl/preview/tb42bf43.jpg" alt="alt text" />
 <figcaption>New parliament speaker Ana Pastor speaks on her phone during the first session of parliament\
@@ -242,6 +244,9 @@ class NTBNITFFormatterTest(TestCase):
             p = next(p_elems)
             self.assertEqual(p.text, "line {}".format(i))
 
+        p_encoding = next(p_elems)
+        self.assertEqual(p_encoding.text, "test encoding: –")
+
         h3 = next(p_elems).find('h3')
         self.assertEqual(h3.text, "intermediate line")
 
@@ -270,11 +275,12 @@ class NTBNITFFormatterTest(TestCase):
         self.assertEqual(video.find("media-caption").text, "\n\nSCRIPT TO FOLLOW\n")
 
     def test_encoding(self):
-        encoding = self.formatter_output[0]['item_encoding']
-        self.assertEqual(encoding, 'iso-8859-1')
+        encoded = self.formatter_output[0]['encoded_item']
+        manually_encoded = self.doc.replace('–', '&#8211;').encode(ENCODING)
+        self.assertEqual(encoded, manually_encoded)
         formatted = self.doc
         header = formatted[:formatted.find('>') + 1]
-        self.assertIn('encoding="iso-8859-1"', header)
+        self.assertIn('encoding="{}"'.format(ENCODING), header)
 
     def test_meta(self):
         head = self.nitf_xml.find('head')

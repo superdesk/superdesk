@@ -11,6 +11,7 @@
 from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE
 from superdesk.publish.formatters.nitf_formatter import NITFFormatter
 import re
+import io
 from bs4 import BeautifulSoup
 from xml.etree import ElementTree as ET
 from superdesk.publish.publish_service import PublishService
@@ -24,10 +25,12 @@ tz = None
 
 EMBED_RE = re.compile(r"<!-- EMBED START ([a-zA-Z]+ {id: \"(?P<id>.+?)\"}) -->.*"
                       r"<!-- EMBED END \1 -->", re.DOTALL)
+ENCODING = 'iso-8859-1'
+assert ENCODING is not 'unicode'  # use e.g. utf-8 for unicode
 
 
 class NTBNITFFormatter(NITFFormatter):
-    XML_ROOT = '<?xml version="1.0" encoding="iso-8859-1" standalone="yes"?>'
+    XML_DECLARATION = '<?xml version="1.0" encoding="iso-8859-1" standalone="yes"?>'
 
     def can_format(self, format_type, article):
         """
@@ -49,9 +52,16 @@ class NTBNITFFormatter(NITFFormatter):
                 nitf.attrib['baselang'] = article['language']
             except KeyError:
                 pass
+
+            # we don't use tostring as we want to set xml_declaration=False
+            stream = io.BytesIO()
+            ET.ElementTree(nitf).write(stream, ENCODING, xml_declaration=False)
+            encoded = stream.getvalue()
+
             return [{'published_seq_num': pub_seq_num,
-                     'formatted_item': self.XML_ROOT + ET.tostring(nitf, "unicode"),
-                     'item_encoding': 'iso-8859-1'}]
+                     # formatted_item can be used for preview, so we keep unicode version there
+                     'formatted_item': self.XML_DECLARATION + ET.tostring(nitf, "unicode"),
+                     'encoded_item': self.XML_DECLARATION.encode(ENCODING) + encoded}]
         except Exception as ex:
             raise FormatterError.nitfFormatterError(ex, subscriber)
 
