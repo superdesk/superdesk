@@ -248,8 +248,8 @@ class NTBNITFFormatterTest(TestCase):
         p_encoding = next(p_elems)
         self.assertEqual(p_encoding.text, "test encoding: –")
 
-        h3 = next(p_elems).find('h3')
-        self.assertEqual(h3.text, "intermediate line")
+        hl2 = next(p_elems).find('hl2')
+        self.assertEqual(hl2.text, "intermediate line")
 
         # all embedded must be removed from body's HTML,
         # they are put in <media/> elements

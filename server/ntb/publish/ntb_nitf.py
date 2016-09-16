@@ -292,7 +292,7 @@ class NTBNITFFormatter(NITFFormatter):
         else:
             body_footer = ET.SubElement(html_elts, 'p', {'class': 'txt-ind'})
             body_footer.text = footer_txt
-        body_content.extend(html_elts)
+        body_content.extend(self.html2nitf(html_elts))
 
         # media
         for data in media_data:
