@@ -1,7 +1,4 @@
 #!/bin/bash
-#cd /opt/superdesk &&
-#bash ./scripts/fig_wrapper.sh honcho start
-
 cat >/tmp/testenv <<EOF
 SUPERDESK_TESTING=true
 
