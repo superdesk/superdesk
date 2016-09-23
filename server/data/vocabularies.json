@@ -10,9 +10,10 @@
             {"is_active": true, "name": "Morgennyheter", "qcode": "m", "single_value": true, "language": "nb-NO"},
             {"is_active": true, "name": "NPKTjenesten", "qcode": "j", "single_value": true, "language": "nn-NO"},
             {"is_active": true, "name": "NPKSisteNytt", "qcode": "s", "single_value": true, "language": "nn-NO"},
+            {"is_active": true, "name": "NPKTema", "qcode": "a", "single_value": true, "language": "nn-NO"},
             {"is_active": true, "name": "NTBTema", "qcode": "b", "single_value": true, "language": "nb-NO"},
             {"is_active": true, "name": "Kulturtjenesten", "qcode": "k", "single_value": true, "language": "nb-NO"},
-            {"is_active": true, "name": "Dagen i Dag", "qcode": "d", "single_value": true, "language": "nb-NO"},
+            {"is_active": true, "name": "DageniDag", "qcode": "d", "single_value": true, "language": "nb-NO"},
             {"is_active": true, "name": "Omtaletjenesten", "qcode": "o", "single_value": true, "language": "nb-NO"},
             {"is_active": true, "name": "Tipstjenesten", "qcode": "p", "single_value": true, "language": "nb-NO"},
             {"is_active": true, "name": "ForskningNo", "qcode": "f", "single_value": true, "language": "nb-NO"},
@@ -48,7 +49,7 @@
             {"is_active": true, "name": "Foto", "qcode": "Foto", "service": {"n": 1, "i": 1}},
             {"is_active": true, "name": "Video", "qcode": "Video", "service": {"n": 1, "i": 1}},
             {"is_active": true, "name": "Grafikk", "qcode": "Grafikk", "service": {"n": 1, "i": 1}},
-            {"is_active": true, "name": "TemaReportasje", "qcode": "TemaReportasje", "service": {"b": 1, "i": 1}},
+            {"is_active": true, "name": "TemaReportasje", "qcode": "TemaReportasje", "service": {"b": 1, "i": 1, "a": 1}},
             {"is_active": true, "name": "TemaFastSpalte", "qcode": "TemaFastSpalte", "service": {"b": 1, "i": 1}},
             {"is_active": true, "name": "TemaEkstra", "qcode": "TemaEkstra", "service": {"b": 1, "i": 1}},
             {"is_active": true, "name": "TemaPakke", "qcode": "TemaPakke", "service": {"b": 1, "i": 1}},
@@ -67,7 +68,8 @@
             {"is_active": true, "name": "Tippefakta", "qcode": "Tippefakta", "service": {"p": 1, "i": 1}},
             {"is_active": true, "name": "Tippevurdering", "qcode": "Tippevurdering", "service": {"p": 1, "i": 1}},
             {"is_active": true, "name": "Forskning", "qcode": "Forskning", "service": {"f": 1, "i": 1}},
-            {"is_active": true, "name": "PRM-NTB", "qcode": "PRM-NTB", "service": {"r": 1, "i": 1}}
+            {"is_active": true, "name": "PRM-NTB", "qcode": "PRM-NTB", "service": {"r": 1, "i": 1}},
+            {"is_active": true, "name": "Showbiz", "qcode": "Showbiz", "service": {"k": 1}}
         ]
     },
     {
@@ -93,7 +95,7 @@
             {"is_active": true, "name": "Nekrologer", "qcode": "Nekrologer", "service": {"n": 1}},
             {"is_active": true, "name": "Fulltekstmeldinger", "qcode": "Fulltekstmeldinger", "service": {"n": 1, "r": 1}},
             {"is_active": true, "name": "Rettelser", "qcode": "Rettelser", "service": {"n": 1}},
-            {"is_active": true, "name": "Featureartikkel", "qcode": "Featureartikkel",  "service": {"j": 1, "b": 1, "f": 1}},
+            {"is_active": true, "name": "Featureartikkel", "qcode": "Featureartikkel",  "service": {"j": 1, "b": 1, "f": 1, "a": 1}},
             {"is_active": true, "name": "Profiler og intervjuer", "qcode": "Profiler og intervjuer", "service": {"j": 1, "k": 1}},
             {"is_active": true, "name": "Logger", "qcode": "Logger", "service": {"i": 1}}
         ]
