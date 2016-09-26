@@ -56,6 +56,9 @@ ARTICLE = {
     '_current_version': 2,
     'version': 2,
     'language': 'nb-NO',
+    # if you change place, please keep a test with 'parent': None
+    # cf SDNTB-290
+    'place': [{'scheme': 'place_custom', 'parent': None, 'name': 'Global', 'qcode': 'Global'}],
     'dateline': {
         'located': {
             'dateline': 'city',
@@ -282,6 +285,10 @@ class NTBNITFFormatterTest(TestCase):
         formatted = self.doc
         header = formatted[:formatted.find('>') + 1]
         self.assertIn('encoding="{}"'.format(ENCODING), header)
+
+    def test_place(self):
+        evloc = self.nitf_xml.find('head/docdata/evloc')
+        self.assertEqual(evloc.get('county-dist'), "Global")
 
     def test_meta(self):
         head = self.nitf_xml.find('head')
