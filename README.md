@@ -86,7 +86,7 @@ For manual installation just follow the steps described in the [Dockerfile](./Do
 
 In general, contributing code to the Superdesk project – whether it is a new feature or a bug fix – is simple and follows this general path:
 
-1) Get a copy of the project source code 
+1) Get a copy of the project source code or [setup a dev environment with docker](DEVSETUP.md)
 <P>2) Work on the code changes</P>
 <P>3) Submit a Pull Request whenever you are ready</P>
 

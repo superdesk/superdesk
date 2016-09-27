@@ -45,3 +45,4 @@ include/
 /superdesk-content-api/
 client/index.html
 client/templates-cache.js
+client/npm-debug.log
