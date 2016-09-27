@@ -189,7 +189,7 @@ class NTBNITFFormatter(NITFFormatter):
     def _format_body_head_dateline(self, article, body_head):
         try:
             dateline_content = article['dateline']['located']['city']
-        except KeyError:
+        except (KeyError, TypeError):
             pass
         else:
             dateline = ET.SubElement(body_head, 'dateline')

@@ -19,6 +19,7 @@ import xml.etree.ElementTree as etree
 import datetime
 import uuid
 import pytz
+import copy
 
 TEST_ABSTRACT = "This is the abstract"
 TEST_NOT_LEAD = "This should not be lead"
@@ -277,6 +278,16 @@ class NTBNITFFormatterTest(TestCase):
         self.assertEqual(video.find("media-reference").get("mime-type"), "video/mpeg")
         self.assertEqual(video.find("media-reference").get("source"), "tb42bf38")
         self.assertEqual(video.find("media-caption").text, "\n\nSCRIPT TO FOLLOW\n")
+
+    @mock.patch.object(SubscribersService, 'generate_sequence_number', lambda self, subscriber: 1)
+    def test_empty_dateline(self):
+        """SDNTB-293 regression test"""
+        article = copy.deepcopy(self.article)
+        article['dateline'] = {'located': None}
+        formatter_output = self.formatter.format(article, {'name': 'Test NTBNITF'})
+        doc = formatter_output[0]['formatted_item']
+        nitf_xml = etree.fromstring(doc)
+        self.assertEqual(nitf_xml.find('body/body.head/dateline'), None)
 
     def test_encoding(self):
         encoded = self.formatter_output[0]['encoded_item']
