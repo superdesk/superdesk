@@ -25,6 +25,7 @@ tz = None
 
 EMBED_RE = re.compile(r"<!-- EMBED START ([a-zA-Z]+ {id: \"(?P<id>.+?)\"}) -->.*"
                       r"<!-- EMBED END \1 -->", re.DOTALL)
+FILENAME_FORBIDDEN_RE = re.compile(r"[^a-zA-Z0-9._-]")
 ENCODING = 'iso-8859-1'
 assert ENCODING is not 'unicode'  # use e.g. utf-8 for unicode
 
@@ -149,9 +150,10 @@ class NTBNITFFormatter(NITFFormatter):
             metadata['service'] = ""
         metadata['category'] = self._get_ntb_category(article)
         metadata['subject'] = self._get_ntb_subject(article)
-        return "{date}_{service}_{category}_{subject}.{ext}".format(
+        filename_raw = "{date}_{service}_{category}_{subject}.{ext}".format(
             ext="xml",
-            **metadata).replace(':', '-')
+            **metadata)
+        return FILENAME_FORBIDDEN_RE.sub('-', filename_raw)
 
     def _format_meta(self, article, head, destination, pub_seq_num):
         super()._format_meta(article, head, destination, pub_seq_num)

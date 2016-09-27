@@ -51,7 +51,8 @@ ARTICLE = {
     'priority': '2',
     '_id': 'urn:localhost.abc',
     'item_id': ITEM_ID,
-    "slugline": "this is the slugline",
+    # we use non latin1 chars in slugline to test encoding
+    "slugline": "this is the slugline œ:?–",
     'urgency': 2,
     'versioncreated': NOW,
     '_current_version': 2,
@@ -219,7 +220,7 @@ class NTBNITFFormatterTest(TestCase):
 
     def test_slugline(self):
         du_key = self.nitf_xml.find('head/docdata/du-key')
-        self.assertEqual(du_key.get('key'), 'this is the slugline')
+        self.assertEqual(du_key.get('key'), 'this is the slugline œ:?–')
 
     def test_pubdata(self):
         pubdata = self.nitf_xml.find('head/pubdata')
@@ -289,9 +290,14 @@ class NTBNITFFormatterTest(TestCase):
         nitf_xml = etree.fromstring(doc)
         self.assertEqual(nitf_xml.find('body/body.head/dateline'), None)
 
+    def test_filenmae(self):
+        filename = self.nitf_xml.find('head/meta[@name="filename"]')
+        datetime = NOW.astimezone(self.tz).strftime("%Y-%m-%d_%H-%M-%S")
+        self.assertEqual(filename.get('content'), datetime + "__Forskning_ny1-this-is-the-slugline-----.xml")
+
     def test_encoding(self):
         encoded = self.formatter_output[0]['encoded_item']
-        manually_encoded = self.doc.replace('–', '&#8211;').encode(ENCODING)
+        manually_encoded = self.doc.encode(ENCODING, 'xmlcharrefreplace')
         self.assertEqual(encoded, manually_encoded)
         formatted = self.doc
         header = formatted[:formatted.find('>') + 1]
