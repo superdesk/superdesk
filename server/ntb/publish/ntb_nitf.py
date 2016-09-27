@@ -109,9 +109,12 @@ class NTBNITFFormatter(NITFFormatter):
             evloc = ET.SubElement(docdata, 'evloc')
             for key, att in (('parent', 'state-prov'), ('qcode', 'county-dist')):
                 try:
-                    evloc.attrib[att] = place[key]
+                    value = place[key]
                 except KeyError:
                     pass
+                else:
+                    if value is not None:
+                        evloc.attrib[att] = value
 
     def _format_pubdata(self, article, head):
         pub_date = article['versioncreated'].astimezone(tz).strftime("%Y%m%dT%H%M%S")
