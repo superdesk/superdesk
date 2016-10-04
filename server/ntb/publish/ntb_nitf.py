@@ -331,10 +331,19 @@ class NTBNITFFormatter(NITFFormatter):
         self._add_meta_media_counter(head, len(media_data))
 
     def _format_body_end(self, article, body_end):
-        if article.get('sign_off'):
+        try:
+            emails = article['sign_off'].split()
+        except KeyError:
+            return
+        if emails:
             tagline = ET.SubElement(body_end, 'tagline')
-            a = ET.SubElement(tagline, 'a', {'href': article['sign_off']})
-            a.text = article['sign_off']
+            previous = None
+            for email in emails:
+                a = ET.SubElement(tagline, 'a', {'href': 'mailto:{}'.format(email)})
+                a.text = email
+                if previous is not None:
+                    previous.tail = '/'
+                previous = a
 
 
 PublishService.register_file_extension('ntbnitf', 'xml')

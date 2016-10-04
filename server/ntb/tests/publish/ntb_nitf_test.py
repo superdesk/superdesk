@@ -23,6 +23,7 @@ import copy
 
 TEST_ABSTRACT = "This is the abstract"
 TEST_NOT_LEAD = "This should not be lead"
+TEST_EMAILS = ('test1@test.tld', 'test2@example.net', 'test3@example.org')
 ITEM_ID = str(uuid.uuid4())
 NOW = datetime.datetime.now(datetime.timezone.utc)
 TEST_BODY = """
@@ -59,6 +60,7 @@ ARTICLE = {
     'version': 5,
     'rewrite_sequence': 1,
     'language': 'nb-NO',
+    'sign_off': ' '.join(TEST_EMAILS),
     # if you change place, please keep a test with 'parent': None
     # cf SDNTB-290
     'place': [{'scheme': 'place_custom', 'parent': None, 'name': 'Global', 'qcode': 'Global'}],
@@ -234,7 +236,6 @@ class NTBNITFFormatterTest(TestCase):
 
     def test_body(self):
         # body content
-
         body_content = self.nitf_xml.find("body/body.content")
         p_elems = iter(body_content.findall('p'))
         lead = next(p_elems)
@@ -281,6 +282,17 @@ class NTBNITFFormatterTest(TestCase):
         self.assertEqual(video.find("media-reference").get("source"), "tb42bf38")
         self.assertEqual(video.find("media-caption").text, "\n\nSCRIPT TO FOLLOW\n")
 
+    def test_sign_off(self):
+        a_elems = self.nitf_xml.findall("body/body.end/tagline/a")
+        assert len(a_elems) == len(TEST_EMAILS)
+        emails = list(TEST_EMAILS)
+        for a_elem in a_elems:
+            email = emails.pop(0)
+            self.assertEqual(a_elem.get('href'), 'mailto:{}'.format(email))
+            self.assertEqual(a_elem.text, email)
+            if emails:  #  only the last element has not "/" in tail
+                self.assertEqual(a_elem.tail, '/')
+
     @mock.patch.object(SubscribersService, 'generate_sequence_number', lambda self, subscriber: 1)
     def test_empty_dateline(self):
         """SDNTB-293 regression test"""
@@ -291,7 +303,7 @@ class NTBNITFFormatterTest(TestCase):
         nitf_xml = etree.fromstring(doc)
         self.assertEqual(nitf_xml.find('body/body.head/dateline'), None)
 
-    def test_filenmae(self):
+    def test_filename(self):
         filename = self.nitf_xml.find('head/meta[@name="filename"]')
         datetime = NOW.astimezone(self.tz).strftime("%Y-%m-%d_%H-%M-%S")
         self.assertEqual(filename.get('content'), datetime + "__Forskning_ny1-this-is-the-slugline-----.xml")
