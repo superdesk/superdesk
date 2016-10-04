@@ -55,8 +55,9 @@ ARTICLE = {
     "slugline": "this is the slugline œ:?–",
     'urgency': 2,
     'versioncreated': NOW,
-    '_current_version': 2,
-    'version': 2,
+    '_current_version': 5,
+    'version': 5,
+    'rewrite_sequence': 1,
     'language': 'nb-NO',
     # if you change place, please keep a test with 'parent': None
     # cf SDNTB-290
