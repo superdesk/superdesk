@@ -12,8 +12,8 @@ git clone git@github.com:lnogues/superdesk-content-api.git
 Create symlinkis between superdesk-client-core and superdesk-content-api to superdesk
 
 ```shell
-ln -s ~/code/superdesk-client-core ~/code/superdesk/client-core
-ln -s ~/code/superdesk-content-api ~/code/superdesk/content-api
+ln -s ~/code/superdesk-client-core ~/code/superdesk/superdesk-client-core
+ln -s ~/code/superdesk-content-api ~/code/superdesk/superdesk-content-api
 ```
 
 Then run the docker-compose script
