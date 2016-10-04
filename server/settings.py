@@ -104,8 +104,6 @@ INSTALLED_APPS.extend([
     'apps.archive',
     'apps.stages',
     'apps.desks',
-    'apps.planning',
-    'apps.coverages',
     'apps.tasks',
     'apps.preferences',
     'apps.spikes',
