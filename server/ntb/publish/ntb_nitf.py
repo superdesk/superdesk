@@ -18,6 +18,7 @@ from superdesk.publish.publish_service import PublishService
 from superdesk.errors import FormatterError
 import superdesk
 from datetime import datetime
+import copy
 import pytz
 import logging
 logger = logging.getLogger(__name__)
@@ -33,6 +34,8 @@ assert ENCODING is not 'unicode'  # use e.g. utf-8 for unicode
 class NTBNITFFormatter(NITFFormatter):
     XML_DECLARATION = '<?xml version="1.0" encoding="iso-8859-1" standalone="yes"?>'
 
+    HTML2NITF = copy.deepcopy(NITFFormatter.HTML2NITF)
+
     def can_format(self, format_type, article):
         """
         Method check if the article can be formatted to NTB NIT
@@ -45,7 +48,10 @@ class NTBNITFFormatter(NITFFormatter):
     def format(self, article, subscriber, codes=None, encoding="us-ascii"):
         global tz
         if tz is None:
+            # first time this method is launched
+            # we set timezone and NTB specific filter
             tz = pytz.timezone(superdesk.app.config['DEFAULT_TIMEZONE'])
+            self.HTML2NITF['p']['filter'] = self.p_filter
         try:
             pub_seq_num = superdesk.get_resource_service('subscribers').generate_sequence_number(subscriber)
             nitf = self.get_nitf(article, subscriber, pub_seq_num)
@@ -65,6 +71,20 @@ class NTBNITFFormatter(NITFFormatter):
                      'encoded_item': self.XML_DECLARATION.encode(ENCODING) + encoded}]
         except Exception as ex:
             raise FormatterError.nitfFormatterError(ex, subscriber)
+
+    @staticmethod
+    def p_filter(root_elem, p_elem):
+        """modify p element to have 'txt' or 'txt-ind' attribute
+
+        'txt' is only used immediatly after "hl2" elem, txt-ind in all other cases
+        """
+        parent = next((p for p in root_elem.iter() if p_elem in p))
+        children = list(parent)
+        idx = children.index(p_elem)
+        if idx > 0 and children[idx - 1].tag == "hl2":
+            p_elem.attrib['class'] = 'txt'
+        else:
+            p_elem.attrib['class'] = 'txt-ind'
 
     def _get_ntb_category(self, article):
         category = ''
@@ -284,7 +304,7 @@ class NTBNITFFormatter(NITFFormatter):
         # so we need to remove it here
         p_lead = html_elts.find('p[@class="lead"]')
         if p_lead is not None:
-            p_lead.attrib['class'] = "txt"
+            p_lead.attrib['class'] = "txt-ind"
             try:
                 del p_lead.attrib['lede']
             except KeyError:

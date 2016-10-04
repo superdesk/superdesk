@@ -28,15 +28,16 @@ NOW = datetime.datetime.now(datetime.timezone.utc)
 TEST_BODY = """
 <p class="lead" lede="true">""" + TEST_NOT_LEAD + """</p>
 <p class="txt">line 1</p>
-<p class="txt-ind">line 2</p>
-<p class="txt-ind">line 3</p>
+<p>line 2</p>
+<p class="toto">line 3</p>
 <p class="txt-ind">test encoding: –</p>
 <!-- EMBED START Image {id: "embedded18237840351"} --><figure>
 <img src="http://scanpix.no/spWebApp/previewimage/sdl/preview/tb42bf43.jpg" alt="alt text" />
 <figcaption>New parliament speaker Ana Pastor speaks on her phone during the first session of parliament\
 following a general election in Madrid, Spain, July 19, 2016. REUTERS/Andrea Comas</figcaption>
 </figure><!-- EMBED END Image {id: "embedded18237840351"} -->
-<p><h3>intermediate line</h3></p>
+<h3>intermediate line</h3>
+<p>this element should have a txt class</p>
 <!-- EMBED START Video {id: "embedded10005446043"} --><figure>
 <video controls="controls">
 </video>
@@ -241,7 +242,7 @@ class NTBNITFFormatterTest(TestCase):
         self.assertEqual(lead.get("class"), "lead")
         self.assertEqual(lead.text, TEST_ABSTRACT)
         not_lead = next(p_elems)
-        self.assertEqual(not_lead.get("class"), "txt")
+        self.assertEqual(not_lead.get("class"), "txt-ind")
         self.assertEqual(not_lead.text, TEST_NOT_LEAD)
 
         p_lead = body_content.findall('p[@class="lead"]')
@@ -250,12 +251,17 @@ class NTBNITFFormatterTest(TestCase):
         for i in range(1, 4):
             p = next(p_elems)
             self.assertEqual(p.text, "line {}".format(i))
+            self.assertEqual(p.get("class"), "txt-ind")
 
         p_encoding = next(p_elems)
         self.assertEqual(p_encoding.text, "test encoding: –")
 
-        hl2 = next(p_elems).find('hl2')
+        hl2 = body_content.find('hl2')
         self.assertEqual(hl2.text, "intermediate line")
+
+        p_cls_txt = next(p_elems)
+        # <p> elements following <hl2> must have a "txt" class
+        self.assertEqual(p_cls_txt.get("class"), "txt")
 
         # all embedded must be removed from body's HTML,
         # they are put in <media/> elements
