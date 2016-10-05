@@ -135,6 +135,7 @@ INSTALLED_APPS.extend([
     'apps.feature_preview',
     'apps.workqueue',
     'apps.picture_crop',
+    'apps.languages',
 
     'ntb.macros'
 ])
@@ -187,6 +188,10 @@ ELASTICSEARCH_AUTO_AGGREGATIONS = False
 SIGN_OFF_MAPPING = 'email'
 DEFAULT_CONTENT_TYPE = 'Standard'
 DEFAULT_LANGUAGE = 'nb-NO'
+LANGUAGES = [{'language': 'en', 'label': 'English', 'source': True, 'destination': False},
+             {'language': 'de', 'label': 'German', 'source': True, 'destination': False},
+             {'language': 'nb-NO', 'label': 'Bokmål', 'source': False, 'destination': True},
+             {'language': 'nn-NO', 'label': 'Nynorsk', 'source': False, 'destination': True}]
 
 
 # NTB NITF specific behaviour
