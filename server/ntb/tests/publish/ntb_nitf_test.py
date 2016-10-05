@@ -61,7 +61,7 @@ ARTICLE = {
     'version': 5,
     'rewrite_sequence': 1,
     'language': 'nb-NO',
-    'sign_off': ' '.join(TEST_EMAILS),
+    'sign_off': '/'.join(TEST_EMAILS),
     # if you change place, please keep a test with 'parent': None
     # cf SDNTB-290
     'place': [{'scheme': 'place_custom', 'parent': None, 'name': 'Global', 'qcode': 'Global'}],
