@@ -14,8 +14,8 @@ curl libfontconfig nodejs npm nginx \
 && rm /etc/nginx/sites-enabled/default \
 && ln --symbolic /usr/bin/nodejs /usr/bin/node
 
-RUN npm install -g npm
-RUN npm -g install grunt-cli
+RUN npm install -g n npm grunt-cli
+RUN n latest
 
 # Set the locale
 RUN locale-gen en_US.UTF-8
