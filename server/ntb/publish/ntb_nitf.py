@@ -352,13 +352,15 @@ class NTBNITFFormatter(NITFFormatter):
 
     def _format_body_end(self, article, body_end):
         try:
-            emails = article['sign_off'].split()
+            emails = [s.strip() for s in article['sign_off'].split('/')]
         except KeyError:
             return
         if emails:
             tagline = ET.SubElement(body_end, 'tagline')
             previous = None
             for email in emails:
+                if not email:
+                    continue
                 a = ET.SubElement(tagline, 'a', {'href': 'mailto:{}'.format(email)})
                 a.text = email
                 if previous is not None:
