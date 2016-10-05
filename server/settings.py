@@ -130,7 +130,8 @@ INSTALLED_APPS.extend([
     'apps.search_providers',
     'apps.vidible',
     'apps.feature_preview',
-    'apps.workqueue'
+    'apps.workqueue',
+    'apps.languages'
 ])
 
 RENDITIONS = {
