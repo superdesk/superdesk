@@ -14,9 +14,6 @@ curl libfontconfig nodejs npm nginx \
 && rm /etc/nginx/sites-enabled/default \
 && ln --symbolic /usr/bin/nodejs /usr/bin/node
 
-RUN npm install -g n npm grunt-cli
-RUN n latest
-
 # Set the locale
 RUN locale-gen en_US.UTF-8
 ENV LANG en_US.UTF-8
@@ -42,21 +39,14 @@ ENV PYTHONUNBUFFERED 1
 ENV C_FORCE_ROOT "False"
 ENV CELERYBEAT_SCHEDULE_FILENAME /tmp/celerybeatschedule.db
 
-# install server dependencies
-COPY ./server/requirements.txt /tmp/requirements.txt
-RUN cd /tmp && pip3 install -U -r /tmp/requirements.txt
-
-# install client dependencies
-COPY ./client/package.json /opt/superdesk/client/
-RUN cd ./client && npm install
-
-# copy server sources
+# install server
 COPY ./server /opt/superdesk
+RUN pip3 install -U -r requirements.txt
 
-# copy client sources
-COPY ./client /opt/superdesk/client
-
-RUN cd ./client && grunt build
+# install client
+COPY ./client /opt/superdesk/client/
+RUN npm install -g n npm grunt-cli && n lts
+RUN cd ./client && npm install && grunt build
 
 # copy git revision informations (used in "about" screen)
 COPY .git/HEAD /opt/superdesk/.git/
