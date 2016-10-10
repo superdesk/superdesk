@@ -35,9 +35,9 @@ The `grunt server` attempts to resolve the API and websockets server to a local 
 
 #### Dependencies (for non-Docker installations)
 
-* Pyton & Pyvenv 3+
+* Python & Pyvenv 3+
 * MongoDB
-* ElasticSearch
+* ElasticSearch <= 1.7.x
 * Redis
 
 #### MacOS
