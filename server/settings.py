@@ -133,6 +133,14 @@ INSTALLED_APPS.extend([
     'apps.workqueue',
     'apps.languages'
 ])
+=======
+])
+
+INSTALLED_PLUGINS = [
+    'planning'
+]
+
+INSTALLED_APPS.extend(INSTALLED_PLUGINS)
 
 RENDITIONS = {
     'picture': {
