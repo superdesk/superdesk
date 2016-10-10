@@ -133,8 +133,6 @@ INSTALLED_APPS.extend([
     'apps.workqueue',
     'apps.languages'
 ])
-=======
-])
 
 INSTALLED_PLUGINS = [
     'planning'
