@@ -3,3 +3,7 @@ honcho==0.6.6
 newrelic>=2.66,<2.67
 
 git+git://github.com/superdesk/superdesk-core.git@d38f44e#egg=Superdesk-Core
+
+wooper
+requests
+requests-mock
