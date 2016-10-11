@@ -248,3 +248,5 @@ NITF_MAPPING = {
 }
 
 ENABLE_PROFILING = False
+
+NO_TAKES = True

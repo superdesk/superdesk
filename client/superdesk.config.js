@@ -31,7 +31,8 @@ module.exports = function(grunt) {
             editFeaturedImage: 0,
             hideCreatePackage: true,
             customMonitoringWidget: true,
-            scanpixSearchShortcut: true
+            scanpixSearchShortcut: true,
+            noTakes: true
         },
 
         user: {
