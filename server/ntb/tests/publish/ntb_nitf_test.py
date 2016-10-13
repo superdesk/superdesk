@@ -31,7 +31,7 @@ TEST_BODY = """
 <p class="txt">line 1</p>
 <p>line 2</p>
 <p class="toto">line 3</p>
-<p class="txt-ind">test encoding: –</p>
+<p class="txt-ind" style="style_should_be:'removed'">test encoding: –</p>
 <!-- EMBED START Image {id: "embedded18237840351"} --><figure>
 <img src="http://scanpix.no/spWebApp/previewimage/sdl/preview/tb42bf43.jpg" alt="alt text" />
 <figcaption>New parliament speaker Ana Pastor speaks on her phone during the first session of parliament\
@@ -256,6 +256,7 @@ class NTBNITFFormatterTest(TestCase):
 
         p_encoding = next(p_elems)
         self.assertEqual(p_encoding.text, "test encoding: –")
+        self.assertNotIn("style", p_encoding.attrib)
 
         hl2 = body_content.find('hl2')
         self.assertEqual(hl2.text, "intermediate line")
