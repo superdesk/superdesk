@@ -34,7 +34,7 @@ def extract_html_macro(item, **kwargs):
     body_html = str(soup)
     for link in links:
         body_html = body_html.replace(links[link], link)
-    body_html = body_html.replace('<p>', '')
+    body_html = body_html.replace('<p>', '__##br##__')
     body_html = body_html.replace('</p>', '__##br##__')
     body_html = body_html.replace('<br>', '__##br##__')
 
@@ -48,8 +48,9 @@ def extract_html_macro(item, **kwargs):
     for link in links:
         body_html = body_html.replace(link, links[link])
 
-    body_html = body_html.replace('__##br##__', '<br>')
-    item['body_html'] = '<p>' + body_html + '</p>'
+    body_html = body_html.replace('\n', '')
+    list_paragraph = body_html.split('__##br##__')
+    item['body_html'] = ''.join('<p>' + p + '</p>' for p in list_paragraph if p and p.strip())
     return item
 
 

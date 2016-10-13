@@ -18,4 +18,4 @@ class ExtractHtmlTestCase(unittest.TestCase):
         item = {'body_html': 'test <a href="www.sourcefabric.org">Sourcefabric</a> <br> <span>test <span/>'}
         extract_html_macro(item)
         self.assertEqual(item.get('body_html'),
-                         '<p>test <a href="www.sourcefabric.org">Sourcefabric</a> <br> test </p>')
+                         '<p>test <a href="www.sourcefabric.org">Sourcefabric</a> </p><p> test </p>')
