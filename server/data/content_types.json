@@ -11,19 +11,22 @@
                "required": true,
                "schema": {
                     "source": {},
-                    "text": {"type": "string", "required": true, "minlength": 1},
+                    "text": {},
                     "date": {},
-                    "location": {}
+                    "located": {
+                        "type": "dict",
+                        "required": true
+                    }
                   }
             },
             "byline": {"type": "string", "required": true, "minlength": 1},
             "abstract": {"type": "string", "required": true, "maxlength": 160, "minlength": 1},
-            "body_html": {},
+            "body_html": {"type": "string"},
             "sign_off": {"type": "string", "required": true, "minlength": 1},
             "feature_media": {"type": "picture"},
             "slugline": {"type": "string", "required": true, "maxlength": 30, "minlength": 1},
-            "priority": {"required": true, "default": 6},
-            "urgency": {"required": true, "default": 5},
+            "priority": {"type": "integer", "required": true, "default": 6},
+            "urgency": {"type": "integer", "required": true, "default": 5},
             "anpa_category": {"type": "list", "required": true, "minlength": 1},
             "subject": {
               "type": "list",
@@ -46,7 +49,7 @@
             },
             "genre" : {"type": "list", "required": true, "minlength": 1},
             "place": {"type": "list", "required": true, "minlength": 1},
-            "ednote": {},
+            "ednote": {"type": "string"},
             "body_footer": {"type": "string", "default": "©NTB"}
         },
         "editor": {
@@ -79,15 +82,15 @@
         "enabled": true,
         "schema": {
             "headline": {"type": "string", "required": true, "maxlength": 64, "minlength": 1},
-            "dateline": {},
+            "dateline": {"type": "dict"},
             "byline": {"type": "string"},
             "abstract": {"type": "string", "maxlength": 160},
-            "body_html": {},
+            "body_html": {"type": "string"},
             "sign_off": {"type": "string"},
             "feature_media": {"type": "picture"},
             "slugline": {"type": "string", "required": true, "maxlength": 30, "minlength": 1},
-            "priority": {"required": true, "default": 6},
-            "urgency": {"required": true, "default": 3},
+            "priority": {"type": "integer", "required": true, "default": 6},
+            "urgency": {"type": "integer", "required": true, "default": 3},
             "anpa_category": {"type": "list", "required": true, "minlength": 1},
             "subject": {
               "type": "list",
@@ -109,7 +112,7 @@
             },
             "genre" : {"type": "list", "required": true, "minlength": 1},
             "place": {"type": "list"},
-            "ednote": {}
+            "ednote": {"type": "string"}
         },
         "editor": {
             "slugline": {"order": 1, "sdWidth": "half"},
@@ -140,15 +143,15 @@
         "enabled": true,
         "schema": {
             "headline": {"type": "string", "required": true, "maxlength": 64, "minlength": 1},
-            "dateline": {},
+            "dateline": {"type": "dict"},
             "byline": {"type": "string"},
             "abstract": {"type": "string", "maxlength": 160},
-            "body_html": {},
+            "body_html": {"type": "string"},
             "sign_off": {"type": "string"},
             "feature_media": {"type": "picture"},
             "slugline": {"type": "string", "required": true, "maxlength": 30, "minlength": 1},
-            "priority": {"default": 6},
-            "urgency": {"default": 5},
+            "priority": {"type": "integer", "default": 6},
+            "urgency": {"type": "integer", "default": 5},
             "anpa_category": {"type": "list", "required": true, "minlength": 1},
             "subject": {
               "type": "list",
@@ -169,8 +172,8 @@
               }
             },
             "genre" : {"type": "list", "required": true, "minlength": 1},
-            "place": {},
-            "ednote": {}
+            "place": {"type": "list"},
+            "ednote": {"type": "string"}
         },
         "editor": {
             "slugline": {"order": 1, "sdWidth": "half"},
