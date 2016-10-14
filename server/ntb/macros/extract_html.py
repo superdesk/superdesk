@@ -48,7 +48,7 @@ def extract_html_macro(item, **kwargs):
     for link in links:
         body_html = body_html.replace(link, links[link])
 
-    body_html = body_html.replace('\n', '')
+    body_html = body_html.replace('\n', '__##br##__')
     list_paragraph = body_html.split('__##br##__')
     item['body_html'] = ''.join('<p>' + p + '</p>' for p in list_paragraph if p and p.strip())
     return item
