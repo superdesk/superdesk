@@ -1,7 +1,7 @@
 [
     {
         "_id": "Standard",
-        "label": "Standard",
+        "label": "Normal",
         "priority": 80,
         "enabled": true,
         "schema": {
@@ -50,7 +50,7 @@
             "genre" : {"type": "list", "required": true, "minlength": 1},
             "place": {"type": "list", "required": true, "minlength": 1},
             "ednote": {"type": "string", "nullable": true},
-            "body_footer": {"type": "string", "default": "©NTB"}
+            "body_footer": {"type": "string", "default": "(©NTB)"}
         },
         "editor": {
             "slugline": {"order": 1, "sdWidth": "half"},
