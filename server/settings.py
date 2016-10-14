@@ -188,6 +188,7 @@ ELASTICSEARCH_AUTO_AGGREGATIONS = False
 SIGN_OFF_MAPPING = 'email'
 DEFAULT_CONTENT_TYPE = 'Standard'
 DEFAULT_LANGUAGE = 'nb-NO'
+GENERATE_SHORT_GUID = True
 LANGUAGES = [{'language': 'en', 'label': 'English', 'source': True, 'destination': False},
              {'language': 'de', 'label': 'German', 'source': True, 'destination': False},
              {'language': 'nb-NO', 'label': 'Bokmål', 'source': False, 'destination': True},
