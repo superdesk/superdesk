@@ -26,6 +26,7 @@ tz = None
 
 EMBED_RE = re.compile(r"<!-- EMBED START ([a-zA-Z]+ {id: \"(?P<id>.+?)\"}) -->.*"
                       r"<!-- EMBED END \1 -->", re.DOTALL)
+STRIP_UNBOUND_RE = re.compile(r"<(/?)[a-zA-Z0-9._-]+:([a-zA-Z0-9._-]+)(/?)>")
 FILENAME_FORBIDDEN_RE = re.compile(r"[^a-zA-Z0-9._-]")
 ENCODING = 'iso-8859-1'
 assert ENCODING is not 'unicode'  # use e.g. utf-8 for unicode
@@ -262,15 +263,14 @@ class NTBNITFFormatter(NITFFormatter):
             associations = article['associations']
         except KeyError:
             self._add_meta_media_counter(head, 0)
-            return
-
-        try:
-            media_data.append(associations['featureimage'])
-        except KeyError:
+        else:
             try:
-                media_data.append(associations['featuremedia'])
+                media_data.append(associations['featureimage'])
             except KeyError:
-                pass
+                try:
+                    media_data.append(associations['featuremedia'])
+                except KeyError:
+                    pass
 
         def repl_embedded(match):
             """embedded in body_html handling"""
@@ -298,7 +298,18 @@ class NTBNITFFormatter(NITFFormatter):
         # this is not optimal, but Beautiful Soup and etree are used
         # and etree from stdlib doesn't have a proper HTML parser
         soup = BeautifulSoup(html, 'html.parser')
-        html_elts = ET.fromstring('<div>{}</div>'.format(soup.decode(formatter='xml')))
+        try:
+            html_elts = ET.fromstring('<div>{}</div>'.format(soup.decode(formatter='xml')))
+        except ET.ParseError as e:
+            if 'unbound' in str(e):
+                # in case of copy/paste, some prefixed elements can appear, making the whole
+                # formatting failing. This workaround remove prefixes, html2nitf will then
+                # remove unknown elements
+                html_cleaned = STRIP_UNBOUND_RE.sub(r"<\1\2\3>", soup.decode(formatter='xml'))
+                html_elts = ET.fromstring('<div>{}</div>'.format(html_cleaned))
+            else:
+                raise ValueError(u"Can't parse body_html content: {}".format(e))
+
         # <p class="lead" lede="true"> is used by NTB for abstract
         # and it may be existing in body_html (from ingested items ?)
         # so we need to remove it here

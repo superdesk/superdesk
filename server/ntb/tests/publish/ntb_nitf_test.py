@@ -310,6 +310,20 @@ class NTBNITFFormatterTest(TestCase):
         nitf_xml = etree.fromstring(doc)
         self.assertEqual(nitf_xml.find('body/body.head/dateline'), None)
 
+    @mock.patch.object(SubscribersService, 'generate_sequence_number', lambda self, subscriber: 1)
+    def test_prefix_cleaning(self):
+        """SDNTB-313 regression test"""
+        article = copy.deepcopy(self.article)
+        article['abstract'] = ''
+        del article['associations']
+        article['body_html'] = "<pref:h1><other_pref:body.content><t:t/>toto</other_pref:body.content></pref:h1>"
+        expected = b'<body.content><p class="lead" lede="true" /><hl2>toto</hl2></body.content>'
+        formatter_output = self.formatter.format(article, {'name': 'Test NTBNITF'})
+        doc = formatter_output[0]['formatted_item']
+        nitf_xml = etree.fromstring(doc)
+        body_content = nitf_xml.find("body/body.content")
+        self.assertEqual(etree.tostring(body_content), expected)
+
     def test_filename(self):
         filename = self.nitf_xml.find('head/meta[@name="filename"]')
         datetime = NOW.astimezone(self.tz).strftime("%Y-%m-%d_%H-%M-%S")
