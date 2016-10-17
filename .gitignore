@@ -26,6 +26,8 @@ include/
 .idea/
 .vagrant/
 /client/.tern-project
+/client/index.html
+/client/templates-cache.js
 /server/.project
 /server/.pydevproject
 /server/.settings/org.eclipse.core.resources.prefs
