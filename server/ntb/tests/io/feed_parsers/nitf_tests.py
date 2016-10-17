@@ -18,6 +18,11 @@ from superdesk.etree import etree
 from superdesk.io.feed_parsers.nitf import NITFFeedParser
 from superdesk.vocabularies.command import VocabulariesPopulateCommand
 
+ABSTRACT = ("København /ritzau/: "
+            "En 41-årig mand, der onsdag blev anholdt og sat i forbindelse "
+            "med en mulig skudepisode nær en børnehave i Hvidovre ved København, "
+            "er blevet løsladt.")
+
 
 class NITFTestCase(TestCase):
 
@@ -62,10 +67,10 @@ class NTBTestCase(NITFTestCase):
     def test_abstract(self):
         self.assertEqual(
             self.item.get('abstract'),
-            "København /ritzau/: "
-            "En 41-årig mand, der onsdag blev anholdt og sat i forbindelse "
-            "med en mulig skudepisode nær en børnehave i Hvidovre ved København, "
-            "er blevet løsladt.")
+            ABSTRACT)
+
+    def test_body_html(self):
+        self.assertNotIn(ABSTRACT, self.item.get('body_html'))
 
     def test_keywords(self):
         self.assertNotIn('keywords', self.item)

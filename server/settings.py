@@ -13,6 +13,7 @@
 import os
 import json
 import superdesk
+from xml.etree import ElementTree as ET
 
 
 try:
@@ -224,6 +225,15 @@ def build_service(elem):
         service[0]['qcode'] = elem.get('content')
     return service
 
+
+def build_body_html(xml):
+    elements = []
+    for elem in xml.find('body/body.content'):
+        if elem.tag == 'p' and elem.get('class') == 'lead':
+            continue
+        elements.append(ET.tostring(elem, encoding='unicode'))
+    return ''.join(elements)
+
 NITF_MAPPING = {
     'anpa_category': {'xpath': "head/meta/[@name='NTBTjeneste']",
                       'filter': build_service,
@@ -243,6 +253,7 @@ NITF_MAPPING = {
     'subject': {'update': True,  # we use default subjects parsing
                 'filter_value': add_subjects_scheme,  # and add NTB scheme
                 'key_hook': lambda item, value: item.setdefault('subject', []).extend(value)},
+    'body_html': build_body_html,
     'slugline': 'head/docdata/du-key/@key',
     'abstract': "body/body.content/p[@class='lead']",
     'keywords': '',  # keywords are ignored on purpose
