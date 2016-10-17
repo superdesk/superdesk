@@ -34,7 +34,3 @@ class ScanpixDatalayer(TestCase):
         result = extract_params(query, names)
         self.assertDictEqual(result, {'q': 'all', 'headline': 'head one'},
                              msg='Fail to parse text query all end')
-
-    def test_date_param_format_is_correct(self):
-        date = '29/02/2016'
-        self.assertEqual('29-02-2016', extract_date(date))

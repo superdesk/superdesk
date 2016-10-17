@@ -54,12 +54,6 @@ def extract_params(query, names):
     return params
 
 
-# Images API is looking for param like dd-mm-yyyy
-def extract_date(date):
-    date_object = datetime.strptime(date, '%d/%m/%Y')
-    return date_object.strftime('%d-%m-%Y')
-
-
 class ScanpixDatalayer(DataLayer):
     def set_credentials(self, user, password):
         self._user = user
@@ -94,7 +88,13 @@ class ScanpixDatalayer(DataLayer):
         :return:
         """
         url = self._app.config['SCANPIX_SEARCH_URL'] + '/search'
-        data = {'mainGroup': 'any'}
+        data = {
+            'mainGroup': 'any',
+            'archived': {
+                'max': '',
+                'min': ''
+            }
+        }
 
         if 'query' in req['query']['filtered']:
             query = req['query']['filtered']['query']['query_string']['query'] \
@@ -166,9 +166,9 @@ class ScanpixDatalayer(DataLayer):
                         data['timeLimit'] = 'lastmonth '
                 elif start or end:
                     if start:
-                        data['archived']['min'] = extract_date(start)
+                        data['archived']['min'] = start
                     if end:
-                        data['archived']['max'] = extract_date(end)
+                        data['archived']['max'] = end
 
             if 'terms' in criterion:
                 if 'type' in criterion.get('terms', {}):
