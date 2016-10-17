@@ -213,8 +213,7 @@ class ScanpixDatalayer(DataLayer):
             new_doc['original_source'] = new_doc['source'] = doc['credit']
         except KeyError:
             pass
-        new_doc['versioncreated'] = utcnow()
-        new_doc['firstcreated'] = self._datetime(doc['archivedTime'])
+        new_doc['versioncreated'] = new_doc['firstcreated'] = self._datetime(doc['archivedTime'])
         new_doc['pubstatus'] = 'usable'
         # This must match the action
         new_doc['_type'] = 'externalsource'
