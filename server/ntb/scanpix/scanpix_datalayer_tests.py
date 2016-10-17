@@ -7,7 +7,7 @@
 # For the full copyright and license information, please see the
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
-from ntb.scanpix.scanpix_datalayer import extract_params, extract_date
+from ntb.scanpix.scanpix_datalayer import extract_params
 from superdesk.tests import TestCase
 
 

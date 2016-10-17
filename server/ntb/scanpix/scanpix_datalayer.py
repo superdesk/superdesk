@@ -13,7 +13,6 @@ import logging
 import re
 import requests
 import json
-from datetime import datetime
 from os.path import splitext
 
 from io import BytesIO
