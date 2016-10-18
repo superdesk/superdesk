@@ -35,8 +35,8 @@ REND2PREV = {
     'viewImage': ('preview', 'thumbnail_big', 'thumbnail', 'preview_big'),
     'baseImage': ('mp4_preview', 'mp4_thumbnail', 'preview_big', 'preview', 'thumbnail_big', 'thumbnail')}
 logger = logging.getLogger('ntb:scanpix')
-
 SCANPIX_TZ = 'Europe/Oslo'
+
 
 def extract_params(query, names):
     if isinstance(names, str):
@@ -214,7 +214,9 @@ class ScanpixDatalayer(DataLayer):
             new_doc['original_source'] = new_doc['source'] = doc['credit']
         except KeyError:
             pass
-        new_doc['versioncreated'] = new_doc['firstcreated'] = self._datetime(local_to_utc(SCANPIX_TZ, get_date(doc['archivedTime'])))
+        new_doc['versioncreated'] = new_doc['firstcreated'] = self._datetime(
+            local_to_utc(SCANPIX_TZ, get_date(doc['archivedTime']))
+        )
         new_doc['pubstatus'] = 'usable'
         # This must match the action
         new_doc['_type'] = 'externalsource'
