@@ -24,7 +24,7 @@ from superdesk.errors import SuperdeskApiError, ProviderError
 from superdesk.media.media_operations import process_file_from_stream, decode_metadata
 from superdesk.media.renditions import generate_renditions, delete_file_on_error, get_renditions_spec
 from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE
-from superdesk.utc import utcnow
+from superdesk.utc import utcnow, get_date, local_to_utc
 import mimetypes
 
 
@@ -35,6 +35,8 @@ REND2PREV = {
     'viewImage': ('preview', 'thumbnail_big', 'thumbnail', 'preview_big'),
     'baseImage': ('mp4_preview', 'mp4_thumbnail', 'preview_big', 'preview', 'thumbnail_big', 'thumbnail')}
 logger = logging.getLogger('ntb:scanpix')
+# Default timezone used to convert datetimes from scanpix api results to utc
+SCANPIX_TZ = 'Europe/Oslo'
 
 
 def extract_params(query, names):
@@ -213,7 +215,9 @@ class ScanpixDatalayer(DataLayer):
             new_doc['original_source'] = new_doc['source'] = doc['credit']
         except KeyError:
             pass
-        new_doc['versioncreated'] = new_doc['firstcreated'] = self._datetime(doc['archivedTime'])
+        new_doc['versioncreated'] = new_doc['firstcreated'] = self._datetime(
+            local_to_utc(SCANPIX_TZ, get_date(doc['archivedTime']))
+        )
         new_doc['pubstatus'] = 'usable'
         # This must match the action
         new_doc['_type'] = 'externalsource'
