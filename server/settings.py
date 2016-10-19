@@ -251,6 +251,3 @@ NITF_MAPPING = {
 ENABLE_PROFILING = False
 
 NO_TAKES = True
-
-# Default timezone used to convert datetimes from scanpix api results to utc
-SCANPIX_TZ = 'Europe/Oslo'
