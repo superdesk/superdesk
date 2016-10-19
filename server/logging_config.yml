@@ -14,25 +14,13 @@ handlers:
   console:
     class: logging.StreamHandler
     stream  : ext://sys.stdout
-  logstash:
-    class: logging.handlers.SysLogHandler
-    address: !!python/tuple [localhost, 5555]
 loggers:
   # superdesk.ws - used for debug message can be removed later on.
   superdesk.ws:
-    handlers: [console, logstash]
+    handlers: [console]
     level: DEBUG
-  superdesk:
-    level: INFO
-    handlers: [console, logstash]
-  apps:
-    handlers: [console, logstash]
-    level: WARN
-  macros:
-    handlers: [console, logstash]
-    level: WARN
   worker:
-    handlers: [console, logstash]
+    handlers: [console]
     level: WARN
   root:
-    handlers: [console, logstash]
+    handlers: [console]
