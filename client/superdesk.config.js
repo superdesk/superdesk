@@ -18,6 +18,8 @@ module.exports = function(grunt) {
 
         startingDay: '1',
 
+        angular_i18n: 'angular-locale_no',
+
         view: {
             timeformat: 'HH:mm',
             dateformat: 'DD.MM.YYYY'
