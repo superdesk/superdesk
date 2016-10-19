@@ -19,6 +19,7 @@ from io import BytesIO
 from eve.io.base import DataLayer
 from eve_elastic.elastic import ElasticCursor
 from superdesk.upload import url_for_media
+from settings import SCANPIX_TZ
 
 from superdesk.errors import SuperdeskApiError, ProviderError
 from superdesk.media.media_operations import process_file_from_stream, decode_metadata
@@ -35,7 +36,6 @@ REND2PREV = {
     'viewImage': ('preview', 'thumbnail_big', 'thumbnail', 'preview_big'),
     'baseImage': ('mp4_preview', 'mp4_thumbnail', 'preview_big', 'preview', 'thumbnail_big', 'thumbnail')}
 logger = logging.getLogger('ntb:scanpix')
-SCANPIX_TZ = 'Europe/Oslo'
 
 
 def extract_params(query, names):
