@@ -18,6 +18,8 @@ module.exports = function(grunt) {
 
         startingDay: '1',
 
+        i18n: 'no',
+
         view: {
             timeformat: 'HH:mm',
             dateformat: 'DD.MM.YYYY'
