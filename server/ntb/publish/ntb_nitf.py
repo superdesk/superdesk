@@ -326,7 +326,7 @@ class NTBNITFFormatter(NITFFormatter):
         except KeyError:
             pass
         else:
-            body_footer = ET.SubElement(html_elts, 'p', {'class': 'txt-ind'})
+            body_footer = ET.SubElement(html_elts, 'p', {'class': 'txt'})
             body_footer.text = footer_txt
         body_content.extend(self.html2nitf(html_elts, attr_remove=["style"]))
 

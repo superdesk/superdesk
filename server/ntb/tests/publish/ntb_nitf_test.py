@@ -61,6 +61,7 @@ ARTICLE = {
     'version': 5,
     'rewrite_sequence': 1,
     'language': 'nb-NO',
+    'body_footer': 'footer text',
     'sign_off': '/'.join(TEST_EMAILS),
     # if you change place, please keep a test with 'parent': None
     # cf SDNTB-290
@@ -317,7 +318,8 @@ class NTBNITFFormatterTest(TestCase):
         article['abstract'] = ''
         del article['associations']
         article['body_html'] = "<pref:h1><other_pref:body.content><t:t/>toto</other_pref:body.content></pref:h1>"
-        expected = b'<body.content><p class="lead" lede="true" /><hl2>toto</hl2></body.content>'
+        expected = (b'<body.content><p class="lead" lede="true" /><hl2>toto</hl2><p class="txt">'
+                    b'footer text</p></body.content>')
         formatter_output = self.formatter.format(article, {'name': 'Test NTBNITF'})
         doc = formatter_output[0]['formatted_item']
         nitf_xml = etree.fromstring(doc)
