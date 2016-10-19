@@ -140,7 +140,8 @@ class NTBNITFFormatter(NITFFormatter):
 
     def _format_pubdata(self, article, head):
         pub_date = article['versioncreated'].astimezone(tz).strftime("%Y%m%dT%H%M%S")
-        ET.SubElement(head, 'pubdata', attrib={'date.publication': pub_date})
+        pubdata = ET.SubElement(head, 'pubdata', attrib={'date.publication': pub_date})
+        article['pubdata'] = pubdata  # needed to access pubdata when formatting body content
 
     def _format_subjects(self, article, tobject):
         subjects = [s for s in article.get('subject', []) if s.get("scheme") == "subject_custom"]
@@ -328,7 +329,17 @@ class NTBNITFFormatter(NITFFormatter):
         else:
             body_footer = ET.SubElement(html_elts, 'p', {'class': 'txt-ind'})
             body_footer.text = footer_txt
-        body_content.extend(self.html2nitf(html_elts, attr_remove=["style"]))
+
+        # count is done here as superdesk.etree.get_char_count expect a text
+        # which would imply a useless serialisation/reparsing
+        body_nitf = self.html2nitf(html_elts, attr_remove=["style"])
+        body_nitf_text = ET.tostring(body_nitf, encoding='unicode', method='text')
+        char_count = len(body_nitf_text)
+
+        body_content.extend(body_nitf)
+        pubdata = article.pop('pubdata')
+        pubdata.set('item-length', str(char_count))
+        pubdata.set("unit-of-measure", "character")
 
         # media
         for data in media_data:
