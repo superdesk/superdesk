@@ -38,6 +38,7 @@ logger = logging.getLogger('ntb:scanpix')
 # Default timezone used to convert datetimes from scanpix api results to utc
 SCANPIX_TZ = 'Europe/Oslo'
 
+
 def extract_params(query, names):
     if isinstance(names, str):
         names = [names]
