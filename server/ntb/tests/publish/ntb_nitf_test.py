@@ -231,7 +231,7 @@ class NTBNITFFormatterTest(TestCase):
         pubdata = self.nitf_xml.find('head/pubdata')
         expected = NOW.astimezone(self.tz).strftime("%Y%m%dT%H%M%S")
         self.assertEqual(pubdata.get('date.publication'), expected)
-        self.assertEqual(pubdata.get('item-length'), '118')
+        self.assertEqual(pubdata.get('item-length'), '129')
         self.assertEqual(pubdata.get('unit-of-measure'), "character")
 
     def test_dateline(self):
@@ -300,7 +300,7 @@ class NTBNITFFormatterTest(TestCase):
             email = emails.pop(0)
             self.assertEqual(a_elem.get('href'), 'mailto:{}'.format(email))
             self.assertEqual(a_elem.text, email)
-            if emails:  #  only the last element has not "/" in tail
+            if emails:  # only the last element has not "/" in tail
                 self.assertEqual(a_elem.tail, '/')
 
     @mock.patch.object(SubscribersService, 'generate_sequence_number', lambda self, subscriber: 1)
