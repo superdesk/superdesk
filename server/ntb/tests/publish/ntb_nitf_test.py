@@ -231,6 +231,8 @@ class NTBNITFFormatterTest(TestCase):
         pubdata = self.nitf_xml.find('head/pubdata')
         expected = NOW.astimezone(self.tz).strftime("%Y%m%dT%H%M%S")
         self.assertEqual(pubdata.get('date.publication'), expected)
+        self.assertEqual(pubdata.get('item-length'), '118')
+        self.assertEqual(pubdata.get('unit-of-measure'), "character")
 
     def test_dateline(self):
         dateline = self.nitf_xml.find('body/body.head/dateline')
