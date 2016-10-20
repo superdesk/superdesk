@@ -9,9 +9,9 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-
-import os
 import json
+import os
+from pathlib import Path
 
 
 try:
@@ -30,8 +30,11 @@ def env(variable, fallback_value=None):
         else:
             return env_value
 
-ABS_PATH = os.path.abspath(os.path.dirname(__file__))
-INIT_DATA_PATH = os.path.join(ABS_PATH, 'data')
+ABS_PATH = str(Path(__file__).resolve().parent)
+
+init_data = Path(ABS_PATH) / 'data'
+if init_data.exists():
+    INIT_DATA_PATH = init_data
 
 LOG_CONFIG_FILE = env('LOG_CONFIG_FILE', 'logging_config.yml')
 
