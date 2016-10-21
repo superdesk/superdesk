@@ -2,7 +2,7 @@
     "name": "superdesk",
     "license": "GPL-3.0",
     "dependencies": {
-        "superdesk-core": "1.3.0",
+        "superdesk-core": "1.3.1",
         "babel-core": "^6.10.4",
         "babel-loader": "^6.2.4",
         "babel-preset-es2015": "^6.9.0",
@@ -43,9 +43,6 @@
         "less": "^2.7.1",
         "less-loader": "^2.2.3",
         "lodash": "^4.13.1",
-        "phantomjs-prebuilt": "^2.1.7",
-        "protractor": "2.2.0",
-        "protractor-flake": "1.0.1",
         "style-loader": "^0.13.1",
         "webpack": "^1.13.1",
         "webpack-dev-server": "1.14.1"
