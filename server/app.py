@@ -28,7 +28,7 @@ if os.environ.get('NEW_RELIC_LICENSE_KEY'):
         pass
 
 
-def get_app(config=None):
+def get_app(config=None, init_elastic=False):
     """App factory.
 
     :param config: configuration that can override config from `settings.py`
@@ -43,15 +43,7 @@ def get_app(config=None):
         if key.isupper():
             config.setdefault(key, getattr(settings, key))
 
-    media_storage = None
-    if config['AMAZON_CONTAINER_NAME']:
-        from superdesk.storage.amazon.amazon_media_storage import AmazonMediaStorage
-        media_storage = AmazonMediaStorage
-
-    config['DOMAIN'] = {}
-
-    app = superdesk_app(config, media_storage)
-    configure_logging(config['LOG_CONFIG_FILE'])
+    app = superdesk_app(config, init_elastic=init_elastic)
     return app
 
 

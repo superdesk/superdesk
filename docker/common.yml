@@ -62,6 +62,7 @@ superdesk:
    - SENTRY_DSN
    - VIEW_DATE_FORMAT
    - VIEW_TIME_FORMAT
+   - SECRET_KEY
   volumes:
    - ../results/server/unit:/opt/superdesk/results-unit/
    - ../results/server/behave:/opt/superdesk/results-behave/
