@@ -190,10 +190,12 @@ SIGN_OFF_MAPPING = 'email'
 DEFAULT_CONTENT_TYPE = 'Standard'
 DEFAULT_LANGUAGE = 'nb-NO'
 GENERATE_SHORT_GUID = True
-LANGUAGES = [{'language': 'en', 'label': 'English', 'source': True, 'destination': False},
-             {'language': 'de', 'label': 'German', 'source': True, 'destination': False},
-             {'language': 'nb-NO', 'label': 'Bokmål', 'source': False, 'destination': True},
-             {'language': 'nn-NO', 'label': 'Nynorsk', 'source': False, 'destination': True}]
+LANGUAGES = [
+    {'language': 'nb-NO', 'label': 'Bokmål', 'source': True, 'destination': False},
+    {'language': 'nn-NO', 'label': 'Nynorsk', 'source': False, 'destination': True},
+    {'language': 'en', 'label': 'English', 'source': False, 'destination': False},
+    {'language': 'de', 'label': 'German', 'source': False, 'destination': False}
+]
 
 
 # NTB NITF specific behaviour
