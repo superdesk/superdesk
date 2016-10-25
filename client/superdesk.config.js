@@ -8,6 +8,9 @@ module.exports = function(grunt) {
     return {
         apps: ['superdesk-planning'],
         defaultRoute: '/workspace/personal',
-        requiredMediaMetadata: ['headline', 'description_text', 'alt_text']
+        requiredMediaMetadata: ['headline', 'description_text', 'alt_text'],
+        features: {
+            swimlane: {columnsLimit: 4}
+        }
     };
 };
