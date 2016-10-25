@@ -180,7 +180,6 @@ class ScanpixDatalayer(DataLayer):
         offset, limit = int(req.get('from', '0')), max(10, int(req.get('size', '25')))
         data['offset'] = offset
         data['showNumResults'] = limit
-        logger.info('MARK GOING FOR THIS url=%s data=%s' % (url, data))
         r = self._request(url, data)
         hits = self._parse_hits(r.json())
         return ElasticCursor(docs=hits['docs'], hits={'hits': hits})
