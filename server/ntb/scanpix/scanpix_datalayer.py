@@ -90,11 +90,7 @@ class ScanpixDatalayer(DataLayer):
         """
         url = self._app.config['SCANPIX_SEARCH_URL'] + '/search'
         data = {
-            'mainGroup': 'any',
-            'archived': {
-                'max': '',
-                'min': ''
-            }
+            'mainGroup': 'any'
         }
 
         if 'query' in req['query']['filtered']:
@@ -160,12 +156,16 @@ class ScanpixDatalayer(DataLayer):
                 # if there is a special start and no end it's one of the date buttons
                 if start and not end:
                     if start == 'now-24H':
-                        data['timeLimit'] = 'last24 '
+                        data['timeLimit'] = 'last24'
                     if start == 'now-1w':
-                        data['timeLimit'] = 'lastweek '
+                        data['timeLimit'] = 'lastweek'
                     if start == 'now-1M':
-                        data['timeLimit'] = 'lastmonth '
+                        data['timeLimit'] = 'lastmonth'
                 elif start or end:
+                    data['archived'] = {
+                        'min': '',
+                        'max': ''
+                    }
                     if start:
                         data['archived']['min'] = start
                     if end:
