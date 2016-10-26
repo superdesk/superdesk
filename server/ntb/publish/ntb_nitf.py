@@ -287,7 +287,7 @@ class NTBNITFFormatter(NITFFormatter):
                 media_data.append(data)
             return ''
 
-        html = EMBED_RE.sub(repl_embedded, article['body_html'])
+        html = EMBED_RE.sub(repl_embedded, article.get('body_html', ''))
 
         # at this point we have media data filled in right order
         # and no more embedded in html
