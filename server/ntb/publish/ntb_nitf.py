@@ -21,6 +21,7 @@ from datetime import datetime
 import copy
 import pytz
 import logging
+from copy import deepcopy
 logger = logging.getLogger(__name__)
 tz = None
 
@@ -46,7 +47,9 @@ class NTBNITFFormatter(NITFFormatter):
         """
         return format_type == 'ntbnitf' and article[ITEM_TYPE] == CONTENT_TYPE.TEXT
 
-    def format(self, article, subscriber, codes=None, encoding="us-ascii"):
+    def format(self, original_article, subscriber, codes=None, encoding="us-ascii"):
+        article = deepcopy(original_article)
+        self._populate_metadata(article)
         global tz
         if tz is None:
             # first time this method is launched
@@ -72,6 +75,34 @@ class NTBNITFFormatter(NITFFormatter):
                      'encoded_item': self.XML_DECLARATION.encode(ENCODING) + encoded}]
         except Exception as ex:
             raise FormatterError.nitfFormatterError(ex, subscriber)
+
+    def _populate_metadata(self, article):
+        """
+        For tree type vocabularies add the parent if a child is present
+        """
+        vocabularies = list(superdesk.get_resource_service('vocabularies').get(None, None))
+        fields = {'place': 'place_custom', 'subject': 'subject_custom'}
+        for field in fields:
+            vocabulary = self._get_list_element(vocabularies, '_id', fields[field])
+            if not vocabulary:
+                continue
+            vocabulary_items = vocabulary.get('items', [])
+            field_values = article.get(field, [])
+            for value in list(field_values):
+                if not value.get('parent', None):
+                    continue
+                parent = self._get_list_element(field_values, 'qcode', value['parent'])
+                if not parent:
+                    field_values.append(self._get_list_element(vocabulary_items, 'qcode', value['parent']))
+
+    def _get_list_element(self, items, key, value):
+        """
+        Get the element from the list by field 'key' and value 'value'
+        """
+        for item in items:
+            if item.get(key, None) == value:
+                return item
+        return None
 
     @staticmethod
     def p_filter(root_elem, p_elem):
