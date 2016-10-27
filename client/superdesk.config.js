@@ -27,7 +27,6 @@ module.exports = function(grunt) {
 
         features: {
             preview: 1,
-            alchemy: 1,
             customAuthoringTopbar: true,
             useTansaProofing: true,
             editFeaturedImage: false,
