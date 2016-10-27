@@ -113,7 +113,7 @@ class NTBNITFFormatter(NITFFormatter):
         parent = next((p for p in root_elem.iter() if p_elem in p))
         children = list(parent)
         idx = children.index(p_elem)
-        if idx > 0 and children[idx - 1].tag == "hl2":
+        if idx > 0 and children[idx - 1].tag == "hl2" or p_elem.attrib.get('class', None) == 'footer-txt':
             p_elem.attrib['class'] = 'txt'
         else:
             p_elem.attrib['class'] = 'txt-ind'
@@ -358,7 +358,7 @@ class NTBNITFFormatter(NITFFormatter):
         except KeyError:
             pass
         else:
-            body_footer = ET.SubElement(html_elts, 'p', {'class': 'txt'})
+            body_footer = ET.SubElement(html_elts, 'p', {'class': 'footer-txt'})
             body_footer.text = footer_txt
 
         # count is done here as superdesk.etree.get_char_count expect a text
