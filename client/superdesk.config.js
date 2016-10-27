@@ -30,7 +30,7 @@ module.exports = function(grunt) {
             alchemy: 1,
             customAuthoringTopbar: true,
             useTansaProofing: true,
-            editFeaturedImage: 0,
+            editFeaturedImage: false,
             hideCreatePackage: true,
             customMonitoringWidget: true,
             scanpixSearchShortcut: true,
