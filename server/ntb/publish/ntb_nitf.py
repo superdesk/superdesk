@@ -93,7 +93,9 @@ class NTBNITFFormatter(NITFFormatter):
                     continue
                 parent = self._get_list_element(field_values, 'qcode', value['parent'])
                 if not parent:
-                    field_values.append(self._get_list_element(vocabulary_items, 'qcode', value['parent']))
+                    parent = self._get_list_element(vocabulary_items, 'qcode', value['parent'])
+                    parent['scheme'] = fields[field]
+                    field_values.append(parent)
 
     def _get_list_element(self, items, key, value):
         """
