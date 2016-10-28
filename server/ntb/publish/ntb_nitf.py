@@ -179,11 +179,12 @@ class NTBNITFFormatter(NITFFormatter):
     def _format_subjects(self, article, tobject):
         subjects = [s for s in article.get('subject', []) if s.get("scheme") == "subject_custom"]
         for subject in subjects:
+            name_key = 'tobject.subject.matter' if subject.get('parent', None) else 'tobject.subject.type'
             ET.SubElement(
                 tobject,
                 'tobject.subject',
                 {'tobject.subject.refnum': subject.get('qcode', ''),
-                 'tobject.subject.matter': subject.get('name', '')})
+                 name_key: subject.get('name', '')})
 
     def _format_datetimes(self, article, head):
             created = article['versioncreated'].astimezone(tz)
