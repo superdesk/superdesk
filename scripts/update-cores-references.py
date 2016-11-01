@@ -15,6 +15,18 @@ TO_BE_UPDATED = [
         'feed_url': 'https://github.com/superdesk/superdesk-client-core/commits/master.atom',
         'file_name': 'client/package.json',
         'pattern': 'superdesk-client-core#([a-f0-9]*)'
+    },
+    # superdesk-planning (frontend)
+    {
+        'feed_url': 'https://github.com/superdesk/superdesk-planning/commits/master.atom',
+        'file_name': 'client/package.json',
+        'pattern': 'superdesk-planning#([a-f0-9]*)'
+    },
+    # superdesk-planning (backend)
+    {
+        'feed_url': 'https://github.com/superdesk/superdesk-planning/commits/master.atom',
+        'file_name': 'server/requirements.txt',
+        'pattern': 'superdesk-planning.git@([a-f0-9]*)'
     }
 ]
 
