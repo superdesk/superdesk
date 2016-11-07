@@ -186,3 +186,6 @@ AMAZON_S3_USE_HTTPS = env('AMAZON_S3_USE_HTTPS', False)
 is_testing = os.environ.get('SUPERDESK_TESTING', '').lower() == 'true'
 ELASTICSEARCH_FORCE_REFRESH = is_testing
 ELASTICSEARCH_AUTO_AGGREGATIONS = False
+
+# 5y
+CONTENT_EXPIRY_MINUTES = 60 * 24 * 365 * 5
