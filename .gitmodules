@@ -1,0 +1,6 @@
+[submodule "client-core"]
+	path = client-core
+	url = https://github.com/superdesk/superdesk-client-core.git
+[submodule "server-core"]
+	path = server-core
+	url = https://github.com/superdesk/superdesk-core.git

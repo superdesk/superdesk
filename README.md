@@ -21,6 +21,38 @@ Find more information about the client configuration in the README file of the r
 
 ## Installation
 
+### Cloning the repo
+
+#### If you want just install it
+```bash
+git clone https://github.com/superdesk/superdesk.git
+cd superdesk
+git submodule update --init
+```
+
+#### If you going to develop cores
+Please don't run `git submodule update --init`, please do
+```bash
+git clone git@github.com:superdesk/superdesk.git
+cd superdesk
+git clone git@github.com:superdesk/superdesk-core.git server-core
+git clone git@github.com:superdesk/superdesk-client-core.git client-core
+```
+Than you can update cores and commit and still can update the main repo without dealing with submodules.
+
+#### If you want to change core references
+Please use a separate local repo for that.
+```bash
+git clone git@github.com:superdesk/superdesk.git superdesk-update-cores
+cd superdesk-update-cores
+git submodule update --init
+cd client-core
+git pull origin master
+cd server-core
+git pull origin master
+git commit -a -m "update cores"
+```
+
 ### Client
 
 1. Clone the repository
