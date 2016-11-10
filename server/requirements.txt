@@ -3,3 +3,4 @@ honcho==0.6.6
 newrelic>=2.66,<2.67
 superdesk-core==1.3rc2
 celery==3.1.25
+redis==2.10.5
