@@ -1,0 +1,37 @@
+[
+    {
+        "_id": "story",
+        "label": "Story",
+        "priority": 30,
+        "enabled": true,
+        "schema": {
+            "urgency": {"nullable": true},
+            "anpa_category": {},
+            "subject": {},
+            "slugline": {"required": true},
+            "ednote": {},
+
+            "headline": {"required": true},
+            "body_html": {"required": true},
+            "abstract": {},
+            "byline": {},
+            "feature_image": {"type": "picture"},
+
+            "assets": {},
+            "featured": {},
+            "product": {}
+        },
+        "editor": {
+            "slugline": {"order": 1, "sdWidth": "full"},
+            "anpa_category": {"order": 2, "sdWidth": "half"},
+            "subject": {"order": 2, "sdWidth": "half"},
+            "product": {"order": 3, "sdWidth": "half"},
+            "urgency": {"order": 4, "sdWidth": "half", "service": {"paservice:news": 1, "paservice:sport": 1}},
+            "assets": {"order": 11, "sdWidth": "half"},
+            "featured": {"order": 12, "sdWidth": "half"},
+            "ednote": {"order": 14, "sdWidth": "full"},
+            "body_html": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]},
+            "abstract": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]}
+        }
+    }
+]

@@ -1,0 +1,13 @@
+[
+    {
+        "_id": "product",
+        "display_name": "Product",
+        "type": "manageable",
+        "service": {"all": 1},
+        "items": [
+            {"is_active": true, "name": "Product A", "qcode": "pa"},
+            {"is_active": true, "name": "Product B", "qcode": "pb"},
+            {"is_active": true, "name": "Sub Product A.1", "qcode": "pa:1", "parent": "pa"}
+        ]
+    }
+]
