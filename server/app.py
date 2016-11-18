@@ -54,6 +54,7 @@ def get_app(config=None):
     configure_logging(config['LOG_CONFIG_FILE'])
     return app
 
+
 if __name__ == '__main__':
     debug = True
     host = '0.0.0.0'
