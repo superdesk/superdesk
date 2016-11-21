@@ -30,9 +30,11 @@ CMD /opt/superdesk/start.sh
 # client ports
 EXPOSE 9000
 EXPOSE 80
+
 # server ports
 EXPOSE 5000
 EXPOSE 5100
+EXPOSE 5400
 
 # set env vars for the server
 ENV PYTHONUNBUFFERED 1

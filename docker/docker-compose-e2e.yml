@@ -48,7 +48,6 @@ superdesk:
    - elastic
    - logstash
    - postfix
-   - pubapi
   environment:
    - MONGO_URI=mongodb://mongodb/superdesk_e2e
    - SUPERDESK_URL=http://localhost:5000/api
@@ -66,6 +65,7 @@ superdesk:
   ports:
    - "5000:5000"
    - "5100:5100"
+   - "5400:5400"
    - "9000:9000"
    - "35729:35729"
   volumes:
@@ -74,23 +74,3 @@ superdesk:
    - ../client-core:/opt/superdesk/client-core/
    - ./Procfile-dev:/opt/superdesk/Procfile
    - ./start-e2e.sh:/opt/superdesk/start.sh
-
-pubapi:
-  extends:
-    file: common.yml
-    service: pubapi
-  links:
-   - mongodb
-   - redis
-   - elastic
-   - logstash
-   - postfix
-  environment:
-   - SUPERDESK_RELOAD=True
-   - SUPERDESK_URL=http://localhost:5000/api
-   - SUPERDESK_CLIENT_URL=http://localhost:9000
-  volumes:
-   - ../superdesk-content-api:/opt/superdesk-content-api/
-   #- ./Procfile:/opt/superdesk/Procfile
-  ports:
-   - "5050:5050"
