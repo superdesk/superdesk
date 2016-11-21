@@ -30,6 +30,7 @@ def env(variable, fallback_value=None):
         else:
             return env_value
 
+
 ABS_PATH = str(Path(__file__).resolve().parent)
 
 init_data = Path(ABS_PATH) / 'data'
