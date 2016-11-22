@@ -48,10 +48,10 @@ superdesk:
    - elastic
    - logstash
    - postfix
+   - pubapi
   environment:
    - SUPERDESK_RELOAD=True
    - SUPERDESK_URL=http://localhost:5000/api
-   - PUBLICAPI_URL=http://localhost:5400/
    - SUPERDESK_WS_URL=ws://localhost:5050
    - SUPERDESK_CLIENT_URL=http://localhost:9000
   ports:
@@ -66,3 +66,23 @@ superdesk:
    - ../client-core:/opt/superdesk/client-core/
    - ./Procfile-dev:/opt/superdesk/Procfile
    - ./start-dev.sh:/opt/superdesk/start.sh
+
+pubapi:
+  extends:
+    file: common.yml
+    service: pubapi
+  links:
+   - mongodb
+   - redis
+   - elastic
+   - logstash
+   - postfix
+  environment:
+   - SUPERDESK_RELOAD=True
+   - SUPERDESK_URL=http://localhost:5000/api
+   - SUPERDESK_CLIENT_URL=http://localhost:9000
+  volumes:
+   - ../superdesk-content-api:/opt/superdesk-content-api/
+   #- ./Procfile:/opt/superdesk/Procfile
+  ports:
+   - "5050:5050"
