@@ -30,6 +30,7 @@ def env(variable, fallback_value=None):
         else:
             return env_value
 
+
 ABS_PATH = os.path.abspath(os.path.dirname(__file__))
 INIT_DATA_PATH = os.path.join(ABS_PATH, 'data')
 
