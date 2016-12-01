@@ -15,7 +15,7 @@ import superdesk
 from flask.ext.script import Manager
 from app import get_app
 
-app = get_app()
+app = get_app(init_elastic=True)
 manager = Manager(app)
 
 if __name__ == '__main__':

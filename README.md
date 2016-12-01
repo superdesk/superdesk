@@ -25,7 +25,7 @@ Find more information about the client configuration in the README file of the r
 
 1. Clone the repository
 2. Navigate to the folder where you've cloned this repository (if it's the main repo, go inside the `client` folder).
-3. Run `npm install && bower install` to install dependencies.
+3. Run `npm install` to install dependencies.
 4. Run `grunt server` to run the web server.
 5. Open browser and navigate to `localhost:9000`.
 
@@ -35,9 +35,9 @@ The `grunt server` attempts to resolve the API and websockets server to a local 
 
 #### Dependencies (for non-Docker installations)
 
-* Pyton & Pyvenv 3+
+* Python & Pyvenv 3+
 * MongoDB
-* ElasticSearch
+* ElasticSearch <= 1.7.x
 * Redis
 
 #### MacOS
@@ -86,7 +86,7 @@ For manual installation just follow the steps described in the [Dockerfile](./Do
 
 In general, contributing code to the Superdesk project – whether it is a new feature or a bug fix – is simple and follows this general path:
 
-1) Get a copy of the project source code 
+1) Get a copy of the project source code or [setup a dev environment with docker](DEVSETUP.md)
 <P>2) Work on the code changes</P>
 <P>3) Submit a Pull Request whenever you are ready</P>
 
