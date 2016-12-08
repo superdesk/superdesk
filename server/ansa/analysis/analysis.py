@@ -44,8 +44,6 @@ class AnalysisResource(Resource):
     privileges = {'POST': 'archive'}
 
 
-
-
 class AnalysisService(BaseService):
     """Service analysing text"""
 
