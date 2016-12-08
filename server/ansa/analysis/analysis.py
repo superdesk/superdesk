@@ -14,14 +14,7 @@ from superdesk.services import BaseService
 from flask import current_app as app
 import json
 import requests
-try:
-    import settings
-except ImportError:
-    # settings doesn't exist during tests
-    settings = None
-import logging
 
-logger = logging.getLogger(__name__)
 
 FORMAT_XML = "xml"
 FORMAT_JSON = "json"
@@ -47,6 +40,11 @@ class AnalysisResource(Resource):
         },
     }
 
+    resource_methods = ['POST']
+    privileges = {'POST': 'archive'}
+
+
+
 
 class AnalysisService(BaseService):
     """Service analysing text"""
@@ -54,6 +52,13 @@ class AnalysisService(BaseService):
     def __init__(self, datasource=None, backend=None):
         super(AnalysisService, self).__init__(datasource, backend)
         self.URL_EXTRACTION = None
+
+    def create(self, docs, **kwargs):
+        ids = []
+        for doc in docs:
+            doc['semantics'] = self.do_analyse(doc)
+            ids.append('')
+        return ids
 
     def do_analyse(self, doc):
         if self.URL_EXTRACTION is None:
@@ -68,7 +73,20 @@ class AnalysisService(BaseService):
         }
         r = requests.post(self.URL_EXTRACTION, extraction_data)
         extracted = json.loads(r.text)
-        return extracted
+        return self.parse(extracted)
 
     def on_fetched(self, doc):
         doc.update(self.do_analyse(doc))
+
+    def parse(self, extracted):
+        parsed = {}
+        for key, val in extracted.items():
+            if not isinstance(val, list):
+                parsed[key] = val
+                continue
+            items = []
+            for item in val:
+                if item.get('value'):
+                    items.append(item['value'])
+            parsed[key] = items
+        return parsed
