@@ -30,6 +30,10 @@ init_data = Path(ABS_PATH) / 'data'
 if init_data.exists():
     INIT_DATA_PATH = init_data
 
+INSTALLED_APPS = [
+    'ansa.analysis',
+]
+
 
 RENDITIONS = {
     'picture': {
@@ -54,3 +58,4 @@ if env('REDIS_PORT'):
 BROKER_URL = env('CELERY_BROKER_URL', REDIS_URL)
 
 SECRET_KEY = env('SECRET_KEY', '')
+ANSA_ANALYSIS_URL = "http://172.20.14.20:8080/extractionservice/"
