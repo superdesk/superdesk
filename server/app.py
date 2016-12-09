@@ -38,7 +38,7 @@ def get_app(config=None, init_elastic=False):
         if key.isupper():
             config.setdefault(key, getattr(settings, key))
 
-    app = superdesk_app(config, init_elastic=init_elastic)
+    app = superdesk_app(config)
     return app
 
 

@@ -6,10 +6,11 @@
  */
 module.exports = function(grunt) {
     return {
-        defaultRoute: '/workspace/personal',
+        defaultRoute: '/workspace/monitoring',
         requiredMediaMetadata: ['headline', 'description_text', 'alt_text'],
-        features: {
-            swimlane: {columnsLimit: 4}
+        workspace: {
+            ingest: 1,
+            content: 1
         }
     };
 };
