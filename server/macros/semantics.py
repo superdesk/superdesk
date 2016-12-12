@@ -14,7 +14,11 @@ def populate(item, **kwargs):
     analysis = get_resource_service('analysis')
     data = {
         'lang': 'ITA',
-        'text': '\n'.join([text(item.get('abstract')), text(item.get('body_html', ''))]),
+        'text': '\n'.join([
+            text(item.get('abstract', '')),
+            text(item.get('body_html', '')),
+            text(item.get('description_text', '')),
+        ]),
         'title': text(item.get('headline', '')),
     }
     item['semantics'] = analysis.do_analyse(data)

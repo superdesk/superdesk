@@ -11,6 +11,9 @@ module.exports = function(grunt) {
         workspace: {
             ingest: 1,
             content: 1
+        },
+        features: {
+            customAuthoringTopbar: true
         }
     };
 };
