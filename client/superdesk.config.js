@@ -7,7 +7,7 @@
 module.exports = function(grunt) {
     return {
         defaultRoute: '/workspace/monitoring',
-        requiredMediaMetadata: ['headline', 'description_text', 'alt_text'],
+        requiredMediaMetadata: ['description_text'],
         workspace: {
             ingest: 1,
             content: 1

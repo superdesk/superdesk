@@ -28,7 +28,7 @@
             },
             "anpa_category": {
                 "type": "list",
-                "required": true,
+                "required": false,
                 "minlength": 1
             },
             "pubstatus": {
@@ -38,7 +38,7 @@
             },
             "slugline": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false,
                 "maxlength": 24
@@ -51,22 +51,22 @@
             },
             "subject": {
                 "type": "list",
-                "required": true,
+                "required": false,
                 "minlength": 1
             },
             "urgency": {
                 "type": "integer",
-                "required": true,
+                "required": false,
                 "allowed": [1, 2, 3, 4, 5]
             },
             "priority": {
                 "type": "integer",
-                "required": true,
+                "required": false,
                 "allowed": [1, 2, 3, 4, 5, 6, 7, 8, 9]
             },
             "dateline": {
                 "type": "dict",
-                "required": true,
+                "required": false,
                 "schema": {
                     "located": {"type": "dict", "required": true},
                     "text": {"type": "string", "required": true}
@@ -98,12 +98,12 @@
             },
             "type": {
                 "type": "string",
-                "required": "true",
+                "required": true,
                 "allowed": ["text"]
             },
             "anpa_category": {
                 "type": "list",
-                "required": true,
+                "required": false,
                 "minlength": 1
             },
             "pubstatus": {
@@ -113,7 +113,7 @@
             },
             "slugline": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false,
                 "maxlength": 24
@@ -126,22 +126,22 @@
             },
             "subject": {
                 "type": "list",
-                "required": true,
+                "required": false,
                 "minlength": 1
             },
             "urgency": {
                 "type": "integer",
-                "required": true,
+                "required": false,
                 "allowed": [1, 2, 3, 4, 5]
             },
             "priority": {
                 "type": "integer",
-                "required": true,
+                "required": false,
                 "allowed": [1, 2, 3, 4, 5, 6, 7, 8, 9]
             },
             "dateline": {
                 "type": "dict",
-                "required": true,
+                "required": false,
                 "schema": {
                     "located": {"type": "dict", "required": true},
                     "text": {"type": "string", "required": true}
@@ -448,29 +448,29 @@
             },
             "type": {
                 "type": "string",
-                "required": "true",
+                "required": true,
                 "allowed": ["picture"]
             },
             "anpa_category": {
                 "type": "list",
-                "required": true,
+                "required": false,
                 "minlength": 1
             },
             "pubstatus": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "allowed": ["usable"]
             },
             "slugline": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false,
                 "maxlength": 24
             },
             "subject": {
                 "type": "list",
-                "required": true,
+                "required": false,
                 "minlength": 1
             },
             "urgency": {
@@ -499,7 +499,7 @@
             },
             "alt_text": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false
             },
@@ -534,12 +534,12 @@
             },
             "type": {
                 "type": "string",
-                "required": "true",
+                "required": true,
                 "allowed": ["picture"]
             },
             "anpa_category": {
                 "type": "list",
-                "required": true,
+                "required": false,
                 "minlength": 1
             },
             "pubstatus": {
@@ -549,14 +549,14 @@
             },
             "slugline": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false,
                 "maxlength": 24
             },
             "subject": {
                 "type": "list",
-                "required": true,
+                "required": false,
                 "minlength": 1
             },
             "urgency": {
@@ -585,7 +585,7 @@
             },
             "alt_text": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false
             },
