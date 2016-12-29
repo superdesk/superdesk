@@ -11,6 +11,17 @@ module.exports = function(grunt) {
         requiredMediaMetadata: ['headline', 'description_text', 'alt_text'],
         features: {
             swimlane: {columnsLimit: 4}
+        },
+        ingest: {
+            PROVIDER_DASHBOARD_DEFAULTS: {
+                show_log_messages: true,
+                show_ingest_count: true,
+                show_time: true,
+                log_messages: 'error',
+                show_status: true
+            },
+            DEFAULT_SCHEDULE: {minutes: 5, seconds: 0},
+            DEFAULT_IDLE_TIME: {hours: 0, minutes: 0}
         }
     };
 };
