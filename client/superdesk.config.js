@@ -10,6 +10,8 @@ module.exports = function(grunt) {
         requiredMediaMetadata: ['headline', 'description_text', 'alt_text'],
         features: {
             swimlane: {columnsLimit: 4}
-        }
+        },
+        i18n: 'ru',
+        noTakes: true
     };
 };
