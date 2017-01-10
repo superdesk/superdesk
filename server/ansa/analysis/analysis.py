@@ -64,7 +64,7 @@ class AnalysisService(BaseService):
             self.URL_EXTRACTION = URL_MAIN + "extract.do"
         extraction_data = {
             "abstract": doc.get('abstract', ''),
-            "lang": doc.get('lang', 'ENG'),
+            "lang": doc.get('lang', 'ITA'),
             "text": doc['text'],
             "title": doc.get('title', ''),
             "format": FORMAT_JSON,
@@ -77,7 +77,7 @@ class AnalysisService(BaseService):
         doc.update(self.do_analyse(doc))
 
     def parse(self, extracted):
-        parsed = {}
+        parsed = {'iptcCodes': []}
         for key, val in extracted.items():
             if not isinstance(val, list):
                 parsed[key] = val
@@ -86,5 +86,7 @@ class AnalysisService(BaseService):
             for item in val:
                 if item.get('value'):
                     items.append(item['value'])
+                if item.get('id'):
+                    parsed['iptcCodes'].append(item['id'])
             parsed[key] = items
         return parsed

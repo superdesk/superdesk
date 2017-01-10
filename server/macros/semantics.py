@@ -1,6 +1,6 @@
 
 from bs4 import BeautifulSoup
-from superdesk import get_resource_service, config
+from superdesk import get_resource_service
 
 
 def text(val):
@@ -13,7 +13,7 @@ def text(val):
 def populate(item, **kwargs):
     analysis = get_resource_service('analysis')
     data = {
-        'lang': 'ITA',
+        'lang': 'ITA' if item.get('language', '') == 'it' else 'ENG',
         'text': '\n'.join([
             text(item.get('abstract', '')),
             text(item.get('body_html', '')),
@@ -23,7 +23,6 @@ def populate(item, **kwargs):
     }
     item['semantics'] = analysis.do_analyse(data)
     return item
-    #get_resource_service('archive').patch(id=item[config.ID_FIELD], updates=updates)
 
 
 name = 'populate_semantics'
