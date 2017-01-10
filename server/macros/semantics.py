@@ -13,7 +13,7 @@ def text(val):
 def populate(item, **kwargs):
     analysis = get_resource_service('analysis')
     data = {
-        'lang': 'ITA' if item.get('language', '') == 'it' else 'ENG',
+        'lang': 'ENG' if item.get('language', '') == 'en' else 'ITA',
         'text': '\n'.join([
             text(item.get('abstract', '')),
             text(item.get('body_html', '')),
