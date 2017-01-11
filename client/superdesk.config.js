@@ -6,7 +6,7 @@ module.exports = function(grunt) {
         publisher: {
             protocol: 'https',
             tenant: 'default',
-            domain: 'master.s-lab.sourcefabric.org',
+            domain: process.env.PUBLISHER_API_URL || '',
             base: 'api/v1'
         }
     };
