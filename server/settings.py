@@ -68,3 +68,8 @@ ANSA_ANALYSIS_URL = "http://172.20.14.51:8080/extractionservice/"
 DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES = 'ANSA'
 ORGANIZATION_NAME = 'Agenzia Nazionale Stampa Associata'
 ORGANIZATION_NAME_ABBREVIATION = 'ANSA'
+
+LANGUAGES = [
+    {'language': 'it', 'label': 'Italiano', 'source': True, 'destination': False},
+    {'language': 'en', 'label': 'English', 'source': True, 'destination': False},
+]
