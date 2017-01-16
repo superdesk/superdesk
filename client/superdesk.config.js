@@ -6,6 +6,7 @@
  */
 module.exports = function(grunt) {
     return {
+        i18n: 'uk',
         defaultRoute: '/workspace/personal',
         requiredMediaMetadata: ['headline', 'description_text', 'alt_text'],
         features: {

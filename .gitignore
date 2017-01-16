@@ -23,7 +23,6 @@ src/
 dist/
 node_modules
 .settings
-po/
 report/
 screenshots/
 coverage/
