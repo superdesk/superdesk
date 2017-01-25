@@ -9,7 +9,8 @@ module.exports = function(grunt) {
         defaultRoute: '/workspace/personal',
         requiredMediaMetadata: ['headline', 'description_text', 'alt_text'],
         features: {
-            swimlane: {columnsLimit: 4}
+            swimlane: {columnsLimit: 4},
+            noTakes: true
         }
     };
 };
