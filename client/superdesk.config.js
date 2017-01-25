@@ -6,12 +6,12 @@
  */
 module.exports = function(grunt) {
     return {
+        language: 'ru',
         defaultRoute: '/workspace/personal',
         requiredMediaMetadata: ['headline', 'description_text', 'alt_text'],
         features: {
-            swimlane: {columnsLimit: 4}
-        },
-        i18n: 'ru',
-        noTakes: true
+            swimlane: {columnsLimit: 4},
+            noTakes: true
+        }
     };
 };
