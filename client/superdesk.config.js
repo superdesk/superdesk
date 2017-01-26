@@ -10,6 +10,9 @@ module.exports = function(grunt) {
         requiredMediaMetadata: ['headline', 'description_text', 'alt_text'],
         features: {
             swimlane: {columnsLimit: 4}
+        },
+        workspace: {
+            analytics: true
         }
     };
 };
