@@ -1,5 +1,4 @@
 gunicorn==19.6.0
 honcho==0.6.6
 newrelic>=2.66,<2.67
-superdesk-core==1.5rc1
-celery[redis]==3.1.25
+superdesk-core==1.6rc5
