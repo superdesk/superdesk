@@ -14,6 +14,10 @@ module.exports = function(grunt) {
         },
         features: {
             customAuthoringTopbar: true
-        }
+        },
+        shortTimeFormat: 'YYYY-MM-DD HH:mm',
+        shortDateFormat: 'YYYY-MM-DD HH:mm',
+        shortWeekFormat: 'YYYY-MM-DD HH:mm',
+        longDateFromat: 'YYYY-MM-DD HH:mm'
     };
 };
