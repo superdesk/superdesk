@@ -13,6 +13,12 @@ module.exports = function(grunt) {
         },
         workspace: {
             analytics: true
+        },
+        langOverride: {
+            'en': {
+                'ANPA Category': 'Category',
+                'ANPA CATEGORY': 'CATEGORY'
+            }
         }
     };
 };
