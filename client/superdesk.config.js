@@ -31,6 +31,13 @@ module.exports = function(grunt) {
             }
         },
 
+        langOverride: {
+            'en': {
+                'ANPA Category': 'Category',
+                'ANPA CATEGORY': 'CATEGORY'
+            }
+        },
+
         features: {
             swimlane: {columnsLimit: 4}
         },
