@@ -33,6 +33,7 @@ if init_data.exists():
 INSTALLED_APPS = [
     'apps.languages',
     'ansa.analysis',
+    'ansa.search',
 ]
 
 
