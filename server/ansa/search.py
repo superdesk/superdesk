@@ -98,10 +98,8 @@ class AnsaPictureProvider(superdesk.SearchProvider):
                         'width': 384,
                     },
                     'baseImage': {
-                        'href': VIEWIMG_HREF.format(md5),
+                        'href': ORIGINAL_HREF.format(md5, ORIG_USERNAME, ORIG_PASSWORD),
                         'mimetype': 'image/jpeg',
-                        'height': 256,
-                        'width': 384,
                     },
                     'original': {
                         'href': ORIGINAL_HREF.format(md5, ORIG_USERNAME, ORIG_PASSWORD),

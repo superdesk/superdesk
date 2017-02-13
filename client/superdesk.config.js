@@ -13,11 +13,36 @@ module.exports = function(grunt) {
             content: 1
         },
         features: {
-            customAuthoringTopbar: true
+            customAuthoringTopbar: true,
+            editFeaturedImage: true
         },
         shortTimeFormat: 'YYYY-MM-DD HH:mm',
         shortDateFormat: 'YYYY-MM-DD HH:mm',
         shortWeekFormat: 'YYYY-MM-DD HH:mm',
-        longDateFromat: 'YYYY-MM-DD HH:mm'
+        longDateFromat: 'YYYY-MM-DD HH:mm',
+
+        validatorMediaMetadata: {
+            headline: {
+                required: true
+            },
+            alt_text: {
+                required: false
+            },
+            description_text: {
+                required: true
+            },
+            copyrightholder: {
+                required: false
+            },
+            byline: {
+                required: false
+            },
+            usageterms: {
+                required: false
+            },
+            copyrightnotice: {
+                required: false
+            }
+        },
     };
 };
