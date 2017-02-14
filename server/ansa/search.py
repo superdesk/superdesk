@@ -1,8 +1,6 @@
 
-import json
 import math
 import arrow
-import logging
 import requests
 import superdesk
 
@@ -13,9 +11,9 @@ from superdesk.io.commands.update_ingest import update_renditions
 SEARCH_URL = 'http://172.20.14.88/ansafoto/portaleimmagini/api/ricerca.json'
 DETAIL_URL = 'http://172.20.14.88/ansafoto/portaleimmagini/api/detail.json'
 
-THUMB_HREF = 'https://ansafoto.ansa.it/portaleimmagini/bdmproxy/{}.jpg?format=thumb'
-VIEWIMG_HREF = 'https://ansafoto.ansa.it/portaleimmagini/bdmproxy/{}.jpg?format=med'
-ORIGINAL_HREF = 'http://172.20.14.88/ansafoto/portaleimmagini/api/binary/{}.jpg?username={}&password={}'
+THUMB_HREF = 'https://ansafoto.ansa.it/portaleimmagini/bdmproxy/{}.jpg?format=thumb&guid={}'
+VIEWIMG_HREF = 'https://ansafoto.ansa.it/portaleimmagini/bdmproxy/{}.jpg?format=med&guid={}'
+ORIGINAL_HREF = 'http://172.20.14.88/ansafoto/portaleimmagini/api/binary/{}.jpg?guid={}&username={}&password={}'
 
 SEARCH_USERNAME = 'user1'
 SEARCH_PASSWORD = 'pwd1'
@@ -24,8 +22,6 @@ ORIG_USERNAME = 'angelo'
 ORIG_PASSWORD = 'pwd1'
 
 TIMEOUT = (5, 25)
-
-logger = logging.getLogger('superdesk')
 
 
 def get_meta(doc, field):
@@ -58,7 +54,6 @@ class AnsaPictureProvider(superdesk.SearchProvider):
         if query_string.get('query'):
             params['searchtext'] = query_string.get('query').replace('(', '').replace(')', '')
 
-        logger.info('search %s %s', query, params)
         response = requests.get(SEARCH_URL, params=params, timeout=TIMEOUT)
         return self._parse_items(response)
 
@@ -71,12 +66,13 @@ class AnsaPictureProvider(superdesk.SearchProvider):
         documents = json_data.get('renderResult', {}).get('documents', [])
         for doc in documents:
             md5 = get_meta(doc, 'orientationMD5')
+            guid = get_meta(doc, 'idAnsa')
             pubdate = arrow.get(get_meta(doc, 'pubDate_N')).datetime
             items.append({
                 'type': 'picture',
                 'pubstatus': get_meta(doc, 'status').replace('stat:', ''),
-                '_id': get_meta(doc, 'idAnsa'),
-                'guid': get_meta(doc, 'idAnsa'),
+                '_id': guid,
+                'guid': guid,
                 'headline': get_meta(doc, 'title_B'),
                 'description_text': get_meta(doc, 'description_B'),
                 'byline': get_meta(doc, 'contentBy'),
@@ -86,23 +82,23 @@ class AnsaPictureProvider(superdesk.SearchProvider):
                 'source': get_meta(doc, 'creditline'),
                 'renditions': {
                     'thumbnail': {
-                        'href': VIEWIMG_HREF.format(md5),
+                        'href': VIEWIMG_HREF.format(md5, guid),
                         'mimetype': 'image/jpeg',
                         'height': 256,
                         'width': 384,
                     },
                     'viewImage': {
-                        'href': VIEWIMG_HREF.format(md5),
+                        'href': VIEWIMG_HREF.format(md5, guid),
                         'mimetype': 'image/jpeg',
                         'height': 256,
                         'width': 384,
                     },
                     'baseImage': {
-                        'href': ORIGINAL_HREF.format(md5, ORIG_USERNAME, ORIG_PASSWORD),
+                        'href': ORIGINAL_HREF.format(md5, guid, ORIG_USERNAME, ORIG_PASSWORD),
                         'mimetype': 'image/jpeg',
                     },
                     'original': {
-                        'href': ORIGINAL_HREF.format(md5, ORIG_USERNAME, ORIG_PASSWORD),
+                        'href': ORIGINAL_HREF.format(md5, guid, ORIG_USERNAME, ORIG_PASSWORD),
                         'mimetype': 'image/jpeg',
                     },
                 },
@@ -140,4 +136,3 @@ class AnsaPictureProvider(superdesk.SearchProvider):
 
 def init_app(app):
     superdesk.register_search_provider('ansa', provider_class=AnsaPictureProvider)
-
