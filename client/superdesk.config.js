@@ -8,10 +8,18 @@ module.exports = function(grunt) {
     return {
         language: 'ru',
         defaultRoute: '/workspace/personal',
-        requiredMediaMetadata: ['headline', 'description_text', 'alt_text'],
         features: {
             swimlane: {columnsLimit: 4},
             noTakes: true
+        },
+        validatorMediaMetadata: {
+            headline: {required: true},
+            alt_text: {required: true},
+            description_text: {required: true},
+            copyrightholder: {required: false},
+            byline: {required: false},
+            usageterms: {required: false},
+            copyrightnotice: {required: false}
         }
     };
 };
