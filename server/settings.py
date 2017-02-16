@@ -48,6 +48,8 @@ WS_PORT = env('WSPORT', '5100')
 
 LOG_CONFIG_FILE = env('LOG_CONFIG_FILE', 'logging_config.yml')
 
+MACROS_MODULE = env('MACROS_MODULE', 'superdesk.macros')
+
 REDIS_URL = env('REDIS_URL', 'redis://localhost:6379')
 if env('REDIS_PORT'):
     REDIS_URL = env('REDIS_PORT').replace('tcp:', 'redis:')
