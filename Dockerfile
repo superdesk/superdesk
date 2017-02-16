@@ -9,6 +9,7 @@ python3 python3-dev python3-pip python3-lxml \
 build-essential libffi-dev git \
 libtiff5-dev libjpeg8-dev zlib1g-dev \
 libfreetype6-dev liblcms2-dev libwebp-dev \
+libxml2-dev libxslt1-dev \
 curl libfontconfig nodejs npm nginx \
 && echo "\ndaemon off;" >> /etc/nginx/nginx.conf \
 && rm /etc/nginx/sites-enabled/default \
