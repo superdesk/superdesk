@@ -1,15 +1,15 @@
 mongodb:
-  image: mongo:2.6
+  image: mongo:3.2
   volumes:
    - ../data/mongodb:/data/db
 
 redis:
-  image: redis:2.8
+  image: redis:3.0
   volumes:
    - ../data/redis:/data
 
 logstash:
-  image: logstash:1.5
+  image: logstash:2.3
   command: logstash -f /usr/share/logstash/logstash.conf
   volumes:
   - ./logstash:/usr/share/logstash
@@ -19,7 +19,7 @@ kibana:
   restart: always
 
 elastic:
-  image: elasticsearch:1.5
+  image: elasticsearch:2.3
   volumes:
    - ../data/elastic:/usr/share/elasticsearch/data
 
