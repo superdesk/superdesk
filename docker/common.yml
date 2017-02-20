@@ -19,7 +19,7 @@ kibana:
   restart: always
 
 elastic:
-  image: elasticsearch:1.5
+  image: elasticsearch:2.4
   volumes:
    - ../data/elastic:/usr/share/elasticsearch/data
 
