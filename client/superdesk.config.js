@@ -21,6 +21,13 @@ module.exports = function(grunt) {
         shortWeekFormat: 'YYYY-MM-DD HH:mm',
         longDateFromat: 'YYYY-MM-DD HH:mm',
 
+        publisher: {
+            protocol: 'http',
+            tenant: 'default',
+            domain: '172.20.14.91',
+            base: 'api/v1'
+        },
+
         validatorMediaMetadata: {
             headline: {
                 required: true
