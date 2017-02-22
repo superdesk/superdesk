@@ -15,11 +15,11 @@ THUMB_HREF = 'https://ansafoto.ansa.it/portaleimmagini/bdmproxy/{}.jpg?format=th
 VIEWIMG_HREF = 'https://ansafoto.ansa.it/portaleimmagini/bdmproxy/{}.jpg?format=med&guid={}'
 ORIGINAL_HREF = 'http://172.20.14.88/ansafoto/portaleimmagini/api/binary/{}.jpg?guid={}&username={}&password={}'
 
-SEARCH_USERNAME = 'user1'
-SEARCH_PASSWORD = 'pwd1'
+SEARCH_USERNAME = 'angelo2'
+SEARCH_PASSWORD = 'blabla'
 
-ORIG_USERNAME = 'angelo'
-ORIG_PASSWORD = 'pwd1'
+ORIG_USERNAME = SEARCH_USERNAME
+ORIG_PASSWORD = SEARCH_PASSWORD
 
 TIMEOUT = (5, 25)
 
@@ -52,7 +52,7 @@ class AnsaPictureProvider(superdesk.SearchProvider):
 
         query_string = query.get('query', {}).get('filtered', {}).get('query', {}).get('query_string', {})
         if query_string.get('query'):
-            params['searchtext'] = query_string.get('query').replace('(', '').replace(')', '')
+            params['searchtext'] = query_string.get('query')
 
         response = requests.get(SEARCH_URL, params=params, timeout=TIMEOUT)
         return self._parse_items(response)
