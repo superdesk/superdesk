@@ -9,11 +9,13 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 
+import json
+import requests
+import requests.exceptions
+
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 from flask import current_app as app
-import json
-import requests
 
 
 FORMAT_XML = "xml"
@@ -69,9 +71,12 @@ class AnalysisService(BaseService):
             "title": doc.get('title', ''),
             "format": FORMAT_JSON,
         }
-        r = requests.post(self.URL_EXTRACTION, extraction_data)
-        extracted = json.loads(r.text)
-        return self.parse(extracted)
+        try:
+            r = requests.post(self.URL_EXTRACTION, extraction_data, timeout=(5, 120))
+            extracted = json.loads(r.text)
+            return self.parse(extracted)
+        except requests.exceptions.ReadTimeout:
+            return {}
 
     def on_fetched(self, doc):
         doc.update(self.do_analyse(doc))
