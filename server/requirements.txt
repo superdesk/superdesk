@@ -2,4 +2,4 @@ gunicorn==19.6.0
 honcho==0.6.6
 newrelic>=2.66,<2.67
 
-git+git://github.com/petrjasek/superdesk-core.git@99808d3#egg=Superdesk-Core
+git+git://github.com/petrjasek/superdesk-core.git@927becf#egg=Superdesk-Core
