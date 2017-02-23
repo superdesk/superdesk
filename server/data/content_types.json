@@ -6,19 +6,19 @@
         "enabled": true,
         "schema": {
             "urgency": {"nullable": true},
+            "priority": {"nullable": true},
             "anpa_category": {},
             "subject": {},
             "slugline": {"required": true},
             "ednote": {},
+            "place": {},
 
             "headline": {"required": true},
             "body_html": {"required": true},
             "abstract": {},
             "byline": {},
-            "feature_image": {"type": "picture"},
+            "feature_media": {"type": "picture"},
 
-            "assets": {},
-            "featured": {},
             "product": {}
         },
         "editor": {
@@ -26,12 +26,15 @@
             "anpa_category": {"order": 2, "sdWidth": "half"},
             "subject": {"order": 2, "sdWidth": "half"},
             "product": {"order": 3, "sdWidth": "half"},
-            "urgency": {"order": 4, "sdWidth": "half", "service": {"paservice:news": 1, "paservice:sport": 1}},
-            "assets": {"order": 11, "sdWidth": "half"},
-            "featured": {"order": 12, "sdWidth": "half"},
+            "urgency": {"order": 4, "sdWidth": "quarter"},
+            "priority": {"order": 5, "sdWidth": "quarter"},
+            "place": {"order": 6, "sdWidth": "half"},
             "ednote": {"order": 14, "sdWidth": "full"},
-            "body_html": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]},
-            "abstract": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]}
+
+            "headline": {},
+            "feature_media": {},
+            "abstract": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]},
+            "body_html": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]}
         }
     }
 ]
