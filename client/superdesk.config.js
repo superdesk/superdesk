@@ -28,6 +28,13 @@ module.exports = function(grunt) {
             base: 'api/v1'
         },
 
+        langOverride: {
+            'en': {
+                'ANPA Category': 'Category',
+                'ANPA CATEGORY': 'CATEGORY'
+            }
+        }, 
+
         validatorMediaMetadata: {
             headline: {
                 required: true
