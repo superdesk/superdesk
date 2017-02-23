@@ -72,7 +72,7 @@ class AnalysisService(BaseService):
             "format": FORMAT_JSON,
         }
         try:
-            r = requests.post(self.URL_EXTRACTION, extraction_data, timeout=(5, 120))
+            r = requests.post(self.URL_EXTRACTION, extraction_data, timeout=(5, 30))
             extracted = json.loads(r.text)
             return self.parse(extracted)
         except requests.exceptions.ReadTimeout:

@@ -9,7 +9,7 @@
             "priority": {"nullable": true},
             "anpa_category": {},
             "subject": {},
-            "slugline": {"required": true},
+            "slugline": {},
             "ednote": {},
             "place": {},
             "genre": {},
@@ -19,6 +19,7 @@
             "abstract": {},
             "byline": {},
             "feature_media": {"type": "picture"},
+            "dateline": {},
 
             "product": {}
         },
@@ -35,6 +36,7 @@
 
             "headline": {},
             "feature_media": {},
+            "dateline": {},
             "abstract": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]},
             "body_html": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]}
         }
