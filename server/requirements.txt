@@ -3,4 +3,4 @@ honcho==0.6.6
 newrelic>=2.66,<2.67
 
 git+git://github.com/superdesk/superdesk-core.git@844d955#egg=Superdesk-Core
-git+git://github.com/mugurrus/superdesk-analytics.git@cc17f1d#egg=superdesk-analytics
+git+git://github.com/superdesk/superdesk-analytics.git@f1a92e1#egg=superdesk-analytics
