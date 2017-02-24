@@ -6,20 +6,20 @@
         "schema": {
             "headline": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 42
+                "maxlength": 250
             },
             "abstract": {
                 "type": "string",
                 "required": false,
-                "maxlength": 160
+                "maxlength": 500
             },
             "sms_message": {
                 "type": "string",
                 "required": false,
-                "maxlength": 160
+                "maxlength": 500
             },
             "type": {
                 "type": "string",
@@ -33,7 +33,7 @@
             },
             "pubstatus": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "allowed": ["usable"]
             },
             "slugline": {
@@ -41,11 +41,11 @@
                 "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 24
+                "maxlength": 80
             },
             "body_html": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false
             },
@@ -68,8 +68,8 @@
                 "type": "dict",
                 "required": false,
                 "schema": {
-                    "located": {"type": "dict", "required": true},
-                    "text": {"type": "string", "required": true}
+                    "located": {"type": "dict", "required": false},
+                    "text": {"type": "string", "required": false}
                 }
             }
         }
@@ -81,24 +81,24 @@
         "schema": {
             "headline": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 42
+                "maxlength": 250
             },
             "abstract": {
                 "type": "string",
                 "required": false,
-                "maxlength": 160
+                "maxlength": 500
             },
             "sms_message": {
                 "type": "string",
                 "required": false,
-                "maxlength": 160
+                "maxlength": 500
             },
             "type": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "allowed": ["text"]
             },
             "anpa_category": {
@@ -108,7 +108,7 @@
             },
             "pubstatus": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "allowed": ["usable"]
             },
             "slugline": {
@@ -116,11 +116,11 @@
                 "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 24
+                "maxlength": 80
             },
             "body_html": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false
             },
@@ -143,8 +143,8 @@
                 "type": "dict",
                 "required": false,
                 "schema": {
-                    "located": {"type": "dict", "required": true},
-                    "text": {"type": "string", "required": true}
+                    "located": {"type": "dict", "required": false},
+                    "text": {"type": "string", "required": false}
                 }
             }
         }
@@ -156,15 +156,15 @@
         "schema": {
             "headline": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 42
+                "maxlength": 250
             },
             "abstract": {
                 "type": "string",
                 "required": false,
-                "maxlength": 160
+                "maxlength": 500
             },
             "type": {
                 "type": "string",
@@ -173,48 +173,48 @@
             },
             "anpa_category": {
                 "type": "list",
-                "required": true,
+                "required": false,
                 "minlength": 1
             },
             "pubstatus": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "allowed": ["canceled"]
             },
             "slugline": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 24
+                "maxlength": 80
             },
             "body_html": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false
             },
             "subject": {
                 "type": "list",
-                "required": true,
+                "required": false,
                 "minlength": 1
             },
             "urgency": {
                 "type": "integer",
-                "required": true,
+                "required": false,
                 "allowed": [1, 2, 3, 4, 5]
             },
             "priority": {
                 "type": "integer",
-                "required": true,
+                "required": false,
                 "allowed": [1, 2, 3, 4, 5, 6, 7, 8, 9]
             },
             "dateline": {
                 "type": "dict",
-                "required": true,
+                "required": false,
                 "schema": {
-                    "located": {"type": "dict", "required": true},
-                    "text": {"type": "string", "required": true}
+                    "located": {"type": "dict", "required": false},
+                    "text": {"type": "string", "required": false}
                 }
             }
         }
@@ -226,15 +226,15 @@
         "schema": {
             "headline": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 42
+                "maxlength": 250
             },
             "abstract": {
                 "type": "string",
                 "required": false,
-                "maxlength": 160
+                "maxlength": 500
             },
             "type": {
                 "type": "string",
@@ -243,48 +243,48 @@
             },
             "anpa_category": {
                 "type": "list",
-                "required": true,
+                "required": false,
                 "minlength": 1
             },
             "pubstatus": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "allowed": ["usable"]
             },
             "slugline": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 24
+                "maxlength": 80
             },
             "body_html": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false
             },
             "subject": {
                 "type": "list",
-                "required": true,
+                "required": false,
                 "minlength": 1
             },
             "urgency": {
                 "type": "integer",
-                "required": true,
+                "required": false,
                 "allowed": [1, 2, 3, 4, 5]
             },
             "priority": {
                 "type": "integer",
-                "required": true,
+                "required": false,
                 "allowed": [1, 2, 3, 4, 5, 6, 7, 8, 9]
             },
             "dateline": {
                 "type": "dict",
-                "required": true,
+                "required": false,
                 "schema": {
-                    "located": {"type": "dict", "required": true},
-                    "text": {"type": "string", "required": true}
+                    "located": {"type": "dict", "required": false},
+                    "text": {"type": "string", "required": false}
                 }
             }
         }
@@ -296,15 +296,15 @@
         "schema": {
             "headline": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 42
+                "maxlength": 250
             },
             "abstract": {
                 "type": "string",
                 "required": false,
-                "maxlength": 160
+                "maxlength": 500
             },
             "type": {
                 "type": "string",
@@ -313,48 +313,48 @@
             },
             "anpa_category": {
                 "type": "list",
-                "required": true,
+                "required": false,
                 "minlength": 1
             },
             "pubstatus": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "allowed": ["usable"]
             },
             "slugline": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 24
+                "maxlength": 80
             },
             "body_html": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false
             },
             "subject": {
                 "type": "list",
-                "required": true,
+                "required": false,
                 "minlength": 1
             },
             "urgency": {
                 "type": "integer",
-                "required": true,
+                "required": false,
                 "allowed": [1, 2, 3, 4, 5]
             },
             "priority": {
                 "type": "integer",
-                "required": true,
+                "required": false,
                 "allowed": [1, 2, 3, 4, 5, 6, 7, 8, 9]
             },
             "dateline": {
                 "type": "dict",
-                "required": true,
+                "required": false,
                 "schema": {
-                    "located": {"type": "dict", "required": true},
-                    "text": {"type": "string", "required": true}
+                    "located": {"type": "dict", "required": false},
+                    "text": {"type": "string", "required": false}
                 }
             }
         }
@@ -366,15 +366,15 @@
         "schema": {
             "headline": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 42
+                "maxlength": 250
             },
             "abstract": {
                 "type": "string",
                 "required": false,
-                "maxlength": 160
+                "maxlength": 500
             },
             "type": {
                 "type": "string",
@@ -383,48 +383,48 @@
             },
             "anpa_category": {
                 "type": "list",
-                "required": true,
+                "required": false,
                 "minlength": 1
             },
             "pubstatus": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "allowed": ["canceled"]
             },
             "slugline": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 24
+                "maxlength": 80
             },
             "body_html": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false
             },
             "subject": {
                 "type": "list",
-                "required": true,
+                "required": false,
                 "minlength": 1
             },
             "urgency": {
                 "type": "integer",
-                "required": true,
+                "required": false,
                 "allowed": [1, 2, 3, 4, 5]
             },
             "priority": {
                 "type": "integer",
-                "required": true,
+                "required": false,
                 "allowed": [1, 2, 3, 4, 5, 6, 7, 8, 9]
             },
             "dateline": {
                 "type": "dict",
-                "required": true,
+                "required": false,
                 "schema": {
-                    "located": {"type": "dict", "required": true},
-                    "text": {"type": "string", "required": true}
+                    "located": {"type": "dict", "required": false},
+                    "text": {"type": "string", "required": false}
                 }
             }
         }
@@ -436,19 +436,19 @@
         "schema": {
             "headline": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 42
+                "maxlength": 250
             },
             "abstract": {
                 "type": "string",
                 "required": false,
-                "maxlength": 160
+                "maxlength": 500
             },
             "type": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "allowed": ["picture"]
             },
             "anpa_category": {
@@ -466,7 +466,7 @@
                 "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 24
+                "maxlength": 80
             },
             "subject": {
                 "type": "list",
@@ -487,13 +487,13 @@
                 "type": "dict",
                 "required": false,
                 "schema": {
-                    "located": {"type": "dict", "required": true},
-                    "text": {"type": "string", "required": true}
+                    "located": {"type": "dict", "required": false},
+                    "text": {"type": "string", "required": false}
                 }
             },
             "description_text": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false
             },
@@ -505,13 +505,13 @@
             },
             "mimetype": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false
             },
             "renditions": {
                 "type": "dict",
-                "required": true
+                "required": false
             }
         }
     },
@@ -522,19 +522,19 @@
         "schema": {
             "headline": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 42
+                "maxlength": 250
             },
             "abstract": {
                 "type": "string",
                 "required": false,
-                "maxlength": 160
+                "maxlength": 500
             },
             "type": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "allowed": ["picture"]
             },
             "anpa_category": {
@@ -544,7 +544,7 @@
             },
             "pubstatus": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "allowed": ["usable"]
             },
             "slugline": {
@@ -552,7 +552,7 @@
                 "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 24
+                "maxlength": 80
             },
             "subject": {
                 "type": "list",
@@ -573,13 +573,13 @@
                 "type": "dict",
                 "required": false,
                 "schema": {
-                    "located": {"type": "dict", "required": true},
-                    "text": {"type": "string", "required": true}
+                    "located": {"type": "dict", "required": false},
+                    "text": {"type": "string", "required": false}
                 }
             },
             "description_text": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false
             },
@@ -591,7 +591,7 @@
             },
             "mimetype": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false
             },
@@ -611,12 +611,12 @@
                 "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 42
+                "maxlength": 250
             },
             "abstract": {
                 "type": "string",
                 "required": false,
-                "maxlength": 160
+                "maxlength": 500
             },
             "type": {
                 "type": "string",
@@ -625,24 +625,24 @@
             },
             "anpa_category": {
                 "type": "list",
-                "required": true,
+                "required": false,
                 "minlength": 1
             },
             "pubstatus": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "allowed": ["canceled"]
             },
             "slugline": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 24
+                "maxlength": 80
             },
             "subject": {
                 "type": "list",
-                "required": true,
+                "required": false,
                 "minlength": 1
             },
             "urgency": {
@@ -657,10 +657,10 @@
             },
             "dateline": {
                 "type": "dict",
-                "required": true,
+                "required": false,
                 "schema": {
-                    "located": {"type": "dict", "required": true},
-                    "text": {"type": "string", "required": true}
+                    "located": {"type": "dict", "required": false},
+                    "text": {"type": "string", "required": false}
                 }
             },
             "description_text": {
@@ -671,7 +671,7 @@
             },
             "mimetype": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false
             },
@@ -691,12 +691,12 @@
                 "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 42
+                "maxlength": 250
             },
             "abstract": {
                 "type": "string",
                 "required": false,
-                "maxlength": 160
+                "maxlength": 500
             },
             "type": {
                 "type": "string",
@@ -705,24 +705,24 @@
             },
             "anpa_category": {
                 "type": "list",
-                "required": true,
+                "required": false,
                 "minlength": 1
             },
             "pubstatus": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "allowed": ["usable"]
             },
             "slugline": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 24
+                "maxlength": 80
             },
             "subject": {
                 "type": "list",
-                "required": true,
+                "required": false,
                 "minlength": 1
             },
             "urgency": {
@@ -739,19 +739,19 @@
                 "type": "dict",
                 "required": false,
                 "schema": {
-                    "located": {"type": "dict", "required": true},
-                    "text": {"type": "string", "required": true}
+                    "located": {"type": "dict", "required": false},
+                    "text": {"type": "string", "required": false}
                 }
             },
             "description_text": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false
             },
             "mimetype": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false
             }
@@ -767,12 +767,12 @@
                 "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 42
+                "maxlength": 250
             },
             "abstract": {
                 "type": "string",
                 "required": false,
-                "maxlength": 160
+                "maxlength": 500
             },
             "type": {
                 "type": "string",
@@ -781,24 +781,24 @@
             },
             "anpa_category": {
                 "type": "list",
-                "required": true,
+                "required": false,
                 "minlength": 1
             },
             "pubstatus": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "allowed": ["usable"]
             },
             "slugline": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 24
+                "maxlength": 80
             },
             "subject": {
                 "type": "list",
-                "required": true,
+                "required": false,
                 "minlength": 1
             },
             "urgency": {
@@ -815,19 +815,19 @@
                 "type": "dict",
                 "required": false,
                 "schema": {
-                    "located": {"type": "dict", "required": true},
-                    "text": {"type": "string", "required": true}
+                    "located": {"type": "dict", "required": false},
+                    "text": {"type": "string", "required": false}
                 }
             },
             "description_text": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false
             },
             "mimetype": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false
             }
@@ -843,12 +843,12 @@
                 "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 42
+                "maxlength": 250
             },
             "abstract": {
                 "type": "string",
                 "required": false,
-                "maxlength": 160
+                "maxlength": 500
             },
             "type": {
                 "type": "string",
@@ -857,24 +857,24 @@
             },
             "anpa_category": {
                 "type": "list",
-                "required": true,
+                "required": false,
                 "minlength": 1
             },
             "pubstatus": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "allowed": ["canceled"]
             },
             "slugline": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 24
+                "maxlength": 80
             },
             "subject": {
                 "type": "list",
-                "required": true,
+                "required": false,
                 "minlength": 1
             },
             "urgency": {
@@ -891,19 +891,19 @@
                 "type": "dict",
                 "required": false,
                 "schema": {
-                    "located": {"type": "dict", "required": true},
-                    "text": {"type": "string", "required": true}
+                    "located": {"type": "dict", "required": false},
+                    "text": {"type": "string", "required": false}
                 }
             },
             "description_text": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false
             },
             "mimetype": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false
             }
@@ -919,12 +919,12 @@
                 "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 42
+                "maxlength": 250
             },
             "abstract": {
                 "type": "string",
                 "required": false,
-                "maxlength": 160
+                "maxlength": 500
             },
             "type": {
                 "type": "string",
@@ -933,24 +933,24 @@
             },
             "anpa_category": {
                 "type": "list",
-                "required": true,
+                "required": false,
                 "minlength": 1
             },
             "pubstatus": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "allowed": ["usable"]
             },
             "slugline": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 24
+                "maxlength": 80
             },
             "subject": {
                 "type": "list",
-                "required": true,
+                "required": false,
                 "minlength": 1
             },
             "urgency": {
@@ -967,19 +967,19 @@
                 "type": "dict",
                 "required": false,
                 "schema": {
-                    "located": {"type": "dict", "required": true},
-                    "text": {"type": "string", "required": true}
+                    "located": {"type": "dict", "required": false},
+                    "text": {"type": "string", "required": false}
                 }
             },
             "description_text": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false
             },
             "mimetype": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false
             }
@@ -995,12 +995,12 @@
                 "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 42
+                "maxlength": 250
             },
             "abstract": {
                 "type": "string",
                 "required": false,
-                "maxlength": 160
+                "maxlength": 500
             },
             "type": {
                 "type": "string",
@@ -1009,24 +1009,24 @@
             },
             "anpa_category": {
                 "type": "list",
-                "required": true,
+                "required": false,
                 "minlength": 1
             },
             "pubstatus": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "allowed": ["usable"]
             },
             "slugline": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 24
+                "maxlength": 80
             },
             "subject": {
                 "type": "list",
-                "required": true,
+                "required": false,
                 "minlength": 1
             },
             "urgency": {
@@ -1043,19 +1043,19 @@
                 "type": "dict",
                 "required": false,
                 "schema": {
-                    "located": {"type": "dict", "required": true},
-                    "text": {"type": "string", "required": true}
+                    "located": {"type": "dict", "required": false},
+                    "text": {"type": "string", "required": false}
                 }
             },
             "description_text": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false
             },
             "mimetype": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false
             }
@@ -1071,12 +1071,12 @@
                 "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 42
+                "maxlength": 250
             },
             "abstract": {
                 "type": "string",
                 "required": false,
-                "maxlength": 160
+                "maxlength": 500
             },
             "type": {
                 "type": "string",
@@ -1085,24 +1085,24 @@
             },
             "anpa_category": {
                 "type": "list",
-                "required": true,
+                "required": false,
                 "minlength": 1
             },
             "pubstatus": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "allowed": ["canceled"]
             },
             "slugline": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 24
+                "maxlength": 80
             },
             "subject": {
                 "type": "list",
-                "required": true,
+                "required": false,
                 "minlength": 1
             },
             "urgency": {
@@ -1119,19 +1119,19 @@
                 "type": "dict",
                 "required": false,
                 "schema": {
-                    "located": {"type": "dict", "required": true},
-                    "text": {"type": "string", "required": true}
+                    "located": {"type": "dict", "required": false},
+                    "text": {"type": "string", "required": false}
                 }
             },
             "description_text": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false
             },
             "mimetype": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false
             }
@@ -1147,7 +1147,7 @@
                 "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 42
+                "maxlength": 250
             },
             "type": {
                 "type": "string",
@@ -1156,24 +1156,24 @@
             },
             "anpa_category": {
                 "type": "list",
-                "required": true,
+                "required": false,
                 "minlength": 1
             },
             "pubstatus": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "allowed": ["usable"]
             },
             "slugline": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 24
+                "maxlength": 80
             },
             "subject": {
                 "type": "list",
-                "required": true,
+                "required": false,
                 "minlength": 1
             },
             "urgency": {
@@ -1202,7 +1202,7 @@
                 "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 42
+                "maxlength": 250
             },
             "type": {
                 "type": "string",
@@ -1211,24 +1211,24 @@
             },
             "anpa_category": {
                 "type": "list",
-                "required": true,
+                "required": false,
                 "minlength": 1
             },
             "pubstatus": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "allowed": ["usable"]
             },
             "slugline": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 24
+                "maxlength": 80
             },
             "subject": {
                 "type": "list",
-                "required": true,
+                "required": false,
                 "minlength": 1
             },
             "urgency": {
@@ -1257,7 +1257,7 @@
                 "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 42
+                "maxlength": 250
             },
             "type": {
                 "type": "string",
@@ -1266,24 +1266,24 @@
             },
             "anpa_category": {
                 "type": "list",
-                "required": true,
+                "required": false,
                 "minlength": 1
             },
             "pubstatus": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "allowed": ["canceled"]
             },
             "slugline": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 24
+                "maxlength": 80
             },
             "subject": {
                 "type": "list",
-                "required": true,
+                "required": false,
                 "minlength": 1
             },
             "urgency": {
@@ -1314,17 +1314,17 @@
             },
             "anpa_category": {
                 "type": "list",
-                "required": true,
+                "required": false,
                 "minlength": 1
             },
             "pubstatus": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "allowed": ["usable"]
             },
             "subject": {
                 "type": "list",
-                "required": true,
+                "required": false,
                 "minlength": 1
             }
         }
@@ -1341,17 +1341,17 @@
             },
             "anpa_category": {
                 "type": "list",
-                "required": true,
+                "required": false,
                 "minlength": 1
             },
             "pubstatus": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "allowed": ["usable"]
             },
             "subject": {
                 "type": "list",
-                "required": true,
+                "required": false,
                 "minlength": 1
             }
         }
@@ -1368,17 +1368,17 @@
             },
             "anpa_category": {
                 "type": "list",
-                "required": true,
+                "required": false,
                 "minlength": 1
             },
             "pubstatus": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "allowed": ["canceled"]
             },
             "subject": {
                 "type": "list",
-                "required": true,
+                "required": false,
                 "minlength": 1
             }
         }
@@ -1390,41 +1390,41 @@
         "schema": {
             "headline": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 42
+                "maxlength": 250
             },
             "abstract": {
                 "type": "string",
                 "required": false,
-                "maxlength": 160
+                "maxlength": 500
             },
             "type": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "allowed": ["text"]
             },
             "anpa_category": {
                 "type": "list",
-                "required": true,
+                "required": false,
                 "minlength": 1
             },
             "pubstatus": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "allowed": ["usable"]
             },
             "slugline": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 24
+                "maxlength": 80
             },
             "body_html": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false
             },
@@ -1435,12 +1435,12 @@
             },
             "urgency": {
                 "type": "integer",
-                "required": true,
+                "required": false,
                 "allowed": [1, 2, 3, 4, 5]
             },
             "priority": {
                 "type": "integer",
-                "required": true,
+                "required": false,
                 "allowed": [1, 2, 3, 4, 5, 6, 7, 8, 9]
             }
         }
@@ -1452,41 +1452,41 @@
         "schema": {
             "headline": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 42
+                "maxlength": 250
             },
             "abstract": {
                 "type": "string",
                 "required": false,
-                "maxlength": 160
+                "maxlength": 500
             },
             "type": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "allowed": ["preformatted"]
             },
             "anpa_category": {
                 "type": "list",
-                "required": true,
+                "required": false,
                 "minlength": 1
             },
             "pubstatus": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "allowed": ["usable"]
             },
             "slugline": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false,
-                "maxlength": 24
+                "maxlength": 80
             },
             "body_html": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "nullable": false,
                 "empty": false
             },
@@ -1497,12 +1497,12 @@
             },
             "urgency": {
                 "type": "integer",
-                "required": true,
+                "required": false,
                 "allowed": [1, 2, 3, 4, 5]
             },
             "priority": {
                 "type": "integer",
-                "required": true,
+                "required": false,
                 "allowed": [1, 2, 3, 4, 5, 6, 7, 8, 9]
             }
         }
@@ -1515,21 +1515,21 @@
         "schema": {
             "type": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "allowed": ["picture"]
             },
             "pubstatus": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "allowed": ["usable"]
             },
             "renditions": {
                 "type": "dict",
-                "required": true
+                "required": false
             },
             "description_text": {
                 "type": "string",
-                "required": true
+                "required": false
             }
         }
     },
@@ -1541,21 +1541,21 @@
         "schema": {
             "type": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "allowed": ["picture"]
             },
             "pubstatus": {
                 "type": "string",
-                "required": true,
+                "required": false,
                 "allowed": ["usable"]
             },
             "renditions": {
                 "type": "dict",
-                "required": true
+                "required": false
             },
             "description_text": {
                 "type": "string",
-                "required": true
+                "required": false
             }
         }
     }
