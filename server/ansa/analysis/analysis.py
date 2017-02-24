@@ -104,5 +104,5 @@ class AnalysisService(BaseService):
                     parsed['place'].append({'name': item.get('value')})
             parsed['semantics'][key] = items
         if parsed['semantics'].get('mainLemmas'):
-            parsed['slugline'] = ' '.join(parsed['semantics']['mainLemmas'])[:80]
+            parsed['slugline'] = ' '.join(parsed['semantics']['mainLemmas'][:4])[:50]
         return parsed
