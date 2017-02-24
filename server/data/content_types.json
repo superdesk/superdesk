@@ -7,12 +7,13 @@
         "schema": {
             "urgency": {"nullable": true},
             "priority": {"nullable": true},
-            "anpa_category": {},
+            "anpa_category": {"required": true},
             "subject": {},
-            "slugline": {},
+            "slugline": {"required": true, "maxlength": 80},
             "ednote": {},
             "place": {},
             "genre": {},
+            "sms": {},
 
             "headline": {"required": true},
             "body_html": {"required": true},
@@ -37,6 +38,8 @@
             "headline": {},
             "feature_media": {},
             "dateline": {},
+            "byline": {},
+            "sms": {},
             "abstract": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]},
             "body_html": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]}
         }
