@@ -7,9 +7,13 @@ class ANSAParser(NewsMLTwoFeedParser):
 
     cat_map = {
         'SPR': 'Sport',
+        'SPO': 'Sport',
         'POL': 'Politics',
         'CRO': 'Chronicle',
         'SPE': 'Entertainment',
+        'EST': 'WORLD',
+        'ECO': 'Business',
+        'PEC': 'Business',
     }
 
     def parse_content_meta(self, tree, item):
