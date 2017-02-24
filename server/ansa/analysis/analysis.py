@@ -56,7 +56,10 @@ class AnalysisService(BaseService):
     def create(self, docs, **kwargs):
         ids = []
         for doc in docs:
-            doc['semantics'] = self.do_analyse(doc)
+            analysed = self.do_analyse(doc)
+            for key, val in analysed.items():
+                doc.setdefault(key, val)
+            doc['semantics'] = analysed['semantics']
             ids.append('')
         return ids
 
@@ -82,16 +85,24 @@ class AnalysisService(BaseService):
         doc.update(self.do_analyse(doc))
 
     def parse(self, extracted):
-        parsed = {'iptcCodes': []}
+        parsed = {
+            'semantics': {'iptcCodes': []},
+            'subject': [],
+            'place': [],
+        }
         for key, val in extracted.items():
             if not isinstance(val, list):
-                parsed[key] = val
                 continue
             items = []
             for item in val:
                 if item.get('value'):
                     items.append(item['value'])
-                if item.get('id'):
-                    parsed['iptcCodes'].append(item['id'])
-            parsed[key] = items
+                if key == 'iptcDomains' and item.get('id'):
+                    parsed['semantics']['iptcCodes'].append(item.get('id'))
+                    parsed['subject'].append({'name': item.get('value'), 'qcode': item.get('id')})
+                if key == 'places':
+                    parsed['place'].append({'name': item.get('value')})
+            parsed['semantics'][key] = items
+        if parsed['semantics'].get('mainLemmas'):
+            parsed['slugline'] = ' '.join(parsed['semantics']['mainLemmas'])[:80]
         return parsed

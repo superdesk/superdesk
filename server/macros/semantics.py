@@ -21,7 +21,11 @@ def populate(item, **kwargs):
         ]),
         'title': text(item.get('headline', '')),
     }
-    item['semantics'] = analysis.do_analyse(data)
+    analysed = analysis.do_analyse(data)
+    for key, val in analysed.items():
+        if not item.get(key):
+            item[key] = val
+    item['semantics'] = analysed['semantics']
     return item
 
 
