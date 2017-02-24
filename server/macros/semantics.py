@@ -26,6 +26,8 @@ def populate(item, **kwargs):
         if not item.get(key):
             item[key] = val
     item['semantics'] = analysed['semantics']
+    if analysed['subject']:
+        item['subject'] = analysed['subject']
     return item
 
 
