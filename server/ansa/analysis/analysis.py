@@ -107,5 +107,5 @@ class AnalysisService(BaseService):
             parsed['slugline'] = ''
             for item in parsed['semantics']['mainLemmas']:
                 if len(parsed['slugline']) + len(item) < 50:
-                    parsed['slugline'] = ' '.join(parsed['slugline'], item)
+                    parsed['slugline'] = ' '.join([parsed['slugline'], item])
         return parsed
