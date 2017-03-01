@@ -32,6 +32,10 @@ module.exports = function(grunt) {
             'en': {
                 'ANPA Category': 'Category',
                 'ANPA CATEGORY': 'CATEGORY'
+            },
+            'it': {
+                'ANPA Category': 'Category',
+                'ANPA CATEGORY': 'CATEGORY'
             }
         }, 
 
