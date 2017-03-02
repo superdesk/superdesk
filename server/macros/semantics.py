@@ -25,8 +25,9 @@ def populate(item, **kwargs):
     for key, val in analysed.items():
         if not item.get(key):
             item[key] = val
-    item['semantics'] = analysed['semantics']
-    if analysed['subject']:
+    if analysed.get('semantics'):
+        item['semantics'] = analysed['semantics']
+    if analysed.get('subject'):
         item['subject'] = analysed['subject']
     return item
 
