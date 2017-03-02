@@ -101,7 +101,7 @@ class AnalysisService(BaseService):
                     parsed['semantics']['iptcCodes'].append(item.get('id'))
                     parsed['subject'].append({'name': item.get('value'), 'qcode': item.get('id')})
                 if key == 'places':
-                    parsed['place'].append({'name': item.get('value')})
+                    parsed['place'].append({'name': item.get('value'), 'qcode': 'n:%s' % item.get('value')})
             parsed['semantics'][key] = items
         if parsed['semantics'].get('mainLemmas'):
             parsed['slugline'] = ''
