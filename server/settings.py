@@ -11,7 +11,7 @@
 
 import os
 from pathlib import Path
-
+from superdesk.default_settings import INSTALLED_APPS
 
 def env(variable, fallback_value=None):
     env_value = os.environ.get(variable, '')
