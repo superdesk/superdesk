@@ -77,3 +77,5 @@ LANGUAGES = [
     {'language': 'it', 'label': 'Italiano', 'source': True, 'destination': False},
     {'language': 'en', 'label': 'English', 'source': True, 'destination': False},
 ]
+
+DEFAULT_LANGUAGE = 'it'
