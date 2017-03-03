@@ -40,8 +40,14 @@
             "dateline": {},
             "byline": {},
             "sms": {},
-            "abstract": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]},
-            "body_html": {"formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"]}
+            "abstract": {
+                "formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"],
+                "cleanPastedHTML": true
+            },
+            "body_html": {
+                "formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"],
+                "cleanPastedHTML": true
+            }
         }
     }
 ]
