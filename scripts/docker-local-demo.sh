@@ -2,21 +2,16 @@
 
 set -ue
 
+SCRIPT_DIR="$(echo $(cd -P -- "$(dirname -- "$0")" && pwd -P))"
+
 function dcs() {
 	docker-compose -p sddemo -f ./docker-compose-prebuilt.yml $@
 }
 
-WORK_DIR="$(echo $(cd -P -- "$(dirname -- "$0")" && pwd -P))"
-(test -d $WORK_DIR/env || virtualenv $WORK_DIR/env )
-set +u
-. $WORK_DIR/env/bin/activate
-set -u
-pip install -r $WORK_DIR/../docker/requirements.txt
-
 (
 	docker --version && docker ps >/dev/null && docker-compose --version
 ) || (
-	echo "Depended executable not found. Check the message above" && exit 1
+	echo "Depended executable not found. Install docker with docker-compose" && exit 1
 ) &&
 
 
@@ -29,8 +24,7 @@ echo '
 |==================================================================|
 '
 
-cd $WORK_DIR/../docker
+cd $SCRIPT_DIR/../docker
 dcs kill
-#dcs rm -fv
 dcs pull
 dcs up --timeout 600
