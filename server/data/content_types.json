@@ -22,7 +22,8 @@
             "feature_media": {"type": "picture"},
             "dateline": {},
 
-            "product": {}
+            "product": {},
+            "relatedItems": {}
         },
         "editor": {
             "slugline": {"order": 1, "sdWidth": "full"},
