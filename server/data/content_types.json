@@ -41,11 +41,11 @@
             "byline": {},
             "sms": {},
             "abstract": {
-                "formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"],
+                "formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor", "removeFormat"],
                 "cleanPastedHTML": true
             },
             "body_html": {
-                "formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor"],
+                "formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor", "removeFormat"],
                 "cleanPastedHTML": true
             }
         }
