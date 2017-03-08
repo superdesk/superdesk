@@ -1,4 +1,6 @@
 
+import arrow
+
 from superdesk.io.feed_parsers.newsml_2_0 import NewsMLTwoFeedParser
 from superdesk.etree import get_word_count
 
@@ -37,3 +39,6 @@ class ANSAParser(NewsMLTwoFeedParser):
         if item.get('word_count') == 0 and item.get('type') == 'text':
             item['word_count'] = get_word_count(item.get('body_html', '<p></p>'))
         return item
+
+    def datetime(self, string):
+        return arrow.get(string).datetime
