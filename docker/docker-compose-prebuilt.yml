@@ -1,10 +1,3 @@
-logstash:
-  extends:
-    file: common.yml
-    service: logstash
-  links:
-  - elastic
-
 mongodb:
   extends:
     file: common.yml
@@ -15,61 +8,29 @@ redis:
     file: common.yml
     service: redis
 
-kibana:
+postfix:
   extends:
     file: common.yml
-    service: kibana
-  links:
-  - elastic
-  ports:
-  - "5601:5601"
-  image: sourcefabric/kibana:master
+    service: postfix
 
 elastic:
   extends:
     file: common.yml
     service: elastic
 
-postfix:
-  extends:
-    file: common.yml
-    service: postfix
-
 superdesk:
   extends:
     file: common.yml
     service: superdesk
-  image: sourcefabric/superdesk:master
   links:
-   - mongodb
    - redis
+   - mongodb
    - elastic
-   - logstash
-   - postfix
-   - pubapi
   environment:
    - SUPERDESK_URL=http://localhost:8080/api
    - SUPERDESK_WS_URL=ws://localhost:8080/ws
-   - PUBLICAPI_URL=http://localhost:8080/pubapi
    - SUPERDESK_CLIENT_URL=http://localhost:8080
   ports:
    - "8080:80"
   volumes:
    - ./superdesk_vhost.conf:/etc/nginx/sites-enabled/superdesk.conf
-
-pubapi:
-  extends:
-    file: common.yml
-    service: pubapi
-  links:
-   - mongodb
-   - redis
-   - elastic
-   - logstash
-   - postfix
-  image: sourcefabric/superdesk-content-api:master
-  environment:
-   - SUPERDESK_URL=http://localhost:8080/api
-   - SUPERDESK_WS_URL=ws://localhost:8080/ws
-   - PUBLICAPI_URL=http://localhost:8080/pubapi
-   - SUPERDESK_CLIENT_URL=http://localhost:8080
