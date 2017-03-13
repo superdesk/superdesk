@@ -1,5 +1,5 @@
 {
     "dependencies": {
-        "superdesk-core": "petrjasek/superdesk-client-core#9c359219"
+        "superdesk-core": "petrjasek/superdesk-client-core#564c97dd"
     }
 }
