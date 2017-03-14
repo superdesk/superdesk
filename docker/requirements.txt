@@ -1,1 +1,1 @@
-docker-compose==1.5.1
+docker-compose==1.7.1

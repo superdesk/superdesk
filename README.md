@@ -19,28 +19,54 @@ different technologies.
 Find more information about the client configuration in the README file of the repo:
 [https://github.com/superdesk/superdesk-client-core](https://github.com/superdesk/superdesk-client-core "")
 
-## Installation on fresh Ubuntu 16.04
+## Requirements
+ * MongoDB
+ * ElasticSearch (1.7.x - 2.4.x)
+ * Redis
+ * Python (>= 3.5)
+ * Node.js (with `npm`)
+
+### General installation steps look like:
+```sh
+path=~/superdesk
+git clone https://github.com/superdesk/superdesk.git $path
+
+# server
+cd $path/server
+pip install -r requirements.txt
+python manage.py app:initialize_data
+python manage.py users:create -u admin -p admin -e 'admin@example.com' --admin
+honcho start
+
+# client
+cd $path/client
+npm install
+grunt server
+
+# open http://localhost:9000 in browser
+```
+
+### Installation on fresh Ubuntu 16.04
 
 ```sh
-# replace <you_ip_or_domain> with domain where Superdesk will be accessible
-(echo HOST=<you_ip_or_domain>; curl https://raw.githubusercontent.com/superdesk/fireq/master/files/superdesk/install) | sudo bash
+curl -s https://raw.githubusercontent.com/superdesk/fireq/master/files/superdesk/install | sudo bash
+# Open http://<ip_or_domain> in browser
+# login: admin
+# password: admin
 ```
-Details you can find [here][fireq] or just read [superdesk/install][fireq-install] file.
+More options and info:
+- [for users](https://github.com/superdesk/fireq/tree/master/files/superdesk)
+- [for developers](https://github.com/superdesk/fireq/tree/master/files/superdesk-dev)
 
-###Questions and issues
+### Questions and issues
 
 - Our [issue tracker] (https://dev.sourcefabric.org/projects/SD) is only for bug reports and feature requests.
-- Questions regarding the installation should be posted to [fireq issues][fireq-issues].
 - Anything else, such as questions or general feedback, should be posted in the [forum] (https://forum.sourcefabric.org/categories/superdesk-dev).
 
-###A special thanks to...
+### A special thanks to...
 
 Users, developers and development partners that have contributed to the Superdesk project. Also, to all the other amazing open-source projects that make Superdesk possible!
 
-###License
+### License
 
 Superdesk is available under the [AGPL version 3] (https://www.gnu.org/licenses/agpl-3.0.html) open source license.
-
-[fireq]: https://github.com/superdesk/fireq
-[fireq-install]: https://github.com/superdesk/fireq/blob/master/files/superdesk/install
-[fireq-issues]: https://github.com/superdesk/fireq/issues
