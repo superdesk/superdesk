@@ -46,7 +46,7 @@
                 "cleanPastedHTML": true
             },
             "body_html": {
-                "formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "anchor", "removeFormat"],
+                "formatOptions": ["h1", "h2", "bold", "italic", "underline", "quote", "pre", "anchor", "removeFormat"],
                 "cleanPastedHTML": true
             }
         }
