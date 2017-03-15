@@ -4,6 +4,7 @@ module.exports = function(grunt) {
         features: {noTakes: 1},
         publisher: {
             protocol: 'https',
+            tenant: process.env.PUBLISHER_API_SUBDOMAIN || '',
             domain: process.env.PUBLISHER_API_DOMAIN || 'localhost',
             base: 'api/v1'
         },
