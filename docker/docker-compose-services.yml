@@ -1,12 +1,3 @@
-logstash:
-  extends:
-    file: common.yml
-    service: logstash
-  links:
-  - elastic
-  ports:
-  - "5555:5555"
-
 mongodb:
   extends:
     file: common.yml
@@ -20,15 +11,6 @@ redis:
     service: redis
   ports:
   - "6379:6379"
-
-kibana:
-  extends:
-    file: common.yml
-    service: kibana
-  links:
-  - elastic
-  ports:
-  - "5601:5601"
 
 elastic:
   extends:
