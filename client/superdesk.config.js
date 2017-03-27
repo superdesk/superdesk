@@ -6,6 +6,7 @@
  */
 module.exports = function(grunt) {
     return {
+        apps: [],
         defaultRoute: '/workspace/personal',
         validatorMediaMetadata: {
             headline: {
@@ -34,6 +35,13 @@ module.exports = function(grunt) {
         features: {
             swimlane: {columnsLimit: 4},
             noTakes: true
+        },
+
+        langOverride: {
+            'en': {
+                'ANPA Category': 'Category',
+                'ANPA CATEGORY': 'CATEGORY'
+            }
         }
     };
 };
