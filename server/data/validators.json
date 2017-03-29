@@ -28,8 +28,7 @@
             },
             "anpa_category": {
                 "type": "list",
-                "required": false,
-                "minlength": 1
+                "required": false
             },
             "pubstatus": {
                 "type": "string",
@@ -103,8 +102,7 @@
             },
             "anpa_category": {
                 "type": "list",
-                "required": false,
-                "minlength": 1
+                "required": false
             },
             "pubstatus": {
                 "type": "string",
@@ -173,8 +171,7 @@
             },
             "anpa_category": {
                 "type": "list",
-                "required": false,
-                "minlength": 1
+                "required": false
             },
             "pubstatus": {
                 "type": "string",
@@ -243,8 +240,7 @@
             },
             "anpa_category": {
                 "type": "list",
-                "required": false,
-                "minlength": 1
+                "required": false
             },
             "pubstatus": {
                 "type": "string",
@@ -313,8 +309,7 @@
             },
             "anpa_category": {
                 "type": "list",
-                "required": false,
-                "minlength": 1
+                "required": false
             },
             "pubstatus": {
                 "type": "string",
@@ -383,8 +378,7 @@
             },
             "anpa_category": {
                 "type": "list",
-                "required": false,
-                "minlength": 1
+                "required": false
             },
             "pubstatus": {
                 "type": "string",
@@ -453,8 +447,7 @@
             },
             "anpa_category": {
                 "type": "list",
-                "required": false,
-                "minlength": 1
+                "required": false
             },
             "pubstatus": {
                 "type": "string",
@@ -539,8 +532,7 @@
             },
             "anpa_category": {
                 "type": "list",
-                "required": false,
-                "minlength": 1
+                "required": false
             },
             "pubstatus": {
                 "type": "string",
@@ -625,8 +617,7 @@
             },
             "anpa_category": {
                 "type": "list",
-                "required": false,
-                "minlength": 1
+                "required": false
             },
             "pubstatus": {
                 "type": "string",
@@ -705,8 +696,7 @@
             },
             "anpa_category": {
                 "type": "list",
-                "required": false,
-                "minlength": 1
+                "required": false
             },
             "pubstatus": {
                 "type": "string",
@@ -781,8 +771,7 @@
             },
             "anpa_category": {
                 "type": "list",
-                "required": false,
-                "minlength": 1
+                "required": false
             },
             "pubstatus": {
                 "type": "string",
@@ -857,8 +846,7 @@
             },
             "anpa_category": {
                 "type": "list",
-                "required": false,
-                "minlength": 1
+                "required": false
             },
             "pubstatus": {
                 "type": "string",
@@ -933,8 +921,7 @@
             },
             "anpa_category": {
                 "type": "list",
-                "required": false,
-                "minlength": 1
+                "required": false
             },
             "pubstatus": {
                 "type": "string",
@@ -1009,8 +996,7 @@
             },
             "anpa_category": {
                 "type": "list",
-                "required": false,
-                "minlength": 1
+                "required": false
             },
             "pubstatus": {
                 "type": "string",
@@ -1085,8 +1071,7 @@
             },
             "anpa_category": {
                 "type": "list",
-                "required": false,
-                "minlength": 1
+                "required": false
             },
             "pubstatus": {
                 "type": "string",
@@ -1156,8 +1141,7 @@
             },
             "anpa_category": {
                 "type": "list",
-                "required": false,
-                "minlength": 1
+                "required": false
             },
             "pubstatus": {
                 "type": "string",
@@ -1211,8 +1195,7 @@
             },
             "anpa_category": {
                 "type": "list",
-                "required": false,
-                "minlength": 1
+                "required": false
             },
             "pubstatus": {
                 "type": "string",
@@ -1266,8 +1249,7 @@
             },
             "anpa_category": {
                 "type": "list",
-                "required": false,
-                "minlength": 1
+                "required": false
             },
             "pubstatus": {
                 "type": "string",
@@ -1314,8 +1296,7 @@
             },
             "anpa_category": {
                 "type": "list",
-                "required": false,
-                "minlength": 1
+                "required": false
             },
             "pubstatus": {
                 "type": "string",
@@ -1341,8 +1322,7 @@
             },
             "anpa_category": {
                 "type": "list",
-                "required": false,
-                "minlength": 1
+                "required": false
             },
             "pubstatus": {
                 "type": "string",
@@ -1368,8 +1348,7 @@
             },
             "anpa_category": {
                 "type": "list",
-                "required": false,
-                "minlength": 1
+                "required": false
             },
             "pubstatus": {
                 "type": "string",
@@ -1407,8 +1386,7 @@
             },
             "anpa_category": {
                 "type": "list",
-                "required": false,
-                "minlength": 1
+                "required": false
             },
             "pubstatus": {
                 "type": "string",
@@ -1469,8 +1447,7 @@
             },
             "anpa_category": {
                 "type": "list",
-                "required": false,
-                "minlength": 1
+                "required": false
             },
             "pubstatus": {
                 "type": "string",
