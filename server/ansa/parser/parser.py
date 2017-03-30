@@ -8,6 +8,21 @@ from superdesk.etree import get_word_count
 class ANSAParser(NewsMLTwoFeedParser):
 
     cat_map = {
+        'ACE': 'Entertainment',
+        'CLJ': 'Chronicle',
+        'DIS': 'Chronicle',
+        'FIN': 'Business',
+        'EDU': 'Chronicle',
+        'ENV': 'Chronicle',
+        'HTH': 'Chronicle',
+        'HUM': 'Chronicle',
+        'LAB': 'Chronicle',
+        'LIF': 'Entertainment',
+        'REL': 'Chronicle',
+        'SCI': 'Chronicle',
+        'SOI': 'Chronicle',
+        'WAR': 'Chronicle',
+        'WEA': 'Chronicle',
         'SPR': 'Sport',
         'SPO': 'Sport',
         'POL': 'Politics',
