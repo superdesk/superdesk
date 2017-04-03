@@ -1,5 +1,5 @@
 {
     "dependencies": {
-        "superdesk-core": "1.6.1"
+        "superdesk-core": "jerome-poisson/superdesk-client-core#1.6_wpp"
     }
 }
