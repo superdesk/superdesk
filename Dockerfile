@@ -1,5 +1,5 @@
 # import base image
-FROM ubuntu:trusty
+FROM debian:jessie
 
 # install system-wide dependencies,
 # python3 and the build-time dependencies for c modules
@@ -7,7 +7,7 @@ RUN apt-get update && \
 DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
 python3 python3-dev python3-pip python3-lxml \
 build-essential libffi-dev git \
-libtiff5-dev libjpeg8-dev zlib1g-dev \
+libtiff5-dev libjpeg62-turbo-dev zlib1g-dev \
 libfreetype6-dev liblcms2-dev libwebp-dev \
 curl libfontconfig nodejs npm nginx \
 libxml2-dev libxslt1-dev \
@@ -20,6 +20,8 @@ RUN locale-gen en_US.UTF-8
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
+
+RUN npm -g install grunt-cli bower
 
 # setup the environment
 WORKDIR /opt/superdesk/
