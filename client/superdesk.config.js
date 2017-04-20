@@ -40,7 +40,8 @@ module.exports = function(grunt) {
         },
 
         features: {
-            swimlane: {columnsLimit: 4}
+            swimlane: {columnsLimit: 4},
+            editor3: true
         },
         workspace: {
             analytics: true
