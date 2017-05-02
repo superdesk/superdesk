@@ -4,4 +4,4 @@ newrelic>=2.66,<2.67
 
 git+git://github.com/superdesk/superdesk-core.git@1493e6d6d#egg=Superdesk-Core
 git+git://github.com/superdesk/superdesk-analytics.git@ac534e3#egg=superdesk-analytics
-git+git://github.com/superdesk/superdesk-planning.git@8b4291816#egg=superdesk-planning
+git+git://github.com/superdesk/superdesk-planning.git@8a93fdae8#egg=superdesk-planning
