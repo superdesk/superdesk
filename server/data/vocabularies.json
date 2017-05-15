@@ -17161,5 +17161,341 @@
                 "qcode": "Zvimba"
             }
         ]
+    },
+    {
+        "_id": "subject_custom",
+        "display_name": "Subject",
+        "type": "manageable",
+        "service": {
+            "all": 1
+        },
+        "schema_field": "subject",
+        "dependent": 0,
+        "items": [
+            {
+                "is_active": true,
+                "name": "archaeology",
+                "parent": null,
+                "qcode": "3509"
+            },
+            {
+                "is_active": true,
+                "name": "Business",
+                "parent": null,
+                "qcode": "11"
+            },
+            {
+                "is_active": true,
+                "name": "Companies",
+                "parent": null,
+                "qcode": "14"
+            },
+            {
+                "is_active": true,
+                "name": "Construction",
+                "parent": "14",
+                "qcode": "2017"
+            },
+            {
+                "is_active": true,
+                "name": "Economy",
+                "parent": null,
+                "qcode": "8"
+            },
+            {
+                "is_active": true,
+                "name": "electronics",
+                "parent": null,
+                "qcode": "3508"
+            },
+            {
+                "is_active": true,
+                "name": "Energy",
+                "parent": "14",
+                "qcode": "40"
+            },
+            {
+                "is_active": true,
+                "name": "Featured",
+                "parent": null,
+                "qcode": "1915"
+            },
+            {
+                "is_active": true,
+                "name": "Financial services",
+                "parent": "14",
+                "qcode": "41"
+            },
+            {
+                "is_active": true,
+                "name": "fire",
+                "parent": null,
+                "qcode": "3511"
+            },
+            {
+                "is_active": true,
+                "name": "Health",
+                "parent": "14",
+                "qcode": "2292"
+            },
+            {
+                "is_active": true,
+                "name": "Investment",
+                "parent": "14",
+                "qcode": "1750"
+            },
+            {
+                "is_active": true,
+                "name": "Labour",
+                "parent": "14",
+                "qcode": "628"
+            },
+            {
+                "is_active": true,
+                "name": "Legal",
+                "parent": "14",
+                "qcode": "1489"
+            },
+            {
+                "is_active": true,
+                "name": "Local Government",
+                "parent": "11",
+                "qcode": "1974"
+            },
+            {
+                "is_active": true,
+                "name": "Manufacturing",
+                "parent": "14",
+                "qcode": "42"
+            },
+            {
+                "is_active": true,
+                "name": "Markets",
+                "parent": null,
+                "qcode": "37"
+            },
+            {
+                "is_active": true,
+                "name": "Media",
+                "parent": null,
+                "qcode": "9"
+            },
+            {
+                "is_active": true,
+                "name": "Media",
+                "parent": "14",
+                "qcode": "43"
+            },
+            {
+                "is_active": true,
+                "name": "Mining",
+                "parent": "14",
+                "qcode": "44"
+            },
+            {
+                "is_active": true,
+                "name": "news agency",
+                "parent": null,
+                "qcode": "3507"
+            },
+            {
+                "is_active": true,
+                "name": "online",
+                "parent": null,
+                "qcode": "3506"
+            },
+            {
+                "is_active": true,
+                "name": "Opinion",
+                "parent": null,
+                "qcode": "38"
+            },
+            {
+                "is_active": true,
+                "name": "Policy",
+                "parent": null,
+                "qcode": "669"
+            },
+            {
+                "is_active": true,
+                "name": "Property",
+                "parent": "14",
+                "qcode": "45"
+            },
+            {
+                "is_active": true,
+                "name": "Resources",
+                "parent": null,
+                "qcode": "66"
+            },
+            {
+                "is_active": true,
+                "name": "Retail",
+                "parent": "14",
+                "qcode": "46"
+            },
+            {
+                "is_active": true,
+                "name": "Small Business",
+                "parent": null,
+                "qcode": "12"
+            },
+            {
+                "is_active": true,
+                "name": "Tech",
+                "parent": "14",
+                "qcode": "47"
+            },
+            {
+                "is_active": true,
+                "name": "technology (general)",
+                "parent": null,
+                "qcode": "3505"
+            },
+            {
+                "is_active": true,
+                "name": "Telecoms",
+                "parent": "14",
+                "qcode": "48"
+            },
+            {
+                "is_active": true,
+                "name": "Tourism",
+                "parent": "14",
+                "qcode": "49"
+            },
+            {
+                "is_active": true,
+                "name": "Trade",
+                "parent": "8",
+                "qcode": "61"
+            },
+            {
+                "is_active": true,
+                "name": "Transport",
+                "parent": "14",
+                "qcode": "50"
+            },
+            {
+                "is_active": true,
+                "name": "Uncategorized",
+                "parent": null,
+                "qcode": "1"
+            },
+            {
+                "is_active": true,
+                "name": "World",
+                "parent": null,
+                "qcode": "10"
+            },
+            {
+                "is_active": true,
+                "name": "World",
+                "parent": "8",
+                "qcode": "60"
+            },
+            {
+                "is_active": true,
+                "name": "Zimbabwe",
+                "parent": "8",
+                "qcode": "58"
+            },
+            {
+                "is_active": true,
+                "name": "Africa",
+                "parent": "8",
+                "qcode": "59"
+            },
+            {
+                "is_active": true,
+                "name": "Agribusiness",
+                "parent": "14",
+                "qcode": "39"
+            },
+            {
+                "is_active": true,
+                "name": "Aid",
+                "parent": "11",
+                "qcode": "1938"
+            },
+            {
+                "is_active": true,
+                "name": "Blogs",
+                "parent": "38",
+                "qcode": "64"
+            },
+            {
+                "is_active": true,
+                "name": "Calendar",
+                "parent": "8",
+                "qcode": "56"
+            },
+            {
+                "is_active": true,
+                "name": "Columnists",
+                "parent": "38",
+                "qcode": "63"
+            },
+            {
+                "is_active": true,
+                "name": "Commodities",
+                "parent": "37",
+                "qcode": "51"
+            },
+            {
+                "is_active": true,
+                "name": "Currencies",
+                "parent": "37",
+                "qcode": "52"
+            },
+            {
+                "is_active": true,
+                "name": "Data",
+                "parent": "8",
+                "qcode": "57"
+            },
+            {
+                "is_active": true,
+                "name": "Data",
+                "parent": "66",
+                "qcode": "67"
+            },
+            {
+                "is_active": true,
+                "name": "Editorial",
+                "parent": "38",
+                "qcode": "62"
+            },
+            {
+                "is_active": true,
+                "name": "Equities",
+                "parent": "37",
+                "qcode": "53"
+            },
+            {
+                "is_active": true,
+                "name": "Funds",
+                "parent": "37",
+                "qcode": "54"
+            },
+            {
+                "is_active": true,
+                "name": "ICT",
+                "parent": "46",
+                "qcode": "1868"
+            },
+            {
+                "is_active": true,
+                "name": "International",
+                "parent": "37",
+                "qcode": "55"
+            },
+            {
+                "is_active": true,
+                "name": "Insurance",
+                "parent": "55",
+                "qcode": "1298"
+            }
+        ]
     }
 ]
