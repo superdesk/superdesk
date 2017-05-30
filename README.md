@@ -8,16 +8,16 @@
 Superdesk is an open source end-to-end news creation, production, curation,
 distribution and publishing platform developed and maintained by Sourcefabric
 with the sole purpose of making the best possible software for journalism. It
-is scaleable to suit news organizations of any size. See the [Superdesk website] (http://www.superdesk.org) for more information.
+is scaleable to suit news organizations of any size. See the [Superdesk website](http://www.superdesk.org) for more information.
 
-Looking to stay up to date on the latest news? [Subscribe] (http://eepurl.com/bClQlD) to our monthly newsletter.
+Looking to stay up to date on the latest news? [Subscribe](http://eepurl.com/bClQlD) to our monthly newsletter.
 
 The Superdesk server provides the API to process all client requests. The client
 provides the user interface. Server and client are separate applications using
 different technologies.
 
 Find more information about the client configuration in the README file of the repo:
-[https://github.com/superdesk/superdesk-client-core](https://github.com/superdesk/superdesk-client-core "")
+[github.com/superdesk/superdesk-client-core](https://github.com/superdesk/superdesk-client-core)
 
 ## Requirements
  * MongoDB
@@ -37,6 +37,8 @@ pip install -r requirements.txt
 python manage.py app:initialize_data
 python manage.py users:create -u admin -p admin -e 'admin@example.com' --admin
 honcho start
+# if you need some data
+python manage.py app:prepopulate
 
 # client
 cd $path/client
@@ -54,14 +56,14 @@ curl -s https://raw.githubusercontent.com/superdesk/fireq/master/files/superdesk
 # login: admin
 # password: admin
 ```
-More options and info:
+More options and details:
 - [for users](https://github.com/superdesk/fireq/tree/master/files/superdesk)
-- [for developers](https://github.com/superdesk/fireq/tree/master/files/superdesk-dev)
+- [for developers](https://github.com/superdesk/fireq/tree/master/files/superdesk#development)
 
 ### Questions and issues
 
-- Our [issue tracker] (https://dev.sourcefabric.org/projects/SD) is only for bug reports and feature requests.
-- Anything else, such as questions or general feedback, should be posted in the [forum] (https://forum.sourcefabric.org/categories/superdesk-dev).
+- Our [issue tracker](https://dev.sourcefabric.org/projects/SD) is only for bug reports and feature requests.
+- Anything else, such as questions or general feedback, should be posted in the [forum](https://forum.sourcefabric.org/categories/superdesk-dev).
 
 ### A special thanks to...
 
@@ -69,4 +71,4 @@ Users, developers and development partners that have contributed to the Superdes
 
 ### License
 
-Superdesk is available under the [AGPL version 3] (https://www.gnu.org/licenses/agpl-3.0.html) open source license.
+Superdesk is available under the [AGPL version 3](https://www.gnu.org/licenses/agpl-3.0.html) open source license.
