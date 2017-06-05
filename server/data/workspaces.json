@@ -1,0 +1,63 @@
+[
+    {
+        "_id": "59280155ab0e4f060a84be3c",
+        "widgets": [
+            {
+                "col": 3,
+                "row": 1,
+                "active": true,
+                "configuration": {
+                    "colorScheme": "superdesk",
+                    "source": "source",
+                    "updateInterval": 5
+                },
+                "multiple_id": 0,
+                "sizex": 1,
+                "_id": "ingest-stats",
+                "sizey": 1
+            },
+            {
+                "col": 2,
+                "row": 1,
+                "active": true,
+                "configuration": {
+                    "label": "",
+                    "groups": []
+                },
+                "multiple_id": 0,
+                "sizex": 1,
+                "_id": "aggregate",
+                "sizey": 2
+            },
+            {
+                "col": 1,
+                "row": 1,
+                "active": true,
+                "configuration": {
+                    "maxItems": 5
+                },
+                "multiple_id": 0,
+                "sizex": 1,
+                "_id": "activity",
+                "sizey": 2
+            },
+            {
+                "active": true,
+                "configuration": {
+                    "label": "Zimbabwe - from ingest",
+                    "groups": []
+                },
+                "multiple_id": 1,
+                "sizex": 1,
+                "_id": "aggregate",
+                "sizey": 2
+            }
+        ],
+        "desk": "5926b7ffab0e4f07a84ce940"
+    },
+    {
+        "_id": "5928231cab0e4f060a84bf0b",
+        "name": "DPC",
+        "user": "592807daab0e4f060a84be5c"
+    }
+]

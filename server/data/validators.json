@@ -1,0 +1,2072 @@
+[
+    {
+        "_id": "publish_text",
+        "type": "text",
+        "schema": {
+            "slugline": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "maxlength": 24,
+                "nullable": false
+            },
+            "anpa_category": {
+                "minlength": 1,
+                "type": "list",
+                "required": true
+            },
+            "headline": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "maxlength": 42,
+                "nullable": false
+            },
+            "body_html": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "nullable": false
+            },
+            "dateline": {
+                "type": "dict",
+                "required": true,
+                "schema": {
+                    "text": {
+                        "type": "string",
+                        "required": true
+                    },
+                    "located": {
+                        "type": "dict",
+                        "required": true
+                    }
+                }
+            },
+            "urgency": {
+                "allowed": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5
+                ],
+                "type": "integer",
+                "required": true
+            },
+            "type": {
+                "allowed": [
+                    "text"
+                ],
+                "type": "string",
+                "required": "true"
+            },
+            "priority": {
+                "allowed": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9
+                ],
+                "type": "integer",
+                "required": true
+            },
+            "pubstatus": {
+                "allowed": [
+                    "usable"
+                ],
+                "type": "string",
+                "required": true
+            },
+            "subject": {
+                "minlength": 1,
+                "type": "list",
+                "required": true
+            },
+            "abstract": {
+                "type": "string",
+                "required": false,
+                "maxlength": 160
+            },
+            "sms_message": {
+                "type": "string",
+                "required": false,
+                "maxlength": 160
+            }
+        },
+        "act": "publish"
+    },
+    {
+        "_id": "correct_text",
+        "type": "text",
+        "schema": {
+            "slugline": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "maxlength": 24,
+                "nullable": false
+            },
+            "anpa_category": {
+                "minlength": 1,
+                "type": "list",
+                "required": true
+            },
+            "headline": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "maxlength": 42,
+                "nullable": false
+            },
+            "body_html": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "nullable": false
+            },
+            "dateline": {
+                "type": "dict",
+                "required": true,
+                "schema": {
+                    "text": {
+                        "type": "string",
+                        "required": true
+                    },
+                    "located": {
+                        "type": "dict",
+                        "required": true
+                    }
+                }
+            },
+            "urgency": {
+                "allowed": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5
+                ],
+                "type": "integer",
+                "required": true
+            },
+            "type": {
+                "allowed": [
+                    "text"
+                ],
+                "type": "string",
+                "required": "true"
+            },
+            "priority": {
+                "allowed": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9
+                ],
+                "type": "integer",
+                "required": true
+            },
+            "pubstatus": {
+                "allowed": [
+                    "usable"
+                ],
+                "type": "string",
+                "required": true
+            },
+            "subject": {
+                "minlength": 1,
+                "type": "list",
+                "required": true
+            },
+            "abstract": {
+                "type": "string",
+                "required": false,
+                "maxlength": 160
+            },
+            "sms_message": {
+                "type": "string",
+                "required": false,
+                "maxlength": 160
+            }
+        },
+        "act": "correct"
+    },
+    {
+        "_id": "kill_text",
+        "type": "text",
+        "schema": {
+            "anpa_category": {
+                "minlength": 1,
+                "type": "list",
+                "required": true
+            },
+            "type": {
+                "allowed": [
+                    "text"
+                ],
+                "type": "string",
+                "required": "true"
+            },
+            "priority": {
+                "allowed": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9
+                ],
+                "type": "integer",
+                "required": true
+            },
+            "slugline": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "maxlength": 24,
+                "nullable": false
+            },
+            "abstract": {
+                "type": "string",
+                "required": false,
+                "maxlength": 160
+            },
+            "urgency": {
+                "allowed": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5
+                ],
+                "type": "integer",
+                "required": true
+            },
+            "pubstatus": {
+                "allowed": [
+                    "canceled"
+                ],
+                "type": "string",
+                "required": true
+            },
+            "headline": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "maxlength": 42,
+                "nullable": false
+            },
+            "body_html": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "nullable": false
+            },
+            "dateline": {
+                "type": "dict",
+                "required": true,
+                "schema": {
+                    "text": {
+                        "type": "string",
+                        "required": true
+                    },
+                    "located": {
+                        "type": "dict",
+                        "required": true
+                    }
+                }
+            },
+            "subject": {
+                "minlength": 1,
+                "type": "list",
+                "required": true
+            }
+        },
+        "act": "kill"
+    },
+    {
+        "_id": "publish_preformatted",
+        "type": "preformatted",
+        "schema": {
+            "anpa_category": {
+                "minlength": 1,
+                "type": "list",
+                "required": true
+            },
+            "type": {
+                "allowed": [
+                    "preformatted"
+                ],
+                "type": "string",
+                "required": "true"
+            },
+            "priority": {
+                "allowed": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9
+                ],
+                "type": "integer",
+                "required": true
+            },
+            "slugline": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "maxlength": 24,
+                "nullable": false
+            },
+            "abstract": {
+                "type": "string",
+                "required": false,
+                "maxlength": 160
+            },
+            "urgency": {
+                "allowed": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5
+                ],
+                "type": "integer",
+                "required": true
+            },
+            "pubstatus": {
+                "allowed": [
+                    "usable"
+                ],
+                "type": "string",
+                "required": true
+            },
+            "headline": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "maxlength": 42,
+                "nullable": false
+            },
+            "body_html": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "nullable": false
+            },
+            "dateline": {
+                "type": "dict",
+                "required": true,
+                "schema": {
+                    "text": {
+                        "type": "string",
+                        "required": true
+                    },
+                    "located": {
+                        "type": "dict",
+                        "required": true
+                    }
+                }
+            },
+            "subject": {
+                "minlength": 1,
+                "type": "list",
+                "required": true
+            }
+        },
+        "act": "publish"
+    },
+    {
+        "_id": "correct_preformatted",
+        "type": "preformatted",
+        "schema": {
+            "anpa_category": {
+                "minlength": 1,
+                "type": "list",
+                "required": true
+            },
+            "type": {
+                "allowed": [
+                    "preformatted"
+                ],
+                "type": "string",
+                "required": "true"
+            },
+            "priority": {
+                "allowed": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9
+                ],
+                "type": "integer",
+                "required": true
+            },
+            "slugline": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "maxlength": 24,
+                "nullable": false
+            },
+            "abstract": {
+                "type": "string",
+                "required": false,
+                "maxlength": 160
+            },
+            "urgency": {
+                "allowed": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5
+                ],
+                "type": "integer",
+                "required": true
+            },
+            "pubstatus": {
+                "allowed": [
+                    "usable"
+                ],
+                "type": "string",
+                "required": true
+            },
+            "headline": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "maxlength": 42,
+                "nullable": false
+            },
+            "body_html": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "nullable": false
+            },
+            "dateline": {
+                "type": "dict",
+                "required": true,
+                "schema": {
+                    "text": {
+                        "type": "string",
+                        "required": true
+                    },
+                    "located": {
+                        "type": "dict",
+                        "required": true
+                    }
+                }
+            },
+            "subject": {
+                "minlength": 1,
+                "type": "list",
+                "required": true
+            }
+        },
+        "act": "correct"
+    },
+    {
+        "_id": "kill_preformatted",
+        "type": "preformatted",
+        "schema": {
+            "anpa_category": {
+                "minlength": 1,
+                "type": "list",
+                "required": true
+            },
+            "type": {
+                "allowed": [
+                    "preformatted"
+                ],
+                "type": "string",
+                "required": "true"
+            },
+            "priority": {
+                "allowed": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9
+                ],
+                "type": "integer",
+                "required": true
+            },
+            "slugline": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "maxlength": 24,
+                "nullable": false
+            },
+            "abstract": {
+                "type": "string",
+                "required": false,
+                "maxlength": 160
+            },
+            "urgency": {
+                "allowed": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5
+                ],
+                "type": "integer",
+                "required": true
+            },
+            "pubstatus": {
+                "allowed": [
+                    "canceled"
+                ],
+                "type": "string",
+                "required": true
+            },
+            "headline": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "maxlength": 42,
+                "nullable": false
+            },
+            "body_html": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "nullable": false
+            },
+            "dateline": {
+                "type": "dict",
+                "required": true,
+                "schema": {
+                    "text": {
+                        "type": "string",
+                        "required": true
+                    },
+                    "located": {
+                        "type": "dict",
+                        "required": true
+                    }
+                }
+            },
+            "subject": {
+                "minlength": 1,
+                "type": "list",
+                "required": true
+            }
+        },
+        "act": "kill"
+    },
+    {
+        "_id": "publish_picture",
+        "type": "picture",
+        "schema": {
+            "alt_text": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "nullable": false
+            },
+            "slugline": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "maxlength": 24,
+                "nullable": false
+            },
+            "description_text": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "nullable": false
+            },
+            "urgency": {
+                "allowed": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5
+                ],
+                "type": "integer",
+                "required": false
+            },
+            "headline": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "maxlength": 42,
+                "nullable": false
+            },
+            "anpa_category": {
+                "minlength": 1,
+                "type": "list",
+                "required": true
+            },
+            "dateline": {
+                "type": "dict",
+                "required": false,
+                "schema": {
+                    "text": {
+                        "type": "string",
+                        "required": true
+                    },
+                    "located": {
+                        "type": "dict",
+                        "required": true
+                    }
+                }
+            },
+            "renditions": {
+                "type": "dict",
+                "required": true
+            },
+            "type": {
+                "allowed": [
+                    "picture"
+                ],
+                "type": "string",
+                "required": "true"
+            },
+            "priority": {
+                "allowed": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9
+                ],
+                "type": "integer",
+                "required": false
+            },
+            "pubstatus": {
+                "allowed": [
+                    "usable"
+                ],
+                "type": "string",
+                "required": true
+            },
+            "subject": {
+                "minlength": 1,
+                "type": "list",
+                "required": true
+            },
+            "abstract": {
+                "type": "string",
+                "required": false,
+                "maxlength": 160
+            },
+            "mimetype": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "nullable": false
+            }
+        },
+        "act": "publish"
+    },
+    {
+        "_id": "correct_picture",
+        "type": "picture",
+        "schema": {
+            "alt_text": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "nullable": false
+            },
+            "slugline": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "maxlength": 24,
+                "nullable": false
+            },
+            "description_text": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "nullable": false
+            },
+            "urgency": {
+                "allowed": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5
+                ],
+                "type": "integer",
+                "required": false
+            },
+            "headline": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "maxlength": 42,
+                "nullable": false
+            },
+            "anpa_category": {
+                "minlength": 1,
+                "type": "list",
+                "required": true
+            },
+            "dateline": {
+                "type": "dict",
+                "required": false,
+                "schema": {
+                    "text": {
+                        "type": "string",
+                        "required": true
+                    },
+                    "located": {
+                        "type": "dict",
+                        "required": true
+                    }
+                }
+            },
+            "renditions": {
+                "type": "dict",
+                "required": false
+            },
+            "type": {
+                "allowed": [
+                    "picture"
+                ],
+                "type": "string",
+                "required": "true"
+            },
+            "priority": {
+                "allowed": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9
+                ],
+                "type": "integer",
+                "required": false
+            },
+            "pubstatus": {
+                "allowed": [
+                    "usable"
+                ],
+                "type": "string",
+                "required": true
+            },
+            "subject": {
+                "minlength": 1,
+                "type": "list",
+                "required": true
+            },
+            "abstract": {
+                "type": "string",
+                "required": false,
+                "maxlength": 160
+            },
+            "mimetype": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "nullable": false
+            }
+        },
+        "act": "correct"
+    },
+    {
+        "_id": "kill_picture",
+        "type": "picture",
+        "schema": {
+            "slugline": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "maxlength": 24,
+                "nullable": false
+            },
+            "description_text": {
+                "empty": false,
+                "required": false,
+                "type": "string",
+                "nullable": false
+            },
+            "urgency": {
+                "allowed": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5
+                ],
+                "type": "integer",
+                "required": false
+            },
+            "headline": {
+                "empty": false,
+                "required": false,
+                "type": "string",
+                "maxlength": 42,
+                "nullable": false
+            },
+            "anpa_category": {
+                "minlength": 1,
+                "type": "list",
+                "required": true
+            },
+            "dateline": {
+                "type": "dict",
+                "required": false,
+                "schema": {
+                    "text": {
+                        "type": "string",
+                        "required": true
+                    },
+                    "located": {
+                        "type": "dict",
+                        "required": true
+                    }
+                }
+            },
+            "renditions": {
+                "type": "dict",
+                "required": false
+            },
+            "type": {
+                "allowed": [
+                    "picture"
+                ],
+                "type": "string",
+                "required": "true"
+            },
+            "priority": {
+                "allowed": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9
+                ],
+                "type": "integer",
+                "required": false
+            },
+            "pubstatus": {
+                "allowed": [
+                    "canceled"
+                ],
+                "type": "string",
+                "required": true
+            },
+            "subject": {
+                "minlength": 1,
+                "type": "list",
+                "required": true
+            },
+            "abstract": {
+                "type": "string",
+                "required": false,
+                "maxlength": 160
+            },
+            "mimetype": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "nullable": false
+            }
+        },
+        "act": "kill"
+    },
+    {
+        "_id": "publish_video",
+        "type": "video",
+        "schema": {
+            "slugline": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "maxlength": 24,
+                "nullable": false
+            },
+            "anpa_category": {
+                "minlength": 1,
+                "type": "list",
+                "required": true
+            },
+            "headline": {
+                "empty": false,
+                "required": false,
+                "type": "string",
+                "maxlength": 42,
+                "nullable": false
+            },
+            "description_text": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "nullable": false
+            },
+            "type": {
+                "allowed": [
+                    "video"
+                ],
+                "type": "string",
+                "required": "true"
+            },
+            "subject": {
+                "minlength": 1,
+                "type": "list",
+                "required": true
+            },
+            "priority": {
+                "allowed": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9
+                ],
+                "type": "integer",
+                "required": false
+            },
+            "abstract": {
+                "type": "string",
+                "required": false,
+                "maxlength": 160
+            },
+            "pubstatus": {
+                "allowed": [
+                    "usable"
+                ],
+                "type": "string",
+                "required": true
+            },
+            "mimetype": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "nullable": false
+            },
+            "dateline": {
+                "type": "dict",
+                "required": false,
+                "schema": {
+                    "text": {
+                        "type": "string",
+                        "required": true
+                    },
+                    "located": {
+                        "type": "dict",
+                        "required": true
+                    }
+                }
+            },
+            "urgency": {
+                "allowed": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5
+                ],
+                "type": "integer",
+                "required": false
+            }
+        },
+        "act": "publish"
+    },
+    {
+        "_id": "correct_video",
+        "type": "video",
+        "schema": {
+            "slugline": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "maxlength": 24,
+                "nullable": false
+            },
+            "anpa_category": {
+                "minlength": 1,
+                "type": "list",
+                "required": true
+            },
+            "headline": {
+                "empty": false,
+                "required": false,
+                "type": "string",
+                "maxlength": 42,
+                "nullable": false
+            },
+            "description_text": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "nullable": false
+            },
+            "type": {
+                "allowed": [
+                    "video"
+                ],
+                "type": "string",
+                "required": "true"
+            },
+            "subject": {
+                "minlength": 1,
+                "type": "list",
+                "required": true
+            },
+            "priority": {
+                "allowed": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9
+                ],
+                "type": "integer",
+                "required": false
+            },
+            "abstract": {
+                "type": "string",
+                "required": false,
+                "maxlength": 160
+            },
+            "pubstatus": {
+                "allowed": [
+                    "usable"
+                ],
+                "type": "string",
+                "required": true
+            },
+            "mimetype": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "nullable": false
+            },
+            "dateline": {
+                "type": "dict",
+                "required": false,
+                "schema": {
+                    "text": {
+                        "type": "string",
+                        "required": true
+                    },
+                    "located": {
+                        "type": "dict",
+                        "required": true
+                    }
+                }
+            },
+            "urgency": {
+                "allowed": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5
+                ],
+                "type": "integer",
+                "required": false
+            }
+        },
+        "act": "correct"
+    },
+    {
+        "_id": "kill_video",
+        "type": "video",
+        "schema": {
+            "slugline": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "maxlength": 24,
+                "nullable": false
+            },
+            "anpa_category": {
+                "minlength": 1,
+                "type": "list",
+                "required": true
+            },
+            "headline": {
+                "empty": false,
+                "required": false,
+                "type": "string",
+                "maxlength": 42,
+                "nullable": false
+            },
+            "description_text": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "nullable": false
+            },
+            "type": {
+                "allowed": [
+                    "video"
+                ],
+                "type": "string",
+                "required": "true"
+            },
+            "subject": {
+                "minlength": 1,
+                "type": "list",
+                "required": true
+            },
+            "priority": {
+                "allowed": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9
+                ],
+                "type": "integer",
+                "required": false
+            },
+            "abstract": {
+                "type": "string",
+                "required": false,
+                "maxlength": 160
+            },
+            "pubstatus": {
+                "allowed": [
+                    "canceled"
+                ],
+                "type": "string",
+                "required": true
+            },
+            "mimetype": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "nullable": false
+            },
+            "dateline": {
+                "type": "dict",
+                "required": false,
+                "schema": {
+                    "text": {
+                        "type": "string",
+                        "required": true
+                    },
+                    "located": {
+                        "type": "dict",
+                        "required": true
+                    }
+                }
+            },
+            "urgency": {
+                "allowed": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5
+                ],
+                "type": "integer",
+                "required": false
+            }
+        },
+        "act": "kill"
+    },
+    {
+        "_id": "publish_audio",
+        "type": "audio",
+        "schema": {
+            "slugline": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "maxlength": 24,
+                "nullable": false
+            },
+            "anpa_category": {
+                "minlength": 1,
+                "type": "list",
+                "required": true
+            },
+            "headline": {
+                "empty": false,
+                "required": false,
+                "type": "string",
+                "maxlength": 42,
+                "nullable": false
+            },
+            "description_text": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "nullable": false
+            },
+            "type": {
+                "allowed": [
+                    "audio"
+                ],
+                "type": "string",
+                "required": "true"
+            },
+            "subject": {
+                "minlength": 1,
+                "type": "list",
+                "required": true
+            },
+            "priority": {
+                "allowed": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9
+                ],
+                "type": "integer",
+                "required": false
+            },
+            "abstract": {
+                "type": "string",
+                "required": false,
+                "maxlength": 160
+            },
+            "pubstatus": {
+                "allowed": [
+                    "usable"
+                ],
+                "type": "string",
+                "required": true
+            },
+            "mimetype": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "nullable": false
+            },
+            "dateline": {
+                "type": "dict",
+                "required": false,
+                "schema": {
+                    "text": {
+                        "type": "string",
+                        "required": true
+                    },
+                    "located": {
+                        "type": "dict",
+                        "required": true
+                    }
+                }
+            },
+            "urgency": {
+                "allowed": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5
+                ],
+                "type": "integer",
+                "required": false
+            }
+        },
+        "act": "publish"
+    },
+    {
+        "_id": "correct_audio",
+        "type": "audio",
+        "schema": {
+            "slugline": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "maxlength": 24,
+                "nullable": false
+            },
+            "anpa_category": {
+                "minlength": 1,
+                "type": "list",
+                "required": true
+            },
+            "headline": {
+                "empty": false,
+                "required": false,
+                "type": "string",
+                "maxlength": 42,
+                "nullable": false
+            },
+            "description_text": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "nullable": false
+            },
+            "type": {
+                "allowed": [
+                    "audio"
+                ],
+                "type": "string",
+                "required": "true"
+            },
+            "subject": {
+                "minlength": 1,
+                "type": "list",
+                "required": true
+            },
+            "priority": {
+                "allowed": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9
+                ],
+                "type": "integer",
+                "required": false
+            },
+            "abstract": {
+                "type": "string",
+                "required": false,
+                "maxlength": 160
+            },
+            "pubstatus": {
+                "allowed": [
+                    "usable"
+                ],
+                "type": "string",
+                "required": true
+            },
+            "mimetype": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "nullable": false
+            },
+            "dateline": {
+                "type": "dict",
+                "required": false,
+                "schema": {
+                    "text": {
+                        "type": "string",
+                        "required": true
+                    },
+                    "located": {
+                        "type": "dict",
+                        "required": true
+                    }
+                }
+            },
+            "urgency": {
+                "allowed": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5
+                ],
+                "type": "integer",
+                "required": false
+            }
+        },
+        "act": "correct"
+    },
+    {
+        "_id": "kill_audio",
+        "type": "audio",
+        "schema": {
+            "slugline": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "maxlength": 24,
+                "nullable": false
+            },
+            "anpa_category": {
+                "minlength": 1,
+                "type": "list",
+                "required": true
+            },
+            "headline": {
+                "empty": false,
+                "required": false,
+                "type": "string",
+                "maxlength": 42,
+                "nullable": false
+            },
+            "description_text": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "nullable": false
+            },
+            "type": {
+                "allowed": [
+                    "audio"
+                ],
+                "type": "string",
+                "required": "true"
+            },
+            "subject": {
+                "minlength": 1,
+                "type": "list",
+                "required": true
+            },
+            "priority": {
+                "allowed": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9
+                ],
+                "type": "integer",
+                "required": false
+            },
+            "abstract": {
+                "type": "string",
+                "required": false,
+                "maxlength": 160
+            },
+            "pubstatus": {
+                "allowed": [
+                    "canceled"
+                ],
+                "type": "string",
+                "required": true
+            },
+            "mimetype": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "nullable": false
+            },
+            "dateline": {
+                "type": "dict",
+                "required": false,
+                "schema": {
+                    "text": {
+                        "type": "string",
+                        "required": true
+                    },
+                    "located": {
+                        "type": "dict",
+                        "required": true
+                    }
+                }
+            },
+            "urgency": {
+                "allowed": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5
+                ],
+                "type": "integer",
+                "required": false
+            }
+        },
+        "act": "kill"
+    },
+    {
+        "_id": "publish_composite",
+        "type": "composite",
+        "schema": {
+            "anpa_category": {
+                "minlength": 1,
+                "type": "list",
+                "required": true
+            },
+            "slugline": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "maxlength": 24,
+                "nullable": false
+            },
+            "priority": {
+                "allowed": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9
+                ],
+                "type": "integer",
+                "required": false
+            },
+            "urgency": {
+                "allowed": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5
+                ],
+                "type": "integer",
+                "required": false
+            },
+            "headline": {
+                "empty": false,
+                "required": false,
+                "type": "string",
+                "maxlength": 42,
+                "nullable": false
+            },
+            "groups": {
+                "minlength": 1,
+                "type": "list"
+            },
+            "type": {
+                "allowed": [
+                    "composite"
+                ],
+                "type": "string",
+                "required": "true"
+            },
+            "pubstatus": {
+                "allowed": [
+                    "usable"
+                ],
+                "type": "string",
+                "required": true
+            },
+            "subject": {
+                "minlength": 1,
+                "type": "list",
+                "required": true
+            }
+        },
+        "act": "publish"
+    },
+    {
+        "_id": "correct_composite",
+        "type": "composite",
+        "schema": {
+            "anpa_category": {
+                "minlength": 1,
+                "type": "list",
+                "required": true
+            },
+            "slugline": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "maxlength": 24,
+                "nullable": false
+            },
+            "priority": {
+                "allowed": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9
+                ],
+                "type": "integer",
+                "required": false
+            },
+            "urgency": {
+                "allowed": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5
+                ],
+                "type": "integer",
+                "required": false
+            },
+            "headline": {
+                "empty": false,
+                "required": false,
+                "type": "string",
+                "maxlength": 42,
+                "nullable": false
+            },
+            "groups": {
+                "minlength": 1,
+                "type": "list"
+            },
+            "type": {
+                "allowed": [
+                    "composite"
+                ],
+                "type": "string",
+                "required": "true"
+            },
+            "pubstatus": {
+                "allowed": [
+                    "usable"
+                ],
+                "type": "string",
+                "required": true
+            },
+            "subject": {
+                "minlength": 1,
+                "type": "list",
+                "required": true
+            }
+        },
+        "act": "correct"
+    },
+    {
+        "_id": "kill_composite",
+        "type": "composite",
+        "schema": {
+            "anpa_category": {
+                "minlength": 1,
+                "type": "list",
+                "required": true
+            },
+            "slugline": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "maxlength": 24,
+                "nullable": false
+            },
+            "priority": {
+                "allowed": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9
+                ],
+                "type": "integer",
+                "required": false
+            },
+            "urgency": {
+                "allowed": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5
+                ],
+                "type": "integer",
+                "required": false
+            },
+            "headline": {
+                "empty": false,
+                "required": false,
+                "type": "string",
+                "maxlength": 42,
+                "nullable": false
+            },
+            "groups": {
+                "minlength": 1,
+                "type": "list"
+            },
+            "type": {
+                "allowed": [
+                    "composite"
+                ],
+                "type": "string",
+                "required": "true"
+            },
+            "pubstatus": {
+                "allowed": [
+                    "canceled"
+                ],
+                "type": "string",
+                "required": true
+            },
+            "subject": {
+                "minlength": 1,
+                "type": "list",
+                "required": true
+            }
+        },
+        "act": "kill"
+    },
+    {
+        "_id": "publish_graphic",
+        "type": "graphic",
+        "schema": {
+            "anpa_category": {
+                "minlength": 1,
+                "type": "list",
+                "required": true
+            },
+            "type": {
+                "allowed": [
+                    "graphic"
+                ],
+                "type": "string",
+                "required": "true"
+            },
+            "pubstatus": {
+                "allowed": [
+                    "usable"
+                ],
+                "type": "string",
+                "required": true
+            },
+            "subject": {
+                "minlength": 1,
+                "type": "list",
+                "required": true
+            }
+        },
+        "act": "publish"
+    },
+    {
+        "_id": "correct_graphic",
+        "type": "graphic",
+        "schema": {
+            "anpa_category": {
+                "minlength": 1,
+                "type": "list",
+                "required": true
+            },
+            "type": {
+                "allowed": [
+                    "graphic"
+                ],
+                "type": "string",
+                "required": "true"
+            },
+            "pubstatus": {
+                "allowed": [
+                    "usable"
+                ],
+                "type": "string",
+                "required": true
+            },
+            "subject": {
+                "minlength": 1,
+                "type": "list",
+                "required": true
+            }
+        },
+        "act": "correct"
+    },
+    {
+        "_id": "kill_graphic",
+        "type": "graphic",
+        "schema": {
+            "anpa_category": {
+                "minlength": 1,
+                "type": "list",
+                "required": true
+            },
+            "type": {
+                "allowed": [
+                    "graphic"
+                ],
+                "type": "string",
+                "required": "true"
+            },
+            "pubstatus": {
+                "allowed": [
+                    "canceled"
+                ],
+                "type": "string",
+                "required": true
+            },
+            "subject": {
+                "minlength": 1,
+                "type": "list",
+                "required": true
+            }
+        },
+        "act": "kill"
+    },
+    {
+        "_id": "auto_publish_text",
+        "type": "text",
+        "schema": {
+            "anpa_category": {
+                "minlength": 1,
+                "type": "list",
+                "required": true
+            },
+            "type": {
+                "allowed": [
+                    "text"
+                ],
+                "type": "string",
+                "required": true
+            },
+            "priority": {
+                "allowed": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9
+                ],
+                "type": "integer",
+                "required": true
+            },
+            "abstract": {
+                "type": "string",
+                "required": false,
+                "maxlength": 160
+            },
+            "urgency": {
+                "allowed": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5
+                ],
+                "type": "integer",
+                "required": true
+            },
+            "pubstatus": {
+                "allowed": [
+                    "usable"
+                ],
+                "type": "string",
+                "required": true
+            },
+            "headline": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "maxlength": 42,
+                "nullable": false
+            },
+            "body_html": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "nullable": false
+            },
+            "slugline": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "maxlength": 24,
+                "nullable": false
+            },
+            "subject": {
+                "minlength": 1,
+                "type": "list",
+                "required": false
+            }
+        },
+        "act": "auto_publish"
+    },
+    {
+        "_id": "auto_publish_preformatted",
+        "type": "preformatted",
+        "schema": {
+            "anpa_category": {
+                "minlength": 1,
+                "type": "list",
+                "required": true
+            },
+            "type": {
+                "allowed": [
+                    "preformatted"
+                ],
+                "type": "string",
+                "required": true
+            },
+            "priority": {
+                "allowed": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9
+                ],
+                "type": "integer",
+                "required": true
+            },
+            "abstract": {
+                "type": "string",
+                "required": false,
+                "maxlength": 160
+            },
+            "urgency": {
+                "allowed": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5
+                ],
+                "type": "integer",
+                "required": true
+            },
+            "pubstatus": {
+                "allowed": [
+                    "usable"
+                ],
+                "type": "string",
+                "required": true
+            },
+            "headline": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "maxlength": 42,
+                "nullable": false
+            },
+            "body_html": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "nullable": false
+            },
+            "slugline": {
+                "empty": false,
+                "required": true,
+                "type": "string",
+                "maxlength": 24,
+                "nullable": false
+            },
+            "subject": {
+                "minlength": 1,
+                "type": "list",
+                "required": false
+            }
+        },
+        "act": "auto_publish"
+    },
+    {
+        "_id": "publish_embedded_picture",
+        "type": "picture",
+        "schema": {
+            "renditions": {
+                "type": "dict",
+                "required": true
+            },
+            "type": {
+                "allowed": [
+                    "picture"
+                ],
+                "type": "string",
+                "required": true
+            },
+            "pubstatus": {
+                "allowed": [
+                    "usable"
+                ],
+                "type": "string",
+                "required": true
+            },
+            "description_text": {
+                "type": "string",
+                "required": true
+            }
+        },
+        "embedded": true,
+        "act": "publish"
+    },
+    {
+        "_id": "correct_embedded_picture",
+        "type": "picture",
+        "schema": {
+            "renditions": {
+                "type": "dict",
+                "required": true
+            },
+            "type": {
+                "allowed": [
+                    "picture"
+                ],
+                "type": "string",
+                "required": true
+            },
+            "pubstatus": {
+                "allowed": [
+                    "usable"
+                ],
+                "type": "string",
+                "required": true
+            },
+            "description_text": {
+                "type": "string",
+                "required": true
+            }
+        },
+        "embedded": true,
+        "act": "correct"
+    }
+]

@@ -1,0 +1,87 @@
+[
+    {
+        "_id": "5926b7ffab0e4f07a84ce940",
+        "source": "news",
+        "description": "News articles, breaking news,",
+        "working_stage": "5926b7ffab0e4f07a84ce93e",
+        "desk_type": "production",
+        "incoming_stage": "5926b7ffab0e4f07a84ce93f",
+        "desk_metadata": {},
+        "name": "News",
+        "content_expiry": null,
+        "members": [
+            {
+                "user": "59280a2cab0e4f060a84be73"
+            },
+            {
+                "user": "59280a60ab0e4f060a84be77"
+            },
+            {
+                "user": "592807daab0e4f060a84be5c"
+            },
+            {
+                "user": "5928098dab0e4f060a84be6b"
+            },
+            {
+                "user": "592809d9ab0e4f060a84be6f"
+            },
+            {
+                "user": "59280829ab0e4f060a84be60"
+            },
+            {
+                "user": "5928036cab0e4f060a84be42"
+            },
+            {
+                "user": "5927ecf1ab0e4f060a84bc69"
+            },
+            {
+                "user": "59269d4aab0e4f06e48580e0"
+            }
+        ],
+        "content_profiles": {},
+        "default_content_template": "5926a6ccab0e4f07a84ce936",
+        "default_content_profile": "5926a6ccab0e4f07a84ce934"
+    },
+    {
+        "_id": "592815c4ab0e4f060a84be9a",
+        "description": "Opinion articles, blog posts, news analysis, commentary",
+        "source": "Opinion/Blogs",
+        "incoming_stage": "592815c4ab0e4f060a84be99",
+        "content_expiry": 0,
+        "name": "Opinion/Blogs",
+        "working_stage": "592815c4ab0e4f060a84be98",
+        "default_content_profile": "5926a6ccab0e4f07a84ce934",
+        "default_content_template": "5926a6ccab0e4f07a84ce936",
+        "desk_metadata": {},
+        "desk_type": "production",
+        "members": [
+            {
+                "user": "5927ecf1ab0e4f060a84bc69"
+            },
+            {
+                "user": "59280829ab0e4f060a84be60"
+            }
+        ]
+    },
+    {
+        "_id": "59281610ab0e4f060a84bea3",
+        "description": "Investigations, long reads, features, projects",
+        "source": "Special Projects",
+        "incoming_stage": "59281610ab0e4f060a84bea2",
+        "content_expiry": 0,
+        "name": "Special Projects",
+        "working_stage": "59281610ab0e4f060a84bea1",
+        "default_content_profile": "5926a6ccab0e4f07a84ce934",
+        "default_content_template": "5926a6ccab0e4f07a84ce936",
+        "desk_metadata": {},
+        "desk_type": "production",
+        "members": [
+            {
+                "user": "5927ecf1ab0e4f060a84bc69"
+            },
+            {
+                "user": "59280829ab0e4f060a84be60"
+            }
+        ]
+    }
+]
