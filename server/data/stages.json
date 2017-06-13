@@ -1,0 +1,68 @@
+[ 
+    {
+        "_id": "5926b7ffab0e4f07a84ce93e",
+        "desk_order": 1,
+        "local_readonly": false,
+        "is_visible": true,
+        "working_stage": true,
+        "default_incoming": false,
+        "content_expiry": null,
+        "name": "Working",
+        "desk": "5926b7ffab0e4f07a84ce940"
+    },
+    {
+        "_id": "5926b7ffab0e4f07a84ce93f",
+        "desk_order": 2,
+        "local_readonly": false,
+        "is_visible": true,
+        "name": "In Progress",
+        "default_incoming": true,
+        "content_expiry": null,
+        "working_stage": false,
+        "desk": "5926b7ffab0e4f07a84ce940"
+    },
+    {
+        "_id": "592815c4ab0e4f060a84be98",
+        "default_incoming": false,
+        "name": "Working",
+        "working_stage": true,
+        "content_expiry": null,
+        "desk_order": 1,
+        "local_readonly": false,
+        "is_visible": true,
+        "desk": "592815c4ab0e4f060a84be9a"
+    },
+    {
+        "_id": "592815c4ab0e4f060a84be99",
+        "default_incoming": true,
+        "name": "In Progress",
+        "desk_order": 2,
+        "content_expiry": null,
+        "working_stage": false,
+        "local_readonly": false,
+        "is_visible": true,
+        "desk": "592815c4ab0e4f060a84be9a"
+    },
+    {
+        "_id": "59281610ab0e4f060a84bea1",
+        "default_incoming": false,
+        "name": "Working",
+        "working_stage": true,
+        "content_expiry": null,
+        "desk_order": 1,
+        "local_readonly": false,
+        "is_visible": true,
+        "desk": "59281610ab0e4f060a84bea3"
+    },
+    {
+        "_id": "59281610ab0e4f060a84bea2",
+        "default_incoming": true,
+        "name": "In Progress",
+        "desk_order": 2,
+        "content_expiry": null,
+        "working_stage": false,
+        "local_readonly": false,
+        "is_visible": true,
+        "desk": "59281610ab0e4f060a84bea3"
+    }
+]

@@ -1,0 +1,79 @@
+[
+    {
+        "_id": "59269d48ab0e4f06d738d471",
+        "is_public": true,
+        "template_name": "kill",
+        "template_type": "kill",
+        "data": {
+            "body_html": "FIXME",
+            "flags": {
+                "marked_for_legal": false,
+                "marked_archived_only": false,
+                "marked_for_not_publication": false,
+                "marked_for_sms": false
+            },
+            "format": "HTML",
+            "headline": "Kill/Takedown notice",
+            "pubstatus": "usable",
+            "type": "text",
+            "anpa_take_key": "KILL/TAKEDOWN",
+            "ednote": "",
+            "abstract": ""
+        }
+    },
+    {
+        "_id": "5926a6ccab0e4f07a84ce936",
+        "user": "59269d4aab0e4f06e48580e0",
+        "data": {
+            "body_html": "",
+            "flags": {
+                "marked_for_sms": false,
+                "marked_for_legal": false,
+                "marked_archived_only": false,
+                "marked_for_not_publication": false
+            },
+            "pubstatus": "usable",
+            "format": "HTML",
+            "headline": "",
+            "sms_message": "",
+            "profile": "5926a6ccab0e4f07a84ce934",
+            "type": "text"
+        },
+        "template_name": "News article",
+        "is_public": true,
+        "template_type": "create",
+        "template_desks": [
+            "5926b7ffab0e4f07a84ce940",
+            "592815c4ab0e4f060a84be9a",
+            "59281610ab0e4f060a84bea3"],
+        "schedule": {}
+    },
+    {
+        "_id": "5926a7caab0e4f07a84ce93a",
+        "user": "59269d4aab0e4f06e48580e0",
+        "data": {
+            "type": "text",
+            "body_html": "",
+            "sms_message": "",
+            "headline": "",
+            "profile": "5926a7caab0e4f07a84ce938",
+            "format": "HTML",
+            "flags": {
+                "marked_for_not_publication": false,
+                "marked_for_sms": false,
+                "marked_for_legal": false,
+                "marked_archived_only": false
+            },
+            "pubstatus": "usable"
+        },
+        "template_name": "video",
+        "is_public": true,
+        "template_type": "create",
+        "schedule": {},
+        "template_desks": [
+            "5926b7ffab0e4f07a84ce940",
+            "592815c4ab0e4f060a84be9a",
+            "59281610ab0e4f060a84bea3"
+        ]
+    }
+]

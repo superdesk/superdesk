@@ -1,0 +1,574 @@
+[ 
+    {
+        "_id": "5926a6ccab0e4f07a84ce934",
+        "created_by": "59269d4aab0e4f06e48580e0",
+        "label": "News article",
+        "updated_by": "59269d4aab0e4f06e48580e0",
+        "enabled": true,
+        "is_used": true,
+        "priority": 0,
+        "schema": {
+            "priority": {
+                "type": "integer",
+                "required": false,
+                "nullable": true
+            },
+            "genre": null,
+            "place": null,
+            "headline": {
+                "minlength": 1,
+                "type": "string",
+                "required": true,
+                "maxlength": 64,
+                "nullable": false
+            },
+            "sms": null,
+            "dateline": {
+                "type": "dict",
+                "required": false,
+                "nullable": true
+            },
+            "urgency": null,
+            "slugline": null,
+            "subject": {
+                "schema": {
+                    "schema": {
+                        "name": {},
+                        "qcode": {},
+                        "scheme": {
+                            "type": "string",
+                            "required": true,
+                            "allowed": [
+                                "subject_custom"
+                            ]
+                        },
+                        "parent": {
+                            "nullable": true
+                        },
+                        "service": {
+                            "nullable": true
+                        }
+                    },
+                    "type": "dict"
+                },
+                "minlength": 1,
+                "type": "list",
+                "required": true,
+                "default": [],
+                "mandatory_in_list": {
+                    "scheme": {
+                        "subject": "subject_custom"
+                    }
+                },
+                "nullable": false
+            },
+            "company_codes": null,
+            "keywords": {
+                "minlength": 0,
+                "type": "list",
+                "required": false,
+                "enabled": true,
+                "nullable": true
+            },
+            "body_footer": null,
+            "anpa_take_key": null,
+            "media_description": null,
+            "feature_media": {
+                "enabled": false,
+                "required": false,
+                "nullable": true
+            },
+            "abstract": {
+                "type": "string",
+                "required": false,
+                "maxlength": 320,
+                "nullable": true
+            },
+            "ednote": {
+                "type": "string",
+                "required": false,
+                "nullable": true
+            },
+            "body_html": {
+                "minlength": 1,
+                "type": "string",
+                "required": true,
+                "nullable": false
+            },
+            "sign_off": null,
+            "anpa_category": null,
+            "byline": {
+                "minlength": 0,
+                "type": "string",
+                "required": false,
+                "nullable": true
+            },
+            "footer": null
+        },
+        "editor": {
+            "priority": {
+                "sdWidth": "quarter",
+                "required": false,
+                "order": 3
+            },
+            "genre": null,
+            "place": null,
+            "headline": {
+                "formatOptions": [
+                    "underline",
+                    "anchor",
+                    "bold",
+                    "removeFormat"
+                ],
+                "cleanPastedHTML": true,
+                "required": true,
+                "order": 7
+            },
+            "sms": null,
+            "dateline": {
+                "required": false,
+                "order": 10
+            },
+            "urgency": null,
+            "slugline": null,
+            "subject_custom": {
+                "sdWidth": "half",
+                "required": true,
+                "order": 1
+            },
+            "company_codes": null,
+            "keywords": {
+                "cleanPastedHTML": false,
+                "sdWidth": "half",
+                "required": false,
+                "order": 2
+            },
+            "body_footer": null,
+            "anpa_take_key": null,
+            "media_description": null,
+            "feature_media": {
+                "sdWidth": "full",
+                "required": false,
+                "order": 6
+            },
+            "abstract": {
+                "formatOptions": [
+                    "bold",
+                    "italic",
+                    "underline",
+                    "anchor",
+                    "removeFormat"
+                ],
+                "cleanPastedHTML": true,
+                "sdWidth": "full",
+                "required": false,
+                "order": 8
+            },
+            "ednote": {
+                "sdWidth": "full",
+                "required": false,
+                "order": 4
+            },
+            "body_html": {
+                "formatOptions": [
+                    "h2",
+                    "bold",
+                    "italic",
+                    "underline",
+                    "quote",
+                    "anchor",
+                    "embed",
+                    "picture",
+                    "removeFormat"
+                ],
+                "cleanPastedHTML": true,
+                "sdWidth": "full",
+                "required": true,
+                "order": 11
+            },
+            "sign_off": null,
+            "anpa_category": null,
+            "byline": {
+                "required": false,
+                "order": 9
+            },
+            "footer": null
+        }
+    },
+    {
+        "_id": "5926a7caab0e4f07a84ce938",
+        "created_by": "59269d4aab0e4f06e48580e0",
+        "label": "Video",
+        "updated_by": "59269d4aab0e4f06e48580e0",
+        "enabled": true,
+        "is_used": true,
+        "priority": 0,
+        "schema": {
+            "sign_off": null,
+            "media_description": null,
+            "feature_media": {
+                "nullable": true,
+                "required": false,
+                "minlength": 0
+            },
+            "headline": {
+                "nullable": false,
+                "type": "string",
+                "maxlength": 64,
+                "required": true,
+                "minlength": 1
+            },
+            "byline": {
+                "nullable": false,
+                "type": "string",
+                "required": true,
+                "minlength": 1
+            },
+            "company_codes": null,
+            "anpa_take_key": null,
+            "footer": null,
+            "anpa_category": null,
+            "body_footer": null,
+            "sms": null,
+            "keywords": {
+                "nullable": true,
+                "enabled": true,
+                "type": "string",
+                "required": false,
+                "minlength": 0
+            },
+            "body_html": {
+                "nullable": true,
+                "type": "string",
+                "required": false,
+                "minlength": 0
+            },
+            "ednote": {
+                "nullable": true,
+                "type": "string",
+                "required": false
+            },
+            "abstract": {
+                "nullable": true,
+                "type": "string",
+                "maxlength": 160,
+                "required": false,
+                "minlength": 0
+            },
+            "dateline": {
+                "nullable": true,
+                "type": "dict",
+                "required": false
+            },
+            "genre": null,
+            "urgency": null,
+            "priority": {
+                "nullable": true,
+                "type": "integer",
+                "required": false
+            },
+            "subject": {
+                "nullable": false,
+                "default": [],
+                "schema": {
+                    "type": "dict",
+                    "schema": {
+                        "service": {
+                            "nullable": true
+                        },
+                        "scheme": {
+                            "type": "string",
+                            "required": true,
+                            "allowed": [
+                                "subject_custom"
+                            ]
+                        },
+                        "name": {},
+                        "parent": {
+                            "nullable": true
+                        },
+                        "qcode": {}
+                    }
+                },
+                "mandatory_in_list": {
+                    "scheme": {
+                        "subject": "subject_custom"
+                    }
+                },
+                "type": "list",
+                "required": true,
+                "minlength": 1
+            },
+            "slugline": null,
+            "place": null
+        },
+        "editor": {
+            "sign_off": null,
+            "media_description": null,
+            "feature_media": {
+                "sdWidth": "full",
+                "required": false
+            },
+            "headline": {
+                "cleanPastedHTML": true,
+                "order": 11,
+                "formatOptions": [
+                    "underline",
+                    "anchor",
+                    "bold",
+                    "removeFormat"
+                ],
+                "required": true
+            },
+            "byline": {
+                "required": true,
+                "order": 14
+            },
+            "company_codes": null,
+            "anpa_take_key": null,
+            "footer": null,
+            "anpa_category": null,
+            "body_footer": null,
+            "sms": null,
+            "keywords": {
+                "sdWidth": "half",
+                "required": false,
+                "order": 2
+            },
+            "body_html": {
+                "sdWidth": "full",
+                "cleanPastedHTML": true,
+                "order": 16,
+                "formatOptions": [
+                    "h2",
+                    "bold",
+                    "italic",
+                    "underline",
+                    "quote",
+                    "anchor",
+                    "embed",
+                    "picture",
+                    "removeFormat"
+                ],
+                "required": false
+            },
+            "ednote": {
+                "sdWidth": "full",
+                "required": false,
+                "order": 10
+            },
+            "abstract": {
+                "sdWidth": "full",
+                "cleanPastedHTML": true,
+                "order": 13,
+                "formatOptions": [
+                    "bold",
+                    "italic",
+                    "underline",
+                    "anchor",
+                    "removeFormat"
+                ],
+                "required": false
+            },
+            "dateline": {
+                "required": false,
+                "order": 15
+            },
+            "genre": null,
+            "urgency": null,
+            "priority": {
+                "sdWidth": "quarter",
+                "required": false,
+                "order": 5
+            },
+            "subject_custom": {
+                "sdWidth": "quarter",
+                "required": true,
+                "order": 8
+            },
+            "slugline": null,
+            "place": null
+        }
+    },
+    {
+        "_id": "592ab9eeab0e4f060a84c429",
+        "description": "News article with embedded video",
+        "label": "Article w/video",
+        "enabled": true,
+        "updated_by": "59269d4aab0e4f06e48580e0",
+        "created_by": "59269d4aab0e4f06e48580e0",
+        "priority": 0,
+        "is_used": true,
+        "editor": {
+            "sign_off": null,
+            "media_description": null,
+            "feature_media": {},
+            "headline": {
+                "formatOptions": [
+                    "underline",
+                    "anchor",
+                    "bold",
+                    "removeFormat"
+                ],
+                "order": 11,
+                "required": true
+            },
+            "byline": {
+                "required": false,
+                "order": 14
+            },
+            "company_codes": null,
+            "anpa_take_key": null,
+            "footer": null,
+            "anpa_category": null,
+            "body_footer": null,
+            "sms": null,
+            "keywords": {
+                "sdWidth": "full",
+                "required": false,
+                "order": 1
+            },
+            "body_html": {
+                "formatOptions": [
+                    "h2",
+                    "bold",
+                    "italic",
+                    "underline",
+                    "quote",
+                    "anchor",
+                    "embed",
+                    "picture",
+                    "removeFormat"
+                ],
+                "order": 16,
+                "cleanPastedHTML": false,
+                "required": false
+            },
+            "ednote": {
+                "sdWidth": "full",
+                "required": false,
+                "order": 10
+            },
+            "abstract": {
+                "formatOptions": [
+                    "bold",
+                    "italic",
+                    "underline",
+                    "anchor",
+                    "removeFormat"
+                ],
+                "order": 13,
+                "required": false
+            },
+            "dateline": {
+                "required": false,
+                "order": 15
+            },
+            "genre": null,
+            "urgency": null,
+            "priority": {
+                "sdWidth": "quarter",
+                "required": false,
+                "order": 5
+            },
+            "subject_custom": {
+                "sdWidth": "full",
+                "required": true,
+                "order": 8
+            },
+            "slugline": null,
+            "place": null
+        },
+        "schema": {
+            "sign_off": null,
+            "media_description": null,
+            "feature_media": {},
+            "headline": {
+                "type": "string",
+                "required": true,
+                "maxlength": 64,
+                "nullable": false,
+                "minlength": 1
+            },
+            "byline": {
+                "type": "string",
+                "required": false,
+                "nullable": true
+            },
+            "company_codes": null,
+            "anpa_take_key": null,
+            "footer": null,
+            "anpa_category": null,
+            "body_footer": null,
+            "sms": null,
+            "keywords": {
+                "type": "string",
+                "required": false,
+                "nullable": true,
+                "enabled": true
+            },
+            "body_html": {
+                "type": "string",
+                "required": false,
+                "nullable": true
+            },
+            "ednote": {
+                "type": "string",
+                "required": false,
+                "nullable": true
+            },
+            "abstract": {
+                "type": "string",
+                "required": false,
+                "maxlength": 160,
+                "nullable": true
+            },
+            "dateline": {
+                "type": "dict",
+                "required": false,
+                "nullable": true
+            },
+            "genre": null,
+            "urgency": null,
+            "priority": {
+                "type": "integer",
+                "required": false,
+                "nullable": true
+            },
+            "subject": {
+                "nullable": false,
+                "default": [],
+                "schema": {
+                    "type": "dict",
+                    "schema": {
+                        "service": {
+                            "nullable": true
+                        },
+                        "scheme": {
+                            "type": "string",
+                            "required": true,
+                            "allowed": [
+                                "subject_custom"
+                            ]
+                        },
+                        "name": {},
+                        "parent": {
+                            "nullable": true
+                        },
+                        "qcode": {}
+                    }
+                },
+                "mandatory_in_list": {
+                    "scheme": {
+                        "subject": "subject_custom"
+                    }
+                },
+                "type": "list",
+                "required": true,
+                "minlength": 1
+            },
+            "slugline": null,
+            "place": null
+        }
+    }
+]
