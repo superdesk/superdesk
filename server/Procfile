@@ -1,5 +1,5 @@
-rest: gunicorn -c gunicorn_config.py wsgi
-wamp: python3 -u ws.py
-work: celery -A worker worker
-beat: celery -A worker beat --pid=
-capi: gunicorn -c gunicorn_config.py content_api.wsgi
+rest: gunicorn -c python:superdesk.gunicorn superdesk.wsgi
+wamp: python3 -u -m superdesk.ws
+work: celery -A superdesk.worker worker
+beat: celery -A superdesk.worker beat --pid=
+capi: gunicorn -c python:superdesk.gunicorn content_api.wsgi
