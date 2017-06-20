@@ -17499,22 +17499,554 @@
         ]
     },
     {
-        "_id": "desk_types",
-        "display_name": "Desk Types",
-        "type": "unmanageable",
+        "_id": "categories",
+        "schema": {
+            "name": {},
+            "subject": {},
+            "qcode": {}
+        },
+        "type": "manageable",
         "items": [
-            {"is_active": true, "name": "authoring", "qcode": "authoring"},
-            {"is_active": true, "name": "production", "qcode": "production"}
-        ]
+            {
+                "name": "FIXME",
+                "is_active": true,
+                "subject": "",
+                "qcode": "f"
+            }
+        ],
+        "display_name": "Categories",
+        "unique_field": "qcode"
+    },
+    {
+        "_id": "default_categories",
+        "schema": {
+            "qcode": {}
+        },
+        "type": "manageable",
+        "items": [
+            {
+                "is_active": true,
+                "qcode": "a"
+            },
+            {
+                "is_active": true,
+                "qcode": "e"
+            },
+            {
+                "is_active": true,
+                "qcode": "f"
+            },
+            {
+                "is_active": true,
+                "qcode": "i"
+            },
+            {
+                "is_active": true,
+                "qcode": "s"
+            },
+            {
+                "is_active": true,
+                "qcode": "t"
+            },
+            {
+                "is_active": true,
+                "qcode": "v"
+            }
+        ],
+        "display_name": "Default Categories",
+        "unique_field": "qcode"
+    },
+    {
+        "_id": "genre",
+        "schema": {
+            "name": {},
+            "qcode": {}
+        },
+        "items": [
+            {
+                "name": "Article (news)",
+                "is_active": true,
+                "qcode": "Article"
+            },
+            {
+                "name": "Sidebar",
+                "is_active": true,
+                "qcode": "Sidebar"
+            },
+            {
+                "name": "Factbox",
+                "is_active": true,
+                "qcode": "Factbox"
+            },
+            {
+                "name": "Feature",
+                "is_active": true,
+                "qcode": "Feature"
+            },
+            {
+                "name": "Newsfeature",
+                "is_active": true,
+                "qcode": "Newsfeature"
+            },
+            {
+                "name": "Backgrounder",
+                "is_active": true,
+                "qcode": "Backgrounder"
+            },
+            {
+                "name": "Opinion",
+                "is_active": true,
+                "qcode": "Opinion"
+            },
+            {
+                "name": "View (incl parly sketch)",
+                "is_active": true,
+                "qcode": "View"
+            },
+            {
+                "name": "Modular",
+                "is_active": true,
+                "qcode": "Modular"
+            },
+            {
+                "name": "Broadcast Script",
+                "is_active": true,
+                "qcode": "Broadcast Script"
+            },
+            {
+                "name": "Briefs",
+                "is_active": true,
+                "qcode": "Briefs"
+            },
+            {
+                "name": "Colour piece",
+                "is_active": true,
+                "qcode": "Colour piece"
+            },
+            {
+                "name": "Obituary",
+                "is_active": true,
+                "qcode": "Obituary"
+            },
+            {
+                "name": "Analysis",
+                "is_active": true,
+                "qcode": "Analysis"
+            },
+            {
+                "name": "Timeline",
+                "is_active": true,
+                "qcode": "Timeline"
+            },
+            {
+                "name": "Chronology",
+                "is_active": true,
+                "qcode": "Chronology"
+            },
+            {
+                "name": "Interview",
+                "is_active": true,
+                "qcode": "Interview"
+            },
+            {
+                "name": "Results (sport)",
+                "is_active": true,
+                "qcode": "Results (sport)"
+            },
+            {
+                "name": "Market Open",
+                "is_active": true,
+                "qcode": "Market Open"
+            },
+            {
+                "name": "Market Close",
+                "is_active": true,
+                "qcode": "Market Close"
+            },
+            {
+                "name": "Market Report",
+                "is_active": true,
+                "qcode": "Market Report"
+            },
+            {
+                "name": "Review",
+                "is_active": true,
+                "qcode": "Review"
+            },
+            {
+                "name": "Preview",
+                "is_active": true,
+                "qcode": "Preview"
+            }
+        ],
+        "display_name": "Genre",
+        "type": "manageable"
+    },
+    {
+        "_id": "urgency",
+        "schema": {
+            "name": {},
+            "color": {
+                "type": "color"
+            },
+            "qcode": {},
+            "short": {
+                "label": "List Name",
+                "type": "short",
+                "maxlength": 2
+            }
+        },
+        "type": "manageable",
+        "items": [
+            {
+                "name": "1",
+                "is_active": true,
+                "qcode": 1
+            },
+            {
+                "name": "2",
+                "is_active": true,
+                "qcode": 2
+            },
+            {
+                "name": "3",
+                "is_active": true,
+                "qcode": 3
+            },
+            {
+                "name": "4",
+                "is_active": true,
+                "qcode": 4
+            },
+            {
+                "name": "5",
+                "is_active": true,
+                "qcode": 5
+            }
+        ],
+        "display_name": "Urgency",
+        "unique_field": "qcode"
+    },
+    {
+        "_id": "priority",
+        "schema": {
+            "name": {},
+            "color": {
+                "type": "color"
+            },
+            "qcode": {},
+            "short": {
+                "label": "List Name",
+                "type": "short",
+                "maxlength": 2
+            }
+        },
+        "items": [
+            {
+                "name": "1",
+                "is_active": true,
+                "qcode": 1
+            },
+            {
+                "name": "2",
+                "is_active": true,
+                "qcode": 2
+            },
+            {
+                "name": "3",
+                "is_active": true,
+                "qcode": 3
+            },
+            {
+                "name": "4",
+                "is_active": true,
+                "qcode": 4
+            },
+            {
+                "name": "5",
+                "is_active": true,
+                "qcode": 5
+            },
+            {
+                "name": "6",
+                "is_active": true,
+                "qcode": 6
+            },
+            {
+                "name": "7",
+                "is_active": false,
+                "qcode": 7
+            },
+            {
+                "name": "8",
+                "is_active": false,
+                "qcode": 8
+            },
+            {
+                "name": "9",
+                "is_active": false,
+                "qcode": 9
+            }
+        ],
+        "display_name": "Priority",
+        "type": "manageable"
+    },
+    {
+        "_id": "type",
+        "items": [
+            {
+                "name": "text",
+                "is_active": true,
+                "qcode": "text"
+            },
+            {
+                "name": "preformatted",
+                "is_active": true,
+                "qcode": "preformatted"
+            },
+            {
+                "name": "audio",
+                "is_active": true,
+                "qcode": "audio"
+            },
+            {
+                "name": "video",
+                "is_active": true,
+                "qcode": "video"
+            },
+            {
+                "name": "picture",
+                "is_active": true,
+                "qcode": "picture"
+            },
+            {
+                "name": "graphic",
+                "is_active": true,
+                "qcode": "graphic"
+            },
+            {
+                "name": "composite",
+                "is_active": true,
+                "qcode": "composite"
+            }
+        ],
+        "display_name": "Article Type",
+        "type": "unmanageable"
+    },
+    {
+        "_id": "signal",
+        "items": [
+            {
+                "name": "Correction",
+                "is_active": true,
+                "qcode": "Correction"
+            },
+            {
+                "name": "Update",
+                "is_active": true,
+                "qcode": "Update"
+            },
+            {
+                "name": "Add",
+                "is_active": true,
+                "qcode": "Add"
+            },
+            {
+                "name": "Repeat",
+                "is_active": true,
+                "qcode": "Repeat"
+            },
+            {
+                "name": "Content Warning",
+                "is_active": true,
+                "qcode": "Content Warning"
+            }
+        ],
+        "display_name": "Signal",
+        "type": "unmanageable"
+    },
+    {
+        "_id": "rightsinfo",
+        "schema": {
+            "name": {},
+            "copyrightHolder": {
+                "label": "Copyright Holder"
+            },
+            "usageTerms": {
+                "label": "Usage Terms"
+            },
+            "copyrightNotice": {
+                "label": "Copyright Notice"
+            }
+        },
+        "items": [
+            {
+                "name": "default",
+                "is_active": true,
+                "copyrightHolder": "",
+                "usageTerms": "",
+                "copyrightNotice": ""
+            }
+        ],
+        "display_name": "Copyrights",
+        "type": "manageable"
+    },
+    {
+        "_id": "subscriber_types",
+        "items": [
+            {
+                "name": "All",
+                "is_active": true,
+                "formats": [
+                    {
+                        "name": "NINJS",
+                        "qcode": "ninjs"
+                    },
+                    {
+                        "name": "NewsML G2",
+                        "qcode": "newsmlg2"
+                    },
+                    {
+                        "name": "Email",
+                        "qcode": "email"
+                    }
+                ],
+                "qcode": "all"
+            },
+            {
+                "name": "Digital/Internet",
+                "is_active": true,
+                "formats": [
+                    {
+                        "name": "NINJS",
+                        "qcode": "ninjs"
+                    },
+                    {
+                        "name": "NewsML G2",
+                        "qcode": "newsmlg2"
+                    },
+                    {
+                        "name": "Email",
+                        "qcode": "email"
+                    }
+                ],
+                "qcode": "digital"
+            },
+            {
+                "name": "Wire/Paper",
+                "is_active": true,
+                "formats": [
+                    {
+                        "name": "NITF",
+                        "qcode": "nitf"
+                    },
+                    {
+                        "name": "Email",
+                        "qcode": "email"
+                    }
+                ],
+                "qcode": "wire"
+            }
+        ],
+        "display_name": "Subscriber Types",
+        "type": "unmanageable"
+    },
+    {
+        "_id": "crop_sizes",
+        "schema": {
+            "name": {},
+            "height": {
+                "type": "int"
+            },
+            "width": {
+                "type": "int"
+            }
+        },
+        "type": "manageable",
+        "items": [
+            {
+                "name": "FIXME",
+                "is_active": true,
+                "height": 600,
+                "width": 800
+            }
+        ],
+        "display_name": "Image Crop Sizes",
+        "unique_field": "name"
+    },
+    {
+        "_id": "desk_types",
+        "items": [
+            {
+                "name": "authoring",
+                "is_active": true,
+                "qcode": "authoring"
+            },
+            {
+                "name": "production",
+                "is_active": true,
+                "qcode": "production"
+            }
+        ],
+        "display_name": "Desk Types",
+        "type": "unmanageable"
+    },
+    {
+        "_id": "replace_words",
+        "schema": {
+            "replacement": {},
+            "existing": {}
+        },
+        "items": [
+            {
+                "is_active": true,
+                "replacement": "",
+                "existing": "FIXME"
+            }
+        ],
+        "display_name": "Replacement Words",
+        "type": "manageable"
+    },
+    {
+        "_id": "locators",
+        "schema": {
+            "name": {},
+            "group": {},
+            "state": {},
+            "qcode": {},
+            "world_region": {},
+            "country": {}
+        },
+        "items": [
+            {
+                "name": "NSW",
+                "is_active": true,
+                "qcode": "NSW"
+            }
+        ],
+        "display_name": "Locators",
+        "type": "manageable"
     },
     {
         "_id": "product_types",
-        "display_name": "Product Types",
-        "type": "unmanageable",
         "items": [
-            {"is_active": true, "name": "API", "qcode": "api"},
-            {"is_active": true, "name": "Direct", "qcode": "direct"},
-            {"is_active": true, "name": "Both", "qcode": "both"}
-        ]
+            {
+                "name": "API",
+                "is_active": true,
+                "qcode": "api"
+            },
+            {
+                "name": "Direct",
+                "is_active": true,
+                "qcode": "direct"
+            },
+            {
+                "name": "Both",
+                "is_active": true,
+                "qcode": "both"
+            }
+        ],
+        "display_name": "Product Types",
+        "type": "unmanageable"
     }
 ]
