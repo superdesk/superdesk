@@ -1,5 +1,5 @@
 {
     "dependencies": {
-        "superdesk-core": "v1.7.0-rc.7"
+        "superdesk-core": "1.7.1"
     }
 }
