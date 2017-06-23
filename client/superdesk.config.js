@@ -8,6 +8,9 @@ module.exports = function(grunt) {
     return {
         apps: [],
         defaultRoute: '/workspace/personal',
+        ui: {
+            italicAbstract: false
+        },
         validatorMediaMetadata: {
             headline: {
                 required: true
