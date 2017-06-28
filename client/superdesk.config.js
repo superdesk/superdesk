@@ -8,7 +8,8 @@ module.exports = function(grunt) {
     return {
         defaultRoute: '/workspace/personal',
         features: {
-            swimlane: {columnsLimit: 4}
+            swimlane: {columnsLimit: 4},
+            noTakes: true
         },
         validatorMediaMetadata: {
             headline: {required: true},

@@ -23,7 +23,7 @@ if os.environ.get('NEW_RELIC_LICENSE_KEY'):
         pass
 
 
-def get_app(config=None, init_elastic=False):
+def get_app(config=None):
     """App factory.
 
     :param config: configuration that can override config from `settings.py`
@@ -38,7 +38,7 @@ def get_app(config=None, init_elastic=False):
         if key.isupper():
             config.setdefault(key, getattr(settings, key))
 
-    app = superdesk_app(config, init_elastic=init_elastic)
+    app = superdesk_app(config)
     return app
 
 
