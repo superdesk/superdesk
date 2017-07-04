@@ -4,6 +4,6 @@
     "dependencies": {
         "superdesk-planning": "superdesk/superdesk-planning#6a213da6d",
         "superdesk-analytics": "superdesk/superdesk-analytics#f856be7",
-        "superdesk-core": "superdesk/superdesk-client-core#735817325"
+        "superdesk-core": "superdesk/superdesk-client-core#85b5f3c"
     }
 }
