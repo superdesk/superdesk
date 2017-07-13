@@ -2,8 +2,8 @@ language: python
 
 python: "3.5"
 
-dist: trusty
 sudo: false
+dist: trusty
 
 services:
     - mongodb
@@ -28,7 +28,7 @@ before_install:
     - nvm install 6.10
     - nvm use 6.10
     - node --version
-    - npm install -g npm@latest
+    - npm install -g npm@3
     - npm install -g grunt-cli
     - pip install requests
     - export DISPLAY=:99.0
