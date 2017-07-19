@@ -44,7 +44,8 @@ module.exports = function(grunt) {
             editor3: true
         },
         workspace: {
-            analytics: true
+            analytics: true,
+            assignments: true
         }
     };
 };
