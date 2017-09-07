@@ -51,14 +51,14 @@ grunt server
 ### Installation on fresh Ubuntu 16.04
 
 ```sh
-curl -s https://raw.githubusercontent.com/superdesk/fireq/master/files/superdesk/install | sudo bash
+curl -s https://raw.githubusercontent.com/superdesk/fireq/files/superdesk/install | sudo bash
 # Open http://<ip_or_domain> in browser
 # login: admin
 # password: admin
 ```
 More options and details:
-- [for users](https://github.com/superdesk/fireq/tree/master/files/superdesk)
-- [for developers](https://github.com/superdesk/fireq/tree/master/files/superdesk#development)
+- [for users](https://github.com/superdesk/fireq/tree/files/superdesk)
+- [for developers](https://github.com/superdesk/fireq/tree/files/superdesk#development)
 
 ### Questions and issues
 
