@@ -1,8 +1,7 @@
-gunicorn==19.6.0
-honcho==0.6.6
+gunicorn==19.7.1
+honcho==1.0.1
 newrelic>=2.66,<2.67
 
-git+git://github.com/superdesk/superdesk-core.git@98d6e61#egg=Superdesk-Core
-git+git://github.com/superdesk/superdesk-analytics.git@f856be7#egg=superdesk-analytics
-git+git://github.com/superdesk/superdesk-planning.git@03ff92f#egg=superdesk-planning
-
+-e git+git://github.com/superdesk/superdesk-core.git@98d6e61#egg=Superdesk-Core
+-e git+git://github.com/superdesk/superdesk-analytics.git@f856be7#egg=superdesk-analytics
+-e git+git://github.com/superdesk/superdesk-planning.git@03ff92f#egg=superdesk-planning
