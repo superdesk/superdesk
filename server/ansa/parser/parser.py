@@ -2,7 +2,7 @@
 import arrow
 
 from superdesk.io.feed_parsers.newsml_2_0 import NewsMLTwoFeedParser
-from superdesk.etree import get_word_count
+from superdesk.text_utils import get_word_count
 
 
 class ANSAParser(NewsMLTwoFeedParser):

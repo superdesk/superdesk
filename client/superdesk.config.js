@@ -7,7 +7,6 @@
 module.exports = function(grunt) {
     return {
         defaultRoute: '/workspace/monitoring',
-        requiredMediaMetadata: ['description_text'],
         workspace: {
             ingest: 1,
             content: 1
@@ -20,13 +19,6 @@ module.exports = function(grunt) {
         shortDateFormat: 'YYYY-MM-DD HH:mm',
         shortWeekFormat: 'YYYY-MM-DD HH:mm',
         longDateFromat: 'YYYY-MM-DD HH:mm',
-
-        publisher: {
-            protocol: 'http',
-            tenant: 'default',
-            domain: '172.20.14.91',
-            base: 'api/v1'
-        },
 
         langOverride: {
             'en': {
