@@ -79,3 +79,5 @@ LANGUAGES = [
 ]
 
 DEFAULT_LANGUAGE = 'it'
+
+MACROS_MODULE = 'macros'
