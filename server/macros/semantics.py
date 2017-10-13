@@ -35,5 +35,5 @@ def populate(item, **kwargs):
 name = 'populate_semantics'
 label = 'Populate Semantics'
 callback = populate
-access_type = 'backend'
+access_type = 'frontend'
 action_type = 'direct'
