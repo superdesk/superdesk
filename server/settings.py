@@ -81,3 +81,5 @@ LANGUAGES = [
 DEFAULT_LANGUAGE = 'it'
 
 MACROS_MODULE = 'ansa.macros'
+
+LEGAL_ARCHIVE = True
