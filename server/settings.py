@@ -80,4 +80,4 @@ LANGUAGES = [
 
 DEFAULT_LANGUAGE = 'it'
 
-MACROS_MODULE = 'macros'
+MACROS_MODULE = 'ansa.macros'
