@@ -54,5 +54,37 @@ module.exports = function(grunt) {
                 required: false
             }
         },
+
+        list: {
+            priority: [
+                'priority',
+                'urgency'
+            ],
+            firstLine: [
+                'wordcount',
+                'highlights',
+                'markedDesks',
+                'associations',
+                'publish_queue_errors',
+                'headline',
+                'versioncreated'
+            ],
+            secondLine: [
+                'profile',
+                'state',
+                'embargo',
+                'update',
+                'takekey',
+                'signal',
+                'broadcast',
+                'flags',
+                'updated',
+                'category',
+                'provider',
+                'expiry',
+                'desk',
+                'fetchedDesk'
+            ]
+        }
     };
 };
