@@ -43,8 +43,43 @@ module.exports = function(grunt) {
             swimlane: {columnsLimit: 4},
             editor3: true
         },
+
         workspace: {
             assignments: true
+        },
+
+        list: {
+            priority: [
+                'priority',
+                'urgency'
+            ],
+            firstLine: [
+                'wordcount',
+                'slugline',
+                'highlights',
+                'markedDesks',
+                'associations',
+                'publish_queue_errors',
+                'headline',
+                'assignment',
+                'versioncreated'
+            ],
+            secondLine: [
+                'profile',
+                'state',
+                'embargo',
+                'update',
+                'takekey',
+                'signal',
+                'broadcast',
+                'flags',
+                'updated',
+                'category',
+                'provider',
+                'expiry',
+                'desk',
+                'fetchedDesk'
+            ]
         }
     };
 };
