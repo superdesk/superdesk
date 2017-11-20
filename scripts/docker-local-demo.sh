@@ -24,7 +24,7 @@ echo '
 |==================================================================|
 '
 
-cd $SCRIPT_DIR/../docker
+cd "$SCRIPT_DIR"/../docker
 dcs kill
 dcs pull
 dcs up --timeout 600
