@@ -1,0 +1,39 @@
+<div id="ansa-related-widget" ng-controller="AnsaRelatedCtrl as related">
+    <div class="widget" sd-loading="!related.items">
+        <input type="text" class="input-xlarge" placeholder="search" ng-model="related.query" ng-keyup="related.searchOnEnter($event)">
+        <p></p>
+
+        <ul class="ingest-list list-view related-item-list" sd-loading="!related.items">
+            <li ng-repeat="item in related.items track by $index"
+                class="list-item-view" sd-draggable-item ng-init="isCollapsed = item.type === 'text'">
+                <div class="basic item-block">
+                    <i sd-filetype-icon data-item="item" style=""></i>
+                    <span class="keyword" ng-click="isCollapsed = !isCollapsed">{{ item.headline }}</span>
+                    <div class="content">
+                        <span class="headline"><time sd-datetime data-date="item.versioncreated"></time></span>
+
+                        <div ng-if="item.body_html && item.type !== 'picture'" ng-hide="isCollapsed">
+                            <div sd-html-preview="item.body_html"></div>
+                        </div>
+
+                        <div ng-if="item.type === 'picture'">
+                            <div sd-item-rendition data-item="item" data-rendition="thumbnail"></div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li ng-if="related.items.length === 0">
+                <p translate>Not found.</p>
+            </li>
+        </ul>
+
+        <div class="btn-group">
+            <button class="btn"
+                ng-click="related.filter('text')"
+                ng-disabled="related.activeFilter == 'text'">Text</button>
+            <button class="btn"
+                ng-click="related.filter('picture')"
+                ng-disabled="related.activeFilter == 'picture'">Pictures</button>
+        </div>
+    </div>
+</div>

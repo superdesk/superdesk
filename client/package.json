@@ -1,5 +1,11 @@
 {
     "dependencies": {
         "superdesk-core": "petrjasek/superdesk-client-core#ddf1de4"
+    },
+    "devDependencies": {
+        "superdesk-code-style": "^1.0.0"
+    },
+    "scripts": {
+        "lint": "eslint --ext .js --ext .jsx ansa"
     }
 }

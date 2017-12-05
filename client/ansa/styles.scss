@@ -1,0 +1,89 @@
+.widget-ansa-semantics {
+    .badge-header {
+        clear: both;
+        padding: 8px 0 3px;
+    }
+
+    .badge {
+        float: left;
+        clear: left;
+        position: relative;
+        padding: 5px 20px 5px 5px;
+
+        font-size: 1.3rem;
+        text-transform: none;
+
+        color: inherit;
+        background: inherit;
+
+        button {
+            position: absolute;
+            bottom: 8px;
+            right: 5px;
+            width: 13px;
+            height: 13px;
+            line-height: 13px;
+            border: none;
+            background: transparent;
+        }
+    }
+}
+
+
+// metasearch
+.metasearch {
+    .main-section {
+        overflow-y: scroll;
+
+        .stage {
+            padding: 8px 18px 3px;
+        }
+
+        .engine {
+            opacity: .8;
+        }
+
+        figure {
+            margin: 3px 0;
+            overflow: hidden;
+            height: 1%;
+
+            img {
+                float: left;
+                padding-right: 8px;
+            }
+        }
+
+        .embed.iframe {
+            margin: 3px 0;
+        }
+
+        .pills-list {
+            clear: both;
+            padding-top: 10px;
+        }
+    }
+
+    .navbtn {
+        margin-top: -10px;
+        margin-left: auto;
+    }
+
+    #search-input {
+        flex-grow: 1;
+    }
+}
+
+#ansa-related-widget {
+    .btn-group {
+        position: fixed;
+        top: 106px;
+        right: 61px;
+    }
+}
+
+.dropdown__menu.desk-notification-list {
+    width: 340px;
+    margin-top: 8px;
+    margin-left: -320px;
+}

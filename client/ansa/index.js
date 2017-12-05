@@ -1,4 +1,8 @@
-var _ = require('lodash');
+import _ from 'lodash';
+import angular from 'angular';
+import widgets from './widgets';
+
+import './styles.scss';
 
 class MetasearchController {
     constructor($scope, $location, $timeout, metasearch, Keys, workspace) {
@@ -517,7 +521,7 @@ function AnsaRepoDropdown(api, $filter, $location, $rootScope) {
     };
 }
 
-export default angular.module('ansa.superdesk', [])
+export default angular.module('ansa.superdesk', [widgets.name])
     .factory('metasearch', MetasearchFactory)
     .controller('MetasearchCtrl', MetasearchController)
     .controller('AnsaSemanticsCtrl', AnsaSemanticsCtrl)
@@ -531,30 +535,9 @@ export default angular.module('ansa.superdesk', [])
         superdeskProvider.activity('/workspace/metasearch', {
             label: gettext('Metasearch'),
             priority: 100,
-            templateUrl: 'scripts/apps/ansa/views/metasearch.html',
+            template: require('./views/metasearch.html'),
             topTemplateUrl: 'scripts/apps/dashboard/views/workspace-topnav.html',
             sideTemplateUrl: 'scripts/apps/workspace/views/workspace-sidenav.html'
-        });
-    }])
-    .config(['authoringWidgetsProvider', (authoringWidgetsProvider) => {
-        authoringWidgetsProvider.widget('ansa-semantics', {
-            label: 'Semantics',
-            icon: 'view',
-            template: 'scripts/apps/widgets/ansa-semantics-widget/ansa-semantics-widget.html',
-            order: 7,
-            side: 'right',
-            display: {authoring: true, picture: true},
-            configurable: false
-        });
-
-        authoringWidgetsProvider.widget('ansa-semantics', {
-            label: 'Related Items',
-            icon: 'global-search',
-            template: 'scripts/apps/widgets/ansa-related-widget/ansa-related-widget.html',
-            order: 7,
-            side: 'right',
-            display: {authoring: true, picture: true},
-            configurable: false
         });
     }])
 ;
