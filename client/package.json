@@ -3,6 +3,6 @@
     "license": "GPL-3.0",
     "dependencies": {
         "superdesk-analytics": "superdesk/superdesk-analytics#963c6e1",
-        "superdesk-core": "superdesk/superdesk-client-core#3c7b719a3"
+        "superdesk-core": "superdesk/superdesk-client-core#c860eb3"
     }
 }
