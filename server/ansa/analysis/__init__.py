@@ -11,7 +11,7 @@
 import superdesk
 
 from .analysis import AnalysisResource, AnalysisService
-from superdesk.metadata.item import not_analyzed
+from superdesk.resource import not_analyzed
 
 
 def init_app(app):
