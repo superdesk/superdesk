@@ -1,8 +1,10 @@
 import _ from 'lodash';
 import angular from 'angular';
 import widgets from './widgets';
+import packages from './package-manager/package-manager';
 
 import './styles.scss';
+import './package-manager/package-manager.scss';
 
 class MetasearchController {
     constructor($scope, $location, $timeout, metasearch, Keys, workspace) {
@@ -521,7 +523,7 @@ function AnsaRepoDropdown(api, $filter, $location, $rootScope) {
     };
 }
 
-export default angular.module('ansa.superdesk', [widgets.name])
+export default angular.module('ansa.superdesk', [widgets.name, packages.name])
     .factory('metasearch', MetasearchFactory)
     .controller('MetasearchCtrl', MetasearchController)
     .controller('AnsaSemanticsCtrl', AnsaSemanticsCtrl)
@@ -539,5 +541,16 @@ export default angular.module('ansa.superdesk', [widgets.name])
             topTemplateUrl: 'scripts/apps/dashboard/views/workspace-topnav.html',
             sideTemplateUrl: 'scripts/apps/workspace/views/workspace-sidenav.html'
         });
+    }])
+    // ansa core templates override
+    .run(['$templateCache', ($templateCache) => {
+        $templateCache.put(
+            'scripts/apps/workspace/views/workspace-sidenav-items.html',
+            require('./views/workspace-sidenav-items.html')
+        );
+        $templateCache.put(
+            'scripts/apps/authoring/packages/views/packages-widget.html',
+            require('./views/packages-widget.html')
+        );
     }])
 ;
