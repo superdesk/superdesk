@@ -3,7 +3,7 @@ export default angular.module('ansa.widgets', [])
     .config(['authoringWidgetsProvider', (authoringWidgetsProvider) => {
         authoringWidgetsProvider.widget('ansa-semantics', {
             label: 'Semantics',
-            icon: 'view',
+            icon: 'semantics',
             template: 'ansa-semantics-widget.html',
             order: 7,
             side: 'right',
@@ -11,9 +11,9 @@ export default angular.module('ansa.widgets', [])
             configurable: false
         });
 
-        authoringWidgetsProvider.widget('ansa-semantics', {
+        authoringWidgetsProvider.widget('related-item', {
             label: 'Related Items',
-            icon: 'global-search',
+            icon: 'related',
             template: 'ansa-related-widget.html',
             order: 7,
             side: 'right',

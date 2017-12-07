@@ -451,7 +451,7 @@ function MetasearchFactory($http, config) {
         }
 
         suggest(word) {
-            return $http.get(url + '/autocompleter', {params: {q: word}});
+            return $http.get(url + 'autocompleter', {params: {q: word}});
         }
     }
 
@@ -538,6 +538,14 @@ export default angular.module('ansa.superdesk', [widgets.name, packages.name])
             label: gettext('Metasearch'),
             priority: 100,
             template: require('./views/metasearch.html'),
+            topTemplateUrl: 'scripts/apps/dashboard/views/workspace-topnav.html',
+            sideTemplateUrl: 'scripts/apps/workspace/views/workspace-sidenav.html'
+        });
+
+        superdeskProvider.activity('/workspace/assistant', {
+            label: gettext('Live assistant'),
+            priority: 200,
+            template: require('./views/live-assistant.html'),
             topTemplateUrl: 'scripts/apps/dashboard/views/workspace-topnav.html',
             sideTemplateUrl: 'scripts/apps/workspace/views/workspace-sidenav.html'
         });

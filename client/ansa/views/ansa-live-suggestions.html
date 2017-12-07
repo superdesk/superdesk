@@ -1,8 +1,8 @@
-<div class="live-suggest__header subnav">
+<div class="subnav">
     <h3 class="subnav__page-title">Live Assistant</h3>
-    <a class="close" ng-click="ctrl.close()"><i class="icon-close-small"></i></a>
 </div>
-<div class="live-suggest__body" ng-if="semantics && !searchEnabled">
+
+<div class="main-section" ng-if="semantics && !searchEnabled">
     <section class="main">
         <h2 translate>Browse the web by SEO suggestions</h2>
         <dl class="pull-left">
@@ -54,11 +54,15 @@
     <p><br><br></p>
 </div>
 
-<div class="live-suggest__body" ng-if="!semantics && !searchEnabled">
-    <h6>There is no semantics info for current item.</h6>
+<div class="main-section" ng-if="!item">
+    <h5>Please select an item for editing first.</h5>
 </div>
 
-<div class="live-suggest__body" ng-if="searchEnabled">
+<div class="main-section" ng-if="item && !semantics && !searchEnabled">
+    <h5>There is no semantics info for current item.</h5>
+</div>
+
+<div class="main-section" ng-if="searchEnabled">
     <div class="subnav">
         <div class="flat-searchbar monitoring-backlink">
             <div class="search-handler">

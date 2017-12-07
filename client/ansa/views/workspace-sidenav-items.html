@@ -94,6 +94,14 @@
     </a>
 </li>
 
+<li ng-class="{active: currentRoute.href === '/workspace/assistant'}">
+    <a href="#/workspace/assistant" class="big-icon-facebook" title="Live assistant"
+      ng-click="hideMonitoring(currentRoute.href === '/workspace/assistant', $event)">
+        <i class="big-icon--web sd-sidebar-menu__main-icon"></i>
+        <i class="big-icon--chevron-left sd-sidebar-menu__helper-icon"></i>
+    </a>
+</li>
+
 <hr ng-if="workspaceConfig.analytics">
 <li ng-if="workspaceConfig.analytics" ng-class="{active: currentRoute.href === '/analytics'}">
     <a href="#/analytics" title="{{ :: 'Analytics' | translate }}" class="sd-sidebar-menu__btn">
