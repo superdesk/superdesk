@@ -16,6 +16,8 @@
             "sms": {},
 
             "headline": {"required": true},
+            "subtitle": {},
+            "shorttitle": {},
             "body_html": {"required": true},
             "abstract": {},
             "byline": {},
@@ -34,9 +36,12 @@
             "priority": {"order": 5, "sdWidth": "quarter"},
             "place": {"order": 6, "sdWidth": "half"},
             "genre": {"order": 7, "sdWidth": "half"},
+            "authors": {"order": 8, "sdWidth": "half"},
             "ednote": {"order": 10, "sdWidth": "full"},
 
             "headline": {},
+            "subtitle": {},
+            "shorttitle": {},
             "feature_media": {},
             "dateline": {},
             "byline": {},
