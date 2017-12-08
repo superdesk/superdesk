@@ -8,7 +8,7 @@
             "urgency": {"nullable": true},
             "priority": {"nullable": true},
             "anpa_category": {"required": true},
-            "subject": {},
+            "subject": {"mandatory_in_list": {"scheme": {}}},
             "slugline": {"required": true, "maxlength": 80},
             "ednote": {},
             "place": {},
