@@ -123,7 +123,7 @@ function PackageManagerCtrl($scope, api, search, packages, notify, gettext, auth
 export default angular.module('ansa.package-manager', ['superdesk.apps.authoring.widgets'])
     .config(['authoringWidgetsProvider', function(authoringWidgetsProvider) {
         authoringWidgetsProvider
-            .widget('package-manager', {
+            .widget('packages', {
                 icon: 'add-to-package',
                 label: gettext('Package Manager'),
                 template: 'package-manager-widget.html',
