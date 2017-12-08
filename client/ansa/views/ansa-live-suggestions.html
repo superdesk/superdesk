@@ -1,5 +1,19 @@
-<div class="subnav">
+<div class="subnav" ng-if="!searchEnabled">
     <h3 class="subnav__page-title">Live Assistant</h3>
+</div>
+
+<div class="subnav" ng-if="searchEnabled">
+    <div class="flat-searchbar monitoring-backlink">
+        <div class="search-handler">
+            <button class="backlink" ng-click="closeSearch()">&nbsp;</button>
+        </div>
+    </div>
+    <h3 class="subnav__page-title">
+        <input type="text" class="live-input input-large"
+            ng-model="metasearch.query"
+            ng-keyup="metasearch.search($event)">
+    </h3>
+    <div class="pull-right" ansa-metasearch-dropdown></div>
 </div>
 
 <div class="main-section" ng-if="semantics && !searchEnabled">
@@ -63,19 +77,7 @@
 </div>
 
 <div class="main-section" ng-if="searchEnabled">
-    <div class="subnav">
-        <div class="flat-searchbar monitoring-backlink">
-            <div class="search-handler">
-                <button class="backlink" ng-click="closeSearch()">&nbsp;</button>
-            </div>
-        </div>
-        <h3 class="subnav__page-title">
-            <input type="text" class="live-input input-large"
-                ng-model="metasearch.query"
-                ng-keyup="metasearch.search($event)">
-        </h3>
-        <div class="pull-right" ansa-metasearch-dropdown></div>
-    </div>
+    
     <div sd-loading="metasearch.loading">
         <section ansa-metasearch-results class="main-section"></section>
     </div>
