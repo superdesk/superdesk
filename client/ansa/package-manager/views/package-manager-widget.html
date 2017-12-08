@@ -1,0 +1,35 @@
+<div ng-controller="PackageManagerWidgetCtrl as ctrl">
+    <div class="nav nav-tabs item-searchbar">
+        <label for="search-input" class="button search-icon"></label>
+        <input id="search-input"
+               type="text"
+               placeholder="{{ 'Search'|translate }}"
+               ng-model="query"
+               tabindex="1">
+    </div>
+    <div class="package-manager-content" sd-loading="ctrl.loading">
+        <ul class="ingest-list relatead-item-list list-view">
+            <li class="list-item-view" ng-repeat="pitem in contentItems | filter: query track by pitem._id" ng-if="pitem._id !== item._id" title="{{ pitem.headline || pitem.slugline}}">
+                <div class="basic item-block">
+                    <i class="filetype-icon-composite"></i>
+                    <div class="content" ng-click="showPreview = !showPreview">
+                        <span class="headline" ng-show="pitem.headline || pitem.slugline">
+                            {{ pitem.headline || pitem.slugline | uppercase}}
+                        </span>
+                        <span class="headline" ng-hide="pitem.headline || pitem.slugline" translate>Blank headline received</span>
+                    </div>
+                    <div class="content-item__action dropdown" dropdown dropdown-append-to-body sd-dropdown-position-absolute>
+                        <button dropdown-toggle><i class="icon-dots-vertical"></i></button>
+                        <ul class="dropdown dropdown__menu more-activity-menu">
+                            <li ng-repeat="group in groupList">
+                                <button ng-click="ctrl.addToPackage(pitem, group)">{{group}}</button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div sd-package class="pull-left" data-item="pitem" ng-show="showPreview"></div>
+            </li>
+        </ul>
+    </div>
+    <div sd-package-manager-modal data-item="item" data-active="packageModal"></div>
+</div>

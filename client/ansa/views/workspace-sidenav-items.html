@@ -1,0 +1,140 @@
+<li ng-class="{active: currentRoute.href === '/workspace'}">
+    <a href="#/workspace" ng-click="hideMonitoring(currentRoute.href === '/workspace', $event)"
+       title="{{ :: 'Dashboard' | translate }}" sd-hotkey="ctrl+alt+b" sd-hotkey-options="{global: true}" class="sd-sidebar-menu__btn" ng-class="{'sd-sidebar-menu__btn--active': menuItemActive1}">
+        <i class="sd-sidebar-menu__main-icon big-icon--dashboard"></i>
+        <i class="sd-sidebar-menu__helper-icon big-icon--chevron-left"></i>
+    </a>
+</li>
+<li ng-class="{active: currentRoute.href === '/workspace/monitoring'}">
+    <a href="#/workspace/monitoring" ng-click="hideMonitoring(currentRoute.href === '/workspace/monitoring', $event)"
+       title="{{ :: 'Monitoring' | translate }}" sd-hotkey="alt+m" sd-hotkey-options="{global: true}" class="sd-sidebar-menu__btn">
+        <i class="sd-sidebar-menu__main-icon big-icon--view"></i>
+        <i class="sd-sidebar-menu__helper-icon big-icon--chevron-left"></i>
+    </a>
+</li>
+<li ng-class="{active: currentRoute.href === '/workspace/highlights'}">
+    <div class="dropdown dropdown--dropright dropdown--hover highlights-dropdown"
+         title="{{ :: 'Highlights' | translate }}"
+         sd-hotkey="ctrl+alt+h" sd-hotkey-options="{global: true}" sd-hotkey-callback="highlightsHotkey"
+         dropdown sd-package-highlights-dropdown>
+    </div>
+</li>
+<li ng-class="{active: currentRoute.href === '/workspace/tasks'}" ng-if="privileges.tasks && workspaceConfig.tasks">
+    <a href="#/workspace/tasks" ng-click="hideMonitoring(currentRoute.href === '/workspace/tasks', $event)"
+       title="{{ :: 'Tasks' | translate }}" sd-hotkey="alt+t" sd-hotkey-options="{global: true}" class="sd-sidebar-menu__btn">
+        <i class="sd-sidebar-menu__main-icon big-icon--tasks"></i>
+        <i class="sd-sidebar-menu__helper-icon big-icon--chevron-left"></i>
+    </a>
+</li>
+<li ng-class="{active: currentRoute.href === '/workspace/assignments'}" ng-if="privileges.planning && workspaceConfig.assignments">
+    <a href="#/workspace/assignments" ng-click="hideMonitoring(currentRoute.href === '/workspace/assignments', $event)"
+       title="{{ :: 'Assignments' | translate }}" sd-hotkey="ctrl+alt+a" sd-hotkey-options="{global: true}" class="sd-sidebar-menu__btn">
+        <i class="sd-sidebar-menu__main-icon big-icon--tasks"></i>
+        <i class="sd-sidebar-menu__helper-icon big-icon--chevron-left"></i>
+    </a>
+</li>
+<li ng-class="{active: currentRoute.href === '/workspace/spike-monitoring'}">
+    <a href="#/workspace/spike-monitoring" ng-click="hideMonitoring(currentRoute.href === '/workspace/spike-monitoring', $event)"
+       title="{{ :: 'Spike' | translate }}" sd-hotkey="ctrl+alt+k" sd-hotkey-options="{global: true}" class="sd-sidebar-menu__btn">
+        <i class="sd-sidebar-menu__main-icon big-icon--spike"></i>
+        <i class="sd-sidebar-menu__helper-icon big-icon--chevron-left"></i>
+    </a>
+</li>
+<li ng-class="{active: currentRoute.href === '/workspace/content'}"
+  ng-if="workspaceConfig.content && privileges.archive"
+  ng-click="hideMonitoring(currentRoute.href === '/workspace/content', $event)">
+    <a href="#/workspace/content" title="{{ :: 'Content' | translate }}" class="sd-sidebar-menu__btn">
+      <i class="big-icon--archive sd-sidebar-menu__main-icon"></i>
+      <i class="big-icon--chevron-left sd-sidebar-menu__helper-icon"></i>
+    </a>
+</li>
+
+<hr>
+<li ng-class="{active: currentRoute.href === '/workspace/personal'}">
+    <a href="#/workspace/personal" ng-click="hideMonitoring(currentRoute.href === '/workspace/personal', $event)"
+       title="{{ :: 'Personal' | translate }}" sd-hotkey="alt+p" sd-hotkey-options="{global: true}" class="sd-sidebar-menu__btn">
+        <i class="sd-sidebar-menu__main-icon big-icon--personal"></i>
+        <i class="sd-sidebar-menu__helper-icon big-icon--chevron-left"></i>
+    </a>
+</li>
+
+<li ng-class="{active: currentRoute.href === '/search'}" ng-show="!providers.length">
+   <div class="dropdown dropdown--dropright dropdown--hover highlights-dropdown" dropdown>
+      <a href="#/search" class="dropdown__toggle sd-sidebar-menu__btn"
+        title="{{ :: 'Search' | translate }}"
+        sd-hotkey="ctrl+alt+f" sd-hotkey-options="{global: true}"
+        ng-click="hideMonitoring(currentRoute.href === '/search', $event)">
+          <i class="sd-sidebar-menu__main-icon big-icon--global-search"></i>
+          <i class="sd-sidebar-menu__helper-icon big-icon--chevron-left"></i>
+      </a>
+      <ul ng-if="$root.config.features.searchShortcut && providers.length > 0" class="dropdown__menu pull-left">
+        <li ng-repeat="provider in providers track by provider._id">
+            <button ng-click="loadSearchShortcut(provider)">
+              {{:: providerLabels[provider.source]}}
+            </button>
+        </li>
+      </ul>
+    </div>
+</li>
+
+<li ng-class="{active: currentRoute.href === '/search'}" ng-repeat="provider in providers">
+  <a href="#/search?repo={{ provider._id }}" class="sd-sidebar-menu__btn"
+    title="{{ :: provider.source }}"
+    ng-click="hideMonitoring(currentRoute.href === '/search', $event)">
+      <i class="sd-sidebar-menu__main-icon big-icon--global-search"></i>
+      <i class="sd-sidebar-menu__helper-icon big-icon--chevron-left"></i>
+  </a>
+</li>
+
+<li ng-class="{active: currentRoute.href === '/workspace/metasearch'}">
+    <a href="#/workspace/metasearch" class="big-icon-facebook" title="Metasearch"
+      ng-click="hideMonitoring(currentRoute.href === '/workspace/metasearch', $event)">
+        <i class="big-icon--web sd-sidebar-menu__main-icon"></i>
+        <i class="big-icon--chevron-left sd-sidebar-menu__helper-icon"></i>
+    </a>
+</li>
+
+<li ng-class="{active: currentRoute.href === '/workspace/assistant'}">
+    <a href="#/workspace/assistant" class="big-icon-facebook" title="Live assistant"
+      ng-click="hideMonitoring(currentRoute.href === '/workspace/assistant', $event)">
+        <i class="big-icon--web sd-sidebar-menu__main-icon"></i>
+        <i class="big-icon--chevron-left sd-sidebar-menu__helper-icon"></i>
+    </a>
+</li>
+
+<hr ng-if="workspaceConfig.analytics">
+<li ng-if="workspaceConfig.analytics" ng-class="{active: currentRoute.href === '/analytics'}">
+    <a href="#/analytics" title="{{ :: 'Analytics' | translate }}" class="sd-sidebar-menu__btn">
+      <i class="sd-sidebar-menu__main-icon big-icon--analytics"></i>
+      <i class="sd-sidebar-menu__helper-icon big-icon--chevron-left"></i>
+    </a>
+</li>
+
+<hr ng-if="workspaceConfig.planning && privileges.planning">
+<li ng-if="workspaceConfig.planning && privileges.planning" ng-class="{active: currentRoute.href === '/planning'}">
+    <a href="#/planning" title="{{ :: 'Planning' | translate }}" class="sd-sidebar-menu__btn"
+      ng-click="hideMonitoring(currentRoute.href === '/planning', $event)">
+      <i class="sd-sidebar-menu__main-icon big-icon--calendar"></i>
+      <i class="sd-sidebar-menu__helper-icon big-icon--chevron-left"></i>
+    </a>
+</li>
+
+<hr ng-if="extraItems.length > 0"/>
+<li ng-repeat="item in extraItems" ng-class="{active: currentRoute.href === '/' + item.route}">
+    <a href="#/{{ item.route }}" title="{{ item.title }}" ng-click="item.onClick && item.onClick($event)" class="sd-sidebar-menu__btn">
+      <i class="sd-sidebar-menu__main-icon {{ item.iconClass }}"></i>
+      <i class="sd-sidebar-menu__helper-icon big-icon--chevron-left"></i>
+    </a>
+</li>
+
+<!-- this is something like deprecated.. don't add, only remove -->
+<hr ng-if="workspaceConfig.ingest">
+<li ng-if="workspaceConfig.ingest && privileges.ingest"
+    ng-class="{active: currentRoute.href === '/workspace/ingest'}">
+    <a href="#/workspace/ingest" class="sd-sidebar-menu__btn"
+       ng-click="hideMonitoring(currentRoute.href === '/workspace/ingest', $event)"
+       title="{{ :: 'Ingest' | translate }}">
+      <i class="sd-sidebar-menu__main-icon big-icon--fetch"></i>
+      <i class="sd-sidebar-menu__helper-icon big-icon--chevron-left"></i>
+    </a>
+</li>

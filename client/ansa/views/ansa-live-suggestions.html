@@ -1,0 +1,84 @@
+<div class="subnav" ng-if="!searchEnabled">
+    <h3 class="subnav__page-title">Live Assistant</h3>
+</div>
+
+<div class="subnav" ng-if="searchEnabled">
+    <div class="flat-searchbar monitoring-backlink">
+        <div class="search-handler">
+            <button class="backlink" ng-click="closeSearch()">&nbsp;</button>
+        </div>
+    </div>
+    <h3 class="subnav__page-title">
+        <input type="text" class="live-input input-large"
+            ng-model="metasearch.query"
+            ng-keyup="metasearch.search($event)">
+    </h3>
+    <div class="pull-right" ansa-metasearch-dropdown></div>
+</div>
+
+<div class="main-section" ng-if="semantics && !searchEnabled">
+    <section class="main">
+        <h2 translate>Browse the web by SEO suggestions</h2>
+        <dl class="pull-left">
+            <dt ng-show="semantics.persons.length" translate>Person</dt>
+            <dd ng-repeat="val in semantics.persons">
+                <a href="" ng-click="toggleInfo(val)">{{ val }}</a>
+            </dd>
+
+            <dt ng-show="semantics.organizations.length" translate>Organisation</dt>
+            <dd ng-repeat="val in semantics.organizations">
+                <a href="" ng-click="toggleInfo(val)">{{ val }}</a>
+            </dd>
+
+            <dt ng-show="semantics.places.length" translate>Place</dt>
+            <dd ng-repeat="val in semantics.places">
+                <a href="" ng-click="toggleInfo(val)">{{ val }}</a>
+            </dd>
+
+            <dt ng-show="semantics.mainGroups.length" translate>Main Groups</dt>
+            <dd ng-repeat="val in semantics.mainGroups">
+                <a href="" ng-click="toggleInfo(val)">{{ val }}</a>
+            </dd>
+        </dl>
+
+        <dl class="pull-left" sd-loading="loading">
+            <dt translate>Suggestions</dt>
+            <dd ng-repeat="term in suggestions">
+                <a href="" ng-click="startSearch(term)">{{ term }}</a>
+            </dd>
+            <dd ng-show="!suggestions.length" translate>Click on an item to start.</dd>
+        </dl>
+    </section>
+    <section class="main">
+        <h2 translate>Web related news by title or slugline</h2>
+        <dl class="pull-left">
+            <dt ng-show="item.headline" translate>Headline</dt>
+            <dd><a href="" ng-click="startSearch(item.headline)">{{ item.headline }}</a></dd>
+            <dt ng-show="item.slugline" translate>Slugline</dt>
+            <dd><a href="" ng-click="startSearch(item.slugline)">{{ item.slugline }}</a></dd>
+        </dl>
+    </section>
+    <section class="main">
+        <h2 translate>Web search hints</h2>
+        <span class="pull-left" ng-repeat="word in archiveQueries">
+            <span><a href="" ng-click="startSearch(word)">{{ word }}</a>
+                &nbsp;&nbsp;&nbsp;</span>
+        </span>
+    </section>
+    <p><br><br></p>
+</div>
+
+<div class="main-section" ng-if="!item">
+    <h5>Please select an item for editing first.</h5>
+</div>
+
+<div class="main-section" ng-if="item && !semantics && !searchEnabled">
+    <h5>There is no semantics info for current item.</h5>
+</div>
+
+<div class="main-section" ng-if="searchEnabled">
+    
+    <div sd-loading="metasearch.loading">
+        <section ansa-metasearch-results class="main-section"></section>
+    </div>
+</div>

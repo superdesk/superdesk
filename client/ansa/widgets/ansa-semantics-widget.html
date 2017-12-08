@@ -1,0 +1,60 @@
+<div ng-controller="AnsaSemanticsCtrl as semantics" class="widget">
+    <fieldset sd-loading="!semantics.data">
+        <button class="btn" ng-click="semantics.refresh()" translate>Refresh</button>
+    </fieldset>
+
+    <dl ng-if="semantics.data">
+        <dt class="badge-header" translate>IPTC Domains</dt>
+        <dd ng-repeat="domain in semantics.data.iptcDomains" class="badge">
+            {{ domain }}
+            <button ng-click="semantics.remove(domain, 'iptcDomains')"><i class="icon-close-small"></i></button>
+        </dd>
+
+        <dt class="badge-header" translate>News Domains</dt>
+        <dd ng-repeat="domain in semantics.data.newsDomains" class="badge">
+            {{ domain }}
+            <button ng-click="semantics.remove(domain, 'newsDomains')"><i class="icon-close-small"></i></button>
+        </dd>
+
+        <dt class="badge-header" translate>Person</dt>
+        <dd ng-repeat="person in semantics.data.persons" class="badge">
+            {{ person }}
+            <button ng-click="semantics.remove(person, 'persons')"><i class="icon-close-small"></i></button>
+        </dd>
+
+        <dt class="badge-header" translate>Place</dt>
+        <dd ng-repeat="place in semantics.data.places" class="badge">
+            {{ place }}
+            <button ng-click="semantics.remove(place, 'places')"><i class="icon-close-small"></i></button>
+        </dd>
+
+        <dt class="badge-header" translate>Organization</dt>
+        <dd ng-repeat="org in semantics.data.organizations" class="badge">
+            {{ org }}
+            <button ng-click="semantics.remove(org, 'organizations')"><i class="icon-close-small"></i></button>
+        </dd>
+
+        <dt class="badge-header" translate>Main Groups</dt>
+        <dd ng-repeat="group in semantics.data.mainGroups" class="badge">
+            {{ group }}
+            <button ng-click="semantics.remove(group, 'mainGroups')"><i class="icon-close-small"></i></button>
+        </dd>
+
+        <dt class="badge-header" translate>Main Lemmas</dt>
+        <dd ng-repeat="lemma in semantics.data.mainLemmas" class="badge">
+            {{ lemma }}
+            <button ng-click="semantics.remove(lemma, 'mainLemmas')"><i class="icon-close-small"></i></button>
+        </dd>
+
+        <dt class="badge-header" translate>IPTC Codes</dt>
+        <dd ng-repeat="code in semantics.data.iptcCodes" class="badge">
+            {{ code }}
+            <button ng-click="semantics.remove(code, 'iptcCodes')"><i class="icon-close-small"></i></button>
+        </dd>
+
+        <dt class="badge-header" translate>Main sentence</dt>
+        <dd><p>{{ semantics.data.mainSenteces[0] }}</p></dd>
+        <dd><p>{{ semantics.data.mainSenteces[1] }}</p></dd>
+        <dd><p>{{ semantics.data.mainSenteces[2] }}</p></dd>
+    </dl>
+</div>

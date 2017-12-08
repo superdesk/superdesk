@@ -1,0 +1,20 @@
+<div class="dropdown strict" dropdown>
+    <button class="navbtn dropdown-toggle dropdown__toggle" dropdown-toggle>
+        <i class="big-icon--cog"></i>
+    </button>
+    <ul class="dropdown__menu dropdown--align-right">
+        <li ng-repeat="cat in metasearch.categories track by cat._id">
+            <button
+                ng-disabled="metasearch.category == cat._id"
+                ng-click="metasearch.setCategory(cat._id)">{{ cat.label }}</button>
+        </li>
+
+        <li class="dropdown__menu-divider"></li>
+
+        <li ng-repeat="time in metasearch.time_ranges track by time._id">
+            <button
+                ng-disabled="metasearch.time_range == time._id"
+                ng-click="metasearch.setTime(time._id)">{{ time.label }}</button>
+        </li>
+    </ul>
+</div>

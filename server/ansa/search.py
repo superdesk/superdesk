@@ -6,7 +6,6 @@ import superdesk
 
 from flask import current_app as app
 from superdesk.io.commands.update_ingest import update_renditions
-from superdesk.logging import time, time_end
 
 
 SEARCH_URL = 'http://172.20.14.88/ansafoto/portaleimmagini/api/ricerca.json'
@@ -125,9 +124,7 @@ class AnsaPictureProvider(superdesk.SearchProvider):
         # generate renditions
         original = item.get('renditions', {}).get('original', {})
         if original:
-            time('renditions')
             update_renditions(item, original.get('href'), {})
-            time_end('renditions')
 
         # it's in superdesk now, so make it ignore the api
         item['fetch_endpoint'] = ''
