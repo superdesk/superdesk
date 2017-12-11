@@ -29,5 +29,23 @@
             {"is_active": true, "name": "VIC", "qcode": "VIC", "state": "Victoria", "country": "Australia", "world_region": "Oceania", "group": "Australia"},
             {"is_active": true, "name": "WA", "qcode": "WA", "state": "Western Australia", "country": "Australia", "world_region": "Oceania", "group": "Australia"}
         ]
+    },
+    {
+        "_id": "subtitle",
+        "display_name": "Subtitle",
+        "type": "manageable",
+        "field_type": "text",
+        "field_options": {"single": true},
+        "items": [],
+        "service": {"all": 1}
+    },
+    {
+        "_id": "shorttitle",
+        "display_name": "Short Title",
+        "type": "manageable",
+        "field_type": "text",
+        "field_options": {"single": true},
+        "items": [],
+        "service": {"all": 1}
     }
 ]
