@@ -8,5 +8,4 @@ sed -i \
  app*.js &&
 nginx &
 
-cd /opt/superdesk &&
-bash ./scripts/fig_wrapper.sh honcho start
+cd /opt/superdesk && sleep 5 && bash honcho start
