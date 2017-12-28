@@ -20,11 +20,16 @@ Find more information about the client configuration in the README file of the r
 [github.com/superdesk/superdesk-client-core](https://github.com/superdesk/superdesk-client-core)
 
 ## Requirements
+
+These services must be installed, configured and running:
+
  * MongoDB
  * ElasticSearch (1.7.x - 2.4.x)
  * Redis
  * Python (>= 3.5)
  * Node.js (with `npm`)
+
+On macOS, if you have [homebrew](https://brew.sh/) installed, simply run: `brew install mongodb elasticsearch@2.4 redis python3 node`.
 
 ### General installation steps look like:
 ```sh
@@ -47,6 +52,16 @@ grunt server
 
 # open http://localhost:9000 in browser
 ```
+
+#### :warning:  macOS users
+
+All the above commands need to run inside the Python Virtual Environment, which you can create
+using the `pyvenv` command:
+
+- Run `pyvenv ~/pyvenv` to create the files needed to start an environment in the directory `~/pyvenv`.
+- Run `. ~/pyvenv/bin/activate` to start the virtual environment in the current terminal session.
+
+Now you may run the installation steps from above.
 
 ### Installation on fresh Ubuntu 16.04
 
