@@ -1,16 +1,18 @@
 <div ng-controller="PackageManagerWidgetCtrl as ctrl">
-    <div class="nav nav-tabs item-searchbar">
-        <label for="search-input" class="button search-icon"></label>
+    <div class="sd-searchbar sd-searchbar--border-bottom sd-searchbar--small" ng-class="{'sd-searchbar--focused': focused}">
+        <label for="search-input" class="sd-searchbar__icon"></label>
         <input id="search-input"
-               type="text"
-               placeholder="{{ 'Search'|translate }}"
-               ng-model="query"
-               tabindex="1">
+                class="sd-searchbar__input"
+                type="text"
+                placeholder="{{ 'Search'|translate }}"
+                ng-model="query"
+                ng-focus="focused = true"
+                tabindex="1">
     </div>
     <div class="package-manager-content" sd-loading="ctrl.loading">
-        <ul class="ingest-list relatead-item-list list-view">
-            <li class="list-item-view" ng-repeat="pitem in contentItems | filter: query track by pitem._id" ng-if="pitem._id !== item._id" title="{{ pitem.headline || pitem.slugline}}">
-                <div class="basic item-block">
+        <ul class="ingest-list simple-list simple-list--dotted">
+            <li class="simple-list__item" ng-repeat="pitem in contentItems | filter: query track by pitem._id" ng-if="pitem._id !== item._id" title="{{ pitem.headline || pitem.slugline}}">
+                <div class="item-block item-block--basic">
                     <i class="filetype-icon-composite"></i>
                     <div class="content" ng-click="showPreview = !showPreview">
                         <span class="headline" ng-show="pitem.headline || pitem.slugline">
@@ -27,7 +29,7 @@
                         </ul>
                     </div>
                 </div>
-                <div sd-package class="pull-left" data-item="pitem" ng-show="showPreview"></div>
+                <div sd-package data-item="pitem" ng-show="showPreview" style="padding: 8px 0 0 0;"></div>
             </li>
         </ul>
     </div>

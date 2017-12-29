@@ -1,5 +1,8 @@
 <div class="metasearch monitoring" ng-controller="MetasearchCtrl as metasearch">
     <div class="subnav">
+        <h3 class="subnav__page-title subnav__page-title--no-grow">Metasearch</h3>
+        <div class="subnav__spacer subnav__spacer--no-margin"></div>
+
         <div class="flat-searchbar monitoring-flat-searchbar" ng-class="{extended: metasearch.openSearch}">
             <div class="search-handler">
                 <label for="search-input" class="trigger-icon"
@@ -8,17 +11,12 @@
                     sd-autofocus
                     ng-model="metasearch.query"
                     ng-keyup="metasearch.search($event)">
-                <button class="search-close"
+                <button class="search-close icn-btn"
                     ng-click="metasearch.reset()"
                     ng-class="{visible: metasearch.query}"><i class="icon-remove-sign"></i></button>
-
             </div>
         </div>
         <div ansa-metasearch-dropdown></div>
-
-        <h3 class="subnav__page-title">
-            <span>Metasearch</span>
-        </h3>
     </div>
     <div sd-loading="metasearch.loading">
         <section ansa-metasearch-results class="main-section"></section>
