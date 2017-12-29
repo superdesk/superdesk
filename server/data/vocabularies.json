@@ -47,5 +47,21 @@
         "field_options": {"single": true},
         "items": [],
         "service": {"all": 1}
+    },
+    {
+        "_id": "destination",
+        "display_name": "Destination",
+        "type": "manageable",
+        "service": {"all": 1},
+        "items": [
+            {"is_active": true, "name": "SMS", "qcode": "destination_sms"},
+            {"is_active": true, "name": "Website", "qcode": "destination_website"},
+            {"is_active": true, "name": "Mobile", "qcode": "destination_mobile"},
+            {"is_active": true, "name": "Archive", "qcode": "destination_archive"}
+        ],
+        "schema": {
+            "name": {"translate": true},
+            "qcode": {}
+        }
     }
 ]
