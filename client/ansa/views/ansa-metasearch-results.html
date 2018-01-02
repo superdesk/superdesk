@@ -1,9 +1,11 @@
-<div class="content-list">
-    <div class="stage">
-        <ul ng-if="metasearch.items.length" class="pills-list">
-            <li ng-repeat="item in metasearch.items" ansa-metasearch-item>
-                <small class="pull-right"><time sd-datetime data-date="item.pubdate"></time></small>
-                <small class="engine">{{ :: item.engine }}</small>
+<ul ng-if="metasearch.items.length" class="sd-list-item-group sd-list-item-group--space-between-items">
+    <li class="sd-list-item sd-list-item--no-hover sd-shadow--z1" ng-repeat="item in metasearch.items" ansa-metasearch-item>
+        <div class="sd-list-item__column sd-list-item__column--large-padding sd-list-item__column--grow sd-list-item__column--no-border">
+            <div class="sd-list-item__row">
+                <small class="engine sd-list-item--element-grow">{{ :: item.engine }}</small>
+                <time sd-datetime data-date="item.pubdate"></time>
+            </div>
+            <div class="sd-list-item__row">
                 <div class="embed html">
                     <div ng-bind-html="html"></div>
                 </div>
@@ -19,25 +21,73 @@
                     </figure>
                     <p>{{ :: item.content }}</p>
                 </div>
-                <div class="clearfix">
-                    <a ng-href="{{ :: item.url }}" target="_blank">{{ :: item.pretty_url }}</a>
-                </div>
-            </li>
+            </div>
+            <div class="sd-list-item__row">
+                <a ng-href="{{ :: item.url }}" target="_blank">{{ :: item.pretty_url }}</a>
+            </div>
+        </div>
+    </li>
+    <li>
+        <div class="nav-button-bar">
+            <button class="btn btn--hollow btn--large btn--icon-only-circle"
+                ng-click="metasearch.goto(metasearch.page - 1)"
+                ng-disabled="!metasearch.hasPrev">
+                <i class="icon-chevron-left-thin"></i>
+            </button>
+            <button class="btn btn--hollow btn--large btn--icon-only-circle"
+                ng-click="metasearch.goto(metasearch.page + 1)"
+                ng-disabled="!metasearch.hasNext">
+                <i class="icon-chevron-right-thin"></i>
+            </button>
+        </div>
+    </li>
+</ul>
 
-            <li>
-                <div class="btn-group">
-                    <button class="btn"
-                        ng-click="metasearch.goto(metasearch.page - 1)"
-                        ng-disabled="!metasearch.hasPrev">&lt;</button>
-                    <button class="btn"
-                        ng-click="metasearch.goto(metasearch.page + 1)"
-                        ng-disabled="!metasearch.hasNext">&gt;</button>
-                </div>
-            </li>
-        </ul>
-        <ul ng-show="metasearch.items.length === 0 && metasearch.query" class="pills-list">
-            <li>There are no results for the query "{{ metasearch.query }}".</li>
-        </ul>
-        <p><br><br><br></p>
+
+<!-- <ul ng-if="metasearch.items.length" class="pills-list">
+    <li class="" ng-repeat="item in metasearch.items" ansa-metasearch-item>
+        <small class="pull-right"><time sd-datetime data-date="item.pubdate"></time></small>
+        <small class="engine">{{ :: item.engine }}</small>
+        <div class="embed html">
+            <div ng-bind-html="html"></div>
+        </div>
+        <div class="embed iframe" ng-if="iframe">
+            <iframe src="{{ iframe }}" type="text/html" width="{{ width }}" height="{{ height }}" frameborder="0"></iframe>
+            <p>{{ :: item.content }}</p>
+        </div>
+        <div class="inline" ng-if="!embed">
+            <h3 ng-if="!item.thumbnail_src"><a ng-href="{{ :: item.url }}" target="_blank">{{ :: item.title }}</a></h3>
+            <figure ng-if="item.thumbnail_src">
+                <img ng-if="item.thumbnail_src" ng-src="{{ :: item.thumbnail_src }}" />
+                <p>{{ :: item.title }}</p>
+            </figure>
+            <p>{{ :: item.content }}</p>
+        </div>
+        <div class="clearfix">
+            <a ng-href="{{ :: item.url }}" target="_blank">{{ :: item.pretty_url }}</a>
+        </div>
+    </li>
+
+    <li>
+        <div class="">
+            <button class="btn btn--hollow btn--icon-only-circle"
+                ng-click="metasearch.goto(metasearch.page - 1)"
+                ng-disabled="!metasearch.hasPrev">
+                <i class="icon-chevron-left-thin"></i>
+            </button>
+            <button class="btn btn--hollow btn--icon-only-circle"
+                ng-click="metasearch.goto(metasearch.page + 1)"
+                ng-disabled="!metasearch.hasNext">
+                <i class="icon-chevron-right-thin"></i>
+            </button>
+        </div>
+    </li>
+</ul> -->
+<div class="panel-info" ng-show="metasearch.items.length === 0 && metasearch.query">
+    <div class="panel-info__icon">
+        <i class="big-icon--info"></i>
     </div>
+    <h3 class="panel-info__heading">No results found</h3>
+    <p class="panel-info__description">There are no results for the query "{{ metasearch.query }}".</p>
 </div>
+

@@ -5,75 +5,94 @@
 <div class="subnav" ng-if="searchEnabled">
     <div class="flat-searchbar monitoring-backlink">
         <div class="search-handler">
-            <button class="backlink" ng-click="closeSearch()">&nbsp;</button>
+            <button sd-tooltip="Back to original view" flow="right" class="backlink" ng-click="closeSearch()"></button>
         </div>
     </div>
-    <h3 class="subnav__page-title">
-        <input type="text" class="live-input input-large"
-            ng-model="metasearch.query"
-            ng-keyup="metasearch.search($event)">
-    </h3>
-    <div class="pull-right" ansa-metasearch-dropdown></div>
+    <div class="flat-searchbar extended">
+        <div class="search-handler">
+            <label class="trigger-icon"><i class="icon-search"></i></label>
+            <input id="search-input" type="text" placeholder="Search" class="input-large live-input" ng-model="metasearch.query" ng-keyup="metasearch.search($event)">
+            <button class="icn-btn search-close" ng-click="metasearch.reset()" ng-class="{visible: metasearch.query}"><i class="icon-remove-sign"></i></button>
+        </div>
+    </div>
+    <div ansa-metasearch-dropdown></div>
 </div>
 
-<div class="main-section" ng-if="semantics && !searchEnabled">
+<div class="main-section live-suggestions" ng-if="semantics && !searchEnabled">
     <section class="main">
-        <h2 translate>Browse the web by SEO suggestions</h2>
-        <dl class="pull-left">
-            <dt ng-show="semantics.persons.length" translate>Person</dt>
-            <dd ng-repeat="val in semantics.persons">
-                <a href="" ng-click="toggleInfo(val)">{{ val }}</a>
-            </dd>
-
-            <dt ng-show="semantics.organizations.length" translate>Organisation</dt>
-            <dd ng-repeat="val in semantics.organizations">
-                <a href="" ng-click="toggleInfo(val)">{{ val }}</a>
-            </dd>
-
-            <dt ng-show="semantics.places.length" translate>Place</dt>
-            <dd ng-repeat="val in semantics.places">
-                <a href="" ng-click="toggleInfo(val)">{{ val }}</a>
-            </dd>
-
-            <dt ng-show="semantics.mainGroups.length" translate>Main Groups</dt>
-            <dd ng-repeat="val in semantics.mainGroups">
-                <a href="" ng-click="toggleInfo(val)">{{ val }}</a>
-            </dd>
-        </dl>
-
-        <dl class="pull-left" sd-loading="loading">
-            <dt translate>Suggestions</dt>
-            <dd ng-repeat="term in suggestions">
-                <a href="" ng-click="startSearch(term)">{{ term }}</a>
-            </dd>
-            <dd ng-show="!suggestions.length" translate>Click on an item to start.</dd>
+        <h3 translate>Browse the web by SEO suggestions</h3>
+        <div class="sd-column-box--2">
+            <div class="sd-column-box__main-column sd-column-box__main-column--40">
+                <dl class="definition-list">
+                    <dt class="definition-list__term" ng-show="semantics.persons.length" translate>Person</dt>
+                    <dd class="definition-list__item" ng-repeat="val in semantics.persons">
+                        <a href="" ng-click="toggleInfo(val)">{{ val }}</a>
+                    </dd>
+        
+                    <dt class="definition-list__term" ng-show="semantics.organizations.length" translate>Organisation</dt>
+                    <dd class="definition-list__item" ng-repeat="val in semantics.organizations">
+                        <a href="" ng-click="toggleInfo(val)">{{ val }}</a>
+                    </dd>
+        
+                    <dt class="definition-list__term" ng-show="semantics.places.length" translate>Place</dt>
+                    <dd class="definition-list__item" ng-repeat="val in semantics.places">
+                        <a href="" ng-click="toggleInfo(val)">{{ val }}</a>
+                    </dd>
+        
+                    <dt class="definition-list__term" ng-show="semantics.mainGroups.length" translate>Main Groups</dt>
+                    <dd class="definition-list__item" ng-repeat="val in semantics.mainGroups">
+                        <a href="" ng-click="toggleInfo(val)">{{ val }}</a>
+                    </dd>
+                </dl>
+            </div>
+            <div class="sd-column-box__main-column  sd-column-box__main-column--60">
+                <dl class="definition-list sd-shadow--z1" sd-loading="loading" style="margin-left: 10px; padding:20px; width:90%; background: #fff; border-radius: 2px;">
+                    <dt class="definition-list__term" translate>Suggestions</dt>
+                    <dd class="definition-list__item" ng-repeat="term in suggestions">
+                        <a href="" ng-click="startSearch(term)">{{ term }}</a>
+                    </dd>
+                    <dd class="definition-list__item" ng-show="!suggestions.length" translate>Click on an item on the left to start.</dd>
+                </dl>
+            </div>
+        </div>
+    </section>
+    <hr class="hr--dotted">
+    <section class="main">
+        <h3 translate>Web related news by title or slugline</h3>
+        <dl class="definition-list">
+            <dt class="definition-list__term" ng-show="item.headline" translate>Headline</dt>
+            <dd class="definition-list__item"><a href="" ng-click="startSearch(item.headline)">{{ item.headline }}</a></dd>
+            <dt class="definition-list__term" ng-show="item.slugline" translate>Slugline</dt>
+            <dd class="definition-list__item"><a href="" ng-click="startSearch(item.slugline)">{{ item.slugline }}</a></dd>
         </dl>
     </section>
+    <hr class="hr--dotted">
     <section class="main">
-        <h2 translate>Web related news by title or slugline</h2>
-        <dl class="pull-left">
-            <dt ng-show="item.headline" translate>Headline</dt>
-            <dd><a href="" ng-click="startSearch(item.headline)">{{ item.headline }}</a></dd>
-            <dt ng-show="item.slugline" translate>Slugline</dt>
-            <dd><a href="" ng-click="startSearch(item.slugline)">{{ item.slugline }}</a></dd>
-        </dl>
-    </section>
-    <section class="main">
-        <h2 translate>Web search hints</h2>
-        <span class="pull-left" ng-repeat="word in archiveQueries">
-            <span><a href="" ng-click="startSearch(word)">{{ word }}</a>
-                &nbsp;&nbsp;&nbsp;</span>
+        <h3 translate>Web search hints</h3>
+        <span class="suggestion-link-list" ng-repeat="word in archiveQueries">
+            <a href="" ng-click="startSearch(word)">{{ word }}</a>
         </span>
     </section>
-    <p><br><br></p>
 </div>
 
 <div class="main-section" ng-if="!item">
-    <h5>Please select an item for editing first.</h5>
+    <div class="panel-info">
+        <div class="panel-info__icon">
+            <i class="big-icon--text"></i>
+        </div>
+        <h3 class="panel-info__heading">No suggestions yet.</h3>
+        <p class="panel-info__description">Please select an item for editing first.</p>
+    </div>
 </div>
 
 <div class="main-section" ng-if="item && !semantics && !searchEnabled">
     <h5>There is no semantics info for current item.</h5>
+    <div class="panel-info">
+        <div class="panel-info__icon">
+            <i class="big-icon--text"></i>
+        </div>
+        <h3 class="panel-info__heading">There is no semantics info for current item.</h3>
+    </div>
 </div>
 
 <div class="main-section" ng-if="searchEnabled">

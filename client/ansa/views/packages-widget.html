@@ -1,7 +1,7 @@
 <div ng-controller="PackagesWidgetCtrl">
     <div class="package-manager-content">
-        <ul class="ingest-list relatead-item-list list-view">
-            <li class="list-item-view" ng-repeat="pitem in contentItems track by pitem._id" ng-if="pitem._id !== item._id" title="{{ pitem.headline || pitem.slugline}}">
+        <ul class="simple-list simple-list--dotted">
+            <li class="simple-list__item" ng-repeat="pitem in contentItems track by pitem._id" ng-if="pitem._id !== item._id" title="{{ pitem.headline || pitem.slugline}}">
                 <div class="basic item-block" ng-click="openPackage(pitem)">
                     <i class="filetype-icon-composite"></i>
                     <div class="content">

@@ -1,60 +1,62 @@
 <div ng-controller="AnsaSemanticsCtrl as semantics" class="widget">
-    <fieldset sd-loading="!semantics.data">
-        <button class="btn" ng-click="semantics.refresh()" translate>Refresh</button>
+    <fieldset sd-loading="!semantics.data" class="fieldset--no-padding sd-text__right widget-header__action">
+        <button class="btn btn--icon-only-circle btn--hollow btn--primary" ng-click="semantics.refresh()" sd-tooltip="{{'Refresh' | translate}}" flow="left">
+            <i class="icon-repeat"></i>
+        </button>
     </fieldset>
 
-    <dl ng-if="semantics.data">
-        <dt class="badge-header" translate>IPTC Domains</dt>
-        <dd ng-repeat="domain in semantics.data.iptcDomains" class="badge">
+    <dl ng-if="semantics.data" class="tag-list">
+        <dt class="tag-list__header" translate>IPTC Domains</dt>
+        <dd ng-repeat="domain in semantics.data.iptcDomains" class="tag-label">
             {{ domain }}
-            <button ng-click="semantics.remove(domain, 'iptcDomains')"><i class="icon-close-small"></i></button>
+            <button class="tag-label__remove" ng-click="semantics.remove(domain, 'iptcDomains')"><i class="icon-close-small"></i></button>
         </dd>
 
-        <dt class="badge-header" translate>News Domains</dt>
-        <dd ng-repeat="domain in semantics.data.newsDomains" class="badge">
+        <dt class="tag-list__header" translate>News Domains</dt>
+        <dd ng-repeat="domain in semantics.data.newsDomains" class="tag-label">
             {{ domain }}
-            <button ng-click="semantics.remove(domain, 'newsDomains')"><i class="icon-close-small"></i></button>
+            <button class="tag-label__remove" ng-click="semantics.remove(domain, 'newsDomains')"><i class="icon-close-small"></i></button>
         </dd>
 
-        <dt class="badge-header" translate>Person</dt>
-        <dd ng-repeat="person in semantics.data.persons" class="badge">
+        <dt class="tag-list__header" translate>Person</dt>
+        <dd ng-repeat="person in semantics.data.persons" class="tag-label">
             {{ person }}
-            <button ng-click="semantics.remove(person, 'persons')"><i class="icon-close-small"></i></button>
+            <button class="tag-label__remove" ng-click="semantics.remove(person, 'persons')"><i class="icon-close-small"></i></button>
         </dd>
 
-        <dt class="badge-header" translate>Place</dt>
-        <dd ng-repeat="place in semantics.data.places" class="badge">
+        <dt class="tag-list__header" translate>Place</dt>
+        <dd ng-repeat="place in semantics.data.places" class="tag-label">
             {{ place }}
-            <button ng-click="semantics.remove(place, 'places')"><i class="icon-close-small"></i></button>
+            <button class="tag-label__remove" ng-click="semantics.remove(place, 'places')"><i class="icon-close-small"></i></button>
         </dd>
 
-        <dt class="badge-header" translate>Organization</dt>
-        <dd ng-repeat="org in semantics.data.organizations" class="badge">
+        <dt class="tag-list__header" translate>Organization</dt>
+        <dd ng-repeat="org in semantics.data.organizations" class="tag-label">
             {{ org }}
-            <button ng-click="semantics.remove(org, 'organizations')"><i class="icon-close-small"></i></button>
+            <button class="tag-label__remove" ng-click="semantics.remove(org, 'organizations')"><i class="icon-close-small"></i></button>
         </dd>
 
-        <dt class="badge-header" translate>Main Groups</dt>
-        <dd ng-repeat="group in semantics.data.mainGroups" class="badge">
+        <dt class="tag-list__header" translate>Main Groups</dt>
+        <dd ng-repeat="group in semantics.data.mainGroups" class="tag-label">
             {{ group }}
-            <button ng-click="semantics.remove(group, 'mainGroups')"><i class="icon-close-small"></i></button>
+            <button class="tag-label__remove" ng-click="semantics.remove(group, 'mainGroups')"><i class="icon-close-small"></i></button>
         </dd>
 
-        <dt class="badge-header" translate>Main Lemmas</dt>
-        <dd ng-repeat="lemma in semantics.data.mainLemmas" class="badge">
+        <dt class="tag-list__header" translate>Main Lemmas</dt>
+        <dd ng-repeat="lemma in semantics.data.mainLemmas" class="tag-label">
             {{ lemma }}
-            <button ng-click="semantics.remove(lemma, 'mainLemmas')"><i class="icon-close-small"></i></button>
+            <button class="tag-label__remove" ng-click="semantics.remove(lemma, 'mainLemmas')"><i class="icon-close-small"></i></button>
         </dd>
 
-        <dt class="badge-header" translate>IPTC Codes</dt>
-        <dd ng-repeat="code in semantics.data.iptcCodes" class="badge">
+        <dt class="tag-list__header" translate>IPTC Codes</dt>
+        <dd ng-repeat="code in semantics.data.iptcCodes" class="tag-label">
             {{ code }}
-            <button ng-click="semantics.remove(code, 'iptcCodes')"><i class="icon-close-small"></i></button>
+            <button class="tag-label__remove" ng-click="semantics.remove(code, 'iptcCodes')"><i class="icon-close-small"></i></button>
         </dd>
 
-        <dt class="badge-header" translate>Main sentence</dt>
-        <dd><p>{{ semantics.data.mainSenteces[0] }}</p></dd>
-        <dd><p>{{ semantics.data.mainSenteces[1] }}</p></dd>
-        <dd><p>{{ semantics.data.mainSenteces[2] }}</p></dd>
+        <dt class="tag-list__header" translate>Main sentence</dt>
+        <dd class="tag-list__text-block"><p>{{ semantics.data.mainSenteces[0] }}</p></dd>
+        <dd class="tag-list__text-block"><p>{{ semantics.data.mainSenteces[1] }}</p></dd>
+        <dd class="tag-list__text-block"><p>{{ semantics.data.mainSenteces[2] }}</p></dd>
     </dl>
 </div>
