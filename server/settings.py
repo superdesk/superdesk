@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'ansa.search',
     'ansa.parser',
     'ansa.subjects',
+    'ansa.formatters',
 ]
 
 

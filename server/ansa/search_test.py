@@ -1,7 +1,16 @@
 
+import os
 import unittest
 
+from httmock import urlmatch, HTTMock
+
 from .search import AnsaPictureProvider
+
+
+@urlmatch(netloc=r'172.20.14.88')
+def ansa_mock(url, request):
+    with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'fixtures', 'ansafoto.json')) as f:
+        return f.read()
 
 
 class AnsaPictureTestCase(unittest.TestCase):
@@ -10,8 +19,9 @@ class AnsaPictureTestCase(unittest.TestCase):
         self.service = AnsaPictureProvider({})
 
     def test_find(self):
-        items = self.service.find({})
-        self.assertEqual(25, len(items))
+        with HTTMock(ansa_mock):
+            items = self.service.find({})
+        self.assertEqual(1, len(items))
         item = items[0]
         self.assertIn('headline', item)
         self.assertIn('type', item)

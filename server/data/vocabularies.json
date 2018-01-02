@@ -63,5 +63,30 @@
             "name": {"translate": true},
             "qcode": {}
         }
+    },
+    {
+        "_id": "subscriber_types",
+        "display_name": "Subscriber Types",
+        "type": "unmanageable",
+        "items": [
+            {"is_active": true, "name": "All", "qcode": "all",
+                "formats": [
+                    {"name": "NINJS", "qcode": "ninjs"},
+                    {"name": "NewsML G2", "qcode": "newsmlg2html"},
+                    {"name": "Email", "qcode": "email"}
+                ]},
+            {"is_active": true, "name": "Digital/Internet", "qcode": "digital",
+                "formats": [
+                    {"name": "NINJS", "qcode": "ninjs"},
+                    {"name": "NewsML G2", "qcode": "newsmlg2html"},
+                    {"name": "Email", "qcode": "email"}
+                ]},
+            {"is_active": true, "name": "Wire/Paper", "qcode": "wire",
+                "formats": [
+                    {"name": "NITF", "qcode": "nitf"},
+                    {"name": "NewsML G2", "qcode": "newsmlg2html"},
+                    {"name": "Email", "qcode": "email"}
+                ]}
+        ]
     }
 ]
