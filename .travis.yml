@@ -38,4 +38,5 @@ script:
     - cd $TRAVIS_BUILD_DIR/client && grunt build
     - cd $TRAVIS_BUILD_DIR/client && npm run lint
     - cd $TRAVIS_BUILD_DIR/server && flake8
+    - cd $TRAVIS_BUILD_DIR/server && nosetests
     - cd $TRAVIS_BUILD_DIR/server && python manage.py users:create -u test -p test -e test@localhost --admin
