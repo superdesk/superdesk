@@ -124,7 +124,7 @@ export default angular.module('ansa.package-manager', ['superdesk.apps.authoring
     .config(['authoringWidgetsProvider', function(authoringWidgetsProvider) {
         authoringWidgetsProvider
             .widget('packages', {
-                icon: 'add-to-package',
+                icon: 'manage-package',
                 label: gettext('Package Manager'),
                 template: 'package-manager-widget.html',
                 order: 6,
