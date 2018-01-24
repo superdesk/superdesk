@@ -125,3 +125,33 @@
         margin-bottom: 3rem;
     }
 }
+
+// QUICK FIXES
+.sd-sidebar-menu__btn {
+    cursor: pointer;
+}
+
+// font size of headlines in the monitoring list view
+.media-box .item-info .item-heading {
+    font-size: 1.4rem !important;
+    font-weight: 500;
+    color: #555;
+}
+
+// ANSA Map modal
+.modal__body--no-padding {
+    padding: 0 !important;
+}
+.modal__body--relative {
+    position: relative;
+}
+iframe.ansa-map {
+    height: 100%;
+    width: 100%;
+    position:absolute;
+    top:0;
+    bottom: 0;
+    left:0;
+    right:0;
+    background-color: #fff;
+}
