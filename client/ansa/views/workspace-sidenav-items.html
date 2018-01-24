@@ -102,6 +102,13 @@
     </a>
 </li>
 
+<hr>
+<li ng-controller="AnsaMapCtrl as ctrl">
+    <a class="sd-sidebar-menu__btn" title="aiNews Map" ng-click="ctrl.open()">
+        <i class="big-icon--web sd-sidebar-menu__main-icon"></i>
+    </a>
+</li>
+
 <hr ng-if="workspaceConfig.analytics">
 <li ng-if="workspaceConfig.analytics" ng-class="{active: currentRoute.href === '/analytics'}">
     <a href="#/analytics" title="{{ :: 'Analytics' | translate }}" class="sd-sidebar-menu__btn">

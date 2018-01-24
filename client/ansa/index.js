@@ -523,11 +523,22 @@ function AnsaRepoDropdown(api, $filter, $location, $rootScope) {
     };
 }
 
+AnsaMapCtrl.$inject = ['$scope', '$modal'];
+function AnsaMapCtrl($scope, $modal) {
+    this.open = () => {
+        $modal.open({
+            template: require('./views/ansa-map.html'),
+            size: 'fullscreen modal--dark-ui'
+        });
+    };
+}
+
 export default angular.module('ansa.superdesk', [widgets.name, packages.name])
     .factory('metasearch', MetasearchFactory)
     .controller('MetasearchCtrl', MetasearchController)
     .controller('AnsaSemanticsCtrl', AnsaSemanticsCtrl)
     .controller('AnsaRelatedCtrl', AnsaRelatedCtrl)
+    .controller('AnsaMapCtrl', AnsaMapCtrl)
     .directive('ansaMetasearchItem', AnsaMetasearchItem)
     .directive('ansaLiveSuggestions', AnsaLiveSuggestions)
     .directive('ansaMetasearchResults', AnsaMetasearchResults)
