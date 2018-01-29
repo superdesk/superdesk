@@ -2,6 +2,9 @@ module.exports = function(grunt) {
     return {
         defaultRoute: '/workspace/personal',
         features: {noTakes: 1},
+        apps: [
+            'superdesk-publisher'
+        ],
         publisher: {
             protocol: 'https',
             tenant: process.env.PUBLISHER_API_SUBDOMAIN || '',
