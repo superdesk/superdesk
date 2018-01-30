@@ -6,7 +6,12 @@
  */
 module.exports = function(grunt) {
     return {
-        apps: ['superdesk-analytics'],
+        apps: process.env.PUBLISHER_ENABLED ? [
+            'superdesk-analytics',
+            'superdesk-publisher'
+        ] : [
+            'superdesk-analytics'
+        ],
         defaultRoute: '/workspace/personal',
         validatorMediaMetadata: {
             headline: {
@@ -30,6 +35,13 @@ module.exports = function(grunt) {
             copyrightnotice: {
                 required: false
             }
+        },
+
+        publisher: {
+            protocol: 'https',
+            tenant: process.env.PUBLISHER_API_SUBDOMAIN || '',
+            domain: process.env.PUBLISHER_API_DOMAIN || 'localhost',
+            base: 'api/v1'
         },
 
         langOverride: {
