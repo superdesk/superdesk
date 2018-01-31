@@ -6,11 +6,12 @@
  */
 module.exports = function(grunt) {
     return {
-        apps: process.env.PUBLISHER_ENABLED ? [
+        apps: [
+            'superdesk-analytics',
+        ],
+        importApps: [
             'superdesk-analytics',
             'superdesk-publisher'
-        ] : [
-            'superdesk-analytics'
         ],
         defaultRoute: '/workspace/personal',
         validatorMediaMetadata: {
