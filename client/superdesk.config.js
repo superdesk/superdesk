@@ -6,7 +6,8 @@
  */
 module.exports = function(grunt) {
     return {
-        apps: ['../ansa'],
+        apps: ['ansa.superdesk'],
+        importApps: ['../ansa'],
         defaultRoute: '/workspace/monitoring',
         workspace: {
             ingest: 1,
