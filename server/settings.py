@@ -11,7 +11,6 @@
 
 import os
 from pathlib import Path
-from superdesk.default_settings import INSTALLED_APPS
 
 
 def env(variable, fallback_value=None):
@@ -30,10 +29,6 @@ ABS_PATH = str(Path(__file__).resolve().parent)
 init_data = Path(ABS_PATH) / 'data'
 if init_data.exists():
     INIT_DATA_PATH = init_data
-
-INSTALLED_APPS.extend([
-    'analytics'
-])
 
 RENDITIONS = {
     'picture': {
