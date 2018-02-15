@@ -62,8 +62,7 @@ if env('REDIS_PORT'):
     REDIS_URL = env('REDIS_PORT').replace('tcp:', 'redis:')
 BROKER_URL = env('CELERY_BROKER_URL', REDIS_URL)
 
-# 5y
-CONTENT_EXPIRY_MINUTES = 60 * 24 * 365 * 5
+CONTENT_EXPIRY_MINUTES = 60 * 24 * 7  # 1w
 
 NO_TAKES = True
 
