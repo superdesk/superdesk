@@ -42,15 +42,19 @@
         <div class="button-list">
             <button class="toggle-button"
                 ng-click="related.filter('text')"
-                ng-class="{'toggle-button--active': related.activeFilter == 'text'}" sd-tooltip="{{'Text' | translate}}" flow="down">
+                ng-class="{'toggle-button--active': related.activeFilter == 'text'}" sd-tooltip="{{ :: 'Text' | translate}}" flow="down">
                 <i class="toggle-button__icon filetype-icon-text"></i>
                 
             </button>
             <button class="toggle-button"
                 ng-click="related.filter('picture')"
-                ng-class="{'toggle-button--active': related.activeFilter == 'picture'}" sd-tooltip="{{'Pictures' | translate}}" flow="down">
+                ng-class="{'toggle-button--active': related.activeFilter == 'picture'}" sd-tooltip="{{ :: 'Pictures' | translate}}" flow="down">
                 <i class="toggle-button__icon filetype-icon-picture"></i>
-                
+            </button>
+            <button class="toggle-button"
+                ng-click="related.filter('video')"
+                ng-class="{'toggle-button--active': related.activeFilter == 'video'}" sd-tooltip="{{ :: 'Video' | translate}}" flow="down">
+                <i class="toggle-button__icon filetype-icon-video"></i>
             </button>
         </div>
     </div>
