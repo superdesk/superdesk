@@ -260,7 +260,7 @@ function AnsaSemanticsCtrl($scope, $rootScope, api) {
 
 AnsaRelatedCtrl.$inject = ['$scope', 'api', 'storage', 'Keys'];
 function AnsaRelatedCtrl($scope, api, storage, Keys) {
-    let search = () => {
+    const search = () => {
         if (!$scope.item.semantics || !$scope.item.semantics.iptcCodes) {
             this.items = [];
             return;
@@ -316,7 +316,7 @@ function AnsaRelatedCtrl($scope, api, storage, Keys) {
             });
         } else {
             angular.extend(query.bool, {
-                must: pictureFilters.concat([{term: {type: 'picture'}}]),
+                must: pictureFilters.concat([{term: {type: this.activeFilter}}]),
                 should: filters,
                 minimum_should_match: 1
             });
