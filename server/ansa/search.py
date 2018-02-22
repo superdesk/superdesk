@@ -4,16 +4,17 @@ import arrow
 import requests
 import superdesk
 
+from urllib.parse import urljoin
 from flask import current_app as app
 from superdesk.io.commands.update_ingest import update_renditions
 
 
-SEARCH_URL = 'http://172.20.14.88/ansafoto/portaleimmagini/api/ricerca.json'
-DETAIL_URL = 'http://172.20.14.88/ansafoto/portaleimmagini/api/detail.json'
+SEARCH_ENDPOINT = 'ricerca.json'
+DETAIL_ENDPOINT = 'detail.json'
+ORIGINAL_ENDPOINT = 'binary/{}.jpg?guid={}&username={}&password={}'
 
 THUMB_HREF = 'https://ansafoto.ansa.it/portaleimmagini/bdmproxy/{}.jpg?format=thumb&guid={}'
 VIEWIMG_HREF = 'https://ansafoto.ansa.it/portaleimmagini/bdmproxy/{}.jpg?format=med&guid={}'
-ORIGINAL_HREF = 'http://172.20.14.88/ansafoto/portaleimmagini/api/binary/{}.jpg?guid={}&username={}&password={}'
 
 SEARCH_USERNAME = 'angelo2'
 SEARCH_PASSWORD = 'blabla'
@@ -29,6 +30,10 @@ def get_meta(doc, field):
         return doc['metadataMap'][field]['fieldValues'][0]['value']
     except KeyError:
         return None
+
+
+def ansa_photo_api(endpoint):
+    return urljoin(app.config['ANSA_PHOTO_API'], endpoint)
 
 
 class AnsaPictureProvider(superdesk.SearchProvider):
@@ -54,7 +59,7 @@ class AnsaPictureProvider(superdesk.SearchProvider):
         if query_string.get('query'):
             params['searchtext'] = query_string.get('query')
 
-        response = requests.get(SEARCH_URL, params=params, timeout=TIMEOUT)
+        response = requests.get(ansa_photo_api(SEARCH_ENDPOINT), params=params, timeout=TIMEOUT)
         return self._parse_items(response)
 
     def _parse_items(self, response):
@@ -94,11 +99,11 @@ class AnsaPictureProvider(superdesk.SearchProvider):
                         'width': 384,
                     },
                     'baseImage': {
-                        'href': ORIGINAL_HREF.format(md5, guid, ORIG_USERNAME, ORIG_PASSWORD),
+                        'href': ansa_photo_api(ORIGINAL_ENDPOINT).format(md5, guid, ORIG_USERNAME, ORIG_PASSWORD),
                         'mimetype': 'image/jpeg',
                     },
                     'original': {
-                        'href': ORIGINAL_HREF.format(md5, guid, ORIG_USERNAME, ORIG_PASSWORD),
+                        'href': ansa_photo_api(ORIGINAL_ENDPOINT).format(md5, guid, ORIG_USERNAME, ORIG_PASSWORD),
                         'mimetype': 'image/jpeg',
                     },
                 },
@@ -117,7 +122,7 @@ class AnsaPictureProvider(superdesk.SearchProvider):
             'changets': 'true',
         }
 
-        response = requests.get(DETAIL_URL, params=params, timeout=TIMEOUT)
+        response = requests.get(ansa_photo_api(DETAIL_ENDPOINT), params=params, timeout=TIMEOUT)
         items = self._parse_items(response)
         item = items[0]
 
