@@ -1,5 +1,6 @@
 
 import os
+import flask
 import unittest
 
 from httmock import urlmatch, HTTMock
@@ -17,10 +18,13 @@ class AnsaPictureTestCase(unittest.TestCase):
 
     def setUp(self):
         self.service = AnsaPictureProvider({})
+        self.app = flask.Flask(__name__)
+        self.app.config['ANSA_PHOTO_API'] = 'http://172.20.14.88/'
 
     def test_find(self):
         with HTTMock(ansa_mock):
-            items = self.service.find({})
+            with self.app.app_context():
+                items = self.service.find({})
         self.assertEqual(1, len(items))
         item = items[0]
         self.assertIn('headline', item)
