@@ -62,8 +62,6 @@ if env('REDIS_PORT'):
     REDIS_URL = env('REDIS_PORT').replace('tcp:', 'redis:')
 BROKER_URL = env('CELERY_BROKER_URL', REDIS_URL)
 
-CONTENT_EXPIRY_MINUTES = 60 * 24 * 7  # 1w
-
 NO_TAKES = True
 
 ANSA_ANALYSIS_URL = "http://172.20.14.51:8080/extractionservice/"
@@ -85,3 +83,7 @@ MACROS_MODULE = 'ansa.macros'
 LEGAL_ARCHIVE = True
 
 ANSA_PHOTO_API = env('ANSA_PHOTO_API', 'http://172.20.14.88/ansafoto/portaleimmagini/api/')
+
+CONTENT_EXPIRY_MINUTES = 60 * 24 * 7  # 1w
+PUBLISHED_CONTENT_EXPIRY_MINUTES = 60 * 24 * 30
+AUDIT_EXPIRY_MINUTES = PUBLISHED_CONTENT_EXPIRY_MINUTES
