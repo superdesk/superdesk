@@ -34,6 +34,8 @@ def init_app(app):
             'isMOODneutral': {'type': 'boolean'},
             'isMOODnegative': {'type': 'boolean'},
             'isMOODpositive': {'type': 'boolean'},
+            'saos': {'type': 'list', 'mapping': not_analyzed},
+            'sentimental': {'type': 'list', 'mapping': not_analyzed},
         }
     }
 
