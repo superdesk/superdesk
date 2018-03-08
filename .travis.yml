@@ -25,15 +25,9 @@ cache:
     - $HOME/.npm
 
 before_install:
-    - nvm install 6.10
-    - nvm use 6.10
-    - node --version
-    - npm install -g npm@latest
-    - npm install -g grunt-cli
-    - pip install requests
-    - export DISPLAY=:99.0
-    - /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1920x1080x24
-    - export CHROME_BIN=`which google-chrome` && $CHROME_BIN --version ;
+    - nvm install 6.11
+    - nvm use 6.11
+    - npm install -g npm@latest grunt-cli
 
 install:
     - cd server && pip install -r dev-requirements.txt && cd ..
