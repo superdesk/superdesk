@@ -28,8 +28,8 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
         try:
             html = etree.HTML(article.get('body_html'))
         except etree.XMLSyntaxError:
-            html = etree.HTML('<p></p>')
-        return html
+            html = None
+        return html if html is not None else etree.HTML('<p></p>')
 
     def _format_itemref(self, group, ref, item):
         itemRef = super()._format_itemref(group, ref, item)
