@@ -1,6 +1,6 @@
 {
     "dependencies": {
-        "superdesk-core": "superdesk/superdesk-client-core#216d815"
+        "superdesk-core": "superdesk/superdesk-client-core#4ef706e"
     },
     "devDependencies": {
         "superdesk-code-style": "^1.0.0"
