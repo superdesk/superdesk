@@ -533,7 +533,7 @@ function AnsaMapCtrl($scope, $modal) {
     };
 }
 
-export default angular.module('ansa.superdesk', [widgets.name, packages.name])
+export default angular.module('ansa.superdesk', [widgets.name, packages.name, 'superdesk.apps.workspace.menu'])
     .factory('metasearch', MetasearchFactory)
     .controller('MetasearchCtrl', MetasearchController)
     .controller('AnsaSemanticsCtrl', AnsaSemanticsCtrl)
@@ -544,7 +544,7 @@ export default angular.module('ansa.superdesk', [widgets.name, packages.name])
     .directive('ansaMetasearchResults', AnsaMetasearchResults)
     .directive('ansaMetasearchDropdown', AnsaMetasearchDropdown)
     .directive('ansaRepoDropdown', AnsaRepoDropdown)
-    .config(['superdeskProvider', (superdeskProvider) => {
+    .config(['superdeskProvider', 'workspaceMenuProvider', (superdeskProvider, workspaceMenuProvider) => {
         superdeskProvider.activity('/workspace/metasearch', {
             label: gettext('Metasearch'),
             priority: 100,
@@ -560,13 +560,35 @@ export default angular.module('ansa.superdesk', [widgets.name, packages.name])
             topTemplateUrl: 'scripts/apps/dashboard/views/workspace-topnav.html',
             sideTemplateUrl: 'scripts/apps/workspace/views/workspace-sidenav.html'
         });
+
+        workspaceMenuProvider
+            .item({
+                href: '/workspace/metasearch',
+                label: 'Metasearch',
+                icon: 'meta-search',
+                order: 910,
+            })
+            .item({
+                href: '/workspace/assistant',
+                label: 'Live assistant',
+                icon: 'live',
+                order: 920,
+            })
+            .item({
+                href: '/ansa/map',
+                icon: 'web',
+                templateUrl: 'menu-map.html',
+                order: 930,
+                group: 'map',
+            });
     }])
     // ansa core templates override
     .run(['$templateCache', ($templateCache) => {
         $templateCache.put(
-            'scripts/apps/workspace/views/workspace-sidenav-items.html',
-            require('./views/workspace-sidenav-items.html')
+            'menu-map.html',
+            require('./views/menu-map.html')
         );
+
         $templateCache.put(
             'scripts/apps/authoring/packages/views/packages-widget.html',
             require('./views/packages-widget.html')
