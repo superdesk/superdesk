@@ -10,6 +10,10 @@ from superdesk.tests import TestCase
 from .ansa_newsml_g2_formatter import ANSANewsMLG2Formatter
 
 
+def ns(value):
+    return '{http://iptc.org/std/nar/2006-10-01/}%s' % value
+
+
 @mock.patch('superdesk.publish.subscribers.SubscribersService.generate_sequence_number', lambda self, subscriber: 1)
 class ANSANewsmlG2FormatterTestCase(TestCase):
     formatter = ANSANewsMLG2Formatter()
@@ -163,3 +167,48 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         self.assertEqual(subjects[0].attrib.get('id'), str(ids[0]))
         name = subjects[0].find('{http://iptc.org/std/nar/2006-10-01/}name')
         self.assertEqual('Sports highlights', name.text)
+
+    def test_gallery(self):
+        article = self.get_article()
+        article['body_html'] = '<p>body</p>'
+        article['associations'] = {
+            'gallery--1': {
+                'type': 'picture',
+                'headline': 'foo',
+                'renditions': {
+                    'original': {
+                        'media': 'picture1',
+                    }
+                }
+            },
+            'gallery--2': {
+                'type': 'picture',
+                'headline': 'bar',
+                'renditions': {
+                    'original': {
+                        'media': 'picture2',
+                    }
+                }
+            },
+        }
+
+        with mock.patch('superdesk.app.media.get', return_value=io.BytesIO(b'test')):
+            xml = self.format(article)
+
+        inline_xmls = xml.findall('.//%s' % ns('inlineXML'))
+        self.assertEqual(2, len(inline_xmls))
+        gallery = inline_xmls[1]
+        self.assertEqual('gallery', gallery.get('rendition'))
+        figures = gallery.findall('.//%s' % ns('figure'))
+        self.assertEqual(2, len(figures))
+        figure = figures[0]
+        self.assertEqual(2, len(figure))
+        img = figure[0]
+        figcaption = figure[1]
+        self.assertTrue(os.path.exists(os.path.join(self.dest['config']['file_path'], img.get('src'))))
+        self.assertTrue('foo', figcaption.text)
+
+    def format(self, article):
+        formatter = ANSANewsMLG2Formatter()
+        _, doc = formatter.format(article, self.subscriber)[0]
+        return etree.fromstring(doc.encode('utf-8'))
