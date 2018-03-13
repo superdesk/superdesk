@@ -9,6 +9,7 @@ import json
 import fileinput
 
 skip = 2
+
 family_set = set ()
 basic_set = set()
 leaf_set = set()
@@ -20,14 +21,14 @@ for line in fileinput.input():
         continue
 
     cols = [col.strip(' "') for col in line.split(';')]
-    family, basic, leaf = cols[1], cols[2], cols[3]
+    code, family, basic, leaf = cols[0], cols[2], cols[3], cols[4]
 
     if family not in family_set:
         family_set.add(family)
         items.append({
             'is_active': True,
             'name': family,
-            'qcode': family,
+            'qcode': code[:3],
         })
 
     if basic not in basic_set:
@@ -35,8 +36,8 @@ for line in fileinput.input():
         items.append({
             'is_active': True,
             'name': basic,
-            'parent': family,
-            'qcode': '%s:%s' % (family, basic),
+            'parent': code[:3],
+            'qcode': code[:8],
         })
 
     if leaf not in leaf_set:
@@ -44,9 +45,8 @@ for line in fileinput.input():
         items.append({
             'is_active': True,
             'name': leaf,
-            'parent': '%s:%s' % (family, basic),
-            'qcode': '%s:%s:%s' % (family, basic, leaf),
+            'parent': code[:8],
+            'qcode': code,
         })
 
 print(json.dumps(items, indent=2))
-# print('total', len(family_set), len(basic_set), len(leaf_set))
