@@ -8295,5 +8295,107 @@
             "qcode": {},
             "parent": {}
         }
+    },
+    {
+        "_id": "g2_content_type",
+        "display_name": "Coverage content types",
+        "type": "manageable",
+        "unique_field": "qcode",
+        "items": [
+            {"is_active": true, "name": "Text", "qcode": "text", "content item type": "text"},
+            {"is_active": true, "name": "Picture", "qcode": "picture", "content item type": "picture"},
+            {"is_active": true, "name": "Video", "qcode": "video", "content item type": "video"},
+            {"is_active": true, "name": "Audio", "qcode": "audio", "content item type": "audio"},
+            {"is_active": true, "name": "Infographics", "qcode": "infographics", "content item type": ""},
+            {"is_active": true, "name": "Live video", "qcode": "live_video", "content item type": ""},
+            {"is_active": true, "name": "Live blog", "qcode": "live_blog", "content item type": ""}
+
+        ]
+    },
+    {
+        "_id": "eventoccurstatus",
+        "display_name": "Event Occurence Status",
+        "type": "manageable",
+        "unique_field": "qcode",
+        "items": [
+            {"is_active": true, "qcode": "eocstat:eos0", "name": "Unplanned event",
+                "label": "Unplanned event"},
+            {"is_active": true, "qcode": "eocstat:eos1", "name": "Planned, occurence planned only",
+                "label": "Planned, occurence planned only"},
+            {"is_active": true, "qcode": "eocstat:eos2", "name": "Planned, occurence highly uncertain",
+                "label": "Planned, occurence highly uncertain"},
+            {"is_active": true, "qcode": "eocstat:eos3", "name": "Planned, May occur",
+                "label": "Planned, May occur"},
+            {"is_active": true, "qcode": "eocstat:eos4", "name": "Planned, occurence highly likely",
+                "label": "Planned, occurence highly likely"},
+            {"is_active": true, "qcode": "eocstat:eos5", "name": "Planned, occurs certainly",
+                "label": "Planned, occurs certainly"},
+            {"is_active": false, "qcode": "eocstat:eos6", "name": "Planned, then cancelled",
+                "label": "Planned, then cancelled"}
+        ]
+    },
+    {
+        "_id": "newscoveragestatus",
+        "display_name": "News Coverage Status",
+        "type": "manageable",
+        "unique_field": "qcode",
+        "items": [
+            {"is_active": true, "qcode": "ncostat:int", "name": "coverage intended", "label": "Planned"},
+            {"is_active": true, "qcode": "ncostat:notdec", "name": "coverage not decided yet",
+                "label": "On merit"},
+            {"is_active": false, "qcode": "ncostat:notint", "name": "coverage not intended",
+                "label": "Not planned"},
+            {"is_active": true, "qcode": "ncostat:onreq", "name": "coverage upon request",
+                "label": "On request"}
+        ]
+    },
+    {
+        "_id": "subscriber_types",
+        "display_name": "Subscriber Types",
+        "type": "unmanageable",
+        "items": [
+            {"is_active": true, "name": "All", "qcode": "all",
+                "formats": [
+                    {"name": "NINJS", "qcode": "ninjs"},
+                    {"name": "NewsML G2", "qcode": "newsmlg2"},
+                    {"name": "Email", "qcode": "email"},
+                    {"name": "NTB Event", "qcode": "ntb_event"}
+                ]},
+            {"is_active": true, "name": "Digital/Internet", "qcode": "digital",
+                "formats": [
+                    {"name": "NINJS", "qcode": "ninjs"},
+                    {"name": "NewsML G2", "qcode": "newsmlg2"},
+                    {"name": "Email", "qcode": "email"},
+                    {"name": "NTB Event", "qcode": "ntb_event"}
+                ]},
+            {"is_active": true, "name": "Wire/Paper", "qcode": "wire",
+                "formats": [
+                    {"name": "NITF", "qcode": "nitf"},
+                    {"name": "Email", "qcode": "email"},
+                    {"name": "NTB Event", "qcode": "ntb_event"}
+                ]}
+        ]
+    },
+    {
+        "_id": "event_calendars",
+        "display_name": "Event Calendars",
+        "type": "manageable",
+        "unique_field": "qcode",
+        "items": [
+            {"is_active": true, "name": "Sport", "qcode": "sport"},
+            {"is_active": true, "name": "Finance", "qcode": "finance"},
+            {"is_active": true, "name": "Entertainment", "qcode": "entertainment"}
+        ]
+    },
+    {
+        "_id": "assignment_priority",
+        "display_name": "Assignment Priority",
+        "type": "manageable",
+        "unique_field": "qcode",
+        "items": [
+            {"is_active": true, "name": "High", "qcode": 1},
+            {"is_active": true, "name": "Medium", "qcode": 2},
+            {"is_active": true, "name": "Low", "qcode": 3}
+        ]
     }
 ]
