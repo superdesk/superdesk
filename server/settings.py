@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'ansa.parser',
     'ansa.subjects',
     'ansa.formatters',
+    'planning',
 ]
 
 
