@@ -23,6 +23,38 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
         content_set = etree.SubElement(news_item, 'contentSet')
         inline = etree.SubElement(content_set, 'inlineXML', attrib={'contenttype': 'application/xhtml+xml'})
         inline.append(self._build_html_doc(article))
+        self._build_gallery(article, content_set)
+
+    def _build_gallery(self, article, content_set):
+        images = []
+        for key, val in article.get('associations', {}).items():
+            if key != 'featuremedia' and val.get('type') == 'picture':
+                images.append(val)
+
+        if images:
+            inline = etree.SubElement(content_set, 'inlineXML', attrib=dict(
+                contenttype='application/xhtml+xml',
+                rendition='gallery'
+            ))
+
+            html = etree.SubElement(inline, 'html')
+            body = etree.SubElement(html, 'body')
+            ul = etree.SubElement(body, 'ul')
+
+            for image in images:
+                orig = image.get('renditions', {}).get('original')
+                if not orig:
+                    continue
+                li = etree.SubElement(ul, 'li')
+                figure = etree.SubElement(li, 'figure')
+                etree.SubElement(figure, 'img', attrib=dict(
+                    src=self._publish_media(orig.get('media')),
+                    alt=image.get('alt_text', ''),
+                    width=orig.get('width', ''),
+                    height=orig.get('height', ''),
+                ))
+                figcaption = etree.SubElement(figure, 'figcaption')
+                figcaption.text = image.get('headline', '')
 
     def _build_html_doc(self, article):
         try:
