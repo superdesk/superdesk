@@ -6,14 +6,14 @@
  */
 module.exports = function(grunt) {
     return {
-        apps: ['ansa.superdesk', 'superdesk-planning'],
-        importApps: ['../ansa', 'superdesk-planning'],
+        apps: ['ansa.superdesk'],
+        importApps: ['../ansa'],
         defaultRoute: '/workspace/monitoring',
         workspace: {
             ingest: 1,
             content: 1,
-            planning: 1,
-            assignments: 1,
+            //planning: 1,
+            //assignments: 1,
         },
         features: {
             customAuthoringTopbar: true,
