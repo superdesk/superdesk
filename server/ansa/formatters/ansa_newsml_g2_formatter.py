@@ -80,7 +80,7 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
         :param dict article:
         :return: True if article can formatted else False
         """
-        return format_type == 'newsmlg2html'
+        return format_type == 'newsmlg2ansa'
 
     def _format_content_meta(self, article, content_meta, item):
         super()._format_content_meta(article, content_meta, item)

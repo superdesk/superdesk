@@ -12569,6 +12569,10 @@
                     {
                         "name": "NTB Event",
                         "qcode": "ntb_event"
+                    },
+                    {
+                        "name": "ANSA NewsML G2",
+                        "qcode": "newsmlg2ansa"
                     }
                 ]
             },
@@ -12592,6 +12596,10 @@
                     {
                         "name": "NTB Event",
                         "qcode": "ntb_event"
+                    },
+                    {
+                        "name": "ANSA NewsML G2",
+                        "qcode": "newsmlg2ansa"
                     }
                 ]
             },
@@ -12611,6 +12619,10 @@
                     {
                         "name": "NTB Event",
                         "qcode": "ntb_event"
+                    },
+                    {
+                        "name": "ANSA NewsML G2",
+                        "qcode": "newsmlg2ansa"
                     }
                 ]
             }
