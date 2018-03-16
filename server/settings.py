@@ -88,3 +88,197 @@ ANSA_PHOTO_API = env('ANSA_PHOTO_API', 'http://172.20.14.88/ansafoto/portaleimma
 CONTENT_EXPIRY_MINUTES = 60 * 24 * 7  # 1w
 PUBLISHED_CONTENT_EXPIRY_MINUTES = 60 * 24 * 30
 AUDIT_EXPIRY_MINUTES = PUBLISHED_CONTENT_EXPIRY_MINUTES
+
+EDITOR = {
+    "picture": {
+        "CopyrigthLine": {
+            "order": 15
+        },
+        "authors": {
+            "order": 13,
+            "sdWidth": "half"
+        },
+        "subtitle": {
+            "order": 3
+        },
+        "byline": {
+            "order": 14,
+            "sdWidth": "half"
+        },
+        "subject": {
+            "order": 10,
+            "sdWidth": "half"
+        },
+        "language": {
+            "order": 8,
+            "sdWidth": "half"
+        },
+        "headline": {
+            "order": 2,
+            "formatOptions": [
+                "underline",
+                "link",
+                "bold"
+            ]
+        },
+        "digitator": {
+            "order": 6,
+            "sdWidth": "half"
+        },
+        "slugline": {
+            "order": 1,
+            "sdWidth": "full"
+        },
+        "place": {
+            "order": 7,
+            "sdWidth": "half"
+        },
+        "ednote": {
+            "order": 12,
+            "sdWidth": "full"
+        },
+        "keywords": {
+            "order": 11,
+            "sdWidth": "full"
+        },
+        "anpa_category": {
+            "order": 9,
+            "sdWidth": "half"
+        },
+        "key": {
+            "order": 4,
+            "sdWidth": "half"
+        },
+        "date": {
+            "order": 5,
+            "sdWidth": "half"
+        }
+    }
+}
+
+SCHEMA = {
+    "picture": {
+        "CopyrigthLine": {
+            "required": True,
+            "enabled": True,
+            "nullable": False,
+            "type": "text"
+        },
+        "authors": {
+            "required": True,
+            "nullable": False,
+            "type": "list",
+            "schema": {
+                "type": "dict",
+                "schema": {
+                    "role": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "parent": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "subtitle": {
+            "required": False,
+            "enabled": True,
+            "nullable": True,
+            "type": "text"
+        },
+        "byline": {
+            "required": False,
+            "nullable": True,
+            "type": "string"
+        },
+        "subject": {
+            "required": False,
+            "schema": {
+                "type": "dict",
+                "schema": {
+                    "name": {},
+                    "scheme": {
+                        "required": True,
+                        "nullable": True,
+                        "allowed": [
+                            "01"
+                        ],
+                        "type": "string"
+                    },
+                    "qcode": {},
+                    "parent": {
+                        "nullable": True
+                    },
+                    "service": {
+                        "nullable": True
+                    }
+                }
+            },
+            "nullable": True,
+            "default": [],
+            "type": "list",
+            "mandatory_in_list": {
+                "scheme": {}
+            }
+        },
+        "language": {
+            "required": True,
+            "enabled": True,
+            "nullable": False,
+            "type": "string"
+        },
+        "headline": {
+            "required": True,
+            "nullable": False,
+            "type": "string"
+        },
+        "digitator": {
+            "required": True,
+            "enabled": True,
+            "nullable": False,
+            "type": "text"
+        },
+        "slugline": {
+            "required": True,
+            "nullable": False,
+            "maxlength": 24,
+            "type": "string"
+        },
+        "place": {
+            "required": False,
+            "nullable": True,
+            "type": "list"
+        },
+        "ednote": {
+            "required": False,
+            "nullable": True,
+            "type": "string"
+        },
+        "keywords": {
+            "required": False,
+            "enabled": True,
+            "nullable": True,
+            "type": "list"
+        },
+        "anpa_category": {
+            "required": True,
+            "nullable": False,
+            "type": "list"
+        },
+        "date": {
+            "required": False,
+            "enabled": True,
+            "nullable": True,
+            "type": "date"
+        },
+        "key": {
+            "required": True,
+            "enabled": True,
+            "nullable": False,
+            "type": "text"
+        }
+    }
+}
