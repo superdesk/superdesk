@@ -159,7 +159,7 @@ EDITOR = {
 SCHEMA = {
     "picture": {
         "CopyrigthLine": {
-            "required": True,
+            "required": False,
             "enabled": True,
             "nullable": False,
             "type": "text"
@@ -236,7 +236,7 @@ SCHEMA = {
             "type": "string"
         },
         "digitator": {
-            "required": True,
+            "required": False,
             "enabled": True,
             "nullable": False,
             "type": "text"
@@ -244,7 +244,6 @@ SCHEMA = {
         "slugline": {
             "required": True,
             "nullable": False,
-            "maxlength": 24,
             "type": "string"
         },
         "place": {
@@ -275,7 +274,7 @@ SCHEMA = {
             "type": "date"
         },
         "key": {
-            "required": True,
+            "required": False,
             "enabled": True,
             "nullable": False,
             "type": "text"

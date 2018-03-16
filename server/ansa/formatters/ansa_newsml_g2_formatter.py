@@ -6,7 +6,7 @@ from lxml import etree
 from lxml.etree import SubElement
 from flask import current_app as app
 
-from superdesk.publish.formatters.newsml_g2_formatter import NewsMLG2Formatter
+from superdesk.publish.formatters.newsml_g2_formatter import NewsMLG2Formatter, XML_LANG
 
 
 class ANSANewsMLG2Formatter(NewsMLG2Formatter):
@@ -128,3 +128,20 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
                         output.write(binary.read())
                         binary.seek(0)
             return filename
+
+    def _format_subject(self, article, content_meta):
+        """Appends the subject element to the contentMeta element
+
+        :param dict article:
+        :param Element content_meta:
+        """
+        if 'subject' in article and len(article['subject']) > 0:
+            for s in article['subject']:
+                if 'qcode' in s:
+                    if ':' in s['qcode']:
+                        qcode = s['qcode']
+                    else:
+                        qcode = '%s:%s' % (s.get('scheme', 'subj'), s['qcode'])
+                    subj = SubElement(content_meta, 'subject',
+                                      attrib={'type': 'cpnat:abstract', 'qcode': qcode})
+                    SubElement(subj, 'name', attrib={XML_LANG: 'en'}).text = s['name']
