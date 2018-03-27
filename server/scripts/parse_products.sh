@@ -1,57 +1,58 @@
 #!/usr/bin/env python3
 
-"""Parse products cvs and generates json for data/vocabularies.json file.
+"""Parse products xls and generates json for data/vocabularies.json file.
 
-Use `;` as separator.
 """
 
+import sys
 import json
-import fileinput
-
-skip = 2
+import openpyxl
 
 family_set = set ()
 basic_set = set()
 leaf_set = set()
 items = []
 
-for line in fileinput.input():
-    if skip:
-        skip -= 1
-        continue
+wb = openpyxl.load_workbook(sys.argv[1], read_only=True)
+for sheet in wb:
+    for line in sheet.rows:
+        if line[0].row == 1:
+            continue  # skip header
 
-    cols = [col.strip(' "') for col in line.split(';')]
-    code, family, basic, leaf, output_code = cols[0], cols[2], cols[3], cols[4], cols[8]
+        code = line[0].value
+        family = line[2].value
+        basic = line[3].value
+        leaf = line[4].value
+        output_code = line[8].value
 
-    family_code = code[:3]
-    basic_code = code[:8]
+        family_code = code[:3]
+        basic_code = code[:8]
 
+        if family_code not in family_set:
+            family_set.add(family_code)
+            items.append({
+                'is_active': True,
+                'name': family,
+                'qcode': family_code,
+            })
 
-    if family_code not in family_set:
-        family_set.add(family_code)
-        items.append({
-            'is_active': True,
-            'name': family,
-            'qcode': family_code,
-        })
+        if basic_code not in basic_set:
+            basic_set.add(basic_code)
+            items.append({
+                'is_active': True,
+                'name': basic,
+                'parent': family_code,
+                'qcode': basic_code,
+            })
 
-    if basic_code not in basic_set:
-        basic_set.add(basic_code)
-        items.append({
-            'is_active': True,
-            'name': basic,
-            'parent': family_code,
-            'qcode': basic_code,
-        })
-
-    if code not in leaf_set:
-        leaf_set.add(code)
-        items.append({
-            'is_active': True,
-            'name': leaf,
-            'parent': basic_code,
-            'qcode': code,
-            'output_code': output_code,
-        })
+        if code not in leaf_set:
+            leaf_set.add(code)
+            items.append({
+                'is_active': True,
+                'name': leaf,
+                'parent': basic_code,
+                'qcode': code,
+                'output_code': output_code,
+            })
 
 print(json.dumps(items, indent=2))
