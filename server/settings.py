@@ -165,7 +165,7 @@ SCHEMA = {
             "type": "text"
         },
         "authors": {
-            "required": True,
+            "required": False,
             "nullable": False,
             "type": "list",
             "schema": {
@@ -263,7 +263,7 @@ SCHEMA = {
             "type": "list"
         },
         "anpa_category": {
-            "required": True,
+            "required": False,
             "nullable": False,
             "type": "list"
         },
