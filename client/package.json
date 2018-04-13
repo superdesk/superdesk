@@ -1,7 +1,7 @@
 {
     "dependencies": {
-        "superdesk-core": "1.15.0",
-        "superdesk-planning": "superdesk/superdesk-planning#1527d41"
+        "superdesk-core": "1.16.0",
+        "superdesk-planning": "superdesk/superdesk-planning#f3cb868"
     },
     "devDependencies": {
         "superdesk-code-style": "^1.0.0"
