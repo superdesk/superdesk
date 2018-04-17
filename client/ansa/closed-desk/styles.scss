@@ -1,0 +1,14 @@
+
+.close-desk-widget-content {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    bottom: 8px;
+    left: 8px;
+    display: flex;
+    flex-direction: column;
+
+    .space-eater {
+        flex-grow: 1;
+    }
+}
