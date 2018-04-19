@@ -8,7 +8,7 @@ export default angular.module('ansa.widgets', [])
             order: 7,
             side: 'right',
             display: {authoring: true, picture: true},
-            configurable: false
+            configurable: false,
         });
 
         authoringWidgetsProvider.widget('related-item', {
@@ -18,7 +18,7 @@ export default angular.module('ansa.widgets', [])
             order: 7,
             side: 'right',
             display: {authoring: true, picture: true},
-            configurable: false
+            configurable: false,
         });
     }])
     .run(['$templateCache', ($templateCache) => {

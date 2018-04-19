@@ -23,14 +23,14 @@ class MetasearchController {
             {_id: 'social media', label: 'Social Media'},
             {_id: 'videos', label: 'Videos'},
             {_id: 'ansa', label: 'ANSA'},
-            {_id: 'enciclopedia', label: 'Enciclopedia'}
+            {_id: 'enciclopedia', label: 'Enciclopedia'},
         ];
 
         this.time_ranges = [
             {_id: 'day', label: 'Today'},
             {_id: 'week', label: 'Last Week'},
             {_id: 'month', label: 'Last Month'},
-            {_id: '', label: 'Anytime'}
+            {_id: '', label: 'Anytime'},
         ];
 
         $scope.$watch(() => workspace.item && workspace.item.slugline, (slugline, oldVal) => {
@@ -141,7 +141,7 @@ MetasearchController.$inject = [
     '$timeout',
     'metasearch',
     'Keys',
-    'authoringWorkspace'
+    'authoringWorkspace',
 ];
 
 function AnsaMetasearchItem(config, $http, $sce) {
@@ -188,7 +188,7 @@ function AnsaMetasearchItem(config, $http, $sce) {
                 scope.width = getEmbedWidth(elem);
                 scope.height = Math.floor(scope.width / 3 * 2);
             }
-        }
+        },
     };
 }
 
@@ -236,9 +236,9 @@ function AnsaSemanticsCtrl($scope, $rootScope, api) {
         text: [
             text($scope.item.abstract),
             text($scope.item.body_html),
-            $scope.item.description_text || ''
+            $scope.item.description_text || '',
         ].join('\n'),
-        abstract: ''
+        abstract: '',
     }).then((result) => {
         this.data = result.semantics;
         save(result);
@@ -301,24 +301,24 @@ function AnsaRelatedCtrl($scope, api, storage, Keys) {
         let query = {
             bool: {
                 must_not: {term: {_id: $scope.item._id}},
-                should: []
-            }
+                should: [],
+            },
         };
 
         if (this.activeFilter === 'text') {
             angular.extend(query.bool, {
                 must: [
                     {term: {type: 'text'}},
-                    {terms: {'semantics.iptcCodes': semantics.iptcCodes}}
+                    {terms: {'semantics.iptcCodes': semantics.iptcCodes}},
                 ],
                 should: filters,
-                minimum_should_match: 1
+                minimum_should_match: 1,
             });
         } else {
             angular.extend(query.bool, {
                 must: pictureFilters.concat([{term: {type: this.activeFilter}}]),
                 should: filters,
-                minimum_should_match: 1
+                minimum_should_match: 1,
             });
         }
 
@@ -327,9 +327,9 @@ function AnsaRelatedCtrl($scope, api, storage, Keys) {
                 bool: {
                     must: [
                         {term: {type: this.activeFilter}},
-                        {query_string: {query: this.query, lenient: true}}
-                    ]
-                }
+                        {query_string: {query: this.query, lenient: true}},
+                    ],
+                },
             };
         }
 
@@ -436,7 +436,7 @@ function AnsaLiveSuggestions(workspace, metasearch) {
                 document.execCommand('copy');
                 selection.removeAllRanges();
             };
-        }
+        },
     };
 }
 
@@ -462,13 +462,13 @@ MetasearchFactory.$inject = ['$http', 'config'];
 
 function AnsaMetasearchResults() {
     return {
-        template: require('./views/ansa-metasearch-results.html')
+        template: require('./views/ansa-metasearch-results.html'),
     };
 }
 
 function AnsaMetasearchDropdown() {
     return {
-        template: require('./views/ansa-metasearch-dropdown.html')
+        template: require('./views/ansa-metasearch-dropdown.html'),
     };
 }
 
@@ -497,7 +497,7 @@ function AnsaRepoDropdown(api, $filter, $location, $rootScope) {
                     archive: false,
                     published: false,
                     archived: false,
-                    search: provider._id
+                    search: provider._id,
                 }));
                 $rootScope.$broadcast('aggregations:changed');
             } else {
@@ -508,7 +508,7 @@ function AnsaRepoDropdown(api, $filter, $location, $rootScope) {
                         archive: true,
                         published: true,
                         archived: true,
-                        search: 'local'
+                        search: 'local',
                     });
                 });
             }
@@ -519,7 +519,7 @@ function AnsaRepoDropdown(api, $filter, $location, $rootScope) {
 
     return {
         controller: AnsaRepoDropdownController,
-        controllerAs: 'repos'
+        controllerAs: 'repos',
     };
 }
 
@@ -528,7 +528,7 @@ function AnsaMapCtrl($scope, $modal) {
     this.open = () => {
         $modal.open({
             template: require('./views/ansa-map.html'),
-            size: 'fullscreen modal--dark-ui'
+            size: 'fullscreen modal--dark-ui',
         });
     };
 }
@@ -550,7 +550,7 @@ export default angular.module('ansa.superdesk', [widgets.name, packages.name, 's
             priority: 100,
             template: require('./views/metasearch.html'),
             topTemplateUrl: 'scripts/apps/dashboard/views/workspace-topnav.html',
-            sideTemplateUrl: 'scripts/apps/workspace/views/workspace-sidenav.html'
+            sideTemplateUrl: 'scripts/apps/workspace/views/workspace-sidenav.html',
         });
 
         superdeskProvider.activity('/workspace/assistant', {
@@ -558,7 +558,7 @@ export default angular.module('ansa.superdesk', [widgets.name, packages.name, 's
             priority: 200,
             template: require('./views/live-assistant.html'),
             topTemplateUrl: 'scripts/apps/dashboard/views/workspace-topnav.html',
-            sideTemplateUrl: 'scripts/apps/workspace/views/workspace-sidenav.html'
+            sideTemplateUrl: 'scripts/apps/workspace/views/workspace-sidenav.html',
         });
 
         workspaceMenuProvider
