@@ -22,7 +22,7 @@ function PackageManagerCtrl($scope, api, search, packages, notify, gettext, auth
             {not: {term: {state: 'spiked'}}},
             {not: {terms: {guid: linkedPackages}}},
             {term: {type: 'composite'}},
-            {range: {versioncreated: {gte: 'now-24h'}}}
+            {range: {versioncreated: {gte: 'now-24h'}}},
         ];
 
         query.size(100).filter(filter);
@@ -103,8 +103,8 @@ function PackageManagerCtrl($scope, api, search, packages, notify, gettext, auth
             package_id: pitem._id,
             new_items: [{
                 group: group,
-                item_id: $scope.item._id
-            }]
+                item_id: $scope.item._id,
+            }],
         };
 
         api.save('published_package_items', query).then(onSuccess, onError);
@@ -129,7 +129,7 @@ export default angular.module('ansa.package-manager', ['superdesk.apps.authoring
                 template: 'package-manager-widget.html',
                 order: 6,
                 side: 'right',
-                display: {authoring: true, packages: false, killedItem: false, legalArchive: false, archived: false}
+                display: {authoring: true, packages: false, killedItem: false, legalArchive: false, archived: false},
             });
     }])
 
