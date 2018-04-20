@@ -3,6 +3,8 @@ import angular from 'angular';
 import widgets from './widgets';
 import packages from './package-manager/package-manager';
 
+import closedDeskWidget from './closed-desk';
+
 import './styles.scss';
 import './package-manager/package-manager.scss';
 
@@ -533,7 +535,12 @@ function AnsaMapCtrl($scope, $modal) {
     };
 }
 
-export default angular.module('ansa.superdesk', [widgets.name, packages.name, 'superdesk.apps.workspace.menu'])
+export default angular.module('ansa.superdesk', [
+    widgets.name,
+    packages.name,
+    'superdesk.apps.workspace.menu',
+    closedDeskWidget.name,
+])
     .factory('metasearch', MetasearchFactory)
     .controller('MetasearchCtrl', MetasearchController)
     .controller('AnsaSemanticsCtrl', AnsaSemanticsCtrl)
