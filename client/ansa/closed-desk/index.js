@@ -2,7 +2,7 @@ import './styles.scss';
 
 RoutingWidgetController.$inject = ['desks', 'privileges', 'api', 'notify', 'gettext', '$scope'];
 function RoutingWidgetController(desks, privileges, api, notify, gettext, $scope) {
-    this.canManage = privileges.privileges.desks;
+    this.canManage = privileges.privileges.desk_routing;
 
     desks.initialize().then(() => {
         this.desk = desks.getCurrentDesk();
@@ -25,23 +25,23 @@ function RoutingWidgetController(desks, privileges, api, notify, gettext, $scope
         }
     };
 
-    this.toggle = () => {
-        api.update('closed_desks', this.desk, {is_closed: !this.desk.is_closed})
+    const updateDesk = (updates) => {
+        api.update('closed_desks', this.desk, updates)
             .then((updated) => {
                 angular.extend(this.desk, {
                     _etag: updated._etag,
                     is_closed: updated.is_closed,
+                    closed_destination: updated.closed_destination,
                 });
             }, errorHandler);
     };
 
-    this.updateDestination = () => {
-        const updates = {closed_destination: this.destination};
+    this.toggle = () => {
+        updateDesk({is_closed: !this.desk.is_closed});
+    };
 
-        desks.save(this.desk, updates)
-            .then((updated) => {
-                angular.extend(this.desk, updated);
-            }, errorHandler);
+    this.updateDestination = () => {
+        updateDesk({closed_destination: this.destination});
     };
 
     // update desk closed status
@@ -68,7 +68,7 @@ export default angular.module('ansa.closed', [])
             label: gettext('Desk Router'),
             icon: 'switches',
             max_sizex: 1,
-            max_sizey: 1,
+            max_sizey: 2,
             sizex: 1,
             sizey: 1,
             template: 'close-desk-widget.html',

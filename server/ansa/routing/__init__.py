@@ -3,6 +3,8 @@ import superdesk
 
 from superdesk.notification import push_notification
 
+PRIVILEGE = 'desk_routing'
+
 
 class ClosedDeskResource(superdesk.Resource):
     """Custom resource to change desk.is_closed
@@ -12,6 +14,7 @@ class ClosedDeskResource(superdesk.Resource):
 
     schema = {
         'is_closed': {'type': 'boolean'},
+        'closed_destination': superdesk.Resource.rel('desks'),
     }
 
     datasource = {
@@ -19,7 +22,7 @@ class ClosedDeskResource(superdesk.Resource):
     }
 
     privileges = {
-        'PATCH': 'archive',  # anyone who can edit can turn it on/off
+        'PATCH': PRIVILEGE,  # anyone who can edit can turn it on/off
     }
 
     resource_methods = []
@@ -47,3 +50,8 @@ def init_app(app):
     })
 
     superdesk.register_resource('closed_desks', ClosedDeskResource, ClosedDeskService, _app=app)
+
+    superdesk.privilege(
+        name=PRIVILEGE,
+        label='Desk routing',
+        description='User can configure desk routing')
