@@ -74,8 +74,12 @@ ORGANIZATION_NAME_ABBREVIATION = 'ANSA'
 NEWSML_PROVIDER_ID = 'ANSA'
 
 LANGUAGES = [
-    {'language': 'it', 'label': 'Italiano', 'source': True, 'destination': False},
-    {'language': 'en', 'label': 'English', 'source': True, 'destination': False},
+    {'language': 'it', 'label': 'Italiano', 'source': True, 'destination': True},
+    {'language': 'en', 'label': 'English', 'source': True, 'destination': True},
+    {'language': 'es', 'label': 'Español', 'source': True, 'destination': True},
+    {'language': 'pt', 'label': 'Português', 'source': True, 'destination': True},
+    {'language': 'de', 'label': 'Deutsch', 'source': True, 'destination': True},
+    {'language': 'ar', 'label': 'Arabic', 'source': True, 'destination': True},
 ]
 
 DEFAULT_LANGUAGE = 'it'
