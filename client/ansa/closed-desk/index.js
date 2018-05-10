@@ -1,3 +1,5 @@
+import {get} from 'lodash';
+
 import './styles.scss';
 
 RoutingWidgetController.$inject = ['desks', 'privileges', 'api', 'notify', 'gettext', '$scope'];
@@ -61,8 +63,78 @@ function RoutingWidgetController(desks, privileges, api, notify, gettext, $scope
     });
 }
 
+
+TopMenuInfoDirective.$inject = ['desks', '$timeout'];
+function TopMenuInfoDirective(desks, $timeout) {
+    return {
+        template: require('./views/top-menu-info.html'),
+        link: (scope) => {
+            const setup = () => {
+                const desk = desks.getCurrentDesk();
+                const selected = document.getElementById('selected-desk');
+
+                selected && selected.classList.remove('desk--closed');
+                scope.routingFrom = scope.routingTo = null;
+
+                if (!desk) {
+                    return;
+                }
+
+                if (desk.is_closed) {
+                    scope.routingTo = get(desks.deskLookup[desk.closed_destination], 'name', '');
+                    selected && selected.classList.add('desk--closed');
+                } else {
+                    scope.routingFrom = getRoutingFrom(desk);
+                }
+
+                // it can only run when dropdown is rendered
+                $timeout(setDeskItemDropdownStatus, 500, false);
+            };
+
+            function getRoutingFrom(desk) {
+                return desks.desks._items
+                    .filter((d) => d.closed_destination === desk._id && d.is_closed)
+                    .map((d) => d.name)
+                    .join(', ');
+            }
+
+            function setDeskItemDropdownStatus() {
+                desks.desks._items.forEach((d) => {
+                    const btn = document.getElementById('desk-item-' + d._id);
+
+                    if (!btn) { // user is not a member
+                        return;
+                    }
+
+                    btn.classList.remove('desk-item--closed', 'desk-item--receiving');
+
+                    if (d.is_closed) {
+                        btn.classList.add('desk-item--closed');
+                    } else if (getRoutingFrom(d)) {
+                        btn.classList.add('desk-item--receiving');
+                    }
+                });
+            }
+
+            desks.initialize().then(() => {
+                scope.$watch(desks.getCurrentDeskId.bind(desks), setup);
+
+                scope.$on('desks:closed', (event, extra) => {
+                    desks.fetchDeskById(extra._id).then((desk) => {
+                        desks.desks._items = desks.desks._items
+                            .map((d) => d._id === desk._id ? angular.extend(d, desk) : d);
+                        desks.deskLookup[desk._id] = desk;
+                        scope.$applyAsync(setup);
+                    });
+                });
+            });
+        },
+    };
+}
+
 export default angular.module('ansa.closed', [])
     .controller('RoutingWidgetController', RoutingWidgetController)
+    .directive('sdTopMenuInfoPlaceholder', TopMenuInfoDirective)
     .config(['dashboardWidgetsProvider', (dashboardWidgets) => {
         dashboardWidgets.addWidget('close-desk', {
             label: gettext('Desk Router'),
