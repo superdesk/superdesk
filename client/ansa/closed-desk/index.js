@@ -1,4 +1,4 @@
-import {get} from 'lodash';
+import {get, debounce} from 'lodash';
 
 import './styles.scss';
 
@@ -69,7 +69,7 @@ function TopMenuInfoDirective(desks, $timeout) {
     return {
         template: require('./views/top-menu-info.html'),
         link: (scope) => {
-            const setup = () => {
+            const setup = debounce(() => {
                 const desk = desks.getCurrentDesk();
                 const selected = document.getElementById('selected-desk');
 
@@ -80,16 +80,18 @@ function TopMenuInfoDirective(desks, $timeout) {
                     return;
                 }
 
-                if (desk.is_closed) {
-                    scope.routingTo = get(desks.deskLookup[desk.closed_destination], 'name', '');
-                    selected && selected.classList.add('desk--closed');
-                } else {
-                    scope.routingFrom = getRoutingFrom(desk);
-                }
+                scope.$applyAsync(() => { // using debounce, so it must trigger angular rendering
+                    if (desk.is_closed) {
+                        scope.routingTo = get(desks.deskLookup[desk.closed_destination], 'name', '');
+                        selected && selected.classList.add('desk--closed');
+                    } else {
+                        scope.routingFrom = getRoutingFrom(desk);
+                    }
+                });
 
                 // it can only run when dropdown is rendered
                 $timeout(setDeskItemDropdownStatus, 500, false);
-            };
+            }, 200);
 
             function getRoutingFrom(desk) {
                 return desks.desks._items
@@ -127,6 +129,8 @@ function TopMenuInfoDirective(desks, $timeout) {
                         scope.$applyAsync(setup);
                     });
                 });
+
+                scope.$on('$routeChangeSuccess', setup);
             });
         },
     };
