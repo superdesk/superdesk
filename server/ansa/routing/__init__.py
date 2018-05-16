@@ -2,6 +2,7 @@
 import superdesk
 
 from superdesk.notification import push_notification
+from apps.content import push_content_notification
 from superdesk import get_resource_service
 
 PRIVILEGE = 'desk_routing'
@@ -49,17 +50,19 @@ class ClosedDeskService(superdesk.Service):
         :param ObjectId desk_id: id of the desk being re-opened
         :param str dest_id: id of the destination desk
         """
-        archive_service = get_resource_service('archive')
-        # XXX: {'$elemMatch': {'desk_id': str(dest_id)}} is not working here
-        #      while it's working as expected when using mongo shell
-        #      so a simple '$exists' is used instead.
-        marked_items = archive_service.find({'task.desk': desk_id, 'marked_desks': {'$exists': ''}})
-        for item in marked_items:
-            marked_desks = item['marked_desks']
-            for marked_desk in marked_desks[:]:
-                if marked_desk['desk_id'] == dest_id:
-                    marked_desks.remove(marked_desk)
-            archive_service.patch(item['_id'], {'marked_desks': marked_desks})
+        for service_name in ('archive', 'published'):
+            service = get_resource_service(service_name)
+            # XXX: {'$elemMatch': {'desk_id': str(dest_id)}} is not working here
+            #      while it's working as expected when using mongo shell
+            #      so a simple '$exists' is used instead.
+            marked_items = service.find({'task.desk': desk_id, 'marked_desks': {'$exists': ''}})
+            for item in marked_items:
+                marked_desks = item['marked_desks']
+                for marked_desk in marked_desks[:]:
+                    if marked_desk['desk_id'] == dest_id:
+                        marked_desks.remove(marked_desk)
+                service.system_update(item['_id'], {'marked_desks': marked_desks}, item)
+                push_content_notification([item])
 
 
 def init_app(app):
