@@ -247,7 +247,7 @@ SCHEMA = {
             "type": "text"
         },
         "slugline": {
-            "required": True,
+            "required": False,
             "nullable": False,
             "type": "string"
         },
