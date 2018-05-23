@@ -1,10 +1,10 @@
 mongodb:
-  image: mongo:2.6
+  image: mongo:3
   volumes:
    - ../data/mongodb:/data/db
 
 redis:
-  image: redis:2.8
+  image: redis:3
   volumes:
    - ../data/redis:/data
 
