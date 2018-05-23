@@ -97,22 +97,22 @@ AUDIT_EXPIRY_MINUTES = PUBLISHED_CONTENT_EXPIRY_MINUTES
 EDITOR = {
     "picture": {
         "CopyrigthLine": {
-            "order": 15
+            "order": 16
         },
         "authors": {
-            "order": 13,
+            "order": 14,
             "sdWidth": "half"
         },
         "subtitle": {
             "order": 3
         },
         "byline": {
-            "order": 14,
+            "order": 15,
             "sdWidth": "half"
         },
         "subject": {
             "order": 10,
-            "sdWidth": "half"
+            "sdWidth": "full"
         },
         "language": {
             "order": 8,
@@ -139,11 +139,11 @@ EDITOR = {
             "sdWidth": "half"
         },
         "ednote": {
-            "order": 12,
+            "order": 13,
             "sdWidth": "full"
         },
         "keywords": {
-            "order": 11,
+            "order": 12,
             "sdWidth": "full"
         },
         "anpa_category": {
@@ -157,7 +157,11 @@ EDITOR = {
         "date": {
             "order": 5,
             "sdWidth": "half"
-        }
+        },
+        "products": {
+            "order": 11,
+            "sdWidth": "full",
+        },
     }
 }
 
@@ -209,7 +213,8 @@ SCHEMA = {
                         "required": True,
                         "nullable": True,
                         "allowed": [
-                            "01"
+                            "01",
+                            "products",
                         ],
                         "type": "string"
                     },
