@@ -37,30 +37,22 @@ class ClosedDeskService(superdesk.Service):
         is_closed = updates.get('is_closed', False)
         if not is_closed and original.get('is_closed'):
             desk_id = updates['_id']
-            dest_id = original['closed_destination']
-            self.remove_marks(desk_id, str(dest_id))
+            self.remove_marks(desk_id)
         push_notification('desks:closed',
                           is_closed=is_closed,
                           _id=original.get('_id'),
                           _etag=updates.get('_etag'))
 
-    def remove_marks(self, desk_id, dest_id):
+    def remove_marks(self, desk_id):
         """Remove "mark for desk" attribute
 
         :param ObjectId desk_id: id of the desk being re-opened
-        :param str dest_id: id of the destination desk
         """
         for service_name in ('archive', 'published'):
             service = get_resource_service(service_name)
-            # XXX: {'$elemMatch': {'desk_id': str(dest_id)}} is not working here
-            #      while it's working as expected when using mongo shell
-            #      so a simple '$exists' is used instead.
-            marked_items = service.find({'task.desk': desk_id, 'marked_desks': {'$exists': ''}})
+            marked_items = service.find({'task.desk': desk_id, 'marked_desks': {'$exists': True, '$ne': []}})
             for item in marked_items:
-                marked_desks = item['marked_desks']
-                for marked_desk in marked_desks[:]:
-                    if marked_desk['desk_id'] == dest_id:
-                        marked_desks.remove(marked_desk)
+                marked_desks = [m for m in item['marked_desks'] if 'user_marked' in m]
                 service.system_update(item['_id'], {'marked_desks': marked_desks}, item)
                 push_content_notification([item])
 
