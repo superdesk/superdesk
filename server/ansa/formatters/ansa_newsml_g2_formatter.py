@@ -85,6 +85,27 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
     def _format_content_meta(self, article, content_meta, item):
         super()._format_content_meta(article, content_meta, item)
         self._format_highlights(article, content_meta)
+        self._format_sign_off(article, content_meta)
+        self._format_authors(article, content_meta)
+        self._format_subtitle(article, content_meta)
+
+    def _format_subtitle(self, article, content_meta):
+        if article.get('extra', {}).get('subtitle'):
+            SubElement(content_meta, 'headline', attrib={
+                'role': 'hld:subHeadline',
+            }).text = article['extra']['subtitle']
+
+    def _format_authors(self, article, content_meta):
+        for author in article.get('authors', []):
+            creator = SubElement(content_meta, 'contributor')
+            SubElement(creator, 'name').text = author.get('sub_label', author.get('name', ''))
+
+    def _format_sign_off(self, article, content_meta):
+        if article.get('sign_off'):
+            sign_off = SubElement(content_meta, 'creator', attrib={
+                'literal': 'SIGNOFF',
+            })
+            SubElement(sign_off, 'name').text = article['sign_off']
 
     def _format_highlights(self, article, content_meta):
         """Adds highlights id as subject."""
@@ -137,7 +158,13 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
         """
         if 'subject' in article and len(article['subject']) > 0:
             for s in article['subject']:
-                if 'qcode' in s:
+                if s.get('output_code'):
+                    subj = SubElement(content_meta, 'subject', attrib={
+                        'qcode': 'output_code:%s' % s['output_code'],
+                    })
+
+                    SubElement(subj, 'name', attrib={XML_LANG: 'it'}).text = s['name']
+                elif 'qcode' in s:
                     if ':' in s['qcode']:
                         qcode = s['qcode']
                     else:
@@ -145,3 +172,21 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
                     subj = SubElement(content_meta, 'subject',
                                       attrib={'type': 'cpnat:abstract', 'qcode': qcode})
                     SubElement(subj, 'name', attrib={XML_LANG: 'en'}).text = s['name']
+
+    def _format_located(self, article, content_meta):
+        """Appends the located element to the contentMeta element
+
+        :param dict article:
+        :param Element content_meta:
+        """
+        located = article.get('dateline', {}).get('located', {})
+        if located and located.get('city'):
+            located_elm = SubElement(content_meta, 'located',
+                                     attrib={'qcode': 'city:%s' % located.get('city').upper()})
+            if located.get('state'):
+                SubElement(located_elm, 'broader', attrib={'qcode': 'reg:%s' % located['state']})
+            if located.get('country'):
+                SubElement(located_elm, 'broader', attrib={'qcode': 'cntry:%s' % located['country'].upper()})
+
+        if article.get('dateline', {}).get('text', {}):
+            SubElement(content_meta, 'dateline').text = article.get('dateline', {}).get('text', {})

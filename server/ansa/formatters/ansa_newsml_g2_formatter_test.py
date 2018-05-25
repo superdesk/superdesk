@@ -14,6 +14,12 @@ def ns(value):
     return '{http://iptc.org/std/nar/2006-10-01/}%s' % value
 
 
+def get_content_meta(xml):
+        return xml.find('{http://iptc.org/std/nar/2006-10-01/}itemSet'
+                        '/{http://iptc.org/std/nar/2006-10-01/}newsItem/'
+                        '{http://iptc.org/std/nar/2006-10-01/}contentMeta')
+
+
 @mock.patch('superdesk.publish.subscribers.SubscribersService.generate_sequence_number', lambda self, subscriber: 1)
 class ANSANewsmlG2FormatterTestCase(TestCase):
     formatter = ANSANewsMLG2Formatter()
@@ -31,8 +37,11 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         'headline': 'This is a test headline',
         'byline': 'joe',
         'slugline': 'slugline',
-        'subject': [{'qcode': '02011001', 'name': 'international court or tribunal'},
-                    {'qcode': '02011002', 'name': 'extradition'}],
+        'subject': [
+            {'qcode': '02011001', 'name': 'international court or tribunal'},
+            {'qcode': '02011002', 'name': 'extradition'},
+            {'qcode': '020002007289230000', 'name': 'PHOTOMED', 'output_code': 'TECN', 'scheme': 'products'},
+        ],
         'anpa_take_key': 'take_key',
         'unique_id': '1',
         'body_html': '<p>The story body <b>HTML</b></p><p>another paragraph</p><style></style>',
@@ -44,18 +53,18 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         'urgency': 2,
         'pubstatus': 'usable',
         'dateline': {
-            'source': 'AAP',
-            'text': 'Los Angeles, Aug 11 AAP -',
+            'source': 'ANSA',
+            'text': 'Roma, Aug 11 ANSA -',
             'located': {
                 'alt_name': '',
-                'state': 'California',
-                'city_code': 'Los Angeles',
-                'city': 'Los Angeles',
+                'state': 'Latium',
+                'city_code': 'Rome',
+                'city': 'Rome',
                 'dateline': 'city',
-                'country_code': 'US',
-                'country': 'USA',
-                'tz': 'America/Los_Angeles',
-                'state_code': 'CA'
+                'country_code': 'IT',
+                'country': 'Italy',
+                'tz': 'Europe/Rome',
+                'state_code': 'IT.07'
             }
         },
         'creditline': 'sample creditline',
@@ -65,6 +74,21 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
                    'state': '', 'country': 'Australia',
                    'world_region': 'Oceania'}],
         'company_codes': [{'name': 'YANCOAL AUSTRALIA LIMITED', 'qcode': 'YAL', 'security_exchange': 'ASX'}],
+        'sign_off': 'Foo',
+        'authors': [
+            {
+                'role': 'editor',
+                'name': 'John Doe',
+            },
+            {
+                'role': 'photographer',
+                'name': 'photographer',
+                'sub_label': 'Foo',
+            },
+        ],
+        'extra': {
+            'subtitle': 'Subtitle text',
+        },
     }
 
     vocab = [{'_id': 'rightsinfo', 'items': [{'name': 'AAP',
@@ -159,13 +183,11 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         article['highlights'] = ids
         seq, doc = self.formatter.format(article, {'name': 'Test Subscriber'})[0]
         xml = etree.fromstring(doc.encode('utf-8'))
-        content_meta = xml.find('{http://iptc.org/std/nar/2006-10-01/}itemSet'
-                                '/{http://iptc.org/std/nar/2006-10-01/}newsItem/'
-                                '{http://iptc.org/std/nar/2006-10-01/}contentMeta')
+        content_meta = get_content_meta(xml)
         subjects = content_meta.findall('{http://iptc.org/std/nar/2006-10-01/}subject[@type="highlight"]')
         self.assertEqual(2, len(subjects))
         self.assertEqual(subjects[0].attrib.get('id'), str(ids[0]))
-        name = subjects[0].find('{http://iptc.org/std/nar/2006-10-01/}name')
+        name = subjects[0].find(ns('name'))
         self.assertEqual('Sports highlights', name.text)
 
     def test_gallery(self):
@@ -212,3 +234,44 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         formatter = ANSANewsMLG2Formatter()
         _, doc = formatter.format(article, self.subscriber)[0]
         return etree.fromstring(doc.encode('utf-8'))
+
+    def test_sign_off(self):
+        content_meta = self.format_content_meta()
+        creator = content_meta.find(ns('creator[@literal="SIGNOFF"]'))
+        self.assertIsNotNone(creator)
+        self.assertEqual('Foo', creator.find(ns('name')).text)
+
+    def test_authors(self):
+        content_meta = self.format_content_meta()
+        contributors = content_meta.findall(ns('contributor'))
+        self.assertEqual(2, len(contributors))
+        self.assertEqual('John Doe', contributors[0].find(ns('name')).text)
+        self.assertEqual('Foo', contributors[1].find(ns('name')).text)
+
+    def test_subtitle(self):
+        content_meta = self.format_content_meta()
+        headlines = content_meta.findall(ns('headline'))
+        self.assertEqual(2, len(headlines))
+        self.assertEqual('hld:subHeadline', headlines[1].get('role'))
+        self.assertEqual('Subtitle text', headlines[1].text)
+
+    def format_content_meta(self):
+        article = self.get_article()
+        xml = self.format(article)
+        return get_content_meta(xml)
+
+    def test_product_output_codes(self):
+        content_meta = self.format_content_meta()
+        subject = content_meta.find(ns('subject[@qcode="output_code:TECN"]'))
+        self.assertIsNotNone(subject)
+        self.assertEqual('PHOTOMED', subject.find(ns('name')).text)
+
+    def test_located(self):
+        content_meta = self.format_content_meta()
+        located = content_meta.find(ns('located'))
+        self.assertIsNotNone(located)
+        self.assertEqual('city:ROME', located.get('qcode'))
+        broader = located.findall(ns('broader'))
+        self.assertEqual(2, len(broader))
+        self.assertEqual('reg:Latium', broader[0].get('qcode'))
+        self.assertEqual('cntry:ITALY', broader[1].get('qcode'))
