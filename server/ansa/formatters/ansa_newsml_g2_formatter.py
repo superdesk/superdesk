@@ -28,7 +28,7 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
     def _build_gallery(self, article, content_set):
         images = []
         for key, val in article.get('associations', {}).items():
-            if key != 'featuremedia' and val.get('type') == 'picture':
+            if key != 'featuremedia' and val and val.get('type') == 'picture':
                 images.append(val)
 
         if images:
@@ -50,8 +50,8 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
                 etree.SubElement(figure, 'img', attrib=dict(
                     src=self._publish_media(orig.get('media')),
                     alt=image.get('alt_text', ''),
-                    width=orig.get('width', ''),
-                    height=orig.get('height', ''),
+                    width=str(orig.get('width', '')),
+                    height=str(orig.get('height', '')),
                 ))
                 figcaption = etree.SubElement(figure, 'figcaption')
                 figcaption.text = image.get('headline', '')
@@ -124,6 +124,8 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
                     file_path = dest['config']['file_path']
                     if not path.isabs(file_path):
                         file_path = "/" + file_path
+                    if not path.isdir(file_path):
+                        return media  # missing destination - skip
                     with open(path.join(file_path, filename), 'wb') as output:
                         output.write(binary.read())
                         binary.seek(0)

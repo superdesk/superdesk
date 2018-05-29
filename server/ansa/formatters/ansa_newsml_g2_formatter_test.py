@@ -178,6 +178,8 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
                 'renditions': {
                     'original': {
                         'media': 'picture1',
+                        'width': 300,
+                        'height': 200,
                     }
                 }
             },
@@ -190,6 +192,7 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
                     }
                 }
             },
+            'canceled': None,
         }
 
         with mock.patch('superdesk.app.media.get', return_value=io.BytesIO(b'test')):
