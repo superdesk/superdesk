@@ -99,6 +99,10 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
             creator = SubElement(content_meta, 'contributor')
             SubElement(creator, 'name').text = author.get('sub_label', author.get('name', ''))
 
+    def _format_creator(self, article, content_meta):
+        if article.get('byline'):
+            SubElement(content_meta, 'by').text = article['byline']
+
     def _format_sign_off(self, article, content_meta):
         if article.get('sign_off'):
             sign_off = SubElement(content_meta, 'creator', attrib={
@@ -150,9 +154,9 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
         """
         if 'subject' in article and len(article['subject']) > 0:
             for s in article['subject']:
-                if s.get('output_code'):
+                if s.get('output_code') and s.get('qcode'):
                     subj = SubElement(content_meta, 'subject', attrib={
-                        'qcode': 'output_code:%s' % s['output_code'],
+                        'qcode': 'products:%s-%s' % (s['qcode'], s['output_code']),
                     })
 
                     SubElement(subj, 'name', attrib={XML_LANG: 'it'}).text = s['name']
