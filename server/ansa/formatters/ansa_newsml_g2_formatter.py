@@ -1,7 +1,6 @@
 
 import superdesk
 
-from os import path
 from lxml import etree
 from lxml.etree import SubElement
 from flask import current_app as app
@@ -48,7 +47,7 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
                 li = etree.SubElement(ul, 'li')
                 figure = etree.SubElement(li, 'figure')
                 etree.SubElement(figure, 'img', attrib=dict(
-                    src=self._publish_media(orig.get('media')),
+                    src=self._publish_media(orig),
                     alt=image.get('alt_text', ''),
                     width=str(orig.get('width', '')),
                     height=str(orig.get('height', '')),
@@ -133,24 +132,15 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
                 SubElement(item_meta, 'link', attrib={
                     'rel': 'irel:seeAlso',
                     'mimetype': orig.get('mimetype', featured.get('mimetype')),
-                    'href': self._publish_media(orig.get('media')),
+                    'href': self._publish_media(orig),
                 })
 
-    def _publish_media(self, media):
-        binary = app.media.get(media, 'upload')
-        if binary:
-            filename = '%s.jpg' % str(media)
-            for dest in self.subscriber.get('destinations', []):
-                if dest.get('config', {}).get('file_path'):
-                    file_path = dest['config']['file_path']
-                    if not path.isabs(file_path):
-                        file_path = "/" + file_path
-                    if not path.isdir(file_path):
-                        return media  # missing destination - skip
-                    with open(path.join(file_path, filename), 'wb') as output:
-                        output.write(binary.read())
-                        binary.seek(0)
-            return filename
+    def _publish_media(self, rendition):
+        if rendition.get('href'):
+            return rendition['href']
+        if rendition.get('media'):
+            return app.media.url_for_media(rendition['media'])
+        return ''
 
     def _format_subject(self, article, content_meta):
         """Appends the subject element to the contentMeta element

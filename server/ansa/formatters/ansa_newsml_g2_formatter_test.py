@@ -1,9 +1,9 @@
 
 import io
-import os
-import tempfile
+
 from lxml import etree
 from unittest import mock
+from urllib.parse import urlparse
 
 from superdesk.utc import utcnow
 from superdesk.tests import TestCase
@@ -100,8 +100,7 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
                                               'copyrightNotice': 'default copy right notice',
                                               'usageTerms': 'default terms'}]}]
 
-    dest = {'config': {'file_path': tempfile.gettempdir()}}
-    subscriber = {'_id': 'foo', 'name': 'Foo', 'config': {}, 'destinations': [dest]}
+    subscriber = {'_id': 'foo', 'name': 'Foo', 'config': {}, 'destinations': []}
 
     def setUp(self):
         self.app.data.insert('vocabularies', self.vocab)
@@ -126,6 +125,7 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         self.assertIn('<body>', doc)
 
     def test_featured_item_link(self):
+        media = self.app.media.put(io.BytesIO(b'test'))
         article = self.get_article()
         article['associations'] = {
             'featuremedia': {
@@ -133,15 +133,14 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
                 'renditions': {
                     'original': {
                         'mimetype': 'image/jpeg',
-                        'media': 'featured'
+                        'media': media,
                     }
                 }
             }
         }
 
         formatter = ANSANewsMLG2Formatter()
-        with mock.patch('superdesk.app.media.get', return_value=io.BytesIO(b'test')):
-            _, doc = formatter.format(article, self.subscriber)[0]
+        _, doc = formatter.format(article, self.subscriber)[0]
         self.assertIn('<link', doc)
         xml = etree.fromstring(doc.encode('utf-8'))
         link = xml.find(
@@ -151,10 +150,11 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         self.assertEqual('image/jpeg', link.attrib['mimetype'])
         self.assertEqual('irel:seeAlso', link.attrib['rel'])
         self.assertIn('href', link.attrib)
-        filepath = os.path.join(self.dest['config']['file_path'], link.attrib['href'])
-        self.assertTrue(os.path.exists(filepath))
-        with open(filepath, 'rb') as related:
-            self.assertEqual(b'test', related.read())
+
+        client = self.app.test_client()
+        response = client.get(urlparse(link.attrib['href']).path)
+        self.assertEqual(200, response.status_code, urlparse(link.attrib['href']).path)
+        self.assertEqual(b'test', response.get_data())
 
     def test_html_void(self):
         """Check that HTML void element use self closing tags, but other elements with no content use start/end pairs
@@ -217,9 +217,7 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
             'canceled': None,
         }
 
-        with mock.patch('superdesk.app.media.get', return_value=io.BytesIO(b'test')):
-            xml = self.format(article)
-
+        xml = self.format(article)
         inline_xmls = xml.findall('.//%s' % ns('inlineXML'))
         self.assertEqual(2, len(inline_xmls))
         gallery = inline_xmls[1]
@@ -230,7 +228,7 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         self.assertEqual(2, len(figure))
         img = figure[0]
         figcaption = figure[1]
-        self.assertTrue(os.path.exists(os.path.join(self.dest['config']['file_path'], img.get('src'))))
+        self.assertIn('src', img.attrib)
         self.assertTrue('foo', figcaption.text)
 
     def format(self, article):
