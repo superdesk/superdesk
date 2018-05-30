@@ -238,9 +238,10 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
 
     def test_sign_off(self):
         content_meta = self.format_content_meta()
-        creator = content_meta.find(ns('creator[@literal="SIGNOFF"]'))
-        self.assertIsNotNone(creator)
-        self.assertEqual('Foo', creator.find(ns('name')).text)
+        creators = content_meta.findall(ns('creator'))
+        self.assertEqual(1, len(creators))
+        self.assertEqual('Foo', creators[0].find(ns('name')).text)
+        self.assertEqual('SIGNOFF', creators[0].get('literal'))
 
     def test_authors(self):
         content_meta = self.format_content_meta()
@@ -263,7 +264,7 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
 
     def test_product_output_codes(self):
         content_meta = self.format_content_meta()
-        subject = content_meta.find(ns('subject[@qcode="output_code:TECN"]'))
+        subject = content_meta.find(ns('subject[@qcode="products:020002007289230000-TECN"]'))
         self.assertIsNotNone(subject)
         self.assertEqual('PHOTOMED', subject.find(ns('name')).text)
 
@@ -276,3 +277,8 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         self.assertEqual(2, len(broader))
         self.assertEqual('reg:Latium', broader[0].get('qcode'))
         self.assertEqual('cntry:ITALY', broader[1].get('qcode'))
+
+    def test_byline(self):
+        content_meta = self.format_content_meta()
+        byline = content_meta.find(ns('by'))
+        self.assertEqual('joe', byline.text)
