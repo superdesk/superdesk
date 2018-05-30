@@ -66,7 +66,7 @@ BROKER_URL = env('CELERY_BROKER_URL', REDIS_URL)
 
 NO_TAKES = True
 
-ANSA_ANALYSIS_URL = "http://172.20.14.51:8080/extractionservice/"
+ANSA_ANALYSIS_URL = "http://172.20.14.20:8080/extractionservice/"
 
 DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES = 'ANSA'
 ORGANIZATION_NAME = 'Agenzia Nazionale Stampa Associata'
