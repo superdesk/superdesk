@@ -96,8 +96,11 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
 
     def _format_authors(self, article, content_meta):
         for author in article.get('authors', []):
-            creator = SubElement(content_meta, 'contributor')
-            SubElement(creator, 'name').text = author.get('sub_label', author.get('name', ''))
+            if author.get('parent'):
+                user = superdesk.get_resource_service('users').find_one(req=None, _id=author['parent'])
+                if user:
+                    creator = SubElement(content_meta, 'contributor', attrib={'literal': user.get('sign_off', '')})
+                    SubElement(creator, 'name').text = user.get('display_name', author.get('name', ''))
 
     def _format_creator(self, article, content_meta):
         if article.get('byline'):
@@ -105,10 +108,9 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
 
     def _format_sign_off(self, article, content_meta):
         if article.get('sign_off'):
-            sign_off = SubElement(content_meta, 'creator', attrib={
-                'literal': 'SIGNOFF',
+            SubElement(content_meta, 'creator', attrib={
+                'literal': article['sign_off'],
             })
-            SubElement(sign_off, 'name').text = article['sign_off']
 
     def _format_highlights(self, article, content_meta):
         """Adds highlights id as subject."""
