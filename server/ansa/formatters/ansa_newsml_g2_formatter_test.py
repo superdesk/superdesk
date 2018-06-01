@@ -75,17 +75,6 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
                    'world_region': 'Oceania'}],
         'company_codes': [{'name': 'YANCOAL AUSTRALIA LIMITED', 'qcode': 'YAL', 'security_exchange': 'ASX'}],
         'sign_off': 'Foo',
-        'authors': [
-            {
-                'role': 'editor',
-                'name': 'John Doe',
-            },
-            {
-                'role': 'photographer',
-                'name': 'photographer',
-                'sub_label': 'Foo',
-            },
-        ],
         'extra': {
             'subtitle': 'Subtitle text',
         },
@@ -105,9 +94,11 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
     def setUp(self):
         self.app.data.insert('vocabularies', self.vocab)
 
-    def get_article(self):
+    def get_article(self, updates=None):
         article = self.article.copy()
         article['firstcreated'] = article['versioncreated'] = utcnow()
+        if updates:
+            article.update(updates)
         return article
 
     def test_html_content(self):
@@ -240,14 +231,44 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         content_meta = self.format_content_meta()
         creators = content_meta.findall(ns('creator'))
         self.assertEqual(1, len(creators))
-        self.assertEqual('Foo', creators[0].find(ns('name')).text)
-        self.assertEqual('SIGNOFF', creators[0].get('literal'))
+        self.assertEqual('Foo', creators[0].get('literal'))
 
     def test_authors(self):
-        content_meta = self.format_content_meta()
+        self.app.data.insert('users', [
+            {
+                "_id": "test_id",
+                "username": "author 1",
+                "display_name": "John Doe",
+                "is_author": True,
+                'sign_off': 'JD',
+            },
+            {
+                "_id": "test_id_2",
+                "username": "author 2",
+                "display_name": "Foo",
+                "is_author": True,
+                'sign_off': 'F',
+            },
+        ])
+
+        updates = {'authors': [
+            {
+                'role': 'editor',
+                'name': 'John Doe',
+                'parent': 'test_id',
+            },
+            {
+                'role': 'photographer',
+                'name': 'photographer',
+                'parent': 'test_id_2',
+            },
+        ]}
+
+        content_meta = self.format_content_meta(updates)
         contributors = content_meta.findall(ns('contributor'))
         self.assertEqual(2, len(contributors))
         self.assertEqual('John Doe', contributors[0].find(ns('name')).text)
+        self.assertEqual(contributors[0].get('literal'), 'JD')
         self.assertEqual('Foo', contributors[1].find(ns('name')).text)
 
     def test_subtitle(self):
@@ -257,8 +278,8 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         self.assertEqual('hld:subHeadline', headlines[1].get('role'))
         self.assertEqual('Subtitle text', headlines[1].text)
 
-    def format_content_meta(self):
-        article = self.get_article()
+    def format_content_meta(self, updates=None):
+        article = self.get_article(updates)
         xml = self.format(article)
         return get_content_meta(xml)
 
