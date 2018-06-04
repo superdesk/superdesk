@@ -78,6 +78,7 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         'extra': {
             'subtitle': 'Subtitle text',
         },
+        'sms_message': 'SMS message',
     }
 
     vocab = [{'_id': 'rightsinfo', 'items': [{'name': 'AAP',
@@ -271,12 +272,14 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         self.assertEqual(contributors[0].get('literal'), 'JD')
         self.assertEqual('Foo', contributors[1].find(ns('name')).text)
 
-    def test_subtitle(self):
+    def test_headlines(self):
         content_meta = self.format_content_meta()
         headlines = content_meta.findall(ns('headline'))
-        self.assertEqual(2, len(headlines))
+        self.assertEqual(3, len(headlines))
         self.assertEqual('hld:subHeadline', headlines[1].get('role'))
         self.assertEqual('Subtitle text', headlines[1].text)
+        self.assertEqual('hld:sms', headlines[2].get('role'))
+        self.assertEqual('SMS message', headlines[2].text)
 
     def format_content_meta(self, updates=None):
         article = self.get_article(updates)
