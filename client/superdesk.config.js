@@ -6,7 +6,7 @@
  */
 module.exports = function(grunt) {
     return {
-        apps: ['superdesk-planning'],
+        apps: ['superdesk-planning', 'superdesk-publisher'],
         defaultRoute: '/workspace/personal',
         validatorMediaMetadata: {
             headline: {
@@ -49,38 +49,11 @@ module.exports = function(grunt) {
             assignments: true
         },
 
-        list: {
-            priority: [
-                'priority',
-                'urgency'
-            ],
-            firstLine: [
-                'wordcount',
-                'slugline',
-                'highlights',
-                'markedDesks',
-                'associations',
-                'publish_queue_errors',
-                'headline',
-                'assignment',
-                'versioncreated'
-            ],
-            secondLine: [
-                'profile',
-                'state',
-                'embargo',
-                'update',
-                'takekey',
-                'signal',
-                'broadcast',
-                'flags',
-                'updated',
-                'category',
-                'provider',
-                'expiry',
-                'desk',
-                'fetchedDesk'
-            ]
+        publisher: {
+            protocol: 'https',
+            tenant: process.env.PUBLISHER_API_SUBDOMAIN || '',
+            domain: process.env.PUBLISHER_API_DOMAIN || 'localhost',
+            base: 'api/v1'
         }
     };
 };
