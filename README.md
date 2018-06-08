@@ -19,7 +19,22 @@ different technologies.
 Find more information about the client configuration in the README file of the repo:
 [github.com/superdesk/superdesk-client-core](https://github.com/superdesk/superdesk-client-core)
 
-## Requirements
+## Installation on fresh Ubuntu 16.04
+
+```sh
+curl -s https://raw.githubusercontent.com/superdesk/fireq/files/superdesk/install | sudo bash
+# Open http://<ip_or_domain> in browser
+# login: admin
+# password: admin
+```
+
+More options and details:
+- [for users](https://github.com/superdesk/fireq/tree/files/superdesk)
+- [for developers](https://github.com/superdesk/fireq/tree/files/superdesk#development)
+
+## Manual installation
+
+### Requirements
 
 These services must be installed, configured and running:
 
@@ -31,7 +46,8 @@ These services must be installed, configured and running:
 
 On macOS, if you have [homebrew](https://brew.sh/) installed, simply run: `brew install mongodb elasticsearch@2.4 redis python3 node`.
 
-### General installation steps look like:
+### Installation steps:
+
 ```sh
 path=~/superdesk
 git clone https://github.com/superdesk/superdesk.git $path
@@ -62,18 +78,6 @@ using the `pyvenv` command:
 - Run `. ~/pyvenv/bin/activate` to start the virtual environment in the current terminal session.
 
 Now you may run the installation steps from above.
-
-### Installation on fresh Ubuntu 16.04
-
-```sh
-curl -s https://raw.githubusercontent.com/superdesk/fireq/files/superdesk/install | sudo bash
-# Open http://<ip_or_domain> in browser
-# login: admin
-# password: admin
-```
-More options and details:
-- [for users](https://github.com/superdesk/fireq/tree/files/superdesk)
-- [for developers](https://github.com/superdesk/fireq/tree/files/superdesk#development)
 
 ### Questions and issues
 
