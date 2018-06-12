@@ -29,6 +29,8 @@ def populate(item, **kwargs):
         item['semantics'] = analysed['semantics']
     if analysed.get('subject'):
         item['subject'] = analysed['subject']
+    if analysed.get('abstract') and not item.get('abstract'):
+        item.setdefault('abstract', analysed['abstract'])
     return item
 
 
