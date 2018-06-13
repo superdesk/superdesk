@@ -291,3 +291,6 @@ SCHEMA = {
         }
     }
 }
+
+GEONAMES_USERNAME = env('GEONAMES_USERNAME', 'superdesk_dev')
+
