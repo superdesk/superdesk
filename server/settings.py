@@ -28,7 +28,7 @@ ABS_PATH = str(Path(__file__).resolve().parent)
 
 init_data = Path(ABS_PATH) / 'data'
 if init_data.exists():
-    INIT_DATA_PATH = init_data
+    XINIT_DATA_PATH = init_data
 
 INSTALLED_APPS = [
     'apps.languages',
@@ -66,7 +66,7 @@ BROKER_URL = env('CELERY_BROKER_URL', REDIS_URL)
 
 NO_TAKES = True
 
-ANSA_ANALYSIS_URL = "http://172.20.14.20:8080/extractionservice/"
+ANSA_ANALYSIS_URL = env('ANSA_EXTRACTION_SERVICE', 'http://172.20.14.51:8080/extractionservice/')
 
 DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES = 'ANSA'
 ORGANIZATION_NAME = 'Agenzia Nazionale Stampa Associata'
