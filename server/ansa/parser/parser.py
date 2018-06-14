@@ -57,3 +57,15 @@ class ANSAParser(NewsMLTwoFeedParser):
 
     def datetime(self, string):
         return arrow.get(string).datetime
+
+    def parse_content_subject(self, tree, item):
+        super().parse_content_subject(tree, item)
+        for subject in tree.findall(self.qname('subject')):
+            qcode_parts = subject.get('qcode', '').split(':')
+            if len(qcode_parts) == 2 and qcode_parts[0] == 'products':
+                name = subject.find(self.qname('name'))
+                item['subject'].append({
+                    'scheme': qcode_parts[0],
+                    'qcode': qcode_parts[1],
+                    'name': name.text if name is not None else qcode_parts[1],
+                })

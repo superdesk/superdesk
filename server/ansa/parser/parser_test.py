@@ -18,3 +18,4 @@ class ANSAParserTestCase(unittest.TestCase):
         self.assertEqual('De Magistris, rafforzamento forze ordine e strutture dello Stato', item.get('abstract'))
         self.assertGreater(item['word_count'], 0)
         self.assertEqual([{'qcode': 'chronicle', 'name': 'Chronicle'}], item.get('anpa_category'))
+        self.assertIn({'name': 'Product X', 'scheme': 'products', 'qcode': '123456789'}, item['subject'])
