@@ -163,9 +163,9 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
         """
         if 'subject' in article and len(article['subject']) > 0:
             for s in article['subject']:
-                if s.get('output_code') and s.get('qcode'):
+                if s.get('scheme') == 'products' and s.get('qcode'):
                     subj = SubElement(content_meta, 'subject', attrib={
-                        'qcode': 'products:%s-%s' % (s['qcode'], s['output_code']),
+                        'qcode': 'products:%s' % s['qcode'],
                     })
 
                     SubElement(subj, 'name', attrib={XML_LANG: 'it'}).text = s['name']

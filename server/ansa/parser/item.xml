@@ -39,6 +39,9 @@
 <subject type="cptype:cat" literal="CRO"/>
 <subject type="cptype:subcat" literal="Spari davanti bimbi"/>
 <subject type="cpnat:abstract" qcode="subj:02000000"/>
+<subject type="cpnat:abstract" qcode="products:123456789">
+    <name>Product X</name>
+</subject>
 <headline>Spari davanti bimbi: sindaco Napoli, serve risposta forte</headline>
 <headline role="hld:subHeadline">De Magistris, rafforzamento forze ordine e strutture dello Stato</headline>
 </contentMeta>

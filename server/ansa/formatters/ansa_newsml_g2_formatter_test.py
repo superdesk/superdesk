@@ -288,7 +288,7 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
 
     def test_product_output_codes(self):
         content_meta = self.format_content_meta()
-        subject = content_meta.find(ns('subject[@qcode="products:020002007289230000-TECN"]'))
+        subject = content_meta.find(ns('subject[@qcode="products:020002007289230000"]'))
         self.assertIsNotNone(subject)
         self.assertEqual('PHOTOMED', subject.find(ns('name')).text)
 
