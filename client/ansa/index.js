@@ -205,8 +205,10 @@ function AnsaSemanticsCtrl($scope, $rootScope, api) {
             $scope.item.place = result.place;
         }
 
-        if (result.subject && _.isEmpty($scope.item.subject)) {
-            $scope.item.subject = result.subject;
+        if (result.subject) {
+            $scope.item.subject = ($scope.item.subject || [])
+                .filter((item) => item.scheme) // keep all custom scheme subjects
+                .concat(result.subject);
         }
 
         if (result.slugline && _.isEmpty($scope.item.slugline)) {
