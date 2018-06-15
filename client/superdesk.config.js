@@ -25,6 +25,8 @@ module.exports = function(grunt) {
         shortWeekFormat: 'YYYY-MM-DD HH:mm',
         longDateFromat: 'YYYY-MM-DD HH:mm',
 
+        language: 'it',
+
         langOverride: {
             'en': {
                 'ANPA Category': 'Category',
@@ -58,6 +60,11 @@ module.exports = function(grunt) {
             copyrightnotice: {
                 required: false
             }
+        },
+
+        ui: {
+            italicAbstract: false,
+            sendAndPublish: true,
         },
 
         list: {
