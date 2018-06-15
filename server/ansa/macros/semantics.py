@@ -28,7 +28,8 @@ def populate(item, **kwargs):
     if analysed.get('semantics'):
         item['semantics'] = analysed['semantics']
     if analysed.get('subject'):
-        item['subject'] = analysed['subject']
+        item['subject'] = [s for s in item['subject'] if s.get('scheme')]  # filter out iptc subjectcodes
+        item['subject'].extend(analysed['subject'])
     if analysed.get('abstract') and not item.get('abstract'):
         item.setdefault('abstract', analysed['abstract'])
     return item

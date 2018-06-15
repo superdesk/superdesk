@@ -40,7 +40,9 @@ class ANSAParser(NewsMLTwoFeedParser):
         headlines = meta.findall(self.qname('headline'))
         for headline in headlines:
             if headline.get('role') == 'hld:subHeadline':
-                item['abstract'] = headline.text
+                item['extra'] = {
+                    'subtitle': headline.text,
+                }
 
         subjects = meta.findall(self.qname('subject'))
         for subject in subjects:
