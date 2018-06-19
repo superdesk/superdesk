@@ -38,6 +38,10 @@ module.exports = function(grunt) {
             }
         }, 
 
+        item_profile: {
+            change_profile: 1,
+        },
+
         validatorMediaMetadata: {
             headline: {
                 required: true
