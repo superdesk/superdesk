@@ -1,8 +1,10 @@
 
+import json
 import arrow
 
 from superdesk.io.feed_parsers.newsml_2_0 import NewsMLTwoFeedParser
 from superdesk.text_utils import get_word_count
+from ansa.analysis.analysis import parse, apply
 
 
 class ANSAParser(NewsMLTwoFeedParser):
@@ -50,6 +52,18 @@ class ANSAParser(NewsMLTwoFeedParser):
                 name = self.cat_map.get(subject.get('literal'))
                 if name:
                     item['anpa_category'] = [{'name': name, 'qcode': name.lower()}]
+
+        if item.get('description_text'):
+            item['description_text'] = item['description_text'].strip()
+
+        descriptions = meta.findall(self.qname('description'))
+        for description in descriptions:
+            if description.get('role') == 'semantics':
+                try:
+                    semantics = parse(json.loads(description.text))
+                    apply(semantics, item)
+                except ValueError:
+                    pass
 
     def parse_item(self, tree):
         item = super().parse_item(tree)

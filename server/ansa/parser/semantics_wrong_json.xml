@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?><newsMessage xmlns:IIM_R1="/photos/schema/IIM_R1#" xmlns:ANSA="/photos/schema/ANSA#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:IIM_R7="/photos/schema/IIM_R7#" xmlns:x="http://www.w3.org/1999/xhtml" xmlns:IIM_R3="/photos/schema/IIM_R3#" xmlns:IIM_R2="/photos/schema/IIM_R2#" xmlns="http://iptc.org/std/nar/2006-10-01/">
+<header>
+<sent>2018-06-29T10:48:32.000Z</sent>
+<sender>ansa.it</sender>
+<transmitId>tag:ansa.it,eebef8e9a659f874dd81a320e530eabb.jpg</transmitId>
+<priority>4</priority>
+</header>
+<itemSet>
+<newsItem version="1" standard="NewsML-G2" standardversion="2.10" conformance="power" guid="tag:ansa.it,eebef8e9a659f874dd81a320e530eabb.jpg">
+<catalogRef href="http://www.iptc.org/std/catalog/catalog.IPTC-G2-Standards_3.xml"/>
+<rightsInfo>
+<copyrightHolder literal="ANSA"/>
+<copyrightNotice xml:lang="en">(c) Copyright ANSA 2017</copyrightNotice>
+</rightsInfo>
+<itemMeta>
+<itemClass qcode="icls:picture"/>
+<provider literal="ansa.it"/>
+<versionCreated>2018-06-29T10:48:32.000Z</versionCreated>
+<firstCreated>2018-06-29T10:48:32.000Z</firstCreated>
+<pubStatus qcode="stat:usable"/>
+<role qcode="itemRole:N"/>
+<signal qcode="pmt:picture"/>
+</itemMeta>
+<contentMeta>
+<urgency>4</urgency>
+<language tag="it"/>
+<subject type="cptype:cat" literal="REL"/>
+<subject literal="Vatican City" type="cptType:5">
+<name>Vatican CityI</name>
+</subject>
+<headline>Pope Francis celebrates mass with the ritual of the blessing of the palliums</headline>
+<by>GIUSEPPE LAMI</by>
+<creditline>ANSA</creditline>
+<description role="descRole:caption">
+            Pope Francis celebrates the mass with the ritual of the blessing of the palliums for the new Metropolitan Archbishops on the occasion of the feast of Romes patrons saints, Peter and Paul in Saint Peter Basilica, Vatican City, 29 June 2018. 
+ANSA/GIUSEPPE LAMI
+        </description>
+<description role="semantics">
+<![CDATA[
+{"iptcDomains": }
+]]>
+</description>
+</contentMeta>
+<contentSet>
+<remoteContent rendition="rend:baseImage" contenttype="image/jpeg" format="fmt:jpegBaseline" href="http://sd.ansa.priv/photo/eebef8e9a659f874dd81a320e530eabb.jpg" residref="tag:ansa.it,eebef8e9a659f874dd81a320e530eabb.jpg"/>
+</contentSet>
+</newsItem>
+</itemSet>
+</newsMessage>
