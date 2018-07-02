@@ -65,6 +65,10 @@ class ANSAParser(NewsMLTwoFeedParser):
                 except ValueError:
                     pass
 
+        creditline = meta.find(self.qname('creditline'))
+        if creditline is not None:
+            item['creditline'] = creditline.text
+
     def parse_item(self, tree):
         item = super().parse_item(tree)
         if item.get('word_count') == 0 and item.get('type') == 'text':
@@ -85,3 +89,11 @@ class ANSAParser(NewsMLTwoFeedParser):
                     'qcode': qcode_parts[1],
                     'name': name.text if name is not None else qcode_parts[1],
                 })
+
+    def parse_rights_info(self, tree, item):
+        """Parse Rights Info tag"""
+        info = tree.find(self.qname('rightsInfo'))
+        if info is not None:
+            item['usageterms'] = getattr(info.find(self.qname('usageTerms')), 'text', '').strip()
+            item['copyrightholder'] = info.find(self.qname('copyrightHolder')).attrib['literal']
+            item['copyrightnotice'] = getattr(info.find(self.qname('copyrightNotice')), 'text', None)
