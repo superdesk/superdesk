@@ -33,3 +33,10 @@ class ANSAParserTestCase(unittest.TestCase):
     def test_parse_semantics_error(self):
         item = self.parse('semantics_wrong_json.xml')
         self.assertIsNotNone(item)
+
+    def test_parse_image_rights(self):
+        item = self.parse('semantics.xml')
+        self.assertEqual('ANSA', item['creditline'])
+        self.assertEqual('ANSA', item['copyrightholder'])
+        self.assertIn('ANSA', item['copyrightnotice'])
+        self.assertEqual('Not for use outside Italy', item['usageterms'])
