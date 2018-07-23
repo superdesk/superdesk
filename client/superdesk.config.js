@@ -100,11 +100,14 @@ module.exports = function(grunt) {
                 'expiry',
                 'desk',
                 'fetchedDesk',
+                'copyright',
+                'usageterms',
             ]
         },
         gridViewFields: [
             'source',
             'copyright',
+            'usageterms',
         ],
     };
 };
