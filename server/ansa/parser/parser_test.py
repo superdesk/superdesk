@@ -1,12 +1,12 @@
 
 import os
-import unittest
 
 from .parser import ANSAParser
 from superdesk.etree import etree
+from superdesk.tests import TestCase
 
 
-class ANSAParserTestCase(unittest.TestCase):
+class ANSAParserTestCase(TestCase):
 
     def parse(self, fixture):
         parser = ANSAParser()
@@ -40,3 +40,20 @@ class ANSAParserTestCase(unittest.TestCase):
         self.assertEqual('ANSA', item['copyrightholder'])
         self.assertIn('ANSA', item['copyrightnotice'])
         self.assertEqual('Not for use outside Italy', item['usageterms'])
+
+    def test_populate_rights(self):
+        self.app.data.insert('vocabularies', [{
+            '_id': 'rightsinfo',
+            'items': [
+                {
+                    'name': 'ansa',
+                    'copyrightHolder': 'ANSA',
+                    'copyrightNotice': 'ANSA notice',
+                    'usageTerms': 'ANSA usage',
+                },
+            ]
+        }])
+        item = self.parse('semantics_missing_rights_info.xml')
+        self.assertEqual('ANSA', item['copyrightholder'])
+        self.assertEqual('ANSA notice', item['copyrightnotice'])
+        self.assertEqual('ANSA usage', item['usageterms'])
