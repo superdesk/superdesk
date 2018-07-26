@@ -86,14 +86,21 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
         self._format_highlights(article, content_meta)
         self._format_sign_off(article, content_meta)
         self._format_authors(article, content_meta)
-        self._format_subtitle(article, content_meta)
+        self._format_extra(article, content_meta)
         self._format_sms(article, content_meta)
 
-    def _format_subtitle(self, article, content_meta):
-        if article.get('extra', {}).get('subtitle'):
+    def _format_extra(self, article, content_meta):
+        extra = article.get('extra', {})
+
+        if extra.get('subtitle'):
             SubElement(content_meta, 'headline', attrib={
                 'role': 'hld:subHeadline',
-            }).text = article['extra']['subtitle']
+            }).text = extra['subtitle']
+
+        if extra.get('shorttitle'):
+            SubElement(content_meta, 'headline', attrib={
+                'role': 'hld:shortHeadline',
+            }).text = extra['shorttitle']
 
     def _format_sms(self, article, content_meta):
         if article.get('sms_message'):

@@ -77,6 +77,7 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         'sign_off': 'Foo',
         'extra': {
             'subtitle': 'Subtitle text',
+            'shorttitle': 'Short headline',
         },
         'sms_message': 'SMS message',
     }
@@ -275,11 +276,13 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
     def test_headlines(self):
         content_meta = self.format_content_meta()
         headlines = content_meta.findall(ns('headline'))
-        self.assertEqual(3, len(headlines))
+        self.assertEqual(4, len(headlines))
         self.assertEqual('hld:subHeadline', headlines[1].get('role'))
         self.assertEqual('Subtitle text', headlines[1].text)
-        self.assertEqual('hld:sms', headlines[2].get('role'))
-        self.assertEqual('SMS message', headlines[2].text)
+        self.assertEqual('hld:shortHeadline', headlines[2].get('role'))
+        self.assertEqual('Short headline', headlines[2].text)
+        self.assertEqual('hld:sms', headlines[3].get('role'))
+        self.assertEqual('SMS message', headlines[3].text)
 
     def format_content_meta(self, updates=None):
         article = self.get_article(updates)
