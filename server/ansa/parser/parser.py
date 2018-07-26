@@ -5,6 +5,7 @@ import arrow
 from superdesk.io.feed_parsers.newsml_2_0 import NewsMLTwoFeedParser
 from superdesk.text_utils import get_word_count
 from ansa.analysis.analysis import parse, apply
+from superdesk import get_resource_service
 
 
 class ANSAParser(NewsMLTwoFeedParser):
@@ -97,3 +98,15 @@ class ANSAParser(NewsMLTwoFeedParser):
             item['usageterms'] = getattr(info.find(self.qname('usageTerms')), 'text', '').strip()
             item['copyrightholder'] = info.find(self.qname('copyrightHolder')).attrib['literal']
             item['copyrightnotice'] = getattr(info.find(self.qname('copyrightNotice')), 'text', None)
+        if item.get('creditline'):
+            item.setdefault('copyrightholder', item['creditline'])
+        if item.get('copyrightholder') and not item.get('copyrightnotice') or not item.get('usageterms'):
+            cv = get_resource_service('vocabularies').find_one(req=None, _id='rightsinfo')
+            if cv:
+                for rightsinfo in cv.get('items', []):
+                    if rightsinfo.get('copyrightHolder', '').lower() == item['copyrightholder'].lower():
+                        if rightsinfo.get('copyrightNotice') and not item.get('copyrightnotice'):
+                            item['copyrightnotice'] = rightsinfo['copyrightNotice']
+                        if rightsinfo.get('usageTerms') and not item.get('usageterms'):
+                            item['usageterms'] = rightsinfo['usageTerms']
+                        break
