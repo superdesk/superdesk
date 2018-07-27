@@ -76,8 +76,8 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         'company_codes': [{'name': 'YANCOAL AUSTRALIA LIMITED', 'qcode': 'YAL', 'security_exchange': 'ASX'}],
         'sign_off': 'Foo',
         'extra': {
-            'subtitle': 'Subtitle text',
-            'shorttitle': 'Short headline',
+            'subtitle': '<p>Subtitle text</p>',
+            'shorttitle': '<p>Short headline</p>',
         },
         'sms_message': 'SMS message',
     }
