@@ -149,6 +149,7 @@ export default angular.module('ansa.closed', [])
             sizey: 1,
             template: 'close-desk-widget.html',
             description: 'Close desk widget',
+            thumbnail: require('./thumbnail.svg'),
         });
     }])
     .run(['$templateCache', ($templateCache) => {
