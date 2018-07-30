@@ -12,3 +12,13 @@
         flex-grow: 1;
     }
 }
+
+$widget_close-desk: #e55028;
+
+.widget-list li.widget.close-desk .thumbnail {
+    background-color: $widget_close-desk;
+}
+
+.widget-detail .thumbnail-box.close-desk {
+    background-color: $widget_close-desk;
+}
