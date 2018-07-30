@@ -6,6 +6,7 @@ from lxml.etree import SubElement
 from flask import current_app as app
 
 from superdesk.publish.formatters.newsml_g2_formatter import NewsMLG2Formatter, XML_LANG
+from superdesk.text_utils import get_text
 
 
 class ANSANewsMLG2Formatter(NewsMLG2Formatter):
@@ -95,12 +96,12 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
         if extra.get('subtitle'):
             SubElement(content_meta, 'headline', attrib={
                 'role': 'hld:subHeadline',
-            }).text = extra['subtitle']
+            }).text = get_text(extra['subtitle'])
 
         if extra.get('shorttitle'):
             SubElement(content_meta, 'headline', attrib={
                 'role': 'hld:shortHeadline',
-            }).text = extra['shorttitle']
+            }).text = get_text(extra['shorttitle'])
 
     def _format_sms(self, article, content_meta):
         if article.get('sms_message'):
