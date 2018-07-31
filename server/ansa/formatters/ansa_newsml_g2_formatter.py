@@ -203,3 +203,14 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
 
         if article.get('dateline', {}).get('text', {}):
             SubElement(content_meta, 'dateline').text = article.get('dateline', {}).get('text', {})
+
+    def _format_place(self, article, content_meta):
+        super()._format_place(article, content_meta)
+        for place in article.get('place', []):
+            if len(place.keys()) == 2 and place.get('name') and place.get('qcode'):  # suggested places from semantics
+                self._create_subject_element(
+                    content_meta,
+                    place['name'],
+                    place['qcode'],
+                    'cpnat:geoArea'
+                )
