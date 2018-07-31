@@ -70,9 +70,19 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         'creditline': 'sample creditline',
         'keywords': ['traffic'],
         'abstract': 'sample abstract',
-        'place': [{'qcode': 'Australia', 'name': 'Australia',
-                   'state': '', 'country': 'Australia',
-                   'world_region': 'Oceania'}],
+        'place': [
+            {
+                'qcode': 'Australia',
+                'name': 'Australia',
+                'state': '',
+                'country': 'Australia',
+                'world_region': 'Oceania',
+            },
+            {
+                'name': 'Roma',
+                'qcode': 'n:Roma',
+            },
+        ],
         'company_codes': [{'name': 'YANCOAL AUSTRALIA LIMITED', 'qcode': 'YAL', 'security_exchange': 'ASX'}],
         'sign_off': 'Foo',
         'extra': {
@@ -309,3 +319,10 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         content_meta = self.format_content_meta()
         byline = content_meta.find(ns('by'))
         self.assertEqual('joe', byline.text)
+
+    def test_places(self):
+        content_meta = self.format_content_meta()
+        places = content_meta.findall(ns('subject[@type="cpnat:geoArea"]'))
+        self.assertEqual(1, len(places))
+        self.assertEqual('n:Roma', places[0].get('qcode'))
+        self.assertEqual('Roma', places[0].find(ns('name')).text)
