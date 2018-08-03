@@ -52,6 +52,11 @@ module.exports = function(grunt) {
             }
         },
 
+        view: {
+            timeformat: 'HH:mm',
+            dateformat: 'DD.MM.YYYY',
+        },
+
         features: {
             preview: 1,
             swimlane: {columnsLimit: 4},
