@@ -6,3 +6,4 @@ pep8
 pyflakes<=1.1
 httmock
 wooper
+requests_mock==1.5.2
