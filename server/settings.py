@@ -293,3 +293,5 @@ SCHEMA = {
 }
 
 GEONAMES_USERNAME = env('GEONAMES_USERNAME', 'superdesk_dev')
+
+ANSA_VFS = env('ANSA_VFS', 'http://172.20.14.95:8080/')

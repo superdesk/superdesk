@@ -13,6 +13,7 @@ import os
 import settings
 
 from superdesk.factory import get_app as superdesk_app
+from ansa.vfs import VFSMediaStorage
 
 
 if os.environ.get('NEW_RELIC_LICENSE_KEY'):
@@ -38,7 +39,7 @@ def get_app(config=None, init_elastic=False):
         if key.isupper():
             config.setdefault(key, getattr(settings, key))
 
-    app = superdesk_app(config)
+    app = superdesk_app(config, media_storage=VFSMediaStorage)
     return app
 
 
