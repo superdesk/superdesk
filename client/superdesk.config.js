@@ -14,29 +14,6 @@ module.exports = function(grunt) {
             'superdesk-publisher'
         ],
         defaultRoute: '/workspace/personal',
-        validatorMediaMetadata: {
-            headline: {
-                required: true
-            },
-            alt_text: {
-                required: true
-            },
-            description_text: {
-                required: true
-            },
-            copyrightholder: {
-                required: false
-            },
-            byline: {
-                required: false
-            },
-            usageterms: {
-                required: false
-            },
-            copyrightnotice: {
-                required: false
-            }
-        },
 
         publisher: {
             protocol: 'https',
