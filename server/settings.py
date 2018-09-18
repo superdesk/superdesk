@@ -11,7 +11,7 @@
 
 import os
 from pathlib import Path
-from superdesk.default_settings import INSTALLED_APPS
+from superdesk.default_settings import INSTALLED_APPS, strtobool
 
 
 def env(variable, fallback_value=None):
@@ -59,3 +59,10 @@ if env('REDIS_PORT'):
 BROKER_URL = env('CELERY_BROKER_URL', REDIS_URL)
 
 SECRET_KEY = env('SECRET_KEY', '')
+
+# Highcharts Export Server - default settings
+ANALYTICS_ENABLE_SCHEDULED_REPORTS = strtobool(
+    env('ANALYTICS_ENABLE_SCHEDULED_REPORTS', 'true')
+)
+HIGHCHARTS_SERVER_HOST = env('HIGHCHARTS_SERVER_HOST', 'localhost')
+HIGHCHARTS_SERVER_PORT = env('HIGHCHARTS_SERVER_PORT', '6060')
