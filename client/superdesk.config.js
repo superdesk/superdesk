@@ -18,7 +18,8 @@ module.exports = function(grunt) {
         features: {
             customAuthoringTopbar: true,
             editFeaturedImage: true,
-            searchShortcut: true
+            searchShortcut: true,
+            editor3: true,
         },
         shortTimeFormat: 'YYYY-MM-DD HH:mm',
         shortDateFormat: 'YYYY-MM-DD HH:mm',
