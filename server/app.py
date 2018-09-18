@@ -24,6 +24,11 @@ if os.environ.get('NEW_RELIC_LICENSE_KEY'):
         pass
 
 
+media_storage = None
+if os.environ.get('ANSA_VFS'):
+    media_storage = VFSMediaStorage
+
+
 def get_app(config=None, init_elastic=False):
     """App factory.
 
@@ -39,7 +44,7 @@ def get_app(config=None, init_elastic=False):
         if key.isupper():
             config.setdefault(key, getattr(settings, key))
 
-    app = superdesk_app(config, media_storage=VFSMediaStorage)
+    app = superdesk_app(config, media_storage=media_storage)
     return app
 
 
