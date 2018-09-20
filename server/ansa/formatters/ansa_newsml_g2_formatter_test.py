@@ -171,8 +171,9 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         _, doc = formatter.format(article, self.subscriber)[0]
         html_start = '<inlineXML contenttype="application/xhtml+xml">'
         html = doc[doc.find(html_start) + len(html_start):doc.find('</inlineXML>')]
-        self.assertIn('<html>', html)
-        self.assertIn('<body>', html)
+        expected = ('<html><body><p></p><h1>The story body</h1><h3></h3>empty element on purpose<br/>'
+                    '<strong>test</strong><em></em><br/>other test</body></html>')
+        self.assertEqual(html, expected)
 
     def test_highlights(self):
 
