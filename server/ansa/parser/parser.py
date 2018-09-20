@@ -50,7 +50,11 @@ class ANSAParser(NewsMLTwoFeedParser):
         subjects = meta.findall(self.qname('subject'))
         for subject in subjects:
             if subject.get('type') == 'cptype:cat':
-                name = self.cat_map.get(subject.get('literal'))
+                if not item.get('subject'):
+                    item['subject'] = []
+                code = subject.get('literal')
+                item['subject'].append({'name': code, 'qcode': code, 'scheme': 'FIEG_Categories'})
+                name = self.cat_map.get(code)
                 if name:
                     item['anpa_category'] = [{'name': name, 'qcode': name.lower()}]
 

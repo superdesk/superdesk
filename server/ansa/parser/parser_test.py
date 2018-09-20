@@ -24,8 +24,9 @@ class ANSAParserTestCase(TestCase):
     def test_parse_semantics(self):
         item = self.parse('semantics.xml')
         self.assertRegex(item['description_text'], r'ANSA/GIUSEPPE LAMI$')
-        self.assertEqual(2, len(item['subject']))
+        self.assertEqual(3, len(item['subject']))
         self.assertIn({'name': 'Religious Leader', 'qcode': '12015000'}, item['subject'])
+        self.assertIn({'name': 'REL', 'qcode': 'REL', 'scheme': 'FIEG_Categories'}, item['subject'])
         self.assertIn('semantics', item)
         self.assertIn('iptcDomains', item['semantics'])
         self.assertIn('Religious Leader', item['semantics']['iptcDomains'])
