@@ -9,10 +9,12 @@ module.exports = function(grunt) {
         apps: [
             'superdesk.analytics'
         ],
+
         importApps: [
             'superdesk-analytics',
             'superdesk-publisher'
         ],
+
         defaultRoute: '/workspace/personal',
 
         publisher: {
@@ -38,8 +40,10 @@ module.exports = function(grunt) {
             preview: 1,
             swimlane: {columnsLimit: 4},
             editor3: true,
-            editorHighlights: true
+            editorHighlights: true,
+            autorefreshContent: true,
         },
+
         workspace: {
             analytics: true
         }
