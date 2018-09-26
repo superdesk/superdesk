@@ -205,34 +205,9 @@ SCHEMA = {
         },
         "subject": {
             "required": False,
-            "schema": {
-                "type": "dict",
-                "schema": {
-                    "name": {},
-                    "scheme": {
-                        "required": True,
-                        "nullable": True,
-                        "allowed": [
-                            "01",
-                            "products",
-                        ],
-                        "type": "string"
-                    },
-                    "qcode": {},
-                    "parent": {
-                        "nullable": True
-                    },
-                    "service": {
-                        "nullable": True
-                    }
-                }
-            },
             "nullable": True,
             "default": [],
             "type": "list",
-            "mandatory_in_list": {
-                "scheme": {}
-            }
         },
         "language": {
             "required": True,
