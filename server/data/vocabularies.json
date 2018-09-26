@@ -279,70 +279,6 @@
         }
     },
     {
-        "_id": "subscriber_types",
-        "display_name": "Subscriber Types",
-        "type": "unmanageable",
-        "items": [
-            {
-                "is_active": true,
-                "name": "All",
-                "qcode": "all",
-                "formats": [
-                    {
-                        "name": "NINJS",
-                        "qcode": "ninjs"
-                    },
-                    {
-                        "name": "NewsML G2",
-                        "qcode": "newsmlg2html"
-                    },
-                    {
-                        "name": "Email",
-                        "qcode": "email"
-                    }
-                ]
-            },
-            {
-                "is_active": true,
-                "name": "Digital/Internet",
-                "qcode": "digital",
-                "formats": [
-                    {
-                        "name": "NINJS",
-                        "qcode": "ninjs"
-                    },
-                    {
-                        "name": "NewsML G2",
-                        "qcode": "newsmlg2html"
-                    },
-                    {
-                        "name": "Email",
-                        "qcode": "email"
-                    }
-                ]
-            },
-            {
-                "is_active": true,
-                "name": "Wire/Paper",
-                "qcode": "wire",
-                "formats": [
-                    {
-                        "name": "NITF",
-                        "qcode": "nitf"
-                    },
-                    {
-                        "name": "NewsML G2",
-                        "qcode": "newsmlg2html"
-                    },
-                    {
-                        "name": "Email",
-                        "qcode": "email"
-                    }
-                ]
-            }
-        ]
-    },
-    {
         "_id": "products",
         "display_name": "Products",
         "type": "manageable",
@@ -12546,6 +12482,7 @@
     {
         "_id": "subscriber_types",
         "display_name": "Subscriber Types",
+        "init_version": 1000,
         "type": "unmanageable",
         "items": [
             {
@@ -12572,6 +12509,10 @@
                     {
                         "name": "ANSA NewsML G2",
                         "qcode": "newsmlg2ansa"
+                    },
+                    {
+                        "name": "Newsroom NINJS",
+                        "qcode": "newsroom ninjs"
                     }
                 ]
             },
@@ -12599,6 +12540,10 @@
                     {
                         "name": "ANSA NewsML G2",
                         "qcode": "newsmlg2ansa"
+                    },
+                    {
+                        "name": "Newsroom NINJS",
+                        "qcode": "newsroom ninjs"
                     }
                 ]
             },
@@ -12622,6 +12567,10 @@
                     {
                         "name": "ANSA NewsML G2",
                         "qcode": "newsmlg2ansa"
+                    },
+                    {
+                        "name": "Newsroom NINJS",
+                        "qcode": "newsroom ninjs"
                     }
                 ]
             }

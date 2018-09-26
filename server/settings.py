@@ -28,7 +28,7 @@ ABS_PATH = str(Path(__file__).resolve().parent)
 
 init_data = Path(ABS_PATH) / 'data'
 if init_data.exists():
-    XINIT_DATA_PATH = init_data
+    INIT_DATA_PATH = init_data
 
 INSTALLED_APPS = [
     'apps.languages',
