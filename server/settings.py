@@ -32,8 +32,8 @@ if init_data.exists():
     INIT_DATA_PATH = init_data
 
 INSTALLED_APPS.extend([
-    #'analytics',
     'apps.languages',
+    'planning',
 ])
 
 RENDITIONS = {
