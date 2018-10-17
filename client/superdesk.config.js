@@ -7,9 +7,8 @@
 module.exports = function(grunt) {
     return {
         apps: [
-        ],
-
-        importApps: [
+            'superdesk-planning',
+            'superdesk-publisher',
         ],
 
         defaultRoute: '/workspace/personal',
@@ -34,6 +33,15 @@ module.exports = function(grunt) {
         },
 
         workspace: {
-        }
+            planning: true,
+            assignments: true,
+        },
+
+        publisher: {
+            protocol: 'https',
+            tenant: process.env.PUBLISHER_API_SUBDOMAIN || '',
+            domain: process.env.PUBLISHER_API_DOMAIN || 'localhost',
+            base: 'api/v1',
+        },
     };
 };
