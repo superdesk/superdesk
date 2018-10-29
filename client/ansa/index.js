@@ -541,6 +541,40 @@ function AnsaMapCtrl($scope, $modal) {
     };
 }
 
+AnsaSearchPanelController.$inject = ['$scope'];
+function AnsaSearchPanelController($scope) {
+    this.categories = [
+        'ACE',
+        'CLJ',
+        'DIS',
+        'EBF',
+        'EDU',
+        'ENV',
+        'FIN',
+        'HTH',
+        'HUM',
+    ];
+
+    this.fields = [
+        {name: 'title', label: 'Title'},
+        {name: 'text', label: 'Text'},
+        {name: 'place', label: 'Place'},
+        {name: 'author', label: 'Author'},
+        {name: 'creditline', label: 'Credits'},
+        {name: 'subcategory', label: 'Subcategory'},
+    ];
+
+    this.selectedCategories = {};
+
+    this.updateCategory = (meta) => {
+        meta.category = Object.keys(this.selectedCategories).filter((category) => !!this.selectedCategories[category]);
+    };
+
+    $scope.$on('search:parameters', () => {
+        console.info('search', $scope.query, $scope.meta);
+    });
+}
+
 export default angular.module('ansa.superdesk', [
     widgets.name,
     packages.name,
@@ -552,6 +586,7 @@ export default angular.module('ansa.superdesk', [
     .controller('AnsaSemanticsCtrl', AnsaSemanticsCtrl)
     .controller('AnsaRelatedCtrl', AnsaRelatedCtrl)
     .controller('AnsaMapCtrl', AnsaMapCtrl)
+    .controller('AnsaSearchPanel', AnsaSearchPanelController)
     .directive('ansaMetasearchItem', AnsaMetasearchItem)
     .directive('ansaLiveSuggestions', AnsaLiveSuggestions)
     .directive('ansaMetasearchResults', AnsaMetasearchResults)
@@ -605,6 +640,11 @@ export default angular.module('ansa.superdesk', [
         $templateCache.put(
             'scripts/apps/authoring/packages/views/packages-widget.html',
             require('./views/packages-widget.html')
+        );
+
+        $templateCache.put(
+            'search-panel-ansa.html',
+            require('./views/search-panel.html')
         );
     }])
 ;

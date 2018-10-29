@@ -17,7 +17,7 @@ def ansa_mock(url, request):
 class AnsaPictureTestCase(unittest.TestCase):
 
     def setUp(self):
-        self.service = AnsaPictureProvider({})
+        self.service = AnsaPictureProvider({'config': {'username': 'foo', 'password': 'bar'}})
         self.app = flask.Flask(__name__)
         self.app.config['ANSA_PHOTO_API'] = 'http://172.20.14.88/'
 
