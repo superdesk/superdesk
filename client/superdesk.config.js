@@ -27,6 +27,10 @@ module.exports = function(grunt) {
         longDateFromat: 'YYYY-MM-DD HH:mm',
 
         language: 'it',
+        profileLanguages: [
+            'en',
+            'it',
+        ],
 
         langOverride: {
             'en': {

@@ -41,3 +41,7 @@ def init_app(app):
 
     for resource in ['ingest', 'archive', 'published', 'archive_autosave']:
         app.config['DOMAIN'][resource]['schema'].update({'semantics': semantics_schema})
+
+    app.config['DOMAIN']['content_templates_apply']['schema']['item']['schema'].update(
+        {'semantics': semantics_schema}
+    )
