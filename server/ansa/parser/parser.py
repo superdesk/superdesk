@@ -78,6 +78,9 @@ class ANSAParser(NewsMLTwoFeedParser):
         item = super().parse_item(tree)
         if item.get('word_count') == 0 and item.get('type') == 'text':
             item['word_count'] = get_word_count(item.get('body_html', '<p></p>'))
+        item['guid'] = tree.attrib['guid']
+        item.setdefault('extra', {})
+        item['extra']['ansaid'] = item['guid']
         return item
 
     def datetime(self, string):
