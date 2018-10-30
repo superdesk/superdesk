@@ -1,0 +1,56 @@
+<fieldset ng-controller="AnsaSearchPanel as asp">
+    <div class="field" ng-repeat="field in asp.fields track by field.name">
+        <label class="search-label" for="search-{{ :: field.name }}">{{ :: field.label | translate }}</label>
+        <div class="control">
+            <input type="text" ng-keypress="keyPressed($event)" id="search-{{ :: field.name }}" ng-model="meta[field.name]" />
+        </div>
+    </div>
+
+    <div class="field">
+        <label class="search-label" translate>Themes</label>
+        <label class="search-label" ng-repeat="category in asp.categories" for="category-{{ :: category }}">
+            <input type="checkbox" ng-model="asp.selectedCategories[category]" ng-change="asp.updateCategory(meta)" id="category-{{ :: category }}" /> {{ :: category }}
+        </label>
+    </div>
+
+    <div class="field">
+        <label class="search-label" translate>When</label>
+        <select ng-model="meta.datefrom">
+            <option value="" translate>All</option>
+            <option value="today" translate>Today</option>
+            <option value="week" translate>Last week</option>
+            <option value="month" translate>Last month</option>
+            <option value="year" translate>Last year</option>
+        </select>
+    </div>
+
+    <div class="field">
+        <label class="search-label" translate>Orientation</label>
+
+        <label class="search-label">
+            <input type="radio" ng-model="meta.orientation" /> {{ :: 'All' | translate }}
+        </label>
+
+        <label class="search-label">
+            <input type="radio" ng-model="meta.orientation" value="vertical" /> {{ :: 'Vertical' | translate }}
+        </label>
+
+        <label class="search-label">
+            <input type="radio" ng-model="meta.orientation" value="horizontal" /> {{ :: 'Horizontal' | translate }}
+        </label>
+    </div>
+
+    <div class="field">
+        <label class="search-label" translate>Language</label>
+        <label class="search-label">
+            <input type="radio" ng-model="meta.language" /> {{ :: 'All' | translate }}
+        </label>
+
+        <label class="search-label">
+            <input type="radio" ng-model="meta.language" value="ITA" /> Italiano
+        </label>
+        <label class="search-label">
+            <input type="radio" ng-model="meta.language" value="ENG" /> English
+        </label>
+    </div>
+</fieldset>

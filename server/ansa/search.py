@@ -1,4 +1,5 @@
 
+import re
 import math
 import arrow
 import requests
@@ -7,6 +8,9 @@ import superdesk
 from urllib.parse import urljoin
 from flask import current_app as app
 from superdesk.io.commands.update_ingest import update_renditions
+from datetime import timedelta
+from superdesk.utc import utcnow, utc_to_local
+from datetime import timedelta
 
 
 SEARCH_ENDPOINT = 'ricerca.json'
@@ -36,6 +40,71 @@ def ansa_photo_api(endpoint):
     return urljoin(app.config['ANSA_PHOTO_API'], endpoint)
 
 
+def extract_params(query, names):
+    if isinstance(names, str):
+        names = [names]
+    findall = re.findall(r'([\w]+):\(([-\w\s*]+)\)', query)
+    params = {}
+    for name, _value in findall:
+        value = _value.replace('-', r'\-')
+        if name in names:
+            if params.get(name) and isinstance(params[name], str) and name == 'category':
+                params[name] = [params[name], value]
+            elif params.get(name) and name == 'category':
+                params[name].append(value)
+            else:
+                params[name] = value  # last one wins
+            query = query.replace('%s:(%s)' % (name, value), '')
+    query = query.strip()
+    if query:
+        params['q'] = query
+    return params
+
+
+FILTERS = [
+    'title',
+    'text',
+    'place',
+    'author',
+    'creditline',
+    'subcategory',
+    'category',
+    'orientation',
+    'language',
+    'datefrom',
+]
+
+QUERY_FILTERS = {
+    'title': 'TITLE.k',
+    'text': 'BODY.k',
+    'place': 'PLACE.k',
+    'author': 'AUTHOR.k',
+    'creditline': 'CREDITLINE.k',
+    'subcategory': 'SUBCAT.k',
+}
+
+
+QUERY_PARAMS = {
+    'orientation': 'orientamento',
+    'language': 'domainlang',
+    'datefrom': 'datafrom',
+}
+
+TZ = 'Europe/Rome'
+DATE_FORMAT = '%d/%m/%Y'
+DATE_RANGES = {
+    'today': lambda: local_date(timedelta(hours=0)),
+    'week': lambda: local_date(-timedelta(days=7)),
+    'month': lambda: local_date(-timedelta(days=30)),
+    'year': lambda: utc_to_local(TZ, utcnow()).replace(day=1, month=1).strftime(DATE_FORMAT),
+}
+
+
+def local_date(delta):
+    now = utcnow()
+    return utc_to_local(TZ, now + delta).strftime(DATE_FORMAT)
+
+
 class AnsaPictureProvider(superdesk.SearchProvider):
 
     label = 'ANSA Pictures'
@@ -46,8 +115,8 @@ class AnsaPictureProvider(superdesk.SearchProvider):
         page = math.ceil((int(query.get('from', 0)) + 1) / size)
 
         params = {
-            'username': SEARCH_USERNAME,
-            'password': SEARCH_PASSWORD,
+            'username': self.provider['config']['username'],
+            'password': self.provider['config']['password'],
             'pgnum': page,
             'pgsize': size,
             'querylang': 'ITA',
@@ -57,7 +126,26 @@ class AnsaPictureProvider(superdesk.SearchProvider):
 
         query_string = query.get('query', {}).get('filtered', {}).get('query', {}).get('query_string', {})
         if query_string.get('query'):
-            params['searchtext'] = query_string.get('query')
+            searchtext = query_string['query']
+            filters = extract_params(searchtext, FILTERS)
+            if filters.get('q'):
+                params['searchtext'] = filters['q']
+            query_filters = []
+            for (key, val) in filters.items():
+                if key in QUERY_FILTERS:
+                    query_filters.append('%s = %s' % (QUERY_FILTERS[key], val))
+                elif key == 'category':
+                    values = [val] if isinstance(val, str) else val
+                    for cat in values:
+                        query_filters.append('categoryAnsa = %s' % cat)
+                elif key in QUERY_PARAMS:
+                    params[QUERY_PARAMS[key]] = val
+                    if key == 'orientation':
+                        params[QUERY_PARAMS[key]] = '1' if val.lower() == 'vertical' else '0'
+                    if key == 'datefrom':
+                        params[QUERY_PARAMS[key]] = DATE_RANGES[val.lower()]()
+            if query_filters:
+                params['filters'] = query_filters
 
         response = requests.get(ansa_photo_api(SEARCH_ENDPOINT), params=params, timeout=TIMEOUT)
         return self._parse_items(response)
@@ -72,7 +160,10 @@ class AnsaPictureProvider(superdesk.SearchProvider):
         for doc in documents:
             md5 = get_meta(doc, 'orientationMD5')
             guid = get_meta(doc, 'idAnsa')
-            pubdate = arrow.get(get_meta(doc, 'pubDate_N')).datetime
+            try:
+                pubdate = arrow.get(get_meta(doc, 'pubDate_N')).datetime
+            except ValueError:
+                continue
             items.append({
                 'type': 'picture',
                 'pubstatus': get_meta(doc, 'status').replace('stat:', ''),
@@ -117,8 +208,8 @@ class AnsaPictureProvider(superdesk.SearchProvider):
     def fetch(self, guid):
         params = {
             'idAnsa': guid,
-            'username': SEARCH_USERNAME,
-            'password': SEARCH_PASSWORD,
+            'username': self.provider['config']['username'],
+            'password': self.provider['config']['password'],
             'changets': 'true',
         }
 

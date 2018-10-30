@@ -146,9 +146,12 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         _, doc = formatter.format(article, self.subscriber)[0]
         self.assertIn('<link', doc)
         xml = etree.fromstring(doc.encode('utf-8'))
-        link = xml.find(
-            '{http://iptc.org/std/nar/2006-10-01/}itemSet/{http://iptc.org/std/nar/2006-10-01/}newsItem/' +
-            '{http://iptc.org/std/nar/2006-10-01/}itemMeta/{http://iptc.org/std/nar/2006-10-01/}link')
+        link = xml.find('/'.join([
+            ns('itemSet'),
+            ns('newsItem'),
+            ns('itemMeta'),
+            ns('link'),
+        ]))
         self.assertIsNotNone(link)
         self.assertEqual('image/jpeg', link.attrib['mimetype'])
         self.assertEqual('irel:seeAlso', link.attrib['rel'])

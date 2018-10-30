@@ -88,7 +88,7 @@ MACROS_MODULE = 'ansa.macros'
 
 LEGAL_ARCHIVE = True
 
-ANSA_PHOTO_API = env('ANSA_PHOTO_API', 'http://172.20.14.88/ansafoto/portaleimmagini/api/')
+ANSA_PHOTO_API = env('ANSA_PHOTO_API', 'http://172.20.14.67:8080/portaleimmagini/api/')
 
 CONTENT_EXPIRY_MINUTES = 60 * 24 * 7  # 1w
 PUBLISHED_CONTENT_EXPIRY_MINUTES = 60 * 24 * 30
