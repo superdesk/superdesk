@@ -10,6 +10,7 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import os
+from flask import json
 from pathlib import Path
 
 
@@ -94,178 +95,44 @@ CONTENT_EXPIRY_MINUTES = 60 * 24 * 7  # 1w
 PUBLISHED_CONTENT_EXPIRY_MINUTES = 60 * 24 * 30
 AUDIT_EXPIRY_MINUTES = PUBLISHED_CONTENT_EXPIRY_MINUTES
 
+with open(os.path.join(os.path.dirname(__file__), 'picture-profile.json')) as profile_json:
+    picture_profile = json.load(profile_json)
+
 EDITOR = {
-    "picture": {
-        "CopyrigthLine": {
-            "order": 16
-        },
-        "authors": {
-            "order": 14,
-            "sdWidth": "half"
-        },
-        "subtitle": {
-            "order": 3
-        },
-        "byline": {
-            "order": 15,
-            "sdWidth": "half"
-        },
-        "subject": {
-            "order": 10,
-            "sdWidth": "full"
-        },
-        "language": {
-            "order": 8,
-            "sdWidth": "half"
-        },
-        "headline": {
-            "order": 2,
-            "formatOptions": [
-                "underline",
-                "link",
-                "bold"
-            ]
-        },
-        "digitator": {
-            "order": 6,
-            "sdWidth": "half"
-        },
-        "slugline": {
-            "order": 1,
-            "sdWidth": "full"
-        },
-        "place": {
-            "order": 7,
-            "sdWidth": "half"
-        },
-        "ednote": {
-            "order": 13,
-            "sdWidth": "full"
-        },
-        "keywords": {
-            "order": 12,
-            "sdWidth": "full"
-        },
-        "anpa_category": {
-            "order": 9,
-            "sdWidth": "half"
-        },
-        "key": {
-            "order": 4,
-            "sdWidth": "half"
-        },
-        "date": {
-            "order": 5,
-            "sdWidth": "half"
-        },
-        "products": {
-            "order": 11,
-            "sdWidth": "full",
-        },
-    }
+    "picture": picture_profile['editor'],
 }
 
 SCHEMA = {
-    "picture": {
-        "CopyrigthLine": {
-            "required": False,
-            "enabled": True,
-            "nullable": False,
-            "type": "text"
-        },
-        "authors": {
-            "required": False,
-            "nullable": False,
-            "type": "list",
-            "schema": {
-                "type": "dict",
-                "schema": {
-                    "role": {
-                        "type": "string"
-                    },
-                    "name": {
-                        "type": "string"
-                    },
-                    "parent": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
-        "subtitle": {
-            "required": False,
-            "enabled": True,
-            "nullable": True,
-            "type": "text"
-        },
-        "byline": {
-            "required": False,
-            "nullable": True,
-            "type": "string"
-        },
-        "subject": {
-            "required": False,
-            "nullable": True,
-            "default": [],
-            "type": "list",
-        },
-        "language": {
-            "required": True,
-            "enabled": True,
-            "nullable": False,
-            "type": "string"
-        },
-        "headline": {
-            "required": True,
-            "nullable": False,
-            "type": "string"
-        },
-        "digitator": {
-            "required": False,
-            "enabled": True,
-            "nullable": False,
-            "type": "text"
-        },
-        "slugline": {
-            "required": False,
-            "nullable": False,
-            "type": "string"
-        },
-        "place": {
-            "required": False,
-            "nullable": True,
-            "type": "list"
-        },
-        "ednote": {
-            "required": False,
-            "nullable": True,
-            "type": "string"
-        },
-        "keywords": {
-            "required": False,
-            "enabled": True,
-            "nullable": True,
-            "type": "list"
-        },
-        "anpa_category": {
-            "required": False,
-            "nullable": False,
-            "type": "list"
-        },
-        "date": {
-            "required": False,
-            "enabled": True,
-            "nullable": True,
-            "type": "date"
-        },
-        "key": {
-            "required": False,
-            "enabled": True,
-            "nullable": False,
-            "type": "text"
-        }
-    }
+    "picture": picture_profile['schema'],
 }
+
+VALIDATOR_MEDIA_METADATA = {
+    "headline": {
+        "required": True,
+    },
+    "alt_text": {
+        "required": False,
+    },
+    "archive_description": {
+        "required": False,
+    },
+    "description_text": {
+        "required": True,
+    },
+    "copyrightholder": {
+        "required": False,
+    },
+    "byline": {
+        "required": False,
+    },
+    "usageterms": {
+        "required": False,
+    },
+    "copyrightnotice": {
+        "required": False,
+    },
+}
+
 
 GEONAMES_USERNAME = env('GEONAMES_USERNAME', 'superdesk_dev')
 

@@ -1,0 +1,150 @@
+{
+    "editor": {
+        "CopyrigthLine": {
+            "order": 15
+        },
+        "byline": {
+            "order": 14,
+            "sdWidth": "half"
+        },
+        "sign_off": {
+            "order": 16
+        },
+        "subject": {
+            "order": 10,
+            "sdWidth": "half"
+        },
+        "subtitle": {
+            "order": 3
+        },
+        "ednote": {
+            "order": 12,
+            "sdWidth": "full"
+        },
+        "FIEG_Categories": {
+            "order": 17
+        },
+        "language": {
+            "order": 8,
+            "sdWidth": "half"
+        },
+        "keywords": {
+            "order": 11,
+            "sdWidth": "full"
+        },
+        "date": {
+            "order": 5,
+            "sdWidth": "half"
+        },
+        "products": {
+            "order": 18,
+            "sdWidth": "full"
+        },
+        "headline": {
+            "order": 2,
+            "formatOptions": ["underline", "link", "bold"]
+        },
+        "place": {
+            "order": 7,
+            "sdWidth": "half"
+        },
+        "digitator": {
+            "order": 6,
+            "sdWidth": "half"
+        }
+    },
+    "schema": {
+        "ednote": {
+            "required": false,
+            "nullable": true,
+            "type": "string"
+        },
+        "CopyrigthLine": {
+            "enabled": true,
+            "type": "text",
+            "nullable": true,
+            "required": false
+        },
+        "byline": {
+            "required": false,
+            "nullable": true,
+            "type": "string"
+        },
+        "language": {
+            "enabled": true,
+            "type": "string",
+            "nullable": false,
+            "required": true
+        },
+        "sign_off": {
+            "enabled": true,
+            "type": "string",
+            "nullable": true,
+            "required": false
+        },
+        "date": {
+            "enabled": true,
+            "type": "date",
+            "nullable": true,
+            "required": false
+        },
+        "keywords": {
+            "enabled": true,
+            "type": "list",
+            "nullable": true,
+            "required": false
+        },
+        "headline": {
+            "required": true,
+            "nullable": false,
+            "type": "string"
+        },
+        "subtitle": {
+            "enabled": true,
+            "type": "text",
+            "nullable": true,
+            "required": false
+        },
+        "place": {
+            "required": false,
+            "nullable": true,
+            "type": "list"
+        },
+        "subject": {
+            "default": [],
+            "type": "list",
+            "nullable": true,
+            "mandatory_in_list": {
+                "scheme": {
+                    "products": "products"
+                }
+            },
+            "required": false,
+            "schema": {
+                "type": "dict",
+                "schema": {
+                    "service": {
+                        "nullable": true
+                    },
+                    "scheme": {
+                        "allowed": ["products", "FIEG_Categories"],
+                        "type": "string",
+                        "nullable": true,
+                        "required": true
+                    },
+                    "qcode": {},
+                    "parent": {
+                        "nullable": true
+                    },
+                    "name": {}
+                }
+            }
+        },
+        "digitator": {
+            "enabled": true,
+            "type": "text",
+            "nullable": true,
+            "required": false
+        }
+    }
+}
