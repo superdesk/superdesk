@@ -1,80 +1,114 @@
 {
     "editor": {
-        "CopyrigthLine": {
-            "order": 15
-        },
-        "byline": {
-            "order": 14,
+        "slugline": {
+            "order": 1,
             "sdWidth": "half"
         },
-        "sign_off": {
-            "order": 16
+        "language": {
+            "order": 2,
+            "sdWidth": "half"
         },
-        "subject": {
-            "order": 10,
+        "headline": {
+            "order": 3,
+            "sdWidth": "half"
+        },
+        "number": {
+            "order": 4,
             "sdWidth": "half"
         },
         "subtitle": {
-            "order": 3
-        },
-        "ednote": {
-            "order": 12,
-            "sdWidth": "full"
-        },
-        "FIEG_Categories": {
-            "order": 17
-        },
-        "language": {
-            "order": 8,
-            "sdWidth": "half"
-        },
-        "keywords": {
-            "order": 11,
-            "sdWidth": "full"
-        },
-        "date": {
             "order": 5,
             "sdWidth": "half"
         },
-        "products": {
-            "order": 18,
-            "sdWidth": "full"
+        "FIEG_Categories": {
+            "order": 6,
+            "sdWidth": "half"
         },
-        "headline": {
-            "order": 2,
-            "formatOptions": ["underline", "link", "bold"]
-        },
-        "place": {
+        "supplier": {
             "order": 7,
             "sdWidth": "half"
         },
+        "byline": {
+            "order": 8,
+            "sdWidth": "half"
+        },
+        "coauthor": {
+            "order": 9,
+            "sdWidth": "half"
+        },
         "digitator": {
-            "order": 6,
+            "order": 10,
+            "sdWidth": "half"
+        },
+        "copyrightnotice": {
+            "order": 11,
+            "sdWidth": "full",
+            "textarea": true
+        },
+        "description_text": {
+            "order": 12,
+            "sdWidth": "full",
+            "textarea": true
+        },
+        "ednote": {
+            "order": 13,
+            "sdWidth": "full",
+            "textarea": true
+        },
+
+        "sign_off": {
+            "order": 14,
+            "sdWidth": "full"
+        },
+
+        "products": {
+            "order": 15,
+            "sdWidth": "half"
+        },
+
+        "subject": {
+            "order": 16,
+            "sdWidth": "half"
+        },
+
+        "keywords": {
+            "order": 17,
+            "sdWidth": "full"
+        },
+
+        "place": {
+            "order": 18,
             "sdWidth": "half"
         }
     },
     "schema": {
-        "ednote": {
-            "required": false,
-            "nullable": true,
-            "type": "string"
+        "slugline": {
+            "type": "string",
+            "required": true,
+            "nullable": true
         },
-        "CopyrigthLine": {
+        "ednote": {
+            "type": "string",
+            "required": false,
+            "nullable": true
+        },
+        "copyrightnotice": {
+            "type": "string",
             "enabled": true,
-            "type": "text",
             "nullable": true,
-            "required": false
+            "required": true
         },
         "byline": {
-            "required": false,
-            "nullable": true,
-            "type": "string"
+            "type": "string",
+            "required": true,
+            "nullable": true
         },
         "language": {
-            "enabled": true,
             "type": "string",
+            "enabled": true,
             "nullable": false,
-            "required": true
+            "required": true,
+            "default": "it"
         },
         "sign_off": {
             "enabled": true,
@@ -140,11 +174,35 @@
                 }
             }
         },
-        "digitator": {
+        "coauthor": {
             "enabled": true,
             "type": "text",
             "nullable": true,
             "required": false
+        },
+        "digitator": {
+            "enabled": true,
+            "type": "text",
+            "nullable": true,
+            "required": true
+        },
+        "supplier": {
+            "enabled": true,
+            "type": "text",
+            "nullable": true,
+            "required": true,
+            "default": "ANSA"
+        },
+        "number": {
+            "enabled": true,
+            "type": "text",
+            "nullable": true,
+            "required": false
+        },
+        "description_text": {
+            "type": "string",
+            "nullable": true,
+            "required": true
         }
     }
 }
