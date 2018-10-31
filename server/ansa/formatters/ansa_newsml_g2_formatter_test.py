@@ -329,3 +329,17 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         self.assertEqual(1, len(places))
         self.assertEqual('n:Roma', places[0].get('qcode'))
         self.assertEqual('Roma', places[0].find(ns('name')).text)
+
+    def get_item(self, article_updates):
+        article = self.get_article(article_updates)
+        xml = self.format(article)
+        return xml.find(ns('itemSet/') + ns('newsItem'))
+
+    def test_use_original_ansa_id(self):
+        updates = {'extra': {'ansaid': 'tag:ansa:foo'}}
+        item = self.get_item(updates)
+        self.assertEqual(updates['extra']['ansaid'], item.get('guid'))
+
+        updates['original_id'] = 'some:other:id'
+        item = self.get_item(updates)
+        self.assertNotEqual(updates['extra']['ansaid'], item.get('guid'))

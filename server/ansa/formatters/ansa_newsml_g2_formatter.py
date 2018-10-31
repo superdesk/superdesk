@@ -214,3 +214,16 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
                     place['qcode'],
                     'cpnat:geoArea'
                 )
+
+    def _format_item_set(self, article, item_set, item_type):
+        """Use original ansa id if available."""
+        item = super()._format_item_set(article, item_set, item_type)
+        if article.get('extra', {}).get('ansaid') and not article.get('original_id'):
+            item.set('guid', article['extra']['ansaid'])
+        return item
+
+    def _format_rights(self, newsItem, article):
+        try:
+            super()._format_rights(newsItem, article)
+        except KeyError:
+            pass

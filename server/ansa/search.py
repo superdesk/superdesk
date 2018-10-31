@@ -20,12 +20,6 @@ ORIGINAL_ENDPOINT = 'binary/{}.jpg?guid={}&username={}&password={}'
 THUMB_HREF = 'https://ansafoto.ansa.it/portaleimmagini/bdmproxy/{}.jpg?format=thumb&guid={}'
 VIEWIMG_HREF = 'https://ansafoto.ansa.it/portaleimmagini/bdmproxy/{}.jpg?format=med&guid={}'
 
-SEARCH_USERNAME = 'angelo2'
-SEARCH_PASSWORD = 'blabla'
-
-ORIG_USERNAME = SEARCH_USERNAME
-ORIG_PASSWORD = SEARCH_PASSWORD
-
 TIMEOUT = (5, 25)
 
 
@@ -190,11 +184,13 @@ class AnsaPictureProvider(superdesk.SearchProvider):
                         'width': 384,
                     },
                     'baseImage': {
-                        'href': ansa_photo_api(ORIGINAL_ENDPOINT).format(md5, guid, ORIG_USERNAME, ORIG_PASSWORD),
+                        'href': ansa_photo_api(ORIGINAL_ENDPOINT).format(md5, guid, self.provider['config']['username'],
+                                                                         self.provider['config']['password']),
                         'mimetype': 'image/jpeg',
                     },
                     'original': {
-                        'href': ansa_photo_api(ORIGINAL_ENDPOINT).format(md5, guid, ORIG_USERNAME, ORIG_PASSWORD),
+                        'href': ansa_photo_api(ORIGINAL_ENDPOINT).format(md5, guid, self.provider['config']['username'],
+                                                                         self.provider['config']['password']),
                         'mimetype': 'image/jpeg',
                     },
                 },
@@ -202,6 +198,9 @@ class AnsaPictureProvider(superdesk.SearchProvider):
                     {'name': get_meta(doc, 'city')},
                     {'name': get_meta(doc, 'ctrName')},
                 ],
+                'extra': {
+                    'ansaid': guid,
+                },
             })
         return items
 

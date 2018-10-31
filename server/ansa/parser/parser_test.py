@@ -20,6 +20,8 @@ class ANSAParserTestCase(TestCase):
         self.assertGreater(item['word_count'], 0)
         self.assertEqual([{'qcode': 'chronicle', 'name': 'Chronicle'}], item.get('anpa_category'))
         self.assertIn({'name': 'Product X', 'scheme': 'products', 'qcode': '123456789'}, item['subject'])
+        self.assertEqual('tag:ansa.it,2017-02-24:ea58f9ce5951ece86fe126162c4fb161', item['guid'])
+        self.assertEqual(item['guid'], item['extra']['ansaid'])
 
     def test_parse_semantics(self):
         item = self.parse('semantics.xml')
