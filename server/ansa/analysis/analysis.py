@@ -13,13 +13,32 @@ import json
 import requests
 import requests.exceptions
 
-from superdesk.resource import Resource
+from superdesk.resource import Resource, not_analyzed
 from superdesk.services import BaseService
 from flask import current_app as app
 
 
 FORMAT_XML = "xml"
 FORMAT_JSON = "json"
+SEMANTICS_SCHEMA = {
+    'type': 'dict',
+    'schema': {
+        'iptcCodes': {'type': 'list', 'mapping': not_analyzed},
+        'iptcDomains': {'type': 'list', 'mapping': not_analyzed},
+        'newsDomains': {'type': 'list', 'mapping': not_analyzed},
+        'places': {'type': 'list', 'mapping': not_analyzed},
+        'persons': {'type': 'list'},  # enable analyzer
+        'organizations': {'type': 'list', 'mapping': not_analyzed},
+        'mainGroups': {'type': 'list', 'mapping': not_analyzed},
+        'mainLemmas': {'type': 'list', 'mapping': not_analyzed},
+        'mainSenteces': {'type': 'list'},
+        'isMOODneutral': {'type': 'boolean'},
+        'isMOODnegative': {'type': 'boolean'},
+        'isMOODpositive': {'type': 'boolean'},
+        'saos': {'type': 'list', 'mapping': not_analyzed},
+        'sentimental': {'type': 'list', 'mapping': not_analyzed},
+    }
+}
 
 
 def parse(extracted):
@@ -31,6 +50,8 @@ def parse(extracted):
     }
     for key, val in extracted.items():
         if not isinstance(val, list):
+            continue
+        if key not in SEMANTICS_SCHEMA['schema']:
             continue
         items = []
         for item in val:
