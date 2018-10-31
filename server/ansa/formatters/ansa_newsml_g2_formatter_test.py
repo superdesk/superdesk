@@ -343,3 +343,24 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         updates['original_id'] = 'some:other:id'
         item = self.get_item(updates)
         self.assertNotEqual(updates['extra']['ansaid'], item.get('guid'))
+
+    def test_semantics(self):
+        updates = {
+            'semantics': {
+                'persons': ['Giorgio Ferrero', 'Flavio'],
+                'organizations': ['Biennale College', 'College Cinema'],
+            },
+            'company_codes': [],
+        }
+
+        meta = self.format_content_meta(updates)
+
+        persons = meta.findall(ns('subject[@type="cpnat:person"]'))
+        self.assertEqual(2, len(persons))
+        self.assertEqual(updates['semantics']['persons'][0], persons[0].find(ns('name')).text)
+        self.assertEqual(updates['semantics']['persons'][1], persons[1].find(ns('name')).text)
+
+        orgs = meta.findall(ns('subject[@type="cpnat:organisation"]'))
+        self.assertEqual(2, len(orgs))
+        self.assertEqual(updates['semantics']['organizations'][0], orgs[0].find(ns('name')).text)
+        self.assertEqual(updates['semantics']['organizations'][1], orgs[1].find(ns('name')).text)
