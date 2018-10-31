@@ -89,6 +89,7 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
         self._format_authors(article, content_meta)
         self._format_extra(article, content_meta)
         self._format_sms(article, content_meta)
+        self._format_semantics(article, content_meta)
 
     def _format_extra(self, article, content_meta):
         extra = article.get('extra', {})
@@ -227,3 +228,12 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
             super()._format_rights(newsItem, article)
         except KeyError:
             pass
+
+    def _format_semantics(self, article, content_meta):
+        mapping = [('persons', 'cpnat:person'), ('organizations', 'cpnat:organisation')]
+        semantics = article.get('semantics', {})
+        for field, cpnat in mapping:
+            if semantics.get(field):
+                for item in semantics[field]:
+                    subj = SubElement(content_meta, 'subject', attrib={'type': cpnat})
+                    SubElement(subj, 'name').text = item
