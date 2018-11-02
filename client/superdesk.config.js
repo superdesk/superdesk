@@ -114,5 +114,10 @@ module.exports = function(grunt) {
             'copyright',
             'usageterms',
         ],
+
+        defaultSearch: {
+            ingest: false,
+            archive: false,
+        },
     };
 };
