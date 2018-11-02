@@ -2,11 +2,15 @@ import _ from 'lodash';
 import angular from 'angular';
 import widgets from './widgets';
 import packages from './package-manager/package-manager';
+import {max} from 'lodash';
 
 import closedDeskWidget from './closed-desk';
 
 import './styles.scss';
 import './package-manager/package-manager.scss';
+
+// must match gallery field id
+const GALLERY = 'photoGallery';
 
 class MetasearchController {
     constructor($scope, $location, $timeout, metasearch, Keys, workspace) {
@@ -266,8 +270,8 @@ function AnsaSemanticsCtrl($scope, $rootScope, api) {
     init();
 }
 
-AnsaRelatedCtrl.$inject = ['$scope', 'api', 'storage', 'Keys'];
-function AnsaRelatedCtrl($scope, api, storage, Keys) {
+AnsaRelatedCtrl.$inject = ['$scope', 'api', 'storage', 'Keys', 'mediaIdGenerator'];
+function AnsaRelatedCtrl($scope, api, storage, Keys, mediaIdGenerator) {
     const search = () => {
         if (!$scope.item.semantics || !$scope.item.semantics.iptcCodes) {
             this.items = [];
@@ -367,6 +371,37 @@ function AnsaRelatedCtrl($scope, api, storage, Keys) {
         });
 
     search();
+
+    // set given picture as featured for current item
+    this.setFeatured = (picture) => {
+        const associations = Object.assign({}, $scope.item.associations || {});
+
+        associations.featuremedia = picture;
+        $scope.item.associations = associations;
+
+        $scope.autosave($scope.item);
+    };
+
+    // add picture to item photo gallery
+    this.addToGallery = (picture) => {
+        const associations = Object.assign({}, $scope.item.associations || {});
+        const index = max(Object.keys(associations).map((key) => {
+            if (key.indexOf(GALLERY) === 0) {
+                return mediaIdGenerator.getFieldParts(key)[1] || 0;
+            }
+
+            return 0;
+        }));
+
+        const rel = mediaIdGenerator.getFieldVersionName(GALLERY, index + 1);
+
+        associations[rel] = picture;
+        $scope.item.associations = associations;
+
+        $scope.autosave($scope.item);
+    };
+
+    this.allowAddMedia = () => $scope._editable && $scope.item.type === 'text';
 }
 
 function AnsaLiveSuggestions(workspace, metasearch) {
