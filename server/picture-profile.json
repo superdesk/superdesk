@@ -96,7 +96,7 @@
             "type": "string",
             "enabled": true,
             "nullable": true,
-            "required": true
+            "required": false
         },
         "byline": {
             "type": "string",
@@ -164,7 +164,7 @@
                         "allowed": ["products", "FIEG_Categories"],
                         "type": "string",
                         "nullable": true,
-                        "required": true
+                        "required": false
                     },
                     "qcode": {},
                     "parent": {
@@ -184,13 +184,13 @@
             "enabled": true,
             "type": "text",
             "nullable": true,
-            "required": true
+            "required": false
         },
         "supplier": {
             "enabled": true,
             "type": "text",
             "nullable": true,
-            "required": true,
+            "required": false,
             "default": "ANSA"
         },
         "number": {
@@ -202,7 +202,7 @@
         "description_text": {
             "type": "string",
             "nullable": true,
-            "required": true
+            "required": false
         }
     }
 }

@@ -117,7 +117,7 @@ VALIDATOR_MEDIA_METADATA = {
         "required": False,
     },
     "description_text": {
-        "required": True,
+        "required": False,
     },
     "copyrightholder": {
         "required": False,
