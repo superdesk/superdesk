@@ -84,7 +84,7 @@
     "schema": {
         "slugline": {
             "type": "string",
-            "required": true,
+            "required": false,
             "nullable": true
         },
         "ednote": {
@@ -129,7 +129,7 @@
             "required": false
         },
         "headline": {
-            "required": true,
+            "required": false,
             "nullable": false,
             "type": "string"
         },
@@ -150,7 +150,6 @@
             "nullable": true,
             "mandatory_in_list": {
                 "scheme": {
-                    "products": "products"
                 }
             },
             "required": false,
