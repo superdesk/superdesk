@@ -1,6 +1,6 @@
 {
     "dependencies": {
-        "superdesk-core": "superdesk/superdesk-client-core#0aea9ff",
+        "superdesk-core": "superdesk/superdesk-client-core#0ec1816",
         "superdesk-planning": "superdesk/superdesk-planning#1.1"
     },
     "devDependencies": {

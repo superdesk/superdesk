@@ -2,5 +2,5 @@ beautifulsoup4==4.5.3
 gunicorn==19.7.1
 honcho==1.0.1
 newrelic>=2.66,<2.67
--e git+git://github.com/superdesk/superdesk-core.git@9af044c#egg=superdesk-core
+-e git+git://github.com/superdesk/superdesk-core.git@4bbc3d5#egg=superdesk-core
 -e git+git://github.com/superdesk/superdesk-planning.git@1.1#egg=superdesk-planning
