@@ -2,15 +2,12 @@ import _ from 'lodash';
 import angular from 'angular';
 import widgets from './widgets';
 import packages from './package-manager/package-manager';
-import {max} from 'lodash';
 
 import closedDeskWidget from './closed-desk';
+import AnsaRelatedCtrl from './AnsaRelatedCtrl';
 
 import './styles.scss';
 import './package-manager/package-manager.scss';
-
-// must match gallery field id
-const GALLERY = 'photoGallery';
 
 class MetasearchController {
     constructor($scope, $location, $timeout, metasearch, Keys, workspace) {
@@ -169,6 +166,7 @@ function AnsaMetasearchItem(config, $http, $sce) {
                 link.href = scope.item.url;
                 link.text = scope.item.title;
                 dt.setData('text/html', link.outerHTML);
+                dt.setData('text/uri-list', scope.item.url);
             });
 
             scope.$on('$destroy', () => {
@@ -268,140 +266,6 @@ function AnsaSemanticsCtrl($scope, $rootScope, api) {
     }
 
     init();
-}
-
-AnsaRelatedCtrl.$inject = ['$scope', 'api', 'storage', 'Keys', 'mediaIdGenerator'];
-function AnsaRelatedCtrl($scope, api, storage, Keys, mediaIdGenerator) {
-    const search = () => {
-        if (!$scope.item.semantics || !$scope.item.semantics.iptcCodes) {
-            this.items = [];
-            return;
-        }
-
-        this.items = null;
-
-        let filters = [];
-        let semantics = $scope.item.semantics;
-        let keys = ['persons', 'organizations'];
-        let namespace = (key) => 'semantics.' + key;
-
-        keys.forEach((key) => {
-            if (semantics[key] && semantics[key].length) {
-                semantics[key].forEach((val) => {
-                    let f = {};
-
-                    f[namespace(key)] = val;
-                    filters.push({match: f});
-                });
-            }
-        });
-
-        let pictureFilters = [];
-        let prefixes = {};
-
-        if (!_.isEmpty(semantics.iptcCodes)) {
-            semantics.iptcCodes.forEach((code) => {
-                let prefix = code.substr(0, 2);
-
-                if (!prefixes[prefix]) {
-                    prefixes[prefix] = 1;
-                    pictureFilters.push({prefix: {'semantics.iptcCodes': prefix}});
-                }
-            });
-        }
-
-        let query = {
-            bool: {
-                must_not: {term: {_id: $scope.item._id}},
-                should: [],
-            },
-        };
-
-        if (this.activeFilter === 'text') {
-            angular.extend(query.bool, {
-                must: [
-                    {term: {type: 'text'}},
-                    {terms: {'semantics.iptcCodes': semantics.iptcCodes}},
-                ],
-                should: filters,
-                minimum_should_match: 1,
-            });
-        } else {
-            angular.extend(query.bool, {
-                must: pictureFilters.concat([{term: {type: this.activeFilter}}]),
-                should: filters,
-                minimum_should_match: 1,
-            });
-        }
-
-        if (this.query) {
-            query = {
-                bool: {
-                    must: [
-                        {term: {type: this.activeFilter}},
-                        {query_string: {query: this.query, lenient: true}},
-                    ],
-                },
-            };
-        }
-
-        console.info('query', angular.toJson(query, 2));
-        this.apiQuery(query);
-    };
-
-    this.activeFilter = storage.getItem('ansa.related.filter') || 'text';
-
-    this.filter = (activeFilter) => {
-        this.activeFilter = activeFilter;
-        storage.setItem('ansa.related.filter', activeFilter);
-        search();
-    };
-
-    this.searchOnEnter = (event) => {
-        if (event.which === Keys.enter) {
-            search();
-        }
-    };
-
-    this.apiQuery = (query) => api.query('archive', {source: {query: query, sort: ['_score'], size: 50}})
-        .then((response) => {
-            this.items = response._items;
-        }, (reason) => {
-            this.items = [];
-        });
-
-    search();
-
-    // set given picture as featured for current item
-    this.setFeatured = (picture) => {
-        const associations = Object.assign({}, $scope.item.associations || {});
-
-        associations.featuremedia = picture;
-        $scope.item.associations = associations;
-
-        $scope.autosave($scope.item);
-    };
-
-    // add picture to item photo gallery
-    this.addToGallery = (picture) => {
-        const associations = Object.assign({}, $scope.item.associations || {});
-        const index = max(Object.keys(associations).map((key) => {
-            if (key.indexOf(GALLERY) === 0) {
-                return mediaIdGenerator.getFieldParts(key)[1] || 0;
-            }
-
-            return 0;
-        }));
-
-        const rel = mediaIdGenerator.getFieldVersionName(GALLERY, index + 1);
-
-        associations[rel] = picture;
-        $scope.item.associations = associations;
-
-        $scope.autosave($scope.item);
-    };
-
-    this.allowAddMedia = () => $scope._editable && $scope.item.type === 'text';
 }
 
 function AnsaLiveSuggestions(workspace, metasearch) {
@@ -604,10 +468,6 @@ function AnsaSearchPanelController($scope) {
     this.updateCategory = (meta) => {
         meta.category = Object.keys(this.selectedCategories).filter((category) => !!this.selectedCategories[category]);
     };
-
-    $scope.$on('search:parameters', () => {
-        console.info('search', $scope.query, $scope.meta);
-    });
 }
 
 export default angular.module('ansa.superdesk', [
