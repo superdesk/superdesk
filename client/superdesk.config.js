@@ -27,9 +27,10 @@ module.exports = function(grunt) {
 
         features: {
             preview: 1,
-            swimlane: {columnsLimit: 4},
+            swimlane: {columnsLimit: 99},
             editor3: true,
             editorHighlights: true,
+            noPublishOnAuthoringDesk: true,
         },
 
         workspace: {
