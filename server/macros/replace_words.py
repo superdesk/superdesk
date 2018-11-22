@@ -80,7 +80,7 @@ def find_and_replace(item, **kwargs):
         replace_words_list = vocab.get('items') or []
 
         if not replace_words_list:
-            return (item, diff)
+            return item
 
         for field in macro_replacement_fields:
             if not item.get(field, None):
@@ -88,7 +88,7 @@ def find_and_replace(item, **kwargs):
 
             item[field] = do_find_replace(item[field], replace_words_list)
 
-    return (item, diff)
+    return item
 
 
 name = 'Replace_Words'
@@ -97,4 +97,4 @@ order = 1
 shortcut = 'a'
 callback = find_and_replace
 access_type = 'frontend'
-action_type = 'interactive'
+action_type = 'direct'
