@@ -2227,5 +2227,129 @@
                 "qcode": "WY"
             }
         ]
+    },
+    {
+        "_id": "urgency",
+        "display_name": "Urgency",
+        "type": "manageable",
+        "selection_type": "multi selection",
+        "unique_field": "qcode",
+        "items": [
+            {
+                "is_active": true,
+                "name": "1",
+                "qcode": 1
+            },
+            {
+                "is_active": true,
+                "name": "2",
+                "qcode": 2
+            },
+            {
+                "is_active": true,
+                "name": "3",
+                "qcode": 3
+            },
+            {
+                "is_active": true,
+                "name": "4",
+                "qcode": 4
+            },
+            {
+                "is_active": true,
+                "name": "5",
+                "qcode": 5
+            }
+        ],
+        "schema": {
+            "name": {
+                "translate": true
+            },
+            "qcode": {
+                "type": "integer"
+            },
+            "color": {
+                "type": "color",
+                "label": "Сolour"
+            },
+            "short": {
+                "type": "short",
+                "label": "List Name",
+                "maxlength": 2,
+                "translate": true
+            }
+        }
+    },
+    {
+        "_id": "priority",
+        "display_name": "Priority",
+        "type": "manageable",
+        "selection_type": "multi selection",
+        "unique_field": "qcode",
+        "items": [
+            {
+                "is_active": true,
+                "name": "1",
+                "qcode": 1
+            },
+            {
+                "is_active": true,
+                "name": "2",
+                "qcode": 2
+            },
+            {
+                "is_active": true,
+                "name": "3",
+                "qcode": 3
+            },
+            {
+                "is_active": true,
+                "name": "4",
+                "qcode": 4
+            },
+            {
+                "is_active": true,
+                "name": "5",
+                "qcode": 5
+            },
+            {
+                "is_active": true,
+                "name": "6",
+                "qcode": 6
+            },
+            {
+                "is_active": false,
+                "name": "7",
+                "qcode": 7
+            },
+            {
+                "is_active": false,
+                "name": "8",
+                "qcode": 8
+            },
+            {
+                "is_active": false,
+                "name": "9",
+                "qcode": 9
+            }
+        ],
+        "schema": {
+            "name": {
+                "translate": true
+            },
+            "qcode": {
+                "type": "integer"
+            },
+            "color": {
+                "type": "color",
+                "label": "Сolour"
+            },
+            "short": {
+                "type": "short",
+                "label": "List Name",
+                "maxlength": 2,
+                "translate": true
+            }
+        }
     }
 ]
