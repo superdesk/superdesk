@@ -38,6 +38,7 @@ module.exports = function(grunt) {
             preview: 1,
             swimlane: {columnsLimit: 4},
             editor3: true,
+            validatePointOfInterestForImages: false,
             editorHighlights: true
         },
         workspace: {
