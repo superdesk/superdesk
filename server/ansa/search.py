@@ -141,6 +141,10 @@ class AnsaPictureProvider(superdesk.SearchProvider):
             if query_filters:
                 params['filters'] = query_filters
 
+        # AND is default operator
+        if params.get('searchtext') and 'OR' not in params['searchtext'] and 'AND' not in params['searchtext']:
+            params['searchtext'] = ' AND '.join(params['searchtext'].split())
+
         response = requests.get(ansa_photo_api(SEARCH_ENDPOINT), params=params, timeout=TIMEOUT)
         return self._parse_items(response)
 
