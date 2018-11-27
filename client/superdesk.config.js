@@ -20,6 +20,7 @@ module.exports = function(grunt) {
             editFeaturedImage: true,
             searchShortcut: true,
             editor3: true,
+            validatePointOfInterestForImages: false,
         },
         shortTimeFormat: 'YYYY-MM-DD HH:mm',
         shortDateFormat: 'YYYY-MM-DD HH:mm',
