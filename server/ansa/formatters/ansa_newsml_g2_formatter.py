@@ -280,3 +280,12 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
                 'qcode': 'geo:%s' % place['region_code'],
             })
             SubElement(region, 'name').text = place['region']
+
+    def _format_genre(self, article, content_meta):
+        if article.get('genre'):
+            for g in article['genre']:
+                if g.get('name'):
+                    code = g.get('qcode', g['name'])
+                    qcode = code if ':' in code else 'genre:%s' % code
+                    genre = SubElement(content_meta, 'genre', attrib={'qcode': qcode})
+                    SubElement(genre, 'name', attrib={XML_LANG: article.get('language', 'en')}).text = g['name']

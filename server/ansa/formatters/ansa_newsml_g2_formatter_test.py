@@ -412,3 +412,15 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         self.assertIsNotNone(state)
         self.assertEqual('geo:%s' % geoname['region_code'], state.get('qcode'))
         self.assertEqual(geoname['region'], state.find(ns('name')).text)
+
+    def test_genre(self):
+        updates = {'genre': [{
+            'name': "Article (news)",
+            'qcode': "Article",
+        }]}
+        meta = self.format_content_meta(updates)
+
+        genre = meta.find(ns('genre'))
+        self.assertIsNotNone(genre)
+        self.assertEqual('genre:Article', genre.get('qcode'))
+        self.assertEqual('Article (news)', genre.find(ns('name')).text)
