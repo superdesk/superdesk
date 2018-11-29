@@ -62,8 +62,6 @@ def parse(extracted):
             if key == 'iptcDomains' and item.get('id'):
                 parsed['semantics']['iptcCodes'].append(item.get('id'))
                 parsed['subject'].append({'name': item.get('value'), 'qcode': item.get('id')})
-            if key == 'places':
-                parsed['place'].append({'name': item.get('value'), 'qcode': 'n:%s' % item.get('value')})
             if key == 'placesExpanded':
                 place = item.get('comune') or item.get('provincia') or item.get('regione') or item.get('nazione')
                 if place:
