@@ -15,6 +15,7 @@ import requests.exceptions
 
 from superdesk.resource import Resource, not_analyzed
 from superdesk.services import BaseService
+from superdesk.places.places_autocomplete import geonames_request, format_geoname_item
 from flask import current_app as app
 
 
@@ -37,6 +38,7 @@ SEMANTICS_SCHEMA = {
         'isMOODpositive': {'type': 'boolean'},
         'saos': {'type': 'list', 'mapping': not_analyzed},
         'sentimental': {'type': 'list', 'mapping': not_analyzed},
+        'placesExpanded': {'type': 'list'},
     }
 }
 
@@ -62,6 +64,14 @@ def parse(extracted):
                 parsed['subject'].append({'name': item.get('value'), 'qcode': item.get('id')})
             if key == 'places':
                 parsed['place'].append({'name': item.get('value'), 'qcode': 'n:%s' % item.get('value')})
+            if key == 'placesExpanded':
+                place = item.get('comune') or item.get('provincia') or item.get('regione') or item.get('nazione')
+                if place:
+                    geonames_item = format_geoname_item(
+                        geonames_request('getJSON', [('geonameId', place['code']), ('lang', 'it')])
+                    )
+                    parsed['place'].append(geonames_item)
+
         parsed['semantics'][key] = items
     if parsed['semantics'].get('mainLemmas'):
         parsed['slugline'] = ''

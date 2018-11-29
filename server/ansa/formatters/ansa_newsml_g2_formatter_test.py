@@ -364,3 +364,51 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         self.assertEqual(2, len(orgs))
         self.assertEqual(updates['semantics']['organizations'][0], orgs[0].find(ns('name')).text)
         self.assertEqual(updates['semantics']['organizations'][1], orgs[1].find(ns('name')).text)
+
+    def test_format_geonames_city(self):
+        geoname = {
+            "region": "Arezzo",
+            "scheme": "geonames",
+            "state": "Tuscany",
+            "state_code": "16",
+            "code": "6541097",
+            "continent_code": "EU",
+            "name": "Monte San Savino",
+            "feature_class": "A",
+            "region_code": "AR",
+            "location": {
+                "lat": 43.32924,
+                "lon": 11.72974
+            },
+            "country_code": "IT",
+            "country": "Italy"
+        }
+
+        updates = {'place': [geoname]}
+        meta = self.format_content_meta(updates)
+
+        places = meta.findall(ns('subject[@type="cptype:city"]'))
+        self.assertEqual(1, len(places))
+
+        place = places[0]
+        self.assertEqual('geo:%s' % geoname['code'], place.get('qcode'))
+        self.assertEqual(geoname['name'], place.find(ns('name')).text)
+
+        continent = place.find(ns('broader[@type="cptype:continentalcode"]'))
+        self.assertIsNotNone(continent)
+        self.assertEqual('geo:EU', continent.get('qcode'))
+
+        country = place.find(ns('broader[@type="cptype:country"]'))
+        self.assertIsNotNone(country)
+        self.assertEqual('geo:IT', country.get('qcode'))
+        self.assertEqual(geoname['country'], country.find(ns('name')).text)
+
+        region = place.find(ns('broader[@type="cptype:region"]'))
+        self.assertIsNotNone(region)
+        self.assertEqual('geo:%s' % geoname['state_code'], region.get('qcode'))
+        self.assertEqual(geoname['state'], region.find(ns('name')).text)
+
+        state = place.find(ns('broader[@type="cptype:statprov"]'))
+        self.assertIsNotNone(state)
+        self.assertEqual('geo:%s' % geoname['region_code'], state.get('qcode'))
+        self.assertEqual(geoname['region'], state.find(ns('name')).text)

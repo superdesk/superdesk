@@ -237,3 +237,46 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
                 for item in semantics[field]:
                     subj = SubElement(content_meta, 'subject', attrib={'type': cpnat})
                     SubElement(subj, 'name').text = item
+
+    def _format_geonames_place(self, place, content_meta):
+        cptype = 'country'
+        if place.get('state'):
+            cptype = 'region'
+        if place.get('region'):
+            cptype = 'statprov'
+        if place.get('region') and place.get('name') != place.get('region'):
+            cptype = 'city'
+
+        subject = self._create_subject_element(
+            content_meta,
+            place.get('name', ''),
+            'geo:%s' % place['code'],
+            'cptype:%s' % cptype,
+        )
+
+        if place.get('continent_code'):
+            SubElement(subject, 'broader', attrib={
+                'type': 'cptype:continentalcode',
+                'qcode': 'geo:%s' % place['continent_code'],
+            })
+
+        if place.get('country_code') and place.get('country') and cptype != 'country':
+            country = SubElement(subject, 'broader', attrib={
+                'type': 'cptype:country',
+                'qcode': 'geo:%s' % place['country_code'],
+            })
+            SubElement(country, 'name').text = place['country']
+
+        if place.get('state_code') and place.get('state') and cptype != 'region':
+            state = SubElement(subject, 'broader', attrib={
+                'type': 'cptype:region',
+                'qcode': 'geo:%s' % place['state_code'],
+            })
+            SubElement(state, 'name').text = place['state']
+
+        if place.get('region_code') and place.get('region') and cptype != 'statprov':
+            region = SubElement(subject, 'broader', attrib={
+                'type': 'cptype:statprov',
+                'qcode': 'geo:%s' % place['region_code'],
+            })
+            SubElement(region, 'name').text = place['region']
