@@ -1,20 +1,25 @@
 mongodb:
   image: mongo:3
+  container_name: mongodb
 
 redis:
   image: redis:3
+  container_name: redis
 
 elastic:
   image: elasticsearch:1
+  container_name: elastic
 
 postfix:
   image: catatnight/postfix
+  container_name: postfix
   environment:
   - maildomain=mail.sourcefabric.org
   - smtp_user=user:pwd
 
 superdesk:
   build: ../
+  container_name: superdesk
   environment:
    - SUPERDESK_URL=http://127.0.0.1/api
    - SUPERDESK_WS_URL=ws://127.0.0.1/ws
