@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+		<newsMessage xmlns:x="http://www.w3.org/1999/xhtml" xmlns:rtr="http://www.reuters.com/ns/2003/08/content" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://iptc.org/std/nar/2006-10-01/">
+<header>
+<sent>2017-02-24T13:51:00.000Z</sent>
+<sender>ansa.it</sender>
+<transmitId>tag:ansa.it,2017-02-24:ea58f9ce5951ece86fe126162c4fb161</transmitId>
+<priority>5</priority>
+<destination>QBX</destination>
+<channel>TXT</channel>
+</header>
+<itemSet>
+<newsItem standard="NewsML-G2" standardversion="2.4" conformance="power" guid="tag:ansa.it,2017-02-24:ea58f9ce5951ece86fe126162c4fb161" version="1" xml:lang="it-IT" xsi:schemaLocation="http://iptc.org/std/nar/2006-10-01/ http://www.iptc.org/std/NewsML-G2/2.4/specification/NewsML-G2_2.4-spec-NewsItem-Power.xsd">
+<catalogRef href="http://www.iptc.org/std/catalog/catalog.IPTC-G2-Standards_11.xml"/>
+<catalogRef href="http://www.ansa.it/std/catalog/catalog.ANSA_1.xml"/>
+<rightsInfo>
+<copyrightHolder literal="ANSA"/>
+<copyrightNotice xml:lang="en">(c) Copyright ANSA 2017. Click For Restrictions - http://www.ansa.it/sito/static/copyright.html</copyrightNotice>
+</rightsInfo>
+<itemMeta>
+<itemClass qcode="icls:text" rtr:msgType="S"/>
+<provider literal="ansa.it"/>
+<versionCreated>2017-02-24T13:51:00+1000</versionCreated>
+<firstCreated>2017-02-24T13:51:00.000Z</firstCreated>
+<pubStatus qcode="stat:usable"/>
+<signal qcode="db:dea_generale"/>
+<signal qcode="pid:dea_generale_cronaca"/>
+<signal qcode="sig:routing">
+<name>R CRO SXB 51 77 03 CRO01 1113 APE4800 GEST GEST03 QBXB</name>
+</signal>
+</itemMeta>
+<contentMeta>
+<urgency>5</urgency>
+<contentCreated>2017-02-24T13:51:00.000Z</contentCreated>
+<located type="cptype:city" literal="NAPOLI" qcode="geo:3172394" />
+<creator literal="YKN-CER">
+<name>YKN-CER</name>
+</creator>
+<language tag="it"/>
+<subject type="cptype:cat" literal="CRO"/>
+<subject type="cptype:subcat" literal="Spari davanti bimbi"/>
+<subject type="cpnat:abstract" qcode="subj:02000000"/>
+<subject type="cpnat:abstract" qcode="products:123456789">
+    <name>Product X</name>
+</subject>
+<headline>Spari davanti bimbi: sindaco Napoli, serve risposta forte</headline>
+<headline role="hld:subHeadline">De Magistris, rafforzamento forze ordine e strutture dello Stato</headline>
+</contentMeta>
+<contentSet>
+<inlineData contenttype="text/plain" rendition="rnd:original" wordcount="0"><![CDATA[
+<p>
+            
+            (ANSA) - NAPOLI, 24 FEB - "C'è bisogno di una risposta forte.
+Non è ammissibile ed inaccettabile che si possa sparare in modo
+indisturbato". Così il sindaco di Napoli, Luigi de Magistris,
+torna a commentare gli spari di ieri contro la vetrina della
+nota pasticceria 'Poppella' nel Rione Sanità. Il sindaco, 
+riferendo che la sua Amministrazione e lui personalmente sono
+"in contatto" con il titolare dell'attività commerciale, ha
+affermato: "La nostra vicinanza a Poppella, così come a chi è
+stato vittima di altri episodi, è discreta ma forte". Di quanto
+accaduto ieri, de Magistris ha riferito di averne parlato
+stamattina con esponenti delle forze dell'ordine a margine
+dell'inaugurazione dell'anno giudiziario al Tar Campania.
+   "Serve - ha affermato il sindaco - una risposta visibile e
+forte dello Stato. Ho fiducia nelle forze dell'ordine e nella
+magistratura locale e il mio auspicio, fino ad ora disatteso, e'
+che ci sia un rafforzamento delle forze dell'ordine e delle
+strutture dello Stato per garantire la sicurezza ai nostri
+cittadini". L'ex pm ha evidenziato che "tutti, dal sindaco ai
+cittadini, possono e devono fare di più, ma quando si spara è lo
+Stato che deve intervenire perché ha tra i suoi compiti
+principali quello di garantire la sicurezza. Questa città sta
+facendo uno sforzo enorme e il Rione Sanità è uno dei quartieri
+simbolo del riscatto. È un quartiere pieno di vivacità, di
+attività culturali, di iniziative che vedono il coinvolgimento
+di istituzioni, associazioni, parroci e perfino dei familiari di
+vittime innocenti".(ANSA).
+          </p>]]></inlineData>
+</contentSet>
+</newsItem>
+</itemSet>
+</newsMessage>

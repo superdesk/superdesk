@@ -9,6 +9,24 @@ from superdesk.utc import utcnow
 from superdesk.tests import TestCase
 from .ansa_newsml_g2_formatter import ANSANewsMLG2Formatter
 
+geoname = {
+    "region": "Arezzo",
+    "scheme": "geonames",
+    "state": "Tuscany",
+    "state_code": "16",
+    "code": "6541097",
+    "continent_code": "EU",
+    "name": "Monte San Savino",
+    "feature_class": "A",
+    "region_code": "AR",
+    "location": {
+        "lat": 43.32924,
+        "lon": 11.72974
+    },
+    "country_code": "IT",
+    "country": "Italy"
+}
+
 
 def ns(value):
     return '{http://iptc.org/std/nar/2006-10-01/}%s' % value
@@ -366,24 +384,6 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         self.assertEqual(updates['semantics']['organizations'][1], orgs[1].find(ns('name')).text)
 
     def test_format_geonames_city(self):
-        geoname = {
-            "region": "Arezzo",
-            "scheme": "geonames",
-            "state": "Tuscany",
-            "state_code": "16",
-            "code": "6541097",
-            "continent_code": "EU",
-            "name": "Monte San Savino",
-            "feature_class": "A",
-            "region_code": "AR",
-            "location": {
-                "lat": 43.32924,
-                "lon": 11.72974
-            },
-            "country_code": "IT",
-            "country": "Italy"
-        }
-
         updates = {'place': [geoname]}
         meta = self.format_content_meta(updates)
 
@@ -413,6 +413,9 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         self.assertEqual('geo:%s' % geoname['region_code'], state.get('qcode'))
         self.assertEqual(geoname['region'], state.find(ns('name')).text)
 
+        geo = place.find(ns('geoAreaDetails'))
+        self.assertIsNone(geo)
+
     def test_genre(self):
         updates = {'genre': [{
             'name': "Article (news)",
@@ -424,3 +427,16 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         self.assertIsNotNone(genre)
         self.assertEqual('genre:Article', genre.get('qcode'))
         self.assertEqual('Article (news)', genre.find(ns('name')).text)
+
+    def test_located_semantics(self):
+        updates = {'dateline': {'located': {'place': geoname}}}
+        meta = self.format_content_meta(updates)
+        located = meta.find(ns('located'))
+        self.assertIsNotNone(located)
+        self.assertEqual('geo:%s' % geoname['code'], located.get('qcode'))
+        geo = located.find(ns('geoAreaDetails'))
+        self.assertIsNotNone(geo)
+        position = geo.find(ns('position'))
+        self.assertIsNotNone(position)
+        self.assertEqual(str(geoname['location']['lat']), position.get('latitude'))
+        self.assertEqual(str(geoname['location']['lon']), position.get('longitude'))
