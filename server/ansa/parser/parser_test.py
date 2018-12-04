@@ -60,3 +60,12 @@ class ANSAParserTestCase(TestCase):
         self.assertEqual('ANSA', item['copyrightholder'])
         self.assertEqual('ANSA notice', item['copyrightnotice'])
         self.assertEqual('ANSA usage', item['usageterms'])
+
+    def test_located(self):
+        if not self.app.config.get('GEONAMES_USERNAME'):
+            pass
+        item = self.parse('located.xml')
+        dateline = item['dateline']
+        located = dateline['located']
+        self.assertEqual('Napoli', located['city'])
+        self.assertIn('place', located)

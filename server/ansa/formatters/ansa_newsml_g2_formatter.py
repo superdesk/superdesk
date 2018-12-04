@@ -194,7 +194,9 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
         :param Element content_meta:
         """
         located = article.get('dateline', {}).get('located', {})
-        if located and located.get('city'):
+        if located and located.get('place'):
+            self._format_geonames_place(located['place'], content_meta, 'located')
+        elif located and located.get('city'):
             located_elm = SubElement(content_meta, 'located',
                                      attrib={'qcode': 'city:%s' % located.get('city').upper()})
             if located.get('state'):
@@ -238,7 +240,7 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
                     subj = SubElement(content_meta, 'subject', attrib={'type': cpnat})
                     SubElement(subj, 'name').text = item
 
-    def _format_geonames_place(self, place, content_meta):
+    def _format_geonames_place(self, place, content_meta, elem='subject'):
         cptype = 'country'
         if place.get('state'):
             cptype = 'region'
@@ -247,12 +249,13 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
         if place.get('region') and place.get('name') != place.get('region'):
             cptype = 'city'
 
-        subject = self._create_subject_element(
-            content_meta,
-            place.get('name', ''),
-            'geo:%s' % place['code'],
-            'cptype:%s' % cptype,
-        )
+        subject = SubElement(content_meta, elem, attrib={
+            'type': 'cptype:%s' % cptype,
+            'qcode': 'geo:%s' % place['code'],
+        })
+
+        if place.get('name'):
+            SubElement(subject, 'name').text = place['name']
 
         if place.get('continent_code'):
             SubElement(subject, 'broader', attrib={
@@ -280,6 +283,13 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
                 'qcode': 'geo:%s' % place['region_code'],
             })
             SubElement(region, 'name').text = place['region']
+
+        if elem == 'located' and place.get('location'):
+            geo = SubElement(subject, 'geoAreaDetails')
+            SubElement(geo, 'position', attrib={
+                'latitude': str(place['location']['lat']),
+                'longitude': str(place['location']['lon']),
+            })
 
     def _format_genre(self, article, content_meta):
         if article.get('genre'):

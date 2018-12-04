@@ -6,6 +6,7 @@ from superdesk.io.feed_parsers.newsml_2_0 import NewsMLTwoFeedParser
 from superdesk.text_utils import get_word_count
 from ansa.analysis.analysis import parse, apply
 from superdesk import get_resource_service
+from ansa.geonames import get_place_by_id
 
 
 class ANSAParser(NewsMLTwoFeedParser):
@@ -73,6 +74,28 @@ class ANSAParser(NewsMLTwoFeedParser):
         creditline = meta.find(self.qname('creditline'))
         if creditline is not None:
             item['creditline'] = creditline.text
+
+        located = meta.find(self.qname('located'))
+        if located is not None:
+            code = located.get('qcode')
+            print('code', code)
+            if code and 'geo:' in code:
+                place = get_place_by_id(code.replace('geo:', ''))
+                print('place', place)
+                item.setdefault('dateline', {})
+                item.setdefault('semantics', {})
+                item['dateline']['located'] = {
+                    "tz": place.get('tz'),
+                    "country_code": place.get('country_code'),
+                    "dateline": "city",
+                    "city_code": place.get('name'),
+                    "state": place.get('state'),
+                    "alt_name": "",
+                    "state_code": place.get('state_code'),
+                    "country": place.get('country'),
+                    "city": place.get('name'),
+                    "place": place,
+                }
 
     def parse_item(self, tree):
         item = super().parse_item(tree)
