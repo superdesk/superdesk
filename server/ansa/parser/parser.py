@@ -8,6 +8,10 @@ from ansa.analysis.analysis import parse, apply
 from superdesk import get_resource_service
 from ansa.geonames import get_place_by_id
 
+MONTHS_IT = [
+    '', 'gen', 'feb', 'mar', 'apr', 'mag', 'giu', 'lug', 'ago', 'set', 'ott', 'nov', 'dic',
+]
+
 
 class ANSAParser(NewsMLTwoFeedParser):
 
@@ -78,14 +82,12 @@ class ANSAParser(NewsMLTwoFeedParser):
         located = meta.find(self.qname('located'))
         if located is not None:
             code = located.get('qcode')
-            print('code', code)
             if code and 'geo:' in code:
                 place = get_place_by_id(code.replace('geo:', ''))
-                print('place', place)
                 item.setdefault('dateline', {})
                 item.setdefault('semantics', {})
                 item['dateline']['located'] = {
-                    "tz": place.get('tz'),
+                    "tz": place.get('tz', 'Italy/Rome'),
                     "country_code": place.get('country_code'),
                     "dateline": "city",
                     "city_code": place.get('name'),
@@ -96,6 +98,15 @@ class ANSAParser(NewsMLTwoFeedParser):
                     "city": place.get('name'),
                     "place": place,
                 }
+
+                time = item.get('firstcreated')
+                if time:
+                    item['dateline']['date'] = time
+                    item['dateline']['text'] = '%s, %d %s' % (
+                        place.get('name', '').upper(),
+                        int(time.strftime('%d')),
+                        MONTHS_IT[time.month].upper(),
+                    )
 
     def parse_item(self, tree):
         item = super().parse_item(tree)

@@ -69,3 +69,5 @@ class ANSAParserTestCase(TestCase):
         located = dateline['located']
         self.assertEqual('Napoli', located['city'])
         self.assertIn('place', located)
+        self.assertEqual('NAPOLI, 24 FEB', dateline['text'])
+        self.assertIn('date', dateline)
