@@ -2351,5 +2351,19 @@
                 "translate": true
             }
         }
+    },
+    {
+        "_id": "replace_words",
+        "display_name": "Replacement Words",
+        "type": "manageable",
+        "items": [
+            {"is_active": true, "existing": "foo", "replacement": "bar"}
+        ],
+        "unique_field" : "existing",
+        "field_type" : null,
+        "schema" : {
+            "existing" : {},
+            "replacement" : {}
+        }
     }
 ]
