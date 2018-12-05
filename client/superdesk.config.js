@@ -14,7 +14,7 @@ module.exports = function(grunt) {
         defaultRoute: '/workspace/personal',
 
         langOverride: {
-            'en': {
+            en: {
                 'ANPA Category': 'Category',
                 'ANPA CATEGORY': 'CATEGORY'
             }
@@ -24,6 +24,8 @@ module.exports = function(grunt) {
             timeformat: 'HH:mm',
             dateformat: 'DD.MM.YYYY',
         },
+
+        shortDateFormat: 'DD/MM',
 
         features: {
             preview: 1,
