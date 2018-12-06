@@ -87,7 +87,7 @@ class ANSAParser(NewsMLTwoFeedParser):
                 item.setdefault('dateline', {})
                 item.setdefault('semantics', {})
                 item['dateline']['located'] = {
-                    "tz": place.get('tz', 'Italy/Rome'),
+                    "tz": place.get('tz', 'Europe/Rome'),
                     "country_code": place.get('country_code'),
                     "dateline": "city",
                     "city_code": place.get('name'),

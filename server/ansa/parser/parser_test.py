@@ -1,6 +1,7 @@
 
 import os
 
+from pytz import timezone
 from .parser import ANSAParser
 from superdesk.etree import etree
 from superdesk.tests import TestCase
@@ -71,3 +72,5 @@ class ANSAParserTestCase(TestCase):
         self.assertIn('place', located)
         self.assertEqual('NAPOLI, 24 FEB', dateline['text'])
         self.assertIn('date', dateline)
+        self.assertIn('tz', located)
+        self.assertIsNotNone(timezone(located['tz']))
