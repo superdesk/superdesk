@@ -9,20 +9,8 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-import os
 from pathlib import Path
-from superdesk.default_settings import INSTALLED_APPS, strtobool
-
-
-def env(variable, fallback_value=None):
-    env_value = os.environ.get(variable, '')
-    if len(env_value) == 0:
-        return fallback_value
-    else:
-        if env_value == "__EMPTY__":
-            return ''
-        else:
-            return env_value
+from superdesk.default_settings import INSTALLED_APPS, strtobool, env
 
 
 ABS_PATH = str(Path(__file__).resolve().parent)
@@ -69,3 +57,30 @@ MACROS_MODULE = env('MACROS_MODULE', 'macros')
 
 HIGHCHARTS_SERVER_HOST = env('HIGHCHARTS_SERVER_HOST', 'localhost')
 HIGHCHARTS_SERVER_PORT = env('HIGHCHARTS_SERVER_PORT', '6060')
+
+VALIDATOR_MEDIA_METADATA = {
+    "headline": {
+        "required": False,
+    },
+    "alt_text": {
+        "required": False,
+    },
+    "archive_description": {
+        "required": False,
+    },
+    "description_text": {
+        "required": True,
+    },
+    "copyrightholder": {
+        "required": False,
+    },
+    "byline": {
+        "required": False,
+    },
+    "usageterms": {
+        "required": False,
+    },
+    "copyrightnotice": {
+        "required": False,
+    },
+}
