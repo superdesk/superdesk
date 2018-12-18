@@ -110,7 +110,11 @@ def apply(analysed, item):
         item['semantics'] = analysed['semantics']
     if analysed.get('subject'):
         item['subject'] = [s for s in item['subject'] if s.get('scheme')]  # filter out iptc subjectcodes
-        item['subject'].extend(analysed['subject'])
+        for subj in analysed['subject']:
+            if subj.get('qcode') and (subj['qcode'], subj.get('scheme')) not in [
+                    (s.get('qcode'), s.get('scheme')) for s in item['subject']
+            ]:
+                item['subject'].append(subj)
     if analysed.get('abstract') and not item.get('abstract'):
         item.setdefault('abstract', analysed['abstract'])
     if old_semantics and old_semantics.get('located'):  # keep located
