@@ -45,6 +45,15 @@ SEMANTICS_SCHEMA = {
 }
 
 
+def get_parent_product(qcode):
+    if len(qcode) > 8:
+        return qcode[:8]
+    elif len(qcode) > 3:
+        return qcode[:3]
+    else:
+        return None
+
+
 def parse(extracted):
     parsed = {
         'semantics': {'iptcCodes': []},
@@ -69,12 +78,15 @@ def parse(extracted):
                 if place:
                     parsed['place'].append(get_place_by_id(place['code']))
             if key == 'subjects':
-                if item.get('qcode') and 'products:' in item['qcode']:
+                if item.get('qcode') and 'products:' in item['qcode'] and item.get('name'):
+                    qcode = item['qcode'].replace('products:', '')
                     parsed['subject'].append({
                         'name': item.get('name'),
-                        'qcode': item['qcode'].replace('products:', ''),
+                        'qcode': qcode,
                         'scheme': 'products',
+                        'parent': get_parent_product(qcode),
                     })
+                    items.append(item.get('name'))
 
         parsed['semantics'][key] = items
     if parsed['semantics'].get('mainLemmas'):

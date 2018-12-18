@@ -54,6 +54,12 @@
             <button class="tag-label__remove" ng-click="semantics.remove(code, 'iptcCodes')"><i class="icon-close-small"></i></button>
         </dd>
 
+        <dt class="tag-list__header" translate>Products</dt>
+        <dd ng-repeat="product in semantics.data.subjects" class="tag-label">
+            {{ product }}
+            <button class="tag-label__remove" ng-click="semantics.remove(product, 'subjects')"><i class="icon-close-small"></i></button>
+        </dd>
+
         <dt class="tag-list__header" translate>Main sentence</dt>
         <dd class="tag-list__text-block"><p>{{ semantics.data.mainSenteces[0] }}</p></dd>
         <dd class="tag-list__text-block"><p>{{ semantics.data.mainSenteces[1] }}</p></dd>
