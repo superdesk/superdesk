@@ -40,6 +40,7 @@ SEMANTICS_SCHEMA = {
         'sentimental': {'type': 'list', 'mapping': not_analyzed},
         'placesExpanded': {'type': 'list'},
         'located': {'type': 'dict', 'mapping': not_enabled},
+        'subjects': {'type': 'list'},
     }
 }
 
@@ -67,6 +68,13 @@ def parse(extracted):
                 place = item.get('comune') or item.get('provincia') or item.get('regione') or item.get('nazione')
                 if place:
                     parsed['place'].append(get_place_by_id(place['code']))
+            if key == 'subjects':
+                if item.get('qcode') and 'products:' in item['qcode']:
+                    parsed['subject'].append({
+                        'name': item.get('name'),
+                        'qcode': item['qcode'].replace('products:', ''),
+                        'scheme': 'products',
+                    })
 
         parsed['semantics'][key] = items
     if parsed['semantics'].get('mainLemmas'):
@@ -144,7 +152,7 @@ class AnalysisService(BaseService):
     def do_analyse(self, doc):
         if self.URL_EXTRACTION is None:
             URL_MAIN = app.config["ANSA_ANALYSIS_URL"]
-            self.URL_EXTRACTION = URL_MAIN + "extract.do"
+            self.URL_EXTRACTION = URL_MAIN + "extractxsl.do"
         extraction_data = {
             "abstract": doc.get('abstract', ''),
             "lang": doc.get('lang', 'ITA'),
