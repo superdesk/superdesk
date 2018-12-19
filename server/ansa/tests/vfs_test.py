@@ -52,7 +52,7 @@ class VFSTestCase(unittest.TestCase):
         data = io.BytesIO(b'foo')
         with requests_mock.mock() as mock:
             mock.post(UPLOAD_URL, content=UPLOAD_RESPONSE.encode('utf-8'))
-            _id = self.media.put(data, 'foo', folder='x')
+            _id = self.media.put(data, 'foo', 'text/plain', {}, folder='x')
         self.assertEqual('af8806db1a880b6653bb8d1f1a370c4e', _id)
 
     def test_get_binary(self):

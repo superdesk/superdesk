@@ -92,7 +92,7 @@ class VFSMediaStorage(MediaStorage):
             'created': arrow.get(item.find('created').text).datetime,
         }
 
-    def put(self, content, filename=None, content_type=None, **kwargs):
+    def put(self, content, filename=None, content_type=None, *args, **kwargs):
         files = {'file': content}
         resp = requests.post(self.url(UPLOAD_ENDPOINT), files=files)
         xml = parse_xml(resp)
