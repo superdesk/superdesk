@@ -12,6 +12,12 @@
             <button class="tag-label__remove" ng-click="semantics.remove(domain, 'iptcDomains')"><i class="icon-close-small"></i></button>
         </dd>
 
+        <dt class="tag-list__header" translate>Products</dt>
+        <dd ng-repeat="product in semantics.data.subjects" class="tag-label">
+            {{ product }}
+            <button class="tag-label__remove" ng-click="semantics.remove(product, 'subjects')"><i class="icon-close-small"></i></button>
+        </dd>
+
         <dt class="tag-list__header" translate>News Domains</dt>
         <dd ng-repeat="domain in semantics.data.newsDomains" class="tag-label">
             {{ domain }}
@@ -52,12 +58,6 @@
         <dd ng-repeat="code in semantics.data.iptcCodes" class="tag-label">
             {{ code }}
             <button class="tag-label__remove" ng-click="semantics.remove(code, 'iptcCodes')"><i class="icon-close-small"></i></button>
-        </dd>
-
-        <dt class="tag-list__header" translate>Products</dt>
-        <dd ng-repeat="product in semantics.data.subjects" class="tag-label">
-            {{ product }}
-            <button class="tag-label__remove" ng-click="semantics.remove(product, 'subjects')"><i class="icon-close-small"></i></button>
         </dd>
 
         <dt class="tag-list__header" translate>Main sentence</dt>
