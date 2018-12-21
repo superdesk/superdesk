@@ -208,9 +208,12 @@ function AnsaSemanticsCtrl($scope, $rootScope, api) {
         }
 
         if (result.subject) {
-            $scope.item.subject = ($scope.item.subject || [])
-                .filter((item) => item.scheme) // keep all custom scheme subjects
-                .concat(result.subject);
+            $scope.item.subject = _.uniqBy(
+                ($scope.item.subject || [])
+                    .filter((item) => item.scheme) // keep all custom scheme subjects
+                    .concat(result.subject)
+                , (subject) => [subject.scheme, subject.qcode].join(':')
+            );
         }
 
         if (result.slugline && _.isEmpty($scope.item.slugline)) {
