@@ -10,6 +10,18 @@ elastic:
   image: elasticsearch:1
   container_name: elastic
 
+kibana:
+  image: kibana:5
+  container_name: kibana
+
+logstash:
+  image: logstash:5
+  container_name: logstash
+
+pubapi:
+  image: willypublicitas/pubapi
+  container_name: pubapi
+
 postfix:
   image: catatnight/postfix
   container_name: postfix
