@@ -57,11 +57,15 @@ def is_error(xml):
 
 class VFSMediaStorage(MediaStorage):
 
+    def __init__(self, app=None):
+        super().__init__(app)
+        self._sess = requests.Session()
+
     def url(self, endpoint):
         return urljoin(app.config.get('VFS_URL', 'http://172.20.14.95:8080/'), endpoint)
 
     def get(self, id_or_filename, resource=None):
-        resp = requests.get(self.url(BINARY_ENDPOINT) % id_or_filename)
+        resp = self._sess.get(self.url(BINARY_ENDPOINT) % id_or_filename)
         if resp.status_code in [200, 201]:
             metadata = self.metadata(id_or_filename, resource)
             return VFSObjectWrapper(id_or_filename, resp.content, metadata)
@@ -73,11 +77,11 @@ class VFSMediaStorage(MediaStorage):
             return False
 
     def delete(self, id_or_filename, resource=None):
-        resp = requests.delete(self.url(DELETE_ENDPOINT) % id_or_filename)
+        resp = self._sess.delete(self.url(DELETE_ENDPOINT) % id_or_filename)
         return parse_xml(resp)
 
     def metadata(self, id_or_filename, resource=None):
-        resp = requests.get(self.url(METADATA_ENDPOINT) % id_or_filename)
+        resp = self._sess.get(self.url(METADATA_ENDPOINT) % id_or_filename)
         xml = parse_xml(resp)
         if is_error(xml):
             return None
@@ -94,7 +98,7 @@ class VFSMediaStorage(MediaStorage):
 
     def put(self, content, filename=None, content_type=None, *args, **kwargs):
         files = {'file': content}
-        resp = requests.post(self.url(UPLOAD_ENDPOINT), files=files)
+        resp = self._sess.post(self.url(UPLOAD_ENDPOINT), files=files)
         xml = parse_xml(resp)
         md5 = xml.find('fileItems').find('md5')
         if md5 is not None:
