@@ -1,10 +1,13 @@
 
 import os
+import requests_mock
 
 from pytz import timezone
 from .parser import ANSAParser
 from superdesk.etree import etree
 from superdesk.tests import TestCase
+
+GEONAMES_URL = 'http://api.geonames.org/getJSON?type=json&username=superdesk_dev&geonameId=3172394&lang=it'
 
 
 class ANSAParserTestCase(TestCase):
@@ -63,9 +66,10 @@ class ANSAParserTestCase(TestCase):
         self.assertEqual('ANSA usage', item['usageterms'])
 
     def test_located(self):
-        if not self.app.config.get('GEONAMES_USERNAME'):
-            pass
-        item = self.parse('located.xml')
+        with requests_mock.mock() as mock:
+            with open(os.path.join(os.path.dirname(__file__), 'geonames.json'), mode='rb') as data:
+                mock.get(GEONAMES_URL, content=data.read())
+            item = self.parse('located.xml')
         dateline = item['dateline']
         located = dateline['located']
         self.assertEqual('Napoli', located['city'])
