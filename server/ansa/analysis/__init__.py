@@ -17,10 +17,4 @@ def init_app(app):
     endpoint_name = 'analysis'
     service = AnalysisService(endpoint_name, backend=superdesk.get_backend())
     AnalysisResource(endpoint_name, app=app, service=service)
-
-    for resource in ['ingest', 'archive', 'published', 'archive_autosave']:
-        app.config['DOMAIN'][resource]['schema'].update({'semantics': SEMANTICS_SCHEMA})
-
-    app.config['DOMAIN']['content_templates_apply']['schema']['item']['schema'].update(
-        {'semantics': SEMANTICS_SCHEMA}
-    )
+    superdesk.register_item_schema_field('semantics', SEMANTICS_SCHEMA, app)
