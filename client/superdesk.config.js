@@ -7,18 +7,21 @@
 module.exports = function(grunt) {
     return {
         defaultRoute: '/workspace/personal',
-        features: {
-            swimlane: {columnsLimit: 4},
-            noTakes: true
+
+        view: {
+            timeformat: 'HH:mm',
+            dateformat: 'DD.MM.YYYY'
         },
-        validatorMediaMetadata: {
-            headline: {required: true},
-            alt_text: {required: true},
-            description_text: {required: true},
-            copyrightholder: {required: false},
-            byline: {required: false},
-            usageterms: {required: false},
-            copyrightnotice: {required: false}
+
+        features: {
+            preview: 1,
+            swimlane: {columnsLimit: 4},
+            noTakes: true,
+            editor3: true,
+            validatePointOfInterestForImages: false,
+            editorHighlights: true,
+            noPublishOnAuthoringDesk: true,
+            noMissingLink: true
         }
     };
 };
