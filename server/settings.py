@@ -30,6 +30,9 @@ init_data = Path(ABS_PATH) / 'data'
 if init_data.exists():
     INIT_DATA_PATH = init_data
 
+INSTALLED_APPS.extend([
+    'apps.languages',
+])
 
 RENDITIONS = {
     'picture': {
@@ -56,3 +59,5 @@ BROKER_URL = env('CELERY_BROKER_URL', REDIS_URL)
 SECRET_KEY = env('SECRET_KEY', '')
 
 NO_TAKES = True
+
+DEFAULT_LANGUAGE = 'en'
