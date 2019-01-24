@@ -12,19 +12,20 @@
             "order": 3,
             "sdWidth": "half"
         },
-        "number": {
+        "FIEG_Categories": {
             "order": 4,
             "sdWidth": "half"
         },
-        "subtitle": {
+        "products": {
             "order": 5,
             "sdWidth": "half"
         },
-        "FIEG_Categories": {
+        "description_text": {
             "order": 6,
-            "sdWidth": "half"
+            "sdWidth": "full",
+            "textarea": true
         },
-        "supplier": {
+        "place": {
             "order": 7,
             "sdWidth": "half"
         },
@@ -32,20 +33,22 @@
             "order": 8,
             "sdWidth": "half"
         },
-        "coauthor": {
-            "order": 9,
-            "sdWidth": "half"
-        },
-        "digitator": {
-            "order": 10,
-            "sdWidth": "half"
-        },
         "copyrightnotice": {
+            "order": 9,
+            "sdWidth": "full",
+            "textarea": true
+        },
+        "usageterms": {
+            "order": 10,
+            "sdWidth": "full",
+            "textarea": true
+        },
+        "copyrighholder": {
             "order": 11,
             "sdWidth": "full",
             "textarea": true
         },
-        "description_text": {
+        "alt_text": {
             "order": 12,
             "sdWidth": "full",
             "textarea": true
@@ -55,29 +58,32 @@
             "sdWidth": "full",
             "textarea": true
         },
-
         "sign_off": {
             "order": 14,
             "sdWidth": "full"
         },
-
-        "products": {
+        "supplier": {
             "order": 15,
             "sdWidth": "half"
         },
-
-        "subject": {
+        "coauthor": {
             "order": 16,
             "sdWidth": "half"
         },
-
-        "keywords": {
+        "digitator": {
             "order": 17,
+            "sdWidth": "half"
+        },
+        "subject": {
+            "order": 18,
+            "sdWidth": "half"
+        },
+        "keywords": {
+            "order": 19,
             "sdWidth": "full"
         },
-
-        "place": {
-            "order": 18,
+        "number": {
+            "order": 20,
             "sdWidth": "half"
         }
     },
@@ -129,18 +135,12 @@
             "required": false
         },
         "headline": {
-            "required": false,
+            "required": true,
             "nullable": false,
             "type": "string"
         },
-        "subtitle": {
-            "enabled": true,
-            "type": "text",
-            "nullable": true,
-            "required": false
-        },
         "place": {
-            "required": false,
+            "required": true,
             "nullable": true,
             "type": "list"
         },
@@ -199,6 +199,21 @@
             "required": false
         },
         "description_text": {
+            "type": "string",
+            "nullable": true,
+            "required": true
+        },
+        "alt_text": {
+            "type": "string",
+            "nullable": true,
+            "required": false
+        },
+        "copyrightnotice": {
+            "type": "string",
+            "nullable": true,
+            "required": false
+        },
+        "usageterms": {
             "type": "string",
             "nullable": true,
             "required": false
