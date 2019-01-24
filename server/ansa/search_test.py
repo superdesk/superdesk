@@ -25,6 +25,9 @@ class AnsaPictureTestCase(unittest.TestCase):
         with HTTMock(ansa_mock):
             with self.app.app_context():
                 items = self.service.find({})
+                self.assertEqual(0, len(items))  # no query, no api call
+
+                items = self.service.find({'query': {'filtered': {'query': {'query_string': {'query': 'foo'}}}}})
         self.assertEqual(1, len(items))
         item = items[0]
         self.assertIn('headline', item)
