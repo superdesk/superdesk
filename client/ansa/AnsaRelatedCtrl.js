@@ -45,7 +45,7 @@ export default function AnsaRelatedCtrl($scope, api, storage, Keys, mediaIdGener
 
         let query = {
             bool: {
-                must_not: {term: {_id: $scope.item._id}},
+                must_not: {term: {item_id: $scope.item._id}},
                 should: [],
             },
         };
@@ -77,6 +77,8 @@ export default function AnsaRelatedCtrl($scope, api, storage, Keys, mediaIdGener
                 },
             };
         }
+
+        console.info('query', angular.toJson(query, 2));
 
         this.apiQuery(query);
     };
