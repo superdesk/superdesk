@@ -36,7 +36,7 @@ module.exports = function(grunt) {
 
         features: {
             preview: 1,
-            swimlane: {columnsLimit: 4},
+            swimlane: {defaultNumberOfColumns: 4},
             editor3: true,
             validatePointOfInterestForImages: false,
             editorHighlights: true
