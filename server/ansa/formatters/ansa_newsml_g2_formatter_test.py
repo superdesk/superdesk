@@ -33,9 +33,9 @@ def ns(value):
 
 
 def get_content_meta(xml):
-        return xml.find('{http://iptc.org/std/nar/2006-10-01/}itemSet'
-                        '/{http://iptc.org/std/nar/2006-10-01/}newsItem/'
-                        '{http://iptc.org/std/nar/2006-10-01/}contentMeta')
+    return xml.find('{http://iptc.org/std/nar/2006-10-01/}itemSet'
+                    '/{http://iptc.org/std/nar/2006-10-01/}newsItem/'
+                    '{http://iptc.org/std/nar/2006-10-01/}contentMeta')
 
 
 @mock.patch('superdesk.publish.subscribers.SubscribersService.generate_sequence_number', lambda self, subscriber: 1)

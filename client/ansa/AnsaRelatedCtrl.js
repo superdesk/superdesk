@@ -1,4 +1,4 @@
-import {max, isEmpty} from 'lodash';
+import {max, get, isEmpty} from 'lodash';
 
 // must match gallery field id
 const GALLERY = 'photoGallery';
@@ -6,7 +6,7 @@ const GALLERY = 'photoGallery';
 AnsaRelatedCtrl.$inject = ['$scope', 'api', 'storage', 'Keys', 'mediaIdGenerator'];
 export default function AnsaRelatedCtrl($scope, api, storage, Keys, mediaIdGenerator) {
     const search = () => {
-        if (!$scope.item.semantics || !$scope.item.semantics.iptcCodes) {
+        if (isEmpty(get($scope.item, 'semantics.iptcCodes')) && !this.query) {
             this.items = [];
             return;
         }
@@ -14,7 +14,7 @@ export default function AnsaRelatedCtrl($scope, api, storage, Keys, mediaIdGener
         this.items = null;
 
         let filters = [];
-        let semantics = $scope.item.semantics;
+        let semantics = $scope.item.semantics || {};
         let keys = ['persons', 'organizations'];
         let namespace = (key) => 'semantics.' + key;
 
@@ -95,9 +95,13 @@ export default function AnsaRelatedCtrl($scope, api, storage, Keys, mediaIdGener
         }
     };
 
-    this.apiQuery = (query) => api.query('archive', {source: {query: query, sort: ['_score'], size: 50}})
+    this.apiQuery = (query) => api.query('published', {source: {
+        query: query,
+        sort: ['_score', {versioncreated: 'desc'}],
+        size: 50,
+    }})
         .then((response) => {
-            this.items = response._items;
+            this.items = response._items.map((published) => published.archive_item || published);
         }, (reason) => {
             this.items = [];
         });
