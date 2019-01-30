@@ -10,80 +10,85 @@
         },
         "headline": {
             "order": 3,
-            "sdWidth": "half"
+            "sdWidth": "full"
+        },
+        "media_description": {
+            "order": 4,
+            "sdWidth": "full",
+            "displayOnMediaEditor": false
         },
         "FIEG_Categories": {
-            "order": 4,
-            "sdWidth": "half"
+            "order": 5,
+            "sdWidth": "full"
         },
         "products": {
-            "order": 5,
-            "sdWidth": "half"
+            "order": 6,
+            "sdWidth": "full"
         },
         "description_text": {
-            "order": 6,
+            "order": 7,
             "sdWidth": "full",
             "textarea": true
         },
         "place": {
-            "order": 7,
-            "sdWidth": "half"
-        },
-        "byline": {
             "order": 8,
             "sdWidth": "half"
         },
-        "copyrightnotice": {
+        "byline": {
             "order": 9,
-            "sdWidth": "full",
-            "textarea": true
+            "sdWidth": "full"
         },
-        "usageterms": {
+        "copyrightnotice": {
             "order": 10,
             "sdWidth": "full",
             "textarea": true
         },
-        "copyrighholder": {
+        "usageterms": {
             "order": 11,
             "sdWidth": "full",
             "textarea": true
         },
-        "alt_text": {
+        "copyrighholder": {
             "order": 12,
             "sdWidth": "full",
             "textarea": true
         },
-        "ednote": {
+        "alt_text": {
             "order": 13,
             "sdWidth": "full",
             "textarea": true
         },
-        "sign_off": {
+        "ednote": {
             "order": 14,
+            "sdWidth": "full",
+            "textarea": true
+        },
+        "sign_off": {
+            "order": 15,
             "sdWidth": "full"
         },
         "supplier": {
-            "order": 15,
-            "sdWidth": "half"
-        },
-        "coauthor": {
             "order": 16,
             "sdWidth": "half"
         },
-        "digitator": {
+        "coauthor": {
             "order": 17,
             "sdWidth": "half"
         },
-        "subject": {
+        "digitator": {
             "order": 18,
             "sdWidth": "half"
         },
-        "keywords": {
+        "subject": {
             "order": 19,
+            "sdWidth": "half"
+        },
+        "keywords": {
+            "order": 20,
             "sdWidth": "full"
         },
         "number": {
-            "order": 20,
+            "order": 21,
             "sdWidth": "half"
         }
     },

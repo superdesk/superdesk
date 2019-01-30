@@ -113,9 +113,6 @@ VALIDATOR_MEDIA_METADATA = {
     "alt_text": {
         "required": False,
     },
-    "archive_description": {
-        "required": False,
-    },
     "description_text": {
         "required": False,
     },
