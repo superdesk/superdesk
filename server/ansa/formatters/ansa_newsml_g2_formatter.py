@@ -146,6 +146,14 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
         super()._format_item_meta(article, item_meta, item)
         self._format_related(article, item_meta)
 
+        # store desk as service
+        archive_item = superdesk.get_resource_service('archive').find_one(req=None, _id=article['guid'])
+        if archive_item is not None and archive_item.get('task') and archive_item['task'].get('desk'):
+            desk = superdesk.get_resource_service('desks').find_one(req=None, _id=archive_item['task']['desk'])
+            if desk and desk.get('name'):
+                service = SubElement(item_meta, 'service')
+                SubElement(service, 'name').text = desk['name']
+
     def _format_related(self, article, item_meta):
         featured = article.get('associations', {}).get('featuremedia')
         if featured:

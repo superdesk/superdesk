@@ -33,9 +33,7 @@ def ns(value):
 
 
 def get_content_meta(xml):
-    return xml.find('{http://iptc.org/std/nar/2006-10-01/}itemSet'
-                    '/{http://iptc.org/std/nar/2006-10-01/}newsItem/'
-                    '{http://iptc.org/std/nar/2006-10-01/}contentMeta')
+    return xml.find('/'.join([ns('itemSet'), ns('newsItem'), ns('contentMeta')]))
 
 
 @mock.patch('superdesk.publish.subscribers.SubscribersService.generate_sequence_number', lambda self, subscriber: 1)
@@ -440,3 +438,16 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         self.assertIsNotNone(position)
         self.assertEqual(str(geoname['location']['lat']), position.get('latitude'))
         self.assertEqual(str(geoname['location']['lon']), position.get('longitude'))
+
+    def test_desk_as_service(self):
+        desks = [{'name': 'Sports'}]
+        self.app.data.insert('desks', desks)
+        article = self.article.copy()
+        article['_id'] = article['guid']
+        article['task'] = {'desk': desks[0]['_id']}
+        self.app.data.insert('archive', [article])
+
+        item = self.get_item({})
+        service = item.find(ns('itemMeta')).find(ns('service'))
+        self.assertIsNotNone(service)
+        self.assertEqual(desks[0]['name'], service.find(ns('name')).text)
