@@ -1,0 +1,22 @@
+[
+    {
+        "_id" : "event",
+        "name": "event",
+        "schema": {
+        },
+        "editor": {
+        }
+    },
+    {
+        "_id": "planning",
+        "name": "planning",
+        "schema": {
+            "anpa_category": {
+                "required": false,
+                "type": "list"
+	        }
+        },
+        "editor": {
+        }
+    }
+]

@@ -100,10 +100,14 @@ with open(os.path.join(os.path.dirname(__file__), 'picture-profile.json')) as pr
 
 EDITOR = {
     "picture": picture_profile['editor'],
+    "audio": picture_profile['editor'],
+    "video": picture_profile['editor'],
 }
 
 SCHEMA = {
     "picture": picture_profile['schema'],
+    "audio": picture_profile['schema'],
+    "video": picture_profile['schema'],
 }
 
 VALIDATOR_MEDIA_METADATA = {
@@ -135,3 +139,5 @@ GEONAMES_USERNAME = env('GEONAMES_USERNAME', 'superdesk_dev')
 GEONAMES_FEATURE_CLASSES = ['P']
 
 ANSA_VFS = env('ANSA_VFS', 'http://172.20.14.95:8080/')
+
+KILL_TEMPLATE_NULL_FIELDS = []
