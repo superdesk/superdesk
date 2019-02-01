@@ -13,8 +13,15 @@ import superdesk
 from .analysis import AnalysisResource, AnalysisService, SEMANTICS_SCHEMA
 
 
+def copy_semantics(sender, item, **extra):
+    archive_item = superdesk.get_resource_service('archive').find_one(req=None, _id=item['_id'])
+    if archive_item and archive_item.get('semantics'):
+        superdesk.get_resource_service('published').update_published_items(item['_id'], 'semantics', archive_item['semantics'])
+
+
 def init_app(app):
     endpoint_name = 'analysis'
     service = AnalysisService(endpoint_name, backend=superdesk.get_backend())
     AnalysisResource(endpoint_name, app=app, service=service)
     superdesk.register_item_schema_field('semantics', SEMANTICS_SCHEMA, app)
+    superdesk.item_published.connect(copy_semantics)
