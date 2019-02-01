@@ -29,43 +29,21 @@ export default function AnsaRelatedCtrl($scope, api, storage, Keys, mediaIdGener
             }
         });
 
-        let pictureFilters = [];
-        let prefixes = {};
-
-        if (!isEmpty(semantics.iptcCodes)) {
-            semantics.iptcCodes.forEach((code) => {
-                let prefix = code.substr(0, 2);
-
-                if (!prefixes[prefix]) {
-                    prefixes[prefix] = 1;
-                    pictureFilters.push({prefix: {'semantics.iptcCodes': prefix}});
-                }
-            });
-        }
-
         let query = {
             bool: {
-                must_not: {term: {item_id: $scope.item._id}},
+                must_not: [{term: {item_id: $scope.item._id}}],
                 should: [],
             },
         };
 
-        if (this.activeFilter === 'text') {
-            angular.extend(query.bool, {
-                must: [
-                    {term: {type: 'text'}},
-                    {terms: {'semantics.iptcCodes': semantics.iptcCodes}},
-                ],
-                should: filters,
-                minimum_should_match: 1,
-            });
-        } else {
-            angular.extend(query.bool, {
-                must: pictureFilters.concat([{term: {type: this.activeFilter}}]),
-                should: filters,
-                minimum_should_match: 1,
-            });
-        }
+        angular.extend(query.bool, {
+            must: [
+                {term: {type: 'text'}},
+                {terms: {'semantics.iptcCodes': semantics.iptcCodes}},
+            ],
+            should: filters,
+            minimum_should_match: 1,
+        });
 
         if (this.query) {
             query = {
@@ -74,9 +52,20 @@ export default function AnsaRelatedCtrl($scope, api, storage, Keys, mediaIdGener
                         {term: {type: this.activeFilter}},
                         {query_string: {query: this.query, lenient: true}},
                     ],
+                    must_not: [{term: {item_id: $scope.item._id}}],
                 },
             };
         }
+
+        // filter out older versions
+        query.bool.must.push(
+            {term: {last_published_version: true}}
+        );
+
+        // and rewritten versions
+        query.bool.must_not.push(
+            {exists: {field: 'rewritten_by'}}
+        );
 
         console.info('query', angular.toJson(query, 2));
 
