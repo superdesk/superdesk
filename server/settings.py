@@ -94,6 +94,7 @@ ANSA_PHOTO_API = env('ANSA_PHOTO_API', 'http://172.20.14.67:8080/portaleimmagini
 CONTENT_EXPIRY_MINUTES = 60 * 24 * 7  # 1w
 PUBLISHED_CONTENT_EXPIRY_MINUTES = 60 * 24 * 30
 AUDIT_EXPIRY_MINUTES = PUBLISHED_CONTENT_EXPIRY_MINUTES
+CONTENT_API_EXPIRY_DAYS = 15
 
 with open(os.path.join(os.path.dirname(__file__), 'picture-profile.json')) as profile_json:
     picture_profile = json.load(profile_json)
