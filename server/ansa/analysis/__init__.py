@@ -16,7 +16,8 @@ from .analysis import AnalysisResource, AnalysisService, SEMANTICS_SCHEMA
 def copy_semantics(sender, item, **extra):
     archive_item = superdesk.get_resource_service('archive').find_one(req=None, _id=item['_id'])
     if archive_item and archive_item.get('semantics'):
-        superdesk.get_resource_service('published').update_published_items(item['_id'], 'semantics', archive_item['semantics'])
+        superdesk.get_resource_service('published').update_published_items(
+            item['_id'], 'semantics', archive_item['semantics'])
 
 
 def init_app(app):
