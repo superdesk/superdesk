@@ -38,7 +38,7 @@ export default function AnsaRelatedCtrl($scope, api, storage, Keys, mediaIdGener
 
         angular.extend(query.bool, {
             must: [
-                {term: {type: 'text'}},
+                {term: {type: this.activeFilter}},
                 {terms: {'semantics.iptcCodes': semantics.iptcCodes}},
             ],
             should: filters,
