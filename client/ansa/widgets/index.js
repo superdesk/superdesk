@@ -1,5 +1,8 @@
 
+import AnsaStagesAutoPublish from './AnsaStagesAutoPublish';
+
 export default angular.module('ansa.widgets', [])
+    .controller('AnsaStagesAutoPublish', AnsaStagesAutoPublish)
     .config(['authoringWidgetsProvider', (authoringWidgetsProvider) => {
         authoringWidgetsProvider.widget('ansa-semantics', {
             label: 'Semantics',
@@ -21,8 +24,21 @@ export default angular.module('ansa.widgets', [])
             configurable: false,
         });
     }])
+    .config(['dashboardWidgetsProvider', (dashboardWidgets) => {
+        dashboardWidgets.addWidget('stages-auto-publish', {
+            label: gettext('Auto Publishing'),
+            icon: 'switches',
+            max_sizex: 1,
+            max_sizey: 2,
+            sizex: 1,
+            sizey: 1,
+            template: 'stages-auto-publish.html',
+            description: 'Configure auto publishing',
+        });
+    }])
     .run(['$templateCache', ($templateCache) => {
         $templateCache.put('ansa-semantics-widget.html', require('./ansa-semantics-widget.html'));
         $templateCache.put('ansa-related-widget.html', require('./ansa-related-widget.html'));
+        $templateCache.put('stages-auto-publish.html', require('./stages-auto-publish.html'));
     }])
 ;

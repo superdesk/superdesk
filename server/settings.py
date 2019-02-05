@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'ansa.subjects',
     'ansa.formatters',
     'ansa.routing',
+    'ansa.stage_auto_publishing',
+
     'planning',
 ]
 
