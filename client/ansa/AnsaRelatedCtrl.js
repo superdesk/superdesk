@@ -50,7 +50,7 @@ export default function AnsaRelatedCtrl($scope, api, storage, Keys, mediaIdGener
                 bool: {
                     must: [
                         {term: {type: this.activeFilter}},
-                        {query_string: {query: this.query, lenient: true}},
+                        {query_string: {query: this.query, lenient: true, default_operator: 'AND'}},
                     ],
                     must_not: [{term: {item_id: $scope.item._id}}],
                 },
@@ -88,7 +88,7 @@ export default function AnsaRelatedCtrl($scope, api, storage, Keys, mediaIdGener
 
     this.apiQuery = (query) => api.query('published', {source: {
         query: query,
-        sort: ['_score', {versioncreated: 'desc'}],
+        sort: [{versioncreated: 'desc'}],
         size: 50,
     }})
         .then((response) => {
