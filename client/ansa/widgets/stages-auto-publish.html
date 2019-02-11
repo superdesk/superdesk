@@ -1,0 +1,7 @@
+<div class="close-desk-widget-content" ng-controller="AnsaStagesAutoPublish as publish">
+    <ul class="simple-list">
+        <li class="simple-list__item" ng-repeat="stage in publish.stages">
+            <span ng-model="stage.auto_publish" ng-change="publish.save(stage)" sd-switch></span><label ng-click="publish.toggle(stage)">{{ stage.name }}</label>
+        </li>
+    </ul>
+</div>
