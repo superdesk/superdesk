@@ -134,9 +134,25 @@
 
 // font size of headlines in the monitoring list view
 .media-box .item-info .item-heading {
-    font-size: 1.4rem !important;
+    font-size: 1.6rem !important;
+    letter-spacing: 0.02rem;
     font-weight: 500;
     color: #555;
+}
+
+.compact-view .media-box .item-info .line {
+    margin: 2px 0 2px 38px;
+}
+.compact-view .media-box .item-info .line:first-child {
+    margin-bottom: 6px;
+}
+.compact-view .media-box .item-info .line:only-child {
+    margin-bottom: 2px !important;
+}
+.sd-grid-item .sd-grid-item__title {
+    font-size: 1.5rem;
+    line-height: 140%;
+    margin-top: 4px;
 }
 
 // ANSA Map modal
