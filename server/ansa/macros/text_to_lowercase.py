@@ -5,7 +5,7 @@ from .process_html import process_html
 """
 
 
-def lower_case(text=''):
+def lower_case(text='', **kwargs):
     return text.lower()
 
 

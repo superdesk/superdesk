@@ -5,7 +5,7 @@ from .process_html import process_html
 """
 
 
-def split_text(text=''):
+def split_text(text='', **kwargs):
     width = 60
     new_text = ''
     space = ''

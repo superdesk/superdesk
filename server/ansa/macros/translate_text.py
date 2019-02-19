@@ -8,10 +8,14 @@ from .process_html import process_html
 """
 
 
-def translate(text=''):
+def translate(text='', **kwargs):
     URL_TRANSLATION = app.config["ANSA_TRANSLATION_URL"]
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
-    data = {'text': text, 'lang': 'en', 'target': 'it'}
+    data = {
+        'text': text,
+        'lang': kwargs.get('lang', 'en'),
+        'target': kwargs.get('target', 'it')
+    }
 
     try:
         result = requests.post(URL_TRANSLATION, data=data, headers=headers, timeout=(5, 30))
@@ -22,7 +26,9 @@ def translate(text=''):
 
 
 def translate_text_macro(item, **kwargs):
-    item['body_html'] = process_html(item.get('body_html', ''), translate)
+    lang = 'en' if item.get('language', 'en') == 'en' else 'it'
+    target = 'it' if lang == 'en' else 'en'
+    item['body_html'] = process_html(item.get('body_html', ''), translate, lang=lang, target=target)
 
     return item
 
