@@ -58,7 +58,8 @@ module.exports = function(grunt) {
             preview: 1,
             swimlane: {columnsLimit: 4},
             editor3: true,
-            editorHighlights: true
+            editorHighlights: true,
+            nestedItemsInOutputStage: true,
         },
         workspace: {
             analytics: true
