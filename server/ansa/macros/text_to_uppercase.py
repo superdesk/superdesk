@@ -5,7 +5,7 @@ from .process_html import process_html
 """
 
 
-def upper_case(text=''):
+def upper_case(text='', **kwargs):
     return text.upper()
 
 
