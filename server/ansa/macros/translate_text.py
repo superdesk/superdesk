@@ -38,4 +38,4 @@ label = 'Translate text'
 callback = translate_text_macro
 access_type = 'frontend'
 action_type = 'direct'
-simple_replace = True
+replace_type = 'simple-replace'

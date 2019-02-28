@@ -36,3 +36,4 @@ label = 'Format text to 60 chars'
 callback = format_text_macro
 access_type = 'frontend'
 action_type = 'direct'
+replace_type = 'keep-style-replace'
