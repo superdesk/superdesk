@@ -34,6 +34,7 @@ export default angular.module('ansa.widgets', [])
             sizey: 1,
             template: 'stages-auto-publish.html',
             description: 'Configure auto publishing',
+            thumbnail: require('./thumbnail.svg'),
         });
     }])
     .run(['$templateCache', ($templateCache) => {
