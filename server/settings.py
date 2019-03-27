@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'ansa.formatters',
     'ansa.routing',
     'ansa.stage_auto_publishing',
+    'ansa.update_signal',
 
     'planning',
 ]
