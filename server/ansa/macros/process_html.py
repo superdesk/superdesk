@@ -9,4 +9,7 @@ def process_html(html, process, **kwargs):
             new_text = process(text, **kwargs)
             html = html.replace(text, new_text)
 
+    if not soup.find_all('p'):  # not html field
+        html = process(soup.text, **kwargs)
+
     return html

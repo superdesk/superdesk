@@ -17,6 +17,9 @@ def translate(text='', **kwargs):
         'target': kwargs.get('target', 'it')
     }
 
+    if not text:
+        return text
+
     try:
         result = requests.post(URL_TRANSLATION, data=data, headers=headers, timeout=(5, 30))
         response = json.loads(result.text)
@@ -32,10 +35,9 @@ def translate_text_macro(item, **kwargs):
     lang = kwargs.get('from_language', lang)
     target = kwargs.get('to_language', target)
 
-    item['headline'] = process_html(item.get('headline', ''), translate, lang=lang, target=target)
-    item['slugline'] = process_html(item.get('slugline', ''), translate, lang=lang, target=target)
-    item['abstract'] = process_html(item.get('abstract', ''), translate, lang=lang, target=target)
-    item['body_html'] = process_html(item.get('body_html', ''), translate, lang=lang, target=target)
+    for field in ('headline', 'slugline', 'abstract', 'body_html'):
+        if item.get(field):
+            item[field] = process_html(item[field], translate, lang=lang, target=target)
 
     return item
 
