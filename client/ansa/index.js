@@ -433,16 +433,6 @@ function AnsaRepoDropdown(api, $filter, $location, $rootScope) {
     };
 }
 
-AnsaMapCtrl.$inject = ['$scope', '$modal'];
-function AnsaMapCtrl($scope, $modal) {
-    this.open = () => {
-        $modal.open({
-            template: require('./views/ansa-map.html'),
-            size: 'fullscreen modal--dark-ui',
-        });
-    };
-}
-
 AnsaSearchPanelController.$inject = ['$scope'];
 function AnsaSearchPanelController($scope) {
     this.categories = [
@@ -483,7 +473,6 @@ export default angular.module('ansa.superdesk', [
     .controller('MetasearchCtrl', MetasearchController)
     .controller('AnsaSemanticsCtrl', AnsaSemanticsCtrl)
     .controller('AnsaRelatedCtrl', AnsaRelatedCtrl)
-    .controller('AnsaMapCtrl', AnsaMapCtrl)
     .controller('AnsaSearchPanel', AnsaSearchPanelController)
     .directive('ansaMetasearchItem', AnsaMetasearchItem)
     .directive('ansaLiveSuggestions', AnsaLiveSuggestions)
@@ -507,6 +496,14 @@ export default angular.module('ansa.superdesk', [
             sideTemplateUrl: 'scripts/apps/workspace/views/workspace-sidenav.html',
         });
 
+        superdeskProvider.activity('/ansa/map', {
+            label: gettext('Superdesk aiNews'),
+            priority: 300,
+            template: require('./views/ansa-map.html'),
+            topTemplateUrl: 'scripts/apps/dashboard/views/workspace-topnav.html',
+            sideTemplateUrl: 'scripts/apps/workspace/views/workspace-sidenav.html',
+        });
+
         workspaceMenuProvider
             .item({
                 href: '/workspace/metasearch',
@@ -523,18 +520,12 @@ export default angular.module('ansa.superdesk', [
             .item({
                 href: '/ansa/map',
                 icon: 'web',
-                templateUrl: 'menu-map.html',
                 order: 930,
                 group: 'map',
             });
     }])
     // ansa core templates override
     .run(['$templateCache', ($templateCache) => {
-        $templateCache.put(
-            'menu-map.html',
-            require('./views/menu-map.html')
-        );
-
         $templateCache.put(
             'scripts/apps/authoring/packages/views/packages-widget.html',
             require('./views/packages-widget.html')
