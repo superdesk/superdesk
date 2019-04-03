@@ -78,7 +78,7 @@ class MetasearchController {
         this.time_range = this.time_range === null ? 'day' : this.time_range;
 
         if (this.query) {
-            let params = {q: this.query, format: 'json', pageno: 1};
+            let params = {q: this.parseQuery(this.query), format: 'json', pageno: 1};
 
             this.items = null;
             this.loading = true;
@@ -97,6 +97,13 @@ class MetasearchController {
                     this.updatePagination();
                 });
         }
+    }
+
+    parseQuery(query) {
+        return (query || '')
+            .split(' ')
+            .filter((piece) => !!piece)
+            .join(' AND ');
     }
 
     updatePagination() {
