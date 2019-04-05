@@ -171,3 +171,14 @@ iframe.ansa-map {
     right:0;
     background-color: #fff;
 }
+
+.main-article .char-count {
+    margin-top: 5px;
+    font-size: 13px;
+    color: inherit;
+}
+
+.main-article:hover .char-count,
+.main-article:focus .char-count {
+    opacity: 0.6;
+}
