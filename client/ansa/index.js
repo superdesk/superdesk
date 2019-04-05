@@ -516,6 +516,7 @@ export default angular.module('ansa.superdesk', [
                 href: '/workspace/metasearch',
                 label: 'Metasearch',
                 icon: 'meta-search',
+                shortcut: 'alt+s',
                 order: 910,
             })
             .item({
@@ -523,12 +524,15 @@ export default angular.module('ansa.superdesk', [
                 label: 'Live assistant',
                 icon: 'live',
                 order: 920,
+                shortcut: 'alt+l',
             })
             .item({
                 href: '/ansa/map',
+                label: 'aiNews',
                 icon: 'web',
                 order: 930,
                 group: 'map',
+                shortcut: 'alt+a',
             });
     }])
     // ansa core templates override
