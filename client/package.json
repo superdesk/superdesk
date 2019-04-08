@@ -1,7 +1,7 @@
 {
     "dependencies": {
         "superdesk-core": "superdesk/superdesk-client-core#1.28-ansa",
-        "superdesk-planning": "petrjasek/superdesk-planning#e42bbfc"
+        "superdesk-planning": "superdesk/superdesk-planning#1.5"
     },
     "devDependencies": {
         "superdesk-code-style": "^1.1.1"
