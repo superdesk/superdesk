@@ -12513,6 +12513,18 @@
                     {
                         "name": "Newsroom NINJS",
                         "qcode": "newsroom ninjs"
+                    },
+                    {
+                        "name": "JSON Event",
+                        "qcode": "json_event"
+                    },
+                    {
+                        "name": "JSON Planning",
+                        "qcode": "json_planning"
+                    },
+                    {
+                        "name": "JSON Planning Featured",
+                        "qcode": "json_planning_featured"
                     }
                 ]
             },
@@ -12544,6 +12556,18 @@
                     {
                         "name": "Newsroom NINJS",
                         "qcode": "newsroom ninjs"
+                    },
+                    {
+                        "name": "JSON Event",
+                        "qcode": "json_event"
+                    },
+                    {
+                        "name": "JSON Planning",
+                        "qcode": "json_planning"
+                    },
+                    {
+                        "name": "JSON Planning Featured",
+                        "qcode": "json_planning_featured"
                     }
                 ]
             },
@@ -12571,6 +12595,18 @@
                     {
                         "name": "Newsroom NINJS",
                         "qcode": "newsroom ninjs"
+                    },
+                    {
+                        "name": "JSON Event",
+                        "qcode": "json_event"
+                    },
+                    {
+                        "name": "JSON Planning",
+                        "qcode": "json_planning"
+                    },
+                    {
+                        "name": "JSON Planning Featured",
+                        "qcode": "json_planning_featured"
                     }
                 ]
             }
