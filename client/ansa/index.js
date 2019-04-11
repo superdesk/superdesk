@@ -3,7 +3,6 @@ import angular from 'angular';
 import widgets from './widgets';
 import packages from './package-manager/package-manager';
 
-import closedDeskWidget from './closed-desk';
 import AnsaRelatedCtrl from './AnsaRelatedCtrl';
 
 import './styles.scss';
@@ -474,7 +473,6 @@ export default angular.module('ansa.superdesk', [
     widgets.name,
     packages.name,
     'superdesk.apps.workspace.menu',
-    closedDeskWidget.name,
 ])
     .factory('metasearch', MetasearchFactory)
     .controller('MetasearchCtrl', MetasearchController)
