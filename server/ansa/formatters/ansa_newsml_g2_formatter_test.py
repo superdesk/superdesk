@@ -49,6 +49,7 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
                 'name': 'Australian General News'
             }
         ],
+        'language': 'en',
         'source': 'AAP',
         'headline': 'This is a test headline',
         'byline': 'joe',
@@ -70,12 +71,13 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         'pubstatus': 'usable',
         'dateline': {
             'source': 'ANSA',
-            'text': 'Roma, Aug 11 ANSA -',
+            'text': 'Roma, Aug 01 ANSA -',
+            'date': '2018-08-01T09:25:19+0000',
             'located': {
                 'alt_name': '',
                 'state': 'Latium',
                 'city_code': 'Rome',
-                'city': 'Rome',
+                'city': 'Roma',
                 'dateline': 'city',
                 'country_code': 'IT',
                 'country': 'Italy',
@@ -104,6 +106,7 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         'extra': {
             'subtitle': '<p>Subtitle text</p>',
             'shorttitle': '<p>Short headline</p>',
+            'HeadingNews': 'ANSA',
         },
         'sms_message': 'SMS message',
     }
@@ -451,3 +454,18 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         service = item.find(ns('itemMeta')).find(ns('service'))
         self.assertIsNotNone(service)
         self.assertEqual(desks[0]['name'], service.find(ns('name')).text)
+
+    def test_dateline(self):
+        datelines = {
+            'it': '(ANSA) - ROMA, 01 AGO -',
+            'en': '(ANSA) - ROMA, AUG 1 -',
+            'de': '(ANSA) - ROMA, 1 AUG -',
+            'es': '(ANSA) - ROMA 1 AGO -',
+            'pt': 'ROMA, 1 AGO (ANSA) -',
+            # 'ar': '(ANSA) - ROMA, 11 AGO -',
+        }
+
+        for lang, expected in datelines.items():
+            content_meta = self.format_content_meta({'language': lang})
+            dateline = content_meta.find(ns('dateline'))
+            self.assertEqual(expected, dateline.text, lang)

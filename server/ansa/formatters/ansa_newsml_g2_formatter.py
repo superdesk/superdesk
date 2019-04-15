@@ -1,9 +1,11 @@
 
+import arrow
 import superdesk
 
 from lxml import etree
 from lxml.etree import SubElement
 from flask import current_app as app
+from babel.dates import format_datetime, get_timezone
 
 from superdesk.publish.formatters.newsml_g2_formatter import NewsMLG2Formatter, XML_LANG
 from superdesk.text_utils import get_text
@@ -206,14 +208,48 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
             self._format_geonames_place(located['place'], content_meta, 'located')
         elif located and located.get('city'):
             located_elm = SubElement(content_meta, 'located',
-                                     attrib={'qcode': 'city:%s' % located.get('city').upper()})
+                                     attrib={'qcode': 'city:%s' % located.get('city_code').upper()})
             if located.get('state'):
                 SubElement(located_elm, 'broader', attrib={'qcode': 'reg:%s' % located['state']})
             if located.get('country'):
                 SubElement(located_elm, 'broader', attrib={'qcode': 'cntry:%s' % located['country'].upper()})
 
-        if article.get('dateline', {}).get('text', {}):
-            SubElement(content_meta, 'dateline').text = article.get('dateline', {}).get('text', {})
+        if article.get('dateline'):
+            self._format_dateline(article, content_meta, article.get('dateline'))
+
+    def _format_dateline(self, article, content_meta, dateline):
+        dateline_text = article.get('dateline', {}).get('text', '')
+        if dateline.get('date') and dateline.get('located'):
+            date = arrow.get(dateline['date']).datetime
+            source = article.get('extra', {}).get('HeadingNews', article.get('source', 'ANSA'))
+            language = article.get('language', 'it')
+            kwargs = {
+                'city': dateline['located'].get('city', 'ROMA').upper(),
+                'date': self._format_dateline_date(date, language, dateline['located'].get('tz')),
+                'source': source,
+            }
+
+            if language in ('it', 'en', 'de'):
+                dateline_text = '({source}) - {city}, {date} -'.format(**kwargs)
+            elif language == 'es':
+                dateline_text = '({source}) - {city} {date} -'.format(**kwargs)
+            elif language == 'pt':
+                dateline_text = '{city}, {date} ({source}) -'.format(**kwargs)
+            elif language == 'ar':
+                dateline_text = '{city} - {date} - {source} -'.format(**kwargs)
+
+        SubElement(content_meta, 'dateline').text = dateline_text
+
+    def _format_dateline_date(self, date, language, tz=None):
+        tzinfo = None
+        if tz:
+            tzinfo = get_timezone(tz)
+        _format = 'dd MMM'
+        if language == 'en':
+            _format = 'MMM d'
+        elif language in ('es', 'pt', 'de'):
+            _format = 'd MMM'
+        return format_datetime(date, _format, tzinfo=tzinfo, locale=language).upper().strip('.')
 
     def _format_place(self, article, content_meta):
         super()._format_place(article, content_meta)
