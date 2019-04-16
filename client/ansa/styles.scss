@@ -161,6 +161,15 @@
 .modal__body--relative {
     position: relative;
 }
+
+.main-section.map {
+    position: absolute;
+    top: 48px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
 iframe.ansa-map {
     height: 100%;
     width: 100%;
