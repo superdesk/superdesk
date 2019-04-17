@@ -1,0 +1,6 @@
+{% for item in items %}
+<h2>{{ item.headline|e }}</h2>
+{{ item.body_html }}
+<p></p>
+
+{% endfor %}
