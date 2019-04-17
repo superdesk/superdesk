@@ -78,6 +78,16 @@
     #search-input {
         flex-grow: 1;
     }
+
+    &.monitoring {
+        .main-section {
+            top: 48px;
+
+            &.map {
+                top: 0;
+            }
+        }
+    }
 }
 
 #ansa-related-widget {
@@ -162,13 +172,7 @@
     position: relative;
 }
 
-.main-section.map {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-}
+
 
 iframe.ansa-map {
     height: 100%;
