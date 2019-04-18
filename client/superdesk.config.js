@@ -16,6 +16,7 @@ module.exports = function(grunt) {
             assignments: 1,
         },
         features: {
+            preview: true,
             customAuthoringTopbar: true,
             editFeaturedImage: true,
             searchShortcut: true,
