@@ -236,7 +236,7 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
             elif language == 'pt':
                 dateline_text = '{city}, {date} ({source}) -'.format(**kwargs)
             elif language == 'ar':
-                dateline_text = '{city} - {date} - {source} -'.format(**kwargs)
+                dateline_text = '{source} - {date} - {city} -'.format(**kwargs)
 
         SubElement(content_meta, 'dateline').text = dateline_text
 
@@ -245,7 +245,7 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
         if tz:
             tzinfo = get_timezone(tz)
         _format = 'dd MMM'
-        if language == 'en':
+        if language in ('en', 'ar'):
             _format = 'MMM d'
         elif language in ('es', 'pt', 'de'):
             _format = 'd MMM'
