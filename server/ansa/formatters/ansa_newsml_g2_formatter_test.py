@@ -462,7 +462,7 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
             'de': '(ANSA) - ROMA, 1 AUG -',
             'es': '(ANSA) - ROMA 1 AGO -',
             'pt': 'ROMA, 1 AGO (ANSA) -',
-            # 'ar': '(ANSA) - ROMA, 11 AGO -',
+            'ar': 'ANSA - ' + 'أغسطس' + ' 1 - ROMA -',
         }
 
         for lang, expected in datelines.items():
