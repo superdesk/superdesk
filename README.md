@@ -54,9 +54,9 @@ git clone https://github.com/superdesk/superdesk.git $path
 
 # server
 cd $path/server
-pip install -r requirements.txt
-python manage.py app:initialize_data
-python manage.py users:create -u admin -p admin -e 'admin@example.com' --admin
+pip3 install -r requirements.txt
+python3 manage.py app:initialize_data
+python3 manage.py users:create -u admin -p admin -e 'admin@example.com' --admin
 honcho start
 # if you need some data
 python manage.py app:prepopulate
