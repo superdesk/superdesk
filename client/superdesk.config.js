@@ -17,7 +17,11 @@ module.exports = function(grunt) {
         },
         features: {
             preview: true,
-            customAuthoringTopbar: true,
+            customAuthoringTopbar: {
+                toDesk: false,
+                publish: true,
+                publishAndContinue: true,
+            },
             editFeaturedImage: true,
             searchShortcut: true,
             editor3: true,
