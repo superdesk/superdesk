@@ -267,7 +267,21 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
         item = super()._format_item_set(article, item_set, item_type)
         if article.get('extra', {}).get('ansaid') and not article.get('original_id'):
             item.set('guid', article['extra']['ansaid'])
+        elif article.get('rewrite_of'):
+            item.set('guid', self._get_original_guid(article))
+            item.set('version', str(article.get('rewrite_sequence') + 1))
+        else:
+            item.set('version', str(1))
         return item
+
+    def _get_original_guid(self, article):
+        guid = article['rewrite_of']
+        for i in range(article.get('rewrite_sequence', 1)):
+            prev = superdesk.get_resource_service('archive').find_one(req=None, _id=guid)
+            if not prev or not prev.get('rewrite_of'):
+                break
+            guid = prev['rewrite_of']
+        return guid
 
     def _format_rights(self, newsItem, article):
         try:
