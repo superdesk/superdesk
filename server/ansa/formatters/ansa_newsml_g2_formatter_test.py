@@ -442,8 +442,8 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         self.assertEqual(str(geoname['location']['lat']), position.get('latitude'))
         self.assertEqual(str(geoname['location']['lon']), position.get('longitude'))
 
-    def test_desk_as_service(self):
-        desks = [{'name': 'Sports'}]
+    def test_desk_in_output(self):
+        desks = [{'name': 'SPO - Sports'}]
         self.app.data.insert('desks', desks)
         article = self.article.copy()
         article['_id'] = article['guid']
@@ -454,6 +454,9 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         service = item.find(ns('itemMeta')).find(ns('service'))
         self.assertIsNotNone(service)
         self.assertEqual(desks[0]['name'], service.find(ns('name')).text)
+
+        signal = item.find(ns('itemMeta')).find(ns('signal[@qcode="red-address:SPO"]'))
+        self.assertIsNotNone(signal)
 
     def test_dateline(self):
         datelines = {
