@@ -1,7 +1,9 @@
 import _ from 'lodash';
+import {get} from 'lodash';
 import angular from 'angular';
 import widgets from './widgets';
 import packages from './package-manager/package-manager';
+import {getArticleSchemaMiddleware} from 'superdesk-core/scripts/apps/authoring/authoring';
 
 import AnsaRelatedCtrl from './AnsaRelatedCtrl';
 
@@ -545,4 +547,20 @@ export default angular.module('ansa.superdesk', [
             require('./views/search-panel.html')
         );
     }])
+
+    .run(() => {
+        getArticleSchemaMiddleware.push(({item, schema}) => {
+            const maxlength = get(schema, 'headline.maxlength', 0);
+
+            if (item.priority === 1 && maxlength > 0) {
+                schema.headline.maxlength -= '+++ '.length * 2;
+            }
+
+            if (item.genre && item.genre.length > 0 && maxlength > 0) {
+                schema.headline.maxlength -= item.genre[0].name.length + 1;
+            }
+
+            return schema;
+        });
+    })
 ;

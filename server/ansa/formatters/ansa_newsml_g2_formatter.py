@@ -343,3 +343,15 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
                     qcode = code if ':' in code else 'genre:%s' % code
                     genre = SubElement(content_meta, 'genre', attrib={'qcode': qcode})
                     SubElement(genre, 'name', attrib={XML_LANG: article.get('language', 'en')}).text = g['name']
+
+    def _format_headline(self, article, content_meta):
+        text = article.get('headline', '')
+
+        if article.get('genre'):
+            for g in article['genre']:
+                if g.get('name'):
+                    text = ' '.join([g['name'], text])
+
+        if article.get('priority', 0) == 1:
+            text = '+++ {} +++'.format(text)
+        SubElement(content_meta, 'headline').text = text
