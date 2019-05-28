@@ -155,6 +155,9 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
             if desk and desk.get('name'):
                 service = SubElement(item_meta, 'service')
                 SubElement(service, 'name').text = desk['name']
+                pieces = desk['name'].split(' - ')
+                if len(pieces) == 2:
+                    SubElement(item_meta, 'signal', {'qcode': 'red-address:{}'.format(pieces[0].strip())})
 
     def _format_related(self, article, item_meta):
         featured = article.get('associations', {}).get('featuremedia')
