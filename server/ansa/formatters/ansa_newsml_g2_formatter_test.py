@@ -428,6 +428,7 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         self.assertIsNotNone(genre)
         self.assertEqual('genre:Article', genre.get('qcode'))
         self.assertEqual('Article (news)', genre.find(ns('name')).text)
+        self.assertEqual('Article (news) {}'.format(self.article['headline']), meta.find(ns('headline')).text)
 
     def test_located_semantics(self):
         updates = {'dateline': {'located': {'place': geoname}}}
@@ -442,8 +443,8 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         self.assertEqual(str(geoname['location']['lat']), position.get('latitude'))
         self.assertEqual(str(geoname['location']['lon']), position.get('longitude'))
 
-    def test_desk_as_service(self):
-        desks = [{'name': 'Sports'}]
+    def test_desk_in_output(self):
+        desks = [{'name': 'SPO - Sports'}]
         self.app.data.insert('desks', desks)
         article = self.article.copy()
         article['_id'] = article['guid']
@@ -454,6 +455,9 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         service = item.find(ns('itemMeta')).find(ns('service'))
         self.assertIsNotNone(service)
         self.assertEqual(desks[0]['name'], service.find(ns('name')).text)
+
+        signal = item.find(ns('itemMeta')).find(ns('signal[@qcode="red-address:SPO"]'))
+        self.assertIsNotNone(signal)
 
     def test_dateline(self):
         datelines = {
@@ -497,3 +501,10 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         item3 = self.get_item(article3)
         self.assertEqual(article1['guid'], item3.get('guid'))
         self.assertEqual('3', item3.get('version'))
+
+    def test_headline_flash(self):
+        updates = {'priority': 1}
+        meta = self.format_content_meta(updates)
+        headline = meta.find(ns('headline'))
+        self.assertEqual(headline.get('role'), None)
+        self.assertEqual('+++ {} +++'.format(self.article['headline']), headline.text)

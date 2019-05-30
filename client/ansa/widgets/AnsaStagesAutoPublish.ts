@@ -7,7 +7,6 @@ export default function AnsaStagesAutoPublish (desks, api) {
         }
 
         this.stages = desks.deskStages[desk._id];
-        console.info('stages', this.stages);
     });
 
     this.toggle = (stage) => {
