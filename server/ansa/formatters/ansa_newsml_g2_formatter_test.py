@@ -508,3 +508,9 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         headline = meta.find(ns('headline'))
         self.assertEqual(headline.get('role'), None)
         self.assertEqual('+++ {} +++'.format(self.article['headline']), headline.text)
+
+    def test_empty_content(self):
+        article = self.get_article()
+        article.pop('body_html')
+        formatter = ANSANewsMLG2Formatter()
+        _, doc = formatter.format(article, self.subscriber)[0]

@@ -9,6 +9,7 @@ from babel.dates import format_datetime, get_timezone
 
 from superdesk.publish.formatters.newsml_g2_formatter import NewsMLG2Formatter, XML_LANG
 from superdesk.text_utils import get_text
+from superdesk.logging import logger
 
 
 class ANSANewsMLG2Formatter(NewsMLG2Formatter):
@@ -61,7 +62,8 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
     def _build_html_doc(self, article):
         try:
             html = etree.HTML(article.get('body_html'))
-        except etree.XMLSyntaxError:
+        except (etree.XMLSyntaxError, ValueError):
+            logger.exception('XML parsing error')
             html = None
         return html if html is not None else etree.HTML('<p></p>')
 
