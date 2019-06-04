@@ -63,9 +63,10 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
         try:
             html = etree.HTML(article.get('body_html'))
         except (etree.XMLSyntaxError, ValueError):
-            logger.exception('XML parsing error')
+            if article.get('body_html'):
+                logger.exception('XML parsing error')
             html = None
-        return html if html is not None else etree.HTML('<p></p>')
+        return html if html is not None else etree.HTML('<p>%s</p>' % article.get('headline') or '')
 
     def _format_itemref(self, group, ref, item):
         itemRef = super()._format_itemref(group, ref, item)

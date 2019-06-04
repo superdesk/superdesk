@@ -506,3 +506,12 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         article.pop('body_html')
         formatter = ANSANewsMLG2Formatter()
         _, doc = formatter.format(article, self.subscriber)[0]
+        xml = etree.fromstring(doc.encode('utf-8'))
+        html = xml.find('/'.join([
+            ns('itemSet'),
+            ns('newsItem'),
+            ns('contentSet'),
+            ns('inlineXML'),
+        ]))
+        self.assertIsNotNone(html)
+        self.assertIn(article['headline'], etree.tostring(html, method='text').decode('utf-8'))
