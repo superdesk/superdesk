@@ -1,14 +1,16 @@
 import _ from 'lodash';
-import {get} from 'lodash';
+import {trim} from 'lodash';
 import angular from 'angular';
 import widgets from './widgets';
 import packages from './package-manager/package-manager';
-import {getArticleSchemaMiddleware} from 'superdesk-core/scripts/apps/authoring/authoring';
+import {onChangeMiddleware} from 'superdesk-core/scripts/apps/authoring/authoring';
 
 import AnsaRelatedCtrl from './AnsaRelatedCtrl';
 
 import './styles.scss';
 import './package-manager/package-manager.scss';
+
+const DEFAULT_GENRE = 'Article';
 
 class MetasearchController {
     constructor($scope, $location, $timeout, metasearch, Keys, workspace) {
@@ -548,19 +550,41 @@ export default angular.module('ansa.superdesk', [
         );
     }])
 
-    .run(() => {
-        getArticleSchemaMiddleware.push(({item, schema}) => {
-            const maxlength = get(schema, 'headline.maxlength', 0);
+    .run(['$rootScope', 'metadata', ($rootScope, metadata) => {
+        let genre = null;
 
-            if (item.priority === 1 && maxlength > 0) {
-                schema.headline.maxlength -= '+++ '.length * 2;
+        onChangeMiddleware.push(({item, original}) => {
+            const hasPlus = item.headline.indexOf('++') === 0;
+            let updated = false;
+
+            if (item.priority === 2 && !hasPlus) {
+                item.headline = ['++', item.headline, '++'].join(' ');
+                updated = true;
+            } else if (item.priority !== 2 && hasPlus) {
+                item.headline = trim(item.headline, '+ ');
+                updated = true;
             }
 
-            if (item.genre && item.genre.length > 0 && maxlength > 0) {
-                schema.headline.maxlength -= item.genre[0].name.length + 1;
+            if (item.genre !== genre) {
+                metadata.values.genre.forEach((genre) => {
+                    const selected = item.genre.find((_genre) => _genre.qcode === genre.qcode) != null;
+                    const included = item.headline.indexOf(genre.name) !== -1;
+
+                    if (selected && !included && genre.qcode !== DEFAULT_GENRE) {
+                        item.headline = [genre.name, item.headline].join(' ');
+                        updated = true;
+                    } else if (!selected && included) {
+                        item.headline = item.headline.replace(genre.name, '').trim();
+                        updated = true;
+                    }
+                });
+
+                genre = item.genre;
             }
 
-            return schema;
+            if (updated) { // update editor3
+                $rootScope.$broadcast('macro:refreshField', 'headline', item.headline);
+            }
         });
-    })
+    }])
 ;

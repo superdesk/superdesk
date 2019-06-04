@@ -9,6 +9,7 @@ from babel.dates import format_datetime, get_timezone
 
 from superdesk.publish.formatters.newsml_g2_formatter import NewsMLG2Formatter, XML_LANG
 from superdesk.text_utils import get_text
+from superdesk.logging import logger
 
 
 class ANSANewsMLG2Formatter(NewsMLG2Formatter):
@@ -61,9 +62,11 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
     def _build_html_doc(self, article):
         try:
             html = etree.HTML(article.get('body_html'))
-        except etree.XMLSyntaxError:
+        except (etree.XMLSyntaxError, ValueError):
+            if article.get('body_html'):
+                logger.exception('XML parsing error')
             html = None
-        return html if html is not None else etree.HTML('<p></p>')
+        return html if html is not None else etree.HTML('<p>%s</p>' % article.get('headline') or '')
 
     def _format_itemref(self, group, ref, item):
         itemRef = super()._format_itemref(group, ref, item)
@@ -222,22 +225,22 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
 
     def _format_dateline(self, article, content_meta, dateline):
         dateline_text = article.get('dateline', {}).get('text', '')
-        if dateline.get('date') and dateline.get('located'):
+        if dateline.get('date') and dateline.get('text'):
             date = arrow.get(dateline['date']).datetime
             source = article.get('extra', {}).get('HeadingNews', article.get('source', 'ANSA'))
             language = article.get('language', 'it')
             kwargs = {
-                'city': dateline['located'].get('city', 'ROMA').upper(),
+                'city': dateline['text'].split(',')[0],
                 'date': self._format_dateline_date(date, language, dateline['located'].get('tz')),
                 'source': source,
             }
 
             if language in ('it', 'en', 'de'):
-                dateline_text = '({source}) - {city}, {date} -'.format(**kwargs)
+                dateline_text = '{source} - {city}, {date} -'.format(**kwargs)
             elif language == 'es':
-                dateline_text = '({source}) - {city} {date} -'.format(**kwargs)
+                dateline_text = '{source} - {city} {date} -'.format(**kwargs)
             elif language == 'pt':
-                dateline_text = '{city}, {date} ({source}) -'.format(**kwargs)
+                dateline_text = '{city}, {date} {source} -'.format(**kwargs)
             elif language == 'ar':
                 dateline_text = '{source} - {date} - {city} -'.format(**kwargs)
 
@@ -360,15 +363,3 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
                     qcode = code if ':' in code else 'genre:%s' % code
                     genre = SubElement(content_meta, 'genre', attrib={'qcode': qcode})
                     SubElement(genre, 'name', attrib={XML_LANG: article.get('language', 'en')}).text = g['name']
-
-    def _format_headline(self, article, content_meta):
-        text = article.get('headline', '')
-
-        if article.get('genre'):
-            for g in article['genre']:
-                if g.get('name'):
-                    text = ' '.join([g['name'], text])
-
-        if article.get('priority', 0) == 1:
-            text = '+++ {} +++'.format(text)
-        SubElement(content_meta, 'headline').text = text

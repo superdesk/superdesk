@@ -71,7 +71,7 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         'pubstatus': 'usable',
         'dateline': {
             'source': 'ANSA',
-            'text': 'Roma, Aug 01 ANSA -',
+            'text': 'Roma (foo), Aug 01 ANSA -',
             'date': '2018-08-01T09:25:19+0000',
             'located': {
                 'alt_name': '',
@@ -106,7 +106,7 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         'extra': {
             'subtitle': '<p>Subtitle text</p>',
             'shorttitle': '<p>Short headline</p>',
-            'HeadingNews': 'ANSA',
+            'HeadingNews': '(ANSA)',
         },
         'sms_message': 'SMS message',
     }
@@ -428,7 +428,6 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         self.assertIsNotNone(genre)
         self.assertEqual('genre:Article', genre.get('qcode'))
         self.assertEqual('Article (news)', genre.find(ns('name')).text)
-        self.assertEqual('Article (news) {}'.format(self.article['headline']), meta.find(ns('headline')).text)
 
     def test_located_semantics(self):
         updates = {'dateline': {'located': {'place': geoname}}}
@@ -461,12 +460,12 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
 
     def test_dateline(self):
         datelines = {
-            'it': '(ANSA) - ROMA, 01 AGO -',
-            'en': '(ANSA) - ROMA, AUG 1 -',
-            'de': '(ANSA) - ROMA, 1 AUG -',
-            'es': '(ANSA) - ROMA 1 AGO -',
-            'pt': 'ROMA, 1 AGO (ANSA) -',
-            'ar': 'ANSA - ' + 'أغسطس' + ' 1 - ROMA -',
+            'it': '(ANSA) - Roma (foo), 01 AGO -',
+            'en': '(ANSA) - Roma (foo), AUG 1 -',
+            'de': '(ANSA) - Roma (foo), 1 AUG -',
+            'es': '(ANSA) - Roma (foo) 1 AGO -',
+            'pt': 'Roma (foo), 1 AGO (ANSA) -',
+            'ar': '(ANSA) - ' + 'أغسطس' + ' 1 - Roma (foo) -',
         }
 
         for lang, expected in datelines.items():
@@ -502,9 +501,17 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         self.assertEqual(article1['guid'], item3.get('guid'))
         self.assertEqual('3', item3.get('version'))
 
-    def test_headline_flash(self):
-        updates = {'priority': 1}
-        meta = self.format_content_meta(updates)
-        headline = meta.find(ns('headline'))
-        self.assertEqual(headline.get('role'), None)
-        self.assertEqual('+++ {} +++'.format(self.article['headline']), headline.text)
+    def test_empty_content(self):
+        article = self.get_article()
+        article.pop('body_html')
+        formatter = ANSANewsMLG2Formatter()
+        _, doc = formatter.format(article, self.subscriber)[0]
+        xml = etree.fromstring(doc.encode('utf-8'))
+        html = xml.find('/'.join([
+            ns('itemSet'),
+            ns('newsItem'),
+            ns('contentSet'),
+            ns('inlineXML'),
+        ]))
+        self.assertIsNotNone(html)
+        self.assertIn(article['headline'], etree.tostring(html, method='text').decode('utf-8'))
