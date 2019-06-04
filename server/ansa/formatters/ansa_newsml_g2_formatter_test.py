@@ -41,6 +41,7 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
     formatter = ANSANewsMLG2Formatter()
 
     article = {
+        '_id': 'tag:aap.com.au:20150613:12345',
         'guid': 'tag:aap.com.au:20150613:12345',
         '_current_version': 1,
         'anpa_category': [
@@ -65,7 +66,6 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         'type': 'text',
         'word_count': '1',
         'priority': '1',
-        '_id': 'urn:localhost.abc',
         'state': 'published',
         'urgency': 2,
         'pubstatus': 'usable',
@@ -473,6 +473,34 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
             content_meta = self.format_content_meta({'language': lang})
             dateline = content_meta.find(ns('dateline'))
             self.assertEqual(expected, dateline.text, lang)
+
+    def test_rewrite_guid_version(self):
+
+        article1 = self.article.copy()
+        article2 = self.article.copy()
+        article3 = self.article.copy()
+
+        article2['rewrite_of'] = article1['_id']
+        article2['rewrite_sequence'] = 1
+        article2['_id'] = article2['guid'] = 'bar'
+
+        article3['rewrite_of'] = article2['_id']
+        article3['rewrite_sequence'] = 2
+        article3['_id'] = article3['guid'] = 'baz'
+
+        self.app.data.insert('archive', [article1, article2, article3])
+
+        item1 = self.get_item(article1)
+        self.assertEqual(article1['guid'], item1.get('guid'))
+        self.assertEqual('1', item1.get('version'))
+
+        item2 = self.get_item(article2)
+        self.assertEqual(article1['guid'], item2.get('guid'))
+        self.assertEqual('2', item2.get('version'))
+
+        item3 = self.get_item(article3)
+        self.assertEqual(article1['guid'], item3.get('guid'))
+        self.assertEqual('3', item3.get('version'))
 
     def test_headline_flash(self):
         updates = {'priority': 1}
