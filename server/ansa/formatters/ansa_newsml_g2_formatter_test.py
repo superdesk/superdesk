@@ -428,7 +428,6 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         self.assertIsNotNone(genre)
         self.assertEqual('genre:Article', genre.get('qcode'))
         self.assertEqual('Article (news)', genre.find(ns('name')).text)
-        self.assertEqual('Article (news) {}'.format(self.article['headline']), meta.find(ns('headline')).text)
 
     def test_located_semantics(self):
         updates = {'dateline': {'located': {'place': geoname}}}
@@ -501,13 +500,6 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         item3 = self.get_item(article3)
         self.assertEqual(article1['guid'], item3.get('guid'))
         self.assertEqual('3', item3.get('version'))
-
-    def test_headline_flash(self):
-        updates = {'priority': 1}
-        meta = self.format_content_meta(updates)
-        headline = meta.find(ns('headline'))
-        self.assertEqual(headline.get('role'), None)
-        self.assertEqual('+++ {} +++'.format(self.article['headline']), headline.text)
 
     def test_empty_content(self):
         article = self.get_article()
