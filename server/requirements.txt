@@ -4,5 +4,5 @@ honcho==1.0.1
 newrelic>=2.66,<2.67
 flask==0.12.2
 flask-babel==0.12.2
-superdesk-core==1.29
+-e git+git://github.com/superdesk/superdesk-core.git@master#egg=superdesk-planning
 -e git+git://github.com/superdesk/superdesk-planning.git@1.5#egg=superdesk-planning
