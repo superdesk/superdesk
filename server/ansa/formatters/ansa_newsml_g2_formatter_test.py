@@ -71,7 +71,7 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         'pubstatus': 'usable',
         'dateline': {
             'source': 'ANSA',
-            'text': 'Roma, Aug 01 ANSA -',
+            'text': 'Roma (foo), Aug 01 ANSA -',
             'date': '2018-08-01T09:25:19+0000',
             'located': {
                 'alt_name': '',
@@ -106,7 +106,7 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         'extra': {
             'subtitle': '<p>Subtitle text</p>',
             'shorttitle': '<p>Short headline</p>',
-            'HeadingNews': 'ANSA',
+            'HeadingNews': '(ANSA)',
         },
         'sms_message': 'SMS message',
     }
@@ -460,12 +460,12 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
 
     def test_dateline(self):
         datelines = {
-            'it': '(ANSA) - ROMA, 01 AGO -',
-            'en': '(ANSA) - ROMA, AUG 1 -',
-            'de': '(ANSA) - ROMA, 1 AUG -',
-            'es': '(ANSA) - ROMA 1 AGO -',
-            'pt': 'ROMA, 1 AGO (ANSA) -',
-            'ar': 'ANSA - ' + 'أغسطس' + ' 1 - ROMA -',
+            'it': '(ANSA) - Roma (foo), 01 AGO -',
+            'en': '(ANSA) - Roma (foo), AUG 1 -',
+            'de': '(ANSA) - Roma (foo), 1 AUG -',
+            'es': '(ANSA) - Roma (foo) 1 AGO -',
+            'pt': 'Roma (foo), 1 AGO (ANSA) -',
+            'ar': '(ANSA) - ' + 'أغسطس' + ' 1 - Roma (foo) -',
         }
 
         for lang, expected in datelines.items():

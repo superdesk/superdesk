@@ -225,22 +225,22 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
 
     def _format_dateline(self, article, content_meta, dateline):
         dateline_text = article.get('dateline', {}).get('text', '')
-        if dateline.get('date') and dateline.get('located'):
+        if dateline.get('date') and dateline.get('text'):
             date = arrow.get(dateline['date']).datetime
             source = article.get('extra', {}).get('HeadingNews', article.get('source', 'ANSA'))
             language = article.get('language', 'it')
             kwargs = {
-                'city': dateline['located'].get('city', 'ROMA').upper(),
+                'city': dateline['text'].split(',')[0],
                 'date': self._format_dateline_date(date, language, dateline['located'].get('tz')),
                 'source': source,
             }
 
             if language in ('it', 'en', 'de'):
-                dateline_text = '({source}) - {city}, {date} -'.format(**kwargs)
+                dateline_text = '{source} - {city}, {date} -'.format(**kwargs)
             elif language == 'es':
-                dateline_text = '({source}) - {city} {date} -'.format(**kwargs)
+                dateline_text = '{source} - {city} {date} -'.format(**kwargs)
             elif language == 'pt':
-                dateline_text = '{city}, {date} ({source}) -'.format(**kwargs)
+                dateline_text = '{city}, {date} {source} -'.format(**kwargs)
             elif language == 'ar':
                 dateline_text = '{source} - {date} - {city} -'.format(**kwargs)
 
