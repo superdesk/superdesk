@@ -99,6 +99,12 @@ def local_date(delta):
     return utc_to_local(TZ, now + delta).strftime(DATE_FORMAT)
 
 
+def set_default_search_operator(params):
+    if params.get('searchtext') and 'OR' not in params['searchtext'] and 'AND' not in params['searchtext']:
+        groups = re.split(r'(\w+|".*?")', params['searchtext'])
+        params['searchtext'] = ' AND '.join([group for group in groups if bool(group) and group.strip()])
+
+
 class AnsaPictureProvider(superdesk.SearchProvider):
 
     label = 'ANSA Pictures'
@@ -143,9 +149,7 @@ class AnsaPictureProvider(superdesk.SearchProvider):
         else:
             return []  # avoid search with no filtering
 
-        # AND is default operator
-        if params.get('searchtext') and 'OR' not in params['searchtext'] and 'AND' not in params['searchtext']:
-            params['searchtext'] = ' AND '.join(params['searchtext'].split())
+        set_default_search_operator(params)
 
         response = requests.get(ansa_photo_api(SEARCH_ENDPOINT), params=params, timeout=TIMEOUT)
         return self._parse_items(response)
