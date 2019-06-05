@@ -86,6 +86,7 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
             }
         },
         'creditline': 'sample creditline',
+        'copyrightholder': 'FOO',
         'keywords': ['traffic'],
         'abstract': 'sample abstract',
         'place': [
@@ -109,6 +110,10 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
             'HeadingNews': '(ANSA)',
         },
         'sms_message': 'SMS message',
+        'genre': [{
+            'name': "Article (news)",
+            'qcode': "Article",
+        }],
     }
 
     vocab = [{'_id': 'rightsinfo', 'items': [{'name': 'AAP',
@@ -418,12 +423,7 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         self.assertIsNone(geo)
 
     def test_genre(self):
-        updates = {'genre': [{
-            'name': "Article (news)",
-            'qcode': "Article",
-        }]}
-        meta = self.format_content_meta(updates)
-
+        meta = self.format_content_meta({})
         genre = meta.find(ns('genre'))
         self.assertIsNotNone(genre)
         self.assertEqual('genre:Article', genre.get('qcode'))
@@ -515,3 +515,16 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         ]))
         self.assertIsNotNone(html)
         self.assertIn(article['headline'], etree.tostring(html, method='text').decode('utf-8'))
+
+    def test_picture_content_meta(self):
+        updates = {'type': 'picture', 'copyrightholder': 'Foo'}
+        content_meta = self.format_content_meta(updates)
+
+        creditline = content_meta.find(ns('creditline'))
+        self.assertEqual('Foo', creditline.text)
+
+        genre = content_meta.find(ns('genre'))
+        self.assertIsNone(genre)
+
+        located = content_meta.find(ns('located'))
+        self.assertIsNone(located)
