@@ -212,7 +212,7 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
         located = article.get('dateline', {}).get('located', {})
         if located and located.get('place'):
             self._format_geonames_place(located['place'], content_meta, 'located')
-        elif located and located.get('city'):
+        elif located and located.get('city') and article.get('type') != 'picture':
             located_elm = SubElement(content_meta, 'located',
                                      attrib={'qcode': 'city:%s' % located.get('city_code').upper()})
             if located.get('state'):
@@ -356,6 +356,8 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
             })
 
     def _format_genre(self, article, content_meta):
+        if article.get('type') == 'picture':
+            return
         if article.get('genre'):
             for g in article['genre']:
                 if g.get('name'):
@@ -363,3 +365,9 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
                     qcode = code if ':' in code else 'genre:%s' % code
                     genre = SubElement(content_meta, 'genre', attrib={'qcode': qcode})
                     SubElement(genre, 'name', attrib={XML_LANG: article.get('language', 'en')}).text = g['name']
+
+    def _format_creditline(self, article, content_meta):
+        if article.get('copyrightholder'):
+            etree.SubElement(content_meta, 'creditline').text = article['copyrightholder']
+        else:
+            super()._format_creditline(article, content_meta)
