@@ -5,7 +5,7 @@ import unittest
 
 from httmock import urlmatch, HTTMock
 
-from .search import AnsaPictureProvider
+from .search import AnsaPictureProvider, set_default_search_operator
 
 
 @urlmatch(netloc=r'172.20.14.88')
@@ -35,3 +35,20 @@ class AnsaPictureTestCase(unittest.TestCase):
         self.assertIn('versioncreated', item)
         self.assertIn('description_text', item)
         self.assertIn('renditions', item)
+
+    def test_default_search_operator(self):
+        params = {'searchtext': 'foo bar'}
+        set_default_search_operator(params)
+        self.assertEqual('foo AND bar', params['searchtext'])
+
+        params['searchtext'] = '"foo bar"'
+        set_default_search_operator(params)
+        self.assertEqual('"foo bar"', params['searchtext'])
+
+        params['searchtext'] = 'foo OR bar'
+        set_default_search_operator(params)
+        self.assertEqual('foo OR bar', params['searchtext'])
+
+        params['searchtext'] = 'foo "juventus turin" bar'
+        set_default_search_operator(params)
+        self.assertEqual('foo AND "juventus turin" AND bar', params['searchtext'])
