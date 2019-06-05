@@ -554,7 +554,7 @@ export default angular.module('ansa.superdesk', [
         let genre = null;
 
         onChangeMiddleware.push(({item, original}) => {
-            const hasPlus = item.headline.indexOf('++') === 0;
+            const hasPlus = item.headline.indexOf('++ ') === 0;
             let updated = false;
 
             if (item.priority === 2 && !hasPlus) {
