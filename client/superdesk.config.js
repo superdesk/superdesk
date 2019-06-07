@@ -43,6 +43,9 @@ module.exports = function(grunt) {
         },
         workspace: {
             analytics: true
-        }
+        },
+        enabledExtensions: {
+            // extensionFolderName: 1,
+        },
     };
 };

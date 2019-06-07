@@ -19,7 +19,7 @@ env/
 bin/
 lib/
 man/
-src/
+/server/src/
 dist/
 node_modules
 .settings
