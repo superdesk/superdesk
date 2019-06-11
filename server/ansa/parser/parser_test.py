@@ -28,6 +28,9 @@ class ANSAParserTestCase(TestCase):
         self.assertEqual(item['guid'], item['extra']['ansaid'])
         self.assertEqual('2017-02-24T12:51:00+00:00', item['firstcreated'].isoformat())
 
+        extra = item.get('extra', {})
+        self.assertEqual('Napoli', extra['place_text'])
+
     def test_parse_semantics(self):
         item = self.parse('semantics.xml')
         self.assertRegex(item['description_text'], r'ANSA/GIUSEPPE LAMI$')

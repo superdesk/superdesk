@@ -42,6 +42,9 @@
 <subject type="cpnat:abstract" qcode="products:123456789">
     <name>Product X</name>
 </subject>
+<subject literal="Napoli" type="cptType:5">
+    <name>Napoli</name>
+</subject>
 <headline>Spari davanti bimbi: sindaco Napoli, serve risposta forte</headline>
 <headline role="hld:subHeadline">De Magistris, rafforzamento forze ordine e strutture dello Stato</headline>
 </contentMeta>

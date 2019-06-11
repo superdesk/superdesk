@@ -65,6 +65,8 @@ class ANSAParser(NewsMLTwoFeedParser):
                 name = self.cat_map.get(code)
                 if name:
                     item['anpa_category'] = [{'name': name, 'qcode': name.lower()}]
+            elif subject.get('type') == 'cptType:5':
+                item.setdefault('extra', {})['place_text'] = subject.get('literal')
 
         if item.get('description_text'):
             item['description_text'] = item['description_text'].strip()

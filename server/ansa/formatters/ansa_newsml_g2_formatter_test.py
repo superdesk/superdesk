@@ -109,6 +109,7 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
             'subtitle': '<p>Subtitle text</p>',
             'shorttitle': '<p>Short headline</p>',
             'HeadingNews': '(ANSA)',
+            'place_text': 'Napoli',
         },
         'sms_message': 'SMS message',
         'genre': [{
@@ -529,6 +530,11 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
 
         located = content_meta.find(ns('located'))
         self.assertIsNone(located)
+
+        place = content_meta.find(ns('subject[@type="cptType:5"]'))
+        self.assertIsNotNone(place)
+        self.assertEqual('Napoli', place.get('literal'))
+        self.assertEqual('Napoli', place.find(ns('name')).text)
 
     def test_right_info(self):
         item = self.get_item({'type': 'picture'})

@@ -30,7 +30,7 @@
             "sdWidth": "full",
             "textarea": true
         },
-        "place": {
+        "place_text": {
             "order": 8,
             "sdWidth": "half"
         },
@@ -144,10 +144,10 @@
             "nullable": false,
             "type": "string"
         },
-        "place": {
+        "place_text": {
             "required": false,
             "nullable": true,
-            "type": "list"
+            "type": "string"
         },
         "subject": {
             "default": [],
