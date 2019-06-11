@@ -145,7 +145,7 @@
             "type": "string"
         },
         "place": {
-            "required": true,
+            "required": false,
             "nullable": true,
             "type": "list"
         },
