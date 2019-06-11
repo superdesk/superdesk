@@ -7,6 +7,7 @@ from superdesk.text_utils import get_word_count
 from ansa.analysis.analysis import parse, apply
 from superdesk import get_resource_service
 from ansa.geonames import get_place_by_id
+from superdesk.utc import local_to_utc
 
 MONTHS_IT = [
     '', 'gen', 'feb', 'mar', 'apr', 'mag', 'giu', 'lug', 'ago', 'set', 'ott', 'nov', 'dic',
@@ -14,6 +15,8 @@ MONTHS_IT = [
 
 
 class ANSAParser(NewsMLTwoFeedParser):
+
+    TZ = 'Europe/Rome'
 
     cat_map = {
         'ACE': 'Entertainment',
@@ -118,7 +121,8 @@ class ANSAParser(NewsMLTwoFeedParser):
         return item
 
     def datetime(self, string):
-        return arrow.get(string).datetime
+        local = arrow.get(string).datetime
+        return local_to_utc(self.TZ, local)
 
     def parse_content_subject(self, tree, item):
         super().parse_content_subject(tree, item)

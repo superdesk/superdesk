@@ -26,6 +26,7 @@ class ANSAParserTestCase(TestCase):
         self.assertIn({'name': 'Product X', 'scheme': 'products', 'qcode': '123456789'}, item['subject'])
         self.assertEqual('tag:ansa.it,2017-02-24:ea58f9ce5951ece86fe126162c4fb161', item['guid'])
         self.assertEqual(item['guid'], item['extra']['ansaid'])
+        self.assertEqual('2017-02-24T12:51:00+00:00', item['firstcreated'].isoformat())
 
     def test_parse_semantics(self):
         item = self.parse('semantics.xml')
