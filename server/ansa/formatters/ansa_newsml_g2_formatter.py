@@ -290,10 +290,19 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
         return guid
 
     def _format_rights(self, newsItem, article):
+        if article.get('type') == 'picture':
+            self._copy_rights_info(article, newsItem)
+            return
         try:
             super()._format_rights(newsItem, article)
         except KeyError:
             pass
+
+    def _copy_rights_info(self, article, news_item):
+        rightsinfo = SubElement(news_item, 'rightsInfo')
+        SubElement(rightsinfo, 'copyrightHolder', {'literal': article.get('copyrightholder', 'ANSA')})
+        if article.get('copyrightnotice'):
+            SubElement(rightsinfo, 'copyrightNotice').text = article['copyrightnotice']
 
     def _format_semantics(self, article, content_meta):
         mapping = [('persons', 'cpnat:person'), ('organizations', 'cpnat:organisation')]

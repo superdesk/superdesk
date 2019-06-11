@@ -87,6 +87,7 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         },
         'creditline': 'sample creditline',
         'copyrightholder': 'FOO',
+        'copyrightnotice': 'FOO 2018',
         'keywords': ['traffic'],
         'abstract': 'sample abstract',
         'place': [
@@ -528,3 +529,12 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
 
         located = content_meta.find(ns('located'))
         self.assertIsNone(located)
+
+    def test_right_info(self):
+        item = self.get_item({'type': 'picture'})
+        rights_info = item.find(ns('rightsInfo'))
+        self.assertIsNotNone(rights_info)
+        copyrightholder = rights_info.find(ns('copyrightHolder'))
+        self.assertEqual('FOO', copyrightholder.get('literal'))
+        copyrightnotice = rights_info.find(ns('copyrightNotice'))
+        self.assertEqual('FOO 2018', copyrightnotice.text)
