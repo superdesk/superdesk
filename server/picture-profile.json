@@ -8,88 +8,70 @@
             "order": 2,
             "sdWidth": "half"
         },
-        "headline": {
+        "PhotoCategories": {
             "order": 3,
-            "sdWidth": "full"
+            "sdWidth": "half"
         },
-        "media_description": {
+        "subject": {
             "order": 4,
-            "sdWidth": "full",
-            "displayOnMediaEditor": false
+            "sdWidth": "half"
         },
-        "FIEG_Categories": {
+        "products": {
             "order": 5,
             "sdWidth": "full"
         },
-        "products": {
+        "city": {
             "order": 6,
             "sdWidth": "full"
         },
-        "description_text": {
+        "nation": {
             "order": 7,
-            "sdWidth": "full",
-            "textarea": true
-        },
-        "place_text": {
-            "order": 8,
-            "sdWidth": "half"
-        },
-        "byline": {
-            "order": 9,
             "sdWidth": "full"
         },
-        "copyrightnotice": {
-            "order": 10,
-            "sdWidth": "full",
-            "textarea": true
-        },
-        "usageterms": {
-            "order": 11,
-            "sdWidth": "full",
-            "textarea": true
-        },
-        "copyrighholder": {
-            "order": 12,
-            "sdWidth": "full",
-            "textarea": true
-        },
-        "alt_text": {
-            "order": 13,
-            "sdWidth": "full",
-            "textarea": true
-        },
         "ednote": {
-            "order": 14,
+            "order": 8,
+            "sdWidth": "full",
+            "textarea": true
+        },
+        "description_text": {
+            "order": 9,
             "sdWidth": "full",
             "textarea": true
         },
         "sign_off": {
-            "order": 15,
+            "order": 10,
             "sdWidth": "full"
         },
-        "supplier": {
-            "order": 16,
+        "byline": {
+            "order": 11,
+            "sdWidth": "full"
+        },
+        "digitator": {
+            "order": 12,
             "sdWidth": "half"
         },
         "coauthor": {
+            "order": 13,
+            "sdWidth": "half"
+        },
+        "supplier": {
+            "order": 14,
+            "sdWidth": "half"
+        },
+        "copyrighholder": {
+            "order": 15,
+            "sdWidth": "full",
+            "textarea": true
+        },
+        "usageterms": {
+            "order": 16,
+            "sdWidth": "full",
+            "textarea": true
+        },
+        "alt_text": {
             "order": 17,
-            "sdWidth": "half"
-        },
-        "digitator": {
-            "order": 18,
-            "sdWidth": "half"
-        },
-        "subject": {
-            "order": 19,
-            "sdWidth": "half"
-        },
-        "keywords": {
-            "order": 20,
-            "sdWidth": "full"
-        },
-        "number": {
-            "order": 21,
-            "sdWidth": "half"
+            "sdWidth": "full",
+            "textarea": true
         }
     },
     "schema": {
@@ -98,56 +80,12 @@
             "required": false,
             "nullable": true
         },
-        "ednote": {
-            "type": "string",
-            "required": false,
-            "nullable": true
-        },
-        "copyrightnotice": {
-            "type": "string",
-            "enabled": true,
-            "nullable": true,
-            "required": false
-        },
-        "byline": {
-            "type": "string",
-            "required": true,
-            "nullable": true
-        },
         "language": {
             "type": "string",
             "enabled": true,
             "nullable": false,
             "required": true,
             "default": "it"
-        },
-        "sign_off": {
-            "enabled": true,
-            "type": "string",
-            "nullable": true,
-            "required": false
-        },
-        "date": {
-            "enabled": true,
-            "type": "date",
-            "nullable": true,
-            "required": false
-        },
-        "keywords": {
-            "enabled": true,
-            "type": "list",
-            "nullable": true,
-            "required": false
-        },
-        "headline": {
-            "required": true,
-            "nullable": false,
-            "type": "string"
-        },
-        "place_text": {
-            "required": false,
-            "nullable": true,
-            "type": "string"
         },
         "subject": {
             "default": [],
@@ -165,7 +103,7 @@
                         "nullable": true
                     },
                     "scheme": {
-                        "allowed": ["products", "FIEG_Categories"],
+                        "allowed": ["products", "PhotoCategories"],
                         "type": "string",
                         "nullable": true,
                         "required": false
@@ -178,13 +116,46 @@
                 }
             }
         },
-        "coauthor": {
+        "city": {
+            "type": "string",
+            "enabled": true,
+            "nullable": true,
+            "required": false
+        },
+        "nation": {
+            "type": "string",
+            "enabled": true,
+            "nullable": true,
+            "required": false
+        },
+        "ednote": {
+            "type": "string",
+            "required": false,
+            "nullable": true
+        },
+        "description_text": {
+            "type": "string",
+            "nullable": true,
+            "required": true
+        },
+        "sign_off": {
+            "enabled": true,
+            "type": "string",
+            "nullable": true,
+            "required": false
+        },
+        "byline": {
+            "type": "string",
+            "required": true,
+            "nullable": true
+        },
+        "digitator": {
             "enabled": true,
             "type": "text",
             "nullable": true,
             "required": false
         },
-        "digitator": {
+        "coauthor": {
             "enabled": true,
             "type": "text",
             "nullable": true,
@@ -197,28 +168,24 @@
             "required": false,
             "default": "ANSA"
         },
-        "number": {
-            "enabled": true,
-            "type": "text",
-            "nullable": true,
-            "required": false
-        },
-        "description_text": {
-            "type": "string",
-            "nullable": true,
-            "required": true
-        },
-        "alt_text": {
+        "copyrighholder": {
             "type": "string",
             "nullable": true,
             "required": false
         },
+
         "copyrightnotice": {
             "type": "string",
+            "enabled": true,
             "nullable": true,
             "required": false
         },
         "usageterms": {
+            "type": "string",
+            "nullable": true,
+            "required": false
+        },
+        "alt_text": {
             "type": "string",
             "nullable": true,
             "required": false

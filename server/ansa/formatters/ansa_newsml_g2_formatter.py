@@ -203,12 +203,12 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
                                       attrib={'type': 'cpnat:abstract', 'qcode': qcode})
                     SubElement(subj, 'name', attrib={XML_LANG: 'en'}).text = s['name']
         # place name for pictures - single line
-        if article.get('extra') and article['extra'].get('place_picture'):
+        if article.get('extra') and article['extra'].get('city'):
             subj = SubElement(content_meta, 'subject', {
                 'type': 'cptType:5',
-                'literal': article['extra']['place_picture'],
+                'literal': article['extra']['city'],
             })
-            SubElement(subj, 'name').text = article['extra']['place_picture']
+            SubElement(subj, 'name').text = article['extra']['city']
 
     def _format_located(self, article, content_meta):
         """Appends the located element to the contentMeta element

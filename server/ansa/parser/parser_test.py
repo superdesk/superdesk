@@ -29,7 +29,7 @@ class ANSAParserTestCase(TestCase):
         self.assertEqual('2017-02-24T12:51:00+00:00', item['firstcreated'].isoformat())
 
         extra = item.get('extra', {})
-        self.assertEqual('Napoli', extra['place_picture'])
+        self.assertEqual('Napoli', extra['city'])
 
     def test_parse_semantics(self):
         item = self.parse('semantics.xml')

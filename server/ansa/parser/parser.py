@@ -66,7 +66,7 @@ class ANSAParser(NewsMLTwoFeedParser):
                 if name:
                     item['anpa_category'] = [{'name': name, 'qcode': name.lower()}]
             elif subject.get('type') == 'cptType:5':
-                item.setdefault('extra', {})['place_picture'] = subject.get('literal')
+                item.setdefault('extra', {})['city'] = subject.get('literal')
 
         if item.get('description_text'):
             item['description_text'] = item['description_text'].strip()
