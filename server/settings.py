@@ -115,29 +115,7 @@ SCHEMA = {
     "video": picture_profile['schema'],
 }
 
-VALIDATOR_MEDIA_METADATA = {
-    "headline": {
-        "required": True,
-    },
-    "alt_text": {
-        "required": False,
-    },
-    "description_text": {
-        "required": False,
-    },
-    "copyrightholder": {
-        "required": False,
-    },
-    "byline": {
-        "required": False,
-    },
-    "usageterms": {
-        "required": False,
-    },
-    "copyrightnotice": {
-        "required": False,
-    },
-}
+VALIDATOR_MEDIA_METADATA = {}
 
 
 GEONAMES_USERNAME = env('GEONAMES_USERNAME', 'superdesk_dev')
