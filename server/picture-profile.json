@@ -119,13 +119,13 @@
             }
         },
         "city": {
-            "type": "string",
+            "type": "text",
             "enabled": true,
             "nullable": true,
             "required": false
         },
         "nation": {
-            "type": "string",
+            "type": "text",
             "enabled": true,
             "nullable": true,
             "required": false
