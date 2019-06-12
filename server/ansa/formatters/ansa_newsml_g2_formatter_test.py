@@ -109,7 +109,7 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
             'subtitle': '<p>Subtitle text</p>',
             'shorttitle': '<p>Short headline</p>',
             'HeadingNews': '(ANSA)',
-            'place_text': 'Napoli',
+            'place_picture': 'Napoli',
         },
         'sms_message': 'SMS message',
         'genre': [{
