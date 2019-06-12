@@ -22,11 +22,13 @@
         },
         "city": {
             "order": 6,
-            "sdWidth": "full"
+            "sdWidth": "half",
+            "section": "header"
         },
         "nation": {
             "order": 7,
-            "sdWidth": "full"
+            "sdWidth": "half",
+            "section": "header"
         },
         "ednote": {
             "order": 8,
