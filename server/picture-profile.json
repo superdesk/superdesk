@@ -35,43 +35,47 @@
             "sdWidth": "full",
             "textarea": true
         },
-        "description_text": {
+        "headline": {
             "order": 9,
+            "sdWidth": "half"
+        },
+        "description_text": {
+            "order": 10,
             "sdWidth": "full",
             "textarea": true
         },
         "sign_off": {
-            "order": 10,
-            "sdWidth": "full"
-        },
-        "byline": {
             "order": 11,
             "sdWidth": "full"
         },
-        "digitator": {
+        "byline": {
             "order": 12,
-            "sdWidth": "half"
+            "sdWidth": "full"
         },
-        "coauthor": {
+        "digitator": {
             "order": 13,
             "sdWidth": "half"
         },
-        "supplier": {
+        "coauthor": {
             "order": 14,
             "sdWidth": "half"
         },
-        "copyrighholder": {
+        "supplier": {
             "order": 15,
-            "sdWidth": "full",
-            "textarea": true
+            "sdWidth": "half"
         },
-        "usageterms": {
+        "copyrighholder": {
             "order": 16,
             "sdWidth": "full",
             "textarea": true
         },
-        "alt_text": {
+        "usageterms": {
             "order": 17,
+            "sdWidth": "full",
+            "textarea": true
+        },
+        "alt_text": {
+            "order": 18,
             "sdWidth": "full",
             "textarea": true
         }
@@ -133,6 +137,11 @@
         "ednote": {
             "type": "string",
             "required": false,
+            "nullable": true
+        },
+        "headline": {
+            "type": "string",
+            "required": true,
             "nullable": true
         },
         "description_text": {
