@@ -110,6 +110,7 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
             'shorttitle': '<p>Short headline</p>',
             'HeadingNews': '(ANSA)',
             'city': 'Napoli',
+            'nation': 'Italia',
         },
         'sms_message': 'SMS message',
         'genre': [{
@@ -535,6 +536,10 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         self.assertIsNotNone(place)
         self.assertEqual('Napoli', place.get('literal'))
         self.assertEqual('Napoli', place.find(ns('name')).text)
+        broader = place.find(ns('broader'))
+        self.assertIsNotNone(broader)
+        self.assertEqual('cptype:country', broader.get('type'))
+        self.assertEqual('Italia', broader.find(ns('name')).text)
 
     def test_right_info(self):
         item = self.get_item({'type': 'picture'})

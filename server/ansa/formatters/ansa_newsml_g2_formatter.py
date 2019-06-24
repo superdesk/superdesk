@@ -209,6 +209,9 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
                 'literal': article['extra']['city'],
             })
             SubElement(subj, 'name').text = article['extra']['city']
+            if article['extra'].get('nation'):
+                broader = SubElement(subj, 'broader', {'type': 'cptype:country'})
+                SubElement(broader, 'name').text = article['extra']['nation']
 
     def _format_located(self, article, content_meta):
         """Appends the located element to the contentMeta element

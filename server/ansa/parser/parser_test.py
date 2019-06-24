@@ -34,7 +34,7 @@ class ANSAParserTestCase(TestCase):
     def test_parse_semantics(self):
         item = self.parse('semantics.xml')
         self.assertRegex(item['description_text'], r'ANSA/GIUSEPPE LAMI$')
-        self.assertEqual(3, len(item['subject']))
+        self.assertGreaterEqual(len(item['subject']), 3)
         self.assertIn({'name': 'Religious Leader', 'qcode': '12015000'}, item['subject'])
         self.assertIn({'name': 'REL', 'qcode': 'REL', 'scheme': 'FIEG_Categories'}, item['subject'])
         self.assertIn('semantics', item)
@@ -82,3 +82,11 @@ class ANSAParserTestCase(TestCase):
         self.assertIn('date', dateline)
         self.assertIn('tz', located)
         self.assertIsNotNone(timezone(located['tz']))
+
+    def test_photo(self):
+        item = self.parse('photo.xml')
+        self.assertIn({'name': 'CLJ', 'scheme': 'PhotoCategories'}, item['subject'])
+
+        extra = item['extra']
+        self.assertEqual('TANGERANG', extra['city'])
+        self.assertEqual('Spain', extra['nation'])
