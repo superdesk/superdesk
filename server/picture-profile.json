@@ -2,23 +2,28 @@
     "editor": {
         "slugline": {
             "order": 1,
-            "sdWidth": "half"
+            "sdWidth": "full",
+            "section": "header"
         },
         "language": {
             "order": 2,
-            "sdWidth": "half"
+            "sdWidth": "half",
+            "section": "header"
         },
         "PhotoCategories": {
             "order": 3,
-            "sdWidth": "half"
+            "sdWidth": "half",
+            "section": "header"
         },
         "subject": {
             "order": 4,
-            "sdWidth": "half"
+            "sdWidth": "full",
+            "section": "header"
         },
         "products": {
             "order": 5,
-            "sdWidth": "full"
+            "sdWidth": "full",
+            "section": "header"
         },
         "city": {
             "order": 6,
@@ -33,51 +38,62 @@
         "ednote": {
             "order": 8,
             "sdWidth": "full",
-            "textarea": true
+            "textarea": true,
+            "section": "content"
         },
         "headline": {
             "order": 9,
-            "sdWidth": "half"
+            "sdWidth": "full",
+            "section": "content"
         },
         "description_text": {
             "order": 10,
             "sdWidth": "full",
-            "textarea": true
+            "textarea": true,
+            "section": "content"
         },
         "sign_off": {
             "order": 11,
-            "sdWidth": "full"
+            "sdWidth": "full",
+            "section": "content"
         },
         "byline": {
             "order": 12,
-            "sdWidth": "full"
+            "sdWidth": "full",
+            "section": "content"
         },
         "digitator": {
             "order": 13,
-            "sdWidth": "half"
+            "sdWidth": "half",
+            "section": "content"
         },
         "coauthor": {
             "order": 14,
-            "sdWidth": "half"
+            "sdWidth": "half",
+            "section": "content"
         },
         "supplier": {
             "order": 15,
-            "sdWidth": "half"
+            "sdWidth": "half",
+            "section": "content"
         },
         "copyrighholder": {
             "order": 16,
             "sdWidth": "full",
-            "textarea": true
+            "textarea": true,
+            "section": "content"
         },
         "usageterms": {
             "order": 17,
             "sdWidth": "full",
-            "textarea": true
+            "textarea": true,
+            "section": "content"
         },
         "alt_text": {
             "order": 18,
             "sdWidth": "full",
-            "textarea": true
+            "textarea": true,
+            "section": "content"
         }
     },
     "schema": {
@@ -109,7 +125,7 @@
                         "nullable": true
                     },
                     "scheme": {
-                        "allowed": ["products", "PhotoCategories"],
+                        "allowed": ["products", "PhotoCategories", "FIEG_Categories"],
                         "type": "string",
                         "nullable": true,
                         "required": false

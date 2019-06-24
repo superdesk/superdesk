@@ -51,9 +51,7 @@ class ANSAParser(NewsMLTwoFeedParser):
         headlines = meta.findall(self.qname('headline'))
         for headline in headlines:
             if headline.get('role') == 'hld:subHeadline':
-                item['extra'] = {
-                    'subtitle': headline.text,
-                }
+                item.setdefault('extra', {})['subtitle'] = headline.text
 
         subjects = meta.findall(self.qname('subject'))
         for subject in subjects:
@@ -65,8 +63,13 @@ class ANSAParser(NewsMLTwoFeedParser):
                 name = self.cat_map.get(code)
                 if name:
                     item['anpa_category'] = [{'name': name, 'qcode': name.lower()}]
+                if item.get('type') == 'picture':
+                    item['subject'].append({'name': code, 'scheme': 'PhotoCategories'})
             elif subject.get('type') == 'cptType:5':
                 item.setdefault('extra', {})['city'] = subject.get('literal')
+                broader = subject.find(self.qname('broader'))
+                if broader is not None and broader.find(self.qname('name')) is not None:
+                    item['extra']['nation'] = broader.find(self.qname('name')).text
 
         if item.get('description_text'):
             item['description_text'] = item['description_text'].strip()
@@ -118,8 +121,7 @@ class ANSAParser(NewsMLTwoFeedParser):
         if item.get('word_count') == 0 and item.get('type') == 'text':
             item['word_count'] = get_word_count(item.get('body_html', '<p></p>'))
         item['guid'] = tree.attrib['guid']
-        item.setdefault('extra', {})
-        item['extra']['ansaid'] = item['guid']
+        item.setdefault('extra', {})['ansaid'] = item['guid']
         return item
 
     def datetime(self, string):
