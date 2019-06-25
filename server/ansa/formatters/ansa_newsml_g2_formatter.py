@@ -11,6 +11,12 @@ from superdesk.publish.formatters.newsml_g2_formatter import NewsMLG2Formatter, 
 from superdesk.text_utils import get_text
 from superdesk.logging import logger
 
+CONTRIBUTOR_MAPPING = {
+    'digitator': 'descrWriter',
+    'coauthor': 'coAuthor',
+    'supplier': 'supplier',
+}
+
 
 class ANSANewsMLG2Formatter(NewsMLG2Formatter):
 
@@ -108,6 +114,11 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
             SubElement(content_meta, 'headline', attrib={
                 'role': 'hld:shortHeadline',
             }).text = get_text(extra['shorttitle'])
+
+        for field, role in CONTRIBUTOR_MAPPING.items():
+            if extra.get(field):
+                elem = SubElement(content_meta, 'contributor', {'role': 'ctrol:{}'.format(role)})
+                SubElement(elem, 'name').text = extra[field]
 
     def _format_sms(self, article, content_meta):
         if article.get('sms_message'):

@@ -64,17 +64,17 @@
         },
         "digitator": {
             "order": 13,
-            "sdWidth": "half",
+            "sdWidth": "full",
             "section": "content"
         },
         "coauthor": {
             "order": 14,
-            "sdWidth": "half",
+            "sdWidth": "full",
             "section": "content"
         },
         "supplier": {
             "order": 15,
-            "sdWidth": "half",
+            "sdWidth": "full",
             "section": "content"
         },
         "copyrighholder": {

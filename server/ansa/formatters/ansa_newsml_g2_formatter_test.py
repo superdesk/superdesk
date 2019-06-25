@@ -111,6 +111,9 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
             'HeadingNews': '(ANSA)',
             'city': 'Napoli',
             'nation': 'Italia',
+            'digitator': 'Digi',
+            'coauthor': 'Coa',
+            'supplier': 'Sup',
         },
         'sms_message': 'SMS message',
         'genre': [{
@@ -308,7 +311,7 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
 
         content_meta = self.format_content_meta(updates)
         contributors = content_meta.findall(ns('contributor'))
-        self.assertEqual(2, len(contributors))
+        self.assertGreaterEqual(len(contributors), 2)
         self.assertEqual('John Doe', contributors[0].find(ns('name')).text)
         self.assertEqual(contributors[0].get('literal'), 'JD')
         self.assertEqual('Foo', contributors[1].find(ns('name')).text)
@@ -540,6 +543,10 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         self.assertIsNotNone(broader)
         self.assertEqual('cptype:country', broader.get('type'))
         self.assertEqual('Italia', broader.find(ns('name')).text)
+
+        self.assertEqual('Digi', content_meta.find(ns('contributor[@role="ctrol:descrWriter"]')).find(ns('name')).text)
+        self.assertEqual('Coa', content_meta.find(ns('contributor[@role="ctrol:coAuthor"]')).find(ns('name')).text)
+        self.assertEqual('Sup', content_meta.find(ns('contributor[@role="ctrol:supplier"]')).find(ns('name')).text)
 
     def test_right_info(self):
         item = self.get_item({'type': 'picture'})

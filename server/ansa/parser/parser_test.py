@@ -90,3 +90,4 @@ class ANSAParserTestCase(TestCase):
         extra = item['extra']
         self.assertEqual('TANGERANG', extra['city'])
         self.assertEqual('Spain', extra['nation'])
+        self.assertEqual('ANSA', extra['supplier'])
