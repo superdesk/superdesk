@@ -1,6 +1,6 @@
 {
     "dependencies": {
-        "superdesk-core": "1.30.2",
+        "superdesk-core": "petrjasek/superdesk-client-core#fix-upload-form",
         "superdesk-planning": "superdesk/superdesk-planning#1.5"
     },
     "devDependencies": {
