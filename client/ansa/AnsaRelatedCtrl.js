@@ -1,4 +1,4 @@
-import {max, get, isEmpty} from 'lodash';
+import {max, isEmpty} from 'lodash';
 
 // must match gallery field id
 const GALLERY = 'photoGallery';
@@ -9,7 +9,8 @@ export default function AnsaRelatedCtrl($scope, api, storage, Keys, mediaIdGener
         this.items = null;
         let semantics = $scope.item.semantics || {};
 
-        if (isEmpty(semantics.iptcCodes) && isEmpty(semantics.persons) && isEmpty(semantics.organisations) && !this.query) {
+        if (isEmpty(semantics.iptcCodes) && isEmpty(semantics.persons)
+            && isEmpty(semantics.organisations) && !this.query) {
             this.items = [];
             return;
         }
