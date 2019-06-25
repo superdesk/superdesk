@@ -159,3 +159,11 @@ class ANSAParser(NewsMLTwoFeedParser):
                         if rightsinfo.get('usageTerms') and not item.get('usageterms'):
                             item['usageterms'] = rightsinfo['usageTerms']
                         break
+
+    def parse_item_meta(self, tree, item):
+        super().parse_item_meta(tree, item)
+        meta = tree.find(self.qname('itemMeta'))
+
+        provider = meta.find(self.qname('provider'))
+        if provider is not None and provider.get('literal'):
+            item.setdefault('extra', {})['supplier'] = provider.get('literal')
