@@ -17,6 +17,10 @@ postfix:
   - maildomain=mail.sourcefabric.org
   - smtp_user=user:pwd
 
+grammalecte:
+  build: grammalecte/
+  container_name: grammalecte
+
 superdesk:
   build: ../
   container_name: superdesk
@@ -24,6 +28,7 @@ superdesk:
    - SUPERDESK_URL=http://127.0.0.1/api
    - SUPERDESK_WS_URL=ws://127.0.0.1/ws
    - SUPERDESK_CLIENT_URL=http://127.0.0.1
+   - GRAMMALECTE_URL=http://grammalecte:9999
    - MONGO_URI=mongodb://mongodb/test
    - PUBLICAPI_MONGO_URI=mongodb://mongodb/test_pa
    - LEGAL_ARCHIVE_URI=mongodb://mongodb/test_la
