@@ -6,15 +6,15 @@ const GALLERY = 'photoGallery';
 AnsaRelatedCtrl.$inject = ['$scope', 'api', 'storage', 'Keys', 'mediaIdGenerator'];
 export default function AnsaRelatedCtrl($scope, api, storage, Keys, mediaIdGenerator) {
     const search = () => {
-        if (isEmpty(get($scope.item, 'semantics.iptcCodes')) && !this.query) {
+        this.items = null;
+        let semantics = $scope.item.semantics || {};
+
+        if (isEmpty(semantics.iptcCodes) && isEmpty(semantics.persons) && isEmpty(semantics.organisations) && !this.query) {
             this.items = [];
             return;
         }
 
-        this.items = null;
-
         let filters = [];
-        let semantics = $scope.item.semantics || {};
         let keys = ['persons', 'organizations'];
         let namespace = (key) => 'semantics.' + key;
 
@@ -39,11 +39,14 @@ export default function AnsaRelatedCtrl($scope, api, storage, Keys, mediaIdGener
         angular.extend(query.bool, {
             must: [
                 {term: {type: this.activeFilter}},
-                {terms: {'semantics.iptcCodes': semantics.iptcCodes}},
             ],
             should: filters,
             minimum_should_match: 1,
         });
+
+        if (!isEmpty(semantics.iptcCodes) && $scope.item.type === 'text') {
+            query.bool.must.push({terms: {'semantics.iptcCodes': semantics.iptcCodes}});
+        }
 
         if (this.query) {
             query = {
