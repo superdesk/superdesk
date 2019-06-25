@@ -77,7 +77,7 @@
             "sdWidth": "full",
             "section": "content"
         },
-        "copyrighholder": {
+        "copyrightholder": {
             "order": 16,
             "sdWidth": "full",
             "textarea": true,
@@ -195,12 +195,11 @@
             "required": false,
             "default": "ANSA"
         },
-        "copyrighholder": {
+        "copyrightholder": {
             "type": "string",
             "nullable": true,
             "required": false
         },
-
         "copyrightnotice": {
             "type": "string",
             "enabled": true,
