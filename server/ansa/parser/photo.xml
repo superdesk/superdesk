@@ -1,49 +1,61 @@
-<?xml version="1.0" encoding="UTF-8"?><newsMessage xmlns:IIM_R1="/photos/schema/IIM_R1#" xmlns:ANSA="/photos/schema/ANSA#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:IIM_R7="/photos/schema/IIM_R7#" xmlns:x="http://www.w3.org/1999/xhtml" xmlns:IIM_R3="/photos/schema/IIM_R3#" xmlns="http://iptc.org/std/nar/2006-10-01/" xmlns:IIM_R2="/photos/schema/IIM_R2#">
-<header>
-<sent>2019-06-24T11:25:44.000Z</sent>
-<sender>ANSA</sender>
-<transmitId>tag:ANSA,34d92329a352dac8c2baabee78c3eb4a.jpg</transmitId>
-<priority>4</priority>
-</header>
-<itemSet>
-<newsItem version="1" standard="NewsML-G2" standardversion="2.10" conformance="power" guid="tag:ANSA,34d92329a352dac8c2baabee78c3eb4a.jpg">
-<catalogRef href="http://www.iptc.org/std/catalog/catalog.IPTC-G2-Standards_3.xml"/>
-<rightsInfo>
-<copyrightHolder literal="EPA"/>
-<copyrightNotice xml:lang="en">All rigths reserved</copyrightNotice>
-</rightsInfo>
-<itemMeta>
-<itemClass qcode="icls:picture"/>
-<provider literal="ANSA"/>
-<versionCreated>2019-06-24T11:25:44.000Z</versionCreated>
-<firstCreated>2019-06-24T11:25:44.000Z</firstCreated>
-<pubStatus qcode="stat:usable"/>
-<role qcode="itemRole:N"/>
-<signal qcode="pmt:picture"/>
-</itemMeta>
-<contentMeta>
-<urgency>4</urgency>
-<subject type="cpnat:abstract" qcode="products:0050000100000">
-<name>Foto - Foto circuito generico</name>
-</subject>
-<language tag="en"/>
-<subject type="cptype:cat" literal="CLJ"/>
-<subject literal="TANGERANG" type="cptType:5">
-    <name>TANGERANG</name>
-    <broader type="cptype:country">
-        <name>Spain</name>
-    </broader>
-</subject>
-<headline>Drug smuggling trial verdict of a Spanish man in Tangerang</headline>
-<by>MAST IRHAM</by>
-<creditline>EPA</creditline>
-<description role="descRole:caption">
-            epa07670048 Fernando Crespo Cotte of Spain (C) is escorted by a police and court officials as he leaves the court room shortly after his trial in Tangerang, Indonesia, 24 June 2019. An Indonesian court sentenced the Spaniard to 16 years in jail for drug smuggling.  EPA/MAST IRHAM
-        </description>
-</contentMeta>
-<contentSet>
-<remoteContent rendition="rend:baseImage" contenttype="image/jpeg" format="fmt:jpegBaseline" href="http://sd.ansa.priv/photo/34d92329a352dac8c2baabee78c3eb4a.jpg" residref="tag:ANSA,34d92329a352dac8c2baabee78c3eb4a.jpg"/>
-</contentSet>
-</newsItem>
-</itemSet>
+<?xml version="1.0" encoding="UTF-8"?>
+<newsMessage xmlns:IIM_R1="/photos/schema/IIM_R1#" xmlns:ANSA="/photos/schema/ANSA#"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:IIM_R7="/photos/schema/IIM_R7#" xmlns:x="http://www.w3.org/1999/xhtml" xmlns:IIM_R3="/photos/schema/IIM_R3#"
+    xmlns="http://iptc.org/std/nar/2006-10-01/" xmlns:IIM_R2="/photos/schema/IIM_R2#">
+    <header>
+        <sent>2019-06-24T11:25:44.000Z</sent>
+        <sender>ANSA</sender>
+        <transmitId>tag:ANSA,34d92329a352dac8c2baabee78c3eb4a.jpg</transmitId>
+        <priority>4</priority>
+    </header>
+    <itemSet>
+        <newsItem version="1" standard="NewsML-G2" standardversion="2.10" conformance="power"
+            guid="tag:ANSA,34d92329a352dac8c2baabee78c3eb4a.jpg">
+            <catalogRef href="http://www.iptc.org/std/catalog/catalog.IPTC-G2-Standards_3.xml" />
+            <rightsInfo>
+                <copyrightHolder literal="EPA" />
+                <copyrightNotice xml:lang="en">All rigths reserved</copyrightNotice>
+            </rightsInfo>
+            <itemMeta>
+                <itemClass qcode="icls:picture" />
+                <provider literal="ANSA" />
+                <versionCreated>2019-06-24T11:25:44.000Z</versionCreated>
+                <firstCreated>2019-06-24T11:25:44.000Z</firstCreated>
+                <pubStatus qcode="stat:usable" />
+                <role qcode="itemRole:N" />
+                <signal qcode="pmt:picture" />
+            </itemMeta>
+            <contentMeta>
+                <urgency>4</urgency>
+                <subject type="cpnat:abstract" qcode="products:0050000100000">
+                    <name>Foto - Foto circuito generico</name>
+                </subject>
+                <language tag="en" />
+                <subject type="cptype:cat" literal="CLJ" />
+                <subject literal="TANGERANG" type="cptType:5">
+                    <name>TANGERANG</name>
+                    <broader type="cptype:country">
+                        <name>Spain</name>
+                    </broader>
+                </subject>
+                <headline>Drug smuggling trial verdict of a Spanish man in Tangerang</headline>
+                <by>MAST IRHAM</by>
+                <creditline>EPA</creditline>
+                <description role="descRole:caption">
+                    epa07670048 Fernando Crespo Cotte of Spain (C) is escorted by a police and court officials as he
+                    leaves the court room shortly after his trial in Tangerang, Indonesia, 24 June 2019. An Indonesian
+                    court sentenced the Spaniard to 16 years in jail for drug smuggling. EPA/MAST IRHAM
+                </description>
+                <contributor role="ctrol:descrWriter">
+                    <name>sp/lrc</name>
+                </contributor>
+            </contentMeta>
+            <contentSet>
+                <remoteContent rendition="rend:baseImage" contenttype="image/jpeg" format="fmt:jpegBaseline"
+                    href="http://sd.ansa.priv/photo/34d92329a352dac8c2baabee78c3eb4a.jpg"
+                    residref="tag:ANSA,34d92329a352dac8c2baabee78c3eb4a.jpg" />
+            </contentSet>
+        </newsItem>
+    </itemSet>
 </newsMessage>

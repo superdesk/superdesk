@@ -115,6 +115,10 @@ class ANSAParser(NewsMLTwoFeedParser):
                         int(time.strftime('%d')),
                         MONTHS_IT[time.month].upper(),
                     )
+        contribs = meta.findall(self.qname('contributor'))
+        for contrib in contribs:
+            if contrib.get('role') == 'ctrol:descrWriter' and contrib.find(self.qname('name')) is not None:
+                item.setdefault('extra', {})['digitator'] = contrib.find(self.qname('name')).text
 
     def parse_item(self, tree):
         item = super().parse_item(tree)
