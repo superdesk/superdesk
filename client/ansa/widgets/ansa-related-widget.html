@@ -13,7 +13,22 @@
     <div class="widget" sd-loading="!related.items">
         <ul class="simple-list simple-list--comfortable simple-list--dotted simple-list--no-padding" sd-loading="!related.items">
             <li ng-repeat="item in related.items track by $index"
-                class="simple-list__item" sd-draggable-item ng-init="isCollapsed = item.type === 'text'">
+                class="simple-list__item" ng-if="item.type === 'picture'" sd-draggable-item>
+                <div class="basic item-block">
+                    <i sd-filetype-icon data-item="item"></i>
+                    <span class="keyword" ng-click="isCollapsed = !isCollapsed">{{ item.headline }}</span>
+                    <div class="headline"><time sd-datetime data-date="item.versioncreated"></time></div>
+                    <div class="collapsed-content">
+                        <div sd-item-rendition data-item="item" data-rendition="thumbnail"></div>
+                        <div ng-if="related.allowAddMedia()" class="set-related-btn-group">
+                            <button class="btn btn--small" ng-click="related.setFeatured(item)" translate>Set as Featured</button>
+                            <button class="btn btn--small" ng-click="related.addToGallery(item)" translate>Add to Gallery</button>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li ng-repeat="item in related.items track by $index"
+                class="simple-list__item" ng-if="item.type !== 'picture'" ng-init="isCollapsed = item.type === 'text'">
                 <div class="basic item-block">
                     <i sd-filetype-icon data-item="item"></i>
                     <span class="keyword" ng-click="isCollapsed = !isCollapsed">{{ item.headline }}</span>
@@ -21,14 +36,6 @@
                     <div class="collapsed-content">
                         <div ng-if="item.body_html && item.type !== 'picture'" ng-hide="isCollapsed">
                             <div sd-html-preview="item.body_html"></div>
-                        </div>
-
-                        <div ng-if="item.type === 'picture'">
-                            <div sd-item-rendition data-item="item" data-rendition="thumbnail"></div>
-                            <div ng-if="related.allowAddMedia()" class="set-related-btn-group">
-                                <button class="btn btn--small" ng-click="related.setFeatured(item)" translate>Set as Featured</button>
-                                <button class="btn btn--small" ng-click="related.addToGallery(item)" translate>Add to Gallery</button>
-                            </div>
                         </div>
                     </div>
                 </div>

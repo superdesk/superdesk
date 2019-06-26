@@ -100,7 +100,10 @@ export default function AnsaRelatedCtrl($scope, api, storage, Keys, mediaIdGener
         size: 50,
     }})
         .then((response) => {
-            this.items = response._items.map((published) => published.archive_item || published);
+            this.items = response._items.map((published) => Object.assign(
+                {_type: published.archive_item ? 'archive' : 'published'},
+                published.archive_item || published
+            ));
         }, (reason) => {
             this.items = [];
         });
