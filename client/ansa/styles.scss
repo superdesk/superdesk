@@ -195,3 +195,9 @@ iframe.ansa-map {
 .main-article:focus .char-count {
     opacity: 0.6;
 }
+
+div[data-field="genre"] .dropdown--dropleft .dropdown__menu {
+    top: auto;
+    left: auto;
+    right: auto;
+}
