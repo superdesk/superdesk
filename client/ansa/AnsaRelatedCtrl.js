@@ -45,7 +45,7 @@ export default function AnsaRelatedCtrl($scope, api, storage, Keys, mediaIdGener
             minimum_should_match: 1,
         });
 
-        if (!isEmpty(semantics.iptcCodes) && $scope.item.type === 'text') {
+        if (!isEmpty(semantics.iptcCodes) && this.activeFilter === 'text') {
             query.bool.must.push({terms: {'semantics.iptcCodes': semantics.iptcCodes}});
         }
 
