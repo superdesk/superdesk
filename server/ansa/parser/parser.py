@@ -64,7 +64,7 @@ class ANSAParser(NewsMLTwoFeedParser):
                 if name:
                     item['anpa_category'] = [{'name': name, 'qcode': name.lower()}]
                 if item.get('type') == 'picture':
-                    item['subject'].append({'name': code, 'scheme': 'PhotoCategories'})
+                    item['subject'].append({'name': code, 'qcode': code, 'scheme': 'PhotoCategories'})
             elif subject.get('type') == 'cptType:5':
                 item.setdefault('extra', {})['city'] = subject.get('literal')
                 broader = subject.find(self.qname('broader'))
