@@ -87,6 +87,8 @@ class ANSAParserTestCase(TestCase):
         item = self.parse('photo.xml')
         self.assertIn({'name': 'CLJ', 'qcode': 'CLJ', 'scheme': 'PhotoCategories'}, item['subject'])
 
+        self.assertEqual('ADM', item.get('sign_off'))
+
         extra = item['extra']
         self.assertEqual('TANGERANG', extra['city'])
         self.assertEqual('Spain', extra['nation'])

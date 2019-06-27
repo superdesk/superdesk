@@ -50,6 +50,7 @@
                 <contributor role="ctrol:descrWriter">
                     <name>sp/lrc</name>
                 </contributor>
+                <creator literal="ADM"></creator>
             </contentMeta>
             <contentSet>
                 <remoteContent rendition="rend:baseImage" contenttype="image/jpeg" format="fmt:jpegBaseline"

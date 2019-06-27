@@ -120,6 +120,10 @@ class ANSAParser(NewsMLTwoFeedParser):
             if contrib.get('role') == 'ctrol:descrWriter' and contrib.find(self.qname('name')) is not None:
                 item.setdefault('extra', {})['digitator'] = contrib.find(self.qname('name')).text
 
+        creator = meta.find(self.qname('creator'))
+        if creator is not None and creator.get('literal'):
+            item['sign_off'] = creator.get('literal')
+
     def parse_item(self, tree):
         item = super().parse_item(tree)
         if item.get('word_count') == 0 and item.get('type') == 'text':
