@@ -230,10 +230,6 @@ function AnsaSemanticsCtrl($scope, $rootScope, api) {
             $scope.item.slugline = result.slugline;
         }
 
-        if (result.abstract && _.isEmpty($scope.item.abstract)) {
-            $scope.item.abstract = result.abstract;
-        }
-
         $scope.autosave($scope.item);
     };
 
