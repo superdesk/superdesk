@@ -29,7 +29,12 @@ export default function AnsaRelatedCtrl($scope, api, storage, Keys, mediaIdGener
                     let f = {};
 
                     f[namespace(key)] = val;
-                    filters.push({match_phrase: f});
+
+                    if (key === 'persons') {
+                        filters.push({match: {[namespace(key)]: {query: val, operator: 'and'}}});
+                    } else {
+                        filters.push({match_phrase: f});
+                    }
                 });
             }
         });
@@ -46,7 +51,7 @@ export default function AnsaRelatedCtrl($scope, api, storage, Keys, mediaIdGener
                 {term: {type: this.activeFilter}},
             ],
             should: filters,
-            minimum_should_match: 1,
+            minimum_should_match: window.MINIMUM_SHOULD_MATCH || 1,
         });
 
         if (!isEmpty(semantics.iptcCodes) && this.activeFilter === 'text') {
