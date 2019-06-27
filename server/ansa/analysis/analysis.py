@@ -94,10 +94,6 @@ def parse(extracted):
         for item in parsed['semantics']['mainLemmas']:
             if len(parsed['slugline']) + len(item) < 50:
                 parsed['slugline'] = ' '.join([parsed['slugline'], item])
-    if parsed['semantics'].get('mainSenteces'):
-        parsed['abstract'] = '\n'.join([
-            '<p>%s</p>' % p for p in parsed['semantics']['mainSenteces']
-        ])
     return parsed
 
 
@@ -115,8 +111,6 @@ def apply(analysed, item):
                     (s.get('qcode'), s.get('scheme')) for s in item['subject']
             ]:
                 item['subject'].append(subj)
-    if analysed.get('abstract') and not item.get('abstract'):
-        item.setdefault('abstract', analysed['abstract'])
     if old_semantics and old_semantics.get('located'):  # keep located
         item.setdefault('semantics', {})
         item['semantics']['located'] = old_semantics['located']
@@ -160,8 +154,6 @@ class AnalysisService(BaseService):
             for key, val in analysed.items():
                 doc.setdefault(key, val)
             doc['semantics'] = analysed['semantics']
-            if not doc.get('abstract') and analysed.get('abstract'):
-                doc['abstract'] = analysed['abstract']
             ids.append('')
         return ids
 
