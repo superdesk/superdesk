@@ -35,7 +35,7 @@ module.exports = function(grunt) {
         language: 'it',
         profileLanguages: [
             'en',
-            'it',
+            //'it',
         ],
 
         langOverride: {
