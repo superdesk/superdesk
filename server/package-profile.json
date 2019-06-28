@@ -1,0 +1,355 @@
+{
+    "updated_by": "59dbce989a7185012ae0a542",
+    "label": "News",
+    "enabled": true,
+    "_links": {
+        "self": {
+            "href": "content_types/5aaa8fbd9a718500f1ce9205",
+            "title": "Content_type"
+        }
+    },
+    "schema": {
+        "usageterms": null,
+        "abstract": null,
+        "company_codes": null,
+        "genre": {
+            "type": "list",
+            "nullable": true,
+            "enabled": true,
+            "required": false
+        },
+        "HeadingNews": {
+            "type": "text",
+            "nullable": true,
+            "enabled": true,
+            "required": false
+        },
+        "sign_off": {
+            "type": "string",
+            "required": false,
+            "nullable": true
+        },
+        "supplier": null,
+        "media_description": null,
+        "anpa_category": null,
+        "headline": {
+            "type": "string",
+            "nullable": false,
+            "maxlength": 64,
+            "required": true
+        },
+        "keywords": null,
+        "urgency": null,
+        "ednote": {
+            "type": "string",
+            "required": false,
+            "nullable": true
+        },
+        "body_html": {
+            "type": "string",
+            "required": false,
+            "nullable": true
+        },
+        "subtitle": {
+            "type": "text",
+            "nullable": true,
+            "enabled": true,
+            "maxlength": 66,
+            "required": false
+        },
+        "CopyrigthLine": null,
+        "dateline": {
+            "type": "dict",
+            "required": false,
+            "nullable": false
+        },
+        "language": null,
+        "key": null,
+        "attachments": null,
+        "date": null,
+        "authors": {
+            "type": "list",
+            "required": false,
+            "nullable": true,
+            "schema": {
+                "type": "dict",
+                "schema": {
+                    "role": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "parent": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "anpa_take_key": null,
+        "slugline": {
+            "type": "string",
+            "required": false,
+            "nullable": true
+        },
+        "coauthor": null,
+        "priority": {
+            "type": "integer",
+            "required": false,
+            "nullable": true
+        },
+        "digitator": null,
+        "nation": null,
+        "body_footer": null,
+        "subject": {
+            "type": "list",
+            "required": false,
+            "default": [],
+            "mandatory_in_list": {
+                "scheme": {
+                    "Servissimo": null,
+                    "CTG": null,
+                    "01": null,
+                    "copyrights": null,
+                    "PhotoCategories": null,
+                    "addressing": null,
+                    "languages": null,
+                    "destination": null,
+                    "products": "products",
+                    "heading": null,
+                    "copyright": null,
+                    "Stages": null,
+                    "FIEG_Categories": "FIEG_Categories"
+                }
+            },
+            "nullable": false,
+            "schema": {
+                "type": "dict",
+                "schema": {
+                    "name": {},
+                    "parent": {
+                        "nullable": true
+                    },
+                    "qcode": {},
+                    "scheme": {
+                        "type": "string",
+                        "nullable": true,
+                        "allowed": [
+                            "FIEG_Categories",
+                            "addressing",
+                            "Stages",
+                            "products"
+                        ],
+                        "required": true
+                    },
+                    "service": {
+                        "nullable": true
+                    }
+                }
+            }
+        },
+        "city": null,
+        "sms": {
+            "type": "string",
+            "nullable": true,
+            "enabled": true,
+            "required": false
+        },
+        "place": {
+            "type": "list",
+            "required": false,
+            "nullable": true
+        },
+        "shorttitle": {
+            "type": "text",
+            "nullable": true,
+            "enabled": true,
+            "maxlength": 35,
+            "required": false
+        },
+        "footer": null,
+        "byline": {
+            "type": "string",
+            "required": false,
+            "nullable": true
+        }
+    },
+    "_created": "2018-03-15T15:22:37+0000",
+    "description": "News",
+    "_etag": "ec299b47a2aceed92e9497525e91b311b346096f",
+    "_updated": "2019-06-28T10:21:06+0000",
+    "widgets_config": [{
+            "is_displayed": false,
+            "widget_id": "macros"
+        },
+        {
+            "is_displayed": false,
+            "widget_id": "attachments"
+        },
+        {
+            "is_displayed": true,
+            "widget_id": "packages"
+        },
+        {
+            "is_displayed": false,
+            "widget_id": "suggestions"
+        },
+        {
+            "is_displayed": false,
+            "widget_id": "inline-comments"
+        }
+    ],
+    "is_used": true,
+    "_id": "5aaa8fbd9a718500f1ce9205",
+    "priority": 0,
+    "editor": {
+        "Servissimo": null,
+        "abstract": null,
+        "destination": null,
+        "HeadingNews": {
+            "required": false,
+            "order": 17,
+            "sdWidth": "full"
+        },
+        "media_description": null,
+        "dateline": {
+            "required": false,
+            "order": 18,
+            "sdWidth": "full"
+        },
+        "anpa_category": null,
+        "keywords": null,
+        "urgency": null,
+        "anpa_take_key": null,
+        "products": {
+            "required": true,
+            "order": 7,
+            "sdWidth": "full"
+        },
+        "date": null,
+        "attachments": null,
+        "subtitle": {
+            "order": 14,
+            "sdWidth": "full"
+        },
+        "Stages": {
+            "section": "header",
+            "order": 9,
+            "sdWidth": "half"
+        },
+        "slugline": {
+            "required": false,
+            "sdWidth": "full",
+            "order": 1,
+            "cleanPastedHTML": true
+        },
+        "coauthor": null,
+        "digitator": null,
+        "copyrights": null,
+        "nation": null,
+        "body_html": {
+            "required": false,
+            "formatOptions": [
+                "h2",
+                "bold",
+                "italic",
+                "underline",
+                "quote",
+                "link",
+                "embed",
+                "h1",
+                "h3",
+                "justifyCenter",
+                "pre",
+                "ordered list",
+                "remove format",
+                "formatting marks",
+                "media"
+            ],
+            "imageTitle": true,
+            "editor3": true,
+            "order": 21,
+            "cleanPastedHTML": true
+        },
+        "subject": {
+            "required": false,
+            "order": 6,
+            "sdWidth": "full"
+        },
+        "city": null,
+        "place": {
+            "required": false,
+            "order": 5,
+            "sdWidth": "full"
+        },
+        "priority": {
+            "required": false,
+            "order": 4,
+            "sdWidth": "quarter"
+        },
+        "copyright": null,
+        "footer": null,
+        "usageterms": null,
+        "genre": {
+            "order": 2,
+            "sdWidth": "half"
+        },
+        "01": null,
+        "sign_off": {
+            "order": 22
+        },
+        "supplier": null,
+        "headline": {
+            "required": true,
+            "sdWidth": "full",
+            "order": 12,
+            "cleanPastedHTML": true,
+            "formatOptions": [
+                "underline",
+                "link",
+                "bold"
+            ]
+        },
+        "CopyrigthLine": null,
+        "shorttitle": {
+            "order": 13,
+            "sdWidth": "full"
+        },
+        "language": null,
+        "key": null,
+        "heading": null,
+        "authors": {
+            "order": 8,
+            "sdWidth": "half"
+        },
+        "FIEG_Categories": {
+            "required": false,
+            "order": 3,
+            "sdWidth": "quarter"
+        },
+        "byline": {
+            "order": 16,
+            "cleanPastedHTML": true
+        },
+        "company_codes": null,
+        "PhotoCategories": null,
+        "addressing": {
+            "order": 10,
+            "sdWidth": "half"
+        },
+        "body_footer": null,
+        "CTG": null,
+        "languages": null,
+        "sms": {
+            "order": 15,
+            "cleanPastedHTML": true,
+            "sourceField": "headline"
+        },
+        "ednote": {
+            "cleanPastedHTML": true,
+            "order": 11,
+            "sdWidth": "full"
+        }
+    },
+    "created_by": "59dbce989a7185012ae0a542"
+}

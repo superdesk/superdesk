@@ -103,16 +103,21 @@ CONTENT_API_EXPIRY_DAYS = 15
 with open(os.path.join(os.path.dirname(__file__), 'picture-profile.json')) as profile_json:
     picture_profile = json.load(profile_json)
 
+with open(os.path.join(os.path.dirname(__file__), 'package-profile.json')) as profile_json:
+    package_profile = json.load(profile_json)
+
 EDITOR = {
     "picture": picture_profile['editor'],
     "audio": picture_profile['editor'],
     "video": picture_profile['editor'],
+    "composite": package_profile['editor'],
 }
 
 SCHEMA = {
     "picture": picture_profile['schema'],
     "audio": picture_profile['schema'],
     "video": picture_profile['schema'],
+    "composite": package_profile['schema'],
 }
 
 VALIDATOR_MEDIA_METADATA = {}
