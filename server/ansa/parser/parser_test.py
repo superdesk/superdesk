@@ -36,7 +36,7 @@ class ANSAParserTestCase(TestCase):
         self.assertRegex(item['description_text'], r'ANSA/GIUSEPPE LAMI$')
         self.assertGreaterEqual(len(item['subject']), 3)
         self.assertIn({'name': 'Religious Leader', 'qcode': '12015000'}, item['subject'])
-        self.assertIn({'name': 'REL', 'qcode': 'REL', 'scheme': 'FIEG_Categories'}, item['subject'])
+        self.assertIn({'name': 'REL', 'qcode': 'REL', 'scheme': 'PhotoCategories'}, item['subject'])
         self.assertIn('semantics', item)
         self.assertIn('iptcDomains', item['semantics'])
         self.assertIn('Religious Leader', item['semantics']['iptcDomains'])
@@ -86,6 +86,8 @@ class ANSAParserTestCase(TestCase):
     def test_photo(self):
         item = self.parse('photo.xml')
         self.assertIn({'name': 'CLJ', 'qcode': 'CLJ', 'scheme': 'PhotoCategories'}, item['subject'])
+        photo_subjects = [s for s in item['subject'] if s.get('qcode') == 'CLJ']
+        self.assertEqual(1, len(photo_subjects))
 
         self.assertEqual('ADM', item.get('sign_off'))
 

@@ -73,12 +73,13 @@ class ANSAParser(NewsMLTwoFeedParser):
                 if not item.get('subject'):
                     item['subject'] = []
                 code = subject.get('literal')
-                item['subject'].append({'name': code, 'qcode': code, 'scheme': 'FIEG_Categories'})
+                if item.get('type') != 'picture':
+                    item['subject'].append({'name': code, 'qcode': code, 'scheme': 'FIEG_Categories'})
+                else:
+                    item['subject'].append({'name': code, 'qcode': code, 'scheme': 'PhotoCategories'})
                 name = self.cat_map.get(code)
                 if name:
                     item['anpa_category'] = [{'name': name, 'qcode': name.lower()}]
-                if item.get('type') == 'picture':
-                    item['subject'].append({'name': code, 'qcode': code, 'scheme': 'PhotoCategories'})
             elif subject.get('type') == 'cptType:5':
                 item.setdefault('extra', {})['city'] = subject.get('literal')
                 broader = subject.find(self.qname('broader'))

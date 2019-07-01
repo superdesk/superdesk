@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?><newsMessage xmlns:x="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://iptc.org/std/nar/2006-10-01/" xsi:schemaLocation="http://iptc.org/std/nar/2006-10-01/     http://www.iptc.org/std/NewsML-G2/2.18/specification/NewsML-G2_2.18-spec-All-Power.xsd">
+  <header>
+    <sent>2019-07-01T08:22:28+00:00</sent>
+    <sender>ANSA</sender>
+    <transmitId>14562</transmitId>
+    <priority>4</priority>
+    <origin>ANSA TEST FROM XAWES</origin>
+  </header>
+  <itemSet>
+    <newsItem conformance="power" guid="tag:ansa.it,2019-07-01:fd66854b6f8fcf6e0f9dd3792d86ae2e" standard="NewsML-G2" standardversion="2.18" version="2" xml:lang="it">
+      <catalogRef href="http://www.iptc.org/std/catalog/catalog.IPTC-G2-Standards_25.xml"></catalogRef>
+      <rightsInfo>
+        <copyrightHolder>
+          <name></name>
+        </copyrightHolder>
+        <copyrightNotice></copyrightNotice>
+        <usageTerms></usageTerms>
+      </rightsInfo>
+      <itemMeta>
+        <itemClass qcode="ninat:text"></itemClass>
+        <provider>
+          <name>ANSA</name>
+        </provider>
+        <versionCreated>2019-07-01T08:22:28+00:00</versionCreated>
+        <firstCreated>2019-07-01T08:21:00+00:00</firstCreated>
+        <pubStatus qcode="stat:usable"></pubStatus>
+		<signal qcode="sig:update"></signal>
+		<signal qcode="redsel:SD03"/>
+<located type="cptype:city" qcode="geo:3169070"><name>ROMA</name></located>
+        <service>
+          <name>TEST - from xawes</name>
+        </service>
+        <signal qcode="red-address:TEST"></signal>
+      </itemMeta>
+      <contentMeta>
+        <urgency>5</urgency>
+        <contentCreated>2019-07-01T08:21:00+00:00</contentCreated>
+        <contentModified>2019-07-01T08:22:28+00:00</contentModified>
+        <located qcode="geo:3169070" type="cptype:statprov">
+          <name>Roma</name>
+          <broader qcode="geo:EU" type="cptype:continentalcode"></broader>
+          <broader qcode="geo:IT" type="cptype:country">
+            <name>Italia</name>
+          </broader>
+          <broader qcode="geo:07" type="cptype:region">
+            <name>Lazio</name>
+          </broader>
+          <geoAreaDetails>
+            <position latitude="41.89193" longitude="12.51133"></position>
+          </geoAreaDetails>
+        </located>
+        <dateline>ANSA TEST - ROMA, 01 LUG -</dateline>
+        <subject qcode="subj:02003003" type="cpnat:abstract">
+          <name xml:lang="en">arrest</name>
+        </subject>
+        <subject qcode="products:0010000500000">
+          <name xml:lang="it">Politica - News</name>
+        </subject>
+        <subject qcode="products:0010000600000">
+          <name xml:lang="it">Cronaca - News</name>
+        </subject>
+        <subject qcode="FIEG_Categories:CRO" type="cpnat:abstract">
+          <name xml:lang="en">CRO</name>
+        </subject>
+        <subject qcode="subj:02000000" type="cpnat:abstract">
+          <name xml:lang="en">crime, law and justice</name>
+        </subject>
+        <subject qcode="subj:02003000" type="cpnat:abstract">
+          <name xml:lang="en">police</name>
+        </subject>
+        <genre qcode="genre:Article">
+          <name xml:lang="it">Article (news)</name>
+        </genre>
+        <slugline></slugline>
+        <headline>TEST FROM XAWES</headline>
+        <creator literal="VR-COM"></creator>
+        <headline role="hld:subHeadline">TEST FROM XAWES</headline>
+        <contributor role="ctrol:supplier">
+          <name>ANSA</name>
+        </contributor>
+      </contentMeta>
+      <contentSet>
+        <inlineXML contenttype="application/xhtml+xml">
+          <html>
+            <body><p xmlns="">
+            
+            (ANSA) - ROMA, 1 LUG - TEST FROM XAWES
+(ANSA).
+          </p>51 77 03 CRO01 1113 APE4800 GEST GEST03 MAE03 LOC03 QBXBSXB</body>
+          </html>
+        </inlineXML>
+      </contentSet>
+    </newsItem>
+  </itemSet>
+</newsMessage>
