@@ -14,6 +14,20 @@ MONTHS_IT = [
 ]
 
 
+def get_text(elem):
+    try:
+        return getattr(elem, 'text').strip()
+    except AttributeError:
+        return ''
+
+
+def get_literal(elem):
+    try:
+        return elem.attrib['literal'].strip()
+    except (AttributeError, KeyError):
+        return ''
+
+
 class ANSAParser(NewsMLTwoFeedParser):
 
     TZ = 'Europe/Rome'
@@ -152,9 +166,9 @@ class ANSAParser(NewsMLTwoFeedParser):
         """Parse Rights Info tag"""
         info = tree.find(self.qname('rightsInfo'))
         if info is not None:
-            item['usageterms'] = getattr(info.find(self.qname('usageTerms')), 'text', '').strip()
-            item['copyrightholder'] = info.find(self.qname('copyrightHolder')).attrib['literal']
-            item['copyrightnotice'] = getattr(info.find(self.qname('copyrightNotice')), 'text', None)
+            item['usageterms'] = get_text(info.find(self.qname('usageTerms')))
+            item['copyrightholder'] = get_literal(info.find(self.qname('copyrightHolder')))
+            item['copyrightnotice'] = get_text(info.find(self.qname('copyrightNotice')))
         if item.get('creditline'):
             item.setdefault('copyrightholder', item['creditline'])
         if item.get('copyrightholder') and not item.get('copyrightnotice') or not item.get('usageterms'):

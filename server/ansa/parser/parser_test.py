@@ -94,3 +94,8 @@ class ANSAParserTestCase(TestCase):
         self.assertEqual('Spain', extra['nation'])
         self.assertEqual('ANSA', extra['supplier'])
         self.assertEqual('sp/lrc', extra['digitator'])
+
+    def test_culture(self):
+        item = self.parse('culture.xml')
+
+        self.assertIn('(ANSA) - ROMA, 1 LUG - TEST FROM XAWES', item['body_html'])
