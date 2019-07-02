@@ -79,6 +79,7 @@ class MetasearchController {
 
         this.category = this.category || '';
         this.time_range = this.time_range === null ? 'day' : this.time_range;
+        this.usedQuery = null;
 
         if (this.query) {
             let params = {q: this.parseQuery(this.query), format: 'json', pageno: 1};
@@ -98,6 +99,7 @@ class MetasearchController {
                     this.finished = this.results.length < 11;
                     this.params = params;
                     this.updatePagination();
+                    this.usedQuery = this.query;
                 });
         }
     }

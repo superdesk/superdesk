@@ -83,11 +83,11 @@
         </div>
     </li>
 </ul> -->
-<div class="panel-info" ng-show="metasearch.items.length === 0 && metasearch.query">
+<div class="panel-info" ng-show="metasearch.items.length === 0 && metasearch.usedQuery">
     <div class="panel-info__icon">
         <i class="big-icon--info"></i>
     </div>
     <h3 class="panel-info__heading">No results found</h3>
-    <p class="panel-info__description">There are no results for the query "{{ metasearch.query }}".</p>
+    <p class="panel-info__description">There are no results for the query "{{ metasearch.usedQuery }}".</p>
 </div>
 
