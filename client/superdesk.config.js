@@ -32,6 +32,11 @@ module.exports = function(grunt) {
         shortWeekFormat: 'YYYY-MM-DD HH:mm',
         longDateFromat: 'YYYY-MM-DD HH:mm',
 
+        authoring: {
+            timeToRead: false,
+            lineLength: 64,
+        },
+
         language: 'it',
         profileLanguages: [
             'en',
