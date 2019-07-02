@@ -4,6 +4,7 @@ import io
 from lxml import etree
 from unittest import mock
 from urllib.parse import urlparse
+from eve.versioning import insert_versioning_documents
 
 from superdesk.utc import utcnow
 from superdesk.tests import TestCase
@@ -449,19 +450,35 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         self.assertEqual(str(geoname['location']['lon']), position.get('longitude'))
 
     def test_desk_in_output(self):
-        desks = [{'name': 'SPO - Sports'}]
+        desks = [{'name': 'SPO - Sports'}, {'name': 'FIN - Finance'}]
         self.app.data.insert('desks', desks)
+
         article = self.article.copy()
         article['_id'] = article['guid']
-        article['task'] = {'desk': desks[0]['_id']}
+
+        article['task'] = {'desk': desks[0]['_id'], 'stage': desks[0]['incoming_stage']}
+        insert_versioning_documents('archive', article)
+
+        article['task'] = {'desk': desks[0]['_id'], 'stage': desks[1]['working_stage']}
+        insert_versioning_documents('archive', article)
+
+        article['task'] = {'desk': desks[1]['_id'], 'stage': desks[1]['incoming_stage']}
+        insert_versioning_documents('archive', article)
+
+        article['task'] = {'desk': desks[1]['_id'], 'stage': desks[1]['working_stage']}
+        insert_versioning_documents('archive', article)
         self.app.data.insert('archive', [article])
 
-        item = self.get_item({})
+        item = self.get_item(article)
         service = item.find(ns('itemMeta')).find(ns('service'))
         self.assertIsNotNone(service)
-        self.assertEqual(desks[0]['name'], service.find(ns('name')).text)
+        self.assertEqual(desks[1]['name'], service.find(ns('name')).text)
 
-        signal = item.find(ns('itemMeta')).find(ns('signal[@qcode="red-address:SPO"]'))
+        signal = item.find(ns('itemMeta')).find(ns('signal[@qcode="red-address:FIN"]'))
+        self.assertIsNotNone(signal)
+        self.assertEqual('desk: FIN - Finance: Working Stage', signal.find(ns('name')).text)
+
+        signal = item.find(ns('itemMeta')).find(ns('signal[@qcode="red-orig:SPO"]'))
         self.assertIsNotNone(signal)
 
     def test_dateline(self):
