@@ -11,7 +11,7 @@ class ValidateTestCase(TestCase):
             'items': [
                 {'qcode': 'foo', 'name': 'Foo', MASK_FIELD: '000011111'},
                 {'qcode': 'bar', 'name': 'Bar', MASK_FIELD: '111110000'},
-                {'qcode': 'baz', 'name': 'Baz'},
+                {'qcode': 'baz', 'name': 'Baz', MASK_FIELD: 'baz'},
             ],
         }])
         item = {
@@ -22,6 +22,10 @@ class ValidateTestCase(TestCase):
                 },
                 {
                     'qcode': 'bar',
+                    'scheme': 'products',
+                },
+                {
+                    'qcode': 'baz',
                     'scheme': 'products',
                 },
             ],
