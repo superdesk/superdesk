@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'ansa.routing',
     'ansa.stage_auto_publishing',
     'ansa.update_signal',
+    'ansa.validate',
 
     'planning',
 ]
