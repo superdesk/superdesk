@@ -161,17 +161,40 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
     def _format_item_meta(self, article, item_meta, item):
         super()._format_item_meta(article, item_meta, item)
         self._format_related(article, item_meta)
+        self._format_desk(article, item_meta)
 
+    def _format_desk(self, article, item_meta):
         # store desk as service
         archive_item = superdesk.get_resource_service('archive').find_one(req=None, _id=article['guid'])
         if archive_item is not None and archive_item.get('task') and archive_item['task'].get('desk'):
             desk = superdesk.get_resource_service('desks').find_one(req=None, _id=archive_item['task']['desk'])
+            try:
+                stage = superdesk.get_resource_service('stages').find_one(req=None, _id=archive_item['task']['stage'])
+            except KeyError:
+                stage = {}
             if desk and desk.get('name'):
                 service = SubElement(item_meta, 'service')
                 SubElement(service, 'name').text = desk['name']
                 pieces = desk['name'].split(' - ')
                 if len(pieces) == 2:
-                    SubElement(item_meta, 'signal', {'qcode': 'red-address:{}'.format(pieces[0].strip())})
+                    signal = SubElement(item_meta, 'signal', {'qcode': 'red-address:{}'.format(pieces[0].strip())})
+                    SubElement(signal, 'name').text = ': '.join([
+                        x for x in ['desk', desk.get('name'), stage.get('name')] if x
+                    ])
+            lookup = {'_id_document': archive_item['_id']}
+            versions = superdesk.get_resource_service('archive_versions').find(where=lookup).sort('_id')
+            first_desk = None
+            for version in versions:
+                if not first_desk and version.get('task') and version['task'].get('desk'):
+                    if desk and desk['_id'] == version['task']['desk']:
+                        first_desk = desk
+                    else:
+                        first_desk = superdesk.get_resource_service('desks') \
+                            .find_one(req=None, _id=version['task']['desk'])
+            if first_desk:
+                pieces = first_desk['name'].split(' - ')
+                if len(pieces) == 2:
+                    SubElement(item_meta, 'signal', {'qcode': 'red-orig:{}'.format(pieces[0].strip())})
 
     def _format_related(self, article, item_meta):
         featured = article.get('associations', {}).get('featuremedia')
