@@ -69,11 +69,7 @@ def validate(sender, item, response, error_fields, **kwargs):
             response.append('Featured photo is required')
 
     if mask.get(Validators.GALLERY_REQUIRED):
-        has_gallery_item = False
-        for key, val in item.get('associations', {}).items():
-            if key.startswith('photoGallery') and val:
-                has_gallery_item = True
-        if not has_gallery_item:
+        if not item.get('photoGallery'):
             response.append('Photo gallery is required')
 
 

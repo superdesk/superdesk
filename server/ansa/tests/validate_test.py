@@ -46,3 +46,13 @@ class ValidateTestCase(TestCase):
         validate(self, item, response, fields)
         self.assertIn('Body is longer than 512 characters', response)
         self.assertEqual(7, len(response))
+
+        response = []
+        item['headline'] = 'foo'
+        item['extra'] = {'subtitle': 'foo', 'shorttitle': 'bar'}
+        item['associations'] = {'featuremedia': {'type': 'picture'}}
+        item['photoGallery'] = {'type': 'picture'}
+        item['subject'].append({'name': 'Test', 'qcode': '12345678'})
+        item['body_html'] = 'short'
+        validate(self, item, response, fields)
+        self.assertEqual([], response)
