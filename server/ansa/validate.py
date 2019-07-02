@@ -65,7 +65,7 @@ def validate(sender, item, response, error_fields, **kwargs):
         response.append('Body is longer than 6400 characters')
 
     if mask.get(Validators.FEATURED_REQUIRED):
-        if not item.get('featuremedia'):
+        if not item.get('associations') or not item['associations'].get('featuremedia'):
             response.append('Featured photo is required')
 
     if mask.get(Validators.GALLERY_REQUIRED):
