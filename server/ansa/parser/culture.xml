@@ -1,4 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?><newsMessage xmlns:x="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://iptc.org/std/nar/2006-10-01/" xsi:schemaLocation="http://iptc.org/std/nar/2006-10-01/     http://www.iptc.org/std/NewsML-G2/2.18/specification/NewsML-G2_2.18-spec-All-Power.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<newsMessage xmlns:x="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://iptc.org/std/nar/2006-10-01/"
+  xsi:schemaLocation="http://iptc.org/std/nar/2006-10-01/     http://www.iptc.org/std/NewsML-G2/2.18/specification/NewsML-G2_2.18-spec-All-Power.xsd">
   <header>
     <sent>2019-07-01T08:22:28+00:00</sent>
     <sender>ANSA</sender>
@@ -7,7 +10,8 @@
     <origin>ANSA TEST FROM XAWES</origin>
   </header>
   <itemSet>
-    <newsItem conformance="power" guid="tag:ansa.it,2019-07-01:fd66854b6f8fcf6e0f9dd3792d86ae2e" standard="NewsML-G2" standardversion="2.18" version="2" xml:lang="it">
+    <newsItem conformance="power" guid="tag:ansa.it,2019-07-01:fd66854b6f8fcf6e0f9dd3792d86ae2e" standard="NewsML-G2"
+      standardversion="2.18" version="2" xml:lang="it">
       <catalogRef href="http://www.iptc.org/std/catalog/catalog.IPTC-G2-Standards_25.xml"></catalogRef>
       <rightsInfo>
         <copyrightHolder>
@@ -24,9 +28,11 @@
         <versionCreated>2019-07-01T08:22:28+00:00</versionCreated>
         <firstCreated>2019-07-01T08:21:00+00:00</firstCreated>
         <pubStatus qcode="stat:usable"></pubStatus>
-		<signal qcode="sig:update"></signal>
-		<signal qcode="redsel:SD03"/>
-<located type="cptype:city" qcode="geo:3169070"><name>ROMA</name></located>
+        <signal qcode="sig:update"></signal>
+        <signal qcode="redsel:SD03" />
+        <located type="cptype:city" qcode="geo:3169070">
+          <name>ROMA</name>
+        </located>
         <service>
           <name>TEST - from xawes</name>
         </service>
@@ -78,15 +84,22 @@
         <contributor role="ctrol:supplier">
           <name>ANSA</name>
         </contributor>
+        <keyword>culture</keyword>
+        <keyword>arts</keyword>
+        <keyword>fashion</keyword>
       </contentMeta>
       <contentSet>
         <inlineXML contenttype="application/xhtml+xml">
           <html>
-            <body><p xmlns="">
-            
-            (ANSA) - ROMA, 1 LUG - TEST FROM XAWES
-(ANSA).
-          </p>51 77 03 CRO01 1113 APE4800 GEST GEST03 MAE03 LOC03 QBXBSXB</body>
+
+          <body>
+            <p xmlns="">
+
+              (ANSA) - ROMA, 1 LUG - TEST FROM XAWES
+              (ANSA).
+            </p>51 77 03 CRO01 1113 APE4800 GEST GEST03 MAE03 LOC03 QBXBSXB
+          </body>
+
           </html>
         </inlineXML>
       </contentSet>

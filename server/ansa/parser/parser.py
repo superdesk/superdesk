@@ -139,6 +139,11 @@ class ANSAParser(NewsMLTwoFeedParser):
         if creator is not None and creator.get('literal'):
             item['sign_off'] = creator.get('literal')
 
+        keywords = meta.findall(self.qname('keyword'))
+        for keyword in keywords:
+            if keyword.text and keyword.text.strip():
+                item.setdefault('keywords', []).append(keyword.text.strip())
+
     def parse_item(self, tree):
         item = super().parse_item(tree)
         if item.get('word_count') == 0 and item.get('type') == 'text':

@@ -101,3 +101,8 @@ class ANSAParserTestCase(TestCase):
         item = self.parse('culture.xml')
 
         self.assertIn('(ANSA) - ROMA, 1 LUG - TEST FROM XAWES', item['body_html'])
+
+        self.assertIn('keywords', item)
+        self.assertIn('culture', item['keywords'])
+        self.assertIn('arts', item['keywords'])
+        self.assertIn('fashion', item['keywords'])
