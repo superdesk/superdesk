@@ -94,6 +94,7 @@ def parse(extracted):
         for item in parsed['semantics']['mainLemmas']:
             if len(parsed['slugline']) + len(item) < 50:
                 parsed['slugline'] = ' '.join([parsed['slugline'], item])
+            parsed.setdefault('keywords', []).append(item)
     return parsed
 
 

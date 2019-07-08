@@ -232,6 +232,10 @@ function AnsaSemanticsCtrl($scope, $rootScope, api) {
             $scope.item.slugline = result.slugline;
         }
 
+        if (result.keywords && _.isEmpty($scope.item.keywords)) {
+            $scope.item.keywords = result.keywords;
+        }
+
         $scope.autosave($scope.item);
     };
 
