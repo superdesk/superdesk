@@ -101,6 +101,7 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
         self._format_extra(article, content_meta)
         self._format_sms(article, content_meta)
         self._format_semantics(article, content_meta)
+        self._format_keywords(article, content_meta)
 
     def _format_extra(self, article, content_meta):
         extra = article.get('extra', {})
@@ -424,3 +425,9 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
             etree.SubElement(content_meta, 'creditline').text = article['copyrightholder']
         else:
             super()._format_creditline(article, content_meta)
+
+    def _format_keywords(self, article, content_meta):
+        if article.get('keywords'):
+            for keyword in article['keywords']:
+                if keyword:
+                    etree.SubElement(content_meta, 'keyword').text = keyword

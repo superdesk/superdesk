@@ -89,7 +89,7 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         'creditline': 'sample creditline',
         'copyrightholder': 'FOO',
         'copyrightnotice': 'FOO 2018',
-        'keywords': ['traffic'],
+        'keywords': ['traffic', 'sport'],
         'abstract': 'sample abstract',
         'place': [
             {
@@ -573,3 +573,10 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         self.assertEqual('FOO', copyrightholder.get('literal'))
         copyrightnotice = rights_info.find(ns('copyrightNotice'))
         self.assertEqual('FOO 2018', copyrightnotice.text)
+
+    def test_keywords(self):
+        content_meta = self.format_content_meta()
+        keywords = content_meta.findall(ns('keyword'))
+        self.assertEqual(2, len(keywords))
+        self.assertEqual('traffic', keywords[0].text)
+        self.assertEqual('sport', keywords[1].text)
