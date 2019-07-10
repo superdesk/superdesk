@@ -219,12 +219,18 @@ function AnsaSemanticsCtrl($scope, $rootScope, api) {
             $scope.item.place = result.place;
         }
 
-        if (result.subject) {
-            $scope.item.subject = _.uniqBy(
-                ($scope.item.subject || [])
-                    .filter((item) => item.scheme) // keep all custom scheme subjects
-                    .concat(result.subject)
-                , (subject) => [subject.scheme, subject.qcode].join(':')
+        if (!_.isEmpty(result.subject)) {
+            const subjects = $scope.item.subject || [];
+
+            $scope.item.subject = subjects.concat(
+                result.subject.filter(
+                    (subject) => !subjects.find(
+                        (selectedSubject) => (
+                            selectedSubject.qcode === subject.qcode &&
+                            selectedSubject.scheme === subject.scheme
+                        )
+                    )
+                )
             );
         }
 
