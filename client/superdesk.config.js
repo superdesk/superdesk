@@ -87,6 +87,11 @@ module.exports = function(grunt) {
             sendAndPublish: true,
         },
 
+        search_cvs: [
+            {id: 'products', name: 'Product', field: 'subject', list: 'products'},
+            {id: 'subject', name: 'Subject', field: 'subject', list: 'subjectcodes'},
+        ],
+
         list: {
             priority: [
                 'priority',
