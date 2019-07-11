@@ -496,6 +496,17 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
             dateline = content_meta.find(ns('dateline'))
             self.assertEqual(expected, dateline.text, lang)
 
+    def test_source(self):
+        item = self.get_item(self.article)
+        signal = item.find(ns('itemMeta')).find(ns('signal[@qcode="source:(ANSA)"]'))
+        self.assertIsNotNone(signal)
+
+        article = self.article.copy()
+        article['extra'] = {'HeadingNews': 'BAR'}
+        item = self.get_item(article)
+        signal = item.find(ns('itemMeta')).find(ns('signal[@qcode="source:BAR"]'))
+        self.assertIsNotNone(signal)
+
     def test_rewrite_guid_version(self):
 
         article1 = self.article.copy()

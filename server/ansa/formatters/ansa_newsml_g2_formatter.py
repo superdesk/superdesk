@@ -163,6 +163,14 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
         super()._format_item_meta(article, item_meta, item)
         self._format_related(article, item_meta)
         self._format_desk(article, item_meta)
+        self._format_source(article, item_meta)
+
+    def _format_source(self, article, item_meta):
+        try:
+            source = article['extra']['HeadingNews']
+        except KeyError:
+            source = '(ANSA)'
+        etree.SubElement(item_meta, 'signal', {'qcode': 'source:{}'.format(source)})
 
     def _format_desk(self, article, item_meta):
         # store desk as service
