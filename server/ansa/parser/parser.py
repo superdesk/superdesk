@@ -195,3 +195,7 @@ class ANSAParser(NewsMLTwoFeedParser):
         provider = meta.find(self.qname('provider'))
         if provider is not None and provider.get('literal'):
             item.setdefault('extra', {})['supplier'] = provider.get('literal')
+
+    def getVocabulary(self, voc_id, qcode, name):
+        """Use name from xml."""
+        return name
