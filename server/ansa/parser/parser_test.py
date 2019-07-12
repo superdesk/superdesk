@@ -6,6 +6,7 @@ from pytz import timezone
 from .parser import ANSAParser
 from superdesk.etree import etree
 from superdesk.tests import TestCase
+from ansa.subjects import init_app as init_subjects
 
 GEONAMES_URL = 'http://api.geonames.org/getJSON?type=json&username=superdesk_dev&geonameId=3172394&lang=it'
 
@@ -19,6 +20,7 @@ class ANSAParserTestCase(TestCase):
             return parser.parse(xml)[0]
 
     def test_parse_item(self):
+        init_subjects(self.app)
         item = self.parse('item.xml')
         self.assertEqual('De Magistris, rafforzamento forze ordine e strutture dello Stato', item['extra']['subtitle'])
         self.assertGreater(item['word_count'], 0)
@@ -27,6 +29,7 @@ class ANSAParserTestCase(TestCase):
         self.assertEqual('tag:ansa.it,2017-02-24:ea58f9ce5951ece86fe126162c4fb161', item['guid'])
         self.assertEqual(item['guid'], item['extra']['ansaid'])
         self.assertEqual('2017-02-24T12:51:00+00:00', item['firstcreated'].isoformat())
+        self.assertIn({'name': 'Giustizia, Criminalità', 'qcode': '02000000'}, item['subject'])
 
         extra = item.get('extra', {})
         self.assertEqual('Napoli', extra['city'])
