@@ -551,7 +551,7 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         self.assertIn(article['headline'], etree.tostring(html, method='text').decode('utf-8'))
 
     def test_picture_content_meta(self):
-        updates = {'type': 'picture', 'copyrightholder': 'Foo'}
+        updates = {'type': 'picture', 'copyrightholder': 'Foo', 'alt_text': 'Alt'}
         content_meta = self.format_content_meta(updates)
 
         creditline = content_meta.find(ns('creditline'))
@@ -576,14 +576,19 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         self.assertEqual('Coa', content_meta.find(ns('contributor[@role="ctrol:coAuthor"]')).find(ns('name')).text)
         self.assertEqual('Sup', content_meta.find(ns('contributor[@role="ctrol:supplier"]')).find(ns('name')).text)
 
+        alt_text = content_meta.find(ns('description[@role="drol:altText"]'))
+        self.assertIsNotNone(alt_text)
+
     def test_right_info(self):
-        item = self.get_item({'type': 'picture'})
+        item = self.get_item({'type': 'picture', 'usageterms': 'Foo usage'})
         rights_info = item.find(ns('rightsInfo'))
         self.assertIsNotNone(rights_info)
         copyrightholder = rights_info.find(ns('copyrightHolder'))
         self.assertEqual('FOO', copyrightholder.get('literal'))
         copyrightnotice = rights_info.find(ns('copyrightNotice'))
         self.assertEqual('FOO 2018', copyrightnotice.text)
+        usageterms = rights_info.find(ns('usageTerms'))
+        self.assertEqual('Foo usage', usageterms.text)
 
     def test_keywords(self):
         content_meta = self.format_content_meta()

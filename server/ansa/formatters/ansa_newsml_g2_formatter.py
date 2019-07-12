@@ -102,6 +102,11 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
         self._format_sms(article, content_meta)
         self._format_semantics(article, content_meta)
         self._format_keywords(article, content_meta)
+        self._format_alt_text(article, content_meta)
+
+    def _format_alt_text(self, article, content_meta):
+        if article.get('alt_text'):
+            SubElement(content_meta, 'description', {'role': 'drol:altText'}).text = article['alt_text']
 
     def _format_extra(self, article, content_meta):
         extra = article.get('extra', {})
@@ -356,6 +361,8 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
         SubElement(rightsinfo, 'copyrightHolder', {'literal': article.get('copyrightholder', 'ANSA')})
         if article.get('copyrightnotice'):
             SubElement(rightsinfo, 'copyrightNotice').text = article['copyrightnotice']
+        if article.get('usageterms'):
+            SubElement(rightsinfo, 'usageTerms').text = article['usageterms']
 
     def _format_semantics(self, article, content_meta):
         mapping = [('persons', 'cpnat:person'), ('organizations', 'cpnat:organisation')]
