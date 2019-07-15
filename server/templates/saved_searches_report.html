@@ -1,0 +1,22 @@
+{% extends "email_layout.html" %}
+
+{% block content %}
+<h1>Saved Searches Report</h1>
+<p>This is a report for search saved as "<strong>{{search.name|e}}</strong>"</p>
+{% if not docs %}
+<p><strong>No document found with this search</strong></p>
+{% else %}
+<p>Here are the found documents:
+    <ul>
+        {% for doc in docs %}
+        <li>
+            <strong>{{doc.headline|e}}</strong>
+            {% if item.extra.subtitle %}
+            <p>{{item.extra.subtitle}}</p>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+</p>
+{% endif %}
+{% endblock %}
