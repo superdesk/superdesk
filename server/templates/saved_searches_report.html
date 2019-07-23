@@ -11,8 +11,8 @@
         {% for doc in docs %}
         <li>
             <strong>{{doc.headline|e}}</strong>
-            {% if item.extra.subtitle %}
-            <p>{{item.extra.subtitle}}</p>
+            {% if doc.get('extra') and doc['extra'].get('subtitle') %}
+            <p>{{doc['extra']['subtitle']|e}}</p>
             {% endif %}
         </li>
         {% endfor %}
