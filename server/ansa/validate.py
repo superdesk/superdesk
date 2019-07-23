@@ -15,7 +15,7 @@ class Validators(IntEnum):
     SUBJECT_REQUIRED = 3
     BODY_LENGTH_512 = 4
     BODY_LENGTH_6400 = 5
-    BODY_LENGTH_1712 = 6
+    BODY_LENGTH_2224 = 6
     FEATURED_REQUIRED = 7
     GALLERY_REQUIRED = 8
 
@@ -59,8 +59,8 @@ def validate(sender, item, response, error_fields, **kwargs):
 
     if mask.get(Validators.BODY_LENGTH_512) and length > 512:
         response.append('Body is longer than 512 characters')
-    elif mask.get(Validators.BODY_LENGTH_1712) and length > 1712:
-        response.append('Body is longer than 1712 characters')
+    elif mask.get(Validators.BODY_LENGTH_2224) and length > 2224:
+        response.append('Body is longer than 2224 characters')
     elif mask.get(Validators.BODY_LENGTH_6400) and length > 6400:
         response.append('Body is longer than 6400 characters')
 
