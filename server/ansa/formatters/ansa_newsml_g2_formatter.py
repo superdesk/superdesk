@@ -137,7 +137,10 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
             if author.get('parent'):
                 user = superdesk.get_resource_service('users').find_one(req=None, _id=author['parent'])
                 if user:
-                    creator = SubElement(content_meta, 'contributor', attrib={'literal': user.get('sign_off', '')})
+                    creator = SubElement(content_meta, 'contributor', attrib={
+                        'literal': user.get('sign_off', ''),
+                        'role': author.get('role') or 'writer',
+                    })
                     SubElement(creator, 'name').text = user.get('display_name', author.get('name', ''))
 
     def _format_creator(self, article, content_meta):
