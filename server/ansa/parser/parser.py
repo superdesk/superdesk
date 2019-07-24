@@ -130,19 +130,28 @@ class ANSAParser(NewsMLTwoFeedParser):
                         int(time.strftime('%d')),
                         MONTHS_IT[time.month].upper(),
                     )
-        contribs = meta.findall(self.qname('contributor'))
-        for contrib in contribs:
-            if contrib.get('role') == 'ctrol:descrWriter' and contrib.find(self.qname('name')) is not None:
-                item.setdefault('extra', {})['digitator'] = contrib.find(self.qname('name')).text
-
-        creator = meta.find(self.qname('creator'))
-        if creator is not None and creator.get('literal'):
-            item['sign_off'] = creator.get('literal')
-
         keywords = meta.findall(self.qname('keyword'))
         for keyword in keywords:
             if keyword.text and keyword.text.strip():
                 item.setdefault('keywords', []).append(keyword.text.strip())
+
+    def parse_authors(self, meta, item):
+        contribs = meta.findall(self.qname('contributor'))
+        for contrib in contribs:
+            name = contrib.find(self.qname('name'))
+            if contrib.get('role') == 'ctrol:descrWriter' and name is not None:
+                item.setdefault('extra', {})['digitator'] = name.text
+            elif contrib.get('role') and contrib.get('role').startswith('ansactrol:') and name is not None:
+                role = contrib.get('role').split(':', 1)[1]
+                item.setdefault('authors', []).append({
+                    'role': role.lower(),
+                    'name': role,
+                    'sub_label': name.text,
+                })
+
+        creator = meta.find(self.qname('creator'))
+        if creator is not None and creator.get('literal'):
+            item['sign_off'] = creator.get('literal')
 
     def parse_item(self, tree):
         item = super().parse_item(tree)

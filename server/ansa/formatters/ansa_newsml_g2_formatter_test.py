@@ -308,11 +308,17 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
                 'name': 'photographer',
                 'parent': 'test_id_2',
             },
+            {
+                'role': 'ingested',
+                'name': 'ingested',
+                'sub_label': 'Bar',
+            },
         ]}
 
         content_meta = self.format_content_meta(updates)
         contributors = content_meta.findall(ns('contributor'))
-        self.assertGreaterEqual(len(contributors), 2)
+
+        self.assertGreaterEqual(len(contributors), 3)
 
         self.assertEqual('John Doe', contributors[0].find(ns('name')).text)
         self.assertEqual(contributors[0].get('literal'), 'JD')
@@ -320,6 +326,10 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
 
         self.assertEqual('Foo', contributors[1].find(ns('name')).text)
         self.assertEqual(contributors[1].get('role'), 'ansactrol:photographer')
+
+        self.assertEqual(contributors[2].get('role'), 'ansactrol:ingested')
+        self.assertEqual(contributors[2].get('literal'), 'Bar')
+        self.assertEqual(contributors[2].find(ns('name')).text, 'Bar')
 
     def test_headlines(self):
         content_meta = self.format_content_meta()

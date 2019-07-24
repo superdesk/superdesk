@@ -109,3 +109,10 @@ class ANSAParserTestCase(TestCase):
         self.assertIn('culture', item['keywords'])
         self.assertIn('arts', item['keywords'])
         self.assertIn('fashion', item['keywords'])
+
+        self.assertIn('authors', item)
+        self.assertEqual([{
+            'role': 'photographer',
+            'name': 'photographer',
+            'sub_label': 'Foo',
+        }], item['authors'])

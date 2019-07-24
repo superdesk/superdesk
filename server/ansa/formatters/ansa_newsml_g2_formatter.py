@@ -142,6 +142,12 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
                         'role': 'ansactrol:{}'.format(author.get('role') or 'writer'),
                     })
                     SubElement(creator, 'name').text = user.get('display_name', author.get('name', ''))
+            elif author.get('role') and author.get('sub_label'):
+                contrib = SubElement(content_meta, 'contributor', attrib={
+                    'literal': author.get('sub_label'),
+                    'role': 'ansactrol:{}'.format(author.get('role')),
+                })
+                SubElement(contrib, 'name').text = author.get('sub_label')
 
     def _format_creator(self, article, content_meta):
         if article.get('byline'):
@@ -282,7 +288,10 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
                 SubElement(located_elm, 'broader', attrib={'qcode': 'cntry:%s' % located['country'].upper()})
 
         if article.get('dateline'):
-            self._format_dateline(article, content_meta, article.get('dateline'))
+            try:
+                self._format_dateline(article, content_meta, article.get('dateline'))
+            except ValueError:
+                pass
 
     def _format_dateline(self, article, content_meta, dateline):
         dateline_text = article.get('dateline', {}).get('text', '')

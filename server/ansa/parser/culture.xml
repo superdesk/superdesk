@@ -79,10 +79,16 @@
         </genre>
         <slugline></slugline>
         <headline>TEST FROM XAWES</headline>
-        <creator literal="VR-COM"></creator>
+        <creator literal="VR-COM"><name>VR-COM</name></creator>
         <headline role="hld:subHeadline">TEST FROM XAWES</headline>
         <contributor role="ctrol:supplier">
           <name>ANSA</name>
+        </contributor>
+        <contributor role="ansactrol:photographer">
+          <name>Foo</name>
+        </contributor>
+        <contributor role="x:writer">
+          <name>Bar</name>
         </contributor>
         <keyword>culture</keyword>
         <keyword>arts</keyword>
