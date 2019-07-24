@@ -139,7 +139,7 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
                 if user:
                     creator = SubElement(content_meta, 'contributor', attrib={
                         'literal': user.get('sign_off', ''),
-                        'role': author.get('role') or 'writer',
+                        'role': 'ansactrol:{}'.format(author.get('role') or 'writer'),
                     })
                     SubElement(creator, 'name').text = user.get('display_name', author.get('name', ''))
 

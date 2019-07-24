@@ -316,10 +316,10 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
 
         self.assertEqual('John Doe', contributors[0].find(ns('name')).text)
         self.assertEqual(contributors[0].get('literal'), 'JD')
-        self.assertEqual(contributors[0].get('role'), 'editor')
+        self.assertEqual(contributors[0].get('role'), 'ansactrol:editor')
 
         self.assertEqual('Foo', contributors[1].find(ns('name')).text)
-        self.assertEqual(contributors[1].get('role'), 'photographer')
+        self.assertEqual(contributors[1].get('role'), 'ansactrol:photographer')
 
     def test_headlines(self):
         content_meta = self.format_content_meta()
