@@ -5,7 +5,7 @@ import unittest
 import ansa.vfs as vfs
 import requests_mock
 
-UPLOAD_URL = 'http://vfs/bdmvfs/rest/uploadfile?commit=true'
+UPLOAD_URL = 'http://vfs/bdmvfs/rest/uploadfile'
 UPLOAD_RESPONSE = """<?xml version="1.0" encoding="UTF-8"?>
 <files>
   <fileItems>
