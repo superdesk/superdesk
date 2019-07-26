@@ -62,7 +62,7 @@ class VFSMediaStorage(MediaStorage):
         self._sess = requests.Session()
 
     def url(self, endpoint):
-        return urljoin(app.config.get('VFS_URL', 'http://172.20.14.95:8080/'), endpoint)
+        return urljoin(app.config.get('ANSA_VFS', 'http://172.20.14.95:8080/'), endpoint)
 
     def get(self, id_or_filename, resource=None):
         resp = self._sess.get(self.url(BINARY_ENDPOINT) % id_or_filename)

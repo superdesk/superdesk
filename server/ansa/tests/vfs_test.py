@@ -39,7 +39,7 @@ class VFSTestCase(unittest.TestCase):
 
     def setUp(self):
         self.app = flask.Flask(__name__)
-        self.app.config['VFS_URL'] = 'http://vfs/'
+        self.app.config['ANSA_VFS'] = 'http://vfs/'
         self.app.download_url = download_url
         self.ctx = self.app.app_context()
         self.ctx.push()
