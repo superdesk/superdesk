@@ -101,16 +101,17 @@ def parse(extracted):
 def apply(analysed, item):
     old_semantics = item.get('semantics', {})
     for key, val in analysed.items():
-        if not item.get(key):
+        if not item.get(key) and key != 'subject':
             item[key] = val
     if analysed.get('semantics'):
         item['semantics'] = analysed['semantics']
     if analysed.get('subject'):
+        item.setdefault('subject', [])
         item['subject'] = [s for s in item['subject'] if s.get('scheme')]  # filter out iptc subjectcodes
         for subj in analysed['subject']:
             if subj.get('qcode') and (subj['qcode'], subj.get('scheme')) not in [
                     (s.get('qcode'), s.get('scheme')) for s in item['subject']
-            ]:
+            ] and (subj.get('scheme') != 'products' or item.get('type') == 'text'):
                 item['subject'].append(subj)
     if old_semantics and old_semantics.get('located'):  # keep located
         item.setdefault('semantics', {})

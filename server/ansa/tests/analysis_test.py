@@ -25,3 +25,20 @@ class AnalysisTestCase(unittest.TestCase):
         item = {}
         apply(parsed, item)
         self.assertEqual(parsed['keywords'], item['keywords'])
+
+    def test_apply_products(self):
+        parsed = {
+            'subject': [
+                {'name': 'arts', 'qcode': '01000000'},
+                {'name': 'product', 'qcode': '12345', 'scheme': 'products'},
+            ],
+        }
+
+        item = {'type': 'text'}
+        apply(parsed, item)
+        self.assertEqual(2, len(item['subject']))
+
+        item = {'type': 'picture'}
+        apply(parsed, item)
+        self.assertEqual(1, len(item['subject']))
+        self.assertEqual('arts', item['subject'][0]['name'])

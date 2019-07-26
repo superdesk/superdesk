@@ -229,7 +229,7 @@ function AnsaSemanticsCtrl($scope, $rootScope, api) {
                             selectedSubject.qcode === subject.qcode &&
                             selectedSubject.scheme === subject.scheme
                         )
-                    )
+                    ) && (subject.scheme !== 'products' || $scope.item.type === 'text')
                 )
             );
         }
