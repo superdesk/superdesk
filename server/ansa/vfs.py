@@ -98,7 +98,7 @@ class VFSMediaStorage(MediaStorage):
 
     def put(self, content, filename=None, content_type=None, *args, **kwargs):
         files = {'file': content}
-        resp = self._sess.post(self.url(UPLOAD_ENDPOINT), files=files)
+        resp = self._sess.post(self.url(UPLOAD_ENDPOINT), files=files, params={'commit': True})
         xml = parse_xml(resp)
         md5 = xml.find('fileItems').find('md5')
         if md5 is not None:
