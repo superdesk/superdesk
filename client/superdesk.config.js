@@ -135,5 +135,9 @@ module.exports = function(grunt) {
             ingest: false,
             archive: false,
         },
+
+        enabledExtensions: {
+            // helloWorld2: 1,
+        },
     };
 };
