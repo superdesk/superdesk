@@ -134,6 +134,8 @@ module.exports = function(grunt) {
         defaultSearch: {
             ingest: false,
             archive: false,
+            archived: false,
+            published: true,
         },
     };
 };
