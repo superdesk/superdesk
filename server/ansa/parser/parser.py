@@ -144,6 +144,7 @@ class ANSAParser(NewsMLTwoFeedParser):
             elif contrib.get('role') and contrib.get('role').startswith('ansactrol:') and name is not None:
                 role = contrib.get('role').split(':', 1)[1]
                 item.setdefault('authors', []).append({
+                    '_id': ':'.join([name.text, role]),
                     'role': role.lower(),
                     'name': role,
                     'sub_label': name.text,
