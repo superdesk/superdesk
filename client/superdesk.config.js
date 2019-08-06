@@ -138,6 +138,7 @@ module.exports = function(grunt) {
 
         enabledExtensions: {
             // helloWorld2: 1,
+            imageShortcuts: 1,
         },
     };
 };
