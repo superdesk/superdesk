@@ -9,6 +9,9 @@ interface IState {
     isDisplayed: boolean;
 }
 
+const featureMediaField = 'feature_media';
+const galleryField = 'photoGallery';
+
 // `contentProfile` and `getContentProfilePromise` are shared between multiple instances of `getWidgets` result
 // one instance is created for list view and another for grid view. See usages.
 let contentProfile: IContentProfile | undefined = undefined;
@@ -34,7 +37,7 @@ export function getWidgets(superdesk: ISuperdesk) {
             this.show = (article: IArticle) => {
                 if (getContentProfilePromise === undefined) {
                     getContentProfilePromise = superdesk.entities.contentProfile.get(article.profile).then((profile) => {
-                        if ((profile.schema.hasOwnProperty('feature_media') || profile.schema.hasOwnProperty('media-gallery'))) {
+                        if ((profile.schema.hasOwnProperty(featureMediaField) || profile.schema.hasOwnProperty(galleryField))) {
                             contentProfile = profile;
                         }
                         
@@ -70,12 +73,12 @@ export function getWidgets(superdesk: ISuperdesk) {
                 return (
                     <div>
                         {
-                            contentProfile.schema.hasOwnProperty('media-gallery')
+                            contentProfile.schema.hasOwnProperty(galleryField)
                                 ? (
                                     <button
-                                        title={gettext('add to gallery')}
+                                        title={gettext('add to photo gallery')}
                                         onClick={() => {
-                                            superdesk.ui.article.addImage('media-gallery', this.props.article);
+                                            superdesk.ui.article.addImage(galleryField, this.props.article);
                                         }}
                                     >
                                         <Icon className="icon-slideshow" size={22} />
@@ -85,12 +88,12 @@ export function getWidgets(superdesk: ISuperdesk) {
                         }
 
                         {
-                            contentProfile.schema.hasOwnProperty('feature_media')
+                            contentProfile.schema.hasOwnProperty(featureMediaField)
                                 ? (
                                     <button
                                         title={gettext('add to featured media')}
                                         onClick={() => {
-                                            superdesk.ui.article.addImage('feature_media', this.props.article);
+                                            superdesk.ui.article.addImage(featureMediaField, this.props.article);
                                         }}
                                     >
                                         <Icon className="icon-picture" size={22} />
