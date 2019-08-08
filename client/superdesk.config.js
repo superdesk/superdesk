@@ -137,5 +137,10 @@ module.exports = function(grunt) {
             archived: false,
             published: true,
         },
+
+        enabledExtensions: {
+            // helloWorld2: 1,
+            imageShortcuts: 1,
+        },
     };
 };
