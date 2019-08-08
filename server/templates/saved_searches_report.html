@@ -12,7 +12,7 @@
         <li>
             <strong>{{doc.headline|e}}</strong>
             {% if doc.get('extra') and doc['extra'].get('subtitle') %}
-            <p>{{doc['extra']['subtitle']|e}}</p>
+            <br />{{doc['extra']['subtitle']|e}}
             {% endif %}
         </li>
         {% endfor %}
