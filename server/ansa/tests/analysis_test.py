@@ -42,3 +42,8 @@ class AnalysisTestCase(unittest.TestCase):
         apply(parsed, item)
         self.assertEqual(1, len(item['subject']))
         self.assertEqual('arts', item['subject'][0]['name'])
+
+        item = {'type': 'text'}
+        apply(parsed, item, skip_products=True)
+        self.assertEqual(1, len(item['subject']))
+        self.assertEqual('arts', item['subject'][0]['name'])

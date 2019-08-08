@@ -98,7 +98,7 @@ def parse(extracted):
     return parsed
 
 
-def apply(analysed, item):
+def apply(analysed, item, skip_products=False):
     old_semantics = item.get('semantics', {})
     for key, val in analysed.items():
         if not item.get(key) and key != 'subject':
@@ -111,7 +111,7 @@ def apply(analysed, item):
         for subj in analysed['subject']:
             if subj.get('qcode') and (subj['qcode'], subj.get('scheme')) not in [
                     (s.get('qcode'), s.get('scheme')) for s in item['subject']
-            ] and (subj.get('scheme') != 'products' or item.get('type') == 'text'):
+            ] and (subj.get('scheme') != 'products' or (item.get('type') == 'text' and not skip_products)):
                 item['subject'].append(subj)
     if old_semantics and old_semantics.get('located'):  # keep located
         item.setdefault('semantics', {})
@@ -177,8 +177,8 @@ class AnalysisService(BaseService):
         except requests.exceptions.ReadTimeout:
             return {}
 
-    def apply(self, analysed, item):
-        return apply(analysed, item)
+    def apply(self, analysed, item, skip_products=False):
+        return apply(analysed, item, skip_products=skip_products)
 
     def on_fetched(self, doc):
         doc.update(self.do_analyse(doc))
