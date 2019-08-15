@@ -121,7 +121,26 @@ SCHEMA = {
     "composite": package_profile['schema'],
 }
 
-VALIDATOR_MEDIA_METADATA = {}
+VALIDATOR_MEDIA_METADATA = {
+    "alt_text": {
+        "required": False,
+    },
+    "description_text": {
+        "required": False,
+    },
+    "copyrightholder": {
+        "required": False,
+    },
+    "byline": {
+        "required": False,
+    },
+    "usageterms": {
+        "required": False,
+    },
+    "copyrightnotice": {
+        "required": False,
+    },
+}
 
 
 GEONAMES_USERNAME = env('GEONAMES_USERNAME', 'superdesk_dev')
