@@ -156,7 +156,7 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         article['body_html'] = ''
         formatter = ANSANewsMLG2Formatter()
         _, doc = formatter.format(article, self.subscriber)[0]
-        self.assertIn('<body>', doc)
+        self.assertNotIn('<body>', doc)
 
     def test_featured_item_link(self):
         media = self.app.media.put(io.BytesIO(b'test'))
@@ -561,8 +561,7 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
             ns('contentSet'),
             ns('inlineXML'),
         ]))
-        self.assertIsNotNone(html)
-        self.assertIn(article['headline'], etree.tostring(html, method='text').decode('utf-8'))
+        self.assertIsNone(html)
 
     def test_picture_content_meta(self):
         updates = {'type': 'picture', 'copyrightholder': 'Foo', 'alt_text': 'Alt'}
