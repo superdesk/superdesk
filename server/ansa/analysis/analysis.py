@@ -39,7 +39,7 @@ SEMANTICS_SCHEMA = {
         'saos': {'type': 'list', 'mapping': not_analyzed},
         'sentimental': {'type': 'list', 'mapping': not_analyzed},
         'placesExpanded': {'type': 'list'},
-        'located': {'type': 'dict', 'mapping': not_enabled},
+        'located': {'type': 'dict', 'mapping': not_enabled, 'nullable': True},
         'subjects': {'type': 'list'},
     }
 }
@@ -95,6 +95,13 @@ def parse(extracted):
             if len(parsed['slugline']) + len(item) < 50:
                 parsed['slugline'] = ' '.join([parsed['slugline'], item])
             parsed.setdefault('keywords', []).append(item)
+    for key, scheme in SEMANTICS_SCHEMA['schema'].items():
+        if scheme.get('type') == 'list':
+            parsed['semantics'].setdefault(key, [])
+        elif scheme.get('type') == 'dict':
+            parsed['semantics'].setdefault(key, None)
+        elif scheme.get('type') == 'boolean':
+            parsed['semantics'].setdefault(key, False)
     return parsed
 
 

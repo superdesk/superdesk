@@ -17,6 +17,14 @@ class AnalysisTestCase(unittest.TestCase):
         self.assertIn('keywords', parsed)
         self.assertIn('World Cup', parsed['keywords'])
 
+    @patch('ansa.analysis.analysis.get_place_by_id')
+    def test_parse_missing(self, mock):
+        modified = extracted.copy()
+        modified.pop('organizations')
+        parsed = parse(modified)
+        self.assertIn('organizations', parsed['semantics'])
+        self.assertEqual([], parsed['semantics']['organizations'])
+
     def test_apply(self):
         parsed = {
             'keywords': ['foo', 'bar'],
