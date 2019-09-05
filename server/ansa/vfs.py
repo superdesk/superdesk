@@ -67,7 +67,7 @@ class VFSMediaStorage(MediaStorage):
     def get(self, id_or_filename, resource=None):
         resp = self._sess.get(self.url(BINARY_ENDPOINT) % id_or_filename)
         if resp.status_code in [200, 201]:
-            metadata = self.metadata(id_or_filename, resource)
+            metadata = self.metadata(id_or_filename, resource, ignore_error=True)
             return VFSObjectWrapper(id_or_filename, resp.content, metadata)
 
     def exists(self, id_or_filename, resource=None):
@@ -80,11 +80,16 @@ class VFSMediaStorage(MediaStorage):
         resp = self._sess.delete(self.url(DELETE_ENDPOINT) % id_or_filename)
         return parse_xml(resp)
 
-    def metadata(self, id_or_filename, resource=None):
+    def metadata(self, id_or_filename, resource=None, ignore_error=False):
         resp = self._sess.get(self.url(METADATA_ENDPOINT) % id_or_filename)
-        xml = parse_xml(resp)
+        try:
+            xml = parse_xml(resp)
+        except VFSError:
+            if not ignore_error:
+                raise
+            return {}
         if is_error(xml):
-            return None
+            return {}
         item = xml.find('fileItems')
         if item is None:
             return {}
