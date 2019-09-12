@@ -3,7 +3,7 @@ language: python
 python: "3.5"
 
 sudo: false
-dist: trusty
+dist: xenial
 
 services:
     - mongodb
