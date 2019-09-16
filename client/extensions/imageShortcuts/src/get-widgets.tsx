@@ -35,6 +35,11 @@ export function getWidgets(superdesk: ISuperdesk) {
             };
 
             this.show = (article: IArticle) => {
+                if (article.profile == null) {
+                    this.hide();
+                    return;
+                }
+
                 if (getContentProfilePromise === undefined) {
                     getContentProfilePromise = superdesk.entities.contentProfile.get(article.profile).then((profile) => {
                         if ((profile.schema.hasOwnProperty(featureMediaField) || profile.schema.hasOwnProperty(galleryField))) {
