@@ -14,6 +14,7 @@ UPLOAD_ENDPOINT = '/bdmvfs/rest/uploadfile'
 BINARY_ENDPOINT = '/bdmvfs/rest/binfilebymd5/%s'
 METADATA_ENDPOINT = '/bdmvfs/rest/infofilebymd5/%s'
 DELETE_ENDPOINT = '/bdmvfs/rest/deletefilebymd5/%s'
+PUT_METADATA_ENDPOINT = '/bdmvfs/rest/uploadfilemeta'
 
 logger = logging.getLogger(__name__)
 
@@ -104,10 +105,14 @@ class VFSMediaStorage(MediaStorage):
     def put(self, content, filename=None, content_type=None, *args, **kwargs):
         files = {'file': content}
         resp = self._sess.post(self.url(UPLOAD_ENDPOINT), files=files, data={'commit': 'true'})
-        xml = parse_xml(resp)
-        md5 = xml.find('fileItems').find('md5')
-        if md5 is not None:
-            return md5.text
+        return _get_md5(resp)
+
+    def put_metadata(self, media, metadata):
+        resp = self._sess.post(self.url(PUT_METADATA_ENDPOINT), json={
+            'md5': str(media),
+            'meta': metadata,
+        })
+        return _get_md5(resp)
 
     def url_for_media(self, media, content_type=None):
         return self.url(BINARY_ENDPOINT) % media
@@ -123,3 +128,10 @@ class VFSMediaStorage(MediaStorage):
 
     def fetch_rendition(self, rendition, resource=None):
         return self.get(rendition['media'], resource)
+
+
+def _get_md5(resp):
+    xml = parse_xml(resp)
+    md5 = xml.find('fileItems').find('md5')
+    if md5 is not None:
+        return md5.text

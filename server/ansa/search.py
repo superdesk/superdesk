@@ -231,6 +231,7 @@ class AnsaPictureProvider(superdesk.SearchProvider):
                     'city': get_meta(doc, 'city'),
                     'nation': get_meta(doc, 'ctrName'),
                     'supplier': 'ANSA',
+                    'signature': get_meta(doc, 'authorName'),
                 },
                 'usageterms': get_meta(doc, 'usageTerms'),
                 'copyrightholder': get_meta(doc, 'copyrightHolder') or get_meta(doc, 'copyright'),

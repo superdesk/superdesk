@@ -29,6 +29,14 @@ NOT_FOUND_RESPONSE = """<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 </files>
 """
 DELETE_URL = 'http://vfs/bdmvfs/rest/deletefilebymd5/foo'
+PUT_METADATA_URL = 'http://vfs/bdmvfs/rest/uploadfilemeta'
+PUT_METADATA_RESPONSE = """<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<files>
+    <fileItems>
+        <md5>bar</md5>
+    </fileItems>
+</files>
+"""
 
 
 def download_url(x):
@@ -102,3 +110,9 @@ class VFSTestCase(unittest.TestCase):
             mock.get(METADATA_URL, content=METADATA_RESPONSE.encode('utf-8'))
             media = self.media.fetch_rendition({'media': 'foo'})
             self.assertEqual(b'foo', media.read())
+
+    def test_put_metadata(self):
+        with requests_mock.mock() as mock:
+            mock.post(PUT_METADATA_URL, content=PUT_METADATA_RESPONSE.encode('utf-8'))
+            md5 = self.media.put_metadata('foo', {})
+            self.assertEqual('bar', md5)

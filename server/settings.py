@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'ansa.stage_auto_publishing',
     'ansa.update_signal',
     'ansa.validate',
+    'ansa.save_iptc',
 
     'planning',
 ]
