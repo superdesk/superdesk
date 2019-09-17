@@ -1,1 +1,171 @@
-{"idArchivio":3,"simpleSearchResult":{"message":null,"errorCode":0,"pageSize":1,"pageNumber":10,"totalPages":6732874,"totalResults":6732873,"searchEntries":[]},"renderResult":{"message":null,"errorCode":0,"totalResults":1,"documents":[{"documentId":"2:/ansa/2016/@1020551","guid":"30c235b23fa270173e34b1ea7e80f88a","metadataMap":{"origfilename_B":{"fieldValues":[{"score":null,"value":"fdee947d9b06f10fa3f26365614e6a2a.jpg"}]},"title_B":{"fieldValues":[{"score":null,"value":"Lower house of India's Parliament passes triple talaq (divorce) bill"}]},"description_B":{"fieldValues":[{"score":null,"value":"epa06409029 A Kashmiri Muslim woman looks from tent after offering prayers outside  the shrine of saint Sheikh Syed Abdul Qadir Jeelani during  a 11-day festival to mark the saint's Urs (yearly)  in Srinagar, the summer capital of Indian Kashmir, 29 December 2017. Lok Sabha, the Lower house of India's Parliament has passed the contentious bill which makes the practice of instant triple talaq (divorce), illegal with up to three years of jail term for the husband. The Muslim practice of triple talaq follows the rule where a husband can end a marriage unilaterally and instantly by repeating the word 'talaq', meaning 'I divorce', three times.  EPA/FAROOQ KHAN"}]},"idAnsa":{"fieldValues":[{"score":null,"value":"tag:ansa.it,2016-08-07:fdee947d9b06f10fa3f26365614e6a2a"}]},"creditline":{"fieldValues":[{"score":null,"value":"EPA"}]},"status":{"fieldValues":[{"score":null,"value":"stat:usable"}]},"categoryAnsa":{"fieldValues":[{"score":null,"value":"SOI"}]},"ctrName":{"fieldValues":[{"score":null,"value":"INDIA"}]},"ctrCode":{"fieldValues":[{"score":null,"value":"IND"}]},"authorCode":{"fieldValues":[{"score":null,"value":"STR"}]},"city":{"fieldValues":[{"score":null,"value":"SRINAGAR"}]},"product":{"fieldValues":[{"score":null,"value":"EPA"},{"score":null,"value":"PBDM"}]},"orientationMD5":{"fieldValues":[{"score":null,"value":"fdee947d9b06f10fa3f26365614e6a2a"}]},"contentBy":{"fieldValues":[{"score":null,"value":"FAROOQ KHAN / STR"}]},"authorName":{"fieldValues":[{"score":null,"value":"FAROOQ KHAN"}]},"categorySupAnsa":{"fieldValues":[{"score":null,"value":"FAMILY"}]},"statProv":{"fieldValues":[{"score":null,"value":"KASHMIR"}]},"idAnsaMD5":{"fieldValues":[{"score":null,"value":"06a0731abd1defbe7a81196e73362be9"}]},"groupby_N":{"fieldValues":[{"score":null,"value":"9013518304084682208"}]},"pubDate_N":{"fieldValues":[{"score":null,"value":"2016-08-07T14:59:29+02:00"}]}},"count":0}]}}
+{
+    "idArchivio": 3,
+    "simpleSearchResult": {
+        "message": null,
+        "errorCode": 0,
+        "pageSize": 1,
+        "pageNumber": 10,
+        "totalPages": 6732874,
+        "totalResults": 6732873,
+        "searchEntries": []
+    },
+    "renderResult": {
+        "message": null,
+        "errorCode": 0,
+        "totalResults": 1,
+        "documents": [{
+            "documentId": "2:/ansa/2016/@1020551",
+            "guid": "30c235b23fa270173e34b1ea7e80f88a",
+            "metadataMap": {
+                "origfilename_B": {
+                    "fieldValues": [{
+                        "score": null,
+                        "value": "fdee947d9b06f10fa3f26365614e6a2a.jpg"
+                    }]
+                },
+                "title_B": {
+                    "fieldValues": [{
+                        "score": null,
+                        "value": "Lower house of India's Parliament passes triple talaq (divorce) bill"
+                    }]
+                },
+                "description_B": {
+                    "fieldValues": [{
+                        "score": null,
+                        "value": "epa06409029 A Kashmiri Muslim woman looks from tent after offering prayers outside  the shrine of saint Sheikh Syed Abdul Qadir Jeelani during  a 11-day festival to mark the saint's Urs (yearly)  in Srinagar, the summer capital of Indian Kashmir, 29 December 2017. Lok Sabha, the Lower house of India's Parliament has passed the contentious bill which makes the practice of instant triple talaq (divorce), illegal with up to three years of jail term for the husband. The Muslim practice of triple talaq follows the rule where a husband can end a marriage unilaterally and instantly by repeating the word 'talaq', meaning 'I divorce', three times.  EPA/FAROOQ KHAN"
+                    }]
+                },
+                "idAnsa": {
+                    "fieldValues": [{
+                        "score": null,
+                        "value": "tag:ansa.it,2016-08-07:fdee947d9b06f10fa3f26365614e6a2a"
+                    }]
+                },
+                "creditline": {
+                    "fieldValues": [{
+                        "score": null,
+                        "value": "EPA"
+                    }]
+                },
+                "status": {
+                    "fieldValues": [{
+                        "score": null,
+                        "value": "stat:usable"
+                    }]
+                },
+                "categoryAnsa": {
+                    "fieldValues": [{
+                        "score": null,
+                        "value": "SOI"
+                    }]
+                },
+                "ctrName": {
+                    "fieldValues": [{
+                        "score": null,
+                        "value": "INDIA"
+                    }]
+                },
+                "ctrCode": {
+                    "fieldValues": [{
+                        "score": null,
+                        "value": "IND"
+                    }]
+                },
+                "authorCode": {
+                    "fieldValues": [{
+                        "score": null,
+                        "value": "STR"
+                    }]
+                },
+                "city": {
+                    "fieldValues": [{
+                        "score": null,
+                        "value": "SRINAGAR"
+                    }]
+                },
+                "product": {
+                    "fieldValues": [{
+                        "score": null,
+                        "value": "EPA"
+                    }, {
+                        "score": null,
+                        "value": "PBDM"
+                    }]
+                },
+                "orientationMD5": {
+                    "fieldValues": [{
+                        "score": null,
+                        "value": "fdee947d9b06f10fa3f26365614e6a2a"
+                    }]
+                },
+                "contentBy": {
+                    "fieldValues": [{
+                        "score": null,
+                        "value": "FAROOQ KHAN / STR"
+                    }]
+                },
+                "authorName": {
+                    "fieldValues": [{
+                        "score": null,
+                        "value": "FAROOQ KHAN"
+                    }]
+                },
+                "categorySupAnsa": {
+                    "fieldValues": [{
+                        "score": null,
+                        "value": "FAMILY"
+                    }]
+                },
+                "statProv": {
+                    "fieldValues": [{
+                        "score": null,
+                        "value": "KASHMIR"
+                    }]
+                },
+                "idAnsaMD5": {
+                    "fieldValues": [{
+                        "score": null,
+                        "value": "06a0731abd1defbe7a81196e73362be9"
+                    }]
+                },
+                "groupby_N": {
+                    "fieldValues": [{
+                        "score": null,
+                        "value": "9013518304084682208"
+                    }]
+                },
+                "pubDate_N": {
+                    "fieldValues": [{
+                        "score": null,
+                        "value": "2016-08-07T14:59:29+02:00"
+                    }]
+                },
+                "copyright": {
+                    "fieldValues": [{
+                        "score": null,
+                        "value": "copyright"
+                    }]
+                },
+                "usageTerms": {
+                    "fieldValues": [{
+                        "score": null,
+                        "value": "usage terms"
+                    }]
+                },
+                "copyrightNotice": {
+                    "fieldValues": [{
+                        "score": null,
+                        "value": "copyright notice"
+                    }]
+                },
+                "language": {
+                    "fieldValues": [{
+                        "score": null,
+                        "value": "en"
+                    }]
+                }
+            },
+            "count": 0
+        }]
+    }
+}

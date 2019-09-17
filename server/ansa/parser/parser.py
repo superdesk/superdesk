@@ -8,6 +8,7 @@ from ansa.analysis.analysis import parse, apply
 from superdesk import get_resource_service
 from ansa.geonames import get_place_by_id
 from superdesk.utc import local_to_utc
+from ansa.constants import PHOTO_CATEGORIES_ID
 
 MONTHS_IT = [
     '', 'gen', 'feb', 'mar', 'apr', 'mag', 'giu', 'lug', 'ago', 'set', 'ott', 'nov', 'dic',
@@ -76,7 +77,7 @@ class ANSAParser(NewsMLTwoFeedParser):
                 if item.get('type') != 'picture':
                     item['subject'].append({'name': code, 'qcode': code, 'scheme': 'FIEG_Categories'})
                 else:
-                    item['subject'].append({'name': code, 'qcode': code, 'scheme': 'PhotoCategories'})
+                    item['subject'].append({'name': code, 'qcode': code, 'scheme': PHOTO_CATEGORIES_ID})
                 name = self.cat_map.get(code)
                 if name:
                     item['anpa_category'] = [{'name': name, 'qcode': name.lower()}]

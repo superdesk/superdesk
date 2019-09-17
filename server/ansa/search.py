@@ -11,6 +11,7 @@ from superdesk.io.commands.update_ingest import update_renditions
 from datetime import timedelta
 from superdesk.utc import utcnow, utc_to_local
 from datetime import timedelta
+from .constants import PHOTO_CATEGORIES_ID
 
 
 SEARCH_ENDPOINT = 'ricerca.json'
@@ -53,6 +54,20 @@ def extract_params(query, names):
     if query:
         params['q'] = query
     return params
+
+
+def fetch_metadata(item, doc):
+    photo_category = get_meta(doc, 'categoryAnsa')
+    if photo_category:
+        photo_cat = superdesk.get_resource_service('vocabularies').find_one(req=None, _id=PHOTO_CATEGORIES_ID)
+        if photo_cat:
+            for subj in photo_cat.get('items', []):
+                if subj.get('name') == photo_category:
+                    item.setdefault('subject', []).append({
+                        'name': subj['name'],
+                        'qcode': subj.get('qcode'),
+                        'scheme': PHOTO_CATEGORIES_ID,
+                    })
 
 
 FILTERS = [
@@ -154,7 +169,7 @@ class AnsaPictureProvider(superdesk.SearchProvider):
         response = requests.get(ansa_photo_api(SEARCH_ENDPOINT), params=params, timeout=TIMEOUT)
         return self._parse_items(response)
 
-    def _parse_items(self, response):
+    def _parse_items(self, response, fetch=False):
         if not response.status_code == requests.codes.ok:
             response.raise_for_status()
 
@@ -168,14 +183,17 @@ class AnsaPictureProvider(superdesk.SearchProvider):
                 pubdate = arrow.get(get_meta(doc, 'pubDate_N')).datetime
             except ValueError:
                 continue
-            items.append({
+            item = {
                 'type': 'picture',
                 'pubstatus': get_meta(doc, 'status').replace('stat:', ''),
                 '_id': guid,
                 'guid': guid,
+                'language': get_meta(doc, 'language') or 'it',
                 'headline': get_meta(doc, 'title_B'),
+                'slugline': get_meta(doc, 'categorySupAnsa'),
                 'description_text': get_meta(doc, 'description_B'),
                 'byline': get_meta(doc, 'contentBy'),
+                'sign_off': get_meta(doc, 'authorCode'),
                 'firstcreated': pubdate,
                 'versioncreated': pubdate,
                 'creditline': get_meta(doc, 'creditline'),
@@ -210,8 +228,19 @@ class AnsaPictureProvider(superdesk.SearchProvider):
                 ],
                 'extra': {
                     'ansaid': guid,
+                    'city': get_meta(doc, 'city'),
+                    'nation': get_meta(doc, 'ctrName'),
+                    'supplier': 'ANSA',
                 },
-            })
+                'usageterms': get_meta(doc, 'usageTerms'),
+                'copyrightholder': get_meta(doc, 'copyrightHolder') or get_meta(doc, 'copyright'),
+                'copyrightnotice': get_meta(doc, 'copyrightNotice'),
+            }
+
+            if fetch:
+                fetch_metadata(item, doc)
+
+            items.append(item)
         return items
 
     def fetch(self, guid):
@@ -223,7 +252,7 @@ class AnsaPictureProvider(superdesk.SearchProvider):
         }
 
         response = requests.get(ansa_photo_api(DETAIL_ENDPOINT), params=params, timeout=TIMEOUT)
-        items = self._parse_items(response)
+        items = self._parse_items(response, fetch=True)
         item = items[0]
 
         # generate renditions
