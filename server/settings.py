@@ -12,6 +12,7 @@
 import os
 from flask import json
 from pathlib import Path
+from distutils.util import strtobool
 
 
 def env(variable, fallback_value=None):
@@ -121,7 +122,26 @@ SCHEMA = {
     "composite": package_profile['schema'],
 }
 
-VALIDATOR_MEDIA_METADATA = {}
+VALIDATOR_MEDIA_METADATA = {
+    "alt_text": {
+        "required": False,
+    },
+    "description_text": {
+        "required": False,
+    },
+    "copyrightholder": {
+        "required": False,
+    },
+    "byline": {
+        "required": False,
+    },
+    "usageterms": {
+        "required": False,
+    },
+    "copyrightnotice": {
+        "required": False,
+    },
+}
 
 
 GEONAMES_USERNAME = env('GEONAMES_USERNAME', 'superdesk_dev')
@@ -130,3 +150,5 @@ GEONAMES_FEATURE_CLASSES = ['P']
 ANSA_VFS = env('ANSA_VFS', 'http://172.20.14.95:8080/')
 
 KILL_TEMPLATE_NULL_FIELDS = []
+
+PUBLISH_ASSOCIATED_ITEMS = bool(strtobool(env('PUBLISH_ASSOCIATED_ITEMS', 'false')))

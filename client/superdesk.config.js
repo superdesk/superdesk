@@ -134,6 +134,14 @@ module.exports = function(grunt) {
         defaultSearch: {
             ingest: false,
             archive: false,
+            archived: false,
+            published: true,
+        },
+
+        enabledExtensions: {
+            // helloWorld2: 1,
+            imageShortcuts: 1,
+            ansaIptc: 1,
         },
 
         enabledExtensions: {

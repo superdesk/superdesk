@@ -112,6 +112,7 @@ class ANSAParserTestCase(TestCase):
 
         self.assertIn('authors', item)
         self.assertEqual([{
+            '_id': 'Foo:photographer',
             'role': 'photographer',
             'name': 'photographer',
             'sub_label': 'Foo',

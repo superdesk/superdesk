@@ -3,6 +3,7 @@ import os
 import flask
 import unittest
 
+from unittest.mock import patch
 from httmock import urlmatch, HTTMock
 
 from .search import AnsaPictureProvider, set_default_search_operator
@@ -12,6 +13,16 @@ from .search import AnsaPictureProvider, set_default_search_operator
 def ansa_mock(url, request):
     with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'fixtures', 'ansafoto.json')) as f:
         return f.read()
+
+
+class VocabulariesMock():
+    def find_one(self, req, _id):
+        return {
+            'items': [
+                {'name': 'foo', 'qcode': '123'},
+                {'name': 'SOI', 'qcode': '140'},
+            ],
+        }
 
 
 class AnsaPictureTestCase(unittest.TestCase):
@@ -52,3 +63,30 @@ class AnsaPictureTestCase(unittest.TestCase):
         params['searchtext'] = 'foo "juventus turin" bar'
         set_default_search_operator(params)
         self.assertEqual('foo AND "juventus turin" AND bar', params['searchtext'])
+
+    @patch('superdesk.get_resource_service')
+    @patch('ansa.search.update_renditions')
+    def test_fetch(self, update_renditions_mock, get_service_mock):
+        get_service_mock.return_value = VocabulariesMock()
+        with HTTMock(ansa_mock):
+            with self.app.app_context():
+                item = self.service.fetch('foo')
+                self.assertIsNotNone(item)
+
+        self.assertEqual('en', item['language'])
+        self.assertEqual('FAROOQ KHAN / STR', item['byline'])
+        self.assertEqual('usage terms', item['usageterms'])
+        self.assertEqual('copyright', item['copyrightholder'])
+        self.assertEqual('copyright notice', item['copyrightnotice'])
+        self.assertEqual('FAMILY', item['slugline'])
+        self.assertEqual('STR', item['sign_off'])
+
+        self.assertEqual('ANSA', item['extra']['supplier'])
+        self.assertEqual('SRINAGAR', item['extra']['city'])
+        self.assertEqual('INDIA', item['extra']['nation'])
+
+        self.assertIn({
+            'name': 'SOI',
+            'qcode': '140',
+            'scheme': 'PhotoCategories',
+        }, item['subject'])

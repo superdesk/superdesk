@@ -30,8 +30,9 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
         :param Element nitf:
         """
         content_set = etree.SubElement(news_item, 'contentSet')
-        inline = etree.SubElement(content_set, 'inlineXML', attrib={'contenttype': 'application/xhtml+xml'})
-        inline.append(self._build_html_doc(article))
+        if article.get('body_html'):
+            inline = etree.SubElement(content_set, 'inlineXML', attrib={'contenttype': 'application/xhtml+xml'})
+            inline.append(self._build_html_doc(article))
         self._build_gallery(article, content_set)
 
     def _build_gallery(self, article, content_set):

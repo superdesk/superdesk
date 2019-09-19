@@ -17,6 +17,14 @@ class AnalysisTestCase(unittest.TestCase):
         self.assertIn('keywords', parsed)
         self.assertIn('World Cup', parsed['keywords'])
 
+    @patch('ansa.analysis.analysis.get_place_by_id')
+    def test_parse_missing(self, mock):
+        modified = extracted.copy()
+        modified.pop('organizations')
+        parsed = parse(modified)
+        self.assertIn('organizations', parsed['semantics'])
+        self.assertEqual([], parsed['semantics']['organizations'])
+
     def test_apply(self):
         parsed = {
             'keywords': ['foo', 'bar'],
@@ -40,5 +48,10 @@ class AnalysisTestCase(unittest.TestCase):
 
         item = {'type': 'picture'}
         apply(parsed, item)
+        self.assertEqual(1, len(item['subject']))
+        self.assertEqual('arts', item['subject'][0]['name'])
+
+        item = {'type': 'text'}
+        apply(parsed, item, skip_products=True)
         self.assertEqual(1, len(item['subject']))
         self.assertEqual('arts', item['subject'][0]['name'])
