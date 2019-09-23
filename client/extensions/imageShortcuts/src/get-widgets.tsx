@@ -9,8 +9,8 @@ interface IState {
     isDisplayed: boolean;
 }
 
-const featureMediaField = 'feature_media';
-const galleryField = 'photoGallery';
+import {galleryField, featureMediaField} from '../../../constants';
+
 
 // `contentProfile` and `getContentProfilePromise` are shared between multiple instances of `getWidgets` result
 // one instance is created for list view and another for grid view. See usages.
