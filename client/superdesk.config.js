@@ -143,9 +143,5 @@ module.exports = function(grunt) {
             imageShortcuts: 1,
             ansaIptc: 1,
         },
-
-        enabledExtensions: {
-            // helloWorld2: 1,
-        },
     };
 };
