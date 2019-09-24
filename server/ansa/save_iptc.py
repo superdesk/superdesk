@@ -16,6 +16,7 @@ ITEM_MAPPING = {
     'copyrightholder': 'copyrightHolder',
     'copyrightnotice': 'copyrightNotice',
     'usageterms': 'usageTerms',
+    'pubstatus': 'status',
 }
 
 EXTRA_MAPPING = {
@@ -58,7 +59,10 @@ def update_iptc_metadata(sender, item, **kwargs):
                 metadata.setdefault('product', []).append(subj['qcode'])
 
     firstcreated = item.get('firstpublished') or utcnow()
-    metadata['pubDate'] = firstcreated.isoformat()
+    metadata['pubDate_N'] = firstcreated.isoformat()
+
+    if metadata.get('status') and 'stat:' not in metadata['status']:
+        metadata['status'] = 'stat:{}'.format(metadata['status'])
 
     original['media'] = app.media.put_metadata(original['media'], metadata)
     original['href'] = app.media.url_for_media(original['media'])

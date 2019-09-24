@@ -20,6 +20,7 @@ class UpdateIPTCMetadataTestCase(unittest.TestCase):
     def test_update_iptc_metadata_on_publish(self):
         item = {
             'type': 'picture',
+            'pubstatus': 'usable',
             'language': 'cs',
             'headline': 'head',
             'slugline': 'slug',
@@ -73,10 +74,11 @@ class UpdateIPTCMetadataTestCase(unittest.TestCase):
                     'copyrightHolder': item['copyrightholder'],
                     'copyrightNotice': item['copyrightnotice'],
                     'usageTerms': item['usageterms'],
-                    'pubDate': '2019-09-20T12:00:00+00:00',
+                    'pubDate_N': '2019-09-20T12:00:00+00:00',
                     'releaseDate': item['extra']['DateRelease'],
                     'dateCreated': item['extra']['DateCreated'],
                     'digitator': item['extra']['digitator'],
+                    'status': 'stat:usable',
                     'product': [
                         item['subject'][2]['qcode'],
                         item['subject'][3]['qcode'],
