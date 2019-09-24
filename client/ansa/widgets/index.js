@@ -10,7 +10,7 @@ export default angular.module('ansa.widgets', [])
             template: 'ansa-semantics-widget.html',
             order: 7,
             side: 'right',
-            display: {authoring: true, picture: true},
+            display: {authoring: true, picture: true, personal: true},
             configurable: false,
         });
 
@@ -20,7 +20,7 @@ export default angular.module('ansa.widgets', [])
             template: 'ansa-related-widget.html',
             order: 7,
             side: 'right',
-            display: {authoring: true, picture: true},
+            display: {authoring: true, picture: true, personal: true},
             configurable: false,
         });
     }])
