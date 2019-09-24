@@ -47,7 +47,8 @@ class UpdateIPTCMetadataTestCase(unittest.TestCase):
             'subject': [
                 {'name': 'Foo', 'qcode': '01000000'},
                 {'name': 'Bar', 'qcode': '02000000', 'scheme': PHOTO_CATEGORIES_ID},
-                {'name': 'Prod', 'qcode': '001', 'scheme': 'products'},
+                {'name': 'Prod A', 'qcode': '001', 'scheme': 'products'},
+                {'name': 'Prod B', 'qcode': '002', 'scheme': 'products'},
             ],
         }
 
@@ -76,7 +77,10 @@ class UpdateIPTCMetadataTestCase(unittest.TestCase):
                     'releaseDate': item['extra']['DateRelease'],
                     'dateCreated': item['extra']['DateCreated'],
                     'digitator': item['extra']['digitator'],
-                    'product': item['subject'][2]['qcode'],
+                    'product': [
+                        item['subject'][2]['qcode'],
+                        item['subject'][3]['qcode'],
+                    ],
                 })
 
         self.assertEqual('bar', item['renditions']['original']['media'])

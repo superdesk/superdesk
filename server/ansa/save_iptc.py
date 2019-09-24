@@ -55,7 +55,7 @@ def update_iptc_metadata(sender, item, **kwargs):
             if subj.get('scheme') == PHOTO_CATEGORIES_ID and subj.get('name'):
                 metadata['categoryAnsa'] = subj['name']
             if subj.get('scheme') == PRODUCTS_ID and subj.get('qcode'):
-                metadata['product'] = subj['qcode']
+                metadata.setdefault('product', []).append(subj['qcode'])
 
     firstcreated = item.get('firstpublished') or utcnow()
     metadata['pubDate'] = firstcreated.isoformat()
