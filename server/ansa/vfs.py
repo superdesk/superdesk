@@ -6,7 +6,7 @@ import requests
 
 from lxml import etree
 from urllib.parse import urljoin
-from flask import current_app as app
+from flask import current_app as app, json
 from eve.io.media import MediaStorage
 from superdesk.errors import SuperdeskError
 
@@ -14,8 +14,12 @@ UPLOAD_ENDPOINT = '/bdmvfs/rest/uploadfile'
 BINARY_ENDPOINT = '/bdmvfs/rest/binfilebymd5/%s'
 METADATA_ENDPOINT = '/bdmvfs/rest/infofilebymd5/%s'
 DELETE_ENDPOINT = '/bdmvfs/rest/deletefilebymd5/%s'
+PUT_METADATA_ENDPOINT = '/bdmvfs/rest/uploadfilemeta'
 
 logger = logging.getLogger(__name__)
+
+TIMEOUT = (5, 15)
+DOWNLOAD_TIMEOUT = (5, 30)
 
 
 class VFSError(SuperdeskError):
@@ -39,7 +43,8 @@ class VFSObjectWrapper(io.BytesIO):
 
 
 def parse_xml(resp):
-    assert resp.status_code in [200, 201]
+    resp.raise_for_status()
+    assert resp.status_code in [200, 201], resp
     logger.debug('vfs %s', resp.content.decode('utf-8'))
     xml = etree.fromstring(resp.content)
     if is_error(xml):
@@ -65,7 +70,7 @@ class VFSMediaStorage(MediaStorage):
         return urljoin(app.config.get('ANSA_VFS', 'http://172.20.14.95:8080/'), endpoint)
 
     def get(self, id_or_filename, resource=None):
-        resp = self._sess.get(self.url(BINARY_ENDPOINT) % id_or_filename)
+        resp = self._sess.get(self.url(BINARY_ENDPOINT) % id_or_filename, timeout=DOWNLOAD_TIMEOUT)
         if resp.status_code in [200, 201]:
             metadata = self.metadata(id_or_filename, resource, ignore_error=True)
             return VFSObjectWrapper(id_or_filename, resp.content, metadata)
@@ -77,11 +82,11 @@ class VFSMediaStorage(MediaStorage):
             return False
 
     def delete(self, id_or_filename, resource=None):
-        resp = self._sess.delete(self.url(DELETE_ENDPOINT) % id_or_filename)
+        resp = self._sess.delete(self.url(DELETE_ENDPOINT) % id_or_filename, timeout=TIMEOUT)
         return parse_xml(resp)
 
     def metadata(self, id_or_filename, resource=None, ignore_error=False):
-        resp = self._sess.get(self.url(METADATA_ENDPOINT) % id_or_filename)
+        resp = self._sess.get(self.url(METADATA_ENDPOINT) % id_or_filename, timeout=TIMEOUT)
         try:
             xml = parse_xml(resp)
         except VFSError:
@@ -103,11 +108,20 @@ class VFSMediaStorage(MediaStorage):
 
     def put(self, content, filename=None, content_type=None, *args, **kwargs):
         files = {'file': content}
-        resp = self._sess.post(self.url(UPLOAD_ENDPOINT), files=files, data={'commit': 'true'})
-        xml = parse_xml(resp)
-        md5 = xml.find('fileItems').find('md5')
-        if md5 is not None:
-            return md5.text
+        resp = self._sess.post(self.url(UPLOAD_ENDPOINT), files=files, data={'commit': 'true'},
+                               timeout=DOWNLOAD_TIMEOUT)
+        return _get_md5(resp)
+
+    def put_metadata(self, media, metadata):
+        data = {
+            'md5': str(media),
+            'meta': metadata,
+        }
+        logger.info('put metadata %s', json.dumps(data))
+        resp = self._sess.post(self.url(PUT_METADATA_ENDPOINT), json=data, timeout=TIMEOUT)
+        md5 = _get_md5(resp)
+        logger.info('updated metadata old=%s new=%s', str(media), str(md5))
+        return md5
 
     def url_for_media(self, media, content_type=None):
         return self.url(BINARY_ENDPOINT) % media
@@ -123,3 +137,10 @@ class VFSMediaStorage(MediaStorage):
 
     def fetch_rendition(self, rendition, resource=None):
         return self.get(rendition['media'], resource)
+
+
+def _get_md5(resp):
+    xml = parse_xml(resp)
+    md5 = xml.find('fileItems').find('md5')
+    if md5 is not None:
+        return md5.text
