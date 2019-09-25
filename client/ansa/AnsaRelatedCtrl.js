@@ -19,10 +19,6 @@ export default function AnsaRelatedCtrl($scope, api, storage, Keys, mediaIdGener
         let keys = ['persons', 'organizations'];
         let namespace = (key) => 'semantics.' + key;
 
-        if (this.activeFilter !== 'text') {
-            keys.push('places');
-        }
-
         keys.forEach((key) => {
             if (semantics[key] && semantics[key].length) {
                 semantics[key].forEach((val) => {
