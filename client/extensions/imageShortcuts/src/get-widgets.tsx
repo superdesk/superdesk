@@ -9,7 +9,10 @@ interface IState {
     isDisplayed: boolean;
 }
 
-import {galleryField, featureMediaField} from '../../../constants';
+// duplicated in client/ansa/AnsaRelatedCtrl.js
+// constants aren't used to avoid imports between multiple projects
+export const featureMediaField = 'feature_media';
+export const galleryField = 'photoGallery';
 
 
 // `contentProfile` and `getContentProfilePromise` are shared between multiple instances of `getWidgets` result

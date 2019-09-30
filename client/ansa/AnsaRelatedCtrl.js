@@ -1,5 +1,10 @@
 import {isEmpty} from 'lodash';
-import {galleryField, featureMediaField} from '../constants';
+
+// duplicated in extensions/imageShortcuts/src/get-widgets.tsx
+// constants aren't used to avoid imports between multiple projects
+const featureMediaField = 'feature_media';
+const galleryField = 'photoGallery';
+
 
 AnsaRelatedCtrl.$inject = ['$scope', 'api', 'storage', 'Keys'];
 export default function AnsaRelatedCtrl($scope, api, storage, Keys) {
