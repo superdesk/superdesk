@@ -1,6 +1,6 @@
 {
     "dependencies": {
-        "superdesk-core": "superdesk/superdesk-client-core#develop",
+        "superdesk-core": "tomaskikutis/superdesk-client-core#build-fixes",
         "superdesk-planning": "superdesk/superdesk-planning#master"
     },
     "devDependencies": {
