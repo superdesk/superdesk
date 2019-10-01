@@ -74,17 +74,17 @@ class AnsaPictureTestCase(unittest.TestCase):
                 self.assertIsNotNone(item)
 
         self.assertEqual('en', item['language'])
-        self.assertEqual('FAROOQ KHAN / STR', item['byline'])
+        self.assertEqual('FAROOQ KHAN / STRR', item['byline'])
         self.assertEqual('usage terms', item['usageterms'])
         self.assertEqual('copyright', item['copyrightholder'])
         self.assertEqual('copyright notice', item['copyrightnotice'])
         self.assertEqual('FAMILY', item['slugline'])
-        self.assertEqual('STR', item['sign_off'])
+        self.assertEqual('STRR', item['sign_off'])
 
         self.assertEqual('ANSA', item['extra']['supplier'])
         self.assertEqual('SRINAGAR', item['extra']['city'])
         self.assertEqual('INDIA', item['extra']['nation'])
-        self.assertEqual('FAROOQ KHAN', item['extra']['signature'])
+        self.assertEqual('STR', item['extra']['signature'])
         self.assertEqual(None, item['extra']['DateRelease'])
         self.assertEqual(None, item['extra']['DateCreated'])
 

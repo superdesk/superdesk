@@ -183,6 +183,10 @@ class AnsaPictureProvider(superdesk.SearchProvider):
                 pubdate = arrow.get(get_meta(doc, 'pubDate_N')).datetime
             except ValueError:
                 continue
+            try:
+                signoff = get_meta(doc, 'contentBy').split('/')[1].strip()
+            except (AttributeError, KeyError):
+                signoff = get_meta(doc, 'authorCode')
             item = {
                 'type': 'picture',
                 'pubstatus': get_meta(doc, 'status').replace('stat:', ''),
@@ -193,7 +197,7 @@ class AnsaPictureProvider(superdesk.SearchProvider):
                 'slugline': get_meta(doc, 'categorySupAnsa'),
                 'description_text': get_meta(doc, 'description_B'),
                 'byline': get_meta(doc, 'contentBy'),
-                'sign_off': get_meta(doc, 'authorCode'),
+                'sign_off': signoff,
                 'firstcreated': pubdate,
                 'versioncreated': pubdate,
                 'creditline': get_meta(doc, 'creditline'),
@@ -231,7 +235,7 @@ class AnsaPictureProvider(superdesk.SearchProvider):
                     'city': get_meta(doc, 'city'),
                     'nation': get_meta(doc, 'ctrName'),
                     'supplier': 'ANSA',
-                    'signature': get_meta(doc, 'authorName'),
+                    'signature': get_meta(doc, 'authorCode'),
                     'DateRelease': get_meta(doc, 'releaseDate'),
                     'DateCreated': get_meta(doc, 'dateCreated'),
                 },
