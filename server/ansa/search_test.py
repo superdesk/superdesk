@@ -85,6 +85,8 @@ class AnsaPictureTestCase(unittest.TestCase):
         self.assertEqual('SRINAGAR', item['extra']['city'])
         self.assertEqual('INDIA', item['extra']['nation'])
         self.assertEqual('FAROOQ KHAN', item['extra']['signature'])
+        self.assertEqual(None, item['extra']['DateRelease'])
+        self.assertEqual(None, item['extra']['DateCreated'])
 
         self.assertIn({
             'name': 'SOI',

@@ -12,7 +12,7 @@ ITEM_MAPPING = {
     'headline': 'title_B',
     'description_text': 'description_B',
     'sign_off': 'signoff',
-    'byline': 'authorName',
+    'byline': 'contentBy',
     'copyrightholder': 'copyrightHolder',
     'copyrightnotice': 'copyrightNotice',
     'usageterms': 'usageTerms',
@@ -20,10 +20,10 @@ ITEM_MAPPING = {
 }
 
 EXTRA_MAPPING = {
-    'city': 'City',
+    'city': 'city',
     'nation': 'ctrName',
     'digitator': 'digitator',
-    'signature': 'authorCode',
+    'signature': 'signature',
     'DateCreated': 'dateCreated',
     'DateRelease': 'releaseDate',
 }
@@ -60,6 +60,9 @@ def update_iptc_metadata(sender, item, **kwargs):
 
     firstcreated = item.get('firstpublished') or utcnow()
     metadata['pubDate_N'] = firstcreated.isoformat()
+
+    if not metadata.get('dateCreated') and item.get('firstcreated'):
+        metadata['dateCreated'] = item['firstcreated'].isoformat()
 
     if metadata.get('status') and 'stat:' not in metadata['status']:
         metadata['status'] = 'stat:{}'.format(metadata['status'])
