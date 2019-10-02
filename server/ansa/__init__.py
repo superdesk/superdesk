@@ -1,5 +1,6 @@
 import superdesk
 
+
 def init_app(app):
     superdesk.privilege(
         name='ansa_metasearch',
@@ -18,5 +19,3 @@ def init_app(app):
         label='ANSA - ai news',
         decsription=''
     )
-
-   
