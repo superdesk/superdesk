@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'ansa.update_signal',
     'ansa.validate',
     'ansa.save_iptc',
+    'ansa',
 
     'planning',
 ]

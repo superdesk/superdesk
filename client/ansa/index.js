@@ -523,6 +523,7 @@ export default angular.module('ansa.superdesk', [
 
         workspaceMenuProvider
             .item({
+                if: 'privileges.ansa_metasearch',
                 href: '/workspace/metasearch',
                 label: 'Metasearch',
                 icon: 'meta-search',
@@ -530,6 +531,7 @@ export default angular.module('ansa.superdesk', [
                 order: 910,
             })
             .item({
+                if: 'privileges.ansa_live_assistant',
                 href: '/workspace/assistant',
                 label: 'Live assistant',
                 icon: 'live',
@@ -537,6 +539,7 @@ export default angular.module('ansa.superdesk', [
                 shortcut: 'alt+l',
             })
             .item({
+                if: 'privileges.ansa_ai_news',
                 href: '/ansa/map',
                 label: 'aiNews',
                 icon: 'web',
