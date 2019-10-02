@@ -3,7 +3,7 @@ import superdesk
 def init_app(app):
     superdesk.privilege(
         name='ansa_metasearch',
-        label='ANSA - Metasearch',
+        label='ANSA - metasearch',
         decsription=''
     )
 
