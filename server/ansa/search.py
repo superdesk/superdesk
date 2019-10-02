@@ -185,7 +185,7 @@ class AnsaPictureProvider(superdesk.SearchProvider):
                 continue
             try:
                 signoff = get_meta(doc, 'contentBy').split('/')[1].strip()
-            except (AttributeError, KeyError):
+            except (AttributeError, KeyError, IndexError):
                 signoff = get_meta(doc, 'authorCode')
             item = {
                 'type': 'picture',
