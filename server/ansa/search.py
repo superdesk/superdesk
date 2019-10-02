@@ -124,6 +124,13 @@ class AnsaPictureProvider(superdesk.SearchProvider):
 
     label = 'ANSA Pictures'
 
+    @property
+    def sess(self):
+        if not hasattr(self, '_sess'):
+            self._sess = requests.Session()
+            self._sess.get(ansa_photo_api('/portaleimmagini/'))  # get cookies
+        return self._sess
+
     def find(self, query):
 
         size = int(query.get('size', 25))
@@ -166,7 +173,7 @@ class AnsaPictureProvider(superdesk.SearchProvider):
 
         set_default_search_operator(params)
 
-        response = requests.get(ansa_photo_api(SEARCH_ENDPOINT), params=params, timeout=TIMEOUT)
+        response = self.sess.get(ansa_photo_api(SEARCH_ENDPOINT), params=params, timeout=TIMEOUT)
         return self._parse_items(response)
 
     def _parse_items(self, response, fetch=False):
@@ -258,7 +265,7 @@ class AnsaPictureProvider(superdesk.SearchProvider):
             'changets': 'true',
         }
 
-        response = requests.get(ansa_photo_api(DETAIL_ENDPOINT), params=params, timeout=TIMEOUT)
+        response = self.sess.get(ansa_photo_api(DETAIL_ENDPOINT), params=params, timeout=TIMEOUT)
         items = self._parse_items(response, fetch=True)
         item = items[0]
 
