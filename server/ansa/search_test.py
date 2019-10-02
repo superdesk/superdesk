@@ -84,7 +84,7 @@ class AnsaPictureTestCase(unittest.TestCase):
         self.assertEqual('ANSA', item['extra']['supplier'])
         self.assertEqual('SRINAGAR', item['extra']['city'])
         self.assertEqual('INDIA', item['extra']['nation'])
-        self.assertEqual('STR', item['extra']['signature'])
+        self.assertEqual('STR', item['extra']['coauthor'])
         self.assertEqual(None, item['extra']['DateRelease'])
         self.assertEqual(None, item['extra']['DateCreated'])
 

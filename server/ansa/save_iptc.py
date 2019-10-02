@@ -11,7 +11,7 @@ ITEM_MAPPING = {
     'slugline': 'categorySupAnsa',
     'headline': 'title_B',
     'description_text': 'description_B',
-    'sign_off': 'signoff',
+    'sign_off': 'signOff',
     'byline': 'contentBy',
     'copyrightholder': 'copyrightHolder',
     'copyrightnotice': 'copyrightNotice',
@@ -23,7 +23,7 @@ EXTRA_MAPPING = {
     'city': 'city',
     'nation': 'ctrName',
     'digitator': 'digitator',
-    'signature': 'signature',
+    'coauthor': 'signature',
     'DateCreated': 'dateCreated',
     'DateRelease': 'releaseDate',
 }
