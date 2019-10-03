@@ -6,5 +6,5 @@ flask==0.12.2
 flask-babel==0.12.2
 pymongo==3.8.0
 
--e git+git://github.com/petrjasek/superdesk-core.git@feat-incoming-macro-task-param#egg=superdesk-core
+-e git+git://github.com/superdesk/superdesk-core.git@release/1.32#egg=superdesk-core
 -e git+git://github.com/superdesk/superdesk-planning.git@1.5#egg=superdesk-planning
