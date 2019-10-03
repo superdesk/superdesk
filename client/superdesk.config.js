@@ -63,6 +63,10 @@ module.exports = function(grunt) {
         },
         workspace: {
             analytics: true
+        },
+        
+        raven: {
+            dsn: process.env.SUPERDESK_RAVEN_DSN || ''
         }
     };
 };
