@@ -1,10 +1,13 @@
-import {max, isEmpty} from 'lodash';
+import {isEmpty} from 'lodash';
 
-// must match gallery field id
-const GALLERY = 'photoGallery';
+// duplicated in extensions/imageShortcuts/src/get-widgets.tsx
+// constants aren't used to avoid imports between multiple projects
+const featureMediaField = 'feature_media';
+const galleryField = 'photoGallery';
 
-AnsaRelatedCtrl.$inject = ['$scope', 'api', 'storage', 'Keys', 'mediaIdGenerator'];
-export default function AnsaRelatedCtrl($scope, api, storage, Keys, mediaIdGenerator) {
+
+AnsaRelatedCtrl.$inject = ['$scope', 'api', 'storage', 'Keys'];
+export default function AnsaRelatedCtrl($scope, api, storage, Keys) {
     const search = () => {
         this.items = null;
         let semantics = $scope.item.semantics || {};
@@ -113,31 +116,12 @@ export default function AnsaRelatedCtrl($scope, api, storage, Keys, mediaIdGener
 
     // set given picture as featured for current item
     this.setFeatured = (picture) => {
-        const associations = Object.assign({}, $scope.item.associations || {});
-
-        associations.featuremedia = picture;
-        $scope.item.associations = associations;
-
-        $scope.autosave($scope.item);
+        window['__private_ansa__add_image_to_article'](featureMediaField, picture);
     };
 
     // add picture to item photo gallery
     this.addToGallery = (picture) => {
-        const associations = Object.assign({}, $scope.item.associations || {});
-        const index = max(Object.keys(associations).map((key) => {
-            if (key.indexOf(GALLERY) === 0) {
-                return mediaIdGenerator.getFieldParts(key)[1] || 0;
-            }
-
-            return 0;
-        }));
-
-        const rel = mediaIdGenerator.getFieldVersionName(GALLERY, index + 1);
-
-        associations[rel] = picture;
-        $scope.item.associations = associations;
-
-        $scope.autosave($scope.item);
+        window['__private_ansa__add_image_to_article'](galleryField, picture);
     };
 
     this.allowAddMedia = () => $scope._editable && $scope.item.type === 'text';
