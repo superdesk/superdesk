@@ -3,7 +3,7 @@ import superdesk
 
 from flask import current_app as app
 from ansa.constants import PHOTO_CATEGORIES_ID, PRODUCTS_ID
-from superdesk.utc import utcnow
+from superdesk.utc import utcnow, get_date
 
 
 ITEM_MAPPING = {
@@ -59,10 +59,10 @@ def update_iptc_metadata(sender, item, **kwargs):
                 metadata.setdefault('product', []).append(subj['qcode'])
 
     firstcreated = item.get('firstpublished') or utcnow()
-    metadata['pubDate_N'] = firstcreated.isoformat()
+    metadata['pubDate_N'] = get_date(firstcreated).isoformat()
 
     if not metadata.get('dateCreated') and item.get('firstcreated'):
-        metadata['dateCreated'] = item['firstcreated'].isoformat()
+        metadata['dateCreated'] = get_date(item['firstcreated']).isoformat()
 
     if metadata.get('status') and 'stat:' not in metadata['status']:
         metadata['status'] = 'stat:{}'.format(metadata['status'])
