@@ -114,7 +114,7 @@
             "type": "list",
             "nullable": true,
             "mandatory_in_list": {
-                "scheme": {
+                "scheme": {"PhotoCategories": "PhotoCategories"
                 }
             },
             "required": false,
@@ -142,7 +142,7 @@
             "type": "text",
             "enabled": true,
             "nullable": true,
-            "required": false
+            "required": true
         },
         "nation": {
             "type": "text",
