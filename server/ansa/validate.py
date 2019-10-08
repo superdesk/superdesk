@@ -27,9 +27,10 @@ def get_active_mask(products):
         codes = {product['qcode']: 1 for product in products}
         if cv and cv.get('items'):
             for item in cv['items']:
-                if codes.get(item.get('qcode')) and item.get(MASK_FIELD) and len(item[MASK_FIELD]) == 9:
+                if codes.get(item.get('qcode')) and item.get(MASK_FIELD) and len(str(item[MASK_FIELD])) == 9:
+                    value = str(item[MASK_FIELD])
                     for i in range(9):
-                        if item[MASK_FIELD][i] == '1':
+                        if value[i] == '1':
                             mask[i] = True
     return mask
 

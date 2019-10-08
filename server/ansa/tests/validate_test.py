@@ -10,7 +10,7 @@ class ValidateTestCase(TestCase):
             '_id': 'products',
             'items': [
                 {'qcode': 'foo', 'name': 'Foo', MASK_FIELD: '000011111'},
-                {'qcode': 'bar', 'name': 'Bar', MASK_FIELD: '111110000'},
+                {'qcode': 'bar', 'name': 'Bar', MASK_FIELD: 111110000},
                 {'qcode': 'baz', 'name': 'Baz', MASK_FIELD: 'baz'},
             ],
         }])
