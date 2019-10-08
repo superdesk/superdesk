@@ -75,7 +75,7 @@ def parse(extracted):
                 parsed['subject'].append({'name': item.get('value'), 'qcode': item.get('id')})
             if key == 'placesExpanded':
                 place = item.get('comune') or item.get('provincia') or item.get('regione') or item.get('nazione')
-                if place:
+                if place and place.get('code'):
                     parsed['place'].append(get_place_by_id(place['code']))
             if key == 'subjects':
                 if item.get('qcode') and 'products:' in item['qcode'] and item.get('name'):
