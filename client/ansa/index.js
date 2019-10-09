@@ -227,7 +227,9 @@ function AnsaSemanticsCtrl($scope, $rootScope, api) {
                     (subject) => !subjects.find(
                         (selectedSubject) => (
                             selectedSubject.qcode === subject.qcode &&
-                            selectedSubject.scheme === subject.scheme
+                            (selectedSubject.scheme === subject.scheme || (
+                                selectedSubject.scheme == null && subject.scheme == null
+                            ))
                         )
                     ) && (subject.scheme !== 'products' || $scope.item.type === 'text')
                 )
