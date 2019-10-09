@@ -125,4 +125,15 @@ export default function AnsaRelatedCtrl($scope, api, storage, Keys) {
     };
 
     this.allowAddMedia = () => $scope._editable && $scope.item.type === 'text';
+
+    $scope.featureMediaField = featureMediaField;
+    $scope.galleryField = galleryField;
+
+    $scope.$watch('item', (item) => {
+        $scope.contentProfile = null;
+
+        window['__private_ansa__get_content_profile'](item.profile).then((contentProfile) => {
+            $scope.contentProfile = contentProfile;
+        });
+    });
 }

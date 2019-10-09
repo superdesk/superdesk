@@ -20,9 +20,24 @@
                     <div class="headline"><time sd-datetime data-date="item.versioncreated"></time></div>
                     <div class="collapsed-content">
                         <div sd-item-rendition data-item="item" data-rendition="thumbnail"></div>
-                        <div ng-if="related.allowAddMedia()" class="set-related-btn-group">
-                            <button class="btn btn--small" ng-click="related.setFeatured(item)" translate>Set as Featured</button>
-                            <button class="btn btn--small" ng-click="related.addToGallery(item)" translate>Add to Gallery</button>
+                        <div ng-if="related.allowAddMedia() && contentProfile != null" class="set-related-btn-group">
+                            <button
+                                ng-if="contentProfile.schema.hasOwnProperty(featureMediaField)"
+                                class="btn btn--small"
+                                ng-click="related.setFeatured(item)"
+                                translate
+                            >
+                                Set as Featured
+                            </button>
+
+                            <button
+                                ng-if="contentProfile.schema.hasOwnProperty(galleryField)"
+                                class="btn btn--small"
+                                ng-click="related.addToGallery(item)"
+                                translate
+                            >
+                                Add to Gallery
+                            </button>
                         </div>
                     </div>
                 </div>

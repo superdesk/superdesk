@@ -9,6 +9,11 @@ const extension: IExtension = {
             superdesk.ui.article.addImage(field, image);
         };
 
+        (window as any)['__private_ansa__get_content_profile'] = (id: string) => {
+            // call the original method from within the extension so usages can be tracked easily
+            return superdesk.entities.contentProfile.get(id);
+        };
+
         const result: IExtensionActivationResult = {
             contributions: {
                 articleListItemWidgets: [getWidgets(superdesk)],
