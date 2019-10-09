@@ -42,7 +42,7 @@ module.exports = function(grunt) {
             editorHighlights: true
         },
         workspace: {
-            analytics: true
+            analytics: false
         },
         enabledExtensions: {
             // extensionFolderName: 1,
