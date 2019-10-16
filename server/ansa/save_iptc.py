@@ -38,8 +38,13 @@ def apply_mapping(mapping, src, dest):
 
 
 def update_iptc_metadata(sender, item, **kwargs):
+    if not hasattr(app.media, 'put_metadata'):
+        # only works with vfs storage
+        return
+
     if item.get('type') != 'picture':
         return
+
     try:
         original = item['renditions']['original']
     except KeyError:

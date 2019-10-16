@@ -90,5 +90,6 @@ class UpdateIPTCMetadataTestCase(unittest.TestCase):
         self.assertIn('bar', item['renditions']['original']['href'])
 
     def test_ignore_non_picture_items(self):
-        item = {'type': 'video'}
-        superdesk.item_publish.send(self, item=item)
+        with self.app.app_context():
+            item = {'type': 'video'}
+            superdesk.item_publish.send(self, item=item)
