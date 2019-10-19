@@ -1,9 +1,9 @@
-logstash:
-  extends:
-    file: common.yml
-    service: logstash
-  links:
-  - elastic
+# logstash:
+#   extends:
+#     file: common.yml
+#     service: logstash
+#   links:
+#     - elastic
 
 mongodb:
   extends:
@@ -42,7 +42,7 @@ superdesk:
    - mongodb
    - redis
    - elastic
-   - logstash
+    # - logstash
    - postfix
   environment:
     - SUPERDESK_URL=http://${DOCKER_IP}/api

@@ -23,9 +23,9 @@ grammalecte:
   build: grammalecte/
   container_name: grammalecte
 
-logstash:
-  build: logstash/
-  container_name: logstash
+# logstash:
+#   build: logstash/
+#   container_name: logstash
 
 kibana:
   build: kibana/

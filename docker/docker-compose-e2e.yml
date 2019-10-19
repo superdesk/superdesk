@@ -1,9 +1,9 @@
-logstash:
-  extends:
-    file: common.yml
-    service: logstash
-  links:
-  - elastic
+# logstash:
+#   extends:
+#     file: common.yml
+#     service: logstash
+#   links:
+#   - elastic
 
 mongodb:
   extends:
@@ -46,7 +46,7 @@ superdesk:
    - mongodb
    - redis
    - elastic
-   - logstash
+    # - logstash
    - postfix
   environment:
    - MONGO_URI=mongodb://mongodb/superdesk_e2e
