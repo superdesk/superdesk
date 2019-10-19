@@ -22,9 +22,9 @@ kibana:
     file: common.yml
     service: kibana
   links:
-  - elastic
+    - elastic
   ports:
-  - "5601:5601"
+    - "5601:5601"
 
 elastic:
   extends:
@@ -43,26 +43,25 @@ superdesk:
     file: common.yml
     service: superdesk
   links:
-   - mongodb
-   - redis
-   - elastic
+    - mongodb
+    - redis
+    - elastic
     # - logstash
-   - postfix
+    - postfix
   environment:
-   - SUPERDESK_RELOAD=True
-   - SUPERDESK_URL=http://localhost:5000/api
-   - SUPERDESK_WS_URL=ws://localhost:5050
-   - SUPERDESK_CLIENT_URL=http://localhost:9000
+    - SUPERDESK_RELOAD=True
+    - SUPERDESK_URL=http://localhost:5000/api
+    - SUPERDESK_WS_URL=ws://localhost:5050
+    - SUPERDESK_CLIENT_URL=http://localhost:9000
   ports:
-   - "5000:5000"
-   - "5100:5100"
-   - "5400:5400"
-   - "9000:9000"
-   - "35729:35729"
+    - "5000:5000"
+    - "5100:5100"
+    - "5400:5400"
+    - "9000:9000"
+    - "35729:35729"
   volumes:
-   - ../server:/opt/superdesk/
-   - ../client:/opt/superdesk/client/
-   - ../client-core:/opt/superdesk/client-core/
-   - ./Procfile-dev:/opt/superdesk/Procfile
-   - ./start-dev.sh:/opt/superdesk/start.sh
-
+    - ../server:/opt/superdesk/
+    - ../client:/opt/superdesk/client/
+    - ../client-core:/opt/superdesk/client-core/
+    - ./Procfile-dev:/opt/superdesk/Procfile
+    - ./start-dev.sh:/opt/superdesk/start.sh

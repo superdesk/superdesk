@@ -9,6 +9,8 @@ mongodb:
   extends:
     file: common.yml
     service: mongodb
+  ports:
+    - "27017:27017"
 
 redis:
   extends:
@@ -20,9 +22,9 @@ kibana:
     file: common.yml
     service: kibana
   links:
-  - elastic
+    - elastic
   ports:
-  - "5601:5601"
+    - "5601:5601"
 
 elastic:
   extends:
@@ -39,16 +41,15 @@ superdesk:
     file: common.yml
     service: superdesk
   links:
-   - mongodb
-   - redis
-   - elastic
+    - mongodb
+    - redis
+    - elastic
     # - logstash
-   - postfix
+    - postfix
   environment:
     - SUPERDESK_URL=http://${DOCKER_IP}/api
     - SUPERDESK_WS_URL=ws://${DOCKER_IP}/ws
     - SUPERDESK_CLIENT_URL=http://${DOCKER_IP}
   ports:
-   - "443:443"
-   - "80:80"
-
+    - "443:443"
+    - "80:80"

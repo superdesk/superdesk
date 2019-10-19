@@ -23,14 +23,14 @@ superdesk:
     file: common.yml
     service: superdesk
   links:
-   - redis
-   - mongodb
-   - elastic
+    - redis
+    - mongodb
+    - elastic
   environment:
-   - SUPERDESK_URL=http://localhost:8080/api
-   - SUPERDESK_WS_URL=ws://localhost:8080/ws
-   - SUPERDESK_CLIENT_URL=http://localhost:8080
+    - SUPERDESK_URL=http://localhost:8080/api
+    - SUPERDESK_WS_URL=ws://localhost:8080/ws
+    - SUPERDESK_CLIENT_URL=http://localhost:8080
   ports:
-   - "8080:80"
+    - "8080:80"
   volumes:
-   - ./superdesk_vhost.conf:/etc/nginx/sites-enabled/superdesk.conf
+    - ./superdesk_vhost.conf:/etc/nginx/sites-enabled/superdesk.conf
