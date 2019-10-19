@@ -9,6 +9,8 @@ redis:
 elastic:
   image: elasticsearch:7.4.0
   container_name: elastic
+  environment:
+    - discovery.type=single-node
 
 postfix:
   image: catatnight/postfix
