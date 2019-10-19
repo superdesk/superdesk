@@ -1,4 +1,4 @@
-#!/home/ioan/sd/env/bin/python3.4
+#!/usr/bin/env python3
 
 # -*- coding: utf-8 -*-
 import re
