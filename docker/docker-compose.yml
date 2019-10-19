@@ -52,13 +52,3 @@ superdesk:
    - "443:443"
    - "80:80"
 
-pubapi:
-  extends:
-    file: common.yml
-    service: pubapi
-  links:
-   - mongodb
-   - redis
-   - elastic
-   - logstash
-   - postfix
