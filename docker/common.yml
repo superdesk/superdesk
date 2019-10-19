@@ -21,6 +21,16 @@ grammalecte:
   build: grammalecte/
   container_name: grammalecte
 
+logstash:
+  build: logstash/
+  container_name: logstash
+
+kibana:
+  build: kibana/
+  container_name: kibana
+  environment:
+    - ELASTICSEARCH_URL=http://elastic:9200
+
 superdesk:
   build: ../
   container_name: superdesk
