@@ -1,13 +1,13 @@
 mongodb:
-  image: mongo:3
+  image: mongo:3.4
   container_name: mongodb
 
 redis:
-  image: redis:3
+  image: redis:5.0
   container_name: redis
 
 elastic:
-  image: elasticsearch:1
+  image: elasticsearch:7.4.0
   container_name: elastic
 
 postfix:
