@@ -1,9 +1,8 @@
 {
-    "name": "superdesk",
-    "license": "GPL-3.0",
-    "dependencies": {
-        "superdesk-analytics": "superdesk/superdesk-analytics#master",
-        "superdesk-core": "superdesk/superdesk-client-core#develop",
-        "superdesk-publisher": "superdesk/superdesk-publisher#master"
-    }
+  "name": "superdesk",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "superdesk-core": "superdesk/superdesk-client-core#develop",
+    "superdesk-publisher": "superdesk/superdesk-publisher#master"
+  }
 }

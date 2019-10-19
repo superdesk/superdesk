@@ -4,48 +4,48 @@
  * working directory, but other files may also be specified using relative paths with
  * the SUPERDESK_CONFIG environment variable or the grunt --config flag.
  */
-module.exports = function(grunt) {
-    return {
-        apps: [
-            'superdesk.analytics'
-        ],
-        importApps: [
-            'superdesk-analytics',
-            'superdesk-publisher'
-        ],
-        defaultRoute: '/workspace/personal',
+module.exports = function (grunt) {
+  return {
+    apps: [
+      // 'superdesk.analytics'
+    ],
+    importApps: [
+      // 'superdesk-analytics',
+      "superdesk-publisher"
+    ],
+    defaultRoute: "/workspace/personal",
 
-        publisher: {
-            protocol: 'https',
-            tenant: process.env.PUBLISHER_API_SUBDOMAIN || '',
-            domain: process.env.PUBLISHER_API_DOMAIN || 'localhost',
-            base: 'api/v1'
-        },
+    publisher: {
+      protocol: "https",
+      tenant: process.env.PUBLISHER_API_SUBDOMAIN || "",
+      domain: process.env.PUBLISHER_API_DOMAIN || "localhost",
+      base: "api/v1"
+    },
 
-        langOverride: {
-            'en': {
-                'ANPA Category': 'Category',
-                'ANPA CATEGORY': 'CATEGORY'
-            }
-        },
+    langOverride: {
+      en: {
+        "ANPA Category": "Category",
+        "ANPA CATEGORY": "CATEGORY"
+      }
+    },
 
-        view: {
-            timeformat: 'HH:mm',
-            dateformat: 'DD.MM.YYYY',
-        },
+    view: {
+      timeformat: "HH:mm",
+      dateformat: "DD.MM.YYYY"
+    },
 
-        features: {
-            preview: 1,
-            swimlane: {defaultNumberOfColumns: 4},
-            editor3: true,
-            validatePointOfInterestForImages: true,
-            editorHighlights: true
-        },
-        workspace: {
-            analytics: true
-        },
-        enabledExtensions: {
-            // extensionFolderName: 1,
-        },
-    };
+    features: {
+      preview: 1,
+      swimlane: { defaultNumberOfColumns: 4 },
+      editor3: true,
+      validatePointOfInterestForImages: true,
+      editorHighlights: true
+    },
+    workspace: {
+      // analytics: true
+    },
+    enabledExtensions: {
+      // extensionFolderName: 1,
+    }
+  };
 };

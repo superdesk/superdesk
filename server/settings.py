@@ -32,7 +32,7 @@ if init_data.exists():
     INIT_DATA_PATH = init_data
 
 INSTALLED_APPS.extend([
-    'analytics',
+    # 'analytics',
     'apps.languages',
 ])
 
@@ -61,8 +61,8 @@ BROKER_URL = env('CELERY_BROKER_URL', REDIS_URL)
 SECRET_KEY = env('SECRET_KEY', '')
 
 # Highcharts Export Server - default settings
-ANALYTICS_ENABLE_SCHEDULED_REPORTS = strtobool(
-    env('ANALYTICS_ENABLE_SCHEDULED_REPORTS', 'true')
-)
-HIGHCHARTS_SERVER_HOST = env('HIGHCHARTS_SERVER_HOST', 'localhost')
-HIGHCHARTS_SERVER_PORT = env('HIGHCHARTS_SERVER_PORT', '6060')
+# ANALYTICS_ENABLE_SCHEDULED_REPORTS = strtobool(
+#     env('ANALYTICS_ENABLE_SCHEDULED_REPORTS', 'true')
+# )
+# HIGHCHARTS_SERVER_HOST = env('HIGHCHARTS_SERVER_HOST', 'localhost')
+# HIGHCHARTS_SERVER_PORT = env('HIGHCHARTS_SERVER_PORT', '6060')
