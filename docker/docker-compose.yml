@@ -44,7 +44,10 @@ superdesk:
    - elastic
    - logstash
    - postfix
-   - pubapi
+  environment:
+    - SUPERDESK_URL=http://${DOCKER_IP}/api
+    - SUPERDESK_WS_URL=ws://${DOCKER_IP}/ws
+    - SUPERDESK_CLIENT_URL=http://${DOCKER_IP}
   ports:
    - "443:443"
    - "80:80"
