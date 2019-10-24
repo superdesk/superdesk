@@ -7,7 +7,7 @@ redis:
   container_name: redis
 
 elastic:
-  image: elasticsearch:1
+  image: elasticsearch:2
   container_name: elastic
 
 postfix:

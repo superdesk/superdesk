@@ -46,6 +46,8 @@ module.exports = function(grunt) {
         },
         enabledExtensions: {
             // extensionFolderName: 1,
+            annotationsLibrary: 1,
+            markForUser: 1,
         },
     };
 };
