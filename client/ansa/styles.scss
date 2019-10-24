@@ -1,20 +1,25 @@
 .widget-ansa-semantics {
     .tag-list {
         margin: 0;
+
         .tag-label {
             margin-right: 0.4rem;
         }
-        .tag-label + .tag-label {
+
+        .tag-label+.tag-label {
             margin-left: 0;
         }
     }
+
     .tag-list__header {
         padding: 1rem 0 0.5rem;
         font-size: 1.4rem;
         font-weight: 500;
     }
+
     .tag-list__text-block {
         margin-left: 0;
+
         p {
             font-size: 1.3rem;
             line-height: 150%;
@@ -29,13 +34,16 @@
     .main-section {
         overflow-y: scroll;
         padding: 10px 20px;
+
         .main {
             min-height: 1%;
             overflow: hidden;
         }
+
         .engine {
             opacity: .8;
         }
+
         figure {
             margin: 3px 0;
             overflow: hidden;
@@ -46,28 +54,34 @@
                 padding-right: 8px;
             }
         }
+
         .embed.iframe {
             margin: 3px 0;
         }
+
         .pills-list {
             clear: both;
             padding-top: 10px;
             max-width: none;
         }
+
         .main-section {
             position: static;
             overflow-y: visible;
             padding: 0;
         }
     }
+
     .sd-list-item-group {
         margin: 1rem 0;
     }
+
     .sd-list-item {
         p {
             font-size: 1.4rem;
             line-height: 140%;
         }
+
         h3 {
             font-size: 1.6rem;
             line-height: 120%;
@@ -91,23 +105,28 @@
 }
 
 #ansa-related-widget {
-    .btn-group, .button-list {
+
+    .btn-group,
+    .button-list {
         position: fixed;
         top: 106px;
         right: 61px;
         z-index: 999;
         overflow: visible;
     }
+
     .collapsed-content {
         padding: 0 0 0 1.2rem;
-        border-left:4px solid rgba(0,0,0,0.15); 
+        border-left: 4px solid rgba(0, 0, 0, 0.15);
         margin: 0.6rem 0 0 0.2rem;
+
         p {
             a {
                 word-break: break-all;
             }
         }
     }
+
     .set-related-btn-group {
         margin-top: 5px;
     }
@@ -158,6 +177,7 @@
 .compact-view .media-box .item-info .line:only-child {
     margin-bottom: 2px !important;
 }
+
 .sd-grid-item .sd-grid-item__title {
     font-size: 1.5rem;
     line-height: 120%;
@@ -168,6 +188,7 @@
 .modal__body--no-padding {
     padding: 0 !important;
 }
+
 .modal__body--relative {
     position: relative;
 }
@@ -177,11 +198,11 @@
 iframe.ansa-map {
     height: 100%;
     width: 100%;
-    position:absolute;
-    top:0;
+    position: absolute;
+    top: 0;
     bottom: 0;
-    left:0;
-    right:0;
+    left: 0;
+    right: 0;
     background-color: #fff;
 }
 
@@ -200,4 +221,10 @@ div[data-field="genre"] .dropdown--dropleft .dropdown__menu {
     top: auto;
     left: auto;
     right: auto;
+}
+
+.Editor3-editor .public-DraftEditor-content {
+    [data-block="true"] {
+        border-bottom-width: 0.8em;
+    }
 }
