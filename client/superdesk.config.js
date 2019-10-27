@@ -33,7 +33,6 @@ module.exports = function (grunt) {
       timeformat: "HH:mm",
       dateformat: "DD.MM.YYYY"
     },
-
     features: {
       preview: 1,
       swimlane: { defaultNumberOfColumns: 4 },
