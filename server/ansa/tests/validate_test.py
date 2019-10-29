@@ -5,7 +5,7 @@ from ansa.validate import validate, MASK_FIELD
 
 class ValidateTestCase(TestCase):
 
-    def test_product_based_validation(self):
+    def setUp(self):
         self.app.data.insert('vocabularies', [{
             '_id': 'products',
             'items': [
@@ -14,7 +14,7 @@ class ValidateTestCase(TestCase):
                 {'qcode': 'baz', 'name': 'Baz', MASK_FIELD: 'baz'},
             ],
         }])
-        item = {
+        self.item = {
             'subject': [
                 {
                     'qcode': 'foo',
@@ -30,6 +30,9 @@ class ValidateTestCase(TestCase):
                 },
             ],
         }
+
+    def test_product_based_validation(self):
+        item = self.item.copy()
         fields = {}
         response = []
         validate(self, item, response, fields)
@@ -54,5 +57,13 @@ class ValidateTestCase(TestCase):
         item['photoGallery'] = {'type': 'picture'}
         item['subject'].append({'name': 'Test', 'qcode': '12345678'})
         item['body_html'] = 'short'
+        validate(self, item, response, fields)
+        self.assertEqual([], response)
+
+    def test_auto_publish_skip_validation(self):
+        item = self.item.copy()
+        item['auto_publish'] = True
+        fields = {}
+        response = []
         validate(self, item, response, fields)
         self.assertEqual([], response)

@@ -36,6 +36,8 @@ def get_active_mask(products):
 
 
 def validate(sender, item, response, error_fields, **kwargs):
+    if item.get('auto_publish'):
+        return
     products = [subject for subject in item.get('subject', []) if subject.get('scheme') == 'products']
     mask = get_active_mask(products)
     extra = item.get('extra', {})
