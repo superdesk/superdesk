@@ -3,23 +3,11 @@ language: python
 python: "3.5"
 
 services:
-    - mongodb
-    - elasticsearch
-    - redis-server
-
-addons:
-  apt:
-    sources:
-    - mongodb-3.0-precise
-    - google-chrome
-    packages:
-    - mongodb-org-server
-    - google-chrome-stable
+    - docker
 
 cache:
-  directories:
-    - $HOME/.cache/pip
-    - $HOME/.npm
+    - pip
+    - npm
 
 before_install:
     - nvm install 6.10
@@ -28,6 +16,7 @@ before_install:
     - npm install -g grunt-cli
 
 install:
+    - docker-compose -f docker/docker-compose-travis.yml up -d
     - cd $TRAVIS_BUILD_DIR/server && pip install -r dev-requirements.txt
     - cd $TRAVIS_BUILD_DIR/client && npm install
 

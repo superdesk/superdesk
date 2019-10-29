@@ -1,0 +1,15 @@
+mongo:
+    image: mongo:3
+    ports:
+        - "27017:27017"
+
+redis:
+    image: redis:3
+    ports:
+        - "6379:6379"
+
+elastic:
+    image: elasticsearch:2
+    ports:
+        - "9200:9200"
+
