@@ -8,7 +8,7 @@ from ansa.analysis.analysis import parse, apply
 from superdesk import get_resource_service
 from ansa.geonames import get_place_by_id
 from superdesk.utc import local_to_utc
-from ansa.constants import PHOTO_CATEGORIES_ID
+from ansa.constants import PHOTO_CATEGORIES_ID, FEATURED, GALLERY
 
 MONTHS_IT = [
     '', 'gen', 'feb', 'mar', 'apr', 'mag', 'giu', 'lug', 'ago', 'set', 'ott', 'nov', 'dic',
@@ -206,6 +206,29 @@ class ANSAParser(NewsMLTwoFeedParser):
         provider = meta.find(self.qname('provider'))
         if provider is not None and provider.get('literal'):
             item.setdefault('extra', {})['supplier'] = provider.get('literal')
+
+        self.parse_links(meta, item)
+
+    def parse_links(self, meta, item):
+        """Parse links to pictures and populate associations."""
+        links = meta.findall(self.qname('link'))
+        for link in links:
+            if link.get('residref') and link.get('rel') and link.get('rel') in (FEATURED, GALLERY):
+                assoc = get_resource_service('archive').find_one(req=None, uri=link.get('residref'))
+                if not assoc:
+                    continue
+                item.setdefault('associations', {})
+                dest = FEATURED
+                if link.get('rel') == GALLERY:
+                    counter = 1
+                    for key in item['associations']:
+                        if key.startswith(GALLERY):
+                            counter += 1
+                    dest = '{}--{}'.format(GALLERY, counter)
+                item['associations'][dest] = assoc
+                title = link.find(self.qname('title'))
+                if title is not None and title.text:
+                    assoc['description_text'] = title.text
 
     def getVocabulary(self, voc_id, qcode, name):
         """Use name from xml."""

@@ -37,6 +37,13 @@
           <name>TEST - from xawes</name>
         </service>
         <signal qcode="red-address:TEST"></signal>
+        <link rel="featuremedia" residref="featured.jpg">
+          <title>featured caption</title>
+        </link>
+        <link rel="photoGallery" residref="featured.jpg">
+          <title></title>
+        </link>
+        <link rel="photoGallery" residref="featured.jpg" />
       </itemMeta>
       <contentMeta>
         <urgency>5</urgency>
