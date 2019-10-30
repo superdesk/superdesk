@@ -54,7 +54,7 @@ class UpdateIPTCMetadataTestCase(unittest.TestCase):
             ],
         }
 
-        with self.app.app_context():
+        with self.app.test_request_context('/'):
             with patch.object(self.app.media, 'put_metadata', return_value='bar') as put_mock:
                 superdesk.item_publish.send(self, item=item)
                 put_mock.assert_called_once_with('orig', ANY)

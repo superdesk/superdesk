@@ -1,9 +1,11 @@
 
+import time
 import superdesk
 
-from flask import current_app as app
-from ansa.constants import PHOTO_CATEGORIES_ID, PRODUCTS_ID
+from flask import current_app as app, request
 from superdesk.utc import utcnow, get_date
+from ansa.constants import PHOTO_CATEGORIES_ID, PRODUCTS_ID
+from ansa.vfs import VFSError
 
 
 ITEM_MAPPING = {
@@ -42,7 +44,7 @@ def update_iptc_metadata(sender, item, **kwargs):
         # only works with vfs storage
         return
 
-    if item.get('type') != 'picture':
+    if item.get('type') != 'picture' or not request:
         return
 
     try:
@@ -72,8 +74,13 @@ def update_iptc_metadata(sender, item, **kwargs):
     if metadata.get('status') and 'stat:' not in metadata['status']:
         metadata['status'] = 'stat:{}'.format(metadata['status'])
 
-    original['media'] = app.media.put_metadata(original['media'], metadata)
-    original['href'] = app.media.url_for_media(original['media'])
+    for _ in range(0, 3):
+        try:
+            original['media'] = app.media.put_metadata(original['media'], metadata)
+            original['href'] = app.media.url_for_media(original['media'])
+            break
+        except VFSError:
+            time.sleep(0.5)
 
 
 def init_app(_app):
