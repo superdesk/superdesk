@@ -119,13 +119,12 @@ class ANSAParserTestCase(TestCase):
         }], item['authors'])
 
     def test_image_association(self):
-        self.app.data.insert('archive', [
-            {'uri': 'featured.jpg', 'headline': 'foo'}
-        ])
-
         item = self.parse('culture.xml')
         self.assertIn('featuremedia', item.get('associations'))
-        self.assertEqual('featured caption', item['associations']['featuremedia']['description_text'])
+        self.assertEqual({
+            'residRef': 'featured.jpg',
+            'description_text': 'featured caption',
+        }, item['associations']['featuremedia'])
 
         self.assertIn('photoGallery--1', item['associations'])
         self.assertIn('photoGallery--2', item['associations'])

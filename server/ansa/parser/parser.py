@@ -214,9 +214,6 @@ class ANSAParser(NewsMLTwoFeedParser):
         links = meta.findall(self.qname('link'))
         for link in links:
             if link.get('residref') and link.get('rel') and link.get('rel') in (FEATURED, GALLERY):
-                assoc = get_resource_service('archive').find_one(req=None, uri=link.get('residref'))
-                if not assoc:
-                    continue
                 item.setdefault('associations', {})
                 dest = FEATURED
                 if link.get('rel') == GALLERY:
@@ -225,10 +222,10 @@ class ANSAParser(NewsMLTwoFeedParser):
                         if key.startswith(GALLERY):
                             counter += 1
                     dest = '{}--{}'.format(GALLERY, counter)
-                item['associations'][dest] = assoc
+                item['associations'][dest] = {'residRef': link.get('residref')}
                 title = link.find(self.qname('title'))
                 if title is not None and title.text:
-                    assoc['description_text'] = title.text
+                    item['associations'][dest]['description_text'] = title.text
 
     def getVocabulary(self, voc_id, qcode, name):
         """Use name from xml."""
