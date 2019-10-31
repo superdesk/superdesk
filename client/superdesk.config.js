@@ -43,6 +43,10 @@ module.exports = function(grunt) {
             //'it',
         ],
 
+        editor3: {
+            spellCheck: true,
+        },
+
         langOverride: {
             'en': {
                 'ANPA Category': 'Category',
