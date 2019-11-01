@@ -45,7 +45,7 @@ def translate_text_macro(item, **kwargs):
 name = 'Translate text'
 label = 'Translate text'
 callback = translate_text_macro
-access_type = 'frontend'
+access_type = 'backend'
 action_type = 'direct'
 replace_type = 'simple-replace'
 from_languages = ['it', 'en', 'es', 'pt', 'de', 'ar']
