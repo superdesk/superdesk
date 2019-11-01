@@ -20,6 +20,8 @@ CONTRIBUTOR_MAPPING = {
 
 class ANSANewsMLG2Formatter(NewsMLG2Formatter):
 
+    DATETIME_USE_CURRENT_TIME = True
+
     def _format_content(self, article, news_item, nitf):
         """Adds the content set to the xml.
 
@@ -318,7 +320,7 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
         SubElement(content_meta, 'dateline').text = dateline_text
 
     def _format_dateline_date(self, date, language, tz=None):
-        tzinfo = None
+        tzinfo = get_timezone('Europe/Rome')
         if tz:
             tzinfo = get_timezone(tz)
         _format = 'dd MMM'
@@ -326,7 +328,8 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
             _format = 'MMM d'
         elif language in ('es', 'pt', 'de'):
             _format = 'd MMM'
-        return format_datetime(date, _format, tzinfo=tzinfo, locale=language).upper().strip('.')
+        datetime = None if self.DATETIME_USE_CURRENT_TIME else date
+        return format_datetime(datetime=datetime, format=_format, tzinfo=tzinfo, locale=language).upper().strip('.')
 
     def _format_place(self, article, content_meta):
         super()._format_place(article, content_meta)

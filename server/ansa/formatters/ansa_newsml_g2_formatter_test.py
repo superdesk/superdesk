@@ -495,14 +495,15 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         signal = item.find(ns('itemMeta')).find(ns('signal[@qcode="red-orig:SPO"]'))
         self.assertIsNotNone(signal)
 
+    @mock.patch('ansa.formatters.ansa_newsml_g2_formatter.format_datetime', lambda **kwargs: 'DATE')
     def test_dateline(self):
         datelines = {
-            'it': '(ANSA) - Roma (foo), 01 AGO -',
-            'en': '(ANSA) - Roma (foo), AUG 1 -',
-            'de': '(ANSA) - Roma (foo), 1 AUG -',
-            'es': '(ANSA) - Roma (foo) 1 AGO -',
-            'pt': 'Roma (foo), 1 AGO (ANSA) -',
-            'ar': '(ANSA) - ' + 'أغسطس' + ' 1 - Roma (foo) -',
+            'it': '(ANSA) - Roma (foo), DATE -',
+            'en': '(ANSA) - Roma (foo), DATE -',
+            'de': '(ANSA) - Roma (foo), DATE -',
+            'es': '(ANSA) - Roma (foo) DATE -',
+            'pt': 'Roma (foo), DATE (ANSA) -',
+            'ar': '(ANSA) - DATE - Roma (foo) -',
         }
 
         for lang, expected in datelines.items():
