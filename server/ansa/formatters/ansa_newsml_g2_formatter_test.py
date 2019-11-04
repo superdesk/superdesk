@@ -8,7 +8,7 @@ from eve.versioning import insert_versioning_documents
 
 from superdesk.utc import utcnow
 from superdesk.tests import TestCase
-from .ansa_newsml_g2_formatter import ANSANewsMLG2Formatter
+from .ansa_newsml_g2_formatter import ANSAPlainTextNewsMLG2Formatter, ANSAHTMLNewsMLG2Formatter
 
 geoname = {
     "region": "Arezzo",
@@ -39,7 +39,7 @@ def get_content_meta(xml):
 
 @mock.patch('superdesk.publish.subscribers.SubscribersService.generate_sequence_number', lambda self, subscriber: 1)
 class ANSANewsmlG2FormatterTestCase(TestCase):
-    formatter = ANSANewsMLG2Formatter()
+    formatter = ANSAHTMLNewsMLG2Formatter()
 
     article = {
         '_id': 'tag:aap.com.au:20150613:12345',
@@ -63,7 +63,7 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         ],
         'anpa_take_key': 'take_key',
         'unique_id': '1',
-        'body_html': '<p>The story body <b>HTML</b></p><p>another paragraph</p><style></style>',
+        'body_html': '<p>The story body <b>HTML</b></p>\n<p>another paragraph</p><style></style>',
         'type': 'text',
         'word_count': '1',
         'priority': '1',
@@ -146,7 +146,7 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
 
     def test_html_content(self):
         article = self.get_article()
-        formatter = ANSANewsMLG2Formatter()
+        formatter = ANSAHTMLNewsMLG2Formatter()
         _, doc = formatter.format(article, self.subscriber)[0]
         self.assertIn('<body>', doc)
         self.assertIn('<b>HTML</b>', doc)
@@ -154,7 +154,7 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
     def test_html_empty_content(self):
         article = self.get_article()
         article['body_html'] = ''
-        formatter = ANSANewsMLG2Formatter()
+        formatter = ANSAHTMLNewsMLG2Formatter()
         _, doc = formatter.format(article, self.subscriber)[0]
         self.assertNotIn('<body>', doc)
 
@@ -173,7 +173,7 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
             }
         }
 
-        formatter = ANSANewsMLG2Formatter()
+        formatter = ANSAHTMLNewsMLG2Formatter()
         _, doc = formatter.format(article, self.subscriber)[0]
         self.assertIn('<link', doc)
         xml = etree.fromstring(doc.encode('utf-8'))
@@ -201,7 +201,7 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         article = self.get_article()
         article['body_html'] = ('<p><h1>The story body</h1><h3/>empty element on purpose<br/><strong>test</strong>'
                                 '<em/><br/>other test</p>')
-        formatter = ANSANewsMLG2Formatter()
+        formatter = ANSAHTMLNewsMLG2Formatter()
         _, doc = formatter.format(article, self.subscriber)[0]
         html_start = '<inlineXML contenttype="application/xhtml+xml">'
         html = doc[doc.find(html_start) + len(html_start):doc.find('</inlineXML>')]
@@ -269,7 +269,7 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         self.assertTrue('foo', figcaption.text)
 
     def format(self, article):
-        formatter = ANSANewsMLG2Formatter()
+        formatter = ANSAHTMLNewsMLG2Formatter()
         _, doc = formatter.format(article, self.subscriber)[0]
         return etree.fromstring(doc.encode('utf-8'))
 
@@ -553,7 +553,7 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
     def test_empty_content(self):
         article = self.get_article()
         article.pop('body_html')
-        formatter = ANSANewsMLG2Formatter()
+        formatter = ANSAHTMLNewsMLG2Formatter()
         _, doc = formatter.format(article, self.subscriber)[0]
         xml = etree.fromstring(doc.encode('utf-8'))
         html = xml.find('/'.join([
@@ -610,3 +610,10 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         self.assertEqual(2, len(keywords))
         self.assertEqual('traffic', keywords[0].text)
         self.assertEqual('sport', keywords[1].text)
+
+    def test_plaintext_formatter(self):
+        formatter = ANSAPlainTextNewsMLG2Formatter()
+        article = self.get_article()
+        _, doc = formatter.format(article, self.subscriber)[0]
+        self.assertIn('<body>', doc)
+        self.assertIn('<pre>The story body HTML\nanother paragraph</pre>', doc)

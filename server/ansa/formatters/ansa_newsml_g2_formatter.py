@@ -1,4 +1,3 @@
-
 import arrow
 import superdesk
 
@@ -18,7 +17,7 @@ CONTRIBUTOR_MAPPING = {
 }
 
 
-class ANSANewsMLG2Formatter(NewsMLG2Formatter):
+class ANSAPlainTextNewsMLG2Formatter(NewsMLG2Formatter):
 
     DATETIME_USE_CURRENT_TIME = True
 
@@ -70,7 +69,13 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
 
     def _build_html_doc(self, article):
         try:
-            html = etree.HTML(article.get('body_html'))
+            content = article.get('body_html').replace('<br/>', '&#10;')
+            html = etree.HTML(content)
+            plaintext = "".join(html.itertext())
+            if '<pre>' in article.get('body_html'):
+                html = etree.HTML('<pre>\n%s</pre>' % plaintext)
+            else:
+                html = etree.HTML('<pre>%s</pre>' % plaintext)
         except (etree.XMLSyntaxError, ValueError):
             if article.get('body_html'):
                 logger.exception('XML parsing error')
@@ -462,3 +467,18 @@ class ANSANewsMLG2Formatter(NewsMLG2Formatter):
             for keyword in article['keywords']:
                 if keyword:
                     etree.SubElement(content_meta, 'keyword').text = keyword
+
+
+class ANSAHTMLNewsMLG2Formatter(ANSAPlainTextNewsMLG2Formatter):
+
+    def _build_html_doc(self, article):
+        try:
+            html = etree.HTML(article.get('body_html'))
+        except (etree.XMLSyntaxError, ValueError):
+            if article.get('body_html'):
+                logger.exception('XML parsing error')
+            html = None
+        return html if html is not None else etree.HTML('<p>%s</p>' % article.get('headline') or '')
+
+    def can_format(self, format_type, article):
+        return format_type == 'newsmlg2ansaHTML'

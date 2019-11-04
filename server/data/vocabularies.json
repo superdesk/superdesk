@@ -12511,6 +12511,10 @@
                         "qcode": "newsmlg2ansa"
                     },
                     {
+                        "name": "ANSA HTML NewsML G2",
+                        "qcode": "newsmlg2ansaHTML"
+                    },
+                    {
                         "name": "Newsroom NINJS",
                         "qcode": "newsroom ninjs"
                     },
@@ -12552,6 +12556,10 @@
                     {
                         "name": "ANSA NewsML G2",
                         "qcode": "newsmlg2ansa"
+                    },
+                    {
+                        "name": "ANSA HTML NewsML G2",
+                        "qcode": "newsmlg2ansaHTML"
                     },
                     {
                         "name": "Newsroom NINJS",
