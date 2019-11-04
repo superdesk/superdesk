@@ -12482,7 +12482,7 @@
     {
         "_id": "subscriber_types",
         "display_name": "Subscriber Types",
-        "init_version": 1000,
+        "init_version": 1001,
         "type": "unmanageable",
         "items": [
             {
