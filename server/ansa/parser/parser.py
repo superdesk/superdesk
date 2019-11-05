@@ -104,9 +104,9 @@ class ANSAParser(NewsMLTwoFeedParser):
             item['creditline'] = creditline.text
 
         located = meta.find(self.qname('located'))
-        if located is not None:
+        if located is not None and located.get('qcode'):
             code = located.get('qcode')
-            if code and 'geo:' in code:
+            if code and 'geo:' in code and code.replace('geo:', '').strip():
                 place = get_place_by_id(code.replace('geo:', ''))
                 item.setdefault('dateline', {})
                 item.setdefault('semantics', {})
