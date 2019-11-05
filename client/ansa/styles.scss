@@ -223,8 +223,19 @@ div[data-field="genre"] .dropdown--dropleft .dropdown__menu {
     right: auto;
 }
 
+// editor tweaks
+
+// avoid spaces between paragraphs
 .Editor3-editor .public-DraftEditor-content {
     [data-block="true"] {
         border-bottom-width: 0.0em;
+    }
+}
+
+// reset pre styles
+.Editor3-editor .public-DraftStyleDefault-pre {
+    margin: 0;
+    pre {
+        margin: 0;
     }
 }
