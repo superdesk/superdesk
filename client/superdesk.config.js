@@ -44,7 +44,7 @@ module.exports = function(grunt) {
         ],
 
         editor3: {
-            spellCheck: true,
+            browserSpellCheck: true,
         },
 
         langOverride: {
