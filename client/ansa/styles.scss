@@ -227,6 +227,9 @@ div[data-field="genre"] .dropdown--dropleft .dropdown__menu {
 
 // avoid spaces between paragraphs
 .Editor3-editor .public-DraftEditor-content {
+
+    padding-bottom: 10px;
+
     [data-block="true"] {
         border-bottom-width: 0.0em;
     }
