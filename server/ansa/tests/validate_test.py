@@ -40,7 +40,7 @@ class ValidateTestCase(TestCase):
         self.assertIn('Subtitle is required', response)
         self.assertIn('Short Title is required', response)
         self.assertIn('Subject is required', response)
-        self.assertIn('Featured photo is required', response)
+        self.assertIn('Photo is required', response)
         self.assertIn('Photo gallery is required', response)
         self.assertEqual(6, len(response))
 
@@ -53,8 +53,10 @@ class ValidateTestCase(TestCase):
         response = []
         item['headline'] = 'foo'
         item['extra'] = {'subtitle': 'foo', 'shorttitle': 'bar'}
-        item['associations'] = {'featuremedia': {'type': 'picture'}}
-        item['photoGallery'] = {'type': 'picture'}
+        item['associations'] = {
+            'featuremedia': {'type': 'picture'},
+            'photoGallery--1': {'type': 'picture'},
+        }
         item['subject'].append({'name': 'Test', 'qcode': '12345678'})
         item['body_html'] = 'short'
         validate(self, item, response, fields)

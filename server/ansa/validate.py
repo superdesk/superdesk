@@ -4,6 +4,7 @@ import superdesk
 from enum import IntEnum
 from superdesk.text_utils import get_char_count
 from superdesk.signals import item_validate
+from ansa.constants import GALLERY
 
 MASK_FIELD = 'output_code'
 
@@ -67,12 +68,17 @@ def validate(sender, item, response, error_fields, **kwargs):
     elif mask.get(Validators.BODY_LENGTH_6400) and length > 6400:
         response.append('Body is longer than 6400 characters')
 
+    associations = item.get('associations') or {}
+    pictures = [val for val in associations.values() if val and val.get('type') == 'picture']
+    gallery = [val for key, val in associations.items()
+               if val and val.get('type') == 'picture' and key.startswith(GALLERY)]
+
     if mask.get(Validators.FEATURED_REQUIRED):
-        if not item.get('associations') or not item['associations'].get('featuremedia'):
-            response.append('Featured photo is required')
+        if not pictures:
+            response.append('Photo is required')
 
     if mask.get(Validators.GALLERY_REQUIRED):
-        if not item.get('photoGallery'):
+        if not gallery:
             response.append('Photo gallery is required')
 
 
