@@ -105,10 +105,10 @@ module.exports = function(grunt) {
                 'wordcount',
                 'highlights',
                 'markedDesks',
-                'associations',
+                'associatedItems',
                 'publish_queue_errors',
                 'headline',
-                'versioncreated'
+                'versioncreated',
             ],
             secondLine: [
                 'profile',

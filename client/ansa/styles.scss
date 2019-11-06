@@ -242,3 +242,11 @@ div[data-field="genre"] .dropdown--dropleft .dropdown__menu {
         margin: 0;
     }
 }
+
+
+// add space after associated icons in lists
+.item-info .sd-text-icon {
+    &.sd-text-icon--aligned-r {
+        margin-right: 0.8rem;
+    }
+}
