@@ -69,10 +69,13 @@ class ANSAPlainTextNewsMLG2Formatter(NewsMLG2Formatter):
 
     def _build_html_doc(self, article):
         try:
-            content = article.get('body_html').replace('<br/>', '&#10;')
+            content = article.get('body_html')
+            preformatted = '<pre>' in content
+            if not preformatted:
+                content = article.get('body_html').replace('<br/>', '&#10;')
             html = etree.HTML(content)
             plaintext = "".join(html.itertext())
-            if '<pre>' in article.get('body_html'):
+            if preformatted:
                 html = etree.HTML('<pre>\n%s</pre>' % plaintext)
             else:
                 html = etree.HTML('<pre>%s</pre>' % plaintext)
