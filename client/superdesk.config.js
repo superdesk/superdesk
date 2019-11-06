@@ -105,6 +105,7 @@ module.exports = function(grunt) {
                 'wordcount',
                 'highlights',
                 'markedDesks',
+                'associations',
                 'publish_queue_errors',
                 'headline',
                 'versioncreated'
@@ -126,7 +127,6 @@ module.exports = function(grunt) {
                 'fetchedDesk',
                 'copyright',
                 'usageterms',
-                'associatedItems',
             ]
         },
         gridViewFields: [
