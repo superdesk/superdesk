@@ -10,6 +10,7 @@ module.exports = function(grunt) {
             'superdesk.analytics'
         ],
         importApps: [
+            '../index',
             'superdesk-analytics',
             'superdesk-publisher'
         ],
@@ -43,11 +44,6 @@ module.exports = function(grunt) {
         },
         workspace: {
             analytics: true
-        },
-        enabledExtensions: {
-            // extensionFolderName: 1,
-            annotationsLibrary: 1,
-            markForUser: 1,
         },
     };
 };
