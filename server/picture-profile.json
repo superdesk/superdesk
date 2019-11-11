@@ -106,7 +106,7 @@
             "type": "string",
             "enabled": true,
             "nullable": false,
-            "required": true,
+            "required": false,
             "default": "it"
         },
         "subject": {
@@ -141,7 +141,7 @@
             "type": "text",
             "enabled": true,
             "nullable": true,
-            "required": true
+            "required": false
         },
         "nation": {
             "type": "text",
@@ -156,13 +156,13 @@
         },
         "headline": {
             "type": "string",
-            "required": true,
+            "required": false,
             "nullable": true
         },
         "description_text": {
             "type": "string",
             "nullable": true,
-            "required": true
+            "required": false
         },
         "sign_off": {
             "enabled": true,
@@ -172,7 +172,7 @@
         },
         "byline": {
             "type": "string",
-            "required": true,
+            "required": false,
             "nullable": true
         },
         "digitator": {
