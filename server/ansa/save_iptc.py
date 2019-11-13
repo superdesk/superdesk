@@ -44,7 +44,10 @@ def update_iptc_metadata(sender, item, **kwargs):
         # only works with vfs storage
         return
 
-    if item.get('type') != 'picture' or not request:
+    if item.get('type') != 'picture':
+        return
+
+    if not request and not app.config['AUTO_PUBLISH_UPDATE_IPTC']:
         return
 
     try:
