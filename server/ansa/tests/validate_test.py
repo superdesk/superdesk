@@ -54,7 +54,6 @@ class ValidateTestCase(TestCase):
         item['headline'] = 'foo'
         item['extra'] = {'subtitle': 'foo', 'shorttitle': 'bar'}
         item['associations'] = {
-            'featuremedia': {'type': 'picture'},
             'photoGallery--1': {'type': 'picture'},
         }
         item['subject'].append({'name': 'Test', 'qcode': '12345678'})
