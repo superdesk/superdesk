@@ -235,11 +235,13 @@ class ANSAPlainTextNewsMLG2Formatter(NewsMLG2Formatter):
         if featured:
             orig = featured.get('renditions', {}).get('original')
             if orig:
-                SubElement(item_meta, 'link', attrib={
+                link = SubElement(item_meta, 'link', attrib={
                     'rel': 'irel:seeAlso',
                     'mimetype': orig.get('mimetype', featured.get('mimetype')),
                     'href': self._publish_media(orig),
                 })
+                if featured.get('headline'):
+                    SubElement(link, 'title').text = featured['headline']
 
     def _publish_media(self, rendition):
         if rendition.get('href'):

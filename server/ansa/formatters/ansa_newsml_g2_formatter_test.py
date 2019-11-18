@@ -164,6 +164,7 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         article['associations'] = {
             'featuremedia': {
                 'type': 'picture',
+                'headline': 'Head',
                 'renditions': {
                     'original': {
                         'mimetype': 'image/jpeg',
@@ -187,6 +188,9 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         self.assertEqual('image/jpeg', link.attrib['mimetype'])
         self.assertEqual('irel:seeAlso', link.attrib['rel'])
         self.assertIn('href', link.attrib)
+        title = link.find(ns('title'))
+        self.assertIsNotNone(title)
+        self.assertEqual('Head', title.text)
 
         client = self.app.test_client()
         response = client.get(urlparse(link.attrib['href']).path)
