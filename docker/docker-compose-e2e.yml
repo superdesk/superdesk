@@ -17,14 +17,14 @@ redis:
     file: common.yml
     service: redis
 
-kibana:
-  extends:
-    file: common.yml
-    service: kibana
-  links:
-    - elastic
-  ports:
-    - "5601:5601"
+# kibana:
+#   extends:
+#     file: common.yml
+#     service: kibana
+#   links:
+#     - elastic
+#   ports:
+#     - "5601:5601"
 
 elastic:
   extends:
