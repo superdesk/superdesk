@@ -19,67 +19,55 @@ different technologies.
 Find more information about the client configuration in the README file of the repo:
 [github.com/superdesk/superdesk-client-core](https://github.com/superdesk/superdesk-client-core)
 
-## Installation on fresh Ubuntu 16.04
+## Simple installation
+
+An environment variable, ```DOCKER_IP```, is required for Superdesk to know where it is hosted. This can be found by using the ```docker-machine env``` command. If you are using a virtual machine, its address may change between restarts, and therefore it is recommended to re-set the variable in every shell you open.
+
+**This is not suitable for production use**. In production, disable the included Postfix email server and point the environment variables to a properly managed server. You'd definitely also want to be storing media on an S3 compatible service, and take regular backups, features which aren't included in this installation.
 
 ```sh
-curl -s https://raw.githubusercontent.com/superdesk/fireq/files/superdesk/install | sudo bash
-# Open http://<ip_or_domain> in browser
-# login: admin
-# password: admin
+# Set DOCKER_IP environment variable
+docker-machine env
+export DOCKER_IP=192.168.xxx.xxx
+
+# Install and run superdesk with services
+git clone https://github.com/superdesk/superdesk
+cd superdesk
+docker compose -f docker/docker-compose.yml up -d
+
+# Open shell in superdesk container
+docker exec -it superdesk bash
+
+# Configure superdesk
+cd /opt/superdesk
+python3 manage.py users:create -u 'username' -p 'password' -e 'email' --admin
+
+# Prepopulate data (for testing)
+python3 manage.py app:prepopulate_data
 ```
+Superdesk will be accessible on ```http://DOCKER_IP:80```.
 
-More options and details:
-- [for users](https://github.com/superdesk/fireq/tree/files/superdesk)
-- [for developers](https://github.com/superdesk/fireq/tree/files/superdesk#development)
+Building the ```superdesk``` image may take a while and can be memory intensive (> 2GB).
 
-## Manual installation
+## Custom installation
+At the bare minimum, Superdesk requires these services to run:
+- MongoDB
+- ElasticSearch (1.7.x - 2.4.x)
+- Redis
+- Python (>= 3.5)
+- Node.js (with `npm`)
+- SMTP Email Server
 
-### Requirements
+You'll probably also want these:
+- AWS S3 compatible storage account
+- Logstash / Kibana for log processing
+- A Highcharts licence for the analytics extension
 
-These services must be installed, configured and running:
+To run the ```superdesk``` container as standalone (without ```docker-compose```), have a look through the environment variables that you'd need to set in ```docker/common.yml``` and ```docker/docker-compose.yml```.
 
- * MongoDB
- * ElasticSearch (1.7.x - 2.4.x)
- * Redis
- * Python (>= 3.5)
- * Node.js (with `npm`)
+Further settings can be found in the [server documentation](https://superdesk.readthedocs.io/en/latest/settings.html).
 
-On macOS, if you have [homebrew](https://brew.sh/) installed, simply run: `brew install mongodb elasticsearch@2.4 redis python3 node`.
-
-### Installation steps:
-
-```sh
-path=~/superdesk
-git clone https://github.com/superdesk/superdesk.git $path
-
-# server
-cd $path/server
-pip3 install -r requirements.txt
-python3 manage.py app:initialize_data
-python3 manage.py users:create -u admin -p admin -e 'admin@example.com' --admin
-honcho start
-# if you need some data
-python manage.py app:prepopulate
-
-# client
-cd $path/client
-npm install
-grunt server
-
-# open http://localhost:9000 in browser
-```
-
-#### :warning:  macOS users
-
-All the above commands need to run inside the Python Virtual Environment, which you can create
-using the `pyvenv` command:
-
-- Run `pyvenv ~/pyvenv` to create the files needed to start an environment in the directory `~/pyvenv`.
-- Run `. ~/pyvenv/bin/activate` to start the virtual environment in the current terminal session.
-
-Now you may run the installation steps from above.
-
-### Questions and issues
+## Questions and issues
 
 - Our [issue tracker](https://dev.sourcefabric.org/projects/SD) is only for bug reports and feature requests.
 - Anything else, such as questions or general feedback, should be posted in the [forum](https://forum.sourcefabric.org/categories/superdesk-dev).
