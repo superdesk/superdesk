@@ -10,6 +10,7 @@ from flask import current_app as app
 from superdesk.io.commands.update_ingest import update_renditions
 from datetime import timedelta
 from superdesk.utc import utcnow, utc_to_local
+from superdesk.utils import ListCursor
 from datetime import timedelta
 from .constants import PHOTO_CATEGORIES_ID
 
@@ -118,6 +119,19 @@ def set_default_search_operator(params):
     if params.get('searchtext') and 'OR' not in params['searchtext'] and 'AND' not in params['searchtext']:
         groups = re.split(r'(\w+|".*?")', params['searchtext'])
         params['searchtext'] = ' AND '.join([group for group in groups if bool(group) and group.strip()])
+
+
+class AnsaListCursor(ListCursor):
+
+    def __init__(self, docs, count):
+        super().__init__(docs)
+        self._count = count
+
+    def __len__(self):
+        return len(self.docs)
+
+    def count(self, **kwargs):
+        return self._count
 
 
 class AnsaPictureProvider(superdesk.SearchProvider):
@@ -255,7 +269,8 @@ class AnsaPictureProvider(superdesk.SearchProvider):
                 fetch_metadata(item, doc)
 
             items.append(item)
-        return items
+
+        return AnsaListCursor(items, json_data.get('simpleSearchResult', {}).get('totalResults', len(items)))
 
     def fetch(self, guid):
         params = {

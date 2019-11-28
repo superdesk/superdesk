@@ -40,6 +40,7 @@ class AnsaPictureTestCase(unittest.TestCase):
 
                 items = self.service.find({'query': {'filtered': {'query': {'query_string': {'query': 'foo'}}}}})
         self.assertEqual(1, len(items))
+        self.assertEqual(6732873, items.count())
         item = items[0]
         self.assertIn('headline', item)
         self.assertIn('type', item)
