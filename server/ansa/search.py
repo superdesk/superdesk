@@ -142,7 +142,7 @@ class AnsaPictureProvider(superdesk.SearchProvider):
     def sess(self):
         if not hasattr(self, '_sess'):
             self._sess = requests.Session()
-            self._sess.get(ansa_photo_api('/portaleimmagini/'))  # get cookies
+            self._sess.get(ansa_photo_api('/portaleimmagini/'), timeout=TIMEOUT)  # get cookies
         return self._sess
 
     def find(self, query):
