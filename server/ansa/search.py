@@ -8,11 +8,11 @@ import superdesk
 from urllib.parse import urljoin
 from flask import current_app as app
 from superdesk.io.commands.update_ingest import update_renditions
-from datetime import timedelta
+from datetime import timedelta, datetime
 from superdesk.utc import utcnow, utc_to_local
 from superdesk.utils import ListCursor
 from datetime import timedelta
-from .constants import PHOTO_CATEGORIES_ID
+from .constants import PHOTO_CATEGORIES_ID, EXIF_DATETIME_FORMAT
 
 
 SEARCH_ENDPOINT = 'ricerca.json'
@@ -200,10 +200,14 @@ class AnsaPictureProvider(superdesk.SearchProvider):
         for doc in documents:
             md5 = get_meta(doc, 'orientationMD5')
             guid = get_meta(doc, 'idAnsa')
+            pubdate_str = get_meta(doc, 'pubDate_N')
             try:
-                pubdate = arrow.get(get_meta(doc, 'pubDate_N')).datetime
+                pubdate = arrow.get(pubdate_str).datetime
             except ValueError:
-                continue
+                try:
+                    pubdate = datetime.strptime(pubdate_str, EXIF_DATETIME_FORMAT)
+                except ValueError:
+                    continue
             try:
                 signoff = get_meta(doc, 'contentBy').split('/')[1].strip()
             except (AttributeError, KeyError, IndexError):

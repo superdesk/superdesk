@@ -4,7 +4,7 @@ import superdesk
 
 from flask import current_app as app, request
 from superdesk.utc import utcnow, get_date
-from ansa.constants import PHOTO_CATEGORIES_ID, PRODUCTS_ID
+from ansa.constants import PHOTO_CATEGORIES_ID, PRODUCTS_ID, EXIF_DATETIME_FORMAT
 from ansa.vfs import VFSError
 
 
@@ -29,6 +29,10 @@ EXTRA_MAPPING = {
     'DateCreated': 'dateCreated',
     'DateRelease': 'releaseDate',
 }
+
+
+def format_date(datetime):
+    return get_date(datetime).strftime(EXIF_DATETIME_FORMAT)
 
 
 def apply_mapping(mapping, src, dest):
@@ -69,10 +73,13 @@ def update_iptc_metadata(sender, item, **kwargs):
                 metadata.setdefault('product', []).append(subj['qcode'])
 
     firstcreated = item.get('firstpublished') or utcnow()
-    metadata['pubDate_N'] = get_date(firstcreated).isoformat()
+    metadata['pubDate_N'] = format_date(firstcreated)
 
     if not metadata.get('dateCreated') and item.get('firstcreated'):
-        metadata['dateCreated'] = get_date(item['firstcreated']).isoformat()
+        metadata['dateCreated'] = format_date(item['firstcreated'])
+
+    if not metadata.get('releaseDate') and item.get('versioncreated'):
+        metadata['releaseDate'] = format_date(item['versioncreated'])
 
     if metadata.get('status') and 'stat:' not in metadata['status']:
         metadata['status'] = 'stat:{}'.format(metadata['status'])
