@@ -1,11 +1,17 @@
 {
   "private": true,
   "main": "dist/extension.js",
+  "name": "ansa-iptc",
+  "version": "1.0.0",
   "scripts": {
     "compile": "tsc",
-    "watch": "tsc -watch"
+    "watch": "tsc -watch",
+    "install": "npm run compile"
   },
   "devDependencies": {
+    "typescript": "3.4.4"
+  },
+  "peerDependencies": {
     "typescript": "3.4.4"
   }
 }
