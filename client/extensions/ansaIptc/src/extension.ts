@@ -1,9 +1,26 @@
 import {IExtension, IExtensionActivationResult, ISuperdesk, IArticle, ISubject} from 'superdesk-api';
 
 const PHOTO_CATEGORIES_ID = 'PhotoCategories';
-const parseDate = (date: string, time: string) => (date && time)
-    ? (date.split('-').join('') + 'T' + time.split(':').join(''))
-    : null;
+
+// convert 20191209 to 2019-12-09
+const parseDate = (date: string) => date.length === 8 ?
+    [
+        date.substr(0, 4),
+        date.substr(4, 2),
+        date.substr(6, 2),
+    ].join('-') : date;
+
+// convert 152339+0000 to 15:23:39+0000
+const parseTime = (time: string) => time.length === 11 ?
+    [
+        time.substr(0, 2),
+        time.substr(2, 4),
+        time.substr(4),
+    ].join(':') : time;
+
+const parseDatetime = (date: string, time: string) => (date && time) ?
+    `${parseDate(date)}T${parseTime(time)}` :
+    null;
 
 const extension: IExtension = {
     activate: (superdesk: ISuperdesk) => {
@@ -36,8 +53,8 @@ const extension: IExtension = {
                             city: data.City,
                             nation: data['Country-PrimaryLocationName'],
                             digitator: data['Writer-Editor'],
-                            DateCreated: parseDate(data.DateCreated, data.TimeCreated),
-                            DateRelease: parseDate(data.ReleaseDate, data.ReleaseTime),
+                            DateCreated: parseDatetime(data.DateCreated, data.TimeCreated),
+                            DateRelease: parseDatetime(data.ReleaseDate, data.ReleaseTime),
                         },
                     });
 
