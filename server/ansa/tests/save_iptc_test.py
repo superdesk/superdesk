@@ -75,7 +75,7 @@ class UpdateIPTCMetadataTestCase(unittest.TestCase):
                     'copyrightHolder': item['copyrightholder'],
                     'copyrightNotice': item['copyrightnotice'],
                     'usageTerms': item['usageterms'],
-                    'pubDate_N': '2019-09-20T12:00:00+0000',
+                    'pubDate_N': '2019-09-20T12:00:00+00:00',
                     'releaseDate': item['extra']['DateRelease'],
                     'dateCreated': item['extra']['DateCreated'],
                     'digitator': item['extra']['digitator'],

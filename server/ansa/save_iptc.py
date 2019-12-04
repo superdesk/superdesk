@@ -4,7 +4,7 @@ import superdesk
 
 from flask import current_app as app, request
 from superdesk.utc import utcnow, get_date
-from ansa.constants import PHOTO_CATEGORIES_ID, PRODUCTS_ID, ANSA_DATETIME_FORMAT
+from ansa.constants import PHOTO_CATEGORIES_ID, PRODUCTS_ID
 from ansa.vfs import VFSError
 
 
@@ -32,7 +32,7 @@ EXTRA_MAPPING = {
 
 
 def format_date(datetime):
-    return get_date(datetime).strftime(ANSA_DATETIME_FORMAT)
+    return get_date(datetime).isoformat()
 
 
 def apply_mapping(mapping, src, dest):
