@@ -1,6 +1,6 @@
 {
     "dependencies": {
-        "superdesk-core": "superdesk/superdesk-client-core#release/1.32",
+        "superdesk-core": "^1.32.0",
         "superdesk-planning": "superdesk/superdesk-planning#v1.7.0",
         "ansa-iptc": "./extensions/ansaIptc"
     },
