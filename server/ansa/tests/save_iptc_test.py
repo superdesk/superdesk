@@ -36,8 +36,8 @@ class UpdateIPTCMetadataTestCase(unittest.TestCase):
                 'city': 'Prague',
                 'nation': 'Czechia',
                 'coauthor': 'sign',
-                'DateRelease': 'DateRelease',
-                'DateCreated': 'DateCreated',
+                'DateCreated': '2019-12-05T08:38:53+0000',
+                'DateRelease': '2019-12-05T09:38:53+0000',
                 'digitator': 'digi',
             },
             'renditions': {
@@ -76,8 +76,8 @@ class UpdateIPTCMetadataTestCase(unittest.TestCase):
                     'copyrightNotice': item['copyrightnotice'],
                     'usageTerms': item['usageterms'],
                     'pubDate_N': '2019-09-20T12:00:00+00:00',
-                    'releaseDate': item['extra']['DateRelease'],
-                    'dateCreated': item['extra']['DateCreated'],
+                    'dateCreated': '2019-12-05T08:38:53+00:00',
+                    'releaseDate': '2019-12-05T09:38:53+00:00',
                     'digitator': item['extra']['digitator'],
                     'status': 'stat:usable',
                     'product': [

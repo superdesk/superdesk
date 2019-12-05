@@ -77,9 +77,13 @@ def update_iptc_metadata(sender, item, **kwargs):
 
     if not metadata.get('dateCreated') and item.get('firstcreated'):
         metadata['dateCreated'] = format_date(item['firstcreated'])
+    elif metadata.get('dateCreated'):
+        metadata['dateCreated'] = format_date(metadata['dateCreated'])
 
     if not metadata.get('releaseDate') and item.get('versioncreated'):
         metadata['releaseDate'] = format_date(item['versioncreated'])
+    elif metadata.get('releaseDate'):
+        metadata['releaseDate'] = format_date(metadata['releaseDate'])
 
     if metadata.get('status') and 'stat:' not in metadata['status']:
         metadata['status'] = 'stat:{}'.format(metadata['status'])
