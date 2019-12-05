@@ -1,12 +1,15 @@
 
 import time
 import superdesk
+import logging
 
 from flask import current_app as app, request
 from superdesk.utc import utcnow, get_date
 from ansa.constants import PHOTO_CATEGORIES_ID, PRODUCTS_ID
 from ansa.vfs import VFSError
 
+
+logger = logging.getLogger(__name__)
 
 ITEM_MAPPING = {
     'language': 'language',
@@ -88,13 +91,17 @@ def update_iptc_metadata(sender, item, **kwargs):
     if metadata.get('status') and 'stat:' not in metadata['status']:
         metadata['status'] = 'stat:{}'.format(metadata['status'])
 
+    media = original['media']
+    logging.info('updating metadata for %s', media)
     for _ in range(0, 3):
         try:
             original['media'] = app.media.put_metadata(original['media'], metadata)
             original['href'] = app.media.url_for_media(original['media'])
-            break
+            logging.info('media updated for %s', media)
+            return
         except VFSError:
-            time.sleep(0.5)
+            logging.error('error when updating metadata for media', extra={'media': media})
+            time.sleep(1)
 
 
 def init_app(_app):
