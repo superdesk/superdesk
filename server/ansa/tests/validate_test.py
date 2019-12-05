@@ -68,3 +68,18 @@ class ValidateTestCase(TestCase):
         response = []
         validate(self, item, response, fields)
         self.assertEqual([], response)
+
+    def test_headline_with_update_info(self):
+        item = self.item.copy()
+        item['headline'] = 'x' * 64
+        fields = {'headline': 'too long'}
+        response = ['HEADLINE is too long']
+
+        validate(self, item, response, fields)
+        self.assertIn('HEADLINE is too long', response)
+        self.assertIn('headline', fields)
+
+        item['headline'] = 'x' * 60 + ' (2)'
+        validate(self, item, response, fields)
+        self.assertNotIn('HEADLINE is too long', response)
+        self.assertNotIn('headline', fields)

@@ -1,4 +1,5 @@
 
+import re
 import superdesk
 
 from enum import IntEnum
@@ -43,6 +44,11 @@ def validate(sender, item, response, error_fields, **kwargs):
     mask = get_active_mask(products)
     extra = item.get('extra', {})
     length = get_char_count(item.get('body_html') or '<p></p>')
+
+    # allow publishing of headline with update info (1,2,..) over limit
+    if item.get('headline') and re.search(r'\([0-9]+\)$', item['headline']) and len(item['headline']) <= 64:
+        response.remove('HEADLINE is too long')
+        error_fields.pop('headline', None)
 
     if mask.get(Validators.HEADLINE_REQUIRED):
         if not item.get('headline'):
