@@ -92,16 +92,15 @@ def update_iptc_metadata(sender, item, **kwargs):
         metadata['status'] = 'stat:{}'.format(metadata['status'])
 
     media = original['media']
-    logging.info('updating metadata for %s', media)
     for _ in range(0, 3):
         try:
             original['media'] = app.media.put_metadata(original['media'], metadata)
             original['href'] = app.media.url_for_media(original['media'])
-            logging.info('media updated for %s', media)
             return
         except VFSError:
-            logging.error('error when updating metadata for media', extra={'media': media})
+            logger.error('error when updating metadata for media', extra={'media': media})
             time.sleep(1)
+    logger.error('no luck updating metadata for media', extra={'media': media})
 
 
 def init_app(_app):
