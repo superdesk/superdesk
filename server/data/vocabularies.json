@@ -1,0 +1,81 @@
+[
+   {
+      "_id":"languages",
+      "display_name":"Language",
+      "type":"unmanageable",
+      "selection_type":"multi selection",
+      "items":[
+         {
+            "is_active":true,
+            "name":"English",
+            "qcode":"en"
+         },
+         {
+            "is_active":true,
+            "name":"French",
+            "qcode":"fr"
+         },
+         {
+            "is_active":true,
+            "name":"German",
+            "qcode":"de"
+         },
+         {
+            "is_active":true,
+            "name":"Spanish",
+            "qcode":"es"
+         },
+         {
+            "is_active":true,
+            "name":"Italian",
+            "qcode":"it"
+         },
+         {
+            "is_active":true,
+            "name":"Swedish",
+            "qcode":"sv"
+         },
+         {
+            "is_active":true,
+            "name":"Norwegian",
+            "qcode":"nb"
+         },
+         {
+            "is_active":true,
+            "name":"Polish",
+            "qcode":"pl"
+         },
+         {
+            "is_active":true,
+            "name":"Simplified Chinese",
+            "qcode":"zh-cn"
+         },
+         {
+            "is_active":true,
+            "name":"Traditional Chinese (HK)",
+            "qcode":"zh-hk"
+         },
+         {
+            "is_active":true,
+            "name":"Japanese",
+            "qcode":"ja"
+         },
+         {
+            "is_active":true,
+            "name":"Korean",
+            "qcode":"ko"
+         },
+         {
+            "is_active":true,
+            "name":"Traditional Chinese (TW)",
+            "qcode":"zh-tw"
+         },
+         {
+            "is_active":true,
+            "name":"Dutch",
+            "qcode":"nl"
+         }
+      ]
+   }
+]
+
