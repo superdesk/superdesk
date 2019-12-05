@@ -1,6 +1,6 @@
 
 from superdesk.tests import TestCase
-from ansa.validate import validate, MASK_FIELD
+from ansa.validate import validate, MASK_FIELD, Errors
 
 
 class ValidateTestCase(TestCase):
@@ -94,3 +94,20 @@ class ValidateTestCase(TestCase):
 
         self.assertEqual({}, fields)
         self.assertEqual([], response)
+
+    def test_avoid_associated_afp_picture(self):
+        item = self.item.copy()
+        item['associations'] = {
+            'test': {
+                'type': 'picture',
+                'extra': {
+                    'supplier': 'AFP',
+                },
+            },
+        }
+
+        fields = {}
+        response = []
+        validate(self, item, response, fields)
+
+        self.assertIn(Errors.AFP_IMAGE_USAGE, response)

@@ -22,6 +22,10 @@ class Validators(IntEnum):
     GALLERY_REQUIRED = 8
 
 
+class Errors():
+    AFP_IMAGE_USAGE = 'AFP images could not be used'
+
+
 def get_active_mask(products):
     mask = {}
     if products:
@@ -43,6 +47,7 @@ def validate(sender, item, response, error_fields, **kwargs):
             error_fields.pop(key)
         response.clear()
         return
+
     products = [subject for subject in item.get('subject', []) if subject.get('scheme') == 'products']
     mask = get_active_mask(products)
     extra = item.get('extra', {})
@@ -89,6 +94,11 @@ def validate(sender, item, response, error_fields, **kwargs):
     if mask.get(Validators.GALLERY_REQUIRED):
         if not gallery:
             response.append('Photo gallery is required')
+
+    for picture in pictures:
+        if picture.get('extra') and picture['extra'].get('supplier') and picture['extra']['supplier'].lower() == 'afp':
+            response.append(Errors.AFP_IMAGE_USAGE)
+            break
 
 
 def init_app(app):
