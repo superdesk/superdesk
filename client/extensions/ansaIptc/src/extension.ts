@@ -14,7 +14,7 @@ const parseDate = (date: string) => date.length === 8 ?
 const parseTime = (time: string) => time.length === 11 ?
     [
         time.substr(0, 2),
-        time.substr(2, 4),
+        time.substr(2, 2),
         time.substr(4),
     ].join(':') : time;
 
@@ -53,10 +53,23 @@ const extension: IExtension = {
                             city: data.City,
                             nation: data['Country-PrimaryLocationName'],
                             digitator: data['Writer-Editor'],
-                            DateCreated: parseDatetime(data.DateCreated, data.TimeCreated),
-                            DateRelease: parseDatetime(data.ReleaseDate, data.ReleaseTime),
                         },
                     });
+
+                    if (item.extra) {
+                        const created = parseDatetime(data.DateCreated, data.TimeCreated);
+                        const release = parseDatetime(data.ReleaseDate, data.ReleaseTime);
+
+                        if (created) {
+                            item.extra.DateCreated = created;
+                        }
+
+                        if (release) {
+                            item.extra.DateRelease = release;
+                        }
+                    }
+
+                    console.debug('iptc', data, item);
 
                     return item;
                 }),
