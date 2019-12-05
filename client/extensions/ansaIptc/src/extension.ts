@@ -35,9 +35,7 @@ const extension: IExtension = {
                     Object.assign(item, {
                         slugline: data.ObjectName,
                         byline: data['By-line'],
-                        sign_off: data['By-lineTitle'] || item.sign_off,
                         headline: data.Headline,
-                        source: data.Source,
                         copyrightholder: data.Credit,
                         copyrightnotice: data.CopyrightNotice,
                         usageterms: data.CopyrightNotice,
@@ -53,6 +51,8 @@ const extension: IExtension = {
                             city: data.City,
                             nation: data['Country-PrimaryLocationName'],
                             digitator: data['Writer-Editor'],
+                            coauthor: data['By-lineTitle'] || item.sign_off,
+                            supplier: data.Source,
                         },
                     });
 

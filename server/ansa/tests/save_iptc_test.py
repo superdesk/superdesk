@@ -39,6 +39,7 @@ class UpdateIPTCMetadataTestCase(unittest.TestCase):
                 'DateCreated': '2019-12-05T08:38:53+0000',
                 'DateRelease': '2019-12-05T09:38:53+0000',
                 'digitator': 'digi',
+                'supplier': 'FOO'
             },
             'renditions': {
                 'original': {
@@ -71,7 +72,7 @@ class UpdateIPTCMetadataTestCase(unittest.TestCase):
                     'signOff': item['sign_off'],
                     'contentBy': item['byline'],
                     'signature': item['extra']['coauthor'],
-                    'supplier': 'ANSA',
+                    'supplier': 'FOO',
                     'copyrightHolder': item['copyrightholder'],
                     'copyrightNotice': item['copyrightnotice'],
                     'usageTerms': item['usageterms'],

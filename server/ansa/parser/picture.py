@@ -17,8 +17,6 @@ iim_codes[(1, 50)] = PRODUCT_ID_KEY
 CORE_MAPPING = {
     'Object Name': 'slugline',
     'By-line': 'byline',
-    'By-line Title': 'sign_off',
-    'Source': 'source',
     'Credit': 'copyrightholder',
     'Copyright Notice': 'usageterms',
     'Language Identifier': 'language',
@@ -28,6 +26,8 @@ EXTRA_MAPPING = {
     'City': 'city',
     'Country/Primary Location Name': 'nation',
     'Writer/Editor': 'digitator',
+    'By-line Title': 'coauthor',
+    'Source': 'supplier',
 }
 
 

@@ -31,6 +31,7 @@ EXTRA_MAPPING = {
     'coauthor': 'signature',
     'DateCreated': 'dateCreated',
     'DateRelease': 'releaseDate',
+    'supplier': 'supplier',
 }
 
 

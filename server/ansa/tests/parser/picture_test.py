@@ -46,9 +46,7 @@ class PictureParserTestCase(TestCase):
         # core metadata
         self.assertEqual('UAE FORMULA ONE GRAND PRIX 2018', item['slugline'])
         self.assertEqual('SRDJAN SUKI', item['byline'])
-        self.assertEqual('STF', item['sign_off'])
         self.assertEqual('Formula One Grand Prix of Abu Dhabi', item['headline'])
-        self.assertEqual('ANSA', item['source'])
         self.assertEqual('EPA', item['copyrightholder'])
         self.assertEqual('ANSA', item['copyrightnotice'])
         self.assertEqual('ANSA', item['usageterms'])
@@ -76,5 +74,7 @@ class PictureParserTestCase(TestCase):
         self.assertEqual('ABU DHABI', item['extra']['city'])
         self.assertEqual('UNITED ARAB EMIRATES', item['extra']['nation'])
         self.assertEqual('ss MR', item['extra']['digitator'])
+        self.assertEqual('STF', item['extra']['coauthor'])
+        self.assertEqual('ANSA', item['extra']['supplier'])
         self.assertEqual('2019-11-29T14:05:31+04:00', item['extra']['DateCreated'].isoformat())
         self.assertEqual('2019-11-29T16:41:44+01:00', item['extra']['DateRelease'].isoformat())
