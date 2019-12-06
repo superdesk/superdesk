@@ -120,4 +120,8 @@ class PictureParser(ImageIPTCFeedParser):
         if metadata.get('Release Date') and metadata.get('Release Time'):
             item['extra']['DateRelease'] = parse_datetime(metadata['Release Date'], metadata['Release Time'])
 
+        # make sure it's a list
+        if item.get('keywords') and isinstance(item['keywords'], str):
+            item['keywords'] = [item['keywords']]
+
         return item
