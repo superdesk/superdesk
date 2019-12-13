@@ -597,6 +597,10 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         alt_text = content_meta.find(ns('description[@role="drol:altText"]'))
         self.assertIsNotNone(alt_text)
 
+    def test_picture_archive_photo(self):
+        updates = {'type': 'picture', 'copyrightholder': None, 'copyrightnotice': 'ANSA', 'alt_text': 'Alt'}
+        self.format_content_meta(updates)
+
     def test_right_info(self):
         item = self.get_item({'type': 'picture', 'usageterms': 'Foo usage'})
         rights_info = item.find(ns('rightsInfo'))

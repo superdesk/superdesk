@@ -384,7 +384,7 @@ class ANSAPlainTextNewsMLG2Formatter(NewsMLG2Formatter):
 
     def _copy_rights_info(self, article, news_item):
         rightsinfo = SubElement(news_item, 'rightsInfo')
-        SubElement(rightsinfo, 'copyrightHolder', {'literal': article.get('copyrightholder', 'ANSA')})
+        SubElement(rightsinfo, 'copyrightHolder', {'literal': article.get('copyrightholder') or 'ANSA'})
         if article.get('copyrightnotice'):
             SubElement(rightsinfo, 'copyrightNotice').text = article['copyrightnotice']
         if article.get('usageterms'):
