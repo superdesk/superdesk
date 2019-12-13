@@ -1,13 +1,14 @@
 
 import os
-import arrow
 
 from flask import current_app as app
 from datetime import datetime
 from superdesk import get_resource_service
 from superdesk.io.feed_parsers.image_iptc import ImageIPTCFeedParser, get_meta_iptc
-from ansa.constants import PHOTO_CATEGORIES_ID, PRODUCTS_ID, EXIF_DATETIME_FORMAT
+from ansa.constants import PHOTO_CATEGORIES_ID, PRODUCTS_ID, EXIF_DATETIME_FORMAT, ANSA_DATETIME_FORMAT, ROME_TZ
 from superdesk.media.iim_codes import iim_codes
+from superdesk.utc import local_to_utc
+
 
 # parse extra codes
 PRODUCT_ID_KEY = 'Product I.D.'
@@ -36,17 +37,6 @@ def get_subject_refs(metadata):
     if not refs:
         return []
     return refs if isinstance(refs, list) else [refs]
-
-
-def parse_datetime(date, time):
-    _datetime = 'T'.join([date, time])
-    try:
-        return datetime.strptime(_datetime, EXIF_DATETIME_FORMAT)
-    except ValueError:
-        try:
-            return arrow.get(_datetime).datetime
-        except ValueError:
-            return
 
 
 class PictureParser(ImageIPTCFeedParser):
@@ -115,13 +105,28 @@ class PictureParser(ImageIPTCFeedParser):
                     })
 
         if metadata.get('Date Created') and metadata.get('Time Created'):
-            item['extra']['DateCreated'] = parse_datetime(metadata['Date Created'], metadata['Time Created'])
+            item['extra']['DateCreated'] = self.parse_date_time(metadata['Date Created'], metadata['Time Created'])
 
         if metadata.get('Release Date') and metadata.get('Release Time'):
-            item['extra']['DateRelease'] = parse_datetime(metadata['Release Date'], metadata['Release Time'])
+            item['extra']['DateRelease'] = self.parse_date_time(metadata['Release Date'], metadata['Release Time'])
 
         # make sure it's a list
         if item.get('keywords') and isinstance(item['keywords'], str):
             item['keywords'] = [item['keywords']]
 
         return item
+
+    def parse_date_time(self, date, time):
+        if not date or not time:
+            return
+        date_string = '{}T{}'.format(date, time)
+        for _format in [EXIF_DATETIME_FORMAT, ANSA_DATETIME_FORMAT]:
+            try:
+                return datetime.strptime(date_string, _format)
+            except ValueError:
+                pass
+            try:
+                local = datetime.strptime(date_string, _format.replace('%z', ''))
+                return local_to_utc(ROME_TZ, local)
+            except ValueError:
+                pass

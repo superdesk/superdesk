@@ -8,7 +8,7 @@ from ansa.analysis.analysis import parse, apply
 from superdesk import get_resource_service
 from ansa.geonames import get_place_by_id
 from superdesk.utc import local_to_utc
-from ansa.constants import PHOTO_CATEGORIES_ID, FEATURED, GALLERY
+from ansa.constants import PHOTO_CATEGORIES_ID, FEATURED, GALLERY, ROME_TZ
 
 MONTHS_IT = [
     '', 'gen', 'feb', 'mar', 'apr', 'mag', 'giu', 'lug', 'ago', 'set', 'ott', 'nov', 'dic',
@@ -30,8 +30,6 @@ def get_literal(elem):
 
 
 class ANSAParser(NewsMLTwoFeedParser):
-
-    TZ = 'Europe/Rome'
 
     cat_map = {
         'ACE': 'Entertainment',
@@ -111,7 +109,7 @@ class ANSAParser(NewsMLTwoFeedParser):
                 item.setdefault('dateline', {})
                 item.setdefault('semantics', {})
                 item['dateline']['located'] = {
-                    "tz": place.get('tz', 'Europe/Rome'),
+                    "tz": place.get('tz', ROME_TZ),
                     "country_code": place.get('country_code'),
                     "dateline": "city",
                     "city_code": place.get('name'),
@@ -165,7 +163,7 @@ class ANSAParser(NewsMLTwoFeedParser):
 
     def datetime(self, string):
         local = arrow.get(string).datetime
-        return local_to_utc(self.TZ, local)
+        return local_to_utc(ROME_TZ, local)
 
     def parse_content_subject(self, tree, item):
         super().parse_content_subject(tree, item)

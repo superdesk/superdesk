@@ -6,6 +6,8 @@ from unittest.mock import MagicMock, patch
 from ansa.parser.picture import PictureParser
 from ansa.subjects import init_app as init_subjects
 from ansa.constants import PHOTO_CATEGORIES_ID, PRODUCTS_ID
+from datetime import datetime
+from pytz import utc
 
 
 class PictureParserTestCase(TestCase):
@@ -78,3 +80,14 @@ class PictureParserTestCase(TestCase):
         self.assertEqual('ANSA', item['extra']['supplier'])
         self.assertEqual('2019-11-29T14:05:31+04:00', item['extra']['DateCreated'].isoformat())
         self.assertEqual('2019-11-29T16:41:44+01:00', item['extra']['DateRelease'].isoformat())
+
+    def test_parse_datetime(self):
+        parser = PictureParser()
+        date = datetime(2019, 12, 13, 13, 32, 5, tzinfo=utc)
+
+        self.assertEqual(date, parser.parse_date_time('20191213', '133205+0000'))
+        self.assertEqual(date, parser.parse_date_time('2019-12-13', '13:32:05+0000'))
+
+        # default rome is +1
+        self.assertEqual(date, parser.parse_date_time('20191213', '143205'))
+        self.assertEqual(date, parser.parse_date_time('2019-12-13', '14:32:05'))
