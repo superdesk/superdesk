@@ -181,7 +181,7 @@ class AnalysisService(BaseService):
             r = requests.post(self.URL_EXTRACTION, extraction_data, timeout=(5, 30))
             extracted = json.loads(r.text)
             return parse(extracted)
-        except requests.exceptions.ReadTimeout:
+        except (requests.exceptions.ReadTimeout, json.JSONDecodeError):
             return {}
 
     def apply(self, analysed, item, skip_products=False):
