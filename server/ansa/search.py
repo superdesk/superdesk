@@ -261,13 +261,17 @@ class AnsaPictureProvider(superdesk.SearchProvider):
                     'nation': get_meta(doc, 'ctrName'),
                     'supplier': 'ANSA',
                     'coauthor': get_meta(doc, 'authorCode'),
-                    'DateRelease': get_meta(doc, 'releaseDate'),
-                    'DateCreated': get_meta(doc, 'dateCreated'),
                 },
                 'usageterms': get_meta(doc, 'usageTerms'),
                 'copyrightholder': get_meta(doc, 'copyrightHolder') or get_meta(doc, 'copyright'),
                 'copyrightnotice': get_meta(doc, 'copyrightNotice'),
             }
+
+            if get_meta(doc, 'releaseDate'):
+                item['extra']['DateRelease'] = get_meta(doc, 'releaseDate')
+
+            if get_meta(doc, 'dateCreated'):
+                item['extra']['DateCreated'] = get_meta(doc, 'dateCreated')
 
             if fetch:
                 fetch_metadata(item, doc)

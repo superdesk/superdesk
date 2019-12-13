@@ -86,8 +86,8 @@ class AnsaPictureTestCase(unittest.TestCase):
         self.assertEqual('SRINAGAR', item['extra']['city'])
         self.assertEqual('INDIA', item['extra']['nation'])
         self.assertEqual('STR', item['extra']['coauthor'])
-        self.assertEqual(None, item['extra']['DateRelease'])
-        self.assertEqual(None, item['extra']['DateCreated'])
+        self.assertNotIn('DateRelease', item['extra'])
+        self.assertNotIn('DateCreated', item['extra'])
 
         self.assertIn({
             'name': 'SOI',

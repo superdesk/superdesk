@@ -84,6 +84,11 @@ class ValidateTestCase(TestCase):
         self.assertNotIn('HEADLINE is too long', response)
         self.assertNotIn('headline', fields)
 
+        item['headline'] = 'x' * 20 + ' (2)'
+        validate(self, item, response, fields)
+        self.assertNotIn('HEADLINE is too long', response)
+        self.assertNotIn('headline', fields)
+
     def test_avoid_errors_on_auto_publish(self):
         item = self.item.copy()
         item['auto_publish'] = True
