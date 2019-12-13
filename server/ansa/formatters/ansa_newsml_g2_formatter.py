@@ -379,7 +379,7 @@ class ANSAPlainTextNewsMLG2Formatter(NewsMLG2Formatter):
             return
         try:
             super()._format_rights(newsItem, article)
-        except KeyError:
+        except (KeyError, TypeError):
             pass
 
     def _copy_rights_info(self, article, news_item):
