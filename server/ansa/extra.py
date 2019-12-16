@@ -1,6 +1,6 @@
 
 import superdesk
-from superdesk.resource import not_enabled
+from superdesk.resource import not_indexed
 
 
 def init_app(_app):
@@ -8,5 +8,8 @@ def init_app(_app):
     superdesk.register_item_schema_field('extra', {
         'type': 'dict',
         'nullable': True,
-        'mapping': not_enabled,
+        'schema': {
+            'DateCreated': {'type': 'string', 'nullable': True, 'mapping': not_indexed},
+            'DateRelease': {'type': 'string', 'nullable': True, 'mapping': not_indexed},
+        },
     }, _app)
