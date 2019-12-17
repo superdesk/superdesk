@@ -8,8 +8,11 @@ def init_app(_app):
     superdesk.register_item_schema_field('extra', {
         'type': 'dict',
         'nullable': True,
-        'schema': {
-            'DateCreated': {'type': 'string', 'nullable': True, 'mapping': not_indexed},
-            'DateRelease': {'type': 'string', 'nullable': True, 'mapping': not_indexed},
+        'mapping': {
+            'type': 'object',
+            'properties': {
+                'DateCreated': not_indexed,
+                'DateRelease': not_indexed,
+            },
         },
     }, _app)
