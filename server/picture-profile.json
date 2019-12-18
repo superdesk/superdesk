@@ -106,7 +106,7 @@
             "type": "string",
             "enabled": true,
             "nullable": false,
-            "required": false,
+            "required": true,
             "default": "it"
         },
         "subject": {
@@ -114,7 +114,10 @@
             "type": "list",
             "nullable": true,
             "mandatory_in_list": {
-                "scheme": {}
+                "scheme": {
+                   "PhotoCategories": "PhotoCategories",
+                   "products": "products"
+                }
             },
             "required": false,
             "schema": {
@@ -127,7 +130,7 @@
                         "allowed": ["products", "PhotoCategories", "FIEG_Categories"],
                         "type": "string",
                         "nullable": true,
-                        "required": false
+                        "required": true
                     },
                     "qcode": {},
                     "parent": {
@@ -141,7 +144,7 @@
             "type": "text",
             "enabled": true,
             "nullable": true,
-            "required": false
+            "required": true
         },
         "nation": {
             "type": "text",
@@ -156,13 +159,13 @@
         },
         "headline": {
             "type": "string",
-            "required": false,
+            "required": true,
             "nullable": true
         },
         "description_text": {
             "type": "string",
             "nullable": true,
-            "required": false
+            "required": true
         },
         "sign_off": {
             "enabled": true,
@@ -172,7 +175,7 @@
         },
         "byline": {
             "type": "string",
-            "required": false,
+            "required": true,
             "nullable": true
         },
         "digitator": {
