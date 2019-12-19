@@ -86,10 +86,10 @@
                 "product": {
                     "fieldValues": [{
                         "score": null,
-                        "value": "EPA"
+                        "value": "PBDM"
                     }, {
                         "score": null,
-                        "value": "PBDM"
+                        "value": "0050000100004"
                     }]
                 },
                 "orientationMD5": {

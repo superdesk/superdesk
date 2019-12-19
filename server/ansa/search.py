@@ -12,7 +12,7 @@ from datetime import timedelta, datetime
 from superdesk.utc import utcnow, utc_to_local
 from superdesk.utils import ListCursor
 from datetime import timedelta
-from .constants import PHOTO_CATEGORIES_ID, EXIF_DATETIME_FORMAT
+from .constants import PHOTO_CATEGORIES_ID, EXIF_DATETIME_FORMAT, PRODUCTS_ID
 
 
 SEARCH_ENDPOINT = 'ricerca.json'
@@ -25,9 +25,12 @@ VIEWIMG_HREF = 'https://ansafoto.ansa.it/portaleimmagini/bdmproxy/{}.jpg?format=
 TIMEOUT = (5, 25)
 
 
-def get_meta(doc, field):
+def get_meta(doc, field, multi=False):
     try:
-        return doc['metadataMap'][field]['fieldValues'][0]['value']
+        if not multi:
+            return doc['metadataMap'][field]['fieldValues'][0]['value']
+        else:
+            return [v['value'] for v in doc['metadataMap'][field]['fieldValues']]
     except KeyError:
         return None
 
@@ -68,6 +71,18 @@ def fetch_metadata(item, doc):
                         'name': subj['name'],
                         'qcode': subj.get('qcode'),
                         'scheme': PHOTO_CATEGORIES_ID,
+                    })
+
+    api_products = get_meta(doc, 'product', multi=True)
+    if api_products:
+        products_cv = superdesk.get_resource_service('vocabularies').find_one(req=None, _id=PRODUCTS_ID)
+        if products_cv:
+            for product in products_cv.get('items', []):
+                if product.get('qcode') and product.get('qcode') in api_products:
+                    item.setdefault('subject', []).append({
+                        'name': product['name'],
+                        'qcode': product['qcode'],
+                        'scheme': PRODUCTS_ID,
                     })
 
 

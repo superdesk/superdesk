@@ -5,6 +5,7 @@ import unittest
 
 from unittest.mock import patch
 from httmock import urlmatch, HTTMock
+from ansa.constants import PHOTO_CATEGORIES_ID, PRODUCTS_ID
 
 from .search import AnsaPictureProvider, set_default_search_operator
 
@@ -17,12 +18,22 @@ def ansa_mock(url, request):
 
 class VocabulariesMock():
     def find_one(self, req, _id):
-        return {
-            'items': [
-                {'name': 'foo', 'qcode': '123'},
-                {'name': 'SOI', 'qcode': '140'},
-            ],
-        }
+        if _id == PHOTO_CATEGORIES_ID:
+            return {
+                'items': [
+                    {'name': 'foo', 'qcode': '123'},
+                    {'name': 'SOI', 'qcode': '140'},
+                ],
+            }
+        if _id == PRODUCTS_ID:
+            return {
+                'items': [
+                    {'name': 'Sports', 'qcode': '0050000100004'},
+                    {'name': 'Test', 'qcode': '0050000100005'},
+                ],
+            }
+
+        raise ValueError(_id)
 
 
 class AnsaPictureTestCase(unittest.TestCase):
@@ -92,5 +103,11 @@ class AnsaPictureTestCase(unittest.TestCase):
         self.assertIn({
             'name': 'SOI',
             'qcode': '140',
-            'scheme': 'PhotoCategories',
+            'scheme': PHOTO_CATEGORIES_ID,
+        }, item['subject'])
+
+        self.assertIn({
+            'name': 'Sports',
+            'qcode': '0050000100004',
+            'scheme': PRODUCTS_ID,
         }, item['subject'])
