@@ -453,8 +453,8 @@ function AnsaRepoDropdown(api, $filter, $location, $rootScope) {
     };
 }
 
-AnsaSearchPanelController.$inject = ['$scope'];
-function AnsaSearchPanelController($scope) {
+AnsaSearchPanelController.$inject = ['$scope', 'metadata'];
+function AnsaSearchPanelController($scope, metadata) {
     this.categories = [
         'ACE',
         'CLJ',
@@ -480,6 +480,15 @@ function AnsaSearchPanelController($scope) {
 
     this.updateCategory = (meta) => {
         meta.category = Object.keys(this.selectedCategories).filter((category) => !!this.selectedCategories[category]);
+    };
+
+    this.selected = {
+        subject: [],
+        products: [],
+    };
+
+    this.updateProducts = () => {
+        console.info('products', this.selected);
     };
 }
 

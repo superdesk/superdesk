@@ -200,8 +200,21 @@ class AnsaPictureProvider(superdesk.SearchProvider):
         else:
             return []  # avoid search with no filtering
 
-        set_default_search_operator(params)
+        try:
+            filters = query['query']['filtered']['filter']['and']
+            for _filter in filters:
+                try:
+                    products = _filter['terms']['subject.qcode']
+                    if products:
+                        params.setdefault('filters', []).append(
+                            'product = {}'.format(products[0])
+                        )
+                except KeyError:
+                    continue
+        except KeyError:
+            pass
 
+        set_default_search_operator(params)
         response = self.sess.get(ansa_photo_api(SEARCH_ENDPOINT), params=params, timeout=TIMEOUT)
         return self._parse_items(response)
 

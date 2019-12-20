@@ -6,11 +6,29 @@
         </div>
     </div>
 
+
+
     <div class="field">
         <label class="search-label" translate>Themes</label>
         <label class="search-label" ng-repeat="category in asp.categories" for="category-{{ :: category }}">
             <input type="checkbox" ng-model="asp.selectedCategories[category]" ng-change="asp.updateCategory(meta)" id="category-{{ :: category }}" /> {{ :: category }}
+
+
         </label>
+    </div>
+
+    <div class="field">
+        <label class="form-label form__row-label" translate>Products</label>
+        <div id="search-{{cv.name}}">
+            <div sd-meta-terms
+                data-item="selecteditems"
+                data-field="products"
+                data-unique="qcode"
+                data-list="metadata.products"
+                data-reload-list="true"
+                data-header="true"
+                data-change="itemSearch(selecteditems, 'products')"></div>
+        </div>
     </div>
 
     <div class="field">
