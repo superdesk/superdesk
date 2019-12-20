@@ -7,3 +7,4 @@ import ansa.macros.auto_publish  # noqa
 import ansa.macros.semantics_without_products  # noqa
 import ansa.macros.desk_routing  # noqa
 import ansa.macros.validate_for_publish  # noqa
+import ansa.macros.internal_destination_auto_publish  # noqa
