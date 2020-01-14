@@ -206,9 +206,10 @@ class AnsaPictureProvider(superdesk.SearchProvider):
                 try:
                     products = _filter['terms']['subject.qcode']
                     if products:
-                        params.setdefault('filters', []).append(
-                            'product = {}'.format(products[0])
-                        )
+                        for product in products:
+                            params.setdefault('filters', []).append(
+                                'product = {}'.format(product)
+                            )
                 except KeyError:
                     continue
         except KeyError:

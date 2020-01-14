@@ -6,8 +6,6 @@
         </div>
     </div>
 
-
-
     <div class="field">
         <label class="search-label" translate>Themes</label>
         <label class="search-label" ng-repeat="category in asp.categories" for="category-{{ :: category }}">
@@ -24,7 +22,7 @@
                 data-item="selecteditems"
                 data-field="products"
                 data-unique="qcode"
-                data-list="metadata.products"
+                data-list="metadata.archive_products"
                 data-reload-list="true"
                 data-header="true"
                 data-change="itemSearch(selecteditems, 'products')"></div>
