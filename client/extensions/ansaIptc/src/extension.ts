@@ -23,6 +23,7 @@ const parseDatetime = (date: string, time: string) => (date && time) ?
     null;
 
 const extension: IExtension = {
+    id: 'ansa-iptc',
     activate: (superdesk: ISuperdesk) => {
         const result: IExtensionActivationResult = {
             contributions: {

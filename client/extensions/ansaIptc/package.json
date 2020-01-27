@@ -5,13 +5,9 @@
   "version": "1.0.0",
   "scripts": {
     "compile": "tsc",
-    "watch": "tsc -watch",
-    "install": "npm run compile"
+    "watch": "tsc -watch"
   },
   "devDependencies": {
-    "typescript": "3.5.2"
-  },
-  "peerDependencies": {
-    "typescript": "3.5.2"
+    "typescript": "3.7.2"
   }
 }

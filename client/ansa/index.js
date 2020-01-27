@@ -4,6 +4,9 @@ import angular from 'angular';
 import widgets from './widgets';
 import packages from './package-manager/package-manager';
 import {onChangeMiddleware} from 'superdesk-core/scripts/apps/authoring/authoring';
+import {startApp} from 'superdesk-core/scripts/index';
+import ansaIptc from '../extensions/ansaIptc/dist/extension';
+import imageShortcuts from '../extensions/imageShortcuts/dist/extension';
 
 import AnsaRelatedCtrl from './AnsaRelatedCtrl';
 
@@ -525,6 +528,7 @@ export default angular.module('ansa.superdesk', [
 
         workspaceMenuProvider
             .item({
+                if: 'privileges.ansa_metasearch',
                 href: '/workspace/metasearch',
                 label: 'Metasearch',
                 icon: 'meta-search',
@@ -532,6 +536,7 @@ export default angular.module('ansa.superdesk', [
                 order: 910,
             })
             .item({
+                if: 'privileges.ansa_live_assistant',
                 href: '/workspace/assistant',
                 label: 'Live assistant',
                 icon: 'live',
@@ -539,6 +544,7 @@ export default angular.module('ansa.superdesk', [
                 shortcut: 'alt+l',
             })
             .item({
+                if: 'privileges.ansa_ai_news',
                 href: '/ansa/map',
                 label: 'aiNews',
                 icon: 'web',
@@ -598,3 +604,10 @@ export default angular.module('ansa.superdesk', [
         });
     }])
 ;
+
+setTimeout(() => {
+    startApp([
+        ansaIptc,
+        imageShortcuts,
+    ]);
+});
