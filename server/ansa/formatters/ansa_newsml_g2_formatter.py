@@ -414,7 +414,7 @@ class ANSAPlainTextNewsMLG2Formatter(NewsMLG2Formatter):
             cptype = 'region'
         if place.get('region'):
             cptype = 'statprov'
-        if place.get('region') and place.get('name') != place.get('region'):
+        if place.get('feature_class') == 'P':
             cptype = 'city'
 
         subject = SubElement(content_meta, elem, attrib={

@@ -11,21 +11,22 @@ from superdesk.tests import TestCase
 from .ansa_newsml_g2_formatter import ANSAPlainTextNewsMLG2Formatter, ANSAHTMLNewsMLG2Formatter
 
 geoname = {
-    "region": "Arezzo",
-    "scheme": "geonames",
-    "state": "Tuscany",
     "state_code": "16",
-    "code": "6541097",
+    "region_code": "FI",
+    "state": "Toscana",
+    "code": "3176959",
+    "name": "Firenze",
+    "tz": "Europe/Rome",
+    "scheme": "geonames",
+    "country": "Italia",
+    "feature_class": "P",
+    "region": "Firenze",
     "continent_code": "EU",
-    "name": "Monte San Savino",
-    "feature_class": "A",
-    "region_code": "AR",
     "location": {
-        "lat": 43.32924,
-        "lon": 11.72974
+        "lat": 43.77925,
+        "lon": 11.24626
     },
-    "country_code": "IT",
-    "country": "Italy"
+    "country_code": "IT"
 }
 
 
