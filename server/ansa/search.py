@@ -304,6 +304,8 @@ class AnsaPictureProvider(superdesk.SearchProvider):
 
             if fetch:
                 fetch_metadata(item, doc)
+            else:
+                item['_fetchable'] = True
 
             items.append(item)
 
