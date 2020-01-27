@@ -44,7 +44,8 @@
         "headline": {
             "order": 9,
             "sdWidth": "full",
-            "section": "content"
+            "section": "content",
+            "textarea": true
         },
         "description_text": {
             "order": 10,

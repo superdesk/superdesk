@@ -107,19 +107,6 @@
             "default": [],
             "mandatory_in_list": {
                 "scheme": {
-                    "Servissimo": null,
-                    "CTG": null,
-                    "01": null,
-                    "copyrights": null,
-                    "PhotoCategories": null,
-                    "addressing": null,
-                    "languages": null,
-                    "destination": null,
-                    "products": "products",
-                    "heading": null,
-                    "copyright": null,
-                    "Stages": null,
-                    "FIEG_Categories": "FIEG_Categories"
                 }
             },
             "nullable": false,

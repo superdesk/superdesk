@@ -189,6 +189,7 @@ class ANSAPlainTextNewsMLG2Formatter(NewsMLG2Formatter):
         self._format_related(article, item_meta)
         self._format_desk(article, item_meta)
         self._format_source(article, item_meta)
+        self._format_to(article, item_meta)
 
     def _format_source(self, article, item_meta):
         try:
@@ -196,6 +197,14 @@ class ANSAPlainTextNewsMLG2Formatter(NewsMLG2Formatter):
         except KeyError:
             source = '(ANSA)'
         etree.SubElement(item_meta, 'signal', {'qcode': 'source:{}'.format(source)})
+
+    def _format_to(self, article, item_meta):
+        try:
+            to = article['extra']['EMAIL_TO'] or ''
+        except KeyError:
+            to = ''
+        signal = etree.SubElement(item_meta, 'signal', {'qcode': 'mail:to'})
+        SubElement(signal, 'name').text = to
 
     def _format_desk(self, article, item_meta):
         # store desk as service
