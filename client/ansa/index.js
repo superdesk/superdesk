@@ -599,7 +599,7 @@ export default angular.module('ansa.superdesk', [
             }
 
             if (updated) { // update editor3
-                $rootScope.$broadcast('macro:refreshField', 'headline', item.headline);
+                $rootScope.$broadcast('macro:refreshField', 'headline', item.headline, {skipOnChange: false});
             }
         });
     }])
