@@ -130,6 +130,7 @@ module.exports = function(grunt) {
             ]
         },
         gridViewFields: [
+            'byline',
             'source',
             'copyright',
             'usageterms',
