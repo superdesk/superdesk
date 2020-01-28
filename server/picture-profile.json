@@ -13,7 +13,8 @@
         "PhotoCategories": {
             "order": 3,
             "sdWidth": "half",
-            "section": "header"
+            "section": "header",
+            "required": true
         },
         "subject": {
             "order": 4,
