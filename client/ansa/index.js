@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import {trim} from 'lodash';
+import {trim, get, isEqual} from 'lodash';
 import angular from 'angular';
 import widgets from './widgets';
 import packages from './package-manager/package-manager';
@@ -605,7 +605,7 @@ export default angular.module('ansa.superdesk', [
     }])
 
     .run(['$rootScope', 'metadata', ($rootScope, metadata) => {
-        let genre = null;
+        let lastGenre = null;
 
         onChangeMiddleware.push(({item, original}) => {
             const hasPlus = item.headline.indexOf('++ ') === 0;
@@ -619,22 +619,32 @@ export default angular.module('ansa.superdesk', [
                 updated = true;
             }
 
-            if (item.genre !== genre) {
-                metadata.values.genre.forEach((genre) => {
-                    const selected = item.genre.find((_genre) => _genre.qcode === genre.qcode) != null;
-                    const included = item.headline.indexOf(genre.name) !== -1;
+            if (lastGenre == null) {
+                lastGenre = original.genre || [];
+            }
 
-                    if (selected && !included && genre.qcode !== DEFAULT_GENRE) {
-                        item.headline = [genre.name, item.headline].join(' ');
-                        updated = true;
-                    } else if (!selected && included) {
+            const isSelected = (genre) => item.genre.find((_genre) => _genre.qcode === genre.qcode) != null;
+            const wasSelected = (genre) => lastGenre.find((_genre) => _genre.qcode === genre.qcode) != null;
+
+            if (!isEqual(get(item.genre, '0.name'), get(lastGenre, '0.name'))) {
+                const genres = metadata.values.genre.concat();
+
+                // remove removed
+                genres.filter((genre) => wasSelected(genre) && !isSelected(genre))
+                    .forEach((genre) => {
                         item.headline = item.headline.replace(genre.name, '').trim();
                         updated = true;
-                    }
-                });
+                    });
 
-                genre = item.genre;
+                // add new
+                genres.filter((genre) => isSelected(genre) && !wasSelected(genre))
+                    .forEach((genre) => {
+                        item.headline = [genre.name, item.headline].join(' ');
+                        updated = true;
+                    });
             }
+
+            lastGenre = item.genre || []; // not set to null to avoid reseting to original
 
             if (updated) { // update editor3
                 $rootScope.$broadcast('macro:refreshField', 'headline', item.headline, {skipOnChange: false});
