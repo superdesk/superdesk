@@ -1,7 +1,10 @@
 
 from superdesk.tests import TestCase
 from ansa.validate import validate, MASK_FIELD, Errors
-from ansa.constants import AUTHOR_FIELD
+from ansa.constants import (
+    AUTHOR_FIELD, COAUTHOR_FIELD,
+    JOURNALIST_ROLE,
+)
 
 
 class ValidateTestCase(TestCase):
@@ -119,38 +122,66 @@ class ValidateTestCase(TestCase):
         self.assertIn(Errors.AFP_IMAGE_USAGE, response)
 
     def test_author_is_user(self):
-        item = {
-            'extra': {AUTHOR_FIELD: 'foo'},
-        }
+        item = {'extra': {}}
         fields = {}
-        response = []
-        validate(self, item, response, fields)
-        self.assertIn(Errors.AUTHOR_NOT_FOUND, response)
 
         roles = self.app.data.insert('roles', [
-            {'name': 'Foo'},
-            {'name': 'Gio'},
+            {'name': 'admin'},
+            {'name': JOURNALIST_ROLE},
         ])
 
         self.app.data.insert('users', [
-            {'username': 'foo'},
-            {'username': 'bar', 'role': roles[0]},
-            {'username': 'baz', 'role': roles[1]},
+            {'username': 'guest'},
+            {'username': 'admin', 'role': roles[0]},
+            {'username': 'journalist', 'role': roles[1]},
         ])
 
         response = []
+        item['extra'][AUTHOR_FIELD] = ''
+        validate(self, item, response, fields)
+        self.assertEqual([], response)
+
+        response = []
+        item['extra'][AUTHOR_FIELD] = 'fox'
+        validate(self, item, response, fields)
+        self.assertIn(Errors.AUTHOR_NOT_FOUND, response)
+
+        response = []
+        item['extra'][AUTHOR_FIELD] = 'guest'
         validate(self, item, response, fields)
         self.assertIn(Errors.AUTHOR_NOT_GIO_ROLE, response)
 
         response = []
-        item['extra'][AUTHOR_FIELD] = 'bar'
+        item['extra'][AUTHOR_FIELD] = 'admin'
         validate(self, item, response, fields)
         self.assertIn(Errors.AUTHOR_NOT_GIO_ROLE, response)
 
         response = []
-        item['extra'][AUTHOR_FIELD] = 'baz'
+        item['extra'][AUTHOR_FIELD] = 'journalist'
         validate(self, item, response, fields)
-        self.assertEquals([], response)
+        self.assertEqual([], response)
+
+        response = []
+        item['extra'][AUTHOR_FIELD] = 'admin'
+        item['extra'][COAUTHOR_FIELD] = 'fox'
+        validate(self, item, response, fields)
+        self.assertIn(Errors.AUTHOR_COAUTHOR_NOT_FOUND, response)
+
+        response = []
+        item['extra'][COAUTHOR_FIELD] = 'admin'
+        validate(self, item, response, fields)
+        self.assertIn(Errors.AUTHOR_COAUTHOR_NOT_GIO_ROLE, response)
+
+        response = []
+        item['extra'][COAUTHOR_FIELD] = 'journalist'
+        validate(self, item, response, fields)
+        self.assertEqual([], response)
+
+        response = []
+        item['extra'][AUTHOR_FIELD] = 'fox'
+        item['extra'][COAUTHOR_FIELD] = 'journalist'
+        validate(self, item, response, fields)
+        self.assertEqual([], response)
 
         # test with validation off
         self.app.config['VALIDATE_AUTHOR'] = False
@@ -159,8 +190,3 @@ class ValidateTestCase(TestCase):
         item['extra'][AUTHOR_FIELD] = 'fox'
         validate(self, item, response, fields)
         self.assertEquals([], response)
-
-        response = []
-        item['extra'][AUTHOR_FIELD] = 'foo'
-        validate(self, item, response, fields)
-        self.assertIn(Errors.AUTHOR_NOT_GIO_ROLE, response)

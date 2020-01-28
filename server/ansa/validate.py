@@ -7,7 +7,10 @@ from flask import current_app as app
 from superdesk.text_utils import get_char_count
 from superdesk.signals import item_validate
 from superdesk import get_resource_service
-from ansa.constants import GALLERY, AUTHOR_FIELD
+from ansa.constants import (
+    GALLERY, AUTHOR_FIELD, COAUTHOR_FIELD,
+    JOURNALIST_ROLE,
+)
 
 MASK_FIELD = "output_code"
 
@@ -28,8 +31,12 @@ class Validators(IntEnum):
 
 class Errors:
     AFP_IMAGE_USAGE = "AFP images could not be used"
+
     AUTHOR_NOT_FOUND = "Author could not be found"
     AUTHOR_NOT_GIO_ROLE = "Author is not Journalist"
+    AUTHOR_COAUTHOR_MISSING = "Co-Author must be set"
+    AUTHOR_COAUTHOR_NOT_FOUND = "Co-Author could not be found"
+    AUTHOR_COAUTHOR_NOT_GIO_ROLE = "Co-Author is not Journalist"
 
 
 def get_active_mask(products):
@@ -138,18 +145,34 @@ def validate(sender, item, response, error_fields, **kwargs):
 
 
 def validate_author(item, response, error_fields):
-    if item.get('extra') and item['extra'].get(AUTHOR_FIELD):
-        user = get_resource_service('users').find_one(req=None, username=item['extra'][AUTHOR_FIELD])
-        if not user:
-            if app.config.get('VALIDATE_AUTHOR', True):
-                response.append(Errors.AUTHOR_NOT_FOUND)
-            else:
-                logger.warning('Author "%s" not found', item['extra'][AUTHOR_FIELD])
+    extra = item.get('extra')
+    if extra and extra.get(AUTHOR_FIELD):
+        author = get_resource_service('users').find_one(req=None, username=extra[AUTHOR_FIELD])
+        coauthor = get_resource_service('users').find_one(req=None, username=extra[COAUTHOR_FIELD]) \
+            if extra.get(COAUTHOR_FIELD) else None
+        if author and is_user_journalist(author):
             return
-        role = get_resource_service('roles').find_one(req=None, _id=user['role']) if user.get('role') else None
-        if not role or not role.get('name') or not role['name'].startswith('Gio'):
+        elif coauthor and is_user_journalist(coauthor):
+            return
+        elif coauthor:
+            response.append(Errors.AUTHOR_COAUTHOR_NOT_GIO_ROLE)
+        elif author and extra.get(COAUTHOR_FIELD):
+            response.append(Errors.AUTHOR_COAUTHOR_NOT_FOUND)
+        elif author:
             response.append(Errors.AUTHOR_NOT_GIO_ROLE)
-            return
+        elif app.config.get('VALIDATE_AUTHOR', True):
+            response.append(Errors.AUTHOR_NOT_FOUND)
+        else:
+            logger.warning('Author "%s" not found', item['extra'][AUTHOR_FIELD])
+
+
+def is_user_journalist(user):
+    role = get_user_role(user)
+    return role and role.get('name') == JOURNALIST_ROLE
+
+
+def get_user_role(user):
+    return get_resource_service('roles').find_one(req=None, _id=user['role']) if user.get('role') else None
 
 
 def init_app(app):

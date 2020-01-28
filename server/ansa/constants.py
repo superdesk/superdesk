@@ -10,6 +10,8 @@ ANSA_DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S%z'
 
 ROME_TZ = 'Europe/Rome'
 
+JOURNALIST_ROLE = 'Gio'
+
 AUTHOR_FIELD = 'Autore'
 COAUTHOR_FIELD = 'Co-Autore'
 DIGITATOR_FIELD = 'Digitatore'
