@@ -1,6 +1,7 @@
 
 from superdesk.tests import TestCase
 from ansa.validate import validate, MASK_FIELD, Errors
+from ansa.constants import AUTHOR_FIELD
 
 
 class ValidateTestCase(TestCase):
@@ -116,3 +117,37 @@ class ValidateTestCase(TestCase):
         validate(self, item, response, fields)
 
         self.assertIn(Errors.AFP_IMAGE_USAGE, response)
+
+    def test_author_is_user(self):
+        item = {
+            'extra': {AUTHOR_FIELD: 'foo'},
+        }
+        fields = {}
+        response = []
+        validate(self, item, response, fields)
+        self.assertIn(Errors.AUTHOR_NOT_FOUND, response)
+
+        roles = self.app.data.insert('roles', [
+            {'name': 'Foo'},
+            {'name': 'Gio'},
+        ])
+
+        self.app.data.insert('users', [
+            {'username': 'foo'},
+            {'username': 'bar', 'role': roles[0]},
+            {'username': 'baz', 'role': roles[1]},
+        ])
+
+        response = []
+        validate(self, item, response, fields)
+        self.assertIn(Errors.AUTHOR_NOT_GIO_ROLE, response)
+
+        response = []
+        item['extra'][AUTHOR_FIELD] = 'bar'
+        validate(self, item, response, fields)
+        self.assertIn(Errors.AUTHOR_NOT_GIO_ROLE, response)
+
+        response = []
+        item['extra'][AUTHOR_FIELD] = 'baz'
+        validate(self, item, response, fields)
+        self.assertEquals([], response)

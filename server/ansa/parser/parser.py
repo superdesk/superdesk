@@ -8,7 +8,7 @@ from ansa.analysis.analysis import parse, apply
 from superdesk import get_resource_service
 from ansa.geonames import get_place_by_id
 from superdesk.utc import local_to_utc
-from ansa.constants import PHOTO_CATEGORIES_ID, FEATURED, GALLERY, ROME_TZ
+from ansa.constants import PHOTO_CATEGORIES_ID, FEATURED, GALLERY, ROME_TZ, AUTHOR_FIELD
 
 MONTHS_IT = [
     '', 'gen', 'feb', 'mar', 'apr', 'mag', 'giu', 'lug', 'ago', 'set', 'ott', 'nov', 'dic',
@@ -142,7 +142,7 @@ class ANSAParser(NewsMLTwoFeedParser):
                 item.setdefault('extra', {})['digitator'] = name.text
             elif contrib.get('role') and contrib.get('role').startswith('ansactrol:') and name is not None:
                 item.setdefault('extra', {}).update({
-                    'Autore': name.text or '',
+                    AUTHOR_FIELD: name.text or '',
                 })
 
         creator = meta.find(self.qname('creator'))

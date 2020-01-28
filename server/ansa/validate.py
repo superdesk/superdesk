@@ -4,7 +4,8 @@ import superdesk
 from enum import IntEnum
 from superdesk.text_utils import get_char_count
 from superdesk.signals import item_validate
-from ansa.constants import GALLERY
+from superdesk import get_resource_service
+from ansa.constants import GALLERY, AUTHOR_FIELD
 
 MASK_FIELD = "output_code"
 
@@ -23,6 +24,8 @@ class Validators(IntEnum):
 
 class Errors:
     AFP_IMAGE_USAGE = "AFP images could not be used"
+    AUTHOR_NOT_FOUND = "Author could not be found"
+    AUTHOR_NOT_GIO_ROLE = "Author is not Journalist"
 
 
 def get_active_mask(products):
@@ -126,6 +129,20 @@ def validate(sender, item, response, error_fields, **kwargs):
         ):
             response.append(Errors.AFP_IMAGE_USAGE)
             break
+
+    validate_author(item, response, error_fields)
+
+
+def validate_author(item, response, error_fields):
+    if item.get('extra') and item['extra'].get(AUTHOR_FIELD):
+        user = get_resource_service('users').find_one(req=None, username=item['extra'][AUTHOR_FIELD])
+        if not user:
+            response.append(Errors.AUTHOR_NOT_FOUND)
+            return
+        role = get_resource_service('roles').find_one(req=None, _id=user['role']) if user.get('role') else None
+        if not role or not role.get('name') or not role['name'].startswith('Gio'):
+            response.append(Errors.AUTHOR_NOT_GIO_ROLE)
+            return
 
 
 def init_app(app):
