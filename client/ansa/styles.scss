@@ -250,3 +250,12 @@ div[data-field="genre"] .dropdown--dropleft .dropdown__menu {
         margin-right: 0.8rem;
     }
 }
+
+// make media metadata editor sidebar bigger
+.sd-column-box__slide-in-column--large {
+    width: 60rem;
+
+    .sd-line-input--boxed input.sd-line-input__input, .sd-line-input--boxed textarea.sd-line-input__input {
+        font-size: 1.6rem;
+    }
+}
