@@ -151,3 +151,16 @@ class ValidateTestCase(TestCase):
         item['extra'][AUTHOR_FIELD] = 'baz'
         validate(self, item, response, fields)
         self.assertEquals([], response)
+
+        # test with validation off
+        self.app.config['VALIDATE_AUTHOR'] = False
+
+        response = []
+        item['extra'][AUTHOR_FIELD] = 'fox'
+        validate(self, item, response, fields)
+        self.assertEquals([], response)
+
+        response = []
+        item['extra'][AUTHOR_FIELD] = 'foo'
+        validate(self, item, response, fields)
+        self.assertIn(Errors.AUTHOR_NOT_GIO_ROLE, response)
