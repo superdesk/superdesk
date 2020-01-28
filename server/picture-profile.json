@@ -23,7 +23,8 @@
         "products": {
             "order": 5,
             "sdWidth": "full",
-            "section": "header"
+            "section": "header",
+            "preview": true
         },
         "city": {
             "order": 6,
