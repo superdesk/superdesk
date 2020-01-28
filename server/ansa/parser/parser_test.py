@@ -110,13 +110,9 @@ class ANSAParserTestCase(TestCase):
         self.assertIn('arts', item['keywords'])
         self.assertIn('fashion', item['keywords'])
 
-        self.assertIn('authors', item)
-        self.assertEqual([{
-            '_id': 'Foo:photographer',
-            'role': 'photographer',
-            'name': 'photographer',
-            'sub_label': 'Foo',
-        }], item['authors'])
+        self.assertIn('extra', item)
+        self.assertIn('Autore', item['extra'])
+        self.assertEqual('Foo', item['extra']['Autore'])
 
     def test_image_association(self):
         item = self.parse('culture.xml')
