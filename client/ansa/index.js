@@ -486,6 +486,27 @@ function AnsaSearchPanelController() {
     };
 }
 
+// from superdesk-core/scripts/apps/authoring/media/MediaCopyMetadataDirective.ts
+function getMediaMetadata(metadata, fields) {
+    const output = {extra: {}};
+
+    if (metadata == null) {
+        return output;
+    }
+
+    fields.forEach((field) => {
+        if (field.extra) {
+            if (metadata.extra != null && metadata.extra[field.field] != null) {
+                output.extra[field.field] = metadata.extra[field.field];
+            }
+        } else if (metadata[field.field] != null) {
+            output[field.field] = metadata[field.field];
+        }
+    });
+
+    return output;
+}
+
 export default angular.module('ansa.superdesk', [
     widgets.name,
     packages.name,
@@ -552,6 +573,23 @@ export default angular.module('ansa.superdesk', [
                 group: 'map',
                 shortcut: 'alt+a',
             });
+
+        superdeskProvider.activity('copy-metadata', {
+            label: gettext('Copy Metadata'),
+            icon: 'copy',
+            monitor: true,
+            controller: ['data', '$controller', '$rootScope', function(data, $controller, $rootScope) {
+                const ctrl = $controller('MediaFieldsController');
+                const stopWatch = $rootScope.$watch(() => ctrl.fields, (fields) => {
+                    if (fields) {
+                        stopWatch();
+                        localStorage.setItem('metadata:items', JSON.stringify(getMediaMetadata(data.item, fields)));
+                    }
+                });
+            }],
+            filters: [{action: 'list', type: 'archive'}],
+            condition: (item) => item.type === 'picture',
+        });
     }])
     // ansa core templates override
     .run(['$templateCache', ($templateCache) => {
