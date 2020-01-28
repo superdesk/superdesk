@@ -10,6 +10,9 @@ from superdesk.publish.formatters.newsml_g2_formatter import NewsMLG2Formatter, 
 from superdesk.text_utils import get_text
 from superdesk.logging import logger
 
+from ansa.constants import AUTHOR_MAPPING
+
+
 CONTRIBUTOR_MAPPING = {
     'digitator': 'descrWriter',
     'coauthor': 'coAuthor',
@@ -135,6 +138,11 @@ class ANSAPlainTextNewsMLG2Formatter(NewsMLG2Formatter):
         for field, role in CONTRIBUTOR_MAPPING.items():
             if extra.get(field):
                 elem = SubElement(content_meta, 'contributor', {'role': 'ctrol:{}'.format(role)})
+                SubElement(elem, 'name').text = extra[field]
+
+        for field, role in AUTHOR_MAPPING.items():
+            if extra.get(field):
+                elem = SubElement(content_meta, 'contributor', {'role': 'ansactrol:{}'.format(role)})
                 SubElement(elem, 'name').text = extra[field]
 
     def _format_sms(self, article, content_meta):

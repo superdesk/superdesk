@@ -9,6 +9,7 @@ from eve.versioning import insert_versioning_documents
 from superdesk.utc import utcnow
 from superdesk.tests import TestCase
 from .ansa_newsml_g2_formatter import ANSAPlainTextNewsMLG2Formatter, ANSAHTMLNewsMLG2Formatter
+from ansa.constants import AUTHOR_FIELD, COAUTHOR_FIELD, DIGITATOR_FIELD
 
 geoname = {
     "state_code": "16",
@@ -285,56 +286,27 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         self.assertEqual('Foo', creators[0].get('literal'))
 
     def test_authors(self):
-        self.app.data.insert('users', [
-            {
-                "_id": "test_id",
-                "username": "author 1",
-                "display_name": "John Doe",
-                "is_author": True,
-                'sign_off': 'JD',
+        updates = {
+            'extra': {
+                AUTHOR_FIELD: 'foo',
+                COAUTHOR_FIELD: 'bar',
+                DIGITATOR_FIELD: 'baz',
             },
-            {
-                "_id": "test_id_2",
-                "username": "author 2",
-                "display_name": "Foo",
-                "is_author": True,
-                'sign_off': 'F',
-            },
-        ])
-
-        updates = {'authors': [
-            {
-                'role': 'editor',
-                'name': 'John Doe',
-                'parent': 'test_id',
-            },
-            {
-                'role': 'photographer',
-                'name': 'photographer',
-                'parent': 'test_id_2',
-            },
-            {
-                'role': 'ingested',
-                'name': 'ingested',
-                'sub_label': 'Bar',
-            },
-        ]}
+        }
 
         content_meta = self.format_content_meta(updates)
         contributors = content_meta.findall(ns('contributor'))
 
-        self.assertGreaterEqual(len(contributors), 3)
+        self.assertEqual(len(contributors), 3)
 
-        self.assertEqual('John Doe', contributors[0].find(ns('name')).text)
-        self.assertEqual(contributors[0].get('literal'), 'JD')
-        self.assertEqual(contributors[0].get('role'), 'ansactrol:editor')
+        self.assertEqual('foo', contributors[0].find(ns('name')).text)
+        self.assertEqual(contributors[0].get('role'), 'ansactrol:author')
 
-        self.assertEqual('Foo', contributors[1].find(ns('name')).text)
-        self.assertEqual(contributors[1].get('role'), 'ansactrol:photographer')
+        self.assertEqual('bar', contributors[1].find(ns('name')).text)
+        self.assertEqual(contributors[1].get('role'), 'ansactrol:co-author')
 
-        self.assertEqual(contributors[2].get('role'), 'ansactrol:ingested')
-        self.assertEqual(contributors[2].get('literal'), 'Bar')
-        self.assertEqual(contributors[2].find(ns('name')).text, 'Bar')
+        self.assertEqual('baz', contributors[2].find(ns('name')).text)
+        self.assertEqual(contributors[2].get('role'), 'ansactrol:writer')
 
     def test_headlines(self):
         content_meta = self.format_content_meta()
