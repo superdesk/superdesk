@@ -142,7 +142,7 @@ class ANSAPlainTextNewsMLG2Formatter(NewsMLG2Formatter):
 
         for field, role in AUTHOR_MAPPING.items():
             if extra.get(field):
-                elem = SubElement(content_meta, 'contributor', {'role': 'ansactrol:{}'.format(role)})
+                elem = SubElement(content_meta, 'contributor', {'role': role})
                 SubElement(elem, 'name').text = extra[field]
 
     def _format_sms(self, article, content_meta):

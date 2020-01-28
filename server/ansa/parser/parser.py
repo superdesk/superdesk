@@ -8,7 +8,7 @@ from ansa.analysis.analysis import parse, apply
 from superdesk import get_resource_service
 from ansa.geonames import get_place_by_id
 from superdesk.utc import local_to_utc
-from ansa.constants import PHOTO_CATEGORIES_ID, FEATURED, GALLERY, ROME_TZ, AUTHOR_FIELD
+from ansa.constants import PHOTO_CATEGORIES_ID, FEATURED, GALLERY, ROME_TZ, AUTHOR_MAPPING
 
 MONTHS_IT = [
     '', 'gen', 'feb', 'mar', 'apr', 'mag', 'giu', 'lug', 'ago', 'set', 'ott', 'nov', 'dic',
@@ -138,12 +138,15 @@ class ANSAParser(NewsMLTwoFeedParser):
         contribs = meta.findall(self.qname('contributor'))
         for contrib in contribs:
             name = contrib.find(self.qname('name'))
-            if contrib.get('role') == 'ctrol:descrWriter' and name is not None:
+            role = contrib.get('role')
+            if name is None or not role:
+                continue
+            if contrib.get('role') == 'ctrol:descrWriter':
                 item.setdefault('extra', {})['digitator'] = name.text
-            elif contrib.get('role') and contrib.get('role').startswith('ansactrol:') and name is not None:
-                item.setdefault('extra', {}).update({
-                    AUTHOR_FIELD: name.text or '',
-                })
+            if contrib.get('role').startswith('ansactrol:'):
+                for field, mapped_role in AUTHOR_MAPPING.items():
+                    if role == mapped_role:
+                        item.setdefault('extra', {})[field] = name.text
 
         creator = meta.find(self.qname('creator'))
         if creator is not None and creator.get('literal'):

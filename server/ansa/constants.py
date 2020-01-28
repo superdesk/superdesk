@@ -15,7 +15,7 @@ COAUTHOR_FIELD = 'Co-Autore'
 DIGITATOR_FIELD = 'Digitatore'
 
 AUTHOR_MAPPING = {
-    AUTHOR_FIELD: 'author',
-    COAUTHOR_FIELD: 'co-author',
-    DIGITATOR_FIELD: 'writer',
+    AUTHOR_FIELD: 'ansactrol:author',
+    COAUTHOR_FIELD: 'ansactrol:co-author',
+    DIGITATOR_FIELD: 'ansactrol:writer',
 }

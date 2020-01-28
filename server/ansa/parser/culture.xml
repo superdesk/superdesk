@@ -91,10 +91,10 @@
         <contributor role="ctrol:supplier">
           <name>ANSA</name>
         </contributor>
-        <contributor role="ansactrol:photographer">
+        <contributor role="ansactrol:author">
           <name>Foo</name>
         </contributor>
-        <contributor role="x:writer">
+        <contributor role="ansactrol:co-author">
           <name>Bar</name>
         </contributor>
         <keyword>culture</keyword>

@@ -295,8 +295,8 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         }
 
         content_meta = self.format_content_meta(updates)
-        contributors = content_meta.findall(ns('contributor'))
 
+        contributors = content_meta.findall(ns('contributor'))
         self.assertEqual(len(contributors), 3)
 
         self.assertEqual('foo', contributors[0].find(ns('name')).text)

@@ -2,6 +2,7 @@ import re
 import superdesk
 
 from enum import IntEnum
+from flask import current_app as app
 from superdesk.text_utils import get_char_count
 from superdesk.signals import item_validate
 from superdesk import get_resource_service
@@ -130,7 +131,8 @@ def validate(sender, item, response, error_fields, **kwargs):
             response.append(Errors.AFP_IMAGE_USAGE)
             break
 
-    validate_author(item, response, error_fields)
+    if app.config.get('VALIDATE_AUTHOR', True):
+        validate_author(item, response, error_fields)
 
 
 def validate_author(item, response, error_fields):
