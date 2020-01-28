@@ -23,7 +23,7 @@ install:
     - cd $TRAVIS_BUILD_DIR/client && npm install
 
 script:
-    - cd $TRAVIS_BUILD_DIR/client && grunt build
+    - cd $TRAVIS_BUILD_DIR/client && node --max_old_space_size=4098 ./node_modules/.bin/grunt build
     - cd $TRAVIS_BUILD_DIR/client && npm run lint
     - cd $TRAVIS_BUILD_DIR/server && flake8
     - cd $TRAVIS_BUILD_DIR/server && nosetests
