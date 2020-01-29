@@ -25,7 +25,8 @@
             "order": 5,
             "sdWidth": "full",
             "section": "header",
-            "preview": true
+            "preview": true,
+            "required": true
         },
         "city": {
             "order": 6,
