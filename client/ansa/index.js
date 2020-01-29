@@ -637,7 +637,7 @@ export default angular.module('ansa.superdesk', [
                     });
 
                 // add new
-                genres.filter((genre) => isSelected(genre) && !wasSelected(genre))
+                genres.filter((genre) => isSelected(genre) && !wasSelected(genre) && genre.qcode !== DEFAULT_GENRE)
                     .forEach((genre) => {
                         item.headline = [genre.name, item.headline].join(' ');
                         updated = true;
