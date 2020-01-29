@@ -632,15 +632,19 @@ export default angular.module('ansa.superdesk', [
                 // remove removed
                 genres.filter((genre) => wasSelected(genre) && !isSelected(genre))
                     .forEach((genre) => {
-                        item.headline = item.headline.replace(genre.name, '').trim();
-                        updated = true;
+                        if (item.headline.startsWith(genre.name)) {
+                            item.headline = item.headline.slice(genre.name.length).trim();
+                            updated = true;
+                        }
                     });
 
                 // add new
                 genres.filter((genre) => isSelected(genre) && !wasSelected(genre) && genre.qcode !== DEFAULT_GENRE)
                     .forEach((genre) => {
-                        item.headline = [genre.name, item.headline].join(' ');
-                        updated = true;
+                        if (!item.headline.startsWith(genre.name)) {
+                            item.headline = genre.name + ' ' + item.headline;
+                            updated = true;
+                        }
                     });
             }
 
