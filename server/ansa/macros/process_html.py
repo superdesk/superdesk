@@ -7,6 +7,9 @@ def process_html(html, process, **kwargs):
 
     for elem in root:
         if elem.tag in ('p', 'pre') and elem.text:
-            elem.text = process(elem.text, **kwargs)
+            text = "".join(elem.itertext())
+            for child in elem:
+                elem.remove(child)
+            elem.text = process(text, **kwargs)
 
     return to_string(root, method='html')

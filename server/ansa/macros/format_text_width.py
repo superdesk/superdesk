@@ -17,6 +17,7 @@ def split_text(text='', **kwargs):
             output.append(line)
         else:
             words = ' '.join(lines[i:]).split(' ')
+            break
 
     text = ''
     for word in words:
