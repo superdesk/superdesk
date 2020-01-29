@@ -1,37 +1,27 @@
-
 from superdesk.tests import TestCase
 from ansa.validate import validate, MASK_FIELD, Errors
-from ansa.constants import (
-    AUTHOR_FIELD, COAUTHOR_FIELD,
-    JOURNALIST_ROLE,
-)
 
 
 class ValidateTestCase(TestCase):
-
     def setUp(self):
-        self.app.data.insert('vocabularies', [{
-            '_id': 'products',
-            'items': [
-                {'qcode': 'foo', 'name': 'Foo', MASK_FIELD: '000011111'},
-                {'qcode': 'bar', 'name': 'Bar', MASK_FIELD: 111110000},
-                {'qcode': 'baz', 'name': 'Baz', MASK_FIELD: 'baz'},
+        self.app.data.insert(
+            'vocabularies',
+            [
+                {
+                    '_id': 'products',
+                    'items': [
+                        {'qcode': 'foo', 'name': 'Foo', MASK_FIELD: '000011111'},
+                        {'qcode': 'bar', 'name': 'Bar', MASK_FIELD: 111110000},
+                        {'qcode': 'baz', 'name': 'Baz', MASK_FIELD: 'baz'},
+                    ],
+                }
             ],
-        }])
+        )
         self.item = {
             'subject': [
-                {
-                    'qcode': 'foo',
-                    'scheme': 'products',
-                },
-                {
-                    'qcode': 'bar',
-                    'scheme': 'products',
-                },
-                {
-                    'qcode': 'baz',
-                    'scheme': 'products',
-                },
+                {'qcode': 'foo', 'scheme': 'products'},
+                {'qcode': 'bar', 'scheme': 'products'},
+                {'qcode': 'baz', 'scheme': 'products'},
             ],
         }
 
@@ -107,12 +97,7 @@ class ValidateTestCase(TestCase):
     def test_avoid_associated_afp_picture(self):
         item = self.item.copy()
         item['associations'] = {
-            'test': {
-                'type': 'picture',
-                'extra': {
-                    'supplier': 'AFP',
-                },
-            },
+            'test': {'type': 'picture', 'extra': {'supplier': 'AFP'}},
         }
 
         fields = {}
@@ -120,73 +105,3 @@ class ValidateTestCase(TestCase):
         validate(self, item, response, fields)
 
         self.assertIn(Errors.AFP_IMAGE_USAGE, response)
-
-    def test_author_is_user(self):
-        item = {'extra': {}}
-        fields = {}
-
-        roles = self.app.data.insert('roles', [
-            {'name': 'admin'},
-            {'name': JOURNALIST_ROLE},
-        ])
-
-        self.app.data.insert('users', [
-            {'username': 'guest'},
-            {'username': 'admin', 'role': roles[0]},
-            {'username': 'journalist', 'role': roles[1]},
-        ])
-
-        response = []
-        item['extra'][AUTHOR_FIELD] = ''
-        validate(self, item, response, fields)
-        self.assertEqual([], response)
-
-        response = []
-        item['extra'][AUTHOR_FIELD] = 'fox'
-        validate(self, item, response, fields)
-        self.assertIn(Errors.AUTHOR_NOT_FOUND, response)
-
-        response = []
-        item['extra'][AUTHOR_FIELD] = 'guest'
-        validate(self, item, response, fields)
-        self.assertIn(Errors.AUTHOR_NOT_GIO_ROLE, response)
-
-        response = []
-        item['extra'][AUTHOR_FIELD] = 'admin'
-        validate(self, item, response, fields)
-        self.assertIn(Errors.AUTHOR_NOT_GIO_ROLE, response)
-
-        response = []
-        item['extra'][AUTHOR_FIELD] = 'journalist'
-        validate(self, item, response, fields)
-        self.assertEqual([], response)
-
-        response = []
-        item['extra'][AUTHOR_FIELD] = 'admin'
-        item['extra'][COAUTHOR_FIELD] = 'fox'
-        validate(self, item, response, fields)
-        self.assertIn(Errors.AUTHOR_COAUTHOR_NOT_FOUND, response)
-
-        response = []
-        item['extra'][COAUTHOR_FIELD] = 'admin'
-        validate(self, item, response, fields)
-        self.assertIn(Errors.AUTHOR_COAUTHOR_NOT_GIO_ROLE, response)
-
-        response = []
-        item['extra'][COAUTHOR_FIELD] = 'journalist'
-        validate(self, item, response, fields)
-        self.assertEqual([], response)
-
-        response = []
-        item['extra'][AUTHOR_FIELD] = 'fox'
-        item['extra'][COAUTHOR_FIELD] = 'journalist'
-        validate(self, item, response, fields)
-        self.assertEqual([], response)
-
-        # test with validation off
-        self.app.config['VALIDATE_AUTHOR'] = False
-
-        response = []
-        item['extra'][AUTHOR_FIELD] = 'fox'
-        validate(self, item, response, fields)
-        self.assertEquals([], response)
