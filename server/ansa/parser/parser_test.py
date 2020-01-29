@@ -7,7 +7,6 @@ from .parser import ANSAParser
 from superdesk.etree import etree
 from superdesk.tests import TestCase
 from ansa.subjects import init_app as init_subjects
-from ansa.constants import AUTHOR_FIELD, COAUTHOR_FIELD
 
 GEONAMES_URL = 'http://api.geonames.org/getJSON?type=json&username=superdesk_dev&geonameId=3172394&lang=it'
 
@@ -110,11 +109,7 @@ class ANSAParserTestCase(TestCase):
         self.assertIn('culture', item['keywords'])
         self.assertIn('arts', item['keywords'])
         self.assertIn('fashion', item['keywords'])
-
-        self.assertEqual('VR-COM', item['sign_off'])
-        self.assertIn('extra', item)
-        self.assertEqual('Foo', item['extra'].get(AUTHOR_FIELD))
-        self.assertEqual('Bar', item['extra'].get(COAUTHOR_FIELD))
+        self.assertEqual('VR/BAR', item['sign_off'])
 
     def test_image_association(self):
         item = self.parse('culture.xml')

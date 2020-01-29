@@ -9,7 +9,6 @@ from eve.versioning import insert_versioning_documents
 from superdesk.utc import utcnow
 from superdesk.tests import TestCase
 from .ansa_newsml_g2_formatter import ANSAPlainTextNewsMLG2Formatter, ANSAHTMLNewsMLG2Formatter
-from ansa.constants import AUTHOR_FIELD, COAUTHOR_FIELD, DIGITATOR_FIELD
 
 geoname = {
     "state_code": "16",
@@ -283,33 +282,27 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         content_meta = self.format_content_meta()
         creators = content_meta.findall(ns('creator'))
         self.assertEqual(1, len(creators))
-        self.assertEqual('Foo', creators[0].get('literal'))
+        self.assertEqual('FOO', creators[0].get('literal'))
 
-    def test_authors(self):
-        updates = {
-            'extra': {
-                AUTHOR_FIELD: 'foo',
-                COAUTHOR_FIELD: 'bar',
-                DIGITATOR_FIELD: 'baz',
-            },
-        }
+        content_meta = self.format_content_meta({'sign_off': 'FOO/BAR/BAZ'})
+        creators = content_meta.findall(ns('creator'))
+        self.assertEqual(1, len(creators))
+        self.assertEqual('FOO-BAZ', creators[0].get('literal'))
 
-        content_meta = self.format_content_meta(updates)
+        content_meta = self.format_content_meta({'sign_off': 'foo-bar'})
+        creators = content_meta.findall(ns('creator'))
+        self.assertEqual(1, len(creators))
+        self.assertEqual('FOO-BAR', creators[0].get('literal'))
 
-        contributors = content_meta.findall(ns('contributor'))
-        self.assertEqual(len(contributors), 3)
+        content_meta = self.format_content_meta({'sign_off': 'a-b/c'})
+        creators = content_meta.findall(ns('creator'))
+        self.assertEqual(1, len(creators))
+        self.assertEqual('A-B', creators[0].get('literal'))
 
-        for name, role in {
-            'foo': 'author',
-            'bar': 'co-author',
-            'baz': 'writer',
-        }.items():
-            self.assertEqual(
-                name,
-                content_meta
-                .find(ns('contributor[@role="ansactrol:{}"]'.format(role)))
-                .find(ns('name')).text
-            )
+        content_meta = self.format_content_meta({'sign_off': 'foo/'})
+        creators = content_meta.findall(ns('creator'))
+        self.assertEqual(1, len(creators))
+        self.assertEqual('FOO', creators[0].get('literal'))
 
     def test_headlines(self):
         content_meta = self.format_content_meta()

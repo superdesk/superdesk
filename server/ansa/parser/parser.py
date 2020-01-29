@@ -8,7 +8,7 @@ from ansa.analysis.analysis import parse, apply
 from superdesk import get_resource_service
 from ansa.geonames import get_place_by_id
 from superdesk.utc import local_to_utc
-from ansa.constants import PHOTO_CATEGORIES_ID, FEATURED, GALLERY, ROME_TZ, AUTHOR_MAPPING
+from ansa.constants import PHOTO_CATEGORIES_ID, FEATURED, GALLERY, ROME_TZ
 
 MONTHS_IT = [
     '', 'gen', 'feb', 'mar', 'apr', 'mag', 'giu', 'lug', 'ago', 'set', 'ott', 'nov', 'dic',
@@ -135,6 +135,10 @@ class ANSAParser(NewsMLTwoFeedParser):
                 item.setdefault('keywords', []).append(keyword.text.strip())
 
     def parse_authors(self, meta, item):
+        creator = meta.find(self.qname('creator'))
+        if creator is not None and creator.get('literal'):
+            item['sign_off'] = creator.get('literal').upper()
+
         contribs = meta.findall(self.qname('contributor'))
         for contrib in contribs:
             name = contrib.find(self.qname('name'))
@@ -143,14 +147,11 @@ class ANSAParser(NewsMLTwoFeedParser):
                 continue
             if contrib.get('role') == 'ctrol:descrWriter':
                 item.setdefault('extra', {})['digitator'] = name.text
-            if contrib.get('role').startswith('ansactrol:'):
-                for field, mapped_role in AUTHOR_MAPPING.items():
-                    if role == mapped_role:
-                        item.setdefault('extra', {})[field] = name.text
-
-        creator = meta.find(self.qname('creator'))
-        if creator is not None and creator.get('literal'):
-            item['sign_off'] = creator.get('literal')
+            if contrib.get('role') == 'ansactrol:co-author':
+                if item.get('sign_off'):
+                    item['sign_off'] += '/' + name.text.upper()
+                else:
+                    item['sign_off'] = name.text.upper()
 
     def parse_item(self, tree):
         item = super().parse_item(tree)

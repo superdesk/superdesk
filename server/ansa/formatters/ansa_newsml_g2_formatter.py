@@ -10,8 +10,6 @@ from superdesk.publish.formatters.newsml_g2_formatter import NewsMLG2Formatter, 
 from superdesk.text_utils import get_text
 from superdesk.logging import logger
 
-from ansa.constants import AUTHOR_MAPPING
-
 
 CONTRIBUTOR_MAPPING = {
     'digitator': 'descrWriter',
@@ -75,7 +73,7 @@ class ANSAPlainTextNewsMLG2Formatter(NewsMLG2Formatter):
             content = article.get('body_html')
             preformatted = '<pre>' in content
             if not preformatted:
-                content = article.get('body_html').replace('<br/>', '&#10;')
+                content = article.get('body_html').replace('<br/>\n', '\n')
             html = etree.HTML(content)
             plaintext = "".join(html.itertext())
             if preformatted:
@@ -140,11 +138,6 @@ class ANSAPlainTextNewsMLG2Formatter(NewsMLG2Formatter):
                 elem = SubElement(content_meta, 'contributor', {'role': 'ctrol:{}'.format(role)})
                 SubElement(elem, 'name').text = extra[field]
 
-        for field, role in AUTHOR_MAPPING.items():
-            if extra.get(field):
-                elem = SubElement(content_meta, 'contributor', {'role': role})
-                SubElement(elem, 'name').text = extra[field]
-
     def _format_sms(self, article, content_meta):
         if article.get('sms_message'):
             SubElement(content_meta, 'headline', attrib={
@@ -174,8 +167,14 @@ class ANSAPlainTextNewsMLG2Formatter(NewsMLG2Formatter):
 
     def _format_sign_off(self, article, content_meta):
         if article.get('sign_off'):
+            sd_sign_off = article['sign_off']
+            xawes_sign_off = sd_sign_off.split('/')[0]
+            if '-' not in sd_sign_off and '/' in sd_sign_off:
+                publisher = sd_sign_off.rsplit('/', 1)[1]
+                if publisher.strip():
+                    xawes_sign_off += '-' + publisher.strip()
             SubElement(content_meta, 'creator', attrib={
-                'literal': article['sign_off'],
+                'literal': xawes_sign_off.upper(),
             })
 
     def _format_highlights(self, article, content_meta):

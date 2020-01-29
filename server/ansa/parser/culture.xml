@@ -86,13 +86,10 @@
         </genre>
         <slugline></slugline>
         <headline>TEST FROM XAWES</headline>
-        <creator literal="VR-COM"><name>VR-COM</name></creator>
         <headline role="hld:subHeadline">TEST FROM XAWES</headline>
+        <creator literal="VR"><name>VR</name></creator>
         <contributor role="ctrol:supplier">
           <name>ANSA</name>
-        </contributor>
-        <contributor role="ansactrol:author">
-          <name>Foo</name>
         </contributor>
         <contributor role="ansactrol:co-author">
           <name>Bar</name>
