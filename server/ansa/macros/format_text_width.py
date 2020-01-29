@@ -8,22 +8,27 @@ WIDTH = 64
 
 
 def split_text(text='', **kwargs):
-    new_text = ''
-    space = ''
-    length = 0
+    lines = text.split('\n')
+    output = []
+    words = []
 
-    words = text.split(' ')
+    for i, line in enumerate(lines):
+        if len(line) <= WIDTH:
+            output.append(line)
+        else:
+            words = ' '.join(lines[i:]).split(' ')
+
+    text = ''
     for word in words:
-        if length + len(word) > WIDTH or length == 0 and len(word) > WIDTH:
-            length = 0
-            new_text = new_text + '\n'
-            space = ''
-
-        length = length + len(word)
-        new_text = new_text + space + word
-        space = ' '
-
-    return new_text
+        if len(text) + len(word) + 1 > WIDTH:
+            output.append(text.strip())
+            text = ''
+        else:
+            text += ' '
+        text += word
+    if text.strip():
+        output.append(text.strip())
+    return '\n'.join(output)
 
 
 def format_text_macro(item, **kwargs):

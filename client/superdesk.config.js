@@ -27,6 +27,7 @@ module.exports = function(grunt) {
             editor3: true,
             validatePointOfInterestForImages: false,
             keepMetaTermsOpenedOnClick: true,
+            showCharacterLimit: 64,
         },
         shortTimeFormat: 'YYYY-MM-DD HH:mm',
         shortDateFormat: 'YYYY-MM-DD HH:mm',
