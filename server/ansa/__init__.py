@@ -30,6 +30,7 @@ def on_publish(updates, original):
                 'qcode': '0050000100002',
                 'scheme': PRODUCTS_ID,
             })
+        item['auto_publish'] = True
         if original:
             original.setdefault('associations', {}).update({key: item})
 
