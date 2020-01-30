@@ -30,7 +30,8 @@ def on_publish(updates, original):
                 'qcode': '0050000100002',
                 'scheme': PRODUCTS_ID,
             })
-        original.setdefault('associations', {})[key].update(item)
+        if original:
+            original.setdefault('associations', {}).update({key: item})
 
 
 def udpate_sign_off(sender, item, **kwargs):
