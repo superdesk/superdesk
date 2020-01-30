@@ -20,7 +20,7 @@ def on_publish(updates, original):
     if not associations:
         return
     for key, item in associations.items():
-        if not item.get('type') == 'picture' or item.get('state') in PUBLISH_STATES:
+        if not item or item.get('type') != 'picture' or item.get('state') in PUBLISH_STATES:
             continue
         subject = item.setdefault('subject', [])
         product = next((subj for subj in subject if subj.get('scheme') == PRODUCTS_ID), None)
