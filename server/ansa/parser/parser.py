@@ -149,7 +149,7 @@ class ANSAParser(NewsMLTwoFeedParser):
                 item.setdefault('extra', {})['digitator'] = name.text
             if contrib.get('role') == 'ansactrol:co-author':
                 if item.get('sign_off'):
-                    item['sign_off'] += '/' + name.text.upper()
+                    item['sign_off'] += '-' + name.text.upper()
                 else:
                     item['sign_off'] = name.text.upper()
 

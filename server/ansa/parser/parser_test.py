@@ -109,7 +109,7 @@ class ANSAParserTestCase(TestCase):
         self.assertIn('culture', item['keywords'])
         self.assertIn('arts', item['keywords'])
         self.assertIn('fashion', item['keywords'])
-        self.assertEqual('VR/BAR', item['sign_off'])
+        self.assertEqual('VR-BAR', item['sign_off'])
 
     def test_image_association(self):
         item = self.parse('culture.xml')

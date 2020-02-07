@@ -10,12 +10,22 @@ from superdesk.publish.formatters.newsml_g2_formatter import NewsMLG2Formatter, 
 from superdesk.text_utils import get_text
 from superdesk.logging import logger
 
+from superdesk import get_resource_service
 
 CONTRIBUTOR_MAPPING = {
     'digitator': 'descrWriter',
     'coauthor': 'coAuthor',
     'supplier': 'supplier',
 }
+
+
+def is_user_journalist(user):
+    role = get_user_role(user)
+    return role and role.get('name') == 'Gio'
+
+
+def get_user_role(user):
+    return get_resource_service('roles').find_one(req=None, _id=user['role']) if user.get('role') else None
 
 
 class ANSAPlainTextNewsMLG2Formatter(NewsMLG2Formatter):
@@ -168,13 +178,33 @@ class ANSAPlainTextNewsMLG2Formatter(NewsMLG2Formatter):
     def _format_sign_off(self, article, content_meta):
         if article.get('sign_off'):
             sd_sign_off = article['sign_off']
+
+            if '-' not in sd_sign_off:
+                author_sign = sd_sign_off.split('/')[0]
+            else:
+                author_sign = sd_sign_off.split('-')[0]
+
+            author = get_resource_service('users').find_one(req=None, username=author_sign)
+
             xawes_sign_off = sd_sign_off.split('/')[0]
-            if '-' not in sd_sign_off and '/' in sd_sign_off:
+            """if  '/' in sd_sign_off:
                 publisher = sd_sign_off.rsplit('/', 1)[1]
-                if publisher.strip():
+                if publisher.strip() and author and is_user_journalist(author):
+                    xawes_sign_off += '/' + publisher.strip()
+                else:
+                    if '-' not in sd_sign_off:
+                       xawes_sign_off += '-' + publisher.strip()
+                    else:
+                       xawes_sign_off += '/' + publisher.strip()
+            """
+            if '-' not in xawes_sign_off and '/' in sd_sign_off:
+                publisher = sd_sign_off.rsplit('/', 1)[1]
+
+                if not author or (publisher.strip() and author and not is_user_journalist(author)):
                     xawes_sign_off += '-' + publisher.strip()
+
             SubElement(content_meta, 'creator', attrib={
-                'literal': xawes_sign_off.upper(),
+                'literal': xawes_sign_off.upper().strip('-/'),
             })
 
     def _format_highlights(self, article, content_meta):
