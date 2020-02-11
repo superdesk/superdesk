@@ -18,7 +18,7 @@ const parseTime = (time: string) => time.length === 11 ?
         time.substr(4),
     ].join(':') : time;
 
-const parseDatetime = (date: string, time: string) => (date && time) ?
+const parseDatetime = (date?: string, time?: string) => (date && time) ?
     `${parseDate(date)}T${parseTime(time)}` :
     null;
 
