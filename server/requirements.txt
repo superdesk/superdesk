@@ -6,6 +6,6 @@ flask==0.12.2
 flask-babel==0.12.2
 pymongo==3.8.0
 
--e git+git://github.com/petrjasek/superdesk-core.git@develop-ansa#egg=superdesk-core
+-e git+git://github.com/superdesk/superdesk-core.git@release/1.33#egg=superdesk-core
 -e git+git://github.com/superdesk/superdesk-planning.git@v1.7.0#egg=superdesk-planning
 

@@ -1,6 +1,6 @@
 {
     "dependencies": {
-        "superdesk-core": "petrjasek/superdesk-client-core#develop-ansa",
+        "superdesk-core": "superdesk/superdesk-client-core#release/1.33",
         "superdesk-planning": "superdesk/superdesk-planning#v1.7.0"
     },
     "devDependencies": {
