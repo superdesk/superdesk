@@ -2,8 +2,8 @@ language: python
 
 python: "3.5"
 
-dist: trusty
 sudo: false
+dist: xenial
 
 services:
     - mongodb
@@ -14,10 +14,8 @@ addons:
   apt:
     sources:
     - mongodb-3.0-precise
-    - google-chrome
     packages:
     - mongodb-org-server
-    - google-chrome-stable
 
 cache:
   directories:
@@ -25,9 +23,11 @@ cache:
     - $HOME/.npm
 
 before_install:
-    - nvm install 6.11
-    - nvm use 6.11
-    - npm install -g npm@latest grunt-cli
+    - nvm install 6.10
+    - nvm use 6.10
+    - node --version
+    - npm install -g npm@3
+    - npm install -g grunt-cli
 
 install:
     - cd server && pip install -r dev-requirements.txt && cd ..
@@ -35,5 +35,5 @@ install:
 
 script:
     - cd server && flake8 && cd ..
-    - cd client && grunt build && cd ..
+    - cd client && node --max-old-space-size=4096 `which grunt` build && cd ..
     - cd server && python manage.py users:create -u test -p test -e test@localhost --admin && cd ..
