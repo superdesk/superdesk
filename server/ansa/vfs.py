@@ -1,5 +1,6 @@
 
 import io
+import os
 import arrow
 import logging
 import requests
@@ -107,10 +108,17 @@ class VFSMediaStorage(MediaStorage):
         }
 
     def put(self, content, filename=None, content_type=None, *args, **kwargs):
+        content.seek(0, os.SEEK_END)
+        length = content.tell()
+        content.seek(0)
+        assert length, 'filename {} is empty'.format(filename)
         files = {'file': content}
         resp = self._sess.post(self.url(UPLOAD_ENDPOINT), files=files, data={'commit': 'true'},
                                timeout=DOWNLOAD_TIMEOUT)
-        return _get_md5(resp)
+        md5 = _get_md5(resp)
+        logger.info('put %s size=%d md5=%s', filename, length, md5)
+        return md5
+
 
     def put_metadata(self, media, metadata):
         data = {
