@@ -7,6 +7,7 @@ import {onChangeMiddleware} from 'superdesk-core/scripts/apps/authoring/authorin
 import {startApp} from 'superdesk-core/scripts/index';
 import ansaIptc from '../extensions/ansaIptc/dist/extension';
 import imageShortcuts from '../extensions/imageShortcuts/dist/extension';
+import planningExtension from 'superdesk-planning-extension';
 
 import AnsaRelatedCtrl from './AnsaRelatedCtrl';
 
@@ -661,5 +662,6 @@ setTimeout(() => {
     startApp([
         ansaIptc,
         imageShortcuts,
+        planningExtension,
     ]);
 });
