@@ -2,6 +2,7 @@
 import io
 import os
 import arrow
+import hashlib
 import logging
 import requests
 
@@ -111,14 +112,21 @@ class VFSMediaStorage(MediaStorage):
         content.seek(0, os.SEEK_END)
         length = content.tell()
         content.seek(0)
+        if app.config.get('VFS_MD5_CHECK', True):
+            md5_test = hashlib.md5(content.read()).hexdigest()
+            content.seek(0)
+        else:
+            md5_test = None
         assert length, 'filename {} is empty'.format(filename)
         files = {'file': content}
         resp = self._sess.post(self.url(UPLOAD_ENDPOINT), files=files, data={'commit': 'true'},
                                timeout=DOWNLOAD_TIMEOUT)
         md5 = _get_md5(resp)
+        if md5_test and md5_test != md5:
+            logger.error('md5 from vfs did not match local md5, vfs=%s local=%s', md5, md5_test)
+            raise VFSError('md5 does not match')
         logger.info('put %s size=%d md5=%s', filename, length, md5)
         return md5
-
 
     def put_metadata(self, media, metadata):
         data = {

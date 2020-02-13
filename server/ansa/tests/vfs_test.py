@@ -9,7 +9,7 @@ UPLOAD_URL = 'http://vfs/bdmvfs/rest/uploadfile'
 UPLOAD_RESPONSE = """<?xml version="1.0" encoding="UTF-8"?>
 <files>
   <fileItems>
-    <md5>af8806db1a880b6653bb8d1f1a370c4e</md5>
+    <md5>acbd18db4cc2f85cedef654fccc4a4d8</md5>
     <fsize>3</fsize>
     <mimetype>text/plain</mimetype>
     <filename>foo.txt</filename>
@@ -61,7 +61,11 @@ class VFSTestCase(unittest.TestCase):
         with requests_mock.mock() as mock:
             mock.post(UPLOAD_URL, content=UPLOAD_RESPONSE.encode('utf-8'))
             _id = self.media.put(data, 'foo', 'text/plain', {}, folder='x')
-        self.assertEqual('af8806db1a880b6653bb8d1f1a370c4e', _id)
+            self.assertEqual('acbd18db4cc2f85cedef654fccc4a4d8', _id)
+
+            with self.assertRaises(vfs.VFSError):
+                data = io.BytesIO(b'bar')
+                self.media.put(data, 'foo', 'text/plain', {}, folder='x')
 
     def test_get_binary(self):
         with requests_mock.mock() as mock:
@@ -70,7 +74,7 @@ class VFSTestCase(unittest.TestCase):
             media = self.media.get('foo')
             self.assertIsNotNone(media)
             self.assertEqual('foo', media._id)
-            self.assertEqual('af8806db1a880b6653bb8d1f1a370c4e', media.md5)
+            self.assertEqual('acbd18db4cc2f85cedef654fccc4a4d8', media.md5)
             self.assertEqual(b'foo', media.read())
             self.assertEqual('text/plain', media.content_type)
             self.assertEqual(3, media.length)
