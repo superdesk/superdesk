@@ -38,29 +38,39 @@ EXTRA_MAPPING = {
 
 
 def format_date(datetime_string):
+    parsed = None
     if isinstance(datetime_string, datetime):
-        return datetime_string.isoformat()
-    mixed = '{}T{}'.format(
-        ANSA_DATETIME_FORMAT.split('T')[0],
-        EXIF_DATETIME_FORMAT.split('T')[1],
-    )
-    formats = [
-        ANSA_DATETIME_FORMAT,
-        ANSA_DATETIME_FORMAT.replace('%z', ''),
-        EXIF_DATETIME_FORMAT,
-        EXIF_DATETIME_FORMAT.replace('%z', ''),
-        mixed,
-        mixed.replace('%z', ''),
-    ]
-    for format_ in formats:
-        try:
-            return datetime.strptime(datetime_string, format_).isoformat()
-        except ValueError:
-            continue
-    try:
-        return get_date(datetime_string).isoformat()
-    except ParserError:
-        pass
+        parsed = datetime_string
+    else:
+        mixed = '{}T{}'.format(
+            ANSA_DATETIME_FORMAT.split('T')[0],
+            EXIF_DATETIME_FORMAT.split('T')[1],
+        )
+        formats = [
+            ANSA_DATETIME_FORMAT,
+            ANSA_DATETIME_FORMAT.replace('%z', ''),
+            EXIF_DATETIME_FORMAT,
+            EXIF_DATETIME_FORMAT.replace('%z', ''),
+            mixed,
+            mixed.replace('%z', ''),
+        ]
+        for format_ in formats:
+            try:
+                parsed = datetime.strptime(datetime_string, format_)
+                break
+            except ValueError:
+                continue
+        if not parsed:
+            try:
+                parsed = get_date(datetime_string)
+            except ParserError:
+                pass
+    if parsed:
+        formatted = parsed.isoformat()
+        if '+' not in formatted:
+            return '{}+00:00'.format(formatted)
+        else:
+            return formatted
     return datetime_string
 
 

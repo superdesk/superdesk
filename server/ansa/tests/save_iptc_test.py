@@ -102,4 +102,4 @@ class UpdateIPTCMetadataTestCase(unittest.TestCase):
             '20200213T205420',
         ]
         for date in dates:
-            self.assertEqual('2020-02-13T20:54:20', format_date(date), date)
+            self.assertEqual('2020-02-13T20:54:20+00:00', format_date(date), date)
