@@ -7,7 +7,7 @@ import superdesk
 from datetime import datetime
 from unittest.mock import patch, ANY
 from ansa.vfs import VFSMediaStorage
-from ansa.save_iptc import init_app
+from ansa.save_iptc import init_app, format_date
 from ansa.constants import PHOTO_CATEGORIES_ID
 
 
@@ -94,3 +94,12 @@ class UpdateIPTCMetadataTestCase(unittest.TestCase):
         with self.app.app_context():
             item = {'type': 'video'}
             superdesk.item_publish.send(self, item=item)
+
+    def test_format_date(self):
+        dates = [
+            '2020-02-13T205420',
+            '2020-02-13T20:54:20',
+            '20200213T205420',
+        ]
+        for date in dates:
+            self.assertEqual('2020-02-13T20:54:20', format_date(date), date)

@@ -4,8 +4,10 @@ import superdesk
 import logging
 
 from flask import current_app as app, request
+from datetime import datetime
+from arrow.parser import ParserError
 from superdesk.utc import utcnow, get_date
-from ansa.constants import PHOTO_CATEGORIES_ID, PRODUCTS_ID
+from ansa.constants import PHOTO_CATEGORIES_ID, PRODUCTS_ID, ANSA_DATETIME_FORMAT, EXIF_DATETIME_FORMAT
 from ansa.vfs import VFSError
 
 
@@ -35,8 +37,31 @@ EXTRA_MAPPING = {
 }
 
 
-def format_date(datetime):
-    return get_date(datetime).isoformat()
+def format_date(datetime_string):
+    if isinstance(datetime_string, datetime):
+        return datetime_string.isoformat()
+    mixed = '{}T{}'.format(
+        ANSA_DATETIME_FORMAT.split('T')[0],
+        EXIF_DATETIME_FORMAT.split('T')[1],
+    )
+    formats = [
+        ANSA_DATETIME_FORMAT,
+        ANSA_DATETIME_FORMAT.replace('%z', ''),
+        EXIF_DATETIME_FORMAT,
+        EXIF_DATETIME_FORMAT.replace('%z', ''),
+        mixed,
+        mixed.replace('%z', ''),
+    ]
+    for format_ in formats:
+        try:
+            return datetime.strptime(datetime_string, format_).isoformat()
+        except ValueError:
+            continue
+    try:
+        return get_date(datetime_string).isoformat()
+    except ParserError:
+        pass
+    return datetime_string
 
 
 def apply_mapping(mapping, src, dest):
