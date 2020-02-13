@@ -1,9 +1,13 @@
+import logging
 import superdesk
 
 from superdesk.signals import item_publish
 from superdesk.metadata.item import PUBLISH_STATES
 
 from .constants import PRODUCTS_ID
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 def on_update(resource, updates, original):
