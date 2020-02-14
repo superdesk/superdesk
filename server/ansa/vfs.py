@@ -128,7 +128,7 @@ class VFSMediaStorage(MediaStorage):
                                    timeout=DOWNLOAD_TIMEOUT)
             md5 = _get_md5(resp)
             if md5_test == md5:
-                logger.info('put %s md5=%s size=%d', filename, md5, length)
+                logger.info('put %s md5=%s size=%d retry=%d', filename, md5, length, i)
                 return md5
 
             if i + 1 < UPLOAD_RETRY:
