@@ -1,10 +1,13 @@
 
 import io
 import os
+import time
 import arrow
+import random
 import hashlib
 import logging
 import requests
+import tempfile
 
 from lxml import etree
 from urllib.parse import urljoin
@@ -22,6 +25,8 @@ logger = logging.getLogger(__name__)
 
 TIMEOUT = (5, 15)
 DOWNLOAD_TIMEOUT = (5, 30)
+
+UPLOAD_RETRY = 3
 
 
 class VFSError(SuperdeskError):
@@ -112,21 +117,29 @@ class VFSMediaStorage(MediaStorage):
         content.seek(0, os.SEEK_END)
         length = content.tell()
         content.seek(0)
-        if app.config.get('VFS_MD5_CHECK', True):
-            md5_test = hashlib.md5(content.read()).hexdigest()
-            content.seek(0)
-        else:
-            md5_test = None
         assert length, 'filename {} is empty'.format(filename)
-        files = {'file': content}
-        resp = self._sess.post(self.url(UPLOAD_ENDPOINT), files=files, data={'commit': 'true'},
-                               timeout=DOWNLOAD_TIMEOUT)
-        md5 = _get_md5(resp)
-        if md5_test and md5_test != md5:
-            logger.error('md5 from vfs did not match local md5, vfs=%s local=%s', md5, md5_test)
-            raise VFSError('md5 does not match')
-        logger.info('put %s size=%d md5=%s', filename, length, md5)
-        return md5
+
+        md5_test = hashlib.md5(content.read()).hexdigest()
+
+        for i in range(UPLOAD_RETRY):
+            content.seek(0)
+            files = {'file': content}
+            resp = self._sess.post(self.url(UPLOAD_ENDPOINT), files=files, data={'commit': 'true'},
+                                   timeout=DOWNLOAD_TIMEOUT)
+            md5 = _get_md5(resp)
+            if md5_test == md5:
+                logger.info('put %s md5=%s size=%d', filename, md5, length)
+                return md5
+
+            if i + 1 < UPLOAD_RETRY:
+                logger.warning('md5 from vfs does not match, retry vfs=%s local=%s filename=%s size=%d',
+                               md5, md5_test, filename, length)
+                time.sleep(random.random())
+
+        with tempfile.NamedTemporaryFile(prefix=filename, delete=False) as output:
+            content.seek(0)
+            output.write(content.read())
+            raise VFSError('put error filename={} tmpfile={} size={}'.format(filename, output.name, length))
 
     def put_metadata(self, media, metadata):
         data = {

@@ -63,9 +63,14 @@ class VFSTestCase(unittest.TestCase):
             _id = self.media.put(data, 'foo', 'text/plain', {}, folder='x')
             self.assertEqual('acbd18db4cc2f85cedef654fccc4a4d8', _id)
 
-            with self.assertRaises(vfs.VFSError):
+            with self.assertRaises(vfs.VFSError) as err:
                 data = io.BytesIO(b'bar')
                 self.media.put(data, 'foo', 'text/plain', {}, folder='x')
+                self.assertIn('filename=foo', err.msg)
+                self.assertIn('size=3', err.msg)
+                tmpfile = err.msg.split('tmpfile=')[1].split(' ')[0]
+                with open(tmpfile) as tmp:
+                    self.assertEqual(data.read(), tmp.read())
 
     def test_get_binary(self):
         with requests_mock.mock() as mock:
