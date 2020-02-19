@@ -42,9 +42,7 @@ def on_publish(updates, original):
 def udpate_sign_off(sender, item, **kwargs):
     """When item is auto published add -RED to sign_off."""
     if item.get('auto_publish'):
-        if item.get('sign_off'):
-            item['sign_off'] += '-RED'
-        else:
+        if not item.get('sign_off'):
             item['sign_off'] = 'RED'
 
 
