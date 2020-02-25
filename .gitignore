@@ -1,4 +1,5 @@
 .env
+.python-version
 /.project
 /.pydevproject
 *.pyc
