@@ -4,57 +4,43 @@
  * working directory, but other files may also be specified using relative paths with
  * the SUPERDESK_CONFIG environment variable or the grunt --config flag.
  */
-module.exports = function(grunt) {
+module.exports = function (grunt) {
     return {
-        apps: ['superdesk-planning', 'superdesk-publisher'],
+        apps: [
+            'superdesk-publisher',
+            'superdesk-planning'
+        ],
+        importApps: [
+            '../index',
+            'superdesk-publisher'
+        ],
         defaultRoute: '/workspace/personal',
-        validatorMediaMetadata: {
-            headline: {
-                required: true
-            },
-            alt_text: {
-                required: true
-            },
-            description_text: {
-                required: true
-            },
-            copyrightholder: {
-                required: false
-            },
-            byline: {
-                required: false
-            },
-            usageterms: {
-                required: false
-            },
-            copyrightnotice: {
-                required: false
-            }
+        publisher: {
+            protocol: 'https',
+            tenant: process.env.PUBLISHER_API_SUBDOMAIN || '',
+            domain: process.env.PUBLISHER_API_DOMAIN || 'localhost',
+            base: 'api/v1'
         },
-
         langOverride: {
             'en': {
                 'ANPA Category': 'Category',
                 'ANPA CATEGORY': 'CATEGORY'
             }
         },
-
-        features: {
-            swimlane: {columnsLimit: 4},
-            editor3: true,
-            nestedItemsInOutputStage: true
+        view: {
+            timeformat: 'HH:mm',
+            dateformat: 'DD.MM.YYYY',
         },
-
+        features: {
+            preview: 1,
+            swimlane: {defaultNumberOfColumns: 4},
+            editor3: true,
+            validatePointOfInterestForImages: true,
+            editorHighlights: true
+        },
         workspace: {
             planning: true,
             assignments: true
         },
-
-        publisher: {
-            protocol: 'https',
-            tenant: process.env.PUBLISHER_API_SUBDOMAIN || '',
-            domain: process.env.PUBLISHER_API_DOMAIN || 'localhost',
-            base: 'api/v1'
-        }
     };
 };
