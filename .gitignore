@@ -1,10 +1,12 @@
 .env
+.python-version
 /.project
 /.pydevproject
 *.pyc
 *.swp
 *.swo
 *.pid
+*.log
 *#
 .#*
 *TAGS
@@ -19,7 +21,7 @@ env/
 bin/
 lib/
 man/
-src/
+/server/src/
 dist/
 node_modules
 .settings
@@ -45,4 +47,3 @@ include/
 /superdesk-content-api/
 client/index.html
 client/templates-cache.js
-client/npm-debug.log
