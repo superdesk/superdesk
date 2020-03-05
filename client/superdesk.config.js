@@ -8,6 +8,10 @@ module.exports = function(grunt) {
     return {
         defaultRoute: '/workspace/personal',
 
+        importApps: [
+            '../index',
+        ],
+
         view: {
             timeformat: 'HH:mm',
             dateformat: 'DD.MM.YYYY'
