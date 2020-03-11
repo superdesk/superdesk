@@ -10,6 +10,9 @@
     <ul>
         {% for doc in docs %}
         <li>
+            {% if doc.get('dateline') and doc['dateline'].get('text') %}
+                {{doc['dateline']['text']}}
+            {% endif %}
             <strong>{{doc.headline|e}}</strong>
             {% if doc.get('extra') and doc['extra'].get('subtitle') %}
             <br />{{doc['extra']['subtitle']|e}}
