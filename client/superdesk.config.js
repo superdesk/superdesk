@@ -7,13 +7,8 @@
 module.exports = function(grunt) {
     return {
         apps: ['superdesk-planning'],
-        importApps: ['superdesk-planning'],
+        importApps: ['superdesk-planning', '../index'],
         defaultRoute: '/workspace/personal',
-        enabledExtensions: {
-            // annotationsLibrary: 1,
-            // markForUser: 1,
-            planning: 1,
-        },
         validatorMediaMetadata: {
             headline: {
                 required: true
