@@ -50,8 +50,9 @@ def publish_item_on_auto_publish_stage(item):
             updates = {'auto_publish': True}
             unlink_update_on_auto_publish(item, updates)
             superdesk.get_resource_service('archive_publish').patch(item[superdesk.config.ID_FIELD], updates)
-        except cerberus.cerberus.ValidationError:
-            logger.error('item was not auto published item=%s stage=%s', item[superdesk.config.ID_FIELD], stage['name'])
+        except cerberus.cerberus.ValidationError as err:
+            logger.exception('item was not auto published item=%s stage=%s error=%s',
+                             item[superdesk.config.ID_FIELD], stage['name'], err)
 
 
 def init_app(app):
