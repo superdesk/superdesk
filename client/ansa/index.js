@@ -614,7 +614,7 @@ export default angular.module('ansa.superdesk', [
             const hasPlus = headline.includes('+');
             let updated = false;
 
-            if (prev === null) {
+            if (prev === null || prev._id !== original._id) {
                 prev = original;
             }
 
