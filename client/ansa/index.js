@@ -607,16 +607,22 @@ export default angular.module('ansa.superdesk', [
 
     .run(['$rootScope', 'metadata', ($rootScope, metadata) => {
         let lastGenre = null;
+        let prev = {};
 
         onChangeMiddleware.push(({item, original}) => {
-            const hasPlus = item.headline.indexOf('++ ') === 0;
+            const headline = item.headline || '';
+            const hasPlus = headline.includes('+');
             let updated = false;
 
-            if (item.priority === 2 && !hasPlus) {
-                item.headline = ['++', item.headline, '++'].join(' ');
+            if (prev === null) {
+                prev = original;
+            }
+
+            if (item.priority === 2 && prev.priority !== 2 && !hasPlus) {
+                item.headline = '++ ' + headline + ' ++';
                 updated = true;
-            } else if (item.priority !== 2 && hasPlus) {
-                item.headline = trim(item.headline, '+ ');
+            } else if (item.priority !== 2 && (prev.priority == null || prev.priority === 2) && hasPlus) {
+                item.headline = headline.replace('++ ', '').replace(' ++', '');
                 updated = true;
             }
 
@@ -654,6 +660,8 @@ export default angular.module('ansa.superdesk', [
             if (updated) { // update editor3
                 $rootScope.$broadcast('macro:refreshField', 'headline', item.headline, {skipOnChange: false});
             }
+
+            prev = Object.assign({}, item);
         });
     }])
 ;
