@@ -5,6 +5,7 @@ import superdesk
 
 from superdesk.metadata.item import PUBLISH_STATES
 
+
 AUTO_PUBLISH_FIELD = 'auto_publish'
 
 logger = logging.getLogger(__name__)
@@ -48,7 +49,16 @@ def publish_item_on_auto_publish_stage(item):
     if stage and stage.get(AUTO_PUBLISH_FIELD):
         try:
             updates = {'auto_publish': True}
+            associations = item.get('associations') or {}
             unlink_update_on_auto_publish(item, updates)
+
+            for key, assoc in associations.items():
+                if not assoc or assoc.get('type') != 'picture' or assoc.get('state') in PUBLISH_STATES:
+                    continue
+                assoc['auto_publish'] = True
+            if associations:
+                updates['associations'] = associations
+
             superdesk.get_resource_service('archive_publish').patch(item[superdesk.config.ID_FIELD], updates)
         except cerberus.cerberus.ValidationError as err:
             logger.exception('item was not auto published item=%s stage=%s error=%s',
