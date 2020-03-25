@@ -8,8 +8,13 @@ module.exports = function(grunt) {
     return {
         defaultRoute: '/workspace/personal',
 
+        apps: [
+            'superdesk-planning',
+        ],
+
         importApps: [
             '../index',
+            'superdesk-planning',
         ],
 
         view: {
@@ -25,7 +30,13 @@ module.exports = function(grunt) {
             validatePointOfInterestForImages: false,
             editorHighlights: true,
             noPublishOnAuthoringDesk: true,
-            noMissingLink: true
-        }
+            noMissingLink: true,
+            planning: true,
+        },
+
+        workspace: {
+            planning: true,
+            assignments: true,
+        },
     };
 };
