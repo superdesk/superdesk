@@ -466,6 +466,18 @@
                     {
                         "name": "Adobe InDesign (IDML)",
                         "qcode": "idml"
+                    },
+                    {
+                        "name": "JSON Event",
+                        "qcode": "json_event"
+                    },
+                    {
+                        "name": "JSON Planning",
+                        "qcode": "json_planning"
+                    },
+                    {
+                        "name": "JSON Planning Featured",
+                        "qcode": "json_planning_featured"
                     }
                 ]
             },
@@ -496,6 +508,18 @@
                     {
                         "name": "Adobe InDesign (IDML)",
                         "qcode": "idml"
+                    },
+                    {
+                        "name": "JSON Event",
+                        "qcode": "json_event"
+                    },
+                    {
+                        "name": "JSON Planning",
+                        "qcode": "json_planning"
+                    },
+                    {
+                        "name": "JSON Planning Featured",
+                        "qcode": "json_planning_featured"
                     }
                 ]
             },
@@ -510,11 +534,23 @@
                     {
                         "name": "Email",
                         "qcode": "email"
+                    },
+                    {
+                        "name": "JSON Event",
+                        "qcode": "json_event"
+                    },
+                    {
+                        "name": "JSON Planning",
+                        "qcode": "json_planning"
+                    },
+                    {
+                        "name": "JSON Planning Featured",
+                        "qcode": "json_planning_featured"
                     }
                 ]
             }
         ],
-        "init_version": 2
+        "init_version": 3
     },
     {
         "_id": "crop_sizes",
@@ -2521,111 +2557,6 @@
                 "qcode": "ncostat:onreq",
                 "name": "coverage upon request",
                 "label": "On request"
-            }
-        ]
-    },
-    {
-        "_id": "subscriber_types",
-        "display_name": "Subscriber Types",
-        "type": "unmanageable",
-        "selection_type": "do not show",
-        "items": [{
-                "is_active": true,
-                "name": "All",
-                "qcode": "all",
-                "formats": [{
-                        "name": "NINJS",
-                        "qcode": "ninjs"
-                    },
-                    {
-                        "name": "Newsroom NINJS",
-                        "qcode": "newsroom ninjs"
-                    },
-                    {
-                        "name": "NewsML G2",
-                        "qcode": "newsmlg2"
-                    },
-                    {
-                        "name": "Email",
-                        "qcode": "email"
-                    },
-                    {
-                        "name": "JSON Event",
-                        "qcode": "json_event"
-                    },
-                    {
-                        "name": "JSON Planning",
-                        "qcode": "json_planning"
-                    },
-                    {
-                        "name": "JSON Planning Featured",
-                        "qcode": "json_planning_featured"
-                    }
-                ]
-            },
-            {
-                "is_active": true,
-                "name": "Digital/Internet",
-                "qcode": "digital",
-                "formats": [{
-                        "name": "NINJS",
-                        "qcode": "ninjs"
-                    },
-                    {
-                        "name": "Newsroom NINJS",
-                        "qcode": "newsroom ninjs"
-                    },
-                    {
-                        "name": "NewsML G2",
-                        "qcode": "newsmlg2"
-                    },
-                    {
-                        "name": "Email",
-                        "qcode": "email"
-                    },
-                    {
-                        "name": "JSON Event",
-                        "qcode": "json_event"
-                    },
-                    {
-                        "name": "JSON Planning",
-                        "qcode": "json_planning"
-                    },
-                    {
-                        "name": "JSON Planning Featured",
-                        "qcode": "json_planning_featured"
-                    }
-                ]
-            },
-            {
-                "is_active": true,
-                "name": "Wire/Paper",
-                "qcode": "wire",
-                "formats": [{
-                        "name": "NITF",
-                        "qcode": "nitf"
-                    },
-                    {
-                        "name": "Newsroom NINJS",
-                        "qcode": "newsroom ninjs"
-                    },
-                    {
-                        "name": "Email",
-                        "qcode": "email"
-                    },
-                    {
-                        "name": "JSON Event",
-                        "qcode": "json_event"
-                    },
-                    {
-                        "name": "JSON Planning",
-                        "qcode": "json_planning"
-                    },
-                    {
-                        "name": "JSON Planning Featured",
-                        "qcode": "json_planning_featured"
-                    }
-                ]
             }
         ]
     },
