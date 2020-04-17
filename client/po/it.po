@@ -1,0 +1,20 @@
+# 
+# Translators:
+# angelo marrara <angelo.marrara@gmail.com>, 2019
+# ansa transifex <ansatransifex@gmail.com>, 2019
+# Beatriz Foina <beatriz.farrugia@ansa.com.br>, 2019
+# Ricardo Viapiana <ricardoviapiana@gmail.com>, 2015
+# Sava Tatić <sava.tatic@sourcefabric.org>, 2019
+msgid ""
+msgstr ""
+"Project-Id-Version: Superdesk\n"
+"PO-Revision-Date: 2020-03-27 09:46+0000\n"
+"Last-Translator: Beatriz Foina <beatriz.farrugia@ansa.com.br>\n"
+"Language-Team: Italian (http://www.transifex.com/sourcefabric/superdesk/language/it/)\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: it\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+# force empty it translation
+# remove this file to re-enable core translations
