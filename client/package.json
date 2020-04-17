@@ -1,6 +1,6 @@
 {
     "dependencies": {
-        "superdesk-core": "superdesk/superdesk-client-core#release/1.33",
+        "superdesk-core": "~1.33.0",
         "superdesk-planning": "github:tomaskikutis/superdesk-planning#move-planning-extension-from-core",
         "superdesk-planning-extension": "1.0.1"
     },

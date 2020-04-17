@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import {trim, get, isEqual} from 'lodash';
+import {get, isEqual} from 'lodash';
 import angular from 'angular';
 import widgets from './widgets';
 import packages from './package-manager/package-manager';
