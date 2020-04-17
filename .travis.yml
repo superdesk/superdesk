@@ -20,4 +20,5 @@ jobs:
           name: "server"
         - script: cd client && npm install && npm run lint && npx grunt build
           name: "client"
+          env: NODE_OPTIONS=--max_old_space_size=4096 
 
