@@ -2,29 +2,22 @@ language: python
 
 python: "3.5"
 
+dist: bionic
+
 services:
     - docker
 
 cache:
     - pip
     - npm
-    - directories:
-        - client/node_modules
-
-before_install:
-    - nvm install 6.10
-    - nvm use 6.10
-    - npm install -g npm@3
-    - npm install -g grunt-cli
 
 install:
     - docker-compose -f docker/docker-compose-travis.yml up -d
-    - cd $TRAVIS_BUILD_DIR/server && pip install -r dev-requirements.txt
-    - cd $TRAVIS_BUILD_DIR/client && npm install
 
-script:
-    - cd $TRAVIS_BUILD_DIR/client && node --max_old_space_size=4098 ./node_modules/.bin/grunt build
-    - cd $TRAVIS_BUILD_DIR/client && npm run lint
-    - cd $TRAVIS_BUILD_DIR/server && flake8
-    - cd $TRAVIS_BUILD_DIR/server && nosetests
-    - cd $TRAVIS_BUILD_DIR/server && python manage.py users:create -u test -p test -e test@localhost --admin
+jobs: 
+    include:
+        - script: cd server && pip install -r dev-requirements.txt && flake8 && nosetests
+          name: "server"
+        - script: cd client && npm install && npm run lint && node --max_old_space_size=4098 ./node_modules/.bin/grunt build
+          name: "client"
+
