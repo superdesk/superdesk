@@ -18,6 +18,6 @@ jobs:
     include:
         - script: cd server && pip install -r dev-requirements.txt && flake8 && nosetests
           name: "server"
-        - script: cd client && npm install && npm run lint && node --max_old_space_size=4098 ./node_modules/.bin/grunt build
+        - script: cd client && npm install && npm run lint && npx grunt build
           name: "client"
 
