@@ -1,4 +1,4 @@
-import planningExtension from 'superdesk-planning-extension';
+import planningExtension from 'superdesk-planning/client/planning-extension/dist/extension';
 import {startApp} from 'superdesk-core/scripts/index';
 import annotationsLibraryExtension from 'superdesk-core/scripts/extensions/annotationsLibrary/dist/src/extension';
 import markForUserExtension from 'superdesk-core/scripts/extensions/markForUser/dist/src/extension';
