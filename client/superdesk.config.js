@@ -98,6 +98,24 @@ module.exports = function(grunt) {
             {id: 'subject', name: 'Subject', field: 'subject', list: 'subjectcodes'},
         ],
 
+        search: {
+            'slugline': 0,
+            'headline': 1,
+            'unique_name': 0,
+            'story_text': 1,
+            'byline': 1,
+            'keywords': 0,
+            'creator': 1,
+            'from_desk': 0,
+            'to_desk': 0,
+            'spike': 1,
+            'ingest_provider': 1,
+            'marked_desks': 0,
+            'date_published': 1,
+            'sign_off': 1,
+            'featuremedia': 1,
+        },
+
         list: {
             priority: [
                 'priority',
