@@ -111,7 +111,7 @@ module.exports = function(grunt) {
             'spike': 1,
             'ingest_provider': 1,
             'marked_desks': 0,
-            'date_published': 1,
+            'firstpublished': 1,
             'sign_off': 1,
             'featuremedia': 1,
         },
