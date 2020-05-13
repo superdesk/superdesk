@@ -58,7 +58,7 @@ module.exports = function(grunt) {
                 'ANPA Category': 'Category',
                 'ANPA CATEGORY': 'CATEGORY'
             }
-        }, 
+        },
 
         item_profile: {
             change_profile: 1,
@@ -149,5 +149,9 @@ module.exports = function(grunt) {
             imageShortcuts: 1,
             ansaIptc: 1,
         },
+
+        view: {
+          timeformat: 'HH:mm:ss'
+        }
     };
 };
