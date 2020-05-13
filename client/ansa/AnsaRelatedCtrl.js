@@ -79,6 +79,9 @@ export default function AnsaRelatedCtrl($scope, api, storage, Keys) {
             {exists: {field: 'rewritten_by'}}
         );
 
+        // filter out afp
+        query.bool.must_not.push({term: {creditline: 'AFP'}});
+
         console.info('query', angular.toJson(query, 2));
 
         this.apiQuery(query);
