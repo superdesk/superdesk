@@ -70,6 +70,10 @@ const extension: IExtension = {
                         }
                     }
 
+                    // generate random id using timestamp + random bits
+                    // will be used as filename when ingesting same binary again
+                    item.uri = Date.now().toString(36) + Math.random().toString(36).substr(2) + '.jpg';
+
                     console.debug('iptc', data, item);
 
                     return item;

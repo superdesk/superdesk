@@ -24,6 +24,7 @@ ITEM_MAPPING = {
     'copyrightnotice': 'copyrightNotice',
     'usageterms': 'usageTerms',
     'pubstatus': 'status',
+    'uri': 'originalTransmissionRef',
 }
 
 EXTRA_MAPPING = {
