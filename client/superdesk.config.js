@@ -129,6 +129,7 @@ module.exports = function(grunt) {
                 'fetchedDesk',
                 'copyright',
                 'usageterms',
+                'used',
             ]
         },
         gridViewFields: [
@@ -136,6 +137,7 @@ module.exports = function(grunt) {
             'source',
             'copyright',
             'usageterms',
+            'used',
         ],
 
         defaultSearch: {

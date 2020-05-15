@@ -11,6 +11,7 @@ from superdesk.io.commands.update_ingest import update_renditions
 from datetime import timedelta, datetime
 from superdesk.utc import utcnow, utc_to_local
 from superdesk.utils import ListCursor
+from superdesk.timer import timer
 from datetime import timedelta
 from .constants import PHOTO_CATEGORIES_ID, EXIF_DATETIME_FORMAT, PRODUCTS_ID
 
@@ -308,6 +309,24 @@ class AnsaPictureProvider(superdesk.SearchProvider):
                 item['_fetchable'] = True
 
             items.append(item)
+
+        # get used status from fetched items
+        uris = [item['guid'] for item in items]
+        if not fetch and uris:
+            with timer('used'):
+                fetched_items = superdesk.get_resource_service('archive').search({
+                    'query': {'bool': {'filter': {'terms': {'uri': uris}}}}
+                })
+                for fetched in fetched_items:
+                    if fetched.get('used'):
+                        item = next((item for item in items if item['guid'] == fetched['uri']))
+                        item['used'] = True
+                        item.setdefault('used_count', 0)
+                        item['used_count'] += fetched.get("used_count", 0)
+                        if fetched['used_updated'] and (
+                            not item.get('used_updated') or item['used_updated'] <= fetched['used_updated']
+                        ):
+                            item['used_updated'] = fetched['used_updated']
 
         return AnsaListCursor(items, json_data.get('simpleSearchResult', {}).get('totalResults', len(items)))
 

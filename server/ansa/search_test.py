@@ -2,11 +2,13 @@
 import os
 import flask
 import unittest
+import superdesk
 
-from unittest.mock import patch
+from unittest.mock import patch, create_autospec
 from httmock import urlmatch, HTTMock
 from ansa.constants import PHOTO_CATEGORIES_ID, PRODUCTS_ID
 
+from apps.archive import ArchiveService
 from .search import AnsaPictureProvider, set_default_search_operator
 
 
@@ -14,6 +16,16 @@ from .search import AnsaPictureProvider, set_default_search_operator
 def ansa_mock(url, request):
     with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'fixtures', 'ansafoto.json')) as f:
         return f.read()
+
+
+class Resource:
+    def __init__(self, service):
+        self.service = service
+
+
+resources = {
+    'archive': Resource(create_autospec(ArchiveService)),
+}
 
 
 class VocabulariesMock():
@@ -43,6 +55,7 @@ class AnsaPictureTestCase(unittest.TestCase):
         self.app = flask.Flask(__name__)
         self.app.config['ANSA_PHOTO_API'] = 'http://172.20.14.88/'
 
+    @patch.dict(superdesk.resources, resources)
     def test_find(self):
         with HTTMock(ansa_mock):
             with self.app.app_context():
