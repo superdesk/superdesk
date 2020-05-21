@@ -5,6 +5,12 @@ import {isEmpty} from 'lodash';
 const featureMediaField = 'feature_media';
 const galleryField = 'photoGallery';
 
+// only supporting Rome for the time being
+const getQueryTimeZone = () => {
+    const now = new Date();
+
+    return now.getTimezoneOffset() === -120 ? '+02:00' : '+01:00';
+};
 
 AnsaRelatedCtrl.$inject = ['$scope', 'api', 'storage', 'Keys'];
 export default function AnsaRelatedCtrl($scope, api, storage, Keys) {
@@ -40,18 +46,12 @@ export default function AnsaRelatedCtrl($scope, api, storage, Keys) {
 
         let query = {
             bool: {
+                must: [{term: {type: this.activeFilter}}],
+                should: filters,
                 must_not: [{term: {item_id: $scope.item._id}}],
-                should: [],
+                minimum_should_match: window.MINIMUM_SHOULD_MATCH || 1,
             },
         };
-
-        angular.extend(query.bool, {
-            must: [
-                {term: {type: this.activeFilter}},
-            ],
-            should: filters,
-            minimum_should_match: window.MINIMUM_SHOULD_MATCH || 1,
-        });
 
         if (!isEmpty(semantics.iptcCodes) && this.activeFilter === 'text') {
             query.bool.must.push({terms: {'semantics.iptcCodes': semantics.iptcCodes}});
@@ -81,6 +81,9 @@ export default function AnsaRelatedCtrl($scope, api, storage, Keys) {
 
         // filter out afp
         query.bool.must_not.push({term: {creditline: 'AFP'}});
+
+        // filter out used
+        query.bool.must_not.push({range: {used_updated: {gte: 'now/d', time_zone: getQueryTimeZone()}}});
 
         console.info('query', angular.toJson(query, 2));
 
