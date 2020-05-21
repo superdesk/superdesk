@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'ansa.validate',
     'ansa.save_iptc',
     'ansa.extra',
+    'ansa.remove_expired_media',
     'ansa',
 
     'planning',
