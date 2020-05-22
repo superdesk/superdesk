@@ -71,7 +71,7 @@ export default function AnsaRelatedCtrl($scope, api, storage, Keys) {
 
         // filter out older versions
         query.bool.must.push(
-            {term: {last_published_version: true}}
+            {term: {state: 'published'}}
         );
 
         // and rewritten versions
@@ -104,7 +104,7 @@ export default function AnsaRelatedCtrl($scope, api, storage, Keys) {
         }
     };
 
-    this.apiQuery = (query) => api.query('published', {source: {
+    this.apiQuery = (query) => api.query('news', {source: {
         query: query,
         sort: [{versioncreated: 'desc'}],
         size: 50,
