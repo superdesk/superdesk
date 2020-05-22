@@ -32,7 +32,7 @@ def remove_expired_media(archived_service, item, **kwargs):
     for rend in renditions:
         try:
             app.media.delete(str(rend['media']))
-        except err:
+        except Exception:
             logger.exception('Failed to remove media %s', rend['media'])
             continue
 
