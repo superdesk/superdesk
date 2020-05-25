@@ -49,12 +49,12 @@ class VFSObjectWrapper(io.BytesIO):
         self.seek(0)
 
 
-def parse_xml(resp):
+def parse_xml(resp, allow_error=False):
     resp.raise_for_status()
     assert resp.status_code in [200, 201], resp
     logger.debug('vfs %s', resp.content.decode('utf-8'))
     xml = etree.fromstring(resp.content)
-    if is_error(xml):
+    if is_error(xml) and not allow_error:
         errors = xml.find('errors')
         raise VFSError(errors.find('message').text)
     return xml
@@ -90,7 +90,14 @@ class VFSMediaStorage(MediaStorage):
 
     def delete(self, id_or_filename, resource=None):
         resp = self._sess.delete(self.url(DELETE_ENDPOINT) % id_or_filename, timeout=TIMEOUT)
-        return parse_xml(resp)
+        xml = parse_xml(resp, allow_error=True)
+        try:
+            specific = xml.find('errors').find('specific').text
+            if 'File to delete not found' in specific:
+                logger.warning('File was removed already from vfs md5=%s', id_or_filename)
+        except AttributeError:
+            pass
+        return is_error(xml)
 
     def metadata(self, id_or_filename, resource=None, ignore_error=False):
         resp = self._sess.get(self.url(METADATA_ENDPOINT) % id_or_filename, timeout=TIMEOUT)

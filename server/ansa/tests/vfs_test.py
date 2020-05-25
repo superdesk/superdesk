@@ -1,6 +1,7 @@
 
 import io
 import flask
+import logging
 import unittest
 import ansa.vfs as vfs
 import requests_mock
@@ -35,6 +36,15 @@ PUT_METADATA_RESPONSE = """<?xml version="1.0" encoding="UTF-8" standalone="yes"
     <fileItems>
         <md5>bar</md5>
     </fileItems>
+</files>
+"""
+DELETE_MISSING_FILE_RESPONSE = """<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<files>
+    <errors>
+        <code>1</code>
+        <message>Error code 1 : Application error</message>
+        <specific>DaoException: File to delete not found, md5 = 84804ef7279886c76b9712687e41e0fb</specific>
+    </errors>
 </files>
 """
 
@@ -98,6 +108,14 @@ class VFSTestCase(unittest.TestCase):
         with requests_mock.mock() as mock:
             mock.delete(DELETE_URL, content=METADATA_RESPONSE.encode('utf-8'))
             self.media.delete('foo')
+
+    def test_delete_graceful(self):
+        with requests_mock.mock() as mock:
+            mock.delete(DELETE_URL, content=DELETE_MISSING_FILE_RESPONSE.encode('utf-8'))
+            with self.assertLogs(level=logging.WARNING) as log:
+                self.media.delete('foo')
+                self.assertEqual(1, len(log.output))
+                self.assertIn('File was removed already from vfs md5=foo', log.output[0])
 
     def test_url_for_media(self):
         self.assertEqual(BINARY_URL, self.media.url_for_media('foo', 'image/jpeg'))
