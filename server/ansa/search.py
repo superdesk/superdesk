@@ -314,19 +314,21 @@ class AnsaPictureProvider(superdesk.SearchProvider):
         uris = [item['guid'] for item in items]
         if not fetch and uris:
             with timer('used'):
-                fetched_items = superdesk.get_resource_service('archive').search({
-                    'query': {'bool': {'filter': {'terms': {'uri': uris}}}}
-                })
+                fetched_items = list(superdesk.get_resource_service('archive').search({
+                    'query': {'bool': {'filter': [
+                        {'terms': {'uri': uris}},
+                        {'term': {'used': True}},
+                    ]}}
+                }))
                 for fetched in fetched_items:
-                    if fetched.get('used'):
-                        item = next((item for item in items if item['guid'] == fetched['uri']))
-                        item['used'] = True
-                        item.setdefault('used_count', 0)
-                        item['used_count'] += fetched.get("used_count", 0)
-                        if fetched['used_updated'] and (
-                            not item.get('used_updated') or item['used_updated'] <= fetched['used_updated']
-                        ):
-                            item['used_updated'] = fetched['used_updated']
+                    item = next((item for item in items if item['guid'] == fetched['uri']))
+                    item['used'] = True
+                    item.setdefault('used_count', 0)
+                    item['used_count'] += fetched.get("used_count", 0)
+                    if fetched['used_updated'] and (
+                        not item.get('used_updated') or item['used_updated'] < fetched['used_updated']
+                    ):
+                        item['used_updated'] = fetched['used_updated']
 
         return AnsaListCursor(items, json_data.get('simpleSearchResult', {}).get('totalResults', len(items)))
 
