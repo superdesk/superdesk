@@ -198,7 +198,8 @@ class AnsaPictureProvider(superdesk.SearchProvider):
                         params[QUERY_PARAMS[key]] = DATE_RANGES[val.lower()]()
             if query_filters:
                 params['filters'] = query_filters
-        else:
+
+        if not params.get('searchtext') and not params.get('filters'):
             return []  # avoid search with no filtering
 
         try:
