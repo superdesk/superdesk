@@ -22,7 +22,7 @@ def remove_expired_media(archived_service, item, **kwargs):
     renditions = []
     populate_renditions(renditions, item)
     if item.get('associations'):
-        for key, val in item['associations']:
+        for key, val in item['associations'].items():
             if val:
                 populate_renditions(renditions, val)
     if renditions:
