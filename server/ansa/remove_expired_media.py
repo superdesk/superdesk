@@ -25,16 +25,16 @@ def remove_expired_media(archived_service, item, dry=False, **kwargs):
         for key, val in item['associations'].items():
             if val:
                 populate_renditions(renditions, val)
-    if renditions:
+    if renditions and not dry:
         logger.info('Removing %d media files for item %s', len(renditions), item.get('guid'))
-    else:
+    elif not dry:
         logger.info('No media to be removed for item %s', item.get('guid'))
     for rend in renditions:
         try:
             if not dry:
                 app.media.delete(str(rend['media']))
             else:
-                print('dry: delete media %s', rend['media'])
+                print(rend['media'])
         except Exception:
             logger.exception('Failed to remove media %s', rend['media'])
             continue
