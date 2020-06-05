@@ -1,6 +1,7 @@
 import re
 import superdesk
 import logging
+import requests
 
 from enum import IntEnum
 from superdesk.text_utils import get_char_count
@@ -26,6 +27,8 @@ class Validators(IntEnum):
 
 class Errors:
     AFP_IMAGE_USAGE = "AFP images could not be used"
+    IMAGE_NOT_FOUND = "Image not found"
+    IMAGE_RENDITION_NOT_FOUND = "Image rendition not found"
 
 
 def get_active_mask(products):
@@ -47,6 +50,12 @@ def get_active_mask(products):
                         if value[i] == "1":
                             mask[i] = True
     return mask
+
+
+def url_exists(url):
+    infourl = url.replace("binfilebymd5", "infofilebymd5")
+    resp = requests.get(infourl)
+    return resp.status_code == requests.codes.ok and "errors" not in resp.text
 
 
 def validate(sender, item, response, error_fields, **kwargs):
@@ -128,6 +137,20 @@ def validate(sender, item, response, error_fields, **kwargs):
             and picture["extra"]["supplier"].lower() == "afp"
         ):
             response.append(Errors.AFP_IMAGE_USAGE)
+            break
+
+        if picture.get("renditions", {}).get("original", {}).get("href"):
+            if not url_exists(picture["renditions"]["original"]["href"]):
+                response.append("{}. Image: {}".format(
+                    Errors.IMAGE_NOT_FOUND,
+                    picture.get("headline", picture.get("_id", ""))
+                ))
+                break
+        else:
+            response.append("{}. Image: {}".format(
+                Errors.IMAGE_RENDITION_NOT_FOUND,
+                picture.get("headline", picture.get("_id", ""))
+            ))
             break
 
 
