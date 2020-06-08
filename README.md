@@ -39,7 +39,7 @@ More options and details:
 These services must be installed, configured and running:
 
  * MongoDB
- * ElasticSearch (1.7.x - 7.6.x)
+ * ElasticSearch (7.0.x - 7.7.x)
  * Redis
  * Python (>= 3.5)
  * Node.js (with `npm`)
