@@ -48,12 +48,15 @@ class ValidateTestCase(TestCase):
         item['headline'] = 'foo'
         item['extra'] = {'subtitle': 'foo', 'shorttitle': 'bar'}
         item['associations'] = {
-            'photoGallery--1': {'type': 'picture'},
+            'photoGallery--1': {
+                'type': 'picture',
+                'headline': 'formula drift',
+            },
         }
         item['subject'].append({'name': 'Test', 'qcode': '12345678'})
         item['body_html'] = 'short'
         validate(self, item, response, fields)
-        self.assertEqual([], response)
+        self.assertEqual(['Image rendition not found. Image: formula drift'], response)
 
     def test_auto_publish_skip_validation(self):
         item = self.item.copy()
