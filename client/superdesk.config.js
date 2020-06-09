@@ -91,6 +91,9 @@ module.exports = function(grunt) {
         ui: {
             italicAbstract: false,
             sendAndPublish: true,
+            sendPublishSchedule: true,
+            sendEmbargo: true,
+            sendDefaultStage: 'working',
         },
 
         search_cvs: [
