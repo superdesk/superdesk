@@ -1,0 +1,13 @@
+{
+  "private": true,
+  "main": "dist/extension.js",
+  "name": "ansa-archive",
+  "version": "0.1.0",
+  "scripts": {
+    "compile": "tsc",
+    "watch": "tsc -watch"
+  },
+  "devDependencies": {
+    "typescript": "3.7.2"
+  }
+}
