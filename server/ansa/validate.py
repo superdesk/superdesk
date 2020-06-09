@@ -54,7 +54,7 @@ def get_active_mask(products):
 
 def url_exists(url):
     infourl = url.replace("binfilebymd5", "infofilebymd5")
-    resp = requests.get(infourl)
+    resp = requests.get(infourl, timeout=5)
     return resp.status_code == requests.codes.ok and "errors" not in resp.text
 
 
