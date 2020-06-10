@@ -91,8 +91,8 @@ module.exports = function(grunt) {
         ui: {
             italicAbstract: false,
             sendAndPublish: true,
-            sendPublishSchedule: true,
-            sendEmbargo: true,
+            sendPublishSchedule: false,
+            sendEmbargo: false,
             sendDefaultStage: 'working',
         },
 
