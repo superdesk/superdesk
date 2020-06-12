@@ -12,7 +12,7 @@ const extension: IExtension = {
                 entities: {
                     article: {
                         getActionsBulk: (articles) => {
-                            const actions: IArticleActionBulk[] = [];
+                            const actions: Array<IArticleActionBulk> = [];
 
                             if (articles.every(isExternalPicture)) {
                                 actions.push({
