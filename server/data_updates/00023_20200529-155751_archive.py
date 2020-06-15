@@ -26,6 +26,7 @@ class DataUpdate(DataUpdate):
         desk = mongodb_database['desks'].find_one({'name': re.compile(r'^XFV')})  # image desk
         if not desk:
             logger.warning('desk XFV not found')
+            return
         ids = list(mongodb_collection.find({'state': 'published', 'task.desk': None}, {'_id': True}))
         if ids:
             logger.info('attaching %d items to desk %s', len(ids), desk['name'])
