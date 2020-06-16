@@ -1,19 +1,17 @@
 # import base image
-FROM ubuntu:trusty
+FROM ubuntu:bionic
 
 # install system-wide dependencies,
 # python3 and the build-time dependencies for c modules
 RUN apt-get update && \
 DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
 python3 python3-dev python3-pip python3-lxml \
-build-essential libffi-dev git \
-libtiff5-dev libjpeg8-dev zlib1g-dev \
+build-essential libffi-dev git locales \
+libtiff5-dev libjpeg8-dev zlib1g-dev libmagic-dev \
 libfreetype6-dev liblcms2-dev libwebp-dev \
 curl libfontconfig nodejs npm nginx \
-libxml2-dev libxslt1-dev \
 && echo "\ndaemon off;" >> /etc/nginx/nginx.conf \
-&& rm /etc/nginx/sites-enabled/default \
-&& ln --symbolic /usr/bin/nodejs /usr/bin/node
+&& rm /etc/nginx/sites-enabled/default
 
 # Set the locale
 RUN locale-gen en_US.UTF-8
@@ -26,7 +24,6 @@ WORKDIR /opt/superdesk/
 COPY ./docker/nginx.conf /etc/nginx/nginx.conf
 COPY ./docker/superdesk_vhost.conf /etc/nginx/sites-enabled/superdesk.conf
 COPY ./docker/start.sh /opt/superdesk/start.sh
-CMD /opt/superdesk/start.sh
 
 # client ports
 EXPOSE 9000
@@ -41,16 +38,29 @@ EXPOSE 5400
 ENV PYTHONUNBUFFERED 1
 ENV C_FORCE_ROOT "False"
 ENV CELERYBEAT_SCHEDULE_FILENAME /tmp/celerybeatschedule.db
+ENV TZ Europe/London
+
+RUN python3 -m pip install --upgrade pip setuptools wheel
+RUN npm install -g n npm grunt-cli && n lts
+
+# install server dependencies
+COPY ./server/requirements.txt /tmp/requirements.txt
+RUN cd /tmp && python3 -m pip install -U -r /tmp/requirements.txt
+
+# install client dependencies
+COPY ./client/package.json ./client/
+RUN cd ./client && npm install
 
 # install server
 COPY ./server /opt/superdesk
-RUN pip3 install -U -r requirements.txt
 
 # install client
 COPY ./client /opt/superdesk/client/
-RUN npm install -g n npm grunt-cli && n lts
-RUN cd ./client && npm install && grunt build
+
+RUN cd ./client && grunt build
 
 # copy git revision informations (used in "about" screen)
 COPY .git/HEAD /opt/superdesk/.git/
 COPY .git/refs/ /opt/superdesk/.git/refs/
+
+CMD /opt/superdesk/start.sh
