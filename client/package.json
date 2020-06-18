@@ -4,6 +4,6 @@
     "license": "AGPL-3.0",
     "dependencies": {
         "superdesk-core": "github:superdesk/superdesk-client-core#release/1.34",
-        "superdesk-planning": "github:superdesk/superdesk-planning#master"
+        "superdesk-planning": "github:superdesk/superdesk-planning#release/1.33.1"
     }
 }
