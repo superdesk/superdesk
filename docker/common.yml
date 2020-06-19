@@ -1,14 +1,10 @@
 mongodb:
   image: mongo:3
   container_name: mongodb
-  volumes:
-  - ../data/mongodb:/data/db
 
 redis:
   image: redis:3
   container_name: redis
-  volumes:
-  - ../data/redis:/data
 
 elastic:
   image: elasticsearch:7.7.1
@@ -25,8 +21,6 @@ elastic:
       hard: 65536
   cap_add:
     - IPC_LOCK
-  volumes:
-  - ../data/elastic:/usr/share/elasticsearch/data
 
 postfix:
   image: catatnight/postfix
