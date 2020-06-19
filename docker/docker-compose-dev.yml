@@ -1,10 +1,3 @@
-logstash:
-  extends:
-    file: common.yml
-    service: logstash
-  links:
-  - elastic
-
 mongodb:
   extends:
     file: common.yml
@@ -16,15 +9,8 @@ redis:
   extends:
     file: common.yml
     service: redis
-
-kibana:
-  extends:
-    file: common.yml
-    service: kibana
-  links:
-  - elastic
   ports:
-  - "5601:5601"
+    - "6379:6379"
 
 elastic:
   extends:
@@ -32,11 +18,6 @@ elastic:
     service: elastic
   ports:
     - "9200:9200"
-
-postfix:
-  extends:
-    file: common.yml
-    service: postfix
 
 superdesk:
   extends:
@@ -46,14 +27,15 @@ superdesk:
    - mongodb
    - redis
    - elastic
-   - logstash
-   - postfix
-   - pubapi
   environment:
    - SUPERDESK_RELOAD=True
    - SUPERDESK_URL=http://localhost:5000/api
    - SUPERDESK_WS_URL=ws://localhost:5050
    - SUPERDESK_CLIENT_URL=http://localhost:9000
+   - MONGO_URI=mongodb://mongodb/superdesk
+   - PUBLICAPI_MONGO_URI=mongodb://mongodb/superdesk_pa
+   - LEGAL_ARCHIVE_URI=mongodb://mongodb/superdesk_la
+   - ARCHIVED_URI=mongodb://mongodb/superdesk_ar
   ports:
    - "5000:5000"
    - "5100:5100"
@@ -66,23 +48,3 @@ superdesk:
    - ../client-core:/opt/superdesk/client-core/
    - ./Procfile-dev:/opt/superdesk/Procfile
    - ./start-dev.sh:/opt/superdesk/start.sh
-
-pubapi:
-  extends:
-    file: common.yml
-    service: pubapi
-  links:
-   - mongodb
-   - redis
-   - elastic
-   - logstash
-   - postfix
-  environment:
-   - SUPERDESK_RELOAD=True
-   - SUPERDESK_URL=http://localhost:5000/api
-   - SUPERDESK_CLIENT_URL=http://localhost:9000
-  volumes:
-   - ../superdesk-content-api:/opt/superdesk-content-api/
-   #- ./Procfile:/opt/superdesk/Procfile
-  ports:
-   - "5050:5050"

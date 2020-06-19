@@ -1,14 +1,32 @@
 mongodb:
   image: mongo:3
   container_name: mongodb
+  volumes:
+  - ../data/mongodb:/data/db
 
 redis:
   image: redis:3
   container_name: redis
+  volumes:
+  - ../data/redis:/data
 
 elastic:
-  image: elasticsearch:2
+  image: elasticsearch:7.7.1
   container_name: elastic
+  environment:
+  - xpack.security.enabled=false
+  - discovery.type=single-node
+  ulimits:
+    memlock:
+      soft: -1
+      hard: -1
+    nofile:
+      soft: 65536
+      hard: 65536
+  cap_add:
+    - IPC_LOCK
+  volumes:
+  - ../data/elastic:/usr/share/elasticsearch/data
 
 postfix:
   image: catatnight/postfix
