@@ -11,7 +11,7 @@
 
 import os
 from pathlib import Path
-from superdesk.default_settings import INSTALLED_APPS
+from superdesk.default_settings import INSTALLED_APPS, strtobool
 
 
 def env(variable, fallback_value=None):
@@ -58,3 +58,5 @@ if env('REDIS_PORT'):
 BROKER_URL = env('CELERY_BROKER_URL', REDIS_URL)
 
 SECRET_KEY = env('SECRET_KEY', '')
+
+PLANNING_EVENT_TEMPLATES_ENABLED = strtobool(env('PLANNING_EVENT_TEMPLATES_ENABLED', 'true'))
