@@ -128,24 +128,12 @@ SCHEMA = {
 }
 
 VALIDATOR_MEDIA_METADATA = {
-    "alt_text": {
-        "required": False,
-    },
-    "description_text": {
-        "required": False,
-    },
-    "copyrightholder": {
-        "required": False,
-    },
-    "byline": {
-        "required": False,
-    },
-    "usageterms": {
-        "required": False,
-    },
-    "copyrightnotice": {
-        "required": False,
-    },
+    "headline": {"required": True},
+    "description_text": {"required": True},
+    "PhotoCategories": {"required": True},
+    "language": {"required": True},
+    "city": {"required": True},
+    "byline": {"required": True},
 }
 
 

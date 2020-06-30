@@ -88,12 +88,18 @@ def update_iptc_metadata(sender, item, **kwargs):
         # only works with vfs storage
         return
 
-    if item.get('type') != 'picture':
+    if not request and not app.config.get('AUTO_PUBLISH_UPDATE_IPTC'):
         return
 
-    if not request and not app.config['AUTO_PUBLISH_UPDATE_IPTC']:
-        return
+    if item.get('type') == 'picture':
+        update_image_metadata(item)
+    elif item.get('associations'):
+        for assoc in item['associations'].values():
+            if assoc and assoc.get('type') == 'picture' and assoc.get('renditions'):
+                update_image_metadata(item)
 
+
+def update_image_metadata(item):
     try:
         original = item['renditions']['original']
     except KeyError:
