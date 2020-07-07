@@ -23,12 +23,27 @@ class Validators(IntEnum):
     BODY_LENGTH_2224 = 6
     FEATURED_REQUIRED = 7
     GALLERY_REQUIRED = 8
+    PRODUCT_ALLOWED = 9
 
 
 class Errors:
     AFP_IMAGE_USAGE = "AFP images could not be used"
     IMAGE_NOT_FOUND = "Image not found"
     IMAGE_RENDITION_NOT_FOUND = "Image rendition not found"
+    XINHUA_IMAGE_USAGE = "XINHUA IMAGES could not be used"
+
+
+def is_user_external(user):
+    role = get_user_role(user)
+    return role and role.get('name') == 'Ext'
+
+
+def get_user_role(user):
+    return (
+        superdesk.get_resource_service('roles').find_one(req=None, _id=user['role'])
+        if user.get('role')
+        else None
+    )
 
 
 def get_active_mask(products):
@@ -43,10 +58,10 @@ def get_active_mask(products):
                 if (
                     codes.get(item.get("qcode"))
                     and item.get(MASK_FIELD)
-                    and len(str(item[MASK_FIELD])) == 9
+                    and len(str(item[MASK_FIELD])) >= 9
                 ):
                     value = str(item[MASK_FIELD])
-                    for i in range(9):
+                    for i in range(len(str(item[MASK_FIELD]))):
                         if value[i] == "1":
                             mask[i] = True
     return mask
@@ -70,6 +85,14 @@ def validate(sender, item, response, error_fields, **kwargs):
         for subject in item.get("subject", [])
         if subject.get("scheme") == "products"
     ]
+    sign_off_author = (item['sign_off']).split('/')[0]
+    user = superdesk.get_resource_service('users').find_one(
+        req=None, username=sign_off_author
+    )
+    desk = superdesk.get_resource_service('desks').find_one(
+        req=None, _id=item['task']['desk']
+    )
+
     mask = get_active_mask(products)
     extra = item.get("extra", {})
     length = get_char_count(item.get("body_html") or "<p></p>")
@@ -130,6 +153,9 @@ def validate(sender, item, response, error_fields, **kwargs):
         if not gallery:
             response.append("Photo gallery is required")
 
+    if user and is_user_external(user) and not mask.get(Validators.PRODUCT_ALLOWED):
+        response.append("Products not allowed to external User")
+
     for picture in pictures:
         if (
             picture.get("extra")
@@ -139,18 +165,31 @@ def validate(sender, item, response, error_fields, **kwargs):
             response.append(Errors.AFP_IMAGE_USAGE)
             break
 
+        if (
+            picture.get("extra")
+            and picture["extra"].get("supplier")
+            and picture["extra"]["supplier"].lower() == "xinhua"
+            and "TAP" not in desk['name']
+        ):
+            response.append(Errors.XINHUA_IMAGE_USAGE)
+            break
+
         if picture.get("renditions", {}).get("original", {}).get("href"):
             if not url_exists(picture["renditions"]["original"]["href"]):
-                response.append("{}. Image: {}".format(
-                    Errors.IMAGE_NOT_FOUND,
-                    picture.get("headline", picture.get("_id", ""))
-                ))
+                response.append(
+                    "{}. Image: {}".format(
+                        Errors.IMAGE_NOT_FOUND,
+                        picture.get("headline", picture.get("_id", "")),
+                    )
+                )
                 break
         else:
-            response.append("{}. Image: {}".format(
-                Errors.IMAGE_RENDITION_NOT_FOUND,
-                picture.get("headline", picture.get("_id", ""))
-            ))
+            response.append(
+                "{}. Image: {}".format(
+                    Errors.IMAGE_RENDITION_NOT_FOUND,
+                    picture.get("headline", picture.get("_id", "")),
+                )
+            )
             break
 
 
