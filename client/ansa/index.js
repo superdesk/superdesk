@@ -249,7 +249,7 @@ function AnsaSemanticsCtrl($scope, $rootScope, api) {
             $scope.item.keywords = result.keywords;
         }
 
-        $scope.autosave($scope.item);
+        $scope.save();
     };
 
     let init = () => {
