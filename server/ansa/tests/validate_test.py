@@ -23,6 +23,10 @@ class ValidateTestCase(TestCase):
                 {'qcode': 'bar', 'scheme': 'products'},
                 {'qcode': 'baz', 'scheme': 'products'},
             ],
+            'sign_off': 'foo',
+            'task': {
+                'desk': 'foo',
+            }
         }
 
     def test_product_based_validation(self):
