@@ -11,7 +11,7 @@ const parseDate = (date: string) => date.length === 8 ?
     ].join('-') : date;
 
 // convert 152339+0000 to 15:23:39+0000
-const parseTime = (time: string) => time.length === 11 ?
+const parseTime = (time: string) => time.length >= 6 ?
     [
         time.substr(0, 2),
         time.substr(2, 2),
@@ -61,7 +61,7 @@ const extension: IExtension = {
                         const created = parseDatetime(data.DateCreated, data.TimeCreated);
                         const release = parseDatetime(data.ReleaseDate, data.ReleaseTime);
 
-                        if (created) {
+                        if (created && created !== '') {
                             item.extra.DateCreated = created;
                         }
 
