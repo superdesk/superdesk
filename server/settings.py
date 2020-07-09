@@ -127,14 +127,18 @@ SCHEMA = {
     "composite": package_profile['schema'],
 }
 
+
+upload_required = bool(strtobool(env('ANSA_VALIDATE_UPLOAD', 'false')))
 VALIDATOR_MEDIA_METADATA = {
-    "headline": {"required": True},
-    "description_text": {"required": True},
-    "PhotoCategories": {"required": True},
-    "language": {"required": True},
-    "city": {"required": True},
-    "byline": {"required": True},
+    "headline": {"required": upload_required},
+    "description_text": {"required": upload_required},
+    "PhotoCategories": {"required": upload_required},
+    "language": {"required": upload_required},
+    "city": {"required": upload_required},
+    "byline": {"required": upload_required},
 }
+
+VALIDATE_MEDIA_METADATA_ON_PUBLISH = False
 
 
 GEONAMES_USERNAME = env('GEONAMES_USERNAME', 'superdesk_dev')
