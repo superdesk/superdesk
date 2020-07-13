@@ -85,10 +85,13 @@ def validate(sender, item, response, error_fields, **kwargs):
         for subject in item.get("subject", [])
         if subject.get("scheme") == "products"
     ]
-    sign_off_author = (item['sign_off']).split('/')[0]
-    user = superdesk.get_resource_service('users').find_one(
-        req=None, username=sign_off_author
-    )
+    try:
+        sign_off_author = (item['sign_off']).split('/')[0]
+        user = superdesk.get_resource_service('users').find_one(
+            req=None, username=sign_off_author
+        )
+    except KeyError:
+        user = None
     desk = superdesk.get_resource_service('desks').find_one(
         req=None, _id=item['task']['desk']
     )
