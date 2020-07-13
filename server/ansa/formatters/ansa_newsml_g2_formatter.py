@@ -227,6 +227,7 @@ class ANSAPlainTextNewsMLG2Formatter(NewsMLG2Formatter):
         self._format_desk(article, item_meta)
         self._format_source(article, item_meta)
         self._format_to(article, item_meta)
+        self._format_update_notice(article, item_meta)
 
     def _format_source(self, article, item_meta):
         try:
@@ -242,6 +243,14 @@ class ANSAPlainTextNewsMLG2Formatter(NewsMLG2Formatter):
             to = ''
         signal = etree.SubElement(item_meta, 'signal', {'qcode': 'mail:to'})
         SubElement(signal, 'name').text = to
+
+    def _format_update_notice(self, article, item_meta):
+        try:
+            update_notice = article['extra']['update_notice'] or ''
+        except KeyError:
+            update_notice = ''
+        signal = etree.SubElement(item_meta, 'signal', {'qcode': 'update_notice'})
+        SubElement(signal, 'name').text = update_notice
 
     def _format_desk(self, article, item_meta):
         # store desk as service
