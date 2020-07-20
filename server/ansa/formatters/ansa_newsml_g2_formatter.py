@@ -24,6 +24,11 @@ def is_user_journalist(user):
     return role and role.get('name') == 'Gio'
 
 
+def is_user_producer(user):
+    role = get_user_role(user)
+    return role and role.get('name') == 'Pro'
+
+
 def get_user_role(user):
     return get_resource_service('roles').find_one(req=None, _id=user['role']) if user.get('role') else None
 
@@ -200,11 +205,16 @@ class ANSAPlainTextNewsMLG2Formatter(NewsMLG2Formatter):
             if '-' not in xawes_sign_off and '/' in sd_sign_off:
                 publisher = sd_sign_off.rsplit('/', 1)[1]
 
-                if not author or (publisher.strip() and author and not is_user_journalist(author)):
+                if not author or (publisher.strip() and author and not is_user_journalist(author)
+                                  and not is_user_producer(author)):
                     xawes_sign_off += '-' + publisher.strip()
+                    xawes_sign_off = xawes_sign_off.strip('-/')
+
+            if '-' not in xawes_sign_off and author and is_user_producer(author):
+                xawes_sign_off = 'RED/' + xawes_sign_off.strip()
 
             SubElement(content_meta, 'creator', attrib={
-                'literal': xawes_sign_off.upper().strip('-/'),
+                'literal': xawes_sign_off.upper(),
             })
 
     def _format_highlights(self, article, content_meta):

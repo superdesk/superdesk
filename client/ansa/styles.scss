@@ -207,8 +207,8 @@ iframe.ansa-map {
 }
 
 .main-article .char-count {
-    margin-top: 4px;
-    font-size: 15px;
+    margin-top: 5px;
+    font-size: 13px;
     color: inherit;
 }
 
@@ -258,4 +258,37 @@ div[data-field="genre"] .dropdown--dropleft .dropdown__menu {
     .sd-line-input--boxed input.sd-line-input__input, .sd-line-input--boxed textarea.sd-line-input__input {
         font-size: 1.6rem;
     }
+}
+
+// angelo
+.main-article .char-count {
+    margin-top: 4px;
+    font-size: 15px;
+    color: inherit;
+}
+
+.item-association { 
+//	border: 2px dashed rgba(150, 150, 150, 0.3); 
+	background-color: rgba(150, 150, 150, 0.06); 
+	color: inherit; 
+	width: 100%; 
+	height: auto;
+	min-height: 65px;
+	position: relative; 
+}
+
+.mlist-view .media-box .item-info time, .compact-view .media-box .item-info time {
+    font-size: 14px !important;
+    color: #000 !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 60px;
+    text-align: right;
+    margin-left: 3px;
+}
+
+.mlist-view .media-box .urgency .badge:nth-child(2), .compact-view .media-box .urgency .badge:nth-child(2) {
+    margin-top: 0.2rem;
+    display: none;
 }

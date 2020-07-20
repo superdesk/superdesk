@@ -85,6 +85,7 @@ def validate(sender, item, response, error_fields, **kwargs):
         for subject in item.get("subject", [])
         if subject.get("scheme") == "products"
     ]
+
     try:
         sign_off_author = (item['sign_off']).split('/')[0]
         user = superdesk.get_resource_service('users').find_one(
