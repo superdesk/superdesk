@@ -136,6 +136,12 @@ VALIDATOR_MEDIA_METADATA = {
     "language": {"required": upload_required},
     "city": {"required": upload_required},
     "byline": {"required": upload_required},
+
+    # keep these to make them visible in editor
+    "alt_text": {"required": False},
+    "copyrightholder": {"required": False},
+    "usageterms": {"required": False},
+    "copyrightnotice": {"required": False},
 }
 
 VALIDATE_MEDIA_METADATA_ON_PUBLISH = False
