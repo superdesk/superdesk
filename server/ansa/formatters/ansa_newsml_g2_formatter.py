@@ -130,6 +130,19 @@ class ANSAPlainTextNewsMLG2Formatter(NewsMLG2Formatter):
         self._format_semantics(article, content_meta)
         self._format_keywords(article, content_meta)
         self._format_alt_text(article, content_meta)
+        self._format_headline(article, content_meta)
+
+    def _format_headline(self, article, content_meta):
+        """Appends the headline element to the contentMeta element
+
+        :param dict article:
+        :param Element content_meta:
+        """
+        hl = article.get('headline', '').strip()
+        if '+++' not in hl and '++' in hl:
+            hl = '++ {} ++'.format(hl.replace('++', '').strip())
+
+        SubElement(content_meta, 'headline').text = hl
 
     def _format_alt_text(self, article, content_meta):
         if article.get('alt_text'):
