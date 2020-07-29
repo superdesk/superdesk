@@ -669,11 +669,17 @@ export default angular.module('ansa.superdesk', [
 ;
 
 setTimeout(() => {
-    startApp([
-        ansaIptc,
-        imageShortcuts,
-        planningExtension,
-        ansaArchive,
-        lineCountInAuthoringHeader,
-    ]);
+    startApp(
+        [
+            ansaIptc,
+            imageShortcuts,
+            planningExtension,
+            ansaArchive,
+            lineCountInAuthoringHeader,
+        ],
+        {},
+        {
+            countLines: (plainText, lineLength) => Math.floor(plainText.length / lineLength),
+        },
+    );
 });
