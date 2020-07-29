@@ -94,6 +94,12 @@ module.exports = function(grunt) {
             sendPublishSchedule: false,
             sendEmbargo: false,
             sendDefaultStage: 'working',
+
+            authoring: {
+                firstLine: {
+                    wordCount: false,
+                },
+            },
         },
 
         search_cvs: [
