@@ -35,6 +35,7 @@ INSTALLED_APPS.extend([
     'apps.languages',
     'planning',
     'analytics',
+    'superdesk.sams',
 ])
 
 PLANNING_EVENT_TEMPLATES_ENABLED = True
