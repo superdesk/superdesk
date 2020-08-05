@@ -12,3 +12,7 @@
 """SAMS specific settings"""
 
 SAMS_AUTH_TYPE = 'sams.auth.public'
+STORAGE_DESTINATION_1 = 'MongoGridFS,Default,mongodb://data-sd/sd-sams_sams'
+STORAGE_DESTINATION_2 = 'MongoGridFS,Media,mongodb://data-sd/sd-sams_sams'
+STORAGE_DESTINATION_3 = 'MongoGridFS,Publications,mongodb://data-sd/sd-sams_sams'
+STORAGE_DESTINATION_4 = 'MongoGridFS,Files,mongodb://data-sd/sd-sams_sams'
