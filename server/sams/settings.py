@@ -12,6 +12,15 @@
 """SAMS specific settings"""
 
 SAMS_AUTH_TYPE = 'sams.auth.public'
+
+# The following is to be removed once fireq SAMS env. var issues are resolved
+SAMS_HOST = 'localhost'
+SAMS_PORT = '5700'
+SAMS_URL = 'http://localhost:5700'
+SAMS_MONGO_DBNAME = 'sd-sams_sams'
+SAMS_MONGO_URI = 'mongodb://data-sd/sd-sams_sams'
+SAMS_ELASTICSEARCH_URL = 'http://data-sd:9201'
+SAMS_ELASTICSEARCH_INDEX = 'sd-sams_sams'
 STORAGE_DESTINATION_1 = 'MongoGridFS,Default,mongodb://data-sd/sd-sams_sams'
 STORAGE_DESTINATION_2 = 'MongoGridFS,Media,mongodb://data-sd/sd-sams_sams'
 STORAGE_DESTINATION_3 = 'MongoGridFS,Publications,mongodb://data-sd/sd-sams_sams'
