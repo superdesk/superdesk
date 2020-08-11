@@ -20,8 +20,11 @@
         "type": "manageable",
         "selection_type": "do not show",
         "unique_field": "qcode",
+	"init_version": 1,
         "items": [
-            {"is_active": true, "name": "Writer", "qcode": "writer"}
+            {"is_active": true, "name": "Writer", "qcode": "writer"},
+	    {"is_active": true, "name": "Editor", "qcode": "editor"},
+	    {"is_active": true, "name": "Photographer", "qcode": "photographer"}
         ],
         "schema": {
             "name": {"translate": true},
@@ -1239,20 +1242,6 @@
             "replacement": {}
         },
         "unique_field": "existing"
-    },
-    {
-        "_id": "author_roles",
-        "display_name": "Author Roles",
-        "type": "manageable",
-        "selection_type": "do not show",
-        "unique_field": "qcode",
-        "items": [
-            {"is_active": true, "name": "Writer", "qcode": "writer"}
-        ],
-        "schema": {
-            "name": {"translate": true},
-            "qcode": {}
-        }
     },
     {
         "_id": "usageterms",
