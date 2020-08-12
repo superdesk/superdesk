@@ -8,10 +8,15 @@ module.exports = function(grunt) {
     return {
         apps: [
             'superdesk-planning',
-            'superdesk-publisher',
+            'superdesk.analytics',
+        ],
+        importApps: [
+            '../index',
+            'superdesk-analytics',
+            'superdesk-planning',
         ],
 
-        defaultRoute: '/workspace/personal',
+        defaultRoute: '/workspace/monitoring',
 
         langOverride: {
             en: {
@@ -26,25 +31,45 @@ module.exports = function(grunt) {
         },
 
         shortDateFormat: 'DD/MM',
+        
+        editor3: { browserSpellCheck: true, },
 
         features: {
             preview: 1,
             swimlane: {columnsLimit: 99},
-            editor3: true,
+            swimlane: {defaultNumberOfColumns: 4},
             editorHighlights: true,
             noPublishOnAuthoringDesk: true,
+            customAuthoringTopbar: {
+                toDesk: true,
+                publish: true,
+                publishAndContinue: true,
+            },
+            validatePointOfInterestForImages: true,
+            editorHighlights: true,
+            editFeaturedImage: true,
+            searchShortcut: true,
+            elasticHighlight: true,
+            planning: true,
+            autorefreshContent: true,
         },
+        
+        item_profile: { change_profile: 1 },
 
         workspace: {
+            analytics: true,
             planning: true,
             assignments: true,
         },
+        
+        monitoring: {
+            scheduled: {
+                sort: {
+                    default: { field: 'publish_schedule', order: 'asc' },
+                    allowed_fields_to_sort: [ 'publish_schedule' ]
+                }
+            },
+        },   
 
-        publisher: {
-            protocol: 'https',
-            tenant: process.env.PUBLISHER_API_SUBDOMAIN || '',
-            domain: process.env.PUBLISHER_API_DOMAIN || 'localhost',
-            base: 'api/v1',
-        },
     };
 };
