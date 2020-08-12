@@ -4,6 +4,7 @@
     "dependencies": {
         "superdesk-core": "github:superdesk/superdesk-client-core#release/2.0",
         "superdesk-planning": "github:superdesk/superdesk-planning#release/2.0",
+        "superdesk-analytis": "github:superdesk/superdesk-analytics#release/2.0",
         "superdesk-publisher": "superdesk/superdesk-publisher#v2.0"
     }
 }
