@@ -66,16 +66,34 @@ HIGHCHARTS_LICENSE_CUSTOMER_ID = '2'
 HIGHCHARTS_LICENSE_EXPIRY = 'Perpetual'
 
 DEFAULT_LANGUAGE = 'en'
+LANGUAGES = [
+    {'language': 'en', 'label': 'English', 'source': True, 'destination': True},
+    {'language': 'en-GB', 'label': 'English (GB)', 'source': True, 'destination': True},
+    {'language': 'fr', 'label': 'French', 'source': True, 'destination': True},
+    {'language': 'ar', 'label': 'Arabic', 'source': True, 'destination': True},
+    {'language': 'de', 'label': 'German', 'source': True, 'destination': True},
+    {'language': 'no', 'label': 'Norwegian', 'source': True, 'destination': True},
+    {'language': 'pt-PT', 'label': 'Portugese', 'source': True, 'destination': True},
+    {'language': 'pt-BR', 'label': 'Portugese (Brazil)', 'source': True, 'destination': True},
+    {'language': 'zh-Hans', 'label': 'Chinese (分类)', 'source': True, 'destination': True},
+    {'language': 'dk', 'label': 'Danish', 'source': True, 'destination': True},
+    {'language': 'es', 'label': 'Spanish', 'source': True, 'destination': True},
+    {'language': 'se', 'label': 'Swedish', 'source': True, 'destination': True},
+    {'language': 'cz', 'label': 'Czech', 'source': True, 'destination': True}
+]
 
 GENERATE_SHORT_GUID = True
 
 ARCHIVE_AUTOCOMPLETE = True
-ARCHIVE_AUTOCOMPLETE_DAYS = 2
+ARCHIVE_AUTOCOMPLETE_DAYS = 30
+KEYWORDS_ADD_MISSING_ON_PUBLISH = True
 
 # publishing of associated and related items
 PUBLISH_ASSOCIATED_ITEMS = True
 
 FTP_TIMEOUT = int(env('FTP_TIMEOUT', 10))
+
+PLANNING_EVENT_TEMPLATES_ENABLED = True
 
 # special characters that are disallowed
 DISALLOWED_CHARACTERS = ['!', '$', '%', '&', '"', '(', ')', '*', '+', ',', '.', '/', ':', ';', '<', '=',
@@ -86,26 +104,74 @@ NEWSML_PROVIDER_ID = 'sourcefabric.org'
 ORGANIZATION_NAME = env('ORGANIZATION_NAME', 'Sourcefabric')
 ORGANIZATION_NAME_ABBREVIATION = env('ORGANIZATION_NAME_ABBREVIATION', 'SoFab')
 
+SCHEMA = {
+    'picture': {
+        'slugline': {'required': False},
+        'headline': {'required': False},
+        'description_text': {'required': True},
+        'byline': {'required': False},
+        'copyrightnotice': {'required': False},
+        'usageterms': {'required': False},
+        'ednote': {'required': False},
+    },
+    'video': {
+        'slugline': {'required': False},
+        'headline': {'required': False},
+        'description_text': {'required': True},
+        'byline': {'required': True},
+        'copyrightnotice': {'required': False},
+        'usageterms': {'required': False},
+        'ednote': {'required': False},
+    },
+}
+
+# editor for images, video, audio
+EDITOR = {
+    'picture': {
+        'headline': {'order': 1, 'sdWidth': 'full'},
+        'description_text': {'order': 2, 'sdWidth': 'full', 'textarea': True},
+        'byline': {'order': 3, 'displayOnMediaEditor': True},
+        'copyrightnotice': {'order': 4, 'displayOnMediaEditor': True},
+        'slugline': {'displayOnMediaEditor': True},
+        'ednote': {'displayOnMediaEditor': True},
+        'usageterms': {'order': 5, 'displayOnMediaEditor': True},
+    },
+    'video': {
+        'headline': {'order': 1, 'sdWidth': 'full'},
+        'description_text': {'order': 2, 'sdWidth': 'full', 'textarea': True},
+        'byline': {'order': 3, 'displayOnMediaEditor': True},
+        'copyrightnotice': {'order': 4, 'displayOnMediaEditor': True},
+        'slugline': {'displayOnMediaEditor': True},
+        'ednote': {'displayOnMediaEditor': True},
+        'usageterms': {'order': 5, 'displayOnMediaEditor': True},
+    },
+}
+
+SCHEMA['audio'] = SCHEMA['video']
+EDITOR['audio'] = EDITOR['video']
+
+# if there is picture/audio/video content type defined in data/content_types
+# use that
+with open(os.path.join(str(INIT_DATA_PATH), 'content_types.json')) as _content_types_file:
+    content_types = json.load(_content_types_file)
+    for content_type in content_types:
+        if content_type['_id'] in SCHEMA:
+            SCHEMA[content_type['_id']] = content_type['schema']
+            EDITOR[content_type['_id']] = content_type['editor']
+
+
+# media required fields for upload
 VALIDATOR_MEDIA_METADATA = {
+    "slugline": {
+        "required": False,
+    },
     "headline": {
-        "required": False,
-    },
-    "alt_text": {
-        "required": False,
-    },
-    "archive_description": {
         "required": False,
     },
     "description_text": {
         "required": True,
     },
-    "copyrightholder": {
-        "required": False,
-    },
     "byline": {
-        "required": False,
-    },
-    "usageterms": {
         "required": False,
     },
     "copyrightnotice": {
