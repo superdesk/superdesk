@@ -9,11 +9,8 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-import os
-
-from flask import json
 from pathlib import Path
-from superdesk.default_settings import strtobool, env, SERVER_URL, CORE_APPS as _core_apps
+from superdesk.default_settings import INSTALLED_APPS, strtobool, env
 
 ABS_PATH = str(Path(__file__).resolve().parent)
 
