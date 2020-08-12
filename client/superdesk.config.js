@@ -38,6 +38,7 @@ module.exports = function(grunt) {
             preview: 1,
             swimlane: {columnsLimit: 99},
             swimlane: {defaultNumberOfColumns: 4},
+            editor3: true,
             editorHighlights: true,
             noPublishOnAuthoringDesk: true,
             customAuthoringTopbar: {
