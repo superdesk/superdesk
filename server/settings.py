@@ -9,9 +9,11 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-from pathlib import Path
-from superdesk.default_settings import INSTALLED_APPS, strtobool, env
+import os
 
+from flask import json
+from pathlib import Path
+from superdesk.default_settings import strtobool, env, SERVER_URL, CORE_APPS as _core_apps
 
 ABS_PATH = str(Path(__file__).resolve().parent)
 
@@ -22,6 +24,8 @@ if init_data.exists():
 INSTALLED_APPS.extend([
     'apps.languages',
     'planning',
+    'analytics',
+    'superdesk.macros.imperial',
 ])
 
 RENDITIONS = {
@@ -57,6 +61,33 @@ MACROS_MODULE = env('MACROS_MODULE', 'macros')
 
 HIGHCHARTS_SERVER_HOST = env('HIGHCHARTS_SERVER_HOST', 'localhost')
 HIGHCHARTS_SERVER_PORT = env('HIGHCHARTS_SERVER_PORT', '6060')
+HIGHCHARTS_LICENSE_ID = env('HIGHCHARTS_LICENSE_ID', '')
+HIGHCHARTS_LICENSE_TYPE = 'OEM'
+HIGHCHARTS_LICENSEE = 'Sourcefabric Ventures s.r.o.'
+HIGHCHARTS_LICENSEE_CONTACT = 'tech@sourcefabric.org'
+HIGHCHARTS_LICENSE_CUSTOMER_ID = '2'
+HIGHCHARTS_LICENSE_EXPIRY = 'Perpetual'
+
+DEFAULT_LANGUAGE = 'en'
+
+GENERATE_SHORT_GUID = True
+
+ARCHIVE_AUTOCOMPLETE = True
+ARCHIVE_AUTOCOMPLETE_DAYS = 2
+
+# publishing of associated and related items
+PUBLISH_ASSOCIATED_ITEMS = True
+
+FTP_TIMEOUT = int(env('FTP_TIMEOUT', 10))
+
+# special characters that are disallowed
+DISALLOWED_CHARACTERS = ['!', '$', '%', '&', '"', '(', ')', '*', '+', ',', '.', '/', ':', ';', '<', '=',
+                         '>', '?', '@', '[', ']', '\\', '^', '_', '`', '{', '|', '}', '~']
+
+# This value gets injected into NewsML 1.2 and G2 output documents.
+NEWSML_PROVIDER_ID = 'sourcefabric.org'
+ORGANIZATION_NAME = env('ORGANIZATION_NAME', 'Sourcefabric')
+ORGANIZATION_NAME_ABBREVIATION = env('ORGANIZATION_NAME_ABBREVIATION', 'SoFab')
 
 VALIDATOR_MEDIA_METADATA = {
     "headline": {
