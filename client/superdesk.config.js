@@ -30,7 +30,11 @@ module.exports = function(grunt) {
             dateformat: 'DD.MM.YYYY',
         },
 
-        shortDateFormat: 'DD/MM',
+        shortTimeFormat: 'HH:mm, DD.MM.YYYY',
+        shortDateFormat: 'HH:mm, DD.MM.YYYY',
+        shortWeekFormat: 'HH:mm, DD.MM.YYYY',
+        startingDay: '1',
+        defaultTimezone: 'Europe/Prague',
         
         editor3: { browserSpellCheck: true, },
 
