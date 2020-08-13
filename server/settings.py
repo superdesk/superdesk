@@ -150,15 +150,6 @@ EDITOR = {
 SCHEMA['audio'] = SCHEMA['video']
 EDITOR['audio'] = EDITOR['video']
 
-# if there is picture/audio/video content type defined in data/content_types
-# use that
-with open(os.path.join(str(INIT_DATA_PATH), 'content_types.json')) as _content_types_file:
-    content_types = json.load(_content_types_file)
-    for content_type in content_types:
-        if content_type['_id'] in SCHEMA:
-            SCHEMA[content_type['_id']] = content_type['schema']
-            EDITOR[content_type['_id']] = content_type['editor']
-
 
 # media required fields for upload
 VALIDATOR_MEDIA_METADATA = {
