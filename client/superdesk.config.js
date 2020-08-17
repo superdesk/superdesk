@@ -37,6 +37,11 @@ module.exports = function(grunt) {
         defaultTimezone: 'Europe/Prague',
         
         editor3: { browserSpellCheck: true, },
+        
+        search_cvs: [
+            {id: 'topics', name:'Topics', field: 'subject', list: 'topics'},
+            {id: 'language', name:'Language', field: 'language', list: 'languages'}
+        ],
 
         features: {
             preview: 1,
