@@ -4,24 +4,24 @@
         "display_name": "Languages",
         "type": "manageable",
         "unique_field": "qcode",
-	"init_version": 1,
+	"init_version": 2,
         "service": {
             "all": 1
         },
         "items": [
             {"qcode": "en", "name": "English", "is_active": true},
             {"qcode": "en-GB", "name": "English (GB)", "is_active": true},
-            {"qcode": "fr", "name": "French", "is_active": true},
-            {"qcode": "ar", "name": "Arabic", "is_active": true},
-            {"qcode": "de", "name": "German", "is_active": true},
-            {"qcode": "no", "name": "Norwegian", "is_active": true},
-            {"qcode": "pt-PT", "name": "Portugese", "is_active": true},
-            {"qcode": "pt-BR", "name": "Portugese (Brazil)", "is_active": true},
+            {"qcode": "fr", "name": "Français", "is_active": true},
+            {"qcode": "ar", "name": "العربية", "is_active": true},
+            {"qcode": "de", "name": "Deutsch", "is_active": true},
+            {"qcode": "no", "name": "Norsk", "is_active": true},
+            {"qcode": "pt-PT", "name": "Português", "is_active": true},
+            {"qcode": "pt-BR", "name": "Português (Brazil)", "is_active": true},
             {"qcode": "zh-Hans", "name": "Chinese (分类)", "is_active": true},
-            {"qcode": "dk", "name": "Danish", "is_active": true},
-            {"qcode": "es", "name": "Spanish", "is_active": true},
-            {"qcode": "se", "name": "Swedish", "is_active": true},
-            {"qcode": "cz", "name": "Czech", "is_active": true}
+            {"qcode": "dk", "name": "Dansk", "is_active": true},
+            {"qcode": "es", "name": "Español", "is_active": true},
+            {"qcode": "se", "name": "Svenska", "is_active": true},
+            {"qcode": "cz", "name": "čeština", "is_active": true}
         ]
     },
     {
