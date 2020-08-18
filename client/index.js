@@ -3,10 +3,17 @@ import annotationsLibraryExtension from 'superdesk-core/scripts/extensions/annot
 import markForUserExtension from 'superdesk-core/scripts/extensions/markForUser/dist/src/extension';
 import datetimeFieldExtension from 'superdesk-core/scripts/extensions/datetimeField/dist/src/extension';
 import planningExtension from 'superdesk-planning/client/planning-extension/dist/extension';
+import samsExtension from 'superdesk-core/scripts/extensions/sams/dist/src/extension';
 
 setTimeout(() => {
     startApp(
-        [annotationsLibraryExtension, markForUserExtension, datetimeFieldExtension, planningExtension],
+        [
+            annotationsLibraryExtension,
+            markForUserExtension,
+            datetimeFieldExtension,
+            planningExtension,
+            samsExtension,
+        ],
         {},
     );
 });
