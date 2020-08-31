@@ -7,6 +7,7 @@ from enum import IntEnum
 from superdesk.text_utils import get_char_count
 from superdesk.signals import item_validate
 from ansa.constants import GALLERY
+from superdesk import get_resource_service
 
 MASK_FIELD = "output_code"
 
@@ -36,6 +37,21 @@ class Errors:
 def is_user_external(user):
     role = get_user_role(user)
     return role and role.get('name') == 'Ext'
+
+
+def is_user_producer(user):
+    role = get_user_role(user)
+    return role and role.get('name') == 'Pro'
+
+
+def is_user_journalist(user):
+    role = get_user_role(user)
+    return role and role.get('name') == 'Gio'
+
+
+def is_user_collaborator(user):
+    role = get_user_role(user)
+    return role and role.get('name') == 'Col'
 
 
 def get_user_role(user):
@@ -80,25 +96,56 @@ def validate(sender, item, response, error_fields, **kwargs):
         response.clear()
         return
 
+    extra = item.get("extra", {})
+
+    # check content profile for extra field Autore
+    try:
+        profile = get_resource_service('content_types').find_one(
+            req=None, _id=item['profile']
+        )
+    except KeyError:
+        profile = None
+    if profile and profile['editor'].get('Autore'):
+        try:
+            autore = extra.get("Autore") or (item['sign_off']).split('/')[0]
+            user = superdesk.get_resource_service('users').find_one(
+                req=None, username=autore
+            )
+        except KeyError:
+            user = None
+
+        try:
+            coautore = extra.get("Co-Autore")
+            digitatore = extra.get("Digitatore")
+            try:
+                couser = superdesk.get_resource_service('users').find_one(
+                    req=None, username=coautore
+                )
+            except KeyError:
+                couser = None  # noqa - will be used soon
+
+            if not extra.get("Autore") is None and (
+                (not user and not coautore)
+                or (user and not is_user_journalist(user))
+                and not coautore
+            ):
+                response.append("Co-Author: is missing")
+            if (
+                (autore and len(autore) > 3)
+                or (coautore and len(coautore) > 3)
+                or (digitatore and len(digitatore) > 3)
+            ):
+                response.append("Check the sign-off lengths")
+        except KeyError:
+            pass
+
     products = [
         subject
         for subject in item.get("subject", [])
         if subject.get("scheme") == "products"
     ]
 
-    try:
-        sign_off_author = (item['sign_off']).split('/')[0]
-        user = superdesk.get_resource_service('users').find_one(
-            req=None, username=sign_off_author
-        )
-    except KeyError:
-        user = None
-    desk = superdesk.get_resource_service('desks').find_one(
-        req=None, _id=item['task']['desk']
-    )
-
     mask = get_active_mask(products)
-    extra = item.get("extra", {})
     length = get_char_count(item.get("body_html") or "<p></p>")
 
     # allow publishing of headline with update info (1,2,..) over limit
@@ -157,8 +204,20 @@ def validate(sender, item, response, error_fields, **kwargs):
         if not gallery:
             response.append("Photo gallery is required")
 
+    try:
+        sign_off_author = (item['sign_off']).split('/')[0]
+        user = superdesk.get_resource_service('users').find_one(
+            req=None, username=sign_off_author
+        )
+    except KeyError:
+        user = None
+
     if user and is_user_external(user) and not mask.get(Validators.PRODUCT_ALLOWED):
         response.append("Products not allowed to external User")
+
+    desk = superdesk.get_resource_service('desks').find_one(
+        req=None, _id=item['task']['desk']
+    )
 
     for picture in pictures:
         if (

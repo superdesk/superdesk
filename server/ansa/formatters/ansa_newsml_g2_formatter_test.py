@@ -425,7 +425,7 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
         self.assertEqual('Article (news)', genre.find(ns('name')).text)
 
     def test_located_semantics(self):
-        updates = {'dateline': {'located': {'place': geoname}}}
+        updates = {'dateline': {'located': {'place': geoname}, 'text': geoname['name']}}
         meta = self.format_content_meta(updates)
         located = meta.find(ns('located'))
         self.assertIsNotNone(located)

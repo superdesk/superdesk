@@ -138,6 +138,7 @@ class ANSAParser(NewsMLTwoFeedParser):
         creator = meta.find(self.qname('creator'))
         if creator is not None and creator.get('literal'):
             item['sign_off'] = creator.get('literal').upper()
+            item.setdefault('extra', {})['Autore'] = creator.get('literal').upper()
 
         contribs = meta.findall(self.qname('contributor'))
         for contrib in contribs:
@@ -146,8 +147,9 @@ class ANSAParser(NewsMLTwoFeedParser):
             if name is None or not role:
                 continue
             if contrib.get('role') == 'ctrol:descrWriter':
-                item.setdefault('extra', {})['digitator'] = name.text
+                item.setdefault('extra', {})['Digitatore'] = name.text
             if contrib.get('role') == 'ansactrol:co-author':
+                item.setdefault('extra', {})['Co-Autore'] = name.text
                 if item.get('sign_off'):
                     item['sign_off'] += '-' + name.text.upper()
                 else:

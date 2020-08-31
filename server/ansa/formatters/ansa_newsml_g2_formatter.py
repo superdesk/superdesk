@@ -30,7 +30,11 @@ def is_user_producer(user):
 
 
 def get_user_role(user):
-    return get_resource_service('roles').find_one(req=None, _id=user['role']) if user.get('role') else None
+    return (
+        get_resource_service('roles').find_one(req=None, _id=user['role'])
+        if user.get('role')
+        else None
+    )
 
 
 class ANSAPlainTextNewsMLG2Formatter(NewsMLG2Formatter):
@@ -48,7 +52,11 @@ class ANSAPlainTextNewsMLG2Formatter(NewsMLG2Formatter):
         """
         content_set = etree.SubElement(news_item, 'contentSet')
         if article.get('body_html'):
-            inline = etree.SubElement(content_set, 'inlineXML', attrib={'contenttype': 'application/xhtml+xml'})
+            inline = etree.SubElement(
+                content_set,
+                'inlineXML',
+                attrib={'contenttype': 'application/xhtml+xml'},
+            )
             inline.append(self._build_html_doc(article))
         self._build_gallery(article, content_set)
 
@@ -59,10 +67,11 @@ class ANSAPlainTextNewsMLG2Formatter(NewsMLG2Formatter):
                 images.append(val)
 
         if images:
-            inline = etree.SubElement(content_set, 'inlineXML', attrib=dict(
-                contenttype='application/xhtml+xml',
-                rendition='gallery'
-            ))
+            inline = etree.SubElement(
+                content_set,
+                'inlineXML',
+                attrib=dict(contenttype='application/xhtml+xml', rendition='gallery'),
+            )
 
             html = etree.SubElement(inline, 'html')
             body = etree.SubElement(html, 'body')
@@ -74,12 +83,16 @@ class ANSAPlainTextNewsMLG2Formatter(NewsMLG2Formatter):
                     continue
                 li = etree.SubElement(ul, 'li')
                 figure = etree.SubElement(li, 'figure')
-                etree.SubElement(figure, 'img', attrib=dict(
-                    src=self._publish_media(orig),
-                    alt=image.get('alt_text', ''),
-                    width=str(orig.get('width', '')),
-                    height=str(orig.get('height', '')),
-                ))
+                etree.SubElement(
+                    figure,
+                    'img',
+                    attrib=dict(
+                        src=self._publish_media(orig),
+                        alt=image.get('alt_text', ''),
+                        width=str(orig.get('width', '')),
+                        height=str(orig.get('height', '')),
+                    ),
+                )
                 figcaption = etree.SubElement(figure, 'figcaption')
                 figcaption.text = image.get('headline', '')
 
@@ -99,15 +112,23 @@ class ANSAPlainTextNewsMLG2Formatter(NewsMLG2Formatter):
             if article.get('body_html'):
                 logger.exception('XML parsing error')
             html = None
-        return html if html is not None else etree.HTML('<p>%s</p>' % article.get('headline') or '')
+        return (
+            html
+            if html is not None
+            else etree.HTML('<p>%s</p>' % article.get('headline') or '')
+        )
 
     def _format_itemref(self, group, ref, item):
         itemRef = super()._format_itemref(group, ref, item)
         if item.get('body_html'):
-            desc = etree.SubElement(itemRef, 'description', attrib={'role': 'drol:teaser'})
+            desc = etree.SubElement(
+                itemRef, 'description', attrib={'role': 'drol:teaser'}
+            )
             desc.append(self._build_html_doc(item))
         elif item.get('description_text'):
-            desc = etree.SubElement(itemRef, 'description', attrib={'role': 'drol:caption'})
+            desc = etree.SubElement(
+                itemRef, 'description', attrib={'role': 'drol:caption'}
+            )
             desc.text = item.get('description_text')
         return itemRef
 
@@ -142,58 +163,80 @@ class ANSAPlainTextNewsMLG2Formatter(NewsMLG2Formatter):
         if '+++' not in hl and '++' in hl:
             hl = '++ {} ++'.format(hl.replace('++', '').strip())
 
+        # p=article.get('priority', 4)
+        # if p == 2 and not '++' in hl:
+        #    hl = '++ {} ++'.format(hl.strip())
+
         SubElement(content_meta, 'headline').text = hl
 
     def _format_alt_text(self, article, content_meta):
         if article.get('alt_text'):
-            SubElement(content_meta, 'description', {'role': 'drol:altText'}).text = article['alt_text']
+            SubElement(
+                content_meta, 'description', {'role': 'drol:altText'}
+            ).text = article['alt_text']
 
     def _format_extra(self, article, content_meta):
         extra = article.get('extra', {})
 
         if extra.get('subtitle'):
-            SubElement(content_meta, 'headline', attrib={
-                'role': 'hld:subHeadline',
-            }).text = get_text(extra['subtitle'])
+            SubElement(
+                content_meta, 'headline', attrib={'role': 'hld:subHeadline'}
+            ).text = get_text(extra['subtitle'])
 
         if extra.get('shorttitle'):
-            SubElement(content_meta, 'headline', attrib={
-                'role': 'hld:shortHeadline',
-            }).text = get_text(extra['shorttitle'])
+            SubElement(
+                content_meta, 'headline', attrib={'role': 'hld:shortHeadline'}
+            ).text = get_text(extra['shorttitle'])
 
         for field, role in CONTRIBUTOR_MAPPING.items():
             if extra.get(field):
-                elem = SubElement(content_meta, 'contributor', {'role': 'ctrol:{}'.format(role)})
+                elem = SubElement(
+                    content_meta, 'contributor', {'role': 'ctrol:{}'.format(role)}
+                )
                 SubElement(elem, 'name').text = extra[field]
 
     def _format_sms(self, article, content_meta):
         if article.get('sms_message'):
-            SubElement(content_meta, 'headline', attrib={
-                'role': 'hld:sms',
-            }).text = article['sms_message']
+            SubElement(
+                content_meta, 'headline', attrib={'role': 'hld:sms'}
+            ).text = article['sms_message']
 
     def _format_authors(self, article, content_meta):
         for author in article.get('authors', []):
             if author.get('parent'):
-                user = superdesk.get_resource_service('users').find_one(req=None, _id=author['parent'])
+                user = superdesk.get_resource_service('users').find_one(
+                    req=None, _id=author['parent']
+                )
                 if user:
-                    creator = SubElement(content_meta, 'contributor', attrib={
-                        'literal': user.get('sign_off', ''),
-                        'role': 'ansactrol:{}'.format(author.get('role') or 'writer'),
-                    })
-                    SubElement(creator, 'name').text = user.get('display_name', author.get('name', ''))
+                    creator = SubElement(
+                        content_meta,
+                        'contributor',
+                        attrib={
+                            'literal': user.get('sign_off', ''),
+                            'role': 'ansactrol:{}'.format(
+                                author.get('role') or 'writer'
+                            ),
+                        },
+                    )
+                    SubElement(creator, 'name').text = user.get(
+                        'display_name', author.get('name', '')
+                    )
             elif author.get('role') and author.get('sub_label'):
-                contrib = SubElement(content_meta, 'contributor', attrib={
-                    'literal': author.get('sub_label'),
-                    'role': 'ansactrol:{}'.format(author.get('role')),
-                })
+                contrib = SubElement(
+                    content_meta,
+                    'contributor',
+                    attrib={
+                        'literal': author.get('sub_label'),
+                        'role': 'ansactrol:{}'.format(author.get('role')),
+                    },
+                )
                 SubElement(contrib, 'name').text = author.get('sub_label')
 
     def _format_creator(self, article, content_meta):
         if article.get('byline'):
             SubElement(content_meta, 'by').text = article['byline']
 
-    def _format_sign_off(self, article, content_meta):
+    def _format_sign_off_sd(self, article, content_meta):
         if article.get('sign_off'):
             sd_sign_off = article['sign_off']
 
@@ -202,7 +245,9 @@ class ANSAPlainTextNewsMLG2Formatter(NewsMLG2Formatter):
             else:
                 author_sign = sd_sign_off.split('-')[0]
 
-            author = get_resource_service('users').find_one(req=None, username=author_sign)
+            author = get_resource_service('users').find_one(
+                req=None, username=author_sign
+            )
 
             xawes_sign_off = sd_sign_off.split('/')[0]
             """if  '/' in sd_sign_off:
@@ -218,17 +263,56 @@ class ANSAPlainTextNewsMLG2Formatter(NewsMLG2Formatter):
             if '-' not in xawes_sign_off and '/' in sd_sign_off:
                 publisher = sd_sign_off.rsplit('/', 1)[1]
 
-                if not author or (publisher.strip() and author and not is_user_journalist(author)
-                                  and not is_user_producer(author)):
+                if not author or (
+                    publisher.strip()
+                    and author
+                    and not is_user_journalist(author)
+                    and not is_user_producer(author)
+                ):
                     xawes_sign_off += '-' + publisher.strip()
                     xawes_sign_off = xawes_sign_off.strip('-/')
 
             if '-' not in xawes_sign_off and author and is_user_producer(author):
                 xawes_sign_off = 'RED/' + xawes_sign_off.strip()
 
-            SubElement(content_meta, 'creator', attrib={
-                'literal': xawes_sign_off.upper(),
-            })
+            SubElement(
+                content_meta, 'creator', attrib={'literal': xawes_sign_off.upper()}
+            )
+
+    def _format_sign_off_xawes(self, article, content_meta):
+        extra = article.get('extra', {})
+        if article.get('sign_off'):
+            sd_sign_off = article['sign_off'].split('/')[0]
+            try:
+                author = get_text(extra['Autore']) or sd_sign_off
+            except KeyError:
+                author = sd_sign_off
+            xawes_sign_off = author
+            try:
+                coauthor = get_text(extra['Co-Autore'])
+                xawes_sign_off += "-" + coauthor
+            except KeyError:
+                pass
+            try:
+                digitator = get_text(extra['Digitatore'])
+                xawes_sign_off += "/" + digitator
+            except KeyError:
+                pass
+            SubElement(
+                content_meta, 'creator', attrib={'literal': xawes_sign_off.upper()}
+            )
+
+    def _format_sign_off(self, article, content_meta):
+        try:
+            profile = get_resource_service('content_types').find_one(
+                req=None, _id=article['profile']
+            )
+        except KeyError:
+            profile = None
+        if profile and profile['editor'].get('Autore'):
+            self._format_sign_off_xawes(article, content_meta)
+        else:
+            self._format_sign_off_sd(article, content_meta)
 
     def _format_highlights(self, article, content_meta):
         """Adds highlights id as subject."""
@@ -236,9 +320,11 @@ class ANSAPlainTextNewsMLG2Formatter(NewsMLG2Formatter):
         for highlight in article.get('highlights', []):
             highlight_id = str(highlight)
             if not names.get(highlight_id):
-                names[highlight_id] = superdesk.get_resource_service('highlights') \
-                    .find_one(req=None, _id=highlight_id) \
+                names[highlight_id] = (
+                    superdesk.get_resource_service('highlights')
+                    .find_one(req=None, _id=highlight_id)
                     .get('name')
+                )
             highlight_name = names.get(highlight_id)
             attrib = {'type': 'highlight', 'id': highlight_id}
             subject = SubElement(content_meta, 'subject', attrib=attrib)
@@ -277,11 +363,21 @@ class ANSAPlainTextNewsMLG2Formatter(NewsMLG2Formatter):
 
     def _format_desk(self, article, item_meta):
         # store desk as service
-        archive_item = superdesk.get_resource_service('archive').find_one(req=None, _id=article['guid'])
-        if archive_item is not None and archive_item.get('task') and archive_item['task'].get('desk'):
-            desk = superdesk.get_resource_service('desks').find_one(req=None, _id=archive_item['task']['desk'])
+        archive_item = superdesk.get_resource_service('archive').find_one(
+            req=None, _id=article['guid']
+        )
+        if (
+            archive_item is not None
+            and archive_item.get('task')
+            and archive_item['task'].get('desk')
+        ):
+            desk = superdesk.get_resource_service('desks').find_one(
+                req=None, _id=archive_item['task']['desk']
+            )
             try:
-                stage = superdesk.get_resource_service('stages').find_one(req=None, _id=archive_item['task']['stage'])
+                stage = superdesk.get_resource_service('stages').find_one(
+                    req=None, _id=archive_item['task']['stage']
+                )
             except KeyError:
                 stage = {}
             if desk and desk.get('name'):
@@ -289,35 +385,56 @@ class ANSAPlainTextNewsMLG2Formatter(NewsMLG2Formatter):
                 SubElement(service, 'name').text = desk['name']
                 pieces = desk['name'].split(' - ')
                 if len(pieces) == 2:
-                    signal = SubElement(item_meta, 'signal', {'qcode': 'red-address:{}'.format(pieces[0].strip())})
-                    SubElement(signal, 'name').text = ': '.join([
-                        x for x in ['desk', desk.get('name'), stage.get('name')] if x
-                    ])
+                    signal = SubElement(
+                        item_meta,
+                        'signal',
+                        {'qcode': 'red-address:{}'.format(pieces[0].strip())},
+                    )
+                    SubElement(signal, 'name').text = ': '.join(
+                        [x for x in ['desk', desk.get('name'), stage.get('name')] if x]
+                    )
             lookup = {'_id_document': archive_item['_id']}
-            versions = superdesk.get_resource_service('archive_versions').find(where=lookup).sort('_id')
+            versions = (
+                superdesk.get_resource_service('archive_versions')
+                .find(where=lookup)
+                .sort('_id')
+            )
             first_desk = None
             for version in versions:
-                if not first_desk and version.get('task') and version['task'].get('desk'):
+                if (
+                    not first_desk
+                    and version.get('task')
+                    and version['task'].get('desk')
+                ):
                     if desk and desk['_id'] == version['task']['desk']:
                         first_desk = desk
                     else:
-                        first_desk = superdesk.get_resource_service('desks') \
-                            .find_one(req=None, _id=version['task']['desk'])
+                        first_desk = superdesk.get_resource_service('desks').find_one(
+                            req=None, _id=version['task']['desk']
+                        )
             if first_desk:
                 pieces = first_desk['name'].split(' - ')
                 if len(pieces) == 2:
-                    SubElement(item_meta, 'signal', {'qcode': 'red-orig:{}'.format(pieces[0].strip())})
+                    SubElement(
+                        item_meta,
+                        'signal',
+                        {'qcode': 'red-orig:{}'.format(pieces[0].strip())},
+                    )
 
     def _format_related(self, article, item_meta):
         featured = article.get('associations', {}).get('featuremedia')
         if featured:
             orig = featured.get('renditions', {}).get('original')
             if orig:
-                link = SubElement(item_meta, 'link', attrib={
-                    'rel': 'irel:seeAlso',
-                    'mimetype': orig.get('mimetype', featured.get('mimetype')),
-                    'href': self._publish_media(orig),
-                })
+                link = SubElement(
+                    item_meta,
+                    'link',
+                    attrib={
+                        'rel': 'irel:seeAlso',
+                        'mimetype': orig.get('mimetype', featured.get('mimetype')),
+                        'href': self._publish_media(orig),
+                    },
+                )
                 if featured.get('headline'):
                     SubElement(link, 'title').text = featured['headline']
 
@@ -337,9 +454,11 @@ class ANSAPlainTextNewsMLG2Formatter(NewsMLG2Formatter):
         if 'subject' in article and len(article['subject']) > 0:
             for s in article['subject']:
                 if s.get('scheme') == 'products' and s.get('qcode'):
-                    subj = SubElement(content_meta, 'subject', attrib={
-                        'qcode': 'products:%s' % s['qcode'],
-                    })
+                    subj = SubElement(
+                        content_meta,
+                        'subject',
+                        attrib={'qcode': 'products:%s' % s['qcode']},
+                    )
 
                     SubElement(subj, 'name', attrib={XML_LANG: 'it'}).text = s['name']
                 elif 'qcode' in s:
@@ -347,15 +466,19 @@ class ANSAPlainTextNewsMLG2Formatter(NewsMLG2Formatter):
                         qcode = s['qcode']
                     else:
                         qcode = '%s:%s' % (s.get('scheme', 'subj'), s['qcode'])
-                    subj = SubElement(content_meta, 'subject',
-                                      attrib={'type': 'cpnat:abstract', 'qcode': qcode})
+                    subj = SubElement(
+                        content_meta,
+                        'subject',
+                        attrib={'type': 'cpnat:abstract', 'qcode': qcode},
+                    )
                     SubElement(subj, 'name', attrib={XML_LANG: 'en'}).text = s['name']
         # place name for pictures - single line
         if article.get('extra') and article['extra'].get('city'):
-            subj = SubElement(content_meta, 'subject', {
-                'type': 'cptType:5',
-                'literal': article['extra']['city'],
-            })
+            subj = SubElement(
+                content_meta,
+                'subject',
+                {'type': 'cptType:5', 'literal': article['extra']['city']},
+            )
             SubElement(subj, 'name').text = article['extra']['city']
             if article['extra'].get('nation'):
                 broader = SubElement(subj, 'broader', {'type': 'cptype:country'})
@@ -368,15 +491,31 @@ class ANSAPlainTextNewsMLG2Formatter(NewsMLG2Formatter):
         :param Element content_meta:
         """
         located = article.get('dateline', {}).get('located', {})
-        if located and located.get('place'):
+        if (
+            located
+            and located.get('place')
+            and located.get('place').get('name').upper()
+            in article.get('dateline').get('text').upper()
+        ):
             self._format_geonames_place(located['place'], content_meta, 'located')
         elif located and located.get('city') and article.get('type') != 'picture':
-            located_elm = SubElement(content_meta, 'located',
-                                     attrib={'qcode': 'city:%s' % located.get('city_code').upper()})
+            located_elm = SubElement(
+                content_meta,
+                'located',
+                attrib={'qcode': 'city:%s' % located.get('city_code').upper()},
+            )
             if located.get('state'):
-                SubElement(located_elm, 'broader', attrib={'qcode': 'reg:%s' % located['state']})
+                SubElement(
+                    located_elm,
+                    'broader',
+                    attrib={'qcode': 'reg:%s' % located['state']},
+                )
             if located.get('country'):
-                SubElement(located_elm, 'broader', attrib={'qcode': 'cntry:%s' % located['country'].upper()})
+                SubElement(
+                    located_elm,
+                    'broader',
+                    attrib={'qcode': 'cntry:%s' % located['country'].upper()},
+                )
 
         if article.get('dateline'):
             try:
@@ -388,11 +527,15 @@ class ANSAPlainTextNewsMLG2Formatter(NewsMLG2Formatter):
         dateline_text = article.get('dateline', {}).get('text', '')
         if dateline.get('date') and dateline.get('text'):
             date = arrow.get(dateline['date']).datetime
-            source = article.get('extra', {}).get('HeadingNews', article.get('source', 'ANSA'))
+            source = article.get('extra', {}).get(
+                'HeadingNews', article.get('source', 'ANSA')
+            )
             language = article.get('language', 'it')
             kwargs = {
                 'city': dateline['text'].split(',')[0],
-                'date': self._format_dateline_date(date, language, dateline['located'].get('tz')),
+                'date': self._format_dateline_date(
+                    date, language, dateline['located'].get('tz')
+                ),
                 'source': source,
             }
 
@@ -417,17 +560,22 @@ class ANSAPlainTextNewsMLG2Formatter(NewsMLG2Formatter):
         elif language in ('es', 'pt', 'de'):
             _format = 'd MMM'
         datetime = None if self.DATETIME_USE_CURRENT_TIME else date
-        return format_datetime(datetime=datetime, format=_format, tzinfo=tzinfo, locale=language).upper().strip('.')
+        return (
+            format_datetime(
+                datetime=datetime, format=_format, tzinfo=tzinfo, locale=language
+            )
+            .upper()
+            .strip('.')
+        )
 
     def _format_place(self, article, content_meta):
         super()._format_place(article, content_meta)
         for place in article.get('place', []):
-            if len(place.keys()) == 2 and place.get('name') and place.get('qcode'):  # suggested places from semantics
+            if (
+                len(place.keys()) == 2 and place.get('name') and place.get('qcode')
+            ):  # suggested places from semantics
                 self._create_subject_element(
-                    content_meta,
-                    place['name'],
-                    place['qcode'],
-                    'cpnat:geoArea'
+                    content_meta, place['name'], place['qcode'], 'cpnat:geoArea'
                 )
 
     def _format_item_set(self, article, item_set, item_type):
@@ -445,7 +593,9 @@ class ANSAPlainTextNewsMLG2Formatter(NewsMLG2Formatter):
     def _get_original_guid(self, article):
         guid = article['rewrite_of']
         for i in range(article.get('rewrite_sequence', 1)):
-            prev = superdesk.get_resource_service('archive').find_one(req=None, _id=guid)
+            prev = superdesk.get_resource_service('archive').find_one(
+                req=None, _id=guid
+            )
             if not prev or not prev.get('rewrite_of'):
                 break
             guid = prev['rewrite_of']
@@ -462,7 +612,11 @@ class ANSAPlainTextNewsMLG2Formatter(NewsMLG2Formatter):
 
     def _copy_rights_info(self, article, news_item):
         rightsinfo = SubElement(news_item, 'rightsInfo')
-        SubElement(rightsinfo, 'copyrightHolder', {'literal': article.get('copyrightholder') or 'ANSA'})
+        SubElement(
+            rightsinfo,
+            'copyrightHolder',
+            {'literal': article.get('copyrightholder') or 'ANSA'},
+        )
         if article.get('copyrightnotice'):
             SubElement(rightsinfo, 'copyrightNotice').text = article['copyrightnotice']
         if article.get('usageterms'):
@@ -486,47 +640,68 @@ class ANSAPlainTextNewsMLG2Formatter(NewsMLG2Formatter):
         if place.get('feature_class') == 'P':
             cptype = 'city'
 
-        subject = SubElement(content_meta, elem, attrib={
-            'type': 'cptype:%s' % cptype,
-            'qcode': 'geo:%s' % place['code'],
-        })
+        subject = SubElement(
+            content_meta,
+            elem,
+            attrib={'type': 'cptype:%s' % cptype, 'qcode': 'geo:%s' % place['code']},
+        )
 
         if place.get('name'):
             SubElement(subject, 'name').text = place['name']
 
         if place.get('continent_code'):
-            SubElement(subject, 'broader', attrib={
-                'type': 'cptype:continentalcode',
-                'qcode': 'geo:%s' % place['continent_code'],
-            })
+            SubElement(
+                subject,
+                'broader',
+                attrib={
+                    'type': 'cptype:continentalcode',
+                    'qcode': 'geo:%s' % place['continent_code'],
+                },
+            )
 
         if place.get('country_code') and place.get('country') and cptype != 'country':
-            country = SubElement(subject, 'broader', attrib={
-                'type': 'cptype:country',
-                'qcode': 'geo:%s' % place['country_code'],
-            })
+            country = SubElement(
+                subject,
+                'broader',
+                attrib={
+                    'type': 'cptype:country',
+                    'qcode': 'geo:%s' % place['country_code'],
+                },
+            )
             SubElement(country, 'name').text = place['country']
 
         if place.get('state_code') and place.get('state') and cptype != 'region':
-            state = SubElement(subject, 'broader', attrib={
-                'type': 'cptype:region',
-                'qcode': 'geo:%s' % place['state_code'],
-            })
+            state = SubElement(
+                subject,
+                'broader',
+                attrib={
+                    'type': 'cptype:region',
+                    'qcode': 'geo:%s' % place['state_code'],
+                },
+            )
             SubElement(state, 'name').text = place['state']
 
         if place.get('region_code') and place.get('region') and cptype != 'statprov':
-            region = SubElement(subject, 'broader', attrib={
-                'type': 'cptype:statprov',
-                'qcode': 'geo:%s' % place['region_code'],
-            })
+            region = SubElement(
+                subject,
+                'broader',
+                attrib={
+                    'type': 'cptype:statprov',
+                    'qcode': 'geo:%s' % place['region_code'],
+                },
+            )
             SubElement(region, 'name').text = place['region']
 
         if elem == 'located' and place.get('location'):
             geo = SubElement(subject, 'geoAreaDetails')
-            SubElement(geo, 'position', attrib={
-                'latitude': str(place['location']['lat']),
-                'longitude': str(place['location']['lon']),
-            })
+            SubElement(
+                geo,
+                'position',
+                attrib={
+                    'latitude': str(place['location']['lat']),
+                    'longitude': str(place['location']['lon']),
+                },
+            )
 
     def _format_genre(self, article, content_meta):
         if article.get('type') == 'picture':
@@ -537,11 +712,15 @@ class ANSAPlainTextNewsMLG2Formatter(NewsMLG2Formatter):
                     code = g.get('qcode', g['name'])
                     qcode = code if ':' in code else 'genre:%s' % code
                     genre = SubElement(content_meta, 'genre', attrib={'qcode': qcode})
-                    SubElement(genre, 'name', attrib={XML_LANG: article.get('language', 'en')}).text = g['name']
+                    SubElement(
+                        genre, 'name', attrib={XML_LANG: article.get('language', 'en')}
+                    ).text = g['name']
 
     def _format_creditline(self, article, content_meta):
         if article.get('copyrightholder'):
-            etree.SubElement(content_meta, 'creditline').text = article['copyrightholder']
+            etree.SubElement(content_meta, 'creditline').text = article[
+                'copyrightholder'
+            ]
         else:
             super()._format_creditline(article, content_meta)
 
@@ -553,7 +732,6 @@ class ANSAPlainTextNewsMLG2Formatter(NewsMLG2Formatter):
 
 
 class ANSAHTMLNewsMLG2Formatter(ANSAPlainTextNewsMLG2Formatter):
-
     def _build_html_doc(self, article):
         try:
             html = etree.HTML(article.get('body_html'))
@@ -561,7 +739,11 @@ class ANSAHTMLNewsMLG2Formatter(ANSAPlainTextNewsMLG2Formatter):
             if article.get('body_html'):
                 logger.exception('XML parsing error')
             html = None
-        return html if html is not None else etree.HTML('<p>%s</p>' % article.get('headline') or '')
+        return (
+            html
+            if html is not None
+            else etree.HTML('<p>%s</p>' % article.get('headline') or '')
+        )
 
     def can_format(self, format_type, article):
         return format_type == 'newsmlg2ansaHTML'

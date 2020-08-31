@@ -294,7 +294,8 @@ class AnsaPictureProvider(superdesk.SearchProvider):
                     'coauthor': get_meta(doc, 'authorCode'),
                 },
                 'usageterms': get_meta(doc, 'usageTerms'),
-                'copyrightholder': get_meta(doc, 'copyrightHolder') or get_meta(doc, 'copyright'),
+                'copyrightholder':
+                    get_meta(doc, 'copyrightHolder') or get_meta(doc, 'copyright') or get_meta(doc, 'creditline'),
                 'copyrightnotice': get_meta(doc, 'copyrightNotice'),
             }
 
