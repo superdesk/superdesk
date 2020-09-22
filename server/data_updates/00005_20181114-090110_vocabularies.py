@@ -17,7 +17,9 @@ class DataUpdate(DataUpdate):
     def forwards(self, mongodb_collection, mongodb_database):
         vocabularies_service = get_resource_service('vocabularies')
         for vocabulary in vocabularies_service.get(req=None, lookup=None):
-            if vocabulary.get('single_value', False):
+            if hasattr(vocabulary, 'selection_type'):
+                value = vocabulary.get('selection_type')
+            elif vocabulary.get('single_value', False):
                 value = 'single selection'
             else:
                 value = 'multi selection'
