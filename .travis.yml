@@ -1,39 +1,48 @@
 language: python
 
-python: "3.5"
+python: 3.6
 
-sudo: false
-dist: xenial
+dist: bionic
 
 services:
-    - mongodb
-    - elasticsearch
-    - redis-server
-
-addons:
-  apt:
-    sources:
-    - mongodb-3.0-precise
-    packages:
-    - mongodb-org-server
+    - docker
 
 cache:
-  directories:
-    - $HOME/.cache/pip
-    - $HOME/.npm
+    - pip
+    - npm
+    - yarn
 
 before_install:
-    - nvm install 6.10
-    - nvm use 6.10
-    - node --version
-    - npm install -g npm@3
-    - npm install -g grunt-cli
+    - |
+      if [ "$SKIP_SERVER_INSTALL" != "true" ]; then
+        docker-compose -f .travis-docker-compose.yml up -d
+      fi
+
+before_script:
+    - node -v
+    - npm -v
 
 install:
-    - cd server && pip install -r dev-requirements.txt && cd ..
-    - cd client && npm install && cd ..
+    - |
+      if [ "$SKIP_SERVER_REQUIREMENTS_INSTALL" != "true" ]; then
+        cd server && pip install -r dev-requirements.txt && cd ..
+      fi
+    - |
+      if [ "$SKIP_CLIENT_REQUIREMENTS_INSTALL" != "true" ]; then
+        cd client && npm install && cd ..
+      fi
 
-script:
-    - cd server && flake8 && cd ..
-    - cd client && node --max-old-space-size=4096 `which grunt` build && cd ..
-    - cd server && python manage.py users:create -u test -p test -e test@localhost --admin && cd ..
+jobs:
+    include:
+        - script: cd server && flake8
+          name: "server: flake8"
+          env: SKIP_SERVER_INSTALL=true SKIP_CLIENT_REQUIREMENTS_INSTALL=true
+        - script: cd server && nosetests
+          name: "server: nosetests"
+          env: SKIP_CLIENT_REQUIREMENTS_INSTALL=true
+        - script: cd server && mypy .
+          name: "server: mypy"
+          env: SKIP_SERVER_INSTALL=true SKIP_CLIENT_REQUIREMENTS_INSTALL=true
+        - script: cd client && node --max_old_space_size=4098 ./node_modules/.bin/grunt build
+          name: "client: build"
+          env: SKIP_SERVER_INSTALL=true SKIP_SERVER_REQUIREMENTS_INSTALL=true
