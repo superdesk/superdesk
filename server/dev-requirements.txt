@@ -5,3 +5,4 @@ nose
 pep8
 httmock
 wooper
+mypy
