@@ -9,6 +9,8 @@
     "typescript": "3.4.4"
   },
   "superdeskExtension": {
-    "dependencies": ["other-extension"]
+    "dependencies": [
+      "other-extension"
+    ]
   }
 }
