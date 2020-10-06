@@ -1,6 +1,5 @@
 # Superdesk
-[![Build Status](https://travis-ci.org/superdesk/superdesk.png?branch=master)](https://travis-ci.org/superdesk/superdesk)
-[![Code Health](https://landscape.io/github/superdesk/superdesk/master/landscape.svg?style=flat)](https://landscape.io/github/superdesk/superdesk/master)
+[![Build Status](https://travis-ci.com/superdesk/superdesk.svg?branch=master)](https://travis-ci.com/superdesk/superdesk)
 [![Coverage Status](https://coveralls.io/repos/superdesk/superdesk/badge.svg)](https://coveralls.io/r/superdesk/superdesk)
 [![Code Climate](https://codeclimate.com/github/superdesk/superdesk/badges/gpa.svg)](https://codeclimate.com/github/superdesk/superdesk)
 [![Requirements Status](https://requires.io/github/superdesk/superdesk/requirements.svg?branch=master)](https://requires.io/github/superdesk/superdesk/requirements/?branch=master)
@@ -8,7 +7,7 @@
 Superdesk is an open source end-to-end news creation, production, curation,
 distribution and publishing platform developed and maintained by Sourcefabric
 with the sole purpose of making the best possible software for journalism. It
-is scaleable to suit news organizations of any size. See the [Superdesk website](http://www.superdesk.org) for more information.
+is scaleable to suit news organizations of any size. See the [Superdesk website](https://www.superdesk.org) for more information.
 
 Looking to stay up to date on the latest news? [Subscribe](http://eepurl.com/bClQlD) to our monthly newsletter.
 
@@ -39,9 +38,9 @@ More options and details:
 These services must be installed, configured and running:
 
  * MongoDB
- * ElasticSearch (7.0.x - 7.7.x)
+ * ElasticSearch (7.x)
  * Redis
- * Python (>= 3.5)
+ * Python (>= 3.6)
  * Node.js (with `npm`)
 
 On macOS, if you have [homebrew](https://brew.sh/) installed, simply run: `brew install mongodb elasticsearch redis python3 node`.
