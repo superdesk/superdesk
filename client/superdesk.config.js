@@ -174,7 +174,7 @@ module.exports = function(grunt) {
         },
 
         view: {
-          timeformat: 'HH:mm:ss'
-        }
+            timeformat: 'HH:mm:ss'
+        },
     };
 };

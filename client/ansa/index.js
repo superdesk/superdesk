@@ -1,5 +1,4 @@
-import _ from 'lodash';
-import {get, isEqual} from 'lodash';
+import {_, get, isEqual} from 'lodash';
 import angular from 'angular';
 import widgets from './widgets';
 import packages from './package-manager/package-manager';
@@ -606,7 +605,7 @@ export default angular.module('ansa.superdesk', [
         );
     }])
 
-    .run(['$rootScope', 'metadata', ($rootScope, metadata) => {
+    .run(['$rootScope', 'metadata', 'deployConfig', ($rootScope, metadata, deployConfig) => {
         let lastGenre = null;
         let prev = {};
 
@@ -625,6 +624,16 @@ export default angular.module('ansa.superdesk', [
             } else if (item.priority !== 2 && (prev.priority == null || prev.priority === 2) && hasPlus) {
                 item.headline = headline.replace('++ ', '').replace(' ++', '');
                 updated = true;
+            }
+
+            // set profile by priority SDANSA-446
+            if (item.priority && prev.priority !== item.priority) {
+                const priorityToProfileConfig = get(deployConfig, 'config.ansa.priority_to_profile_mapping') || {};
+
+                if (priorityToProfileConfig[item.priority] && item.profile !== priorityToProfileConfig[item.priority]) {
+                    item.profile = priorityToProfileConfig[item.priority];
+                    updated = true;
+                }
             }
 
             if (lastGenre == null) {

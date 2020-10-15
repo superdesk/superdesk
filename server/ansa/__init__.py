@@ -71,3 +71,16 @@ def init_app(app):
 
     app.on_update += on_update
     item_publish.connect(udpate_sign_off)
+
+    priority_to_profile_mapping = {}
+    for key, val in app.config['PRIORITY_TO_PROFILE_MAPPING'].items():
+        with app.app_context():
+            profile = app.data.find_one('content_types', req=None, label=val)
+        if profile:
+            priority_to_profile_mapping[key] = str(profile['_id'])
+
+    app.client_config.update({
+        'ansa': {
+            'priority_to_profile_mapping': priority_to_profile_mapping,
+        },
+    })
