@@ -243,7 +243,15 @@ div[data-field="genre"] .dropdown--dropleft .dropdown__menu {
     }
 }
 
+.main-article.sd-editor--body-large .Editor3-root .DraftEditor-editorContainer {
+    font-size: 1.9rem;
+    font-weight: 400;
+}
 
+.theme-preview.sd-editor--body-large .text-field__body {
+    font-size: 1.9rem;
+    font-weight: 400;
+}
 // add space after associated icons in lists
 .item-info .sd-text-icon {
     &.sd-text-icon--aligned-r {

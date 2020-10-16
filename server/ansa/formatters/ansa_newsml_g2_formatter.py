@@ -21,7 +21,7 @@ CONTRIBUTOR_MAPPING = {
 
 def is_user_journalist(user):
     role = get_user_role(user)
-    return role and role.get('name') == 'Gio'
+    return role and (role.get('name') == 'Gio' or role.get('name') == 'CoG')
 
 
 def is_user_producer(user):
@@ -160,7 +160,8 @@ class ANSAPlainTextNewsMLG2Formatter(NewsMLG2Formatter):
         :param Element content_meta:
         """
         hl = article.get('headline', '').strip()
-        if '+++' not in hl and '++' in hl:
+        p = article.get('priority', 4)
+        if p == 2 and '+++' not in hl and '++' in hl:
             hl = '++ {} ++'.format(hl.replace('++', '').strip())
 
         # p=article.get('priority', 4)
@@ -180,12 +181,20 @@ class ANSAPlainTextNewsMLG2Formatter(NewsMLG2Formatter):
 
         if extra.get('subtitle'):
             SubElement(
-                content_meta, 'headline', attrib={'role': 'hld:subHeadline'}
+                content_meta,
+                'headline',
+                attrib={
+                    'role': 'hld:subHeadline',
+                },
             ).text = get_text(extra['subtitle'])
 
         if extra.get('shorttitle'):
             SubElement(
-                content_meta, 'headline', attrib={'role': 'hld:shortHeadline'}
+                content_meta,
+                'headline',
+                attrib={
+                    'role': 'hld:shortHeadline',
+                },
             ).text = get_text(extra['shorttitle'])
 
         for field, role in CONTRIBUTOR_MAPPING.items():
@@ -198,7 +207,11 @@ class ANSAPlainTextNewsMLG2Formatter(NewsMLG2Formatter):
     def _format_sms(self, article, content_meta):
         if article.get('sms_message'):
             SubElement(
-                content_meta, 'headline', attrib={'role': 'hld:sms'}
+                content_meta,
+                'headline',
+                attrib={
+                    'role': 'hld:sms',
+                },
             ).text = article['sms_message']
 
     def _format_authors(self, article, content_meta):
@@ -276,7 +289,11 @@ class ANSAPlainTextNewsMLG2Formatter(NewsMLG2Formatter):
                 xawes_sign_off = 'RED/' + xawes_sign_off.strip()
 
             SubElement(
-                content_meta, 'creator', attrib={'literal': xawes_sign_off.upper()}
+                content_meta,
+                'creator',
+                attrib={
+                    'literal': xawes_sign_off.upper(),
+                },
             )
 
     def _format_sign_off_xawes(self, article, content_meta):
@@ -299,16 +316,19 @@ class ANSAPlainTextNewsMLG2Formatter(NewsMLG2Formatter):
             except KeyError:
                 pass
             SubElement(
-                content_meta, 'creator', attrib={'literal': xawes_sign_off.upper()}
+                content_meta,
+                'creator',
+                attrib={
+                    'literal': xawes_sign_off.upper(),
+                },
             )
 
     def _format_sign_off(self, article, content_meta):
-        try:
+        profile = None
+        if article.get('profile'):
             profile = get_resource_service('content_types').find_one(
                 req=None, _id=article['profile']
             )
-        except KeyError:
-            profile = None
         if profile and profile['editor'].get('Autore'):
             self._format_sign_off_xawes(article, content_meta)
         else:
@@ -457,7 +477,9 @@ class ANSAPlainTextNewsMLG2Formatter(NewsMLG2Formatter):
                     subj = SubElement(
                         content_meta,
                         'subject',
-                        attrib={'qcode': 'products:%s' % s['qcode']},
+                        attrib={
+                            'qcode': 'products:%s' % s['qcode'],
+                        },
                     )
 
                     SubElement(subj, 'name', attrib={XML_LANG: 'it'}).text = s['name']
@@ -465,7 +487,8 @@ class ANSAPlainTextNewsMLG2Formatter(NewsMLG2Formatter):
                     if ':' in s['qcode']:
                         qcode = s['qcode']
                     else:
-                        qcode = '%s:%s' % (s.get('scheme', 'subj'), s['qcode'])
+                        # qcode = '%s:%s' % (s.get('scheme', 'subj'), s['qcode'])
+                        qcode = '%s:%s' % (s.get('scheme') or 'subj', s['qcode'])
                     subj = SubElement(
                         content_meta,
                         'subject',
@@ -477,7 +500,10 @@ class ANSAPlainTextNewsMLG2Formatter(NewsMLG2Formatter):
             subj = SubElement(
                 content_meta,
                 'subject',
-                {'type': 'cptType:5', 'literal': article['extra']['city']},
+                {
+                    'type': 'cptType:5',
+                    'literal': article['extra']['city'],
+                },
             )
             SubElement(subj, 'name').text = article['extra']['city']
             if article['extra'].get('nation'):
@@ -643,7 +669,10 @@ class ANSAPlainTextNewsMLG2Formatter(NewsMLG2Formatter):
         subject = SubElement(
             content_meta,
             elem,
-            attrib={'type': 'cptype:%s' % cptype, 'qcode': 'geo:%s' % place['code']},
+            attrib={
+                'type': 'cptype:%s' % cptype,
+                'qcode': 'geo:%s' % place['code'],
+            },
         )
 
         if place.get('name'):

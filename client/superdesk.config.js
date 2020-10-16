@@ -35,6 +35,7 @@ module.exports = function(grunt) {
         longDateFromat: 'YYYY-MM-DD HH:mm',
 
         authoring: {
+            stickyLineCount: true,
             timeToRead: false,
             lineLength: 64,
         },

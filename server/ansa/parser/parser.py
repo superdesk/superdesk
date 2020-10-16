@@ -1,4 +1,3 @@
-
 import json
 import arrow
 
@@ -11,7 +10,19 @@ from superdesk.utc import local_to_utc
 from ansa.constants import PHOTO_CATEGORIES_ID, FEATURED, GALLERY, ROME_TZ
 
 MONTHS_IT = [
-    '', 'gen', 'feb', 'mar', 'apr', 'mag', 'giu', 'lug', 'ago', 'set', 'ott', 'nov', 'dic',
+    '',
+    'gen',
+    'feb',
+    'mar',
+    'apr',
+    'mag',
+    'giu',
+    'lug',
+    'ago',
+    'set',
+    'ott',
+    'nov',
+    'dic',
 ]
 
 
@@ -73,9 +84,13 @@ class ANSAParser(NewsMLTwoFeedParser):
                     item['subject'] = []
                 code = subject.get('literal')
                 if item.get('type') != 'picture':
-                    item['subject'].append({'name': code, 'qcode': code, 'scheme': 'FIEG_Categories'})
+                    item['subject'].append(
+                        {'name': code, 'qcode': code, 'scheme': 'FIEG_Categories'}
+                    )
                 else:
-                    item['subject'].append({'name': code, 'qcode': code, 'scheme': PHOTO_CATEGORIES_ID})
+                    item['subject'].append(
+                        {'name': code, 'qcode': code, 'scheme': PHOTO_CATEGORIES_ID}
+                    )
                 name = self.cat_map.get(code)
                 if name:
                     item['anpa_category'] = [{'name': name, 'qcode': name.lower()}]
@@ -173,27 +188,42 @@ class ANSAParser(NewsMLTwoFeedParser):
             qcode_parts = subject.get('qcode', '').split(':')
             if len(qcode_parts) == 2 and qcode_parts[0] == 'products':
                 name = subject.find(self.qname('name'))
-                item['subject'].append({
-                    'scheme': qcode_parts[0],
-                    'qcode': qcode_parts[1],
-                    'name': name.text if name is not None else qcode_parts[1],
-                })
+                item['subject'].append(
+                    {
+                        'scheme': qcode_parts[0],
+                        'qcode': qcode_parts[1],
+                        'name': name.text if name is not None else qcode_parts[1],
+                    }
+                )
 
     def parse_rights_info(self, tree, item):
         """Parse Rights Info tag"""
         info = tree.find(self.qname('rightsInfo'))
         if info is not None:
             item['usageterms'] = get_text(info.find(self.qname('usageTerms')))
-            item['copyrightholder'] = get_literal(info.find(self.qname('copyrightHolder')))
+            item['copyrightholder'] = get_literal(
+                info.find(self.qname('copyrightHolder'))
+            )
             item['copyrightnotice'] = get_text(info.find(self.qname('copyrightNotice')))
         if item.get('creditline'):
             item.setdefault('copyrightholder', item['creditline'])
-        if item.get('copyrightholder') and not item.get('copyrightnotice') or not item.get('usageterms'):
-            cv = get_resource_service('vocabularies').find_one(req=None, _id='rightsinfo')
+        if (
+            item.get('copyrightholder')
+            and not item.get('copyrightnotice')
+            or not item.get('usageterms')
+        ):
+            cv = get_resource_service('vocabularies').find_one(
+                req=None, _id='rightsinfo'
+            )
             if cv:
                 for rightsinfo in cv.get('items', []):
-                    if rightsinfo.get('copyrightHolder', '').lower() == item['copyrightholder'].lower():
-                        if rightsinfo.get('copyrightNotice') and not item.get('copyrightnotice'):
+                    if (
+                        rightsinfo.get('copyrightHolder', '').lower()
+                        == item['copyrightholder'].lower()
+                    ):
+                        if rightsinfo.get('copyrightNotice') and not item.get(
+                            'copyrightnotice'
+                        ):
                             item['copyrightnotice'] = rightsinfo['copyrightNotice']
                         if rightsinfo.get('usageTerms') and not item.get('usageterms'):
                             item['usageterms'] = rightsinfo['usageTerms']
@@ -213,7 +243,11 @@ class ANSAParser(NewsMLTwoFeedParser):
         """Parse links to pictures and populate associations."""
         links = meta.findall(self.qname('link'))
         for link in links:
-            if link.get('residref') and link.get('rel') and link.get('rel') in (FEATURED, GALLERY):
+            if (
+                link.get('residref')
+                and link.get('rel')
+                and link.get('rel') in (FEATURED, GALLERY)
+            ):
                 item.setdefault('associations', {})
                 dest = FEATURED
                 if link.get('rel') == GALLERY:

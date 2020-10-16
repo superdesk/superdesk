@@ -1,4 +1,3 @@
-
 import re
 import math
 import arrow
@@ -20,8 +19,12 @@ SEARCH_ENDPOINT = 'ricerca.json'
 DETAIL_ENDPOINT = 'detail.json'
 ORIGINAL_ENDPOINT = 'binary/{}.jpg?guid={}&username={}&password={}'
 
-THUMB_HREF = 'https://ansafoto.ansa.it/portaleimmagini/bdmproxy/{}.jpg?format=thumb&guid={}'
-VIEWIMG_HREF = 'https://ansafoto.ansa.it/portaleimmagini/bdmproxy/{}.jpg?format=med&guid={}'
+THUMB_HREF = (
+    'https://ansafoto.ansa.it/portaleimmagini/bdmproxy/{}.jpg?format=thumb&guid={}'
+)
+VIEWIMG_HREF = (
+    'https://ansafoto.ansa.it/portaleimmagini/bdmproxy/{}.jpg?format=med&guid={}'
+)
 
 TIMEOUT = (5, 25)
 
@@ -48,7 +51,11 @@ def extract_params(query, names):
     for name, _value in findall:
         value = _value.replace('-', r'\-')
         if name in names:
-            if params.get(name) and isinstance(params[name], str) and name == 'category':
+            if (
+                params.get(name)
+                and isinstance(params[name], str)
+                and name == 'category'
+            ):
                 params[name] = [params[name], value]
             elif params.get(name) and name == 'category':
                 params[name].append(value)
@@ -64,27 +71,35 @@ def extract_params(query, names):
 def fetch_metadata(item, doc):
     photo_category = get_meta(doc, 'categoryAnsa')
     if photo_category:
-        photo_cat = superdesk.get_resource_service('vocabularies').find_one(req=None, _id=PHOTO_CATEGORIES_ID)
+        photo_cat = superdesk.get_resource_service('vocabularies').find_one(
+            req=None, _id=PHOTO_CATEGORIES_ID
+        )
         if photo_cat:
             for subj in photo_cat.get('items', []):
                 if subj.get('name') == photo_category:
-                    item.setdefault('subject', []).append({
-                        'name': subj['name'],
-                        'qcode': subj.get('qcode'),
-                        'scheme': PHOTO_CATEGORIES_ID,
-                    })
+                    item.setdefault('subject', []).append(
+                        {
+                            'name': subj['name'],
+                            'qcode': subj.get('qcode'),
+                            'scheme': PHOTO_CATEGORIES_ID,
+                        }
+                    )
 
     api_products = get_meta(doc, 'product', multi=True)
     if api_products:
-        products_cv = superdesk.get_resource_service('vocabularies').find_one(req=None, _id=PRODUCTS_ID)
+        products_cv = superdesk.get_resource_service('vocabularies').find_one(
+            req=None, _id=PRODUCTS_ID
+        )
         if products_cv:
             for product in products_cv.get('items', []):
                 if product.get('qcode') and product.get('qcode') in api_products:
-                    item.setdefault('subject', []).append({
-                        'name': product['name'],
-                        'qcode': product['qcode'],
-                        'scheme': PRODUCTS_ID,
-                    })
+                    item.setdefault('subject', []).append(
+                        {
+                            'name': product['name'],
+                            'qcode': product['qcode'],
+                            'scheme': PRODUCTS_ID,
+                        }
+                    )
 
 
 FILTERS = [
@@ -122,7 +137,9 @@ DATE_RANGES = {
     'today': lambda: local_date(timedelta(hours=0)),
     'week': lambda: local_date(-timedelta(days=7)),
     'month': lambda: local_date(-timedelta(days=30)),
-    'year': lambda: utc_to_local(TZ, utcnow()).replace(day=1, month=1).strftime(DATE_FORMAT),
+    'year': lambda: utc_to_local(TZ, utcnow())
+    .replace(day=1, month=1)
+    .strftime(DATE_FORMAT),
 }
 
 
@@ -132,13 +149,18 @@ def local_date(delta):
 
 
 def set_default_search_operator(params):
-    if params.get('searchtext') and 'OR' not in params['searchtext'] and 'AND' not in params['searchtext']:
+    if (
+        params.get('searchtext')
+        and 'OR' not in params['searchtext']
+        and 'AND' not in params['searchtext']
+    ):
         groups = re.split(r'(\w+|".*?")', params['searchtext'])
-        params['searchtext'] = ' AND '.join([group for group in groups if bool(group) and group.strip()])
+        params['searchtext'] = ' AND '.join(
+            [group for group in groups if bool(group) and group.strip()]
+        )
 
 
 class AnsaListCursor(ListCursor):
-
     def __init__(self, docs, count):
         super().__init__(docs)
         self._count = count
@@ -158,7 +180,9 @@ class AnsaPictureProvider(superdesk.SearchProvider):
     def sess(self):
         if not hasattr(self, '_sess'):
             self._sess = requests.Session()
-            self._sess.get(ansa_photo_api('/portaleimmagini/'), timeout=TIMEOUT)  # get cookies
+            self._sess.get(
+                ansa_photo_api('/portaleimmagini/'), timeout=TIMEOUT
+            )  # get cookies
         return self._sess
 
     def find(self, query):
@@ -176,7 +200,12 @@ class AnsaPictureProvider(superdesk.SearchProvider):
             'changets': 'true',
         }
 
-        query_string = query.get('query', {}).get('filtered', {}).get('query', {}).get('query_string', {})
+        query_string = (
+            query.get('query', {})
+            .get('filtered', {})
+            .get('query', {})
+            .get('query_string', {})
+        )
         if query_string.get('query'):
             searchtext = query_string['query']
             filters = extract_params(searchtext, FILTERS)
@@ -185,7 +214,7 @@ class AnsaPictureProvider(superdesk.SearchProvider):
             query_filters = []
             for (key, val) in filters.items():
                 if key in QUERY_FILTERS:
-                    query_filters.append('%s = %s' % (QUERY_FILTERS[key], val))
+                    query_filters.append('%s = %s' % (QUERY_FILTERS[key], val.lower()))
                 elif key == 'category':
                     values = [val] if isinstance(val, str) else val
                     for cat in values:
@@ -193,7 +222,9 @@ class AnsaPictureProvider(superdesk.SearchProvider):
                 elif key in QUERY_PARAMS:
                     params[QUERY_PARAMS[key]] = val
                     if key == 'orientation':
-                        params[QUERY_PARAMS[key]] = '1' if val.lower() == 'vertical' else '0'
+                        params[QUERY_PARAMS[key]] = (
+                            '1' if val.lower() == 'vertical' else '0'
+                        )
                     if key == 'datefrom':
                         params[QUERY_PARAMS[key]] = DATE_RANGES[val.lower()]()
             if query_filters:
@@ -218,7 +249,9 @@ class AnsaPictureProvider(superdesk.SearchProvider):
             pass
 
         set_default_search_operator(params)
-        response = self.sess.get(ansa_photo_api(SEARCH_ENDPOINT), params=params, timeout=TIMEOUT)
+        response = self.sess.get(
+            ansa_photo_api(SEARCH_ENDPOINT), params=params, timeout=TIMEOUT
+        )
         return self._parse_items(response)
 
     def _parse_items(self, response, fetch=False):
@@ -272,13 +305,21 @@ class AnsaPictureProvider(superdesk.SearchProvider):
                         'width': 384,
                     },
                     'baseImage': {
-                        'href': ansa_photo_api(ORIGINAL_ENDPOINT).format(md5, guid, self.provider['config']['username'],
-                                                                         self.provider['config']['password']),
+                        'href': ansa_photo_api(ORIGINAL_ENDPOINT).format(
+                            md5,
+                            guid,
+                            self.provider['config']['username'],
+                            self.provider['config']['password'],
+                        ),
                         'mimetype': 'image/jpeg',
                     },
                     'original': {
-                        'href': ansa_photo_api(ORIGINAL_ENDPOINT).format(md5, guid, self.provider['config']['username'],
-                                                                         self.provider['config']['password']),
+                        'href': ansa_photo_api(ORIGINAL_ENDPOINT).format(
+                            md5,
+                            guid,
+                            self.provider['config']['username'],
+                            self.provider['config']['password'],
+                        ),
                         'mimetype': 'image/jpeg',
                     },
                 },
@@ -294,8 +335,9 @@ class AnsaPictureProvider(superdesk.SearchProvider):
                     'coauthor': get_meta(doc, 'authorCode'),
                 },
                 'usageterms': get_meta(doc, 'usageTerms'),
-                'copyrightholder':
-                    get_meta(doc, 'copyrightHolder') or get_meta(doc, 'copyright') or get_meta(doc, 'creditline'),
+                'copyrightholder': get_meta(doc, 'copyrightHolder')
+                or get_meta(doc, 'copyright')
+                or get_meta(doc, 'creditline'),
                 'copyrightnotice': get_meta(doc, 'copyrightNotice'),
             }
 
@@ -316,23 +358,37 @@ class AnsaPictureProvider(superdesk.SearchProvider):
         uris = [item['guid'] for item in items]
         if not fetch and uris:
             with timer('used'):
-                fetched_items = list(superdesk.get_resource_service('archive').search({
-                    'query': {'bool': {'filter': [
-                        {'terms': {'uri': uris}},
-                        {'term': {'used': True}},
-                    ]}}
-                }))
+                fetched_items = list(
+                    superdesk.get_resource_service('archive').search(
+                        {
+                            'query': {
+                                'bool': {
+                                    'filter': [
+                                        {'terms': {'uri': uris}},
+                                        {'term': {'used': True}},
+                                    ]
+                                }
+                            }
+                        }
+                    )
+                )
                 for fetched in fetched_items:
-                    item = next((item for item in items if item['guid'] == fetched['uri']))
+                    item = next(
+                        (item for item in items if item['guid'] == fetched['uri'])
+                    )
                     item['used'] = True
                     item.setdefault('used_count', 0)
                     item['used_count'] += fetched.get("used_count", 0)
                     if fetched.get('used_updated') and (
-                        not item.get('used_updated') or item['used_updated'] < fetched['used_updated']
+                        not item.get('used_updated')
+                        or item['used_updated'] < fetched['used_updated']
                     ):
                         item['used_updated'] = fetched['used_updated']
 
-        return AnsaListCursor(items, json_data.get('simpleSearchResult', {}).get('totalResults', len(items)))
+        return AnsaListCursor(
+            items,
+            json_data.get('simpleSearchResult', {}).get('totalResults', len(items)),
+        )
 
     def fetch(self, guid):
         params = {
@@ -342,7 +398,9 @@ class AnsaPictureProvider(superdesk.SearchProvider):
             'changets': 'true',
         }
 
-        response = self.sess.get(ansa_photo_api(DETAIL_ENDPOINT), params=params, timeout=TIMEOUT)
+        response = self.sess.get(
+            ansa_photo_api(DETAIL_ENDPOINT), params=params, timeout=TIMEOUT
+        )
         items = self._parse_items(response, fetch=True)
         item = items[0]
 

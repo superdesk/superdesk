@@ -46,7 +46,7 @@ def is_user_producer(user):
 
 def is_user_journalist(user):
     role = get_user_role(user)
-    return role and role.get('name') == 'Gio'
+    return role and (role.get('name') == 'Gio' or role.get('name') == 'CoG')
 
 
 def is_user_collaborator(user):
@@ -99,13 +99,12 @@ def validate(sender, item, response, error_fields, **kwargs):
     extra = item.get("extra", {})
 
     # check content profile for extra field Autore
-    try:
+    profile = None
+    if item.get("type") != "picture" and item.get('profile'):
         profile = get_resource_service('content_types').find_one(
             req=None, _id=item['profile']
         )
-    except KeyError:
-        profile = None
-    if profile and profile['editor'].get('Autore'):
+    if profile is not None and profile['editor'].get('Autore'):
         try:
             autore = extra.get("Autore") or (item['sign_off']).split('/')[0]
             user = superdesk.get_resource_service('users').find_one(
@@ -117,12 +116,6 @@ def validate(sender, item, response, error_fields, **kwargs):
         try:
             coautore = extra.get("Co-Autore")
             digitatore = extra.get("Digitatore")
-            try:
-                couser = superdesk.get_resource_service('users').find_one(
-                    req=None, username=coautore
-                )
-            except KeyError:
-                couser = None  # noqa - will be used soon
 
             if not extra.get("Autore") is None and (
                 (not user and not coautore)
