@@ -7,6 +7,7 @@ import {startApp} from 'superdesk-core/scripts/index';
 import ansaIptc from '../extensions/ansaIptc/dist/extension';
 import imageShortcuts from '../extensions/imageShortcuts/dist/extension';
 import ansaArchive from '../extensions/ansa-archive';
+import lineCountInAuthoringHeader from '../extensions/lineCountInAuthoringHeader/dist/extension';
 import planningExtension from 'superdesk-planning/client/planning-extension/dist/extension';
 
 import AnsaRelatedCtrl from './AnsaRelatedCtrl';
@@ -677,10 +678,17 @@ export default angular.module('ansa.superdesk', [
 ;
 
 setTimeout(() => {
-    startApp([
-        ansaIptc,
-        imageShortcuts,
-        planningExtension,
-        ansaArchive,
-    ]);
+    startApp(
+        [
+            ansaIptc,
+            imageShortcuts,
+            planningExtension,
+            ansaArchive,
+            lineCountInAuthoringHeader,
+        ],
+        {},
+        {
+            countLines: (plainText, lineLength) => Math.floor(plainText.length / lineLength),
+        },
+    );
 });
