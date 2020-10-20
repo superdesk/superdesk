@@ -1,39 +1,37 @@
 language: python
 
-python: "3.5"
+python: "3.6"
 
-sudo: false
-dist: trusty
+dist: bionic
 
 services:
-    - mongodb
-    - elasticsearch
-    - redis-server
-
-addons:
-  apt:
-    sources:
-    - mongodb-3.0-precise
-    packages:
-    - mongodb-org-server
+    - docker
 
 cache:
-  directories:
-    - $HOME/.cache/pip
-    - $HOME/.npm
+    - pip
+    - npm
 
 before_install:
-    - nvm install 6.10
-    - nvm use 6.10
-    - node --version
-    - npm install -g npm@3
-    - npm install -g grunt-cli
+    - |
+      if [ "$TEST" = "server" ]; then
+        sudo apt-get update
+        sudo apt-get -y install libxml2-dev libxmlsec1-dev libxmlsec1-openssl libexempi3
+        docker-compose -f .travis-docker-compose.yml up -d
+      fi
 
 install:
-    - cd server && pip install -r dev-requirements.txt && cd ..
-    - cd client && npm install && cd ..
+    - |
+      if [ "$TEST" = "server" ]; then
+        cd server && pip install -r dev-requirements.txt && cd ..
+      else
+        cd client && npm ci && cd ..
+      fi
 
-script:
-    - cd server && flake8 && cd ..
-    - cd client && grunt build && cd ..
-    - cd server && python manage.py users:create -u test -p test -e test@localhost --admin && cd ..
+jobs:
+    include:
+        - script: cd server && flake8 && python manage.py app:initialize_data
+          env: TEST=server
+          name: "server"
+        - script: cd client && node --max_old_space_size=4098 ./node_modules/.bin/grunt build
+          name: "client"
+
