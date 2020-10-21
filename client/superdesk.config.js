@@ -9,14 +9,10 @@ module.exports = function(grunt) {
         defaultRoute: '/workspace/personal',
 
         apps: [
-            'superdesk.analytics',
-            'superdesk-planning',
         ],
 
         importApps: [
             '../index',
-            'superdesk-analytics',
-            'superdesk-planning',
         ],
 
         view: {
@@ -33,13 +29,9 @@ module.exports = function(grunt) {
             editorHighlights: true,
             noPublishOnAuthoringDesk: true,
             noMissingLink: true,
-            planning: true,
         },
 
         workspace: {
-            planning: true,
-            analytics: true,
-            assignments: true,
         },
     };
 };

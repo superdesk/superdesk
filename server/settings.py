@@ -33,12 +33,8 @@ if init_data.exists():
 
 INSTALLED_APPS.extend([
     'apps.languages',
-    'planning',
-    'analytics',
     'superdesk.sams',
 ])
-
-PLANNING_EVENT_TEMPLATES_ENABLED = True
 
 RENDITIONS = {
     'picture': {
@@ -67,17 +63,3 @@ SECRET_KEY = env('SECRET_KEY', '')
 NO_TAKES = True
 
 DEFAULT_LANGUAGE = 'en'
-
-ANALYTICS_ENABLE_SCHEDULED_REPORTS = strtobool(
-    env('ANALYTICS_ENABLE_SCHEDULED_REPORTS', 'true')
-)
-
-HIGHCHARTS_SERVER_HOST = env('HIGHCHARTS_SERVER_HOST', 'localhost')
-HIGHCHARTS_SERVER_PORT = env('HIGHCHARTS_SERVER_PORT', '6060')
-
-HIGHCHARTS_LICENSE_ID = env('HIGHCHARTS_LICENSE_ID', '')
-HIGHCHARTS_LICENSE_TYPE = 'OEM'
-HIGHCHARTS_LICENSEE = 'Sourcefabric Ventures s.r.o.'
-HIGHCHARTS_LICENSEE_CONTACT = 'tech@sourcefabric.org'
-HIGHCHARTS_LICENSE_CUSTOMER_ID = '2'
-HIGHCHARTS_LICENSE_EXPIRY = 'Perpetual'
