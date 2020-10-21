@@ -29,6 +29,7 @@ module.exports = function(grunt) {
             keepMetaTermsOpenedOnClick: true,
             showCharacterLimit: 64,
             sendToPersonal: true,
+            publishFromPersonal: true,
         },
         shortTimeFormat: 'YYYY-MM-DD HH:mm',
         shortDateFormat: 'YYYY-MM-DD HH:mm',
