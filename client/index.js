@@ -3,6 +3,7 @@ import annotationsLibraryExtension from 'superdesk-core/scripts/extensions/annot
 import markForUserExtension from 'superdesk-core/scripts/extensions/markForUser/dist/src/extension';
 import datetimeFieldExtension from 'superdesk-core/scripts/extensions/datetimeField/dist/src/extension';
 import samsExtension from 'superdesk-core/scripts/extensions/sams/dist/src/extension';
+import {SamsAttachmentsWidget} from 'superdesk-core/scripts/extensions/sams/dist/src/apps/samsAttachmentsWidget';
 
 setTimeout(() => {
     startApp(
@@ -12,7 +13,9 @@ setTimeout(() => {
             datetimeFieldExtension,
             samsExtension,
         ],
-        {},
+        {
+            AuthoringAttachmentsWidget: SamsAttachmentsWidget,
+        },
     );
 });
 
