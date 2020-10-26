@@ -689,6 +689,6 @@ setTimeout(() => {
         {},
         {
             countLines: (plainText, lineLength) => Math.floor(plainText.length / lineLength),
-        },
+        }
     );
 });
