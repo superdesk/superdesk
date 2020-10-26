@@ -36,6 +36,8 @@ INSTALLED_APPS.extend([
     'superdesk.sams',
 ])
 
+MEDIA_STORAGE_PROVIDER = 'superdesk.sams.media_storage.SAMSMediaStorage'
+
 RENDITIONS = {
     'picture': {
         'thumbnail': {'width': 220, 'height': 120},
