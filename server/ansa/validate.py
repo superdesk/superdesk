@@ -84,6 +84,8 @@ def get_active_mask(products):
 
 
 def url_exists(url):
+    if 'filebymd5' not in url:  # only check vfs urls
+        return True
     infourl = url.replace("binfilebymd5", "infofilebymd5")
     resp = requests.get(infourl, timeout=5)
     return resp.status_code == requests.codes.ok and "errors" not in resp.text
