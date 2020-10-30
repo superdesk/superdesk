@@ -136,6 +136,7 @@ VALIDATOR_MEDIA_METADATA = {
     "language": {"required": upload_required},
     "city": {"required": upload_required},
     "byline": {"required": upload_required},
+    "signature": {"required": upload_required},
 
     # keep these to make them visible in editor
     "alt_text": {"required": False},
