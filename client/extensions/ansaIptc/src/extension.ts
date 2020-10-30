@@ -1,4 +1,4 @@
-import {IExtension, IExtensionActivationResult, ISuperdesk, IArticle, ISubject} from 'superdesk-api';
+import {IExtension, IExtensionActivationResult, ISuperdesk, IArticle, ISubject, IUser} from 'superdesk-api';
 
 const PHOTO_CATEGORIES_ID = 'PhotoCategories';
 
@@ -30,10 +30,12 @@ const extension: IExtension = {
                 iptcMapping: (data, item: IArticle) => Promise.all([
                     superdesk.entities.vocabulary.getIptcSubjects(),
                     superdesk.entities.vocabulary.getVocabulary(PHOTO_CATEGORIES_ID),
-                ]).then(([subjects, categories]: [Array<ISubject>, Array<ISubject>]) => {
+                    superdesk.session.getCurrentUser(),
+                ]).then(([subjects, categories, user]: [Array<ISubject>, Array<ISubject>, IUser]) => {
                     const subjectReference = Array.isArray(data.SubjectReference) ? data.SubjectReference : [data.SubjectReference || ''];
 
                     Object.assign(item, {
+                        sign_off: user.sign_off || user.username,
                         slugline: data.ObjectName,
                         byline: data['By-line'],
                         headline: data.Headline,
