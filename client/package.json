@@ -2,9 +2,8 @@
     "name": "superdesk",
     "license": "GPL-3.0",
     "dependencies": {
-        "superdesk-core": "github:superdesk/superdesk-client-core#release/2.0",
-        "superdesk-planning": "github:superdesk/superdesk-planning#release/2.0",
-        "superdesk-analytics": "github:superdesk/superdesk-analytics#release/2.0",
-        "superdesk-publisher": "superdesk/superdesk-publisher#v2.0"
+        "superdesk-core": "github:superdesk/superdesk-client-core#v2.0.1",
+        "superdesk-planning": "github:superdesk/superdesk-planning#v2.0.0",
+        "superdesk-analytics": "github:superdesk/superdesk-analytics#v2.0.0"
     }
 }
