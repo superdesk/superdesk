@@ -1,5 +1,24 @@
 [
     {
+        "_id": "desk_types",
+        "display_name": "Desk Types",
+        "type": "unmanageable",
+        "selection_type": "do not show",
+        "init_version": 1,
+        "items": [
+            {
+                "is_active": true,
+                "name": "authoring",
+                "qcode": "authoring"
+            },
+            {
+                "is_active": true,
+                "name": "production",
+                "qcode": "production"
+            }
+        ]
+    },
+    {
         "_id": "languages",
         "display_name": "Languages",
         "type": "manageable",
