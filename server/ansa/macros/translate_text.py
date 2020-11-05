@@ -35,7 +35,7 @@ def translate_text_macro(item, **kwargs):
     lang = kwargs.get('from_language', lang)
     target = kwargs.get('to_language', target)
 
-    for field in ('headline', 'slugline', 'abstract', 'body_html'):
+    for field in ('headline', 'slugline', 'abstract', 'body_html', 'description_text'):
         if item.get(field):
             item[field] = process_html(item[field], translate, lang=lang, target=target)
 
