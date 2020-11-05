@@ -68,11 +68,11 @@ jobs:
     - uses: actions/cache@v2
       with:
         path: ~/.npm
-        key: ${{ runner.os }}-npm-${{ hashFiles('client/package-lock.json') }}
+        key: ${{ runner.os }}-npm-${{ hashFiles('client/package.json') }}
         restore-keys: |
           ${{ runner.os }}-npm
           ${{ runner.os }}-
 
-    - run: npm ci
+    - run: npm install
 
     - run: node --max_old_space_size=4098 ./node_modules/.bin/grunt build
