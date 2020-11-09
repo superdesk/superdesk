@@ -95,6 +95,8 @@ FTP_TIMEOUT = int(env('FTP_TIMEOUT', 10))
 
 PLANNING_EVENT_TEMPLATES_ENABLED = True
 
+PLANNING_AUTO_ASSIGN_TO_WORKFLOW = True
+
 # special characters that are disallowed
 DISALLOWED_CHARACTERS = ['!', '$', '%', '&', '"', '(', ')', '*', '+', ',', '.', '/', ':', ';', '<', '=',
                          '>', '?', '@', '[', ']', '\\', '^', '_', '`', '{', '|', '}', '~']
