@@ -81,7 +81,7 @@ module.exports = function(grunt) {
                 'takekey',
                 'highlights',
                 'markedDesks',
-                'associations',
+                'associatedItems',
                 'versioncreated'
             ],
             secondLine: [
@@ -93,7 +93,6 @@ module.exports = function(grunt) {
                 'provider',
                 'desk',
                 'fetchedDesk',
-                'associatedItems',
                 'used',
                 'nestedlink'
             ]
