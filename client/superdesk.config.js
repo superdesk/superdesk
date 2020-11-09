@@ -71,7 +71,34 @@ module.exports = function(grunt) {
             planning: true,
             assignments: true,
         },
-        
+
+        list: {
+            priority: [
+                'urgency'
+            ],
+            firstLine: [
+                'headline',  
+                'takekey',
+                'highlights',
+                'markedDesks',
+                'associations',
+                'versioncreated'
+            ],
+            secondLine: [
+                'state',
+                'update',
+                'scheduledDateTime',
+                'flags',
+                'updated',
+                'provider',
+                'desk',
+                'fetchedDesk',
+                'associatedItems',
+                'used',
+                'nestedlink'
+            ]
+        },
+
         monitoring: {
             scheduled: {
                 sort: {
