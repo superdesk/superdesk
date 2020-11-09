@@ -53,7 +53,6 @@ module.exports = function(grunt) {
             customAuthoringTopbar: {
                 toDesk: true,
                 publish: true,
-                publishAndContinue: true,
             },
             validatePointOfInterestForImages: true,
             editorHighlights: true,
@@ -62,6 +61,7 @@ module.exports = function(grunt) {
             elasticHighlight: true,
             planning: true,
             autorefreshContent: true,
+            nestedItemsInOutputStage: true,
         },
         
         item_profile: { change_profile: 1 },
