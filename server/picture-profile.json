@@ -192,7 +192,7 @@
             "enabled": true,
             "type": "text",
             "nullable": true,
-            "required": false
+            "required": true
         },
         "supplier": {
             "enabled": true,
