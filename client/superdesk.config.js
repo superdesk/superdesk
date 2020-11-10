@@ -40,6 +40,9 @@ module.exports = function(grunt) {
             stickyLineCount: true,
             timeToRead: false,
             lineLength: 64,
+            preview: {
+                hideContentLabels: true,
+            },
         },
 
         language: 'it',
@@ -109,12 +112,6 @@ module.exports = function(grunt) {
             {id: 'products', name: 'Product', field: 'subject', list: 'products'},
             {id: 'subject', name: 'Subject', field: 'subject', list: 'subjectcodes'},
         ],
-
-        authoring: {
-            preview: {
-                hideContentLabels: true,
-            },	
-        },
 
         search: {
             'slugline': 0,
