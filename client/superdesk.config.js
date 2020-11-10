@@ -71,6 +71,10 @@ module.exports = function(grunt) {
             planning: true,
             assignments: true,
         },
+        
+        ui: {
+            italicAbstract: false,
+            },
 
         list: {
             priority: [
@@ -78,7 +82,6 @@ module.exports = function(grunt) {
             ],
             firstLine: [
                 'headline',  
-                'takekey',
                 'highlights',
                 'markedDesks',
                 'associatedItems',
