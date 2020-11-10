@@ -9,5 +9,4 @@ accesslog = '-'
 access_log_format = '%(m)s %(U)s status=%(s)s time=%(T)ss size=%(B)sb'
 
 reload = 'SUPERDESK_RELOAD' in os.environ
-
 timeout = int(os.environ.get('WEB_TIMEOUT', 30))

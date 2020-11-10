@@ -1,3 +1,5 @@
-client/node_modules
+**/node_modules
+**/dist
+**/package-lock.json
 server/env
 data
