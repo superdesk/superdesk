@@ -4,9 +4,9 @@ FROM node:lts AS build
 # install client
 WORKDIR /tmp/client
 RUN npm install -g grunt-cli
-COPY ./client/package.json .
+COPY package.json .
 RUN npm install --no-audit
-COPY ./client .
+COPY . .
 RUN npx grunt build
 
 # DEPLOY
