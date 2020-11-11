@@ -3,6 +3,7 @@ gunicorn==19.7.1
 honcho==1.0.1
 flask-babel==0.12.2
 pymongo==3.8.0
+elastic-apm[flask]>=5.9,<5.10
 
 git+git://github.com/superdesk/superdesk-core.git@7f751bc#egg=superdesk-core
 git+git://github.com/superdesk/superdesk-planning.git@v1.33.1#egg=superdesk-planning
