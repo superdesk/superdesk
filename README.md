@@ -1,6 +1,5 @@
 # Superdesk
-[![Build Status](https://travis-ci.com/superdesk/superdesk.svg?branch=master)](https://travis-ci.com/superdesk/superdesk)
-[![Coverage Status](https://coveralls.io/repos/superdesk/superdesk/badge.svg)](https://coveralls.io/r/superdesk/superdesk)
+[![CI](https://github.com/superdesk/superdesk/workflows/CI/badge.svg)](https://github.com/superdesk/superdesk/actions?query=workflow%3ACI)
 [![Code Climate](https://codeclimate.com/github/superdesk/superdesk/badges/gpa.svg)](https://codeclimate.com/github/superdesk/superdesk)
 [![Requirements Status](https://requires.io/github/superdesk/superdesk/requirements.svg?branch=master)](https://requires.io/github/superdesk/superdesk/requirements/?branch=master)
 
