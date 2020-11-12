@@ -18,7 +18,7 @@ different technologies.
 Find more information about the client configuration in the README file of the repo:
 [github.com/superdesk/superdesk-client-core](https://github.com/superdesk/superdesk-client-core)
 
-## Run Superdesk localy using Docker
+## Run Superdesk locally using Docker
 
 You can start superdesk using `docker-compose`:
 
