@@ -33,9 +33,10 @@ const extension: IExtension = {
                     superdesk.session.getCurrentUser(),
                 ]).then(([subjects, categories, user]: [Array<ISubject>, Array<ISubject>, IUser]) => {
                     const subjectReference = Array.isArray(data.SubjectReference) ? data.SubjectReference : [data.SubjectReference || ''];
+                    const signOff = user.sign_off || user.username;
 
                     Object.assign(item, {
-                        sign_off: user.sign_off || user.username,
+                        sign_off: signOff,
                         slugline: data.ObjectName,
                         byline: data['By-line'],
                         headline: data.Headline,
@@ -54,7 +55,7 @@ const extension: IExtension = {
                             city: data.City,
                             nation: data['Country-PrimaryLocationName'],
                             digitator: data['Writer-Editor'],
-                            coauthor: data['By-lineTitle'] || item.sign_off,
+                            coauthor: data['By-lineTitle'] || signOff,
                             supplier: data.Source,
                         },
                     });
