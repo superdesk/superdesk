@@ -18,18 +18,23 @@ different technologies.
 Find more information about the client configuration in the README file of the repo:
 [github.com/superdesk/superdesk-client-core](https://github.com/superdesk/superdesk-client-core)
 
-## Installation on fresh Ubuntu 16.04
+## Run Superdesk localy using Docker
+
+You can start superdesk using `docker-compose`:
 
 ```sh
-curl -s https://raw.githubusercontent.com/superdesk/fireq/files/superdesk/install | sudo bash
-# Open http://<ip_or_domain> in browser
-# login: admin
-# password: admin
+$ docker-compose up -d
 ```
 
-More options and details:
-- [for users](https://github.com/superdesk/fireq/tree/files/superdesk)
-- [for developers](https://github.com/superdesk/fireq/tree/files/superdesk#development)
+This will start superdesk on http://localhost:8080. On the first run you also have to initialize
+elastic/mongo and create a user:
+
+```sh
+$ docker-compose run superdesk-server run python manage.py app:initialize_data  # init d
+$ docker-compose run superdesk-server run python manage.py users:create -u admin -p admin -e admin@localhost --admin
+```
+
+Then you can login with admin:admin credentials.
 
 ## Manual installation
 
@@ -63,7 +68,7 @@ python manage.py app:prepopulate
 # client
 cd $path/client
 npm install
-grunt server
+npx grunt server
 
 # open http://localhost:9000 in browser
 ```
