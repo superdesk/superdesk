@@ -208,9 +208,10 @@ def validate(sender, item, response, error_fields, **kwargs):
     if user and is_user_external(user) and not mask.get(Validators.PRODUCT_ALLOWED):
         response.append("Products not allowed to external User")
 
-    desk = superdesk.get_resource_service('desks').find_one(
-        req=None, _id=item.get('task', {}).get('desk')
-    )
+    if item.get('task') and item['task'].get('desk'):
+        desk = superdesk.get_resource_service('desks').find_one(
+            req=None, _id=item['task']['desk']
+        )
 
     for picture in pictures:
         if (
