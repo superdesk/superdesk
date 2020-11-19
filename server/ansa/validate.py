@@ -209,7 +209,7 @@ def validate(sender, item, response, error_fields, **kwargs):
         response.append("Products not allowed to external User")
 
     desk = superdesk.get_resource_service('desks').find_one(
-        req=None, _id=item['task']['desk']
+        req=None, _id=item.get('task', {}).get('desk')
     )
 
     for picture in pictures:
