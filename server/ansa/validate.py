@@ -212,6 +212,8 @@ def validate(sender, item, response, error_fields, **kwargs):
         desk = superdesk.get_resource_service('desks').find_one(
             req=None, _id=item['task']['desk']
         )
+    else:
+        desk = None
 
     for picture in pictures:
         if (
