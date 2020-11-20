@@ -38,7 +38,10 @@ const extension: IExtension = {
                     Object.assign(item, {
                         sign_off: signOff,
                         slugline: data.ObjectName,
-                        byline: data['By-line'],
+                        byline: data['By-line'] || [
+                            user.first_name,
+                            user.last_name,
+                        ].filter((value) => value).join(' '),
                         headline: data.Headline,
                         copyrightholder: data.Credit,
                         copyrightnotice: data.CopyrightNotice,
