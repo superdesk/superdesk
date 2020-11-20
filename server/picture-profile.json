@@ -57,7 +57,7 @@
             "section": "content"
         },
         "sign_off": {
-            "order": 11,
+            "order": 13,
             "sdWidth": "full",
             "section": "content"
         },
@@ -67,12 +67,12 @@
             "section": "content"
         },
         "digitator": {
-            "order": 13,
+            "order": 14,
             "sdWidth": "full",
             "section": "content"
         },
         "coauthor": {
-            "order": 14,
+            "order": 11,
             "sdWidth": "full",
             "section": "content"
         },
