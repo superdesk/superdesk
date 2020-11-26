@@ -128,7 +128,7 @@ SCHEMA = {
 }
 
 
-upload_required = bool(strtobool(env('ANSA_VALIDATE_UPLOAD', 'false')))
+upload_required = bool(strtobool(env('ANSA_VALIDATE_UPLOAD', 'true')))
 VALIDATOR_MEDIA_METADATA = {
     "headline": {"required": upload_required},
     "description_text": {"required": upload_required},
@@ -174,7 +174,6 @@ WORKFLOW_ALLOW_DUPLICATE_NON_MEMBERS = True
 FULL_SIGN_OFF = True
 
 PRIORITY_TO_PROFILE_MAPPING = {
-    '1': 'Flash',
     '2': 'News B',
-    '4': 'News',
+    '4': 'News Compact',
 }
