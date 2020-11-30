@@ -177,3 +177,5 @@ PRIORITY_TO_PROFILE_MAPPING = {
     '2': 'News B',
     '4': 'News Compact',
 }
+
+HEADLINE_MAXLENGTH = 64

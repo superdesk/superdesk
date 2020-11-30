@@ -15,6 +15,8 @@ from apps.publish.content.common import ITEM_PUBLISH
 
 def validate_for_publish(item, **kwargs):
     doc = get_resource_service('archive').find_one(req=None, _id=item[config.ID_FIELD])
+    if not doc:  # doc not in production, skip validation for published/ingested
+        return item
     validate_item = {'act': ITEM_PUBLISH, 'type': doc['type'], 'validate': doc}
     validation_errors = get_resource_service('validate').post([validate_item])
     if validation_errors[0]:

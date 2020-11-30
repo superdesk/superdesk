@@ -20,7 +20,7 @@ def get_destination_desk(desk, limit=10):
 def routing(item, desk=None, task=None, **kwargs):
     if not task:
         logger.info("no task for item %s", item)
-        return
+        return item
     if desk is None:
         desk_id = item.get("task", {}).get("desk")
         if desk_id:
