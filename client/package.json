@@ -2,6 +2,6 @@
     "name": "superdesk",
     "license": "GPL-3.0",
     "dependencies": {
-        "superdesk-core": "tomaskikutis/superdesk-client-core#auto-tagging"
+        "superdesk-core": "tomaskikutis/superdesk-client-core#auto-tagging-test-module-patching-solution"
     }
 }
