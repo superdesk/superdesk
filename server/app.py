@@ -16,14 +16,6 @@ from superdesk.factory import get_app as superdesk_app
 from ansa.vfs import VFSMediaStorage
 
 
-if os.environ.get('NEW_RELIC_LICENSE_KEY'):
-    try:
-        import newrelic.agent
-        newrelic.agent.initialize(os.path.abspath(os.path.join(os.path.dirname(__file__), 'newrelic.ini')))
-    except ImportError:
-        pass
-
-
 media_storage = None
 if os.environ.get('ANSA_VFS'):
     media_storage = VFSMediaStorage
