@@ -1,4 +1,4 @@
-import {_, get, isEqual} from 'lodash';
+import {get, without, isEqual, isEmpty} from 'lodash';
 import angular from 'angular';
 import widgets from './widgets';
 import packages from './package-manager/package-manager';
@@ -220,11 +220,11 @@ function AnsaSemanticsCtrl($scope, $rootScope, api) {
     let save = (result) => {
         $scope.item.semantics = result.semantics;
 
-        if (result.place && _.isEmpty($scope.item.place)) {
+        if (result.place && isEmpty($scope.item.place)) {
             $scope.item.place = result.place;
         }
 
-        if (!_.isEmpty(result.subject)) {
+        if (!isEmpty(result.subject)) {
             const subjects = $scope.item.subject || [];
 
             $scope.item.subject = subjects.concat(
@@ -241,11 +241,11 @@ function AnsaSemanticsCtrl($scope, $rootScope, api) {
             );
         }
 
-        if (result.slugline && _.isEmpty($scope.item.slugline)) {
+        if (result.slugline && isEmpty($scope.item.slugline)) {
             $scope.item.slugline = result.slugline;
         }
 
-        if (result.keywords && _.isEmpty($scope.item.keywords)) {
+        if (result.keywords && isEmpty($scope.item.keywords)) {
             $scope.item.keywords = result.keywords;
         }
 
@@ -284,7 +284,7 @@ function AnsaSemanticsCtrl($scope, $rootScope, api) {
     });
 
     this.remove = (term, category) => {
-        this.data[category] = _.without(this.data[category], term);
+        this.data[category] = without(this.data[category], term);
         save({semantics: this.data});
         broadcast(this.data);
     };
@@ -298,7 +298,7 @@ function AnsaSemanticsCtrl($scope, $rootScope, api) {
 
 function AnsaLiveSuggestions(workspace, metasearch) {
     function getArchiveQueries(semantics) {
-        if (_.isEmpty(semantics)) {
+        if (isEmpty(semantics)) {
             return [];
         }
 
@@ -306,7 +306,7 @@ function AnsaLiveSuggestions(workspace, metasearch) {
         const fields = ['persons', 'organizations', 'places', 'mainGroups', 'mainLemmas', 'iptcDomains'];
 
         fields.forEach((field) => {
-            if (_.isEmpty(semantics[field])) {
+            if (isEmpty(semantics[field])) {
                 return;
             }
 
@@ -341,7 +341,7 @@ function AnsaLiveSuggestions(workspace, metasearch) {
                 metasearch.suggest(val)
                     .then((response) => {
                         scope.suggestions = response.data;
-                        if (_.isEmpty(scope.suggestions)) {
+                        if (isEmpty(scope.suggestions)) {
                             scope.suggestions = [val];
                         }
                     })
