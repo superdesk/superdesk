@@ -243,6 +243,22 @@ div[data-field="genre"] .dropdown--dropleft .dropdown__menu {
     }
 }
 
+// sticky editor toolbar
+.Editor3-controls {
+    width: 100%;
+    min-width: 300px;
+    font-family: "Roboto", Helvetica, Arial, sans-serif;
+    font-size: 14px !important;
+    user-select: none;
+    background-color: #D7D7D7;
+    border-bottom: 1px solid;
+    border-bottom-color: rgba(150, 150, 150, 0.2);
+    line-height: 100% !important;
+    position: sticky;
+    top: 0;
+    z-index: 9999999;
+}
+
 .main-article.sd-editor--body-large .Editor3-root .DraftEditor-editorContainer {
     font-size: 1.9rem;
     font-weight: 400;
