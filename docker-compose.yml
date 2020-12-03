@@ -4,10 +4,14 @@ services:
   mongodb:
     image: mongo:3
     container_name: mongodb
+    ports:
+      - "27017:27017"
 
   redis:
     image: redis:3
     container_name: redis
+    ports:
+      - "6379:6379"
 
   elastic:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.9.3
@@ -24,6 +28,8 @@ services:
         hard: 65536
     cap_add:
       - IPC_LOCK
+    ports:
+      - "9200:9200"
 
   postfix:
     image: catatnight/postfix
@@ -68,6 +74,9 @@ services:
       - SECRET_KEY
       - CONTENTAPI_URL=http://localhost:8080/capi
       - CONTENTAPI_MONGO_URI=mongodb://mongodb/test_ca
+    ports:
+      - "5000:5000"
+      - "5100:5100"
 
   superdesk:
     build: ./client/
