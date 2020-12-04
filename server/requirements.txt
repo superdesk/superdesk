@@ -4,5 +4,5 @@ honcho==1.0.1
 flask-babel==0.12.2
 pymongo==3.8.0
 
-git+git://github.com/superdesk/superdesk-core.git@5731442#egg=superdesk-core
+git+git://github.com/superdesk/superdesk-core.git@fd82345#egg=superdesk-core
 git+git://github.com/superdesk/superdesk-planning.git@v1.33.1#egg=superdesk-planning
