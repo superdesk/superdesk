@@ -48,6 +48,7 @@ def publish_item_on_auto_publish_stage(item):
     stage = superdesk.get_resource_service('stages').find_one(req=None, _id=stage_id)
     if stage and stage.get(AUTO_PUBLISH_FIELD):
         try:
+            updates = item.copy()
             updates = {'auto_publish': True}
             associations = item.get('associations') or {}
             unlink_update_on_auto_publish(item, updates)
@@ -58,6 +59,9 @@ def publish_item_on_auto_publish_stage(item):
                 assoc['auto_publish'] = True
             if associations:
                 updates['associations'] = associations
+
+            if stage.get('incoming_macro'):
+                superdesk.get_resource_service('macros').execute_macro(updates, stage['incoming_macro'])
 
             superdesk.get_resource_service('archive_publish').patch(item[superdesk.config.ID_FIELD], updates)
         except cerberus.cerberus.ValidationError as err:
