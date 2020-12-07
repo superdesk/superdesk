@@ -10,6 +10,9 @@ import ansa.macros.validate_for_publish  # noqa
 import ansa.macros.internal_destination_auto_publish  # noqa
 import ansa.macros.validate_headline  # noqa
 import ansa.macros.validate_and_route  # noqa
+
 import ansa.macros.schedule_0100  # noqa
 import ansa.macros.schedule_0700  # noqa
 import ansa.macros.schedule_0730  # noqa
+
+import ansa.macros.set_profile_sms  # noqa
