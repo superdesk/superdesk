@@ -688,11 +688,10 @@ setTimeout(() => {
         ],
         {},
         {
-            countLines: (plainText, lineLength) => {
-                const lineBreaks = plainText.split('\n').length;
-
-                return Math.floor((plainText.length - lineBreaks) / lineLength) + lineBreaks;
-            },
+            countLines: (plainText, lineLength) =>
+                plainText
+                    .split('\n')
+                    .reduce((sum, line) => sum + (line.length > 0 ? Math.ceil(line.length / lineLength) : 1), 0),
         }
     );
 });
