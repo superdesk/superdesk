@@ -117,7 +117,7 @@ def validate(sender, item, response, error_fields, **kwargs):
 
         try:
             coautore = extra.get("Co-Autore")
-            digitatore = extra.get("Digitatore")
+            # digitatore = extra.get("Digitatore")
 
             if not extra.get("Autore") is None and (
                 (not user and not coautore)
@@ -125,12 +125,12 @@ def validate(sender, item, response, error_fields, **kwargs):
                 and not coautore
             ):
                 response.append("Co-Author: is missing")
-            if (
-                (autore and len(autore) > 3)
-                or (coautore and len(coautore) > 3)
-                or (digitatore and len(digitatore) > 3)
-            ):
-                response.append("Check the sign-off lengths")
+            # if (
+                # (autore and len(autore) > 3)
+                # or (coautore and len(coautore) > 3)
+                # or (digitatore and len(digitatore) > 3)
+            # ):
+                # response.append("Check the sign-off lengths")
         except KeyError:
             pass
 
