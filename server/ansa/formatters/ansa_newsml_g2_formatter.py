@@ -411,7 +411,7 @@ class ANSAPlainTextNewsMLG2Formatter(NewsMLG2Formatter):
                         {'qcode': 'red-address:{}'.format(pieces[0].strip())},
                     )
                     SubElement(signal, 'name').text = ': '.join(
-                        [x for x in ['desk', desk.get('name'), stage.get('name')] if x]
+                        [x for x in ['desk', desk.get('name'), stage.get('name') if stage else None] if x]
                     )
             lookup = {'_id_document': archive_item['_id']}
             versions = (
