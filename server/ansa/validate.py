@@ -204,7 +204,7 @@ def validate(sender, item, response, error_fields, **kwargs):
         user = superdesk.get_resource_service('users').find_one(
             req=None, username=sign_off_author
         )
-    except KeyError:
+    except (KeyError, AttributeError):
         user = None
 
     if user and is_user_external(user) and not mask.get(Validators.PRODUCT_ALLOWED):
