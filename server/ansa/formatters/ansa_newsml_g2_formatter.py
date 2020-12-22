@@ -556,7 +556,12 @@ class ANSAPlainTextNewsMLG2Formatter(NewsMLG2Formatter):
             source = article.get('extra', {}).get(
                 'HeadingNews', article.get('source', 'ANSA')
             )
+
             language = article.get('language', 'it')
+            app_languages = {lang['language'] for lang in app.config['LANGUAGES']}
+            if language not in app_languages:
+                language = app.config['DEFAULT_LANGUAGE']
+
             kwargs = {
                 'city': dateline['text'].split(',')[0],
                 'date': self._format_dateline_date(

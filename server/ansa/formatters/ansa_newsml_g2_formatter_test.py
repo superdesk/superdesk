@@ -1,5 +1,6 @@
 
 import io
+import settings
 
 from lxml import etree
 from unittest import mock
@@ -137,6 +138,9 @@ class ANSANewsmlG2FormatterTestCase(TestCase):
 
     def setUp(self):
         self.app.data.insert('vocabularies', self.vocab)
+        self.app.config.update({
+            'LANGUAGES': settings.LANGUAGES,
+        })
 
     def get_article(self, updates=None):
         article = self.article.copy()
