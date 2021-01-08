@@ -12,30 +12,28 @@ from superdesk import get_resource_service
 
 class DataUpdate(DataUpdate):
 
-    resource = 'vocabularies'
+    resource = "vocabularies"
 
     def forwards(self, mongodb_collection, mongodb_database):
-        vocabularies_service = get_resource_service('vocabularies')
+        vocabularies_service = get_resource_service("vocabularies")
         for vocabulary in vocabularies_service.get(req=None, lookup=None):
-            if vocabulary.get('selection_type'):
+            if vocabulary.get("selection_type"):
                 continue
-            if vocabulary.get('single_value', False):
-                value = 'single selection'
+            if vocabulary.get("single_value", False):
+                value = "single selection"
             else:
-                value = 'multi selection'
-            mongodb_collection.update({'_id': vocabulary['_id']}, {
-                '$set': {'selection_type': value},
-                '$unset': {'single_value': 1}
-            })
+                value = "multi selection"
+            mongodb_collection.update(
+                {"_id": vocabulary["_id"]}, {"$set": {"selection_type": value}, "$unset": {"single_value": 1}}
+            )
 
     def backwards(self, mongodb_collection, mongodb_database):
-        vocabularies_service = get_resource_service('vocabularies')
+        vocabularies_service = get_resource_service("vocabularies")
         for vocabulary in vocabularies_service.get(req=None, lookup=None):
-            if vocabulary.get('selection_type') == 'single selection':
+            if vocabulary.get("selection_type") == "single selection":
                 value = True
             else:
                 value = False
-            mongodb_collection.update({'_id': vocabulary['_id']}, {
-                '$set': {'single_value': value},
-                '$unset': {'selection_type': 1}
-            })
+            mongodb_collection.update(
+                {"_id": vocabulary["_id"]}, {"$set": {"single_value": value}, "$unset": {"selection_type": 1}}
+            )

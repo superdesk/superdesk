@@ -42,10 +42,6 @@ jobs:
         python -m pip install --upgrade pip wheel setuptools
         pip install -r dev-requirements.txt
 
-    - run: flake8
-
-    - run: mypy .
-
     - run: nosetests 
 
     - run: python manage.py app:initialize_data
