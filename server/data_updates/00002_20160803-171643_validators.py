@@ -13,10 +13,10 @@ from apps.prepopulate.app_initialize import AppInitializeWithDataCommand
 
 class DataUpdate(DataUpdate):
 
-    resource = 'validators'
+    resource = "validators"
 
     def forwards(self, mongodb_collection, mongodb_database):
-        AppInitializeWithDataCommand().run(entity_name='validators')
+        AppInitializeWithDataCommand().run(entity_name="validators")
 
     def backwards(self, mongodb_collection, mongodb_database):
         pass
