@@ -243,10 +243,6 @@ div[data-field="genre"] .dropdown--dropleft .dropdown__menu {
     }
 }
 
-.Editor3-editor .public-DraftStyleDefault-block {
-    white-space: break-spaces;
-}
-
 // sticky editor toolbar
 .Editor3-controls {
     width: 100%;
@@ -324,3 +320,10 @@ div[data-field="genre"] .dropdown--dropleft .dropdown__menu {
     margin-top: 0.2rem;
     display: none;
 }
+
+.public-DraftStyleDefault-block, .public-DraftStyleDefault-ltr {
+    max-width: 64ch !important;
+}
+
+.main-article.sd-editor--theme-dark .Editor3-controls {background-color: #333;}
+.main-article.sd-editor--theme-blue .Editor3-controls {background: #05274e;}
