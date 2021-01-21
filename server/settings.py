@@ -128,7 +128,7 @@ SCHEMA = {
 }
 
 
-upload_required = bool(strtobool(env('ANSA_VALIDATE_UPLOAD', 'true')))
+upload_required = bool(strtobool(env('ANSA_VALIDATE_UPLOAD', 'false')))
 VALIDATOR_MEDIA_METADATA = {
     "headline": {"required": upload_required},
     "description_text": {"required": upload_required},
