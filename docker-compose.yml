@@ -4,14 +4,14 @@ services:
   mongodb:
     image: mongo:3
     container_name: mongodb
-    ports:
-      - "27017:27017"
+    networks:
+      - superdesk
 
   redis:
     image: redis:3
     container_name: redis
-    ports:
-      - "6379:6379"
+    networks:
+      - superdesk
 
   elastic:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.9.3
@@ -28,8 +28,8 @@ services:
         hard: 65536
     cap_add:
       - IPC_LOCK
-    ports:
-      - "9200:9200"
+    networks:
+      - superdesk
 
   postfix:
     image: catatnight/postfix
@@ -37,6 +37,8 @@ services:
     environment:
       - maildomain=mail.sourcefabric.org
       - smtp_user=user:pwd
+    networks:
+      - superdesk
 
   superdesk-server:
     build: ./server/
@@ -74,13 +76,13 @@ services:
       - SECRET_KEY
       - CONTENTAPI_URL=http://localhost:8080/capi
       - CONTENTAPI_MONGO_URI=mongodb://mongodb/test_ca
-    ports:
-      - "5000:5000"
-      - "5100:5100"
+      - DEFAULT_TIMEZONE=Europe/Prague
+    networks:
+      - superdesk
 
-  superdesk:
+  superdesk-client:
     build: ./client/
-    container_name: superdesk
+    container_name: superdesk-client
     environment:
       - SUPERDESK_URL=http://localhost:8080/api
       - SUPERDESK_WS_URL=ws://localhost:8080/ws
@@ -91,3 +93,12 @@ services:
       - superdesk-server
     ports:
       - "8080:80"
+    networks:
+      - superdesk
+
+networks:
+    superdesk:
+        driver: bridge
+
+volumes:
+    superdesk:
