@@ -35,6 +35,16 @@
         ]
     },
     {
+        "_id": "product_types",
+        "display_name": "Product Types",
+        "type": "unmanageable",
+        "items": [
+            {"is_active": true, "name": "API", "qcode": "api"},
+            {"is_active": true, "name": "Direct", "qcode": "direct"},
+            {"is_active": true, "name": "Both", "qcode": "both"}
+        ]
+    },
+    {
         "_id": "languages",
         "display_name": "Languages",
         "type": "manageable",
