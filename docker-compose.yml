@@ -2,7 +2,7 @@ version: "3"
 services:
 
   mongodb:
-    image: mongo:3
+    image: mongo:4.4
     container_name: mongodb
     networks:
       - superdesk
@@ -14,7 +14,7 @@ services:
       - superdesk
 
   elastic:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.3
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.1
     container_name: elastic
     environment:
       - xpack.security.enabled=false
@@ -42,6 +42,7 @@ services:
 
   superdesk-server:
     build: ./server/
+    image: sourcefabricoss/superdesk-server:latest
     container_name: superdesk-server
     depends_on:
       - redis
@@ -82,6 +83,7 @@ services:
 
   superdesk-client:
     build: ./client/
+    image: sourcefabricoss/superdesk-client:latest
     container_name: superdesk-client
     environment:
       - SUPERDESK_URL=http://localhost:8080/api
