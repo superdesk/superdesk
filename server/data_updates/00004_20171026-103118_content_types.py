@@ -13,12 +13,12 @@ from superdesk import get_resource_service
 
 class DataUpdate(DataUpdate):
 
-    resource = 'content_types'
+    resource = "content_types"
 
     def forwards(self, mongodb_collection, mongodb_database):
-        content_types_service = get_resource_service('content_types')
+        content_types_service = get_resource_service("content_types")
         for content_type in content_types_service.get(req=None, lookup=None):
-            content_types_service.patch(content_type['_id'], {})
+            content_types_service.patch(content_type["_id"], {})
 
     def backwards(self, mongodb_collection, mongodb_database):
         pass
