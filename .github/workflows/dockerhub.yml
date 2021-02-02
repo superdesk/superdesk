@@ -1,0 +1,22 @@
+name: Publish Docker images
+
+on:
+  push:
+    branches: []
+
+jobs:
+  server:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: server
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: docker/build-push-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+          repository: ${{ secrets.DOCKER_USERNAME }}/superdesk-server
+          tag_with_ref: true
