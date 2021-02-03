@@ -2,6 +2,6 @@
     "name": "superdesk",
     "license": "AGPL-3.0",
     "dependencies": {
-        "superdesk-core": "superdesk/superdesk-client-core#master"
+        "superdesk-core": "superdesk/superdesk-client-core#develop"
     }
 }

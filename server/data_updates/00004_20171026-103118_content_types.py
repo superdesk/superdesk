@@ -7,11 +7,11 @@
 # Author  : mugur
 # Creation: 2017-10-26 10:31
 
-from superdesk.commands.data_updates import DataUpdate
+from superdesk.commands.data_updates import BaseDataUpdate
 from superdesk import get_resource_service
 
 
-class DataUpdate(DataUpdate):
+class DataUpdate(BaseDataUpdate):
 
     resource = "content_types"
 
