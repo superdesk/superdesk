@@ -1,0 +1,93 @@
+version: "3"
+services:
+
+  mongodb:
+    image: mongo:3
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+
+  redis:
+    image: redis:3
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+  elastic:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.3
+    container_name: elastic
+    environment:
+      - xpack.security.enabled=false
+      - discovery.type=single-node
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    cap_add:
+      - IPC_LOCK
+    ports:
+      - "9200:9200"
+
+  postfix:
+    image: catatnight/postfix
+    container_name: postfix
+    environment:
+      - maildomain=mail.sourcefabric.org
+      - smtp_user=user:pwd
+
+  superdesk-server:
+    build: ./server/
+    container_name: superdesk-server
+    depends_on:
+      - redis
+      - mongodb
+      - elastic
+      - postfix
+    environment:
+      - WEB_CONCURRENCY=2
+      - SUPERDESK_CLIENT_URL=http://localhost:8080
+      - GRAMMALECTE_URL=http://grammalecte:9999
+      - MONGO_URI=mongodb://mongodb/test
+      - PUBLICAPI_MONGO_URI=mongodb://mongodb/test_pa
+      - LEGAL_ARCHIVE_URI=mongodb://mongodb/test_la
+      - ARCHIVED_URI=mongodb://mongodb/test_ar
+      - ELASTICSEARCH_URL=http://elastic:9200
+      - ELASTICSEARCH_INDEX=superdesk
+      - CELERY_BROKER_URL=redis://redis:6379/1
+      - REDIS_URL=redis://redis:6379/1
+      - AMAZON_ACCESS_KEY_ID
+      - AMAZON_CONTAINER_NAME
+      - AMAZON_REGION
+      - AMAZON_SECRET_ACCESS_KEY
+      - REUTERS_USERNAME
+      - REUTERS_PASSWORD
+      - MAIL_SERVER=postfix
+      - MAIL_PORT=25
+      - MAIL_USE_TLS=false
+      - MAIL_USE_SSL=false
+      - MAIL_USERNAME=user
+      - MAIL_PASSWORD=pwd
+      - SENTRY_DSN
+      - SECRET_KEY
+      - CONTENTAPI_URL=http://localhost:8080/capi
+      - CONTENTAPI_MONGO_URI=mongodb://mongodb/test_ca
+    ports:
+      - "5000:5000"
+      - "5100:5100"
+
+  superdesk:
+    build: ./client/
+    container_name: superdesk
+    environment:
+      - SUPERDESK_URL=http://localhost:8080/api
+      - SUPERDESK_WS_URL=ws://localhost:8080/ws
+      - VIEW_DATE_FORMAT
+      - VIEW_TIME_FORMAT
+      - IFRAMELY_KEY
+    depends_on:
+      - superdesk-server
+    ports:
+      - "8080:80"

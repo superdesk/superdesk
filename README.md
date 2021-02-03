@@ -1,14 +1,12 @@
 # Superdesk
-[![Build Status](https://travis-ci.org/superdesk/superdesk.png?branch=master)](https://travis-ci.org/superdesk/superdesk)
-[![Code Health](https://landscape.io/github/superdesk/superdesk/master/landscape.svg?style=flat)](https://landscape.io/github/superdesk/superdesk/master)
-[![Coverage Status](https://coveralls.io/repos/superdesk/superdesk/badge.svg)](https://coveralls.io/r/superdesk/superdesk)
+[![CI](https://github.com/superdesk/superdesk/workflows/CI/badge.svg)](https://github.com/superdesk/superdesk/actions?query=workflow%3ACI)
 [![Code Climate](https://codeclimate.com/github/superdesk/superdesk/badges/gpa.svg)](https://codeclimate.com/github/superdesk/superdesk)
 [![Requirements Status](https://requires.io/github/superdesk/superdesk/requirements.svg?branch=master)](https://requires.io/github/superdesk/superdesk/requirements/?branch=master)
 
 Superdesk is an open source end-to-end news creation, production, curation,
 distribution and publishing platform developed and maintained by Sourcefabric
 with the sole purpose of making the best possible software for journalism. It
-is scaleable to suit news organizations of any size. See the [Superdesk website](http://www.superdesk.org) for more information.
+is scaleable to suit news organizations of any size. See the [Superdesk website](https://www.superdesk.org) for more information.
 
 Looking to stay up to date on the latest news? [Subscribe](http://eepurl.com/bClQlD) to our monthly newsletter.
 
@@ -19,18 +17,23 @@ different technologies.
 Find more information about the client configuration in the README file of the repo:
 [github.com/superdesk/superdesk-client-core](https://github.com/superdesk/superdesk-client-core)
 
-## Installation on fresh Ubuntu 16.04
+## Run Superdesk locally using Docker
+
+You can start superdesk using `docker-compose`:
 
 ```sh
-curl -s https://raw.githubusercontent.com/superdesk/fireq/files/superdesk/install | sudo bash
-# Open http://<ip_or_domain> in browser
-# login: admin
-# password: admin
+$ docker-compose up -d
 ```
 
-More options and details:
-- [for users](https://github.com/superdesk/fireq/tree/files/superdesk)
-- [for developers](https://github.com/superdesk/fireq/tree/files/superdesk#development)
+This will start superdesk on http://localhost:8080. On the first run you also have to initialize
+elastic/mongo and create a user:
+
+```sh
+$ docker-compose run superdesk-server run python manage.py app:initialize_data  # init d
+$ docker-compose run superdesk-server run python manage.py users:create -u admin -p admin -e admin@localhost --admin
+```
+
+Then you can login with admin:admin credentials.
 
 ## Manual installation
 
@@ -39,9 +42,9 @@ More options and details:
 These services must be installed, configured and running:
 
  * MongoDB
- * ElasticSearch (7.0.x - 7.7.x)
+ * ElasticSearch (7.x)
  * Redis
- * Python (>= 3.5)
+ * Python (>= 3.6)
  * Node.js (with `npm`)
 
 On macOS, if you have [homebrew](https://brew.sh/) installed, simply run: `brew install mongodb elasticsearch redis python3 node`.
@@ -64,7 +67,7 @@ python manage.py app:prepopulate
 # client
 cd $path/client
 npm install
-grunt server
+npx grunt server
 
 # open http://localhost:9000 in browser
 ```
