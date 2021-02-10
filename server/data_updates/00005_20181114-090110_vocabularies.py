@@ -6,11 +6,11 @@
 #
 # Creation: 2018-11-14 10:31
 
-from superdesk.commands.data_updates import DataUpdate
+from superdesk.commands.data_updates import BaseDataUpdate
 from superdesk import get_resource_service
 
 
-class DataUpdate(DataUpdate):
+class DataUpdate(BaseDataUpdate):
 
     resource = 'vocabularies'
 
