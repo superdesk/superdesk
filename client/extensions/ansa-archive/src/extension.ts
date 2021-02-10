@@ -5,7 +5,6 @@ const isExternalPicture = (article: IArticle) =>
     article.fetch_endpoint === 'search_providers_proxy';
 
 const extension: IExtension = {
-    id: 'ansa-archive',
     activate: (superdesk: ISuperdesk) => {
         const result: IExtensionActivationResult = {
             contributions: {

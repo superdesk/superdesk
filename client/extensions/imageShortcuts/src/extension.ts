@@ -2,7 +2,6 @@ import {ISuperdesk, IExtension, IExtensionActivationResult, IArticle} from 'supe
 import {getWidgets} from './get-widgets';
 
 const extension: IExtension = {
-    id: 'image-shortcuts',
     activate: (superdesk: ISuperdesk) => {
         // expose API method via a global so angularjs code can use it.
         (window as any)['__private_ansa__add_image_to_article'] = (field: string, image: IArticle) => {
