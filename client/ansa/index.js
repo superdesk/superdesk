@@ -4,11 +4,6 @@ import widgets from './widgets';
 import packages from './package-manager/package-manager';
 import {onChangeMiddleware} from 'superdesk-core/scripts/apps/authoring/authoring';
 import {startApp} from 'superdesk-core/scripts/index';
-import ansaIptc from '../extensions/ansaIptc/dist/extension';
-import imageShortcuts from '../extensions/imageShortcuts/dist/extension';
-import ansaArchive from '../extensions/ansa-archive';
-import lineCountInAuthoringHeader from '../extensions/lineCountInAuthoringHeader/dist/extension';
-import planningExtension from 'superdesk-planning/client/planning-extension/dist/extension';
 
 import AnsaRelatedCtrl from './AnsaRelatedCtrl';
 
@@ -680,11 +675,26 @@ export default angular.module('ansa.superdesk', [
 setTimeout(() => {
     startApp(
         [
-            ansaIptc,
-            imageShortcuts,
-            planningExtension,
-            ansaArchive,
-            lineCountInAuthoringHeader,
+            {
+                id: 'ansaIptc',
+                load: () => import('../extensions/ansaIptc/dist/extension').then((res) => res.default),
+            },
+            {
+                id: 'imageShortcuts',
+                load: () => import('../extensions/imageShortcuts/dist/extension').then((res) => res.default),
+            },
+            {
+                id: 'ansa-archive',
+                load: () => import('../extensions/ansa-archive').then((res) => res.default),
+            },
+            {
+                id: 'lineCountInAuthoringHeader',
+                load: () => import('../extensions/lineCountInAuthoringHeader/dist/extension').then((res) => res.default),
+            },
+            {
+                id: 'planning-extension',
+                load: () => import('superdesk-planning/client/planning-extension/dist/extension').then((res) => res.default),
+            },
         ],
         {},
         {
