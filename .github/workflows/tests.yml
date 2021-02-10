@@ -42,7 +42,9 @@ jobs:
 
     - run: flake8
 
-    - run: mypy .
+    # disable mypy until they fix
+    # https://github.com/python/mypy/issues/4675
+    # - run: mypy .
 
     - run: nosetests
 
