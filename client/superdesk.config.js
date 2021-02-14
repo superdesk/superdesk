@@ -6,33 +6,40 @@
  */
 module.exports = function(grunt) {
     return {
-        apps: [
-        ],
-        importApps: [
-            '../index',
-        ],
         defaultRoute: '/workspace/personal',
 
-        langOverride: {
-            'en': {
-                'ANPA Category': 'Category',
-                'ANPA CATEGORY': 'CATEGORY'
-            }
-        },
+        apps: [
+            'superdesk.analytics',
+            'superdesk-planning',
+        ],
+
+        importApps: [
+            '../index',
+            'superdesk-analytics',
+            'superdesk-planning',
+        ],
 
         view: {
             timeformat: 'HH:mm',
-            dateformat: 'DD.MM.YYYY',
+            dateformat: 'DD.MM.YYYY'
         },
 
         features: {
             preview: 1,
-            swimlane: {defaultNumberOfColumns: 4},
+            swimlane: {columnsLimit: 4},
+            noTakes: true,
             editor3: true,
-            validatePointOfInterestForImages: true,
-            editorHighlights: true
+            validatePointOfInterestForImages: false,
+            editorHighlights: true,
+            noPublishOnAuthoringDesk: true,
+            noMissingLink: true,
+            planning: true,
         },
+
         workspace: {
+            planning: true,
+            analytics: true,
+            assignments: true,
         },
     };
 };

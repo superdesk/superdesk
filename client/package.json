@@ -1,7 +1,10 @@
 {
+    "private": true,
     "name": "superdesk",
     "license": "AGPL-3.0",
     "dependencies": {
-        "superdesk-core": "github:superdesk/superdesk-client-core#v2.1.0"
+        "superdesk-analytics": "github:superdesk/superdesk-analytics#master",
+        "superdesk-core": "github:superdesk/superdesk-client-core#master",
+        "superdesk-planning": "github:superdesk/superdesk-client-core#master"
     }
 }
