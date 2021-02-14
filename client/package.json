@@ -5,6 +5,6 @@
     "dependencies": {
         "superdesk-analytics": "github:superdesk/superdesk-analytics#master",
         "superdesk-core": "github:superdesk/superdesk-client-core#master",
-        "superdesk-planning": "github:superdesk/superdesk-client-core#master"
+        "superdesk-planning": "github:superdesk/superdesk-planning#master"
     }
 }
