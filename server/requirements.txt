@@ -2,5 +2,5 @@ gunicorn==19.7.1
 honcho==1.0.1
 newrelic>=2.66,<2.67
 
--e git+git://github.com/superdesk/superdesk-core.git@sams#egg=Superdesk-Core
+-e git+git://github.com/superdesk/superdesk-core.git@develop#egg=Superdesk-Core
 -e git+git://github.com/superdesk/sams.git@develop#egg=sams_client&subdirectory=src/clients/python/
