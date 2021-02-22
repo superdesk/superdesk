@@ -84,3 +84,5 @@ HIGHCHARTS_LICENSE_EXPIRY = 'Perpetual'
 
 # Update schema to fix elastic settings
 SCHEMA_VERSION = 2
+
+PLANNING_AUTO_CLOSE_POPUP_EDITOR = False
