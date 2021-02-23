@@ -3,6 +3,6 @@
     "name": "superdesk",
     "license": "AGPL-3.0",
     "dependencies": {
-        "superdesk-core": "github:superdesk/superdesk-client-core#sams"
+        "superdesk-core": "github:superdesk/superdesk-client-core#develop"
     }
 }
