@@ -1,0 +1,33 @@
+name: "Docker"
+
+on:
+  push:
+    branches: [ansa]
+  pull_request:
+    branches: [ansa]
+
+jobs:
+
+  client:
+
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: client
+
+    steps:
+    - uses: actions/checkout@v2
+    - run: docker build .
+
+  server:
+
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: server
+
+    steps:
+    - uses: actions/checkout@v2
+    - run: docker build .
