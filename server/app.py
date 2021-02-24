@@ -45,7 +45,7 @@ def get_app(config=None, init_elastic=False):
             'TRANSACTIONS_IGNORE_PATTERNS': ['^OPTIONS '],
             'SERVER_URL': os.environ['APM_SERVER_URL'],
             'SECRET_TOKEN': os.environ['APM_SECRET_TOKEN'],
-            'SERVICE_NAME': app.config.get('APM_SERVICE_NAME') or 'superdesk',
+            'SERVICE_NAME': os.environ.get('APM_SERVICE_NAME') or 'superdesk',
         }
 
         ElasticAPM(app)
