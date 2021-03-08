@@ -34,6 +34,7 @@ if init_data.exists():
 INSTALLED_APPS.extend(
     [
         "apps.languages",
+        "planning",
     ]
 )
 
