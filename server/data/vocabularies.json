@@ -550,7 +550,7 @@
                 ]
             }
         ],
-        "init_version": 3
+        "init_version": 4
     },
     {
         "_id": "crop_sizes",
