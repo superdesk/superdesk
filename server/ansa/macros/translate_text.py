@@ -2,10 +2,15 @@ import json
 import requests
 from flask import current_app as app
 from .process_html import process_html
+from superdesk.editor_utils import generate_fields, TEXT_FIELDS
 
 """
     Translate text from body_html
 """
+
+FIELDS = ('headline', 'slugline', 'abstract', 'body_html', 'description_text', 'extra>subtitle')
+
+sess = requests.Session()
 
 
 def translate(text='', **kwargs):
@@ -21,7 +26,7 @@ def translate(text='', **kwargs):
         return text
 
     try:
-        result = requests.post(URL_TRANSLATION, data=data, headers=headers, timeout=(5, 30))
+        result = sess.post(URL_TRANSLATION, data=data, headers=headers, timeout=(5, 30))
         response = json.loads(result.text)
         return response.get('translatedtext', text)
     except requests.exceptions.ReadTimeout:
@@ -35,9 +40,17 @@ def translate_text_macro(item, **kwargs):
     lang = kwargs.get('from_language', lang)
     target = kwargs.get('to_language', target)
 
-    for field in ('headline', 'slugline', 'abstract', 'body_html', 'description_text'):
+    for field in FIELDS:
         if item.get(field):
             item[field] = process_html(item[field], translate, lang=lang, target=target)
+        elif 'extra>' in field:
+            extra_field = field.replace('extra>', '')
+            if item.get('extra') and item['extra'].get(extra_field):
+                item['extra'][extra_field] = process_html(item['extra'][extra_field], translate, lang=lang, target=target)
+            if field not in TEXT_FIELDS:  # needed for generate fields later
+                TEXT_FIELDS.append(field)
+
+    generate_fields(item, FIELDS, force=True)
 
     return item
 

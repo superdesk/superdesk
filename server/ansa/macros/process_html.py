@@ -3,6 +3,9 @@ from superdesk.etree import parse_html, to_string
 
 
 def process_html(html, process, **kwargs):
+    if '<p' not in html:  # text field
+        return process(html, **kwargs)
+
     root = parse_html(html, 'html')
 
     for elem in root:
