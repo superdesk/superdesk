@@ -46,7 +46,9 @@ def translate_text_macro(item, **kwargs):
         elif 'extra>' in field:
             extra_field = field.replace('extra>', '')
             if item.get('extra') and item['extra'].get(extra_field):
-                item['extra'][extra_field] = process_html(item['extra'][extra_field], translate, lang=lang, target=target)
+                item['extra'][extra_field] = process_html(
+                    item['extra'][extra_field],
+                    translate, lang=lang, target=target)
             if field not in TEXT_FIELDS:  # needed for generate fields later
                 TEXT_FIELDS.append(field)
 
