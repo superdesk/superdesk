@@ -40,6 +40,7 @@ services:
       # If not hosting on localhost, change this line
       - SUPERDESK_CLIENT_URL=http://localhost:8080
       - MONGO_URI=mongodb://mongo/test
+      - CONTENTAPI_MONGO_URI=mongodb://mongo/test_ca
       - PUBLICAPI_MONGO_URI=mongodb://mongo/test_pa
       - LEGAL_ARCHIVE_URI=mongodb://mongo/test_la
       - ARCHIVED_URI=mongodb://mongo/test_ar
