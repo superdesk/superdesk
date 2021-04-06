@@ -20,9 +20,10 @@ ENV VIRTUAL_ENV=/opt/superdesk/env
 RUN python3 -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
-RUN pip install pip==20.3.4
+RUN pip3 install pip==20.3.4
 RUN pip3 install setuptools
 RUN pip3 install wheel
+RUN pip3 install setuptools-scm==5.0.2
 
 COPY requirements.txt .
 
