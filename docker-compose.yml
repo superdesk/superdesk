@@ -3,22 +3,21 @@ services:
 
   mongo:
     image: mongo:4.4
-    expose:
-      - "27017"
+    ports:
+        - "27017:27017"
 
   redis:
     image: redis:3
-    expose:
-      - "6379"
+    ports:
+        - "6379:6379"
     
   elastic:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.10.1
     environment:
       - xpack.security.enabled=false
       - discovery.type=single-node
-    expose:
-      - "9200"
-      - "9300"
+    ports:
+        - "9200:9200"
     ulimits:
       memlock:
         soft: -1
