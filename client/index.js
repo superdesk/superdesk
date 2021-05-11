@@ -6,19 +6,19 @@ setTimeout(() => {
         [
             {
                 id: 'annotationsLibrary',
-                load: () => import('superdesk-core/scripts/extensions/annotationsLibrary/dist/src/extension').then((res) => res.default),
+                load: () => import('superdesk-core/scripts/extensions/annotationsLibrary/dist/src/extension'),
             },
             {
                 id: 'markForUser',
-                load: () => import('superdesk-core/scripts/extensions/markForUser/dist/src/extension').then((res) => res.default),
+                load: () => import('superdesk-core/scripts/extensions/markForUser/dist/src/extension'),
             },
             {
                 id: 'datetimeField',
-                load: () => import('superdesk-core/scripts/extensions/datetimeField/dist/src/extension').then((res) => res.default),
+                load: () => import('superdesk-core/scripts/extensions/datetimeField/dist/src/extension'),
             },
             {
                 id: 'sams',
-                load: () => import('superdesk-core/scripts/extensions/sams/dist/src/extension').then((res) => res.default),
+                load: () => import('superdesk-core/scripts/extensions/sams/dist/src/extension'),
             },
         ],
         {
