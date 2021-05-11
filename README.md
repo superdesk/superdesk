@@ -1,4 +1,5 @@
 # Superdesk
+
 [![CI](https://github.com/superdesk/superdesk/workflows/CI/badge.svg)](https://github.com/superdesk/superdesk/actions?query=workflow%3ACI)
 [![Code Climate](https://codeclimate.com/github/superdesk/superdesk/badges/gpa.svg)](https://codeclimate.com/github/superdesk/superdesk)
 [![Requirements Status](https://requires.io/github/superdesk/superdesk/requirements.svg?branch=master)](https://requires.io/github/superdesk/superdesk/requirements/?branch=master)
@@ -19,7 +20,7 @@ Find more information about the client configuration in the README file of the r
 
 ## Run Superdesk locally using Docker
 
-You can start superdesk using `docker-compose`:
+You can start superdesk using the `docker-compose.yml` file:
 
 ```sh
 $ docker-compose up -d
@@ -29,11 +30,15 @@ This will start superdesk on http://localhost:8080. On the first run you also ha
 elastic/mongo and create a user:
 
 ```sh
-$ docker-compose run superdesk-server run python manage.py app:initialize_data  # init d
+# Initialize data
+$ docker-compose run superdesk-server run python manage.py app:initialize_data
+# Create first admin user
 $ docker-compose run superdesk-server run python manage.py users:create -u admin -p admin -e admin@localhost --admin
 ```
 
 Then you can login with admin:admin credentials.
+
+The Docker images are hosted on Dockerhub for the [client](https://hub.docker.com/r/sourcefabricoss/superdesk-client) and [server](https://hub.docker.com/r/sourcefabricoss/superdesk-server).
 
 ## Manual installation
 
@@ -41,11 +46,11 @@ Then you can login with admin:admin credentials.
 
 These services must be installed, configured and running:
 
- * MongoDB
- * ElasticSearch (7.x)
- * Redis
- * Python (>= 3.6)
- * Node.js (with `npm`)
+- MongoDB
+- ElasticSearch (7.x)
+- Redis
+- Python (>= 3.6)
+- Node.js (with `npm`)
 
 On macOS, if you have [homebrew](https://brew.sh/) installed, simply run: `brew install mongodb elasticsearch redis python3 node`.
 
@@ -72,7 +77,7 @@ npx grunt server
 # open http://localhost:9000 in browser
 ```
 
-#### :warning:  macOS users
+#### :warning: macOS users
 
 All the above commands need to run inside the Python Virtual Environment, which you can create
 using the `pyvenv` command:

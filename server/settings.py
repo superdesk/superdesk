@@ -34,8 +34,11 @@ if init_data.exists():
 INSTALLED_APPS.extend(
     [
         "apps.languages",
+        "planning",
     ]
 )
+
+PLANNING_EVENT_TEMPLATES_ENABLED = True
 
 RENDITIONS = {
     "picture": {
