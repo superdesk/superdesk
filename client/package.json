@@ -4,5 +4,9 @@
     "dependencies": {
         "superdesk-core": "github:superdesk/superdesk-client-core#develop",
         "superdesk-planning": "github:superdesk/superdesk-planning#develop"
+    },
+    "scripts": {
+        "watch-css-from-extensions": "node build-extensions.js --watch",
+        "postinstall": "node build-extensions.js"
     }
 }
