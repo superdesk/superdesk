@@ -3,7 +3,8 @@
     "license": "AGPL-3.0",
     "dependencies": {
         "superdesk-core": "github:superdesk/superdesk-client-core#develop",
-        "superdesk-planning": "github:superdesk/superdesk-planning#develop"
+        "superdesk-planning": "github:superdesk/superdesk-planning#develop",
+        "@superdesk/planning-extension": "^1.0.5"
     },
     "scripts": {
         "watch-css-from-extensions": "node build-extensions.js --watch",
