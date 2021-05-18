@@ -5,6 +5,7 @@ FROM node:lts AS build
 WORKDIR /tmp/client
 RUN npm install -g grunt-cli
 COPY package.json .
+COPY build-extensions.js .
 RUN npm install --no-audit --unsafe-perm
 COPY . .
 RUN npx grunt build
