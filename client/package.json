@@ -3,7 +3,7 @@
     "license": "AGPL-3.0",
     "dependencies": {
         "@superdesk/planning-extension": "^1.0.6",
-        "superdesk-core": "github:tomaskikutis/superdesk-client-core#expect-root-dir-when-registering-extensions",
+        "superdesk-core": "github:superdesk/superdesk-client-core#develop",
         "superdesk-planning": "github:superdesk/superdesk-planning#develop"
     },
     "scripts": {
