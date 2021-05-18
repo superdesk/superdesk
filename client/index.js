@@ -5,15 +5,15 @@ setTimeout(() => {
         [
             {
                 id: 'annotationsLibrary',
-                load: () => import('superdesk-core/scripts/extensions/annotationsLibrary/dist/src/extension'),
+                load: () => import('superdesk-core/scripts/extensions/annotationsLibrary'),
             },
             {
                 id: 'markForUserExtension',
-                load: () => import('superdesk-core/scripts/extensions/markForUser/dist/src/extension'),
+                load: () => import('superdesk-core/scripts/extensions/markForUser'),
             },
             {
                 id: 'datetimeFieldExtension',
-                load: () => import('superdesk-core/scripts/extensions/datetimeField/dist/src/extension'),
+                load: () => import('superdesk-core/scripts/extensions/datetimeField'),
             },
             {
                 id: 'planning-extension',
