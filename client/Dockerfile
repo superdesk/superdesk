@@ -4,12 +4,8 @@ FROM node:lts AS build
 # install client
 WORKDIR /tmp/client
 RUN npm install -g grunt-cli
-COPY package.json .
-COPY build-extensions.js .
-COPY superdesk.config.js .
-COPY index.js .
-RUN npm install --no-audit --unsafe-perm
 COPY . .
+RUN npm install --no-audit --unsafe-perm
 RUN npx grunt build
 
 # DEPLOY
