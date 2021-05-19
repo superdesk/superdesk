@@ -7,6 +7,7 @@ RUN npm install -g grunt-cli
 COPY package.json .
 COPY build-extensions.js .
 COPY superdesk.config.js .
+COPY index.js .
 RUN npm install --no-audit --unsafe-perm
 COPY . .
 RUN npx grunt build
