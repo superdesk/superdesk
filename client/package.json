@@ -2,12 +2,12 @@
     "name": "superdesk",
     "license": "AGPL-3.0",
     "dependencies": {
+        "@superdesk/build-tools": "^1.0.3",
         "@superdesk/planning-extension": "^1.0.6",
         "superdesk-core": "github:superdesk/superdesk-client-core#develop",
         "superdesk-planning": "github:superdesk/superdesk-planning#develop"
     },
     "scripts": {
-        "watch-css-from-extensions": "node build-extensions.js --watch",
-        "postinstall": "node build-extensions.js"
+        "postinstall": "npx @superdesk/build-tools prepare-root-repo ./ && npx @superdesk/build-tools extensions build ./"
     }
 }
