@@ -54,7 +54,7 @@ jobs:
 
     - run: npm install --no-audit
 
-    - run: node --max_old_space_size=4098 ./node_modules/.bin/grunt build
+    - run: npm run build
   
   docker:
 
