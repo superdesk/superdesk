@@ -8,7 +8,6 @@
         "superdesk-planning": "github:superdesk/superdesk-planning#develop"
     },
     "scripts": {
-        "build": "node --max_old_space_size=4098 ./node_modules/.bin/grunt build && npx @superdesk/build-tools prepare-root-repo ./",
-        "postinstall": "npx @superdesk/build-tools extensions build ./"
+        "build": "node --max_old_space_size=4098 ./node_modules/.bin/grunt build && npx @superdesk/build-tools prepare-root-repo ./ && npx @superdesk/build-tools extensions build ./"
     }
 }
