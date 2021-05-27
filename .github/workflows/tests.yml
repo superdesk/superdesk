@@ -23,7 +23,9 @@ jobs:
       with:
         python-version: 3.6
 
-    - run: sudo apt-get -y install libxml2-dev libxmlsec1-dev libxmlsec1-openssl libexempi-dev
+    - run: |
+        sudo apt-get update
+        sudo apt-get -y install libxml2-dev libxmlsec1-dev libxmlsec1-openssl libexempi-dev
 
     - run: docker-compose up -d
 
@@ -52,7 +54,7 @@ jobs:
 
     - run: npm install --no-audit
 
-    - run: node --max_old_space_size=4098 ./node_modules/.bin/grunt build
+    - run: npm run build
   
   docker:
 
