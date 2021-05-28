@@ -6,7 +6,7 @@ WORKDIR /tmp/client
 RUN npm install -g grunt-cli
 COPY . .
 RUN npm install --no-audit --unsafe-perm
-RUN npx grunt build
+RUN npm run build
 
 # DEPLOY
 FROM nginx

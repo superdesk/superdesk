@@ -16,7 +16,7 @@ setTimeout(() => {
                 load: () => import('superdesk-core/scripts/extensions/datetimeField'),
             },
             {
-                id: 'planningExtension',
+                id: 'planning-extension',
                 load: () => import('superdesk-planning/client/planning-extension'),
             },
         ],
