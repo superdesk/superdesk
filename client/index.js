@@ -17,7 +17,7 @@ setTimeout(() => {
             },
             {
                 id: 'planning-extension',
-                load: () => import('@superdesk/planning-extension'),
+                load: () => import('superdesk-planning/client/planning-extension'),
             },
         ],
         {},
