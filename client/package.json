@@ -2,14 +2,13 @@
     "name": "superdesk",
     "license": "AGPL-3.0",
     "dependencies": {
-        "@superdesk/planning-extension": "^1.0.6",
         "superdesk-core": "github:superdesk/superdesk-client-core#develop",
-        "superdesk-planning": "github:superdesk/superdesk-planning#develop"
+        "superdesk-planning": "github:tomaskikutis/superdesk-planning#enable-installing-planning-extension-without-npm"
     },
     "scripts": {
         "build": "npx @superdesk/build-tools build-root-repo ./"
     },
     "devDependencies": {
-        "@superdesk/build-tools": "^1.0.5"
+        "@superdesk/build-tools": "^1.0.10"
     }
 }
