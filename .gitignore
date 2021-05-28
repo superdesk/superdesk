@@ -47,3 +47,4 @@ include/
 client/index.html
 client/templates-cache.js
 client/npm-debug.log
+client/package-lock.json
