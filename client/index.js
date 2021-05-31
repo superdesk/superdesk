@@ -18,7 +18,7 @@ setTimeout(() => {
             },
             {
                 id: 'sams',
-                load: () => import('superdesk-core/scripts/extensions/sams/dist/src/extension'),
+                load: () => import('superdesk-core/scripts/extensions/sams'),
             },
         ],
         {
