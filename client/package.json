@@ -2,7 +2,13 @@
     "name": "superdesk",
     "license": "GPL-3.0",
     "dependencies": {
-        "superdesk-core": "superdesk/superdesk-client-core#develop",
-        "superdesk-planning": "superdesk/superdesk-planning#develop"
+        "superdesk-core": "github:superdesk/superdesk-client-core#develop",
+        "superdesk-planning": "github:superdesk/superdesk-planning#develop"
+    },
+    "devDependencies": {
+        "@superdesk/build-tools": "^1.0.14"
+    },
+    "scripts": {
+        "build": "npx @superdesk/build-tools build-root-repo ./"
     }
 }
