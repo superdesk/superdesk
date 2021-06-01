@@ -43,6 +43,6 @@ jobs:
         - script: cd server && mypy .
           name: "server: mypy"
           env: SKIP_SERVER_INSTALL=true SKIP_CLIENT_REQUIREMENTS_INSTALL=true
-        - script: cd client && node --max_old_space_size=4098 ./node_modules/.bin/grunt build
+        - script: cd client && npm run build
           name: "client: build"
           env: SKIP_SERVER_INSTALL=true SKIP_SERVER_REQUIREMENTS_INSTALL=true
