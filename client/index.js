@@ -4,7 +4,7 @@ setTimeout(() => {
     startApp(
         [{
             id: 'planning',
-            load: () => import('superdesk-planning/client/planning-extension/dist/extension'),
+            load: () => import('superdesk-planning/client/planning-extension'),
         }],
         {}
     )
