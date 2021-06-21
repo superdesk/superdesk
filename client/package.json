@@ -2,7 +2,7 @@
     "name": "superdesk",
     "license": "AGPL-3.0",
     "dependencies": {
-        "superdesk-core": "github:superdesk/superdesk-client-core#develop",
+        "superdesk-core": "github:GyanP/superdesk-client-core#SDCP-551",
         "superdesk-planning": "github:tomaskikutis/superdesk-planning#enable-installing-planning-extension-without-npm"
     },
     "scripts": {
