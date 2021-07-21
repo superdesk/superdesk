@@ -19,7 +19,7 @@ services:
       - superdesk
 
   superdesk-server:
-    image: sourcefabricoss/superdesk-server:demo
+    image: sourcefabricoss/superdesk-server:latest
     depends_on:
       - redis
       - mongodb
