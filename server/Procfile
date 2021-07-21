@@ -3,4 +3,5 @@ wamp: python3 -u ws.py
 work: celery -A worker worker
 beat: celery -A worker beat --pid=
 capi: gunicorn -c gunicorn_config.py content_api.wsgi
+papi: gunicorn -c gunicorn_config.py prod_api.wsgi
 #highcharts: python3 -u -m analytics.reports.highcharts_server

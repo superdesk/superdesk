@@ -1,10 +1,10 @@
-name: "CI"
+name: "Test"
 
 on:
   push:
   pull_request:
   schedule:
-    - cron: '0 5 * * *'
+    - cron: '30 1 * * 0'
 
 jobs:
 
@@ -23,26 +23,15 @@ jobs:
       with:
         python-version: 3.6
 
-    - run: sudo apt-get -y install libxml2-dev libxmlsec1-dev libxmlsec1-openssl libexempi3
+    - run: |
+        sudo apt-get update
+        sudo apt-get -y install libxml2-dev libxmlsec1-dev libxmlsec1-openssl libexempi-dev
 
-    - run: docker-compose -f ../.travis-docker-compose.yml up -d
-
-    - name: Cache pip
-      uses: actions/cache@v2
-      with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('server/dev-requirements.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-pip
-          ${{ runner.os }}-
+    - run: docker-compose up -d mongo redis elastic
 
     - run: |
         python -m pip install --upgrade pip wheel setuptools
         pip install -r dev-requirements.txt
-
-    - run: flake8
-
-    - run: mypy .
 
     - run: nosetests
 
@@ -63,17 +52,9 @@ jobs:
       with:
         node-version: 12.x
 
-    - uses: actions/cache@v2
-      with:
-        path: ~/.npm
-        key: ${{ runner.os }}-npm-${{ hashFiles('client/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-npm
-          ${{ runner.os }}-
-
     - run: npm install --no-audit
 
-    - run: node --max_old_space_size=4098 ./node_modules/.bin/grunt build
+    - run: npm run build
   
   docker:
 

@@ -12,14 +12,18 @@ libjpeg-dev zlib1g-dev \
 libmagic-dev \
 && rm -rf /var/lib/apt/lists/* 
 
+# update pip
+RUN python3 -m pip install -U pip wheel setuptools
+
 # install server
 WORKDIR /opt/superdesk/
 COPY requirements.txt .
-RUN python3 -m pip install -U pip wheel setuptools && \
-python3 -m pip install -Ur requirements.txt
+RUN python3 -m pip install -Ur requirements.txt
 
 ENV PYTHONUNBUFFERED=1
 ENV C_FORCE_ROOT=False
+ENV CELERYBEAT_SCHEDULE_FILENAME=/tmp/celerybeatschedule.db
+ENV TZ=Europe/London
 
 COPY . .
 

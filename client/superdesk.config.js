@@ -4,15 +4,13 @@
  * working directory, but other files may also be specified using relative paths with
  * the SUPERDESK_CONFIG environment variable or the grunt --config flag.
  */
-module.exports = function(grunt) {
+module.exports = function() {
     return {
         apps: [
             'superdesk-planning',
-            'superdesk.analytics',
         ],
         importApps: [
             '../index',
-            'superdesk-analytics',
             'superdesk-planning',
         ],
 
@@ -62,12 +60,12 @@ module.exports = function(grunt) {
             planning: true,
             autorefreshContent: true,
             nestedItemsInOutputStage: true,
+            planning: true,
         },
         
         item_profile: { change_profile: 1 },
 
         workspace: {
-            analytics: true,
             planning: true,
             assignments: true,
         },

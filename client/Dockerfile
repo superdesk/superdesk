@@ -4,10 +4,9 @@ FROM node:lts AS build
 # install client
 WORKDIR /tmp/client
 RUN npm install -g grunt-cli
-COPY package.json .
-RUN npm install --no-audit
 COPY . .
-RUN npx grunt build
+RUN npm install --no-audit --unsafe-perm
+RUN npm run build
 
 # DEPLOY
 FROM nginx

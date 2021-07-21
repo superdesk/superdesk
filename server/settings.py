@@ -10,7 +10,7 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 from pathlib import Path
-from superdesk.default_settings import INSTALLED_APPS, strtobool, env
+from superdesk.default_settings import strtobool, env
 
 ABS_PATH = str(Path(__file__).resolve().parent)
 
@@ -18,12 +18,12 @@ init_data = Path(ABS_PATH) / "data"
 if init_data.exists():
     INIT_DATA_PATH = init_data
 
-INSTALLED_APPS.extend([
-    'apps.languages',
-    'planning',
-    'analytics',
-    'superdesk.macros.imperial',
-])
+INSTALLED_APPS = [
+    "apps.languages",
+    "planning",
+]
+
+PLANNING_EVENT_TEMPLATES_ENABLED = True
 
 RENDITIONS = {
     "picture": {
@@ -173,3 +173,4 @@ VALIDATOR_MEDIA_METADATA = {
 }
 
 NINJS_PLACE_EXTENDED = True
+PUBLISH_ASSOCIATED_ITEMS = True

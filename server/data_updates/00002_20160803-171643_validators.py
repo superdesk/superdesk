@@ -7,11 +7,11 @@
 # Author  : mugur
 # Creation: 2016-08-03 17:16
 
-from superdesk.commands.data_updates import DataUpdate
+from superdesk.commands.data_updates import BaseDataUpdate
 from apps.prepopulate.app_initialize import AppInitializeWithDataCommand
 
 
-class DataUpdate(DataUpdate):
+class DataUpdate(BaseDataUpdate):
 
     resource = "validators"
 

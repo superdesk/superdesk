@@ -7,10 +7,10 @@
 # Author  : petr
 # Creation: 2016-08-29 09:41
 
-from superdesk.commands.data_updates import DataUpdate
+from superdesk.commands.data_updates import BaseDataUpdate
 
 
-class DataUpdate(DataUpdate):
+class DataUpdate(BaseDataUpdate):
 
     resource = "validators"
 

@@ -11,7 +11,6 @@ until $(curl --output /dev/null --silent --head --fail "${ELASTICSEARCH_URL}"); 
 done
 echo 'done.'
 
-
 # init dbs
 honcho run python3 manage.py app:initialize_data
 
