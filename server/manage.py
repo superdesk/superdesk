@@ -12,6 +12,7 @@
 """Superdesk Manager"""
 
 import superdesk
+
 from flask_script import Manager
 from app import get_app
 
