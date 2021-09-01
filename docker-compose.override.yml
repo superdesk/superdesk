@@ -1,7 +1,7 @@
 version: "3.2"
 services:
-  superdesk-server:
+  server:
     build: ./server
 
-  superdesk-client:
+  client:
     build: ./client
