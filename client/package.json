@@ -2,8 +2,8 @@
     "name": "superdesk",
     "license": "AGPL-3.0",
     "dependencies": {
-        "superdesk-core": "github:superdesk/superdesk-client-core#v2.3.0",
-        "superdesk-planning": "github:superdesk/superdesk-planning#v2.3.0"
+        "superdesk-core": "github:superdesk/superdesk-client-core#v2.3.1",
+        "superdesk-planning": "github:superdesk/superdesk-planning#v2.3.1"
     },
     "scripts": {
         "build": "npx @superdesk/build-tools build-root-repo ./"
