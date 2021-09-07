@@ -18,7 +18,7 @@ services:
     networks:
       - superdesk
 
-  server:
+  superdesk-server:
     image: sourcefabricoss/superdesk-server:latest
     depends_on:
       - redis
@@ -44,7 +44,7 @@ services:
     networks:
       - superdesk
 
-  client:
+  superdesk-client:
     image: sourcefabricoss/superdesk-client:latest
     environment:
       # If not hosting on localhost, change these lines
@@ -52,7 +52,7 @@ services:
       - SUPERDESK_WS_URL=ws://localhost:8080/ws
       - IFRAMELY_KEY
     depends_on:
-      - server
+      - superdesk-server
     ports:
       - "8080:80"
     networks:
