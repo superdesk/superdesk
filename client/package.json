@@ -9,6 +9,6 @@
         "build": "npx @superdesk/build-tools build-root-repo ./"
     },
     "devDependencies": {
-        "@superdesk/build-tools": "2.0.1"
+        "@superdesk/build-tools": "^2.0.1"
     }
 }
