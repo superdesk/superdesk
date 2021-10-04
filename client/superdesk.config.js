@@ -34,6 +34,9 @@ module.exports = function(grunt) {
             validatePointOfInterestForImages: true,
             editorHighlights: true,
             planning: true,
+            customAuthoringTopbar: {
+                toDesk: true,
+            },
         },
         workspace: {
             planning: true,
