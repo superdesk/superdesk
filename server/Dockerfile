@@ -18,7 +18,7 @@ RUN python3 -m venv "$VIRTUAL_ENV"
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 # update venv
-RUN python3 -m pip install -U pip wheel setuptools
+RUN python3 -m pip install -U 'pip<21.3' wheel setuptools
 
 # install server
 WORKDIR /opt/superdesk/
