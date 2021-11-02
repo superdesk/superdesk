@@ -1,5 +1,5 @@
 gunicorn>=20.0.4,<20.1
 honcho==1.0.1
 
--e git+git://github.com/superdesk/superdesk-core.git@develop#egg=superdesk-core
--e git+git://github.com/superdesk/superdesk-planning.git@develop#egg=superdesk-planning
+-e git+https://github.com/superdesk/superdesk-core.git@develop#egg=superdesk-core
+-e git+https://github.com/superdesk/superdesk-planning.git@develop#egg=superdesk-planning
