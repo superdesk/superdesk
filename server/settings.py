@@ -73,3 +73,6 @@ NINJS_PLACE_EXTENDED = True
 PUBLISH_ASSOCIATED_ITEMS = True
 
 DEFAULT_TIMEZONE = "Europe/Prague"
+
+# temporary for testing
+CORRECTIONS_WORKFLOW = True
