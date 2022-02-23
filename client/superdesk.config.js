@@ -37,6 +37,7 @@ module.exports = function(grunt) {
             customAuthoringTopbar: {
                 toDesk: true,
             },
+            autorefreshContent: false,
         },
         workspace: {
             planning: true,
