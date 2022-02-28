@@ -1,357 +1,5 @@
 [
     {
-        "_id": "type",
-        "display_name": "Article Type",
-        "type": "unmanageable",
-        "selection_type": "multi selection",
-        "init_version": 2,
-        "items": [{
-            "is_active": true,
-            "name": "text",
-            "qcode": "text"
-        }, {
-            "is_active": true,
-            "name": "preformatted",
-            "qcode": "preformatted"
-        }, {
-            "is_active": true,
-            "name": "audio",
-            "qcode": "audio"
-        }, {
-            "is_active": true,
-            "name": "video",
-            "qcode": "video"
-        }, {
-            "is_active": true,
-            "name": "picture",
-            "qcode": "picture"
-        }, {
-            "is_active": true,
-            "name": "graphic",
-            "qcode": "graphic"
-        }, {
-            "is_active": true,
-            "name": "composite",
-            "qcode": "composite"
-        }, {
-            "is_active": true,
-            "name": "planning item",
-            "qcode": "planning"
-        }, {
-            "is_active": true,
-            "name": "event",
-            "qcode": "event"
-        }]
-    },
-    {
-        "_id": "subscriber_types",
-        "display_name": "Subscriber Types",
-        "type": "unmanageable",
-        "selection_type": "do not show",
-        "init_version": 4,
-        "items": [{
-            "is_active": true,
-            "name": "All",
-            "qcode": "all",
-            "formats": [{
-                "name": "NINJS",
-                "qcode": "ninjs"
-            },
-            {
-                "name": "NINJSv2",
-                "qcode": "ninjs2"
-            },
-            {
-                "name": "NINJS FTP",
-                "qcode": "ftp ninjs"
-            },
-            {
-                "name": "NewsML G2",
-                "qcode": "newsmlg2"
-            },
-            {
-                "name": "Email",
-                "qcode": "email"
-            },
-            {
-                "name": "Newsroom NINJS",
-                "qcode": "newsroom ninjs"
-            },
-            {
-                "name": "Adobe InDesign (IDML)",
-                "qcode": "idml"
-            },
-            {
-                "name": "iMatrics",
-                "qcode": "imatrics"
-            },
-            {
-                "name": "JSON Event",
-                "qcode": "json_event"
-            },
-            {
-                "name": "JSON Planning",
-                "qcode": "json_planning"
-            },
-            {
-                "name": "JSON Planning Featured",
-                "qcode": "json_planning_featured"
-            }]
-        },
-        {
-            "is_active": true,
-            "name": "Digital/Internet",
-            "qcode": "digital",
-            "formats": [{
-                "name": "NINJS",
-                "qcode": "ninjs"
-            },
-            {
-                "name": "NINJSv2",
-                "qcode": "ninjs2"
-            },
-            {
-                "name": "NINJS FTP",
-                "qcode": "ftp ninjs"
-            },
-            {
-                "name": "NewsML G2",
-                "qcode": "newsmlg2"
-            },
-            {
-                "name": "Email",
-                "qcode": "email"
-            },
-            {
-                "name": "Newsroom NINJS",
-                "qcode": "newsroom ninjs"
-            },
-            {
-                "name": "Adobe InDesign (IDML)",
-                "qcode": "idml"
-            },
-            {
-                "name": "iMatrics",
-                "qcode": "imatrics"
-            },
-            {
-                "name": "JSON Event",
-                "qcode": "json_event"
-            },
-            {
-                "name": "JSON Planning",
-                "qcode": "json_planning"
-            },
-            {
-                "name": "JSON Planning Featured",
-                "qcode": "json_planning_featured"
-            }]
-        },
-        {
-            "is_active": true,
-            "name": "Wire/Paper",
-            "qcode": "wire",
-            "formats": [{
-                "name": "NITF",
-                "qcode": "nitf"
-            },
-            {
-                "name": "Email",
-                "qcode": "email"
-            },
-            {
-                "name": "JSON Event",
-                "qcode": "json_event"
-            },
-            {
-                "name": "JSON Planning",
-                "qcode": "json_planning"
-            },
-            {
-                "name": "JSON Planning Featured",
-                "qcode": "json_planning_featured"
-            }]
-        }]
-    },
-    {
-        "_id": "g2_content_type",
-        "display_name": "Coverage content types",
-        "type": "manageable",
-        "unique_field": "qcode",
-        "selection_type": "do not show",
-        "init_version": 1,
-        "items": [{
-            "is_active": true,
-            "name": "Text",
-            "qcode": "text",
-            "content item type": "text"
-        },
-        {
-            "is_active": true,
-            "name": "Picture",
-            "qcode": "picture",
-            "content item type": "picture"
-        },
-        {
-            "is_active": true,
-            "name": "Video",
-            "qcode": "video",
-            "content item type": "video"
-        },
-        {
-            "is_active": true,
-            "name": "Audio",
-            "qcode": "audio",
-            "content item type": "audio"
-        },
-        {
-            "is_active": true,
-            "name": "Infographics",
-            "qcode": "infographics",
-            "content item type": ""
-        },
-        {
-            "is_active": true,
-            "name": "Live video",
-            "qcode": "live_video",
-            "content item type": ""
-        },
-        {
-            "is_active": true,
-            "name": "Live blog",
-            "qcode": "live_blog",
-            "content item type": ""
-        }]
-    },
-    {
-        "_id": "eventoccurstatus",
-        "display_name": "Event Occurence Status",
-        "type": "manageable",
-        "unique_field": "qcode",
-        "selection_type": "do not show",
-        "init_version": 1,
-        "items": [{
-            "is_active": true,
-            "qcode": "eocstat:eos0",
-            "name": "Unplanned event",
-            "label": "Unplanned event"
-        },
-        {
-            "is_active": true,
-            "qcode": "eocstat:eos1",
-            "name": "Planned, occurence planned only",
-            "label": "Planned, occurence planned only"
-        },
-        {
-            "is_active": true,
-            "qcode": "eocstat:eos2",
-            "name": "Planned, occurence highly uncertain",
-            "label": "Planned, occurence highly uncertain"
-        },
-        {
-            "is_active": true,
-            "qcode": "eocstat:eos3",
-            "name": "Planned, May occur",
-            "label": "Planned, May occur"
-        },
-        {
-            "is_active": true,
-            "qcode": "eocstat:eos4",
-            "name": "Planned, occurence highly likely",
-            "label": "Planned, occurence highly likely"
-        },
-        {
-            "is_active": true,
-            "qcode": "eocstat:eos5",
-            "name": "Planned, occurs certainly",
-            "label": "Planned, occurs certainly"
-        },
-        {
-            "is_active": false,
-            "qcode": "eocstat:eos6",
-            "name": "Planned, then cancelled",
-            "label": "Planned, then cancelled"
-        }]
-    },
-    {
-        "_id": "newscoveragestatus",
-        "display_name": "News Coverage Status",
-        "type": "manageable",
-        "unique_field": "qcode",
-        "selection_type": "do not show",
-        "init_version": 1,
-        "items": [{
-            "is_active": true,
-            "qcode": "ncostat:int",
-            "name": "coverage intended",
-            "label": "Planned"
-        },
-        {
-            "is_active": true,
-            "qcode": "ncostat:notdec",
-            "name": "coverage not decided yet",
-            "label": "On merit"
-        },
-        {
-            "is_active": false,
-            "qcode": "ncostat:notint",
-            "name": "coverage not intended",
-            "label": "Not planned"
-        },
-        {
-            "is_active": true,
-            "qcode": "ncostat:onreq",
-            "name": "coverage upon request",
-            "label": "On request"
-        }]
-    },
-    {
-        "_id": "event_calendars",
-        "display_name": "Event Calendars",
-        "type": "manageable",
-        "unique_field": "qcode",
-        "selection_type": "do not show",
-        "init_version": 1,
-        "items": [{
-            "is_active": true,
-            "name": "Sport",
-            "qcode": "sport"
-        },
-        {
-            "is_active": true,
-            "name": "Finance",
-            "qcode": "finance"
-        },
-        {
-            "is_active": true,
-            "name": "Entertainment",
-            "qcode": "entertainment"
-        }]
-    },
-    {
-        "_id": "assignment_priority",
-        "display_name": "Assignment Priority",
-        "type": "manageable",
-        "unique_field": "qcode",
-        "selection_type": "do not show",
-        "init_version": 1,
-        "items": [{
-            "is_active": true,
-            "name": "High",
-            "qcode": 1
-        },
-        {
-            "is_active": true,
-            "name": "Medium",
-            "qcode": 2
-        },
-        {
-            "is_active": true,
-            "name": "Low",
-            "qcode": 3
-        }]
-    },
-    {
         "_id": "categories",
         "display_name": "Categories",
         "type": "manageable",
@@ -2322,5 +1970,357 @@
             }
         ],
         "helper_text": "The administrative state or region of an address"
+    },
+    {
+        "_id": "type",
+        "display_name": "Article Type",
+        "type": "unmanageable",
+        "selection_type": "multi selection",
+        "init_version": 2,
+        "items": [{
+            "is_active": true,
+            "name": "text",
+            "qcode": "text"
+        }, {
+            "is_active": true,
+            "name": "preformatted",
+            "qcode": "preformatted"
+        }, {
+            "is_active": true,
+            "name": "audio",
+            "qcode": "audio"
+        }, {
+            "is_active": true,
+            "name": "video",
+            "qcode": "video"
+        }, {
+            "is_active": true,
+            "name": "picture",
+            "qcode": "picture"
+        }, {
+            "is_active": true,
+            "name": "graphic",
+            "qcode": "graphic"
+        }, {
+            "is_active": true,
+            "name": "composite",
+            "qcode": "composite"
+        }, {
+            "is_active": true,
+            "name": "planning item",
+            "qcode": "planning"
+        }, {
+            "is_active": true,
+            "name": "event",
+            "qcode": "event"
+        }]
+    },
+    {
+        "_id": "subscriber_types",
+        "display_name": "Subscriber Types",
+        "type": "unmanageable",
+        "selection_type": "do not show",
+        "init_version": 4,
+        "items": [{
+            "is_active": true,
+            "name": "All",
+            "qcode": "all",
+            "formats": [{
+                "name": "NINJS",
+                "qcode": "ninjs"
+            },
+            {
+                "name": "NINJSv2",
+                "qcode": "ninjs2"
+            },
+            {
+                "name": "NINJS FTP",
+                "qcode": "ftp ninjs"
+            },
+            {
+                "name": "NewsML G2",
+                "qcode": "newsmlg2"
+            },
+            {
+                "name": "Email",
+                "qcode": "email"
+            },
+            {
+                "name": "Newsroom NINJS",
+                "qcode": "newsroom ninjs"
+            },
+            {
+                "name": "Adobe InDesign (IDML)",
+                "qcode": "idml"
+            },
+            {
+                "name": "iMatrics",
+                "qcode": "imatrics"
+            },
+            {
+                "name": "JSON Event",
+                "qcode": "json_event"
+            },
+            {
+                "name": "JSON Planning",
+                "qcode": "json_planning"
+            },
+            {
+                "name": "JSON Planning Featured",
+                "qcode": "json_planning_featured"
+            }]
+        },
+        {
+            "is_active": true,
+            "name": "Digital/Internet",
+            "qcode": "digital",
+            "formats": [{
+                "name": "NINJS",
+                "qcode": "ninjs"
+            },
+            {
+                "name": "NINJSv2",
+                "qcode": "ninjs2"
+            },
+            {
+                "name": "NINJS FTP",
+                "qcode": "ftp ninjs"
+            },
+            {
+                "name": "NewsML G2",
+                "qcode": "newsmlg2"
+            },
+            {
+                "name": "Email",
+                "qcode": "email"
+            },
+            {
+                "name": "Newsroom NINJS",
+                "qcode": "newsroom ninjs"
+            },
+            {
+                "name": "Adobe InDesign (IDML)",
+                "qcode": "idml"
+            },
+            {
+                "name": "iMatrics",
+                "qcode": "imatrics"
+            },
+            {
+                "name": "JSON Event",
+                "qcode": "json_event"
+            },
+            {
+                "name": "JSON Planning",
+                "qcode": "json_planning"
+            },
+            {
+                "name": "JSON Planning Featured",
+                "qcode": "json_planning_featured"
+            }]
+        },
+        {
+            "is_active": true,
+            "name": "Wire/Paper",
+            "qcode": "wire",
+            "formats": [{
+                "name": "NITF",
+                "qcode": "nitf"
+            },
+            {
+                "name": "Email",
+                "qcode": "email"
+            },
+            {
+                "name": "JSON Event",
+                "qcode": "json_event"
+            },
+            {
+                "name": "JSON Planning",
+                "qcode": "json_planning"
+            },
+            {
+                "name": "JSON Planning Featured",
+                "qcode": "json_planning_featured"
+            }]
+        }]
+    },
+    {
+        "_id": "g2_content_type",
+        "display_name": "Coverage content types",
+        "type": "manageable",
+        "unique_field": "qcode",
+        "selection_type": "do not show",
+        "init_version": 1,
+        "items": [{
+            "is_active": true,
+            "name": "Text",
+            "qcode": "text",
+            "content item type": "text"
+        },
+        {
+            "is_active": true,
+            "name": "Picture",
+            "qcode": "picture",
+            "content item type": "picture"
+        },
+        {
+            "is_active": true,
+            "name": "Video",
+            "qcode": "video",
+            "content item type": "video"
+        },
+        {
+            "is_active": true,
+            "name": "Audio",
+            "qcode": "audio",
+            "content item type": "audio"
+        },
+        {
+            "is_active": true,
+            "name": "Infographics",
+            "qcode": "infographics",
+            "content item type": ""
+        },
+        {
+            "is_active": true,
+            "name": "Live video",
+            "qcode": "live_video",
+            "content item type": ""
+        },
+        {
+            "is_active": true,
+            "name": "Live blog",
+            "qcode": "live_blog",
+            "content item type": ""
+        }]
+    },
+    {
+        "_id": "eventoccurstatus",
+        "display_name": "Event Occurence Status",
+        "type": "manageable",
+        "unique_field": "qcode",
+        "selection_type": "do not show",
+        "init_version": 1,
+        "items": [{
+            "is_active": true,
+            "qcode": "eocstat:eos0",
+            "name": "Unplanned event",
+            "label": "Unplanned event"
+        },
+        {
+            "is_active": true,
+            "qcode": "eocstat:eos1",
+            "name": "Planned, occurence planned only",
+            "label": "Planned, occurence planned only"
+        },
+        {
+            "is_active": true,
+            "qcode": "eocstat:eos2",
+            "name": "Planned, occurence highly uncertain",
+            "label": "Planned, occurence highly uncertain"
+        },
+        {
+            "is_active": true,
+            "qcode": "eocstat:eos3",
+            "name": "Planned, May occur",
+            "label": "Planned, May occur"
+        },
+        {
+            "is_active": true,
+            "qcode": "eocstat:eos4",
+            "name": "Planned, occurence highly likely",
+            "label": "Planned, occurence highly likely"
+        },
+        {
+            "is_active": true,
+            "qcode": "eocstat:eos5",
+            "name": "Planned, occurs certainly",
+            "label": "Planned, occurs certainly"
+        },
+        {
+            "is_active": false,
+            "qcode": "eocstat:eos6",
+            "name": "Planned, then cancelled",
+            "label": "Planned, then cancelled"
+        }]
+    },
+    {
+        "_id": "newscoveragestatus",
+        "display_name": "News Coverage Status",
+        "type": "manageable",
+        "unique_field": "qcode",
+        "selection_type": "do not show",
+        "init_version": 1,
+        "items": [{
+            "is_active": true,
+            "qcode": "ncostat:int",
+            "name": "coverage intended",
+            "label": "Planned"
+        },
+        {
+            "is_active": true,
+            "qcode": "ncostat:notdec",
+            "name": "coverage not decided yet",
+            "label": "On merit"
+        },
+        {
+            "is_active": false,
+            "qcode": "ncostat:notint",
+            "name": "coverage not intended",
+            "label": "Not planned"
+        },
+        {
+            "is_active": true,
+            "qcode": "ncostat:onreq",
+            "name": "coverage upon request",
+            "label": "On request"
+        }]
+    },
+    {
+        "_id": "event_calendars",
+        "display_name": "Event Calendars",
+        "type": "manageable",
+        "unique_field": "qcode",
+        "selection_type": "do not show",
+        "init_version": 1,
+        "items": [{
+            "is_active": true,
+            "name": "Sport",
+            "qcode": "sport"
+        },
+        {
+            "is_active": true,
+            "name": "Finance",
+            "qcode": "finance"
+        },
+        {
+            "is_active": true,
+            "name": "Entertainment",
+            "qcode": "entertainment"
+        }]
+    },
+    {
+        "_id": "assignment_priority",
+        "display_name": "Assignment Priority",
+        "type": "manageable",
+        "unique_field": "qcode",
+        "selection_type": "do not show",
+        "init_version": 1,
+        "items": [{
+            "is_active": true,
+            "name": "High",
+            "qcode": 1
+        },
+        {
+            "is_active": true,
+            "name": "Medium",
+            "qcode": 2
+        },
+        {
+            "is_active": true,
+            "name": "Low",
+            "qcode": 3
+        }]
     }
 ]
