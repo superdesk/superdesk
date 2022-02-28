@@ -1,5 +1,5 @@
 # BUILD
-FROM node:lts AS build
+FROM node:12 AS build
 
 # install client
 WORKDIR /tmp/client
