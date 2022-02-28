@@ -39,7 +39,7 @@ services:
       - CELERY_BROKER_URL=redis://redis:6379/1
       - REDIS_URL=redis://redis:6379/1
       - DEFAULT_TIMEZONE=Europe/Prague
-      - SECRET_KEY
+      - SECRET_KEY=*k^&9)byk=8en9n1sg7-xj4f8wr2mh^x#t%_2=1=z@69oxt50!
       # More configuration options can be found at https://superdesk.readthedocs.io/en/latest/settings.html
     networks:
       - superdesk
