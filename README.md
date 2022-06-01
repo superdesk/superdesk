@@ -49,7 +49,7 @@ These services must be installed, configured and running:
 - MongoDB
 - ElasticSearch (7.x)
 - Redis
-- Python (>= 3.6)
+- Python (>= 3.8)
 - Node.js (with `npm`)
 
 On macOS, if you have [homebrew](https://brew.sh/) installed, simply run: `brew install mongodb elasticsearch redis python3 node`.
