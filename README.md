@@ -72,6 +72,7 @@ python manage.py app:prepopulate
 # client
 cd $path/client
 npm install
+npm run build
 npx grunt server
 
 # open http://localhost:9000 in browser

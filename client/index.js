@@ -8,11 +8,11 @@ setTimeout(() => {
                 load: () => import('superdesk-core/scripts/extensions/annotationsLibrary'),
             },
             {
-                id: 'markForUserExtension',
+                id: 'markForUser',
                 load: () => import('superdesk-core/scripts/extensions/markForUser'),
             },
             {
-                id: 'datetimeFieldExtension',
+                id: 'datetimeField',
                 load: () => import('superdesk-core/scripts/extensions/datetimeField'),
             },
             {

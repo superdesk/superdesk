@@ -1,6 +1,7 @@
-.git/
-env/
+.env
+.git
+env
 start_container.sh
-.vagrant/
+.vagrant
 *.pyc
-__pycache__/
+**/__pycache__

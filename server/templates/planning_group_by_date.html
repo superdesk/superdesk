@@ -1,0 +1,33 @@
+{% for year, year_group in items|groupby('planning_date.year') %}
+{% for month, month_group in year_group|groupby('planning_date.month') %}
+{% for day, day_group in month_group|groupby('planning_date.day') %}
+    {% set weekday = day_group[0].planning_date.strftime('%A') %}
+    {% if weekday == 'Monday' %}<h2>Monday {{day}}/{{month}}</h2>{% endif %}
+    {% if weekday == 'Tuesday' %}<h2>Tuesday {{day}}/{{month}}</h2>{% endif %}
+    {% if weekday == 'Wednesday' %}<h2>Wednesday {{day}}/{{month}}</h2>{% endif %}
+    {% if weekday == 'Thursday' %}<h2>Thursday {{day}}/{{month}}</h2>{% endif %}
+    {% if weekday == 'Friday' %}<h2>Friday {{day}}/{{month}}</h2>{% endif %}
+    {% if weekday == 'Saturday' %}<h2>Saturday {{day}}/{{month}}</h2>{% endif %}
+    {% if weekday == 'Sunday' %}<h2>Sunday {{day}}/{{month}}</h2>{% endif %}
+    {% for item in day_group %}
+        <h2>{{ item.name or item.headline or item.slugline }}</h2>
+        <p>{{ item.description_text or '' }}
+            {% if item.get('event', {}).get('location') %}
+            &nbsp;Location: {{ item.event.location[0].name }}.
+            {% endif %}
+            {% if item.get('planning_date', '') != ''
+                and item.get('planning_date', '') | format_datetime(date_format='%H:%M') != '00:00' %}
+            &nbsp;Time: {{ item.planning_date | format_datetime(date_format='%H:%M') }}.
+            {% endif %}
+        </p>
+        {% if item.get('ednote', '') != '' %}
+        <p>Editorial note: {{ item.ednote }}</p>
+        {% endif %}
+        {% if item.coverages %}
+        <p>Coverage(s): {{ item.coverages | join(', ') }}</p>
+        {% endif %}
+        <p></p>
+    {% endfor %}
+{% endfor %}
+{% endfor %}
+{% endfor %}
