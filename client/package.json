@@ -2,7 +2,7 @@
     "name": "superdesk",
     "license": "AGPL-3.0",
     "dependencies": {
-        "superdesk-core": "github:superdesk/superdesk-client-core#v2.5.0-rc3",
+        "superdesk-core": "github:superdesk/superdesk-client-core#v2.5.0-rc1",
         "superdesk-planning": "github:superdesk/superdesk-planning#v2.5.0-rc3"
     },
     "scripts": {
