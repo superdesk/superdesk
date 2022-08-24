@@ -35,6 +35,7 @@ INSTALLED_APPS.extend(
     [
         "apps.languages",
         "planning",
+        "analytics",
     ]
 )
 
