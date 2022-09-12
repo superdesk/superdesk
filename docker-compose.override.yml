@@ -5,3 +5,15 @@ services:
 
   superdesk-client:
     build: ./client
+
+  mongodb:
+    ports:
+        - "27017:27017"
+
+  elastic:
+    ports:
+        - "9200:9200"
+
+  redis:
+    ports:
+        - "6379:6379"
