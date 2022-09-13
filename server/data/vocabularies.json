@@ -2322,5 +2322,109 @@
             "name": "Low",
             "qcode": 3
         }]
+    },
+    {
+        "_id": "show_part",
+        "display_name": "Show Part",
+        "type": "manageable",
+        "unique_field": "qcode",
+        "selection_type": "do not show",
+        "init_version": 1,
+        "items": [{
+            "is_active": true,
+            "name": "Uvod",
+            "qcode": "Uvod"
+        },
+        {
+            "is_active": true,
+            "name": "Odjava",
+            "qcode": "Odjava"
+        },
+        {
+            "is_active": true,
+            "name": "Hladna najava",
+            "qcode": "Hladna najava"
+        },
+        {
+            "is_active": true,
+            "name": "REC",
+            "qcode": "REC"
+        },
+        {
+            "is_active": true,
+            "name": "SLIKA",
+            "qcode": "SLIKA"
+        },
+        {
+            "is_active": true,
+            "name": "PODATAK",
+            "qcode": "PODATAK"
+        },
+        {
+            "is_active": true,
+            "name": "KALENDAR",
+            "qcode": "KALENDAR"
+        },
+        {
+            "is_active": true,
+            "name": "ICUTANJEJEODGOVOR",
+            "qcode": "ICUTANJEJEODGOVOR"
+        }]
+    },
+    {
+        "_id": "rundown_item_types",
+        "display_name": "Item Type",
+        "type": "manageable",
+        "unique_field": "qcode",
+        "selection_type": "do not show",
+        "init_version": 1,
+        "items": [{
+            "is_active": true,
+            "name": "PRLG",
+            "qcode": "PRLG"
+        },
+        {
+            "is_active": true,
+            "name": "AACC",
+            "qcode": "AACC"
+        },
+        {
+            "is_active": true,
+            "name": "GOST",
+            "qcode": "GOST"
+        },
+        {
+            "is_active": true,
+            "name": "OFF",
+            "qcode": "OFF"
+        },
+        {
+            "is_active": true,
+            "name": "TON",
+            "qcode": "TON"
+        }]
+    },
+    {
+        "_id": "rundown_subitem_types",
+        "display_name": "Subitem Type",
+        "type": "manageable",
+        "unique_field": "qcode",
+        "selection_type": "do not show",
+        "init_version": 1,
+        "items": [{
+            "is_active": true,
+            "name": "POKR",
+            "qcode": "POKR"
+        },
+        {
+            "is_active": true,
+            "name": "WALL",
+            "qcode": "WALL"
+        },
+        {
+            "is_active": true,
+            "name": "GRAF",
+            "qcode": "GRAF"
+        }]
     }
 ]
