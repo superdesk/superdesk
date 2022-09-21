@@ -50,36 +50,34 @@ BROKER_URL = env("CELERY_BROKER_URL", REDIS_URL)
 SECRET_KEY = env("SECRET_KEY", "")
 
 # Highcharts Export Server - default settings
-ANALYTICS_ENABLE_SCHEDULED_REPORTS = strtobool(
-    env('ANALYTICS_ENABLE_SCHEDULED_REPORTS', 'true')
-)
+ANALYTICS_ENABLE_SCHEDULED_REPORTS = strtobool(env("ANALYTICS_ENABLE_SCHEDULED_REPORTS", "true"))
 
-MACROS_MODULE = env('MACROS_MODULE', 'macros')
+MACROS_MODULE = env("MACROS_MODULE", "macros")
 
-HIGHCHARTS_SERVER_HOST = env('HIGHCHARTS_SERVER_HOST', 'localhost')
-HIGHCHARTS_SERVER_PORT = env('HIGHCHARTS_SERVER_PORT', '6060')
-HIGHCHARTS_LICENSE_ID = env('HIGHCHARTS_LICENSE_ID', '')
-HIGHCHARTS_LICENSE_TYPE = 'OEM'
-HIGHCHARTS_LICENSEE = 'Sourcefabric Ventures s.r.o.'
-HIGHCHARTS_LICENSEE_CONTACT = 'tech@sourcefabric.org'
-HIGHCHARTS_LICENSE_CUSTOMER_ID = '2'
-HIGHCHARTS_LICENSE_EXPIRY = 'Perpetual'
+HIGHCHARTS_SERVER_HOST = env("HIGHCHARTS_SERVER_HOST", "localhost")
+HIGHCHARTS_SERVER_PORT = env("HIGHCHARTS_SERVER_PORT", "6060")
+HIGHCHARTS_LICENSE_ID = env("HIGHCHARTS_LICENSE_ID", "")
+HIGHCHARTS_LICENSE_TYPE = "OEM"
+HIGHCHARTS_LICENSEE = "Sourcefabric Ventures s.r.o."
+HIGHCHARTS_LICENSEE_CONTACT = "tech@sourcefabric.org"
+HIGHCHARTS_LICENSE_CUSTOMER_ID = "2"
+HIGHCHARTS_LICENSE_EXPIRY = "Perpetual"
 
-DEFAULT_LANGUAGE = 'en'
+DEFAULT_LANGUAGE = "en"
 LANGUAGES = [
-    {'language': 'en', 'label': 'English', 'source': True, 'destination': True},
-    {'language': 'en-GB', 'label': 'English (GB)', 'source': True, 'destination': True},
-    {'language': 'fr', 'label': 'French', 'source': True, 'destination': True},
-    {'language': 'ar', 'label': 'Arabic', 'source': True, 'destination': True},
-    {'language': 'de', 'label': 'German', 'source': True, 'destination': True},
-    {'language': 'no', 'label': 'Norwegian', 'source': True, 'destination': True},
-    {'language': 'pt-PT', 'label': 'Portugese', 'source': True, 'destination': True},
-    {'language': 'pt-BR', 'label': 'Portugese (Brazil)', 'source': True, 'destination': True},
-    {'language': 'zh-Hans', 'label': 'Chinese (分类)', 'source': True, 'destination': True},
-    {'language': 'dk', 'label': 'Danish', 'source': True, 'destination': True},
-    {'language': 'es', 'label': 'Spanish', 'source': True, 'destination': True},
-    {'language': 'se', 'label': 'Swedish', 'source': True, 'destination': True},
-    {'language': 'cz', 'label': 'Czech', 'source': True, 'destination': True}
+    {"language": "en", "label": "English", "source": True, "destination": True},
+    {"language": "en-GB", "label": "English (GB)", "source": True, "destination": True},
+    {"language": "fr", "label": "French", "source": True, "destination": True},
+    {"language": "ar", "label": "Arabic", "source": True, "destination": True},
+    {"language": "de", "label": "German", "source": True, "destination": True},
+    {"language": "no", "label": "Norwegian", "source": True, "destination": True},
+    {"language": "pt-PT", "label": "Portugese", "source": True, "destination": True},
+    {"language": "pt-BR", "label": "Portugese (Brazil)", "source": True, "destination": True},
+    {"language": "zh-Hans", "label": "Chinese (分类)", "source": True, "destination": True},
+    {"language": "dk", "label": "Danish", "source": True, "destination": True},
+    {"language": "es", "label": "Spanish", "source": True, "destination": True},
+    {"language": "se", "label": "Swedish", "source": True, "destination": True},
+    {"language": "cz", "label": "Czech", "source": True, "destination": True},
 ]
 
 GENERATE_SHORT_GUID = True
@@ -91,66 +89,95 @@ KEYWORDS_ADD_MISSING_ON_PUBLISH = True
 # publishing of associated and related items
 PUBLISH_ASSOCIATED_ITEMS = True
 
-FTP_TIMEOUT = int(env('FTP_TIMEOUT', 10))
+FTP_TIMEOUT = int(env("FTP_TIMEOUT", 10))
 
 PLANNING_EVENT_TEMPLATES_ENABLED = True
 
 PLANNING_AUTO_ASSIGN_TO_WORKFLOW = True
 
 # special characters that are disallowed
-DISALLOWED_CHARACTERS = ['!', '$', '%', '&', '"', '(', ')', '*', '+', ',', '.', '/', ':', ';', '<', '=',
-                         '>', '?', '@', '[', ']', '\\', '^', '_', '`', '{', '|', '}', '~']
+DISALLOWED_CHARACTERS = [
+    "!",
+    "$",
+    "%",
+    "&",
+    '"',
+    "(",
+    ")",
+    "*",
+    "+",
+    ",",
+    ".",
+    "/",
+    ":",
+    ";",
+    "<",
+    "=",
+    ">",
+    "?",
+    "@",
+    "[",
+    "]",
+    "\\",
+    "^",
+    "_",
+    "`",
+    "{",
+    "|",
+    "}",
+    "~",
+]
 
 # This value gets injected into NewsML 1.2 and G2 output documents.
-NEWSML_PROVIDER_ID = 'sourcefabric.org'
-ORGANIZATION_NAME = env('ORGANIZATION_NAME', 'Sourcefabric')
-ORGANIZATION_NAME_ABBREVIATION = env('ORGANIZATION_NAME_ABBREVIATION', 'SoFab')
+NEWSML_PROVIDER_ID = "sourcefabric.org"
+ORGANIZATION_NAME = env("ORGANIZATION_NAME", "Sourcefabric")
+ORGANIZATION_NAME_ABBREVIATION = env("ORGANIZATION_NAME_ABBREVIATION", "SoFab")
 
 SCHEMA = {
-    'picture': {
-        'slugline': {'required': False},
-        'headline': {'required': False},
-        'description_text': {'required': True},
-        'byline': {'required': False},
-        'copyrightnotice': {'required': False},
-        'usageterms': {'required': False},
-        'ednote': {'required': False},
+    "picture": {
+        "slugline": {"required": False},
+        "headline": {"required": False},
+        "description_text": {"required": True},
+        "byline": {"required": False},
+        "copyrightnotice": {"required": False},
+        "usageterms": {"required": False},
+        "ednote": {"required": False},
     },
-    'video': {
-        'slugline': {'required': False},
-        'headline': {'required': False},
-        'description_text': {'required': True},
-        'byline': {'required': True},
-        'copyrightnotice': {'required': False},
-        'usageterms': {'required': False},
-        'ednote': {'required': False},
+    "video": {
+        "slugline": {"required": False},
+        "headline": {"required": False},
+        "description_text": {"required": True},
+        "byline": {"required": True},
+        "copyrightnotice": {"required": False},
+        "usageterms": {"required": False},
+        "ednote": {"required": False},
     },
 }
 
 # editor for images, video, audio
 EDITOR = {
-    'picture': {
-        'headline': {'order': 1, 'sdWidth': 'full'},
-        'description_text': {'order': 2, 'sdWidth': 'full', 'textarea': True},
-        'byline': {'order': 3, 'displayOnMediaEditor': True},
-        'copyrightnotice': {'order': 4, 'displayOnMediaEditor': True},
-        'slugline': {'displayOnMediaEditor': True},
-        'ednote': {'displayOnMediaEditor': True},
-        'usageterms': {'order': 5, 'displayOnMediaEditor': True},
+    "picture": {
+        "headline": {"order": 1, "sdWidth": "full"},
+        "description_text": {"order": 2, "sdWidth": "full", "textarea": True},
+        "byline": {"order": 3, "displayOnMediaEditor": True},
+        "copyrightnotice": {"order": 4, "displayOnMediaEditor": True},
+        "slugline": {"displayOnMediaEditor": True},
+        "ednote": {"displayOnMediaEditor": True},
+        "usageterms": {"order": 5, "displayOnMediaEditor": True},
     },
-    'video': {
-        'headline': {'order': 1, 'sdWidth': 'full'},
-        'description_text': {'order': 2, 'sdWidth': 'full', 'textarea': True},
-        'byline': {'order': 3, 'displayOnMediaEditor': True},
-        'copyrightnotice': {'order': 4, 'displayOnMediaEditor': True},
-        'slugline': {'displayOnMediaEditor': True},
-        'ednote': {'displayOnMediaEditor': True},
-        'usageterms': {'order': 5, 'displayOnMediaEditor': True},
+    "video": {
+        "headline": {"order": 1, "sdWidth": "full"},
+        "description_text": {"order": 2, "sdWidth": "full", "textarea": True},
+        "byline": {"order": 3, "displayOnMediaEditor": True},
+        "copyrightnotice": {"order": 4, "displayOnMediaEditor": True},
+        "slugline": {"displayOnMediaEditor": True},
+        "ednote": {"displayOnMediaEditor": True},
+        "usageterms": {"order": 5, "displayOnMediaEditor": True},
     },
 }
 
-SCHEMA['audio'] = SCHEMA['video']
-EDITOR['audio'] = EDITOR['video']
+SCHEMA["audio"] = SCHEMA["video"]
+EDITOR["audio"] = EDITOR["video"]
 
 
 # media required fields for upload
@@ -183,3 +210,5 @@ ARCHIVE_AUTOCOMPLETE_LIMIT = 2000
 
 # 2: reindex slugline
 SCHEMA_VERSION = 2
+
+RUNDOWNS_TIMEZONE = DEFAULT_TIMEZONE
