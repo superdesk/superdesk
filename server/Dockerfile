@@ -18,7 +18,7 @@ RUN python3 -m venv "$VIRTUAL_ENV"
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 # update venv
-RUN python3 -m pip install -U 'pip<21.3' wheel setuptools
+RUN python3 -m pip install -U pip wheel setuptools
 
 # install server
 WORKDIR /opt/superdesk/
@@ -28,7 +28,7 @@ RUN python3 -m pip install -Ur requirements.txt
 ENV PYTHONUNBUFFERED=1
 ENV C_FORCE_ROOT=False
 ENV CELERYBEAT_SCHEDULE_FILENAME=/tmp/celerybeatschedule.db
-ENV TZ=Europe/London
+ENV TZ=Europe/Prague
 
 COPY . .
 
