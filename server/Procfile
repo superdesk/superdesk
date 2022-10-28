@@ -4,4 +4,3 @@ work: celery -A worker worker
 beat: celery -A worker beat
 capi: hypercorn -c file:hypercorn_config.py content_api.wsgi:application
 papi: hypercorn -c file:hypercorn_config.py prod_api.wsgi:application
-#highcharts: python3 -u -m analytics.reports.highcharts_server
