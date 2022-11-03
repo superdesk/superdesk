@@ -2329,7 +2329,7 @@
         "type": "manageable",
         "unique_field": "qcode",
         "selection_type": "do not show",
-        "init_version": 2,
+        "init_version": 3,
         "items": [{
             "is_active": true,
             "name": "Uvod",
@@ -2372,7 +2372,7 @@
         }],
         "schema": {
             "name": {"translate": true},
-            "qcode": {"type": "integer"},
+            "qcode": {"type": "string"},
             "color": {"type": "color", "label": "Сolor"}
         }
     },
@@ -2382,7 +2382,7 @@
         "type": "manageable",
         "unique_field": "qcode",
         "selection_type": "do not show",
-        "init_version": 2,
+        "init_version": 3,
         "items": [{
             "is_active": true,
             "name": "PRLG",
@@ -2410,7 +2410,7 @@
         }],
         "schema": {
             "name": {"translate": true},
-            "qcode": {"type": "integer"},
+            "qcode": {"type": "string"},
             "color": {"type": "color", "label": "Сolor"}
         }
     },
@@ -2420,7 +2420,7 @@
         "type": "manageable",
         "unique_field": "qcode",
         "selection_type": "do not show",
-        "init_version": 2,
+        "init_version": 3,
         "items": [{
             "is_active": true,
             "name": "POKR",
@@ -2438,7 +2438,7 @@
         }],
         "schema": {
             "name": {"translate": true},
-            "qcode": {"type": "integer"},
+            "qcode": {"type": "string"},
             "color": {"type": "color", "label": "Сolor"}
         }
     },
@@ -2448,7 +2448,7 @@
         "type": "manageable",
         "unique_field": "qcode",
         "selection_type": "do not show",
-        "init_version": 1,
+        "init_version": 2,
         "items": [{
             "is_active": true,
             "name": "INIT",
@@ -2456,7 +2456,7 @@
         }],
         "schema": {
             "name": {"translate": true},
-            "qcode": {"type": "integer"},
+            "qcode": {"type": "string"},
             "color": {"type": "color", "label": "Сolor"}
         }
     }
