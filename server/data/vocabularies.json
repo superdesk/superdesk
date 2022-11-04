@@ -2448,11 +2448,22 @@
         "type": "manageable",
         "unique_field": "qcode",
         "selection_type": "do not show",
-        "init_version": 2,
+        "init_version": 3,
         "items": [{
             "is_active": true,
-            "name": "INIT",
-            "qcode": "INIT"
+            "name": "pending",
+            "qcode": "pending",
+            "color": "#ff5630"
+        },{
+            "is_active": true,
+            "name": "in approval",
+            "qcode": "in-approval",
+            "color": "#ff991f"
+        },{
+            "is_active": true,
+            "name": "approved",
+            "qcode": "approved",
+            "color": "#36b37e"
         }],
         "schema": {
             "name": {"translate": true},
