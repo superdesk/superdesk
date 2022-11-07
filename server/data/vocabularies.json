@@ -2470,5 +2470,30 @@
             "qcode": {"type": "string"},
             "color": {"type": "color", "label": "Сolor"}
         }
+    },
+    {
+        "_id": "camera",
+        "display_name": "Camera",
+        "type": "manageable",
+        "unique_field": "qcode",
+        "selection_type": "do not show",
+        "init_version": 1,
+        "items": [{
+            "is_active": true,
+            "name": "K1",
+            "qcode": "K1"
+        },{
+            "is_active": true,
+            "name": "K2",
+            "qcode": "K2"
+        },{
+            "is_active": true,
+            "name": "K3",
+            "qcode": "K3"
+        }],
+        "schema": {
+            "name": {"type": "string"},
+            "qcode": {"type": "string"}
+        }
     }
 ]
