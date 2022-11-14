@@ -11,6 +11,14 @@ setTimeout(() => {
                 id: 'markForUser',
                 load: () => import('superdesk-core/scripts/extensions/markForUser'),
             },
+            {
+                id: 'datetimeField',
+                load: () => import('superdesk-core/scripts/extensions/datetimeField'),
+            },
+            {
+                id: 'planning-extension',
+                load: () => import('superdesk-planning/client/planning-extension'),
+            },
         ],
         {},
     );
