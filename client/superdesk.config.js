@@ -33,9 +33,9 @@ module.exports = function() {
         shortWeekFormat: 'HH:mm, DD.MM.YYYY',
         startingDay: '1',
         defaultTimezone: 'Europe/Prague',
-        
+
         editor3: { browserSpellCheck: true, },
-        
+
         search_cvs: [
             {id: 'topics', name:'Topics', field: 'subject', list: 'topics'},
             {id: 'language', name:'Language', field: 'language', list: 'languages'}
@@ -65,14 +65,14 @@ module.exports = function() {
                 toDesk: true,
             },
         },
-        
+
         item_profile: { change_profile: 1 },
 
         workspace: {
             planning: true,
             assignments: true,
         },
-        
+
         ui: {
             italicAbstract: false,
             },
@@ -82,7 +82,7 @@ module.exports = function() {
                 'urgency'
             ],
             firstLine: [
-                'headline',  
+                'headline',
                 'highlights',
                 'markedDesks',
                 'associatedItems',
@@ -98,7 +98,8 @@ module.exports = function() {
                 'desk',
                 'fetchedDesk',
                 'used',
-                'nestedlink'
+                'nestedlink',
+                'translations'
             ]
         },
 
@@ -109,6 +110,6 @@ module.exports = function() {
                     allowed_fields_to_sort: [ 'publish_schedule' ]
                 }
             },
-        },   
+        },
     };
 };
