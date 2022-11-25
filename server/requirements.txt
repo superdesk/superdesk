@@ -226,9 +226,9 @@ six==1.16.0
     #   flask-oidc-ex
     #   oauth2client
     #   python-dateutil
-superdesk-core @ git+https://github.com/superdesk/superdesk-core.git@v2.5.0
+superdesk-core @ git+https://github.com/superdesk/superdesk-core.git@v2.5.2
     # via -r requirements.in
-superdesk-planning @ git+https://github.com/superdesk/superdesk-planning.git@v2.5.0-rc6
+superdesk-planning @ git+https://github.com/superdesk/superdesk-planning.git@v2.5.1
     # via -r requirements.in
 typing-extensions==4.3.0
     # via superdesk-core
