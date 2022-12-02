@@ -75,7 +75,7 @@ elasticsearch==7.13.4
     # via eve-elastic
 eve==1.1.2
     # via superdesk-core
-eve-elastic==7.2.0
+eve-elastic==7.3.0
     # via superdesk-core
 events==0.3
     # via eve
@@ -114,8 +114,6 @@ icalendar==4.0.9
     # via superdesk-planning
 idna==3.4
     # via requests
-importlib-metadata==3.1.1
-    # via superdesk-core
 itsdangerous==1.1.0
     # via
     #   flask
@@ -255,8 +253,6 @@ werkzeug==1.0.1
     #   superdesk-core
 wrapt==1.14.1
     # via deprecated
-zipp==3.8.1
-    # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
