@@ -2,7 +2,7 @@ name: Publish Docker Images
 
 on:
   release:
-    types: [published]
+    types: [released]
 
 jobs:
   push_to_dockerhub:
