@@ -21,7 +21,11 @@ jobs:
 
     - uses: actions/setup-python@v4
       with:
+<<<<<<< HEAD
         python-version: ${{ matrix.python-version }}
+=======
+        python-version: 3.8
+>>>>>>> origin/master
 
     - run: |
         sudo apt-get update

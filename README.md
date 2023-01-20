@@ -1,8 +1,6 @@
 # Superdesk
 
-[![CI](https://github.com/superdesk/superdesk/workflows/CI/badge.svg)](https://github.com/superdesk/superdesk/actions?query=workflow%3ACI)
-[![Code Climate](https://codeclimate.com/github/superdesk/superdesk/badges/gpa.svg)](https://codeclimate.com/github/superdesk/superdesk)
-[![Requirements Status](https://requires.io/github/superdesk/superdesk/requirements.svg?branch=master)](https://requires.io/github/superdesk/superdesk/requirements/?branch=master)
+[![Tests](https://github.com/superdesk/superdesk/actions/workflows/tests.yml/badge.svg?branch=master)](https://github.com/superdesk/superdesk/actions/workflows/tests.yml)
 
 Superdesk is an open source end-to-end news creation, production, curation,
 distribution and publishing platform developed and maintained by Sourcefabric
@@ -47,9 +45,9 @@ The Docker images are hosted on Dockerhub for the [client](https://hub.docker.co
 These services must be installed, configured and running:
 
 - MongoDB
-- ElasticSearch (7.x)
+- ElasticSearch (7+)
 - Redis
-- Python (>= 3.6)
+- Python (3.8)
 - Node.js (with `npm`)
 
 On macOS, if you have [homebrew](https://brew.sh/) installed, simply run: `brew install mongodb elasticsearch redis python3 node`.
