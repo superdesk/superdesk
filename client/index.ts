@@ -17,7 +17,7 @@ setTimeout(() => {
             },
             {
                 id: 'broadcasting',
-                load: () => import('superdesk-core/scripts/extensions/broadcasting').then((broadcasting) => {
+                load: () => import('superdesk-core/scripts/extensions/broadcasting/src/extension').then((broadcasting) => {
                     broadcasting.setCustomizations({
                         getRundownItemDisplayName: (rundown) => rundown.technical_title,
                     });
