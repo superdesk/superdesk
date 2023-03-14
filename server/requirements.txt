@@ -32,7 +32,7 @@ draftjs-exporter==2.1.7
 elastic-apm==6.7.2
 elasticsearch==7.13.4
 Eve==1.1.2
-Eve-Elastic==7.3.1
+Eve-Elastic==7.2.1
 Events==0.3
 feedparser==6.0.10
 Flask==1.1.4
