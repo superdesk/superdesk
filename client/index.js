@@ -19,6 +19,16 @@ setTimeout(() => {
                 id: 'planning-extension',
                 load: () => import('superdesk-planning/client/planning-extension'),
             },
+            {
+                id: 'broadcasting',
+                load: () => import('superdesk-core/scripts/extensions/broadcasting').then((broadcasting) => {
+                    broadcasting.setCustomizations({
+                        getRundownItemDisplayName: (rundown) => rundown.technical_title,
+                    });
+
+                    return broadcasting;
+                }),
+            },
         ],
         {},
     );

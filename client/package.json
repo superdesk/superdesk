@@ -6,7 +6,8 @@
         "superdesk-planning": "github:superdesk/superdesk-planning#develop"
     },
     "scripts": {
-        "build": "npx @superdesk/build-tools build-root-repo ./"
+        "build": "npx @superdesk/build-tools build-root-repo ./",
+        "start": "npx grunt server"
     },
     "devDependencies": {
         "@superdesk/build-tools": "^1.0.18",
