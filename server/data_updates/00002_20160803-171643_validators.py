@@ -7,16 +7,16 @@
 # Author  : mugur
 # Creation: 2016-08-03 17:16
 
-from superdesk.commands.data_updates import DataUpdate
+from superdesk.commands.data_updates import BaseDataUpdate
 from apps.prepopulate.app_initialize import AppInitializeWithDataCommand
 
 
-class DataUpdate(DataUpdate):
+class DataUpdate(BaseDataUpdate):
 
-    resource = 'validators'
+    resource = "validators"
 
     def forwards(self, mongodb_collection, mongodb_database):
-        AppInitializeWithDataCommand().run(entity_name='validators')
+        AppInitializeWithDataCommand().run(entity_name="validators")
 
     def backwards(self, mongodb_collection, mongodb_database):
         pass

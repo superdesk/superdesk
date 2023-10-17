@@ -1,14 +1,15 @@
 {
     "name": "superdesk",
-    "license": "GPL-3.0",
+    "license": "AGPL-3.0",
     "dependencies": {
         "superdesk-core": "github:superdesk/superdesk-client-core#develop",
         "superdesk-planning": "github:superdesk/superdesk-planning#develop"
     },
-    "devDependencies": {
-        "@superdesk/build-tools": "^1.0.14"
-    },
     "scripts": {
         "build": "npx @superdesk/build-tools build-root-repo ./"
+    },
+    "devDependencies": {
+        "@superdesk/build-tools": "^1.0.18",
+        "@types/node": "^14.14.20"
     }
 }

@@ -7,17 +7,16 @@
 # Author  : petr
 # Creation: 2016-08-29 09:41
 
-from superdesk.commands.data_updates import DataUpdate
+from superdesk.commands.data_updates import BaseDataUpdate
 
 
-class DataUpdate(DataUpdate):
+class DataUpdate(BaseDataUpdate):
 
-    resource = 'validators'
+    resource = "validators"
 
     def forwards(self, mongodb_collection, mongodb_database):
         mongodb_collection.update_many(
-            {'_id': {'$in': ['publish_embedded_picture', 'correct_embedded_picture']}},
-            {'$set': {'embedded': True}}
+            {"_id": {"$in": ["publish_embedded_picture", "correct_embedded_picture"]}}, {"$set": {"embedded": True}}
         )
 
     def backwards(self, mongodb_collection, mongodb_database):

@@ -1,0 +1,2326 @@
+[
+    {
+        "_id": "categories",
+        "display_name": "Categories",
+        "type": "manageable",
+        "selection_type": "multi selection",
+        "unique_field": "qcode",
+        "init_version": 1,
+        "items": [
+
+            {"is_active": true, "name": "FIXME1", "qcode": "f1", "subject": "", "translations": {"name": {"fr": "FIXME1-fr", "es": "FIXME1-es"}}},
+            {"is_active": true, "name": "FIXME2", "qcode": "f2", "subject": "", "translations": {"name": {"fr": "FIXME2-fr", "es": "FIXME2-es"}}}
+        ],
+        "schema": {
+            "name": {"translate": true},
+            "qcode": {},
+            "subject": {}
+        },
+        "translations": {
+            "display_name": {
+                "ar": "فئات",
+                "da": "kategorier",
+                "de-DE": "Kategorien",
+                "el": "κατηγορίες",
+                "es": "categorías",
+                "nb": "kategorier",
+                "pt-BR": "categorias",
+                "ru-RU": "категории",
+                "uk-UA": "категорії",
+                "fr-CA": "Catégories"
+            }
+        }
+    },
+    {
+        "_id": "default_categories",
+        "display_name": "Default Categories",
+        "type": "manageable",
+        "selection_type": "multi selection",
+        "unique_field": "qcode",
+        "items": [
+            {"is_active": true, "qcode": "a"},
+            {"is_active": true, "qcode": "e"},
+            {"is_active": true, "qcode": "f"},
+            {"is_active": true, "qcode": "i"},
+            {"is_active": true, "qcode": "s"},
+            {"is_active": true, "qcode": "t"},
+            {"is_active": true, "qcode": "v"}
+        ],
+        "schema": {
+            "qcode": {}
+        }
+    },
+    {
+        "_id": "languages",
+        "display_name": "Languages",
+        "type": "manageable",
+        "unique_field": "qcode",
+        "init_version": 1,
+        "service": { "all": 1 },
+        "items": [
+            {"name": "Nederlands", "qcode": "nl", "is_active": true },
+            {"name": "Français", "qcode": "fr", "is_active": true },
+            {"name": "English", "qcode": "en", "is_active": true },
+            {"name": "Deutsch", "qcode": "de", "is_active": true },
+            {"name": "Español", "qcode": "es", "is_active": true }
+        ]
+    },
+    {
+        "_id": "genre",
+        "display_name": "Genre",
+        "type": "manageable",
+        "selection_type": "multi selection",
+        "unique_field": "qcode",
+        "init_version": 1,
+        "items": [
+            {"is_active": true, "name": "Article (news)", "qcode": "Article"},
+            {"is_active": true, "name": "Sidebar", "qcode": "Sidebar"},
+            {"is_active": true, "name": "Factbox", "qcode": "Factbox"},
+            {"is_active": true, "name": "Feature", "qcode": "Feature"},
+            {"is_active": true, "name": "Newsfeature", "qcode": "Newsfeature"},
+            {"is_active": true, "name": "Backgrounder", "qcode": "Backgrounder"},
+            {"is_active": true, "name": "Opinion", "qcode": "Opinion"},
+            {"is_active": true, "name": "View (incl parly sketch)", "qcode": "View"},
+            {"is_active": true, "name": "Modular", "qcode": "Modular"},
+            {"is_active": true, "name": "Broadcast Script", "qcode": "Broadcast Script"},
+            {"is_active": true, "name": "Briefs", "qcode": "Briefs"},
+            {"is_active": true, "name": "Colour piece", "qcode": "Colour piece"},
+            {"is_active": true, "name": "Obituary", "qcode": "Obituary"},
+            {"is_active": true, "name": "Analysis", "qcode": "Analysis"},
+            {"is_active": true, "name": "Timeline", "qcode": "Timeline"},
+            {"is_active": true, "name": "Chronology", "qcode": "Chronology"},
+            {"is_active": true, "name": "Interview", "qcode": "Interview"},
+            {"is_active": true, "name": "Results (sport)", "qcode": "Results (sport)"},
+            {"is_active": true, "name": "Market Open", "qcode": "Market Open"},
+            {"is_active": true, "name": "Market Close", "qcode": "Market Close"},
+            {"is_active": true, "name": "Market Report", "qcode": "Market Report"},
+            {"is_active": true, "name": "Review", "qcode": "Review"},
+            {"is_active": true, "name": "Preview", "qcode": "Preview"}
+        ],
+        "schema": {
+            "name": {"translate": true},
+            "qcode": {}
+        },
+        "translations": {
+            "display_name": {
+                "da": "genre",
+                "de-DE": "genre",
+                "el": "Είδος",
+                "es": "genero",
+                "fr-CA": "version",
+                "nb": "Stofftype",
+                "pt-BR": "gênero",
+                "ru-RU": "Жанр",
+                "uk-UA": "Жанр"
+            }
+        }
+    },
+    {
+        "_id": "urgency",
+        "display_name": "Urgency",
+        "type": "manageable",
+        "selection_type": "multi selection",
+        "unique_field": "qcode",
+        "init_version": 1,
+        "items": [
+            {"is_active": true, "name": "1", "qcode": 1},
+            {"is_active": true, "name": "2", "qcode": 2},
+            {"is_active": true, "name": "3", "qcode": 3},
+            {"is_active": true, "name": "4", "qcode": 4},
+            {"is_active": true, "name": "5", "qcode": 5}
+        ],
+        "schema": {
+            "name": {"translate": true},
+            "qcode": {"type": "integer"},
+            "color": {"type": "color", "label": "Сolour"},
+            "short": {"type": "short", "label": "List Name", "maxlength": 2, "translate": true}
+        },
+        "translations": {
+            "display_name": {
+                "da": "haster",
+                "de-DE": "dringlichkeit",
+                "el": "Επείγον",
+                "es": "urgencia",
+                "fr-CA": "urgence",
+                "nb": "Hast",
+                "pt-BR": "Urgência",
+                "ru-RU": "Срочность",
+                "uk-UA": "Tерміновість"
+            }
+        }
+    },
+    {
+        "_id": "priority",
+        "display_name": "Priority",
+        "type": "manageable",
+        "selection_type": "multi selection",
+        "unique_field": "qcode",
+        "init_version": 1,
+        "items": [
+            {"is_active": true, "name": "1", "qcode": 1},
+            {"is_active": true, "name": "2", "qcode": 2},
+            {"is_active": true, "name": "3", "qcode": 3},
+            {"is_active": true, "name": "4", "qcode": 4},
+            {"is_active": true, "name": "5", "qcode": 5},
+            {"is_active": true, "name": "6", "qcode": 6},
+            {"is_active": false, "name": "7", "qcode": 7},
+            {"is_active": false, "name": "8", "qcode": 8},
+            {"is_active": false, "name": "9", "qcode": 9}
+        ],
+        "schema": {
+            "name": {"translate": true},
+            "qcode": {"type": "integer"},
+            "color": {"type": "color", "label": "Сolour"},
+            "short": {"type": "short", "label": "List Name", "maxlength": 2, "translate": true}
+        },
+        "translations": {
+            "display_name": {
+                "da": "prioritet",
+                "de-DE": "priorität",
+                "el": "Προτεραιότητα",
+                "es": "prioridad",
+                "fr-CA": "Priorité",
+                "nb": "viktighet",
+                "pt-BR": "prioridade",
+                "ru-RU": "Приоритет",
+                "uk-UA": "Пріоритет"
+            }
+        }
+    },
+    {
+        "_id": "signal",
+        "display_name": "Signal",
+        "type": "unmanageable",
+        "selection_type": "multi selection",
+        "items": [
+            {"is_active": true, "name": "Correction", "qcode": "Correction"},
+            {"is_active": true, "name": "Update", "qcode": "Update"},
+            {"is_active": true, "name": "Add", "qcode": "Add"},
+            {"is_active": true, "name": "Repeat", "qcode": "Repeat"},
+            {"is_active": true, "name": "Content Warning", "qcode": "Content Warning"}
+        ]
+    },
+    {
+        "_id": "rightsinfo",
+        "display_name": "Copyrights",
+        "type": "manageable",
+        "selection_type": "multi selection",
+        "items": [
+            {
+                "is_active": true,
+                "name": "default",
+                "copyrightHolder": "",
+                "copyrightNotice": "",
+                "usageTerms": ""
+            }
+        ],
+        "schema": {
+            "name": {"translate": true},
+            "copyrightHolder": {"label": "Copyright Holder", "translate": true},
+            "copyrightNotice": {"label": "Copyright Notice", "translate": true},
+            "usageTerms": {"label": "Usage Terms", "translate": true}
+        },
+        "unique_field": "name"
+    },
+    {
+        "_id": "crop_sizes",
+        "display_name": "Image Crop Sizes",
+        "type": "manageable",
+        "selection_type": "do not show",
+        "unique_field": "name",
+        "items": [
+            {"is_active": true, "name": "FIXME", "width": 800, "height": 600}
+        ],
+        "schema": {
+            "name": {},
+            "width": {"type": "int"},
+            "height": {"type": "int"}
+        }
+    },
+    {
+        "_id": "desk_types",
+        "display_name": "Desk Types",
+        "type": "unmanageable",
+        "selection_type": "do not show",
+        "items": [
+            {"is_active": true, "name": "authoring", "qcode": "authoring"},
+            {"is_active": true, "name": "production", "qcode": "production"}
+        ]
+    },
+    {
+        "_id": "replace_words",
+        "display_name": "Replacement Words",
+        "type": "manageable",
+        "selection_type": "do not show",
+        "items": [
+            {"is_active": true, "existing": "FIXME", "replacement": ""}
+        ],
+        "schema": {
+            "existing": {},
+            "replacement": {}
+        },
+        "unique_field": "existing"
+    },
+    {
+        "_id": "locators",
+        "display_name": "Locators",
+        "type": "manageable",
+        "selection_type": "multi selection",
+        "unique_field": "qcode",
+        "items": [
+            {"is_active": true, "name": "NSW", "qcode": "NSW"}
+        ],
+        "schema": {
+            "name": {"translate": true},
+            "qcode": {},
+            "state": {"translate": true},
+            "country": {"translate": true},
+            "world_region": {"translate": true},
+            "group": {}
+        }
+    },
+    {
+        "_id": "product_types",
+        "display_name": "Product Types",
+        "type": "unmanageable",
+        "selection_type": "do not show",
+        "items": [
+            {"is_active": true, "name": "API", "qcode": "api"},
+            {"is_active": true, "name": "Direct", "qcode": "direct"},
+            {"is_active": true, "name": "Both", "qcode": "both"}
+        ]
+    },
+    {
+        "_id": "annotation_types",
+        "display_name": "Annotation Types",
+        "type": "manageable",
+        "selection_type": "do not show",
+        "unique_field": "qcode",
+        "items": [
+            {"is_active": true, "name": "Regular", "qcode": "regular"},
+            {"is_active": true, "name": "Remark", "qcode": "remark"}
+        ],
+        "schema" : {
+            "name" : {},
+            "qcode" : {}
+        }
+    },
+    {
+        "_id": "author_roles",
+        "display_name": "Author Roles",
+        "type": "manageable",
+        "selection_type": "do not show",
+        "unique_field": "qcode",
+        "items": [
+            {"is_active": true, "name": "Writer", "qcode": "writer"}
+        ],
+        "schema": {
+            "name": {"translate": true},
+            "qcode": {}
+        }
+    },
+    {
+        "_id": "job_titles",
+        "display_name": "Job Titles",
+        "type": "manageable",
+        "selection_type": "do not show",
+        "unique_field": "qcode",
+        "items": [
+            {"is_active": true, "name": "Director", "qcode": "director"},
+            {"is_active": true, "name": "Media Advisor", "qcode": "media_advisor"},
+            {"is_active": true, "name": "Publicity Officer", "qcode": "publicity_officer"},
+            {"is_active": true, "name": "Spokesperson", "qcode": "spokesperson"},
+            {"is_active": true, "name": "Spokeswoman", "qcode": "spokeswoman"},
+            {"is_active": true, "name": "President", "qcode": "president"},
+            {"is_active": true, "name": "CEO", "qcode": "ceo"},
+            {"is_active": true, "name": "Vice President", "qcode": "vice_presedent"},
+            {"is_active": true, "name": "Chairman", "qcode": "chairman"},
+            {"is_active": true, "name": "Carer", "qcode": "carer"},
+            {"is_active": true, "name": "General Secretary", "qcode": "general_secretary"},
+            {"is_active": true, "name": "Media Officer", "qcode": "media_officer"},
+            {"is_active": true, "name": "Mayor", "qcode": "mayor"},
+            {"is_active": true, "name": "Lord Mayor", "qcode": "lord_mayor"},
+            {"is_active": true, "name": "Director of Media", "qcode": "director_of_media"},
+            {"is_active": true, "name": "Media Contact", "qcode": "media_contact"},
+            {"is_active": true, "name": "Spokesman", "qcode": "spokesman"}
+        ],
+        "schema": {
+            "name": {"translate": true},
+            "qcode": {}
+        }
+    },
+    {
+        "_id": "package-story-labels",
+        "display_name": "Package Story Labels",
+        "type": "manageable",
+        "selection_type": "do not show",
+        "unique_field": "qcode",
+        "items": [
+            {"is_active": true, "qcode": "story-label:featured", "name": "Featured"}
+        ],
+        "schema": {
+            "qcode": {},
+            "name": {},
+            "is_active": {}
+        }
+    },
+    {
+        "_id": "usageterms",
+        "display_name": "Terms of use",
+        "schema_field": "usageterms",
+        "type": "manageable",
+        "unique_field": "qcode",
+        "selection_type": "single selection",
+        "items": [
+            {"is_active": true, "qcode": "single-usage", "name": "Single Usage"},
+            {"is_active": true, "qcode": "time-restricted", "name": "Time Restricted"},
+            {"is_active": true, "qcode": "indefinite-usage", "name": "Indefinite Usage"}
+        ],
+        "schema": {
+            "qcode": {},
+            "name": {}
+        }
+    },
+    {
+        "_id": "contact_mobile_usage",
+        "display_name": "Contact mobile usage",
+        "type": "manageable",
+        "unique_field": "qcode",
+        "items": [
+            {
+                "is_active": true,
+                "qcode": "Confidential",
+                "name": "Confidential number",
+                "public": false
+            },
+            {
+                "is_active": true,
+                "qcode": "Business",
+                "name": "Business number",
+                "public": true
+            }
+        ],
+        "helper_text": "Indicates if the contact mobile number is to be made public outside the system"
+    },
+    {
+        "_id": "contact_phone_usage",
+        "display_name": "Contact phone usage",
+        "type": "manageable",
+        "unique_field": "qcode",
+        "items": [
+            {
+                "is_active": true,
+                "qcode": "Confidential",
+                "name": "Confidential number",
+                "public": false
+            },
+            {
+                "is_active": true,
+                "qcode": "Business",
+                "name": "Business number",
+                "public": true
+            }
+        ],
+        "helper_text": "Indicates if the contact phone number is to be made public outside the system"
+    },
+    {
+        "_id": "countries",
+        "display_name": "Countries",
+        "type": "manageable",
+        "unique_field": "qcode",
+        "items": [
+            {
+                "is_active": true,
+                "qcode": "AFG",
+                "name": "Afghanistan"
+            },
+            {
+                "is_active": true,
+                "qcode": "ALA",
+                "name": "Aland Islands"
+            },
+            {
+                "is_active": true,
+                "qcode": "ALB",
+                "name": "Albania"
+            },
+            {
+                "is_active": true,
+                "qcode": "DZA",
+                "name": "Algeria"
+            },
+            {
+                "is_active": true,
+                "qcode": "ASM",
+                "name": "American Samoa"
+            },
+            {
+                "is_active": true,
+                "qcode": "AND",
+                "name": "Andorra"
+            },
+            {
+                "is_active": true,
+                "qcode": "AGO",
+                "name": "Angola"
+            },
+            {
+                "is_active": true,
+                "qcode": "AIA",
+                "name": "Anguilla"
+            },
+            {
+                "is_active": true,
+                "qcode": "ATA",
+                "name": "Antarctica"
+            },
+            {
+                "is_active": true,
+                "qcode": "ATG",
+                "name": "Antigua and Barbuda"
+            },
+            {
+                "is_active": true,
+                "qcode": "ARG",
+                "name": "Argentina"
+            },
+            {
+                "is_active": true,
+                "qcode": "ARM",
+                "name": "Armenia"
+            },
+            {
+                "is_active": true,
+                "qcode": "ABW",
+                "name": "Aruba"
+            },
+            {
+                "is_active": true,
+                "qcode": "AUS",
+                "name": "Australia"
+            },
+            {
+                "is_active": true,
+                "qcode": "AUT",
+                "name": "Austria"
+            },
+            {
+                "is_active": true,
+                "qcode": "AZE",
+                "name": "Azerbaijan"
+            },
+            {
+                "is_active": true,
+                "qcode": "BHS",
+                "name": "Bahamas"
+            },
+            {
+                "is_active": true,
+                "qcode": "BHR",
+                "name": "Bahrain"
+            },
+            {
+                "is_active": true,
+                "qcode": "BGD",
+                "name": "Bangladesh"
+            },
+            {
+                "is_active": true,
+                "qcode": "BRB",
+                "name": "Barbados"
+            },
+            {
+                "is_active": true,
+                "qcode": "BLR",
+                "name": "Belarus"
+            },
+            {
+                "is_active": true,
+                "qcode": "BEL",
+                "name": "Belgium"
+            },
+            {
+                "is_active": true,
+                "qcode": "BLZ",
+                "name": "Belize"
+            },
+            {
+                "is_active": true,
+                "qcode": "BEN",
+                "name": "Benin"
+            },
+            {
+                "is_active": true,
+                "qcode": "BMU",
+                "name": "Bermuda"
+            },
+            {
+                "is_active": true,
+                "qcode": "BTN",
+                "name": "Bhutan"
+            },
+            {
+                "is_active": true,
+                "qcode": "BOL",
+                "name": "Bolivia"
+            },
+            {
+                "is_active": true,
+                "qcode": "BIH",
+                "name": "Bosnia and Herzegovina"
+            },
+            {
+                "is_active": true,
+                "qcode": "BWA",
+                "name": "Botswana"
+            },
+            {
+                "is_active": true,
+                "qcode": "BVT",
+                "name": "Bouvet Island"
+            },
+            {
+                "is_active": true,
+                "qcode": "BRA",
+                "name": "Brazil"
+            },
+            {
+                "is_active": true,
+                "qcode": "VGB",
+                "name": "British Virgin Islands"
+            },
+            {
+                "is_active": true,
+                "qcode": "IOT",
+                "name": "British Indian Ocean Territory"
+            },
+            {
+                "is_active": true,
+                "qcode": "BRN",
+                "name": "Brunei Darussalam"
+            },
+            {
+                "is_active": true,
+                "qcode": "BGR",
+                "name": "Bulgaria"
+            },
+            {
+                "is_active": true,
+                "qcode": "BFA",
+                "name": "Burkina Faso"
+            },
+            {
+                "is_active": true,
+                "qcode": "BDI",
+                "name": "Burundi"
+            },
+            {
+                "is_active": true,
+                "qcode": "KHM",
+                "name": "Cambodia"
+            },
+            {
+                "is_active": true,
+                "qcode": "CMR",
+                "name": "Cameroon"
+            },
+            {
+                "is_active": true,
+                "qcode": "CAN",
+                "name": "Canada"
+            },
+            {
+                "is_active": true,
+                "qcode": "CPV",
+                "name": "Cape Verde"
+            },
+            {
+                "is_active": true,
+                "qcode": "CYM",
+                "name": "Cayman Islands"
+            },
+            {
+                "is_active": true,
+                "qcode": "CAF",
+                "name": "Central African Republic"
+            },
+            {
+                "is_active": true,
+                "qcode": "TCD",
+                "name": "Chad"
+            },
+            {
+                "is_active": true,
+                "qcode": "CHL",
+                "name": "Chile"
+            },
+            {
+                "is_active": true,
+                "qcode": "CHN",
+                "name": "China"
+            },
+            {
+                "is_active": true,
+                "qcode": "HKG",
+                "name": "Hong Kong, SAR China"
+            },
+            {
+                "is_active": true,
+                "qcode": "MAC",
+                "name": "Macao, SAR China"
+            },
+            {
+                "is_active": true,
+                "qcode": "CXR",
+                "name": "Christmas Island"
+            },
+            {
+                "is_active": true,
+                "qcode": "CCK",
+                "name": "Cocos (Keeling) Islands"
+            },
+            {
+                "is_active": true,
+                "qcode": "COL",
+                "name": "Colombia"
+            },
+            {
+                "is_active": true,
+                "qcode": "COM",
+                "name": "Comoros"
+            },
+            {
+                "is_active": true,
+                "qcode": "COG",
+                "name": "Congo (Brazzaville)"
+            },
+            {
+                "is_active": true,
+                "qcode": "COD",
+                "name": "Congo, (Kinshasa)"
+            },
+            {
+                "is_active": true,
+                "qcode": "COK",
+                "name": "Cook Islands"
+            },
+            {
+                "is_active": true,
+                "qcode": "CRI",
+                "name": "Costa Rica"
+            },
+            {
+                "is_active": true,
+                "qcode": "CIV",
+                "name": "CÃ´te d'Ivoire"
+            },
+            {
+                "is_active": true,
+                "qcode": "HRV",
+                "name": "Croatia"
+            },
+            {
+                "is_active": true,
+                "qcode": "CUB",
+                "name": "Cuba"
+            },
+            {
+                "is_active": true,
+                "qcode": "CYP",
+                "name": "Cyprus"
+            },
+            {
+                "is_active": true,
+                "qcode": "CZE",
+                "name": "Czech Republic"
+            },
+            {
+                "is_active": true,
+                "qcode": "DNK",
+                "name": "Denmark"
+            },
+            {
+                "is_active": true,
+                "qcode": "DJI",
+                "name": "Djibouti"
+            },
+            {
+                "is_active": true,
+                "qcode": "DMA",
+                "name": "Dominica"
+            },
+            {
+                "is_active": true,
+                "qcode": "DOM",
+                "name": "Dominican Republic"
+            },
+            {
+                "is_active": true,
+                "qcode": "ECU",
+                "name": "Ecuador"
+            },
+            {
+                "is_active": true,
+                "qcode": "EGY",
+                "name": "Egypt"
+            },
+            {
+                "is_active": true,
+                "qcode": "SLV",
+                "name": "El Salvador"
+            },
+            {
+                "is_active": true,
+                "qcode": "GNQ",
+                "name": "Equatorial Guinea"
+            },
+            {
+                "is_active": true,
+                "qcode": "ERI",
+                "name": "Eritrea"
+            },
+            {
+                "is_active": true,
+                "qcode": "EST",
+                "name": "Estonia"
+            },
+            {
+                "is_active": true,
+                "qcode": "ETH",
+                "name": "Ethiopia"
+            },
+            {
+                "is_active": true,
+                "qcode": "FLK",
+                "name": "Falkland Islands (Malvinas)"
+            },
+            {
+                "is_active": true,
+                "qcode": "FRO",
+                "name": "Faroe Islands"
+            },
+            {
+                "is_active": true,
+                "qcode": "FJI",
+                "name": "Fiji"
+            },
+            {
+                "is_active": true,
+                "qcode": "FIN",
+                "name": "Finland"
+            },
+            {
+                "is_active": true,
+                "qcode": "FRA",
+                "name": "France"
+            },
+            {
+                "is_active": true,
+                "qcode": "GUF",
+                "name": "French Guiana"
+            },
+            {
+                "is_active": true,
+                "qcode": "PYF",
+                "name": "French Polynesia"
+            },
+            {
+                "is_active": true,
+                "qcode": "ATF",
+                "name": "French Southern Territories"
+            },
+            {
+                "is_active": true,
+                "qcode": "GAB",
+                "name": "Gabon"
+            },
+            {
+                "is_active": true,
+                "qcode": "GMB",
+                "name": "Gambia"
+            },
+            {
+                "is_active": true,
+                "qcode": "GEO",
+                "name": "Georgia"
+            },
+            {
+                "is_active": true,
+                "qcode": "DEU",
+                "name": "Germany"
+            },
+            {
+                "is_active": true,
+                "qcode": "GHA",
+                "name": "Ghana"
+            },
+            {
+                "is_active": true,
+                "qcode": "GIB",
+                "name": "Gibraltar"
+            },
+            {
+                "is_active": true,
+                "qcode": "GRC",
+                "name": "Greece"
+            },
+            {
+                "is_active": true,
+                "qcode": "GRL",
+                "name": "Greenland"
+            },
+            {
+                "is_active": true,
+                "qcode": "GRD",
+                "name": "Grenada"
+            },
+            {
+                "is_active": true,
+                "qcode": "GLP",
+                "name": "Guadeloupe"
+            },
+            {
+                "is_active": true,
+                "qcode": "GUM",
+                "name": "Guam"
+            },
+            {
+                "is_active": true,
+                "qcode": "GTM",
+                "name": "Guatemala"
+            },
+            {
+                "is_active": true,
+                "qcode": "GGY",
+                "name": "Guernsey"
+            },
+            {
+                "is_active": true,
+                "qcode": "GIN",
+                "name": "Guinea"
+            },
+            {
+                "is_active": true,
+                "qcode": "GNB",
+                "name": "Guinea-Bissau"
+            },
+            {
+                "is_active": true,
+                "qcode": "GUY",
+                "name": "Guyana"
+            },
+            {
+                "is_active": true,
+                "qcode": "HTI",
+                "name": "Haiti"
+            },
+            {
+                "is_active": true,
+                "qcode": "HMD",
+                "name": "Heard and Mcdonald Islands"
+            },
+            {
+                "is_active": true,
+                "qcode": "VAT",
+                "name": "Holy See (Vatican City State)"
+            },
+            {
+                "is_active": true,
+                "qcode": "HND",
+                "name": "Honduras"
+            },
+            {
+                "is_active": true,
+                "qcode": "HUN",
+                "name": "Hungary"
+            },
+            {
+                "is_active": true,
+                "qcode": "ISL",
+                "name": "Iceland"
+            },
+            {
+                "is_active": true,
+                "qcode": "IND",
+                "name": "India"
+            },
+            {
+                "is_active": true,
+                "qcode": "IDN",
+                "name": "Indonesia"
+            },
+            {
+                "is_active": true,
+                "qcode": "IRN",
+                "name": "Iran, Islamic Republic of"
+            },
+            {
+                "is_active": true,
+                "qcode": "IRQ",
+                "name": "Iraq"
+            },
+            {
+                "is_active": true,
+                "qcode": "IRL",
+                "name": "Ireland"
+            },
+            {
+                "is_active": true,
+                "qcode": "IMN",
+                "name": "Isle of Man"
+            },
+            {
+                "is_active": true,
+                "qcode": "ISR",
+                "name": "Israel"
+            },
+            {
+                "is_active": true,
+                "qcode": "ITA",
+                "name": "Italy"
+            },
+            {
+                "is_active": true,
+                "qcode": "JAM",
+                "name": "Jamaica"
+            },
+            {
+                "is_active": true,
+                "qcode": "JPN",
+                "name": "Japan"
+            },
+            {
+                "is_active": true,
+                "qcode": "JEY",
+                "name": "Jersey"
+            },
+            {
+                "is_active": true,
+                "qcode": "JOR",
+                "name": "Jordan"
+            },
+            {
+                "is_active": true,
+                "qcode": "KAZ",
+                "name": "Kazakhstan"
+            },
+            {
+                "is_active": true,
+                "qcode": "KEN",
+                "name": "Kenya"
+            },
+            {
+                "is_active": true,
+                "qcode": "KIR",
+                "name": "Kiribati"
+            },
+            {
+                "is_active": true,
+                "qcode": "PRK",
+                "name": "Korea (North)"
+            },
+            {
+                "is_active": true,
+                "qcode": "KOR",
+                "name": "Korea (South)"
+            },
+            {
+                "is_active": true,
+                "qcode": "KWT",
+                "name": "Kuwait"
+            },
+            {
+                "is_active": true,
+                "qcode": "KGZ",
+                "name": "Kyrgyzstan"
+            },
+            {
+                "is_active": true,
+                "qcode": "LAO",
+                "name": "Lao PDR"
+            },
+            {
+                "is_active": true,
+                "qcode": "LVA",
+                "name": "Latvia"
+            },
+            {
+                "is_active": true,
+                "qcode": "LBN",
+                "name": "Lebanon"
+            },
+            {
+                "is_active": true,
+                "qcode": "LSO",
+                "name": "Lesotho"
+            },
+            {
+                "is_active": true,
+                "qcode": "LBR",
+                "name": "Liberia"
+            },
+            {
+                "is_active": true,
+                "qcode": "LBY",
+                "name": "Libya"
+            },
+            {
+                "is_active": true,
+                "qcode": "LIE",
+                "name": "Liechtenstein"
+            },
+            {
+                "is_active": true,
+                "qcode": "LTU",
+                "name": "Lithuania"
+            },
+            {
+                "is_active": true,
+                "qcode": "LUX",
+                "name": "Luxembourg"
+            },
+            {
+                "is_active": true,
+                "qcode": "MKD",
+                "name": "Macedonia, Republic of"
+            },
+            {
+                "is_active": true,
+                "qcode": "MDG",
+                "name": "Madagascar"
+            },
+            {
+                "is_active": true,
+                "qcode": "MWI",
+                "name": "Malawi"
+            },
+            {
+                "is_active": true,
+                "qcode": "MYS",
+                "name": "Malaysia"
+            },
+            {
+                "is_active": true,
+                "qcode": "MDV",
+                "name": "Maldives"
+            },
+            {
+                "is_active": true,
+                "qcode": "MLI",
+                "name": "Mali"
+            },
+            {
+                "is_active": true,
+                "qcode": "MLT",
+                "name": "Malta"
+            },
+            {
+                "is_active": true,
+                "qcode": "MHL",
+                "name": "Marshall Islands"
+            },
+            {
+                "is_active": true,
+                "qcode": "MTQ",
+                "name": "Martinique"
+            },
+            {
+                "is_active": true,
+                "qcode": "MRT",
+                "name": "Mauritania"
+            },
+            {
+                "is_active": true,
+                "qcode": "MUS",
+                "name": "Mauritius"
+            },
+            {
+                "is_active": true,
+                "qcode": "MYT",
+                "name": "Mayotte"
+            },
+            {
+                "is_active": true,
+                "qcode": "MEX",
+                "name": "Mexico"
+            },
+            {
+                "is_active": true,
+                "qcode": "FSM",
+                "name": "Micronesia, Federated States of"
+            },
+            {
+                "is_active": true,
+                "qcode": "MDA",
+                "name": "Moldova"
+            },
+            {
+                "is_active": true,
+                "qcode": "MCO",
+                "name": "Monaco"
+            },
+            {
+                "is_active": true,
+                "qcode": "MNG",
+                "name": "Mongolia"
+            },
+            {
+                "is_active": true,
+                "qcode": "MNE",
+                "name": "Montenegro"
+            },
+            {
+                "is_active": true,
+                "qcode": "MSR",
+                "name": "Montserrat"
+            },
+            {
+                "is_active": true,
+                "qcode": "MAR",
+                "name": "Morocco"
+            },
+            {
+                "is_active": true,
+                "qcode": "MOZ",
+                "name": "Mozambique"
+            },
+            {
+                "is_active": true,
+                "qcode": "MMR",
+                "name": "Myanmar"
+            },
+            {
+                "is_active": true,
+                "qcode": "NAM",
+                "name": "Namibia"
+            },
+            {
+                "is_active": true,
+                "qcode": "NRU",
+                "name": "Nauru"
+            },
+            {
+                "is_active": true,
+                "qcode": "NPL",
+                "name": "Nepal"
+            },
+            {
+                "is_active": true,
+                "qcode": "NLD",
+                "name": "Netherlands"
+            },
+            {
+                "is_active": true,
+                "qcode": "ANT",
+                "name": "Netherlands Antilles"
+            },
+            {
+                "is_active": true,
+                "qcode": "NCL",
+                "name": "New Caledonia"
+            },
+            {
+                "is_active": true,
+                "qcode": "NZL",
+                "name": "New Zealand"
+            },
+            {
+                "is_active": true,
+                "qcode": "NIC",
+                "name": "Nicaragua"
+            },
+            {
+                "is_active": true,
+                "qcode": "NER",
+                "name": "Niger"
+            },
+            {
+                "is_active": true,
+                "qcode": "NGA",
+                "name": "Nigeria"
+            },
+            {
+                "is_active": true,
+                "qcode": "NIU",
+                "name": "Niue"
+            },
+            {
+                "is_active": true,
+                "qcode": "NFK",
+                "name": "Norfolk Island"
+            },
+            {
+                "is_active": true,
+                "qcode": "MNP",
+                "name": "Northern Mariana Islands"
+            },
+            {
+                "is_active": true,
+                "qcode": "NOR",
+                "name": "Norway"
+            },
+            {
+                "is_active": true,
+                "qcode": "OMN",
+                "name": "Oman"
+            },
+            {
+                "is_active": true,
+                "qcode": "PAK",
+                "name": "Pakistan"
+            },
+            {
+                "is_active": true,
+                "qcode": "PLW",
+                "name": "Palau"
+            },
+            {
+                "is_active": true,
+                "qcode": "PSE",
+                "name": "Palestinian Territory"
+            },
+            {
+                "is_active": true,
+                "qcode": "PAN",
+                "name": "Panama"
+            },
+            {
+                "is_active": true,
+                "qcode": "PNG",
+                "name": "Papua New Guinea"
+            },
+            {
+                "is_active": true,
+                "qcode": "PRY",
+                "name": "Paraguay"
+            },
+            {
+                "is_active": true,
+                "qcode": "PER",
+                "name": "Peru"
+            },
+            {
+                "is_active": true,
+                "qcode": "PHL",
+                "name": "Philippines"
+            },
+            {
+                "is_active": true,
+                "qcode": "PCN",
+                "name": "Pitcairn"
+            },
+            {
+                "is_active": true,
+                "qcode": "POL",
+                "name": "Poland"
+            },
+            {
+                "is_active": true,
+                "qcode": "PRT",
+                "name": "Portugal"
+            },
+            {
+                "is_active": true,
+                "qcode": "PRI",
+                "name": "Puerto Rico"
+            },
+            {
+                "is_active": true,
+                "qcode": "QAT",
+                "name": "Qatar"
+            },
+            {
+                "is_active": true,
+                "qcode": "REU",
+                "name": "RÃ©union"
+            },
+            {
+                "is_active": true,
+                "qcode": "ROU",
+                "name": "Romania"
+            },
+            {
+                "is_active": true,
+                "qcode": "RUS",
+                "name": "Russian Federation"
+            },
+            {
+                "is_active": true,
+                "qcode": "RWA",
+                "name": "Rwanda"
+            },
+            {
+                "is_active": true,
+                "qcode": "BLM",
+                "name": "Saint-BarthÃ©lemy"
+            },
+            {
+                "is_active": true,
+                "qcode": "SHN",
+                "name": "Saint Helena"
+            },
+            {
+                "is_active": true,
+                "qcode": "KNA",
+                "name": "Saint Kitts and Nevis"
+            },
+            {
+                "is_active": true,
+                "qcode": "LCA",
+                "name": "Saint Lucia"
+            },
+            {
+                "is_active": true,
+                "qcode": "MAF",
+                "name": "Saint-Martin (French part)"
+            },
+            {
+                "is_active": true,
+                "qcode": "SPM",
+                "name": "Saint Pierre and Miquelon"
+            },
+            {
+                "is_active": true,
+                "qcode": "VCT",
+                "name": "Saint Vincent and Grenadines"
+            },
+            {
+                "is_active": true,
+                "qcode": "WSM",
+                "name": "Samoa"
+            },
+            {
+                "is_active": true,
+                "qcode": "SMR",
+                "name": "San Marino"
+            },
+            {
+                "is_active": true,
+                "qcode": "STP",
+                "name": "Sao Tome and Principe"
+            },
+            {
+                "is_active": true,
+                "qcode": "SAU",
+                "name": "Saudi Arabia"
+            },
+            {
+                "is_active": true,
+                "qcode": "SEN",
+                "name": "Senegal"
+            },
+            {
+                "is_active": true,
+                "qcode": "SRB",
+                "name": "Serbia"
+            },
+            {
+                "is_active": true,
+                "qcode": "SYC",
+                "name": "Seychelles"
+            },
+            {
+                "is_active": true,
+                "qcode": "SLE",
+                "name": "Sierra Leone"
+            },
+            {
+                "is_active": true,
+                "qcode": "SGP",
+                "name": "Singapore"
+            },
+            {
+                "is_active": true,
+                "qcode": "SVK",
+                "name": "Slovakia"
+            },
+            {
+                "is_active": true,
+                "qcode": "SVN",
+                "name": "Slovenia"
+            },
+            {
+                "is_active": true,
+                "qcode": "SLB",
+                "name": "Solomon Islands"
+            },
+            {
+                "is_active": true,
+                "qcode": "SOM",
+                "name": "Somalia"
+            },
+            {
+                "is_active": true,
+                "qcode": "ZAF",
+                "name": "South Africa"
+            },
+            {
+                "is_active": true,
+                "qcode": "SGS",
+                "name": "South Georgia and the South Sandwich Islands"
+            },
+            {
+                "is_active": true,
+                "qcode": "SSD",
+                "name": "South Sudan"
+            },
+            {
+                "is_active": true,
+                "qcode": "ESP",
+                "name": "Spain"
+            },
+            {
+                "is_active": true,
+                "qcode": "LKA",
+                "name": "Sri Lanka"
+            },
+            {
+                "is_active": true,
+                "qcode": "SDN",
+                "name": "Sudan"
+            },
+            {
+                "is_active": true,
+                "qcode": "SUR",
+                "name": "Suriname"
+            },
+            {
+                "is_active": true,
+                "qcode": "SJM",
+                "name": "Svalbard and Jan Mayen Islands"
+            },
+            {
+                "is_active": true,
+                "qcode": "SWZ",
+                "name": "Swaziland"
+            },
+            {
+                "is_active": true,
+                "qcode": "SWE",
+                "name": "Sweden"
+            },
+            {
+                "is_active": true,
+                "qcode": "CHE",
+                "name": "Switzerland"
+            },
+            {
+                "is_active": true,
+                "qcode": "SYR",
+                "name": "Syrian Arab Republic (Syria)"
+            },
+            {
+                "is_active": true,
+                "qcode": "TWN",
+                "name": "Taiwan, Republic of China"
+            },
+            {
+                "is_active": true,
+                "qcode": "TJK",
+                "name": "Tajikistan"
+            },
+            {
+                "is_active": true,
+                "qcode": "TZA",
+                "name": "Tanzania, United Republic of"
+            },
+            {
+                "is_active": true,
+                "qcode": "THA",
+                "name": "Thailand"
+            },
+            {
+                "is_active": true,
+                "qcode": "TLS",
+                "name": "Timor-Leste"
+            },
+            {
+                "is_active": true,
+                "qcode": "TGO",
+                "name": "Togo"
+            },
+            {
+                "is_active": true,
+                "qcode": "TKL",
+                "name": "Tokelau"
+            },
+            {
+                "is_active": true,
+                "qcode": "TON",
+                "name": "Tonga"
+            },
+            {
+                "is_active": true,
+                "qcode": "TTO",
+                "name": "Trinidad and Tobago"
+            },
+            {
+                "is_active": true,
+                "qcode": "TUN",
+                "name": "Tunisia"
+            },
+            {
+                "is_active": true,
+                "qcode": "TUR",
+                "name": "Turkey"
+            },
+            {
+                "is_active": true,
+                "qcode": "TKM",
+                "name": "Turkmenistan"
+            },
+            {
+                "is_active": true,
+                "qcode": "TCA",
+                "name": "Turks and Caicos Islands"
+            },
+            {
+                "is_active": true,
+                "qcode": "TUV",
+                "name": "Tuvalu"
+            },
+            {
+                "is_active": true,
+                "qcode": "UGA",
+                "name": "Uganda"
+            },
+            {
+                "is_active": true,
+                "qcode": "UKR",
+                "name": "Ukraine"
+            },
+            {
+                "is_active": true,
+                "qcode": "ARE",
+                "name": "United Arab Emirates"
+            },
+            {
+                "is_active": true,
+                "qcode": "GBR",
+                "name": "United Kingdom"
+            },
+            {
+                "is_active": true,
+                "qcode": "USA",
+                "name": "United States of America"
+            },
+            {
+                "is_active": true,
+                "qcode": "UMI",
+                "name": "US Minor Outlying Islands"
+            },
+            {
+                "is_active": true,
+                "qcode": "URY",
+                "name": "Uruguay"
+            },
+            {
+                "is_active": true,
+                "qcode": "UZB",
+                "name": "Uzbekistan"
+            },
+            {
+                "is_active": true,
+                "qcode": "VUT",
+                "name": "Vanuatu"
+            },
+            {
+                "is_active": true,
+                "qcode": "VEN",
+                "name": "Venezuela (Bolivarian Republic)"
+            },
+            {
+                "is_active": true,
+                "qcode": "VNM",
+                "name": "Viet Nam"
+            },
+            {
+                "is_active": true,
+                "qcode": "VIR",
+                "name": "Virgin Islands, US"
+            },
+            {
+                "is_active": true,
+                "qcode": "WLF",
+                "name": "Wallis and Futuna Islands"
+            },
+            {
+                "is_active": true,
+                "qcode": "ESH",
+                "name": "Western Sahara"
+            },
+            {
+                "is_active": true,
+                "qcode": "YEM",
+                "name": "Yemen"
+            },
+            {
+                "is_active": true,
+                "qcode": "ZMB",
+                "name": "Zambia"
+            },
+            {
+                "is_active": true,
+                "qcode": "ZWE",
+                "name": "Zimbabwe"
+            }
+        ]
+    },
+    {
+        "_id": "regions",
+        "type": "manageable",
+        "selection_type": "multi selection",
+        "unique_field": "qcode",
+        "display_name": "State / Region",
+        "items": [
+            {
+                "is_active": true,
+                "name": "Alabama",
+                "qcode": "AL"
+            },
+            {
+                "is_active": true,
+                "name": "Alaska",
+                "qcode": "AK"
+            },
+            {
+                "is_active": true,
+                "name": "American Samoa",
+                "qcode": "AS"
+            },
+            {
+                "is_active": true,
+                "name": "Arizona",
+                "qcode": "AZ"
+            },
+            {
+                "is_active": true,
+                "name": "Arkansas",
+                "qcode": "AR"
+            },
+            {
+                "is_active": true,
+                "name": "California",
+                "qcode": "CA"
+            },
+            {
+                "is_active": true,
+                "name": "Colorado",
+                "qcode": "CO"
+            },
+            {
+                "is_active": true,
+                "name": "Connecticut",
+                "qcode": "CT"
+            },
+            {
+                "is_active": true,
+                "name": "Delaware",
+                "qcode": "DE"
+            },
+            {
+                "is_active": true,
+                "name": "District Of Columbia",
+                "qcode": "DC"
+            },
+            {
+                "is_active": true,
+                "name": "Federated States Of Micronesia",
+                "qcode": "FM"
+            },
+            {
+                "is_active": true,
+                "name": "Florida",
+                "qcode": "FL"
+            },
+            {
+                "is_active": true,
+                "name": "Georgia",
+                "qcode": "GA"
+            },
+            {
+                "is_active": true,
+                "name": "Guam",
+                "qcode": "GU"
+            },
+            {
+                "is_active": true,
+                "name": "Hawaii",
+                "qcode": "HI"
+            },
+            {
+                "is_active": true,
+                "name": "Idaho",
+                "qcode": "ID"
+            },
+            {
+                "is_active": true,
+                "name": "Illinois",
+                "qcode": "IL"
+            },
+            {
+                "is_active": true,
+                "name": "Indiana",
+                "qcode": "IN"
+            },
+            {
+                "is_active": true,
+                "name": "Iowa",
+                "qcode": "IA"
+            },
+            {
+                "is_active": true,
+                "name": "Kansas",
+                "qcode": "KS"
+            },
+            {
+                "is_active": true,
+                "name": "Kentucky",
+                "qcode": "KY"
+            },
+            {
+                "is_active": true,
+                "name": "Louisiana",
+                "qcode": "LA"
+            },
+            {
+                "is_active": true,
+                "name": "Maine",
+                "qcode": "ME"
+            },
+            {
+                "is_active": true,
+                "name": "Marshall Islands",
+                "qcode": "MH"
+            },
+            {
+                "is_active": true,
+                "name": "Maryland",
+                "qcode": "MD"
+            },
+            {
+                "is_active": true,
+                "name": "Massachusetts",
+                "qcode": "MA"
+            },
+            {
+                "is_active": true,
+                "name": "Michigan",
+                "qcode": "MI"
+            },
+            {
+                "is_active": true,
+                "name": "Minnesota",
+                "qcode": "MN"
+            },
+            {
+                "is_active": true,
+                "name": "Mississippi",
+                "qcode": "MS"
+            },
+            {
+                "is_active": true,
+                "name": "Missouri",
+                "qcode": "MO"
+            },
+            {
+                "is_active": true,
+                "name": "Montana",
+                "qcode": "MT"
+            },
+            {
+                "is_active": true,
+                "name": "Nebraska",
+                "qcode": "NE"
+            },
+            {
+                "is_active": true,
+                "name": "Nevada",
+                "qcode": "NV"
+            },
+            {
+                "is_active": true,
+                "name": "New Hampshire",
+                "qcode": "NH"
+            },
+            {
+                "is_active": true,
+                "name": "New Jersey",
+                "qcode": "NJ"
+            },
+            {
+                "is_active": true,
+                "name": "New Mexico",
+                "qcode": "NM"
+            },
+            {
+                "is_active": true,
+                "name": "New York",
+                "qcode": "NY"
+            },
+            {
+                "is_active": true,
+                "name": "North Carolina",
+                "qcode": "NC"
+            },
+            {
+                "is_active": true,
+                "name": "North Dakota",
+                "qcode": "ND"
+            },
+            {
+                "is_active": true,
+                "name": "Northern Mariana Islands",
+                "qcode": "MP"
+            },
+            {
+                "is_active": true,
+                "name": "Ohio",
+                "qcode": "OH"
+            },
+            {
+                "is_active": true,
+                "name": "Oklahoma",
+                "qcode": "OK"
+            },
+            {
+                "is_active": true,
+                "name": "Oregon",
+                "qcode": "OR"
+            },
+            {
+                "is_active": true,
+                "name": "Palau",
+                "qcode": "PW"
+            },
+            {
+                "is_active": true,
+                "name": "Pennsylvania",
+                "qcode": "PA"
+            },
+            {
+                "is_active": true,
+                "name": "Puerto Rico",
+                "qcode": "PR"
+            },
+            {
+                "is_active": true,
+                "name": "Rhode Island",
+                "qcode": "RI"
+            },
+            {
+                "is_active": true,
+                "name": "South Carolina",
+                "qcode": "SC"
+            },
+            {
+                "is_active": true,
+                "name": "South Dakota",
+                "qcode": "SD"
+            },
+            {
+                "is_active": true,
+                "name": "Tennessee",
+                "qcode": "TN"
+            },
+            {
+                "is_active": true,
+                "name": "Texas",
+                "qcode": "TX"
+            },
+            {
+                "is_active": true,
+                "name": "Utah",
+                "qcode": "UT"
+            },
+            {
+                "is_active": true,
+                "name": "Vermont",
+                "qcode": "VT"
+            },
+            {
+                "is_active": true,
+                "name": "Virgin Islands",
+                "qcode": "VI"
+            },
+            {
+                "is_active": true,
+                "name": "Virginia",
+                "qcode": "VA"
+            },
+            {
+                "is_active": true,
+                "name": "Washington",
+                "qcode": "WA"
+            },
+            {
+                "is_active": true,
+                "name": "West Virginia",
+                "qcode": "WV"
+            },
+            {
+                "is_active": true,
+                "name": "Wisconsin",
+                "qcode": "WI"
+            },
+            {
+                "is_active": true,
+                "name": "Wyoming",
+                "qcode": "WY"
+            }
+        ],
+        "helper_text": "The administrative state or region of an address"
+    },
+    {
+        "_id": "type",
+        "display_name": "Article Type",
+        "type": "unmanageable",
+        "selection_type": "multi selection",
+        "init_version": 2,
+        "items": [{
+            "is_active": true,
+            "name": "text",
+            "qcode": "text"
+        }, {
+            "is_active": true,
+            "name": "preformatted",
+            "qcode": "preformatted"
+        }, {
+            "is_active": true,
+            "name": "audio",
+            "qcode": "audio"
+        }, {
+            "is_active": true,
+            "name": "video",
+            "qcode": "video"
+        }, {
+            "is_active": true,
+            "name": "picture",
+            "qcode": "picture"
+        }, {
+            "is_active": true,
+            "name": "graphic",
+            "qcode": "graphic"
+        }, {
+            "is_active": true,
+            "name": "composite",
+            "qcode": "composite"
+        }, {
+            "is_active": true,
+            "name": "planning item",
+            "qcode": "planning"
+        }, {
+            "is_active": true,
+            "name": "event",
+            "qcode": "event"
+        }]
+    },
+    {
+        "_id": "subscriber_types",
+        "display_name": "Subscriber Types",
+        "type": "unmanageable",
+        "selection_type": "do not show",
+        "init_version": 4,
+        "items": [{
+            "is_active": true,
+            "name": "All",
+            "qcode": "all",
+            "formats": [{
+                "name": "NINJS",
+                "qcode": "ninjs"
+            },
+            {
+                "name": "NINJSv2",
+                "qcode": "ninjs2"
+            },
+            {
+                "name": "NINJS FTP",
+                "qcode": "ftp ninjs"
+            },
+            {
+                "name": "NewsML G2",
+                "qcode": "newsmlg2"
+            },
+            {
+                "name": "Email",
+                "qcode": "email"
+            },
+            {
+                "name": "Newsroom NINJS",
+                "qcode": "newsroom ninjs"
+            },
+            {
+                "name": "Adobe InDesign (IDML)",
+                "qcode": "idml"
+            },
+            {
+                "name": "iMatrics",
+                "qcode": "imatrics"
+            },
+            {
+                "name": "JSON Event",
+                "qcode": "json_event"
+            },
+            {
+                "name": "JSON Planning",
+                "qcode": "json_planning"
+            },
+            {
+                "name": "JSON Planning Featured",
+                "qcode": "json_planning_featured"
+            }]
+        },
+        {
+            "is_active": true,
+            "name": "Digital/Internet",
+            "qcode": "digital",
+            "formats": [{
+                "name": "NINJS",
+                "qcode": "ninjs"
+            },
+            {
+                "name": "NINJSv2",
+                "qcode": "ninjs2"
+            },
+            {
+                "name": "NINJS FTP",
+                "qcode": "ftp ninjs"
+            },
+            {
+                "name": "NewsML G2",
+                "qcode": "newsmlg2"
+            },
+            {
+                "name": "Email",
+                "qcode": "email"
+            },
+            {
+                "name": "Newsroom NINJS",
+                "qcode": "newsroom ninjs"
+            },
+            {
+                "name": "Adobe InDesign (IDML)",
+                "qcode": "idml"
+            },
+            {
+                "name": "iMatrics",
+                "qcode": "imatrics"
+            },
+            {
+                "name": "JSON Event",
+                "qcode": "json_event"
+            },
+            {
+                "name": "JSON Planning",
+                "qcode": "json_planning"
+            },
+            {
+                "name": "JSON Planning Featured",
+                "qcode": "json_planning_featured"
+            }]
+        },
+        {
+            "is_active": true,
+            "name": "Wire/Paper",
+            "qcode": "wire",
+            "formats": [{
+                "name": "NITF",
+                "qcode": "nitf"
+            },
+            {
+                "name": "Email",
+                "qcode": "email"
+            },
+            {
+                "name": "JSON Event",
+                "qcode": "json_event"
+            },
+            {
+                "name": "JSON Planning",
+                "qcode": "json_planning"
+            },
+            {
+                "name": "JSON Planning Featured",
+                "qcode": "json_planning_featured"
+            }]
+        }]
+    },
+    {
+        "_id": "g2_content_type",
+        "display_name": "Coverage content types",
+        "type": "manageable",
+        "unique_field": "qcode",
+        "selection_type": "do not show",
+        "init_version": 1,
+        "items": [{
+            "is_active": true,
+            "name": "Text",
+            "qcode": "text",
+            "content item type": "text"
+        },
+        {
+            "is_active": true,
+            "name": "Picture",
+            "qcode": "picture",
+            "content item type": "picture"
+        },
+        {
+            "is_active": true,
+            "name": "Video",
+            "qcode": "video",
+            "content item type": "video"
+        },
+        {
+            "is_active": true,
+            "name": "Audio",
+            "qcode": "audio",
+            "content item type": "audio"
+        },
+        {
+            "is_active": true,
+            "name": "Infographics",
+            "qcode": "infographics",
+            "content item type": ""
+        },
+        {
+            "is_active": true,
+            "name": "Live video",
+            "qcode": "live_video",
+            "content item type": ""
+        },
+        {
+            "is_active": true,
+            "name": "Live blog",
+            "qcode": "live_blog",
+            "content item type": ""
+        }]
+    },
+    {
+        "_id": "eventoccurstatus",
+        "display_name": "Event Occurence Status",
+        "type": "manageable",
+        "unique_field": "qcode",
+        "selection_type": "do not show",
+        "init_version": 1,
+        "items": [{
+            "is_active": true,
+            "qcode": "eocstat:eos0",
+            "name": "Unplanned event",
+            "label": "Unplanned event"
+        },
+        {
+            "is_active": true,
+            "qcode": "eocstat:eos1",
+            "name": "Planned, occurence planned only",
+            "label": "Planned, occurence planned only"
+        },
+        {
+            "is_active": true,
+            "qcode": "eocstat:eos2",
+            "name": "Planned, occurence highly uncertain",
+            "label": "Planned, occurence highly uncertain"
+        },
+        {
+            "is_active": true,
+            "qcode": "eocstat:eos3",
+            "name": "Planned, May occur",
+            "label": "Planned, May occur"
+        },
+        {
+            "is_active": true,
+            "qcode": "eocstat:eos4",
+            "name": "Planned, occurence highly likely",
+            "label": "Planned, occurence highly likely"
+        },
+        {
+            "is_active": true,
+            "qcode": "eocstat:eos5",
+            "name": "Planned, occurs certainly",
+            "label": "Planned, occurs certainly"
+        },
+        {
+            "is_active": false,
+            "qcode": "eocstat:eos6",
+            "name": "Planned, then cancelled",
+            "label": "Planned, then cancelled"
+        }]
+    },
+    {
+        "_id": "newscoveragestatus",
+        "display_name": "News Coverage Status",
+        "type": "manageable",
+        "unique_field": "qcode",
+        "selection_type": "do not show",
+        "init_version": 1,
+        "items": [{
+            "is_active": true,
+            "qcode": "ncostat:int",
+            "name": "coverage intended",
+            "label": "Planned"
+        },
+        {
+            "is_active": true,
+            "qcode": "ncostat:notdec",
+            "name": "coverage not decided yet",
+            "label": "On merit"
+        },
+        {
+            "is_active": false,
+            "qcode": "ncostat:notint",
+            "name": "coverage not intended",
+            "label": "Not planned"
+        },
+        {
+            "is_active": true,
+            "qcode": "ncostat:onreq",
+            "name": "coverage upon request",
+            "label": "On request"
+        }]
+    },
+    {
+        "_id": "event_calendars",
+        "display_name": "Event Calendars",
+        "type": "manageable",
+        "unique_field": "qcode",
+        "selection_type": "do not show",
+        "init_version": 1,
+        "items": [{
+            "is_active": true,
+            "name": "Sport",
+            "qcode": "sport"
+        },
+        {
+            "is_active": true,
+            "name": "Finance",
+            "qcode": "finance"
+        },
+        {
+            "is_active": true,
+            "name": "Entertainment",
+            "qcode": "entertainment"
+        }]
+    },
+    {
+        "_id": "assignment_priority",
+        "display_name": "Assignment Priority",
+        "type": "manageable",
+        "unique_field": "qcode",
+        "selection_type": "do not show",
+        "init_version": 1,
+        "items": [{
+            "is_active": true,
+            "name": "High",
+            "qcode": 1
+        },
+        {
+            "is_active": true,
+            "name": "Medium",
+            "qcode": 2
+        },
+        {
+            "is_active": true,
+            "name": "Low",
+            "qcode": 3
+        }]
+    }
+]

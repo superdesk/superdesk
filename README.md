@@ -1,14 +1,13 @@
 # Superdesk
-[![Build Status](https://travis-ci.org/superdesk/superdesk.png?branch=master)](https://travis-ci.org/superdesk/superdesk)
-[![Code Health](https://landscape.io/github/superdesk/superdesk/master/landscape.svg?style=flat)](https://landscape.io/github/superdesk/superdesk/master)
-[![Coverage Status](https://coveralls.io/repos/superdesk/superdesk/badge.svg)](https://coveralls.io/r/superdesk/superdesk)
+
+[![CI](https://github.com/superdesk/superdesk/workflows/CI/badge.svg)](https://github.com/superdesk/superdesk/actions?query=workflow%3ACI)
 [![Code Climate](https://codeclimate.com/github/superdesk/superdesk/badges/gpa.svg)](https://codeclimate.com/github/superdesk/superdesk)
 [![Requirements Status](https://requires.io/github/superdesk/superdesk/requirements.svg?branch=master)](https://requires.io/github/superdesk/superdesk/requirements/?branch=master)
 
 Superdesk is an open source end-to-end news creation, production, curation,
 distribution and publishing platform developed and maintained by Sourcefabric
 with the sole purpose of making the best possible software for journalism. It
-is scaleable to suit news organizations of any size. See the [Superdesk website](http://www.superdesk.org) for more information.
+is scaleable to suit news organizations of any size. See the [Superdesk website](https://www.superdesk.org) for more information.
 
 Looking to stay up to date on the latest news? [Subscribe](http://eepurl.com/bClQlD) to our monthly newsletter.
 
@@ -19,23 +18,53 @@ different technologies.
 Find more information about the client configuration in the README file of the repo:
 [github.com/superdesk/superdesk-client-core](https://github.com/superdesk/superdesk-client-core)
 
-## Requirements
- * MongoDB
- * ElasticSearch (1.7.x - 2.4.x)
- * Redis
- * Python (>= 3.5)
- * Node.js (with `npm`)
+## Run Superdesk locally using Docker
 
-### General installation steps look like:
+You can start superdesk using the `docker-compose.yml` file:
+
+```sh
+$ docker-compose up -d
+```
+
+This will start superdesk on http://localhost:8080. On the first run you also have to initialize
+elastic/mongo and create a user:
+
+```sh
+# Initialize data
+$ docker-compose run superdesk-server run python manage.py app:initialize_data
+# Create first admin user
+$ docker-compose run superdesk-server run python manage.py users:create -u admin -p admin -e admin@localhost --admin
+```
+
+Then you can login with admin:admin credentials.
+
+The Docker images are hosted on Dockerhub for the [client](https://hub.docker.com/r/sourcefabricoss/superdesk-client) and [server](https://hub.docker.com/r/sourcefabricoss/superdesk-server).
+
+## Manual installation
+
+### Requirements
+
+These services must be installed, configured and running:
+
+- MongoDB
+- ElasticSearch (7.x)
+- Redis
+- Python (>= 3.6)
+- Node.js (with `npm`)
+
+On macOS, if you have [homebrew](https://brew.sh/) installed, simply run: `brew install mongodb elasticsearch redis python3 node`.
+
+### Installation steps:
+
 ```sh
 path=~/superdesk
 git clone https://github.com/superdesk/superdesk.git $path
 
 # server
 cd $path/server
-pip install -r requirements.txt
-python manage.py app:initialize_data
-python manage.py users:create -u admin -p admin -e 'admin@example.com' --admin
+pip3 install -r requirements.txt
+python3 manage.py app:initialize_data
+python3 manage.py users:create -u admin -p admin -e 'admin@example.com' --admin
 honcho start
 # if you need some data
 python manage.py app:prepopulate
@@ -43,22 +72,21 @@ python manage.py app:prepopulate
 # client
 cd $path/client
 npm install
-grunt server
+npm run build
+npx grunt server
 
 # open http://localhost:9000 in browser
 ```
 
-### Installation on fresh Ubuntu 16.04
+#### :warning: macOS users
 
-```sh
-curl -s https://raw.githubusercontent.com/superdesk/fireq/master/files/superdesk/install | sudo bash
-# Open http://<ip_or_domain> in browser
-# login: admin
-# password: admin
-```
-More options and details:
-- [for users](https://github.com/superdesk/fireq/tree/master/files/superdesk)
-- [for developers](https://github.com/superdesk/fireq/tree/master/files/superdesk#development)
+All the above commands need to run inside the Python Virtual Environment, which you can create
+using the `pyvenv` command:
+
+- Run `pyvenv ~/pyvenv` to create the files needed to start an environment in the directory `~/pyvenv`.
+- Run `. ~/pyvenv/bin/activate` to start the virtual environment in the current terminal session.
+
+Now you may run the installation steps from above.
 
 ### Questions and issues
 
