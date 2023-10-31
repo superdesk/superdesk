@@ -3,7 +3,7 @@
     "license": "AGPL-3.0",
     "dependencies": {
         "superdesk-core": "github:superdesk/superdesk-client-core#authoring-react-post-broadcasting",
-        "superdesk-planning": "github:superdesk/superdesk-planning#develop"
+        "superdesk-planning": "github:superdesk/superdesk-planning#authoring-react-post-broadcasting"
     },
     "scripts": {
         "build": "npx @superdesk/build-tools build-root-repo ./",
