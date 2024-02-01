@@ -2,7 +2,7 @@
     "name": "superdesk",
     "license": "AGPL-3.0",
     "dependencies": {
-        "superdesk-core": "github:superdesk/superdesk-client-core#broadcasting"
+        "superdesk-core": "github:superdesk/superdesk-client-core#develop"
     },
     "scripts": {
         "build": "npx @superdesk/build-tools build-root-repo ./",
