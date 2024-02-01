@@ -16,7 +16,9 @@ module.exports = function() {
         langOverride: {
             en: {
                 'ANPA Category': 'Category',
-                'ANPA CATEGORY': 'CATEGORY'
+                'ANPA CATEGORY': 'CATEGORY',
+                'multi-line quote': 'pullquote',
+                'Multi-line quote': 'Pullquote',
             }
         },
 
@@ -95,7 +97,8 @@ module.exports = function() {
                 'desk',
                 'fetchedDesk',
                 'used',
-                'nestedlink'
+                'nestedlink',
+                'translations'
             ]
         },
 

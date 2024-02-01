@@ -5,11 +5,19 @@ services:
     image: mongo:4
     networks:
       - superdesk
+    expose:
+      - "27017"
+    ports:
+      - "27017:27017"
 
   redis:
     image: redis:3
     networks:
       - superdesk
+    expose:
+      - "6379"
+    ports:
+      - "6379:6379"
 
   elastic:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.10.1
@@ -17,6 +25,11 @@ services:
       - discovery.type=single-node
     networks:
       - superdesk
+    expose:
+      - "9200"
+      - "9300"
+    ports:
+      - "9200:9200"
 
   superdesk-server:
     image: sourcefabricoss/superdesk-server:latest

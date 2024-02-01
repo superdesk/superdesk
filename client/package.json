@@ -5,9 +5,11 @@
         "superdesk-core": "github:superdesk/superdesk-client-core#broadcasting"
     },
     "scripts": {
-        "build": "npx @superdesk/build-tools build-root-repo ./"
+        "build": "npx @superdesk/build-tools build-root-repo ./",
+        "start": "npx grunt server"
     },
     "devDependencies": {
-        "@superdesk/build-tools": "^1.0.18"
+        "@superdesk/build-tools": "^1.0.18",
+        "@types/node": "^14.14.20"
     }
 }
