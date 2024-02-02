@@ -10,7 +10,7 @@
         "start": "npx grunt server"
     },
     "devDependencies": {
-        "@superdesk/build-tools": "^1.0.18",
+        "@superdesk/build-tools": "^2.0.1",
         "@types/node": "^14.14.20"
     }
 }
