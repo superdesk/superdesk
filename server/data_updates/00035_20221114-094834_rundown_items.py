@@ -4,21 +4,19 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 #
-# Author  : mugur
-# Creation: 2017-10-26 10:31
+# Author  : petr
+# Creation: 2022-11-14 09:48
 
 from superdesk.commands.data_updates import BaseDataUpdate
-from superdesk import get_resource_service
 
 
 class DataUpdate(BaseDataUpdate):
 
-    resource = "content_types"
+    resource = 'rundown_items'
 
     def forwards(self, mongodb_collection, mongodb_database):
-        content_types_service = get_resource_service("content_types")
-        for content_type in content_types_service.get(req=None, lookup=None):
-            content_types_service.patch(content_type["_id"], {})
+        res = mongodb_collection.update_many({"subitems": {"$exists": 1}}, {"$unset": {"subitems": 1}})
+        print("updated {}".format(res.modified_count))
 
     def backwards(self, mongodb_collection, mongodb_database):
         pass

@@ -1,3 +1,4 @@
+import angular from 'angular';
 import {startApp} from 'superdesk-core/scripts/index';
 
 setTimeout(() => {
