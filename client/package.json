@@ -4,7 +4,8 @@
     "dependencies": {
         "superdesk-analytics": "github:superdesk/superdesk-analytics#develop",
         "superdesk-core": "github:superdesk/superdesk-client-core#develop",
-        "superdesk-planning": "github:superdesk/superdesk-planning#develop"
+        "superdesk-planning": "github:superdesk/superdesk-planning#develop",
+        "superdesk-publisher": "github:superdesk/superdesk-publisher#develop"
     },
     "scripts": {
         "build": "npx @superdesk/build-tools build-root-repo ./",
