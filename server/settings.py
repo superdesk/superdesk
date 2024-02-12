@@ -21,6 +21,7 @@ if init_data.exists():
 INSTALLED_APPS = [
     "apps.languages",
     "planning",
+    "analytics",
 ]
 
 PLANNING_EVENT_TEMPLATES_ENABLED = True

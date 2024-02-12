@@ -26,9 +26,9 @@ blinker==1.4
     #   flask-mail
     #   raven
     #   superdesk-core
-boto3==1.34.33
+boto3==1.34.39
     # via superdesk-core
-botocore==1.34.33
+botocore==1.34.39
     # via
     #   boto3
     #   s3transfer
@@ -79,8 +79,6 @@ cryptography==42.0.2
     #   jwcrypto
 deepdiff==6.7.1
     # via superdesk-planning
-deprecated==1.2.14
-    # via jwcrypto
 draftjs-exporter[lxml]==2.1.7
     # via
     #   draftjs-exporter
@@ -148,7 +146,7 @@ jmespath==1.0.1
     # via
     #   boto3
     #   botocore
-jwcrypto==1.5.1
+jwcrypto==1.5.3
     # via
     #   flask-oidc-ex
     #   python-jwt
@@ -261,12 +259,16 @@ six==1.16.0
     #   flask-oidc-ex
     #   oauth2client
     #   python-dateutil
+superdesk-analytics @ git+https://github.com/superdesk/superdesk-analytics.git@develop
+    # via -r requirements.in
 superdesk-core @ git+https://github.com/superdesk/superdesk-core.git@develop
     # via -r requirements.in
 superdesk-planning @ git+https://github.com/superdesk/superdesk-planning.git@develop
     # via -r requirements.in
 typing-extensions==4.9.0
-    # via superdesk-core
+    # via
+    #   jwcrypto
+    #   superdesk-core
 tzlocal==2.1
     # via superdesk-core
 unidecode==0.4.21
@@ -292,6 +294,4 @@ werkzeug==1.0.1
     #   flask
     #   superdesk-core
 wrapt==1.14.1
-    # via
-    #   deprecated
-    #   elastic-apm
+    # via elastic-apm
