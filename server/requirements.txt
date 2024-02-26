@@ -20,15 +20,15 @@ bcrypt==3.1.7
     # via superdesk-core
 billiard==3.6.4.0
     # via celery
-blinker==1.4
+blinker==1.7.0
     # via
     #   elastic-apm
     #   flask-mail
     #   raven
     #   superdesk-core
-boto3==1.34.33
+boto3==1.34.49
     # via superdesk-core
-botocore==1.34.33
+botocore==1.34.49
     # via
     #   boto3
     #   s3transfer
@@ -51,7 +51,7 @@ cffi==1.16.0
     # via
     #   bcrypt
     #   cryptography
-chardet==3.0.4
+chardet==5.2.0
     # via superdesk-core
 charset-normalizer==3.3.2
     # via requests
@@ -73,14 +73,12 @@ click-repl==0.3.0
     # via celery
 croniter==0.3.37
     # via superdesk-core
-cryptography==42.0.2
+cryptography==42.0.5
     # via
     #   authlib
     #   jwcrypto
 deepdiff==6.7.1
     # via superdesk-planning
-deprecated==1.2.14
-    # via jwcrypto
 draftjs-exporter[lxml]==2.1.7
     # via
     #   draftjs-exporter
@@ -93,7 +91,7 @@ elastic-apm[flask]==6.20.0
     #   superdesk-core
 elasticsearch==7.13.4
     # via eve-elastic
-eve==1.1.2
+eve==2.1.0
     # via superdesk-core
 eve-elastic==7.3.2
     # via superdesk-core
@@ -118,7 +116,7 @@ flask-oidc-ex==0.5.5
     # via superdesk-core
 flask-script==2.0.6
     # via superdesk-core
-future==0.18.3
+future==1.0.0
     # via python-twitter
 gunicorn==21.2.0
     # via -r requirements.in
@@ -148,7 +146,7 @@ jmespath==1.0.1
     # via
     #   boto3
     #   botocore
-jwcrypto==1.5.1
+jwcrypto==1.5.4
     # via
     #   flask-oidc-ex
     #   python-jwt
@@ -205,7 +203,7 @@ pymongo==3.11.4
     #   superdesk-core
 pyparsing==3.1.1
     # via httplib2
-python-dateutil==2.7.5
+python-dateutil==2.8.2
     # via
     #   arrow
     #   botocore
@@ -265,8 +263,10 @@ superdesk-core @ git+https://github.com/superdesk/superdesk-core.git@develop
     # via -r requirements.in
 superdesk-planning @ git+https://github.com/superdesk/superdesk-planning.git@develop
     # via -r requirements.in
-typing-extensions==4.9.0
-    # via superdesk-core
+typing-extensions==4.10.0
+    # via
+    #   jwcrypto
+    #   superdesk-core
 tzlocal==2.1
     # via superdesk-core
 unidecode==0.4.21
@@ -292,6 +292,4 @@ werkzeug==1.0.1
     #   flask
     #   superdesk-core
 wrapt==1.14.1
-    # via
-    #   deprecated
-    #   elastic-apm
+    # via elastic-apm
