@@ -20,6 +20,7 @@ if init_data.exists():
 
 INSTALLED_APPS = [
     "apps.languages",
+    "apps.rundowns",
     "planning",
 ]
 
