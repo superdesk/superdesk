@@ -6,9 +6,9 @@
 version: 2
 updates:
   - package-ecosystem: "npm" # See documentation for possible values
-    directory: "weekly" # Location of package manifests
+    directory: "client" # Location of package manifests
     schedule:
-      interval: "daily"
+      interval: "weekly"
   - package-ecosystem: "pip" # See documentation for possible values
     directory: "server" # Location of package manifests
     schedule:
