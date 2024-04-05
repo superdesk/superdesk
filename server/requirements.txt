@@ -16,7 +16,7 @@ authlib==0.14.3
     # via superdesk-core
 babel==2.14.0
     # via flask-babel
-bcrypt==3.1.7
+bcrypt==4.1.2
     # via superdesk-core
 billiard==3.6.4.0
     # via celery
@@ -26,9 +26,9 @@ blinker==1.7.0
     #   flask-mail
     #   raven
     #   superdesk-core
-boto3==1.34.62
+boto3==1.34.78
     # via superdesk-core
-botocore==1.34.62
+botocore==1.34.78
     # via
     #   boto3
     #   s3transfer
@@ -46,9 +46,7 @@ certifi==2024.2.2
     #   elasticsearch
     #   requests
 cffi==1.16.0
-    # via
-    #   bcrypt
-    #   cryptography
+    # via cryptography
 chardet==5.2.0
     # via superdesk-core
 charset-normalizer==3.3.2
@@ -63,7 +61,7 @@ click==8.1.7
     #   click-repl
     #   flask
     #   superdesk-core
-click-didyoumean==0.3.0
+click-didyoumean==0.3.1
     # via celery
 click-plugins==1.1.1
     # via celery
@@ -81,7 +79,7 @@ draftjs-exporter[lxml]==2.1.7
     # via superdesk-core
 ecs-logging==2.1.0
     # via elastic-apm
-elastic-apm[flask]==6.21.3
+elastic-apm[flask]==6.22.0
     # via superdesk-core
 elasticsearch==7.13.4
     # via
@@ -89,7 +87,7 @@ elasticsearch==7.13.4
     #   superdesk-core
 eve==2.1.0
     # via superdesk-core
-eve-elastic==7.4.0
+eve-elastic==7.4.1
     # via superdesk-core
 events==0.3
     # via eve
@@ -178,15 +176,15 @@ pillow==9.2.0
     #   superdesk-core
 prompt-toolkit==3.0.43
     # via click-repl
-pyasn1==0.5.1
+pyasn1==0.6.0
     # via
     #   ldap3
     #   oauth2client
     #   pyasn1-modules
     #   rsa
-pyasn1-modules==0.3.0
+pyasn1-modules==0.4.0
     # via oauth2client
-pycparser==2.21
+pycparser==2.22
     # via cffi
 pyjwt==2.4.0
     # via superdesk-core
@@ -199,7 +197,7 @@ pymongo==3.11.4
     #   superdesk-core
 pyparsing==3.1.2
     # via httplib2
-python-dateutil==2.8.2
+python-dateutil==2.9.0.post0
     # via
     #   arrow
     #   botocore
@@ -237,11 +235,11 @@ requests==2.31.0
     #   python-twitter
     #   requests-oauthlib
     #   superdesk-core
-requests-oauthlib==1.4.0
+requests-oauthlib==2.0.0
     # via python-twitter
 rsa==4.9
     # via oauth2client
-s3transfer==0.10.0
+s3transfer==0.10.1
     # via boto3
 sgmllib3k==1.0.0
     # via feedparser
@@ -249,7 +247,6 @@ simplejson==3.19.2
     # via eve
 six==1.16.0
     # via
-    #   bcrypt
     #   flask-oidc-ex
     #   oauth2client
     #   python-dateutil
@@ -257,7 +254,7 @@ superdesk-core @ git+https://github.com/superdesk/superdesk-core.git@develop
     # via -r requirements.in
 superdesk-planning @ git+https://github.com/superdesk/superdesk-planning.git@develop
     # via -r requirements.in
-typing-extensions==4.10.0
+typing-extensions==4.11.0
     # via
     #   jwcrypto
     #   superdesk-core
