@@ -112,7 +112,7 @@ flask-script==2.0.6
     # via superdesk-core
 future==1.0.0
     # via python-twitter
-gunicorn==21.2.0
+gunicorn==22.0.0
     # via -r requirements.in
 hachoir==3.0a3
     # via superdesk-core
