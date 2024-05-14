@@ -14,9 +14,9 @@ async-timeout==4.0.3
     # via redis
 authlib==0.14.3
     # via superdesk-core
-babel==2.14.0
+babel==2.15.0
     # via flask-babel
-bcrypt==4.1.2
+bcrypt==4.1.3
     # via superdesk-core
 billiard==3.6.4.0
     # via celery
@@ -26,9 +26,9 @@ blinker==1.7.0
     #   flask-mail
     #   raven
     #   superdesk-core
-boto3==1.34.88
+boto3==1.34.104
     # via superdesk-core
-botocore==1.34.88
+botocore==1.34.104
     # via
     #   boto3
     #   s3transfer
@@ -69,13 +69,13 @@ click-repl==0.3.0
     # via celery
 croniter==2.0.5
     # via superdesk-core
-cryptography==42.0.5
+cryptography==42.0.7
     # via
     #   authlib
     #   jwcrypto
 deepdiff==7.0.1
     # via superdesk-planning
-draftjs-exporter[lxml]==2.1.7
+draftjs-exporter[lxml]==2.1.0
     # via superdesk-core
 ecs-logging==2.1.0
     # via elastic-apm
@@ -106,7 +106,7 @@ flask-babel==2.0.0
     # via superdesk-core
 flask-mail==0.9.1
     # via superdesk-core
-flask-oidc-ex==0.5.5
+flask-oidc-ex==0.5.8
     # via superdesk-core
 flask-script==2.0.6
     # via superdesk-core
@@ -150,11 +150,14 @@ kombu==5.2.4
     #   superdesk-core
 ldap3==2.5.2
     # via superdesk-core
-lxml==4.6.5
+lxml==5.2.2
     # via
     #   draftjs-exporter
+    #   lxml-html-clean
     #   superdesk-core
     #   xmlsec
+lxml-html-clean==0.1.1
+    # via superdesk-core
 markupsafe==2.0.1
     # via
     #   jinja2
@@ -222,11 +225,11 @@ pyyaml==6.0.1
     # via superdesk-core
 raven[flask]==6.10.0
     # via superdesk-core
-redis==5.0.3
+redis==5.0.4
     # via
     #   celery
     #   superdesk-core
-regex==2020.7.14
+regex==2024.4.28
     # via superdesk-core
 reportlab==3.6.13
     # via superdesk-core
@@ -284,5 +287,5 @@ werkzeug==1.0.1
     #   superdesk-core
 wrapt==1.14.1
     # via elastic-apm
-xmlsec==1.3.13
+xmlsec==1.3.14
     # via superdesk-core
