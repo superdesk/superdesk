@@ -233,7 +233,7 @@ regex==2024.4.28
     # via superdesk-core
 reportlab==3.6.13
     # via superdesk-core
-requests==2.31.0
+requests==2.32.0
     # via
     #   python-twitter
     #   requests-oauthlib
