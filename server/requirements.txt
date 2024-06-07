@@ -172,7 +172,7 @@ ordered-set==4.1.0
     # via deepdiff
 packaging==24.0
     # via gunicorn
-pillow==9.2.0
+pillow==10.3.0
     # via
     #   reportlab
     #   superdesk-core
