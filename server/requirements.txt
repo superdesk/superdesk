@@ -40,7 +40,7 @@ cerberus==1.3.5
     # via
     #   eve
     #   superdesk-core
-certifi==2024.2.2
+certifi==2024.7.4
     # via
     #   elastic-apm
     #   elasticsearch
