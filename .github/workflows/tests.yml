@@ -6,6 +6,10 @@ jobs:
 
   server:
 
+    strategy:
+      matrix:
+        python-version: ['3.8', '3.10']
+
     runs-on: ubuntu-latest
 
     defaults:
