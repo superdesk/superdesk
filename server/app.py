@@ -33,6 +33,7 @@ def get_app(config=None):
     app = superdesk_app(config)
     return app
 
+
 # required so quart can instantiate it from commands terminal
 create_app = get_app
 
