@@ -27,7 +27,6 @@ services:
       - superdesk
     expose:
       - "9200"
-      - "9300"
     ports:
       - "9200:9200"
 
@@ -59,14 +58,12 @@ services:
       - superdesk
 
   superdesk-client:
-    image: sourcefabricoss/superdesk-client:latest
+    build: sourcefabricoss/superdesk-client:latest
     environment:
       # If not hosting on localhost, change these lines
       - SUPERDESK_URL=http://localhost:8080/api
       - SUPERDESK_WS_URL=ws://localhost:8080/ws
       - IFRAMELY_KEY
-    depends_on:
-      - superdesk-server
     ports:
       - "8080:80"
     networks:
