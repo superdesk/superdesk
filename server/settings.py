@@ -18,12 +18,6 @@ init_data = Path(ABS_PATH) / "data"
 if init_data.exists():
     INIT_DATA_PATH = init_data
 
-INSTALLED_APPS = [
-    "apps.languages",
-    "apps.rundowns",
-    "planning",
-]
-
 PLANNING_EVENT_TEMPLATES_ENABLED = True
 
 RENDITIONS = {
@@ -201,15 +195,13 @@ VALIDATOR_MEDIA_METADATA = {
 }
 
 NINJS_PLACE_EXTENDED = True
-PUBLISH_ASSOCIATED_ITEMS = True
 
 DEFAULT_TIMEZONE = "Europe/Prague"
 
-ARCHIVE_AUTOCOMPLETE = True
-ARCHIVE_AUTOCOMPLETE_DAYS = 2
 ARCHIVE_AUTOCOMPLETE_LIMIT = 2000
 
 # 2: reindex slugline
 SCHEMA_VERSION = 2
 
 RUNDOWNS_TIMEZONE = DEFAULT_TIMEZONE
+

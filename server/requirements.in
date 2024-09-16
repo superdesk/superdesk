@@ -1,5 +1,3 @@
 honcho
-gunicorn
 
-git+https://github.com/superdesk/superdesk-core.git@develop#egg=superdesk-core
-git+https://github.com/superdesk/superdesk-planning.git@develop#egg=superdesk-planning
+git+https://github.com/superdesk/superdesk-core.git@async#egg=superdesk-core

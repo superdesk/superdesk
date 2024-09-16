@@ -6,13 +6,8 @@
  */
 module.exports = function() {
     return {
-        apps: [
-            'superdesk-planning',
-        ],
-        importApps: [
-            '../index',
-            'superdesk-planning',
-        ],
+        apps: [],
+        importApps: ['../index'],
 
         defaultRoute: '/workspace/monitoring',
 
@@ -45,8 +40,7 @@ module.exports = function() {
 
         features: {
             preview: 1,
-            swimlane: {columnsLimit: 99},
-            swimlane: {defaultNumberOfColumns: 4},
+            swimlane: {columnsLimit: 99, defaultNumberOfColumns: 4},
             editor3: true,
             editorHighlights: true,
             noPublishOnAuthoringDesk: true,
@@ -55,25 +49,16 @@ module.exports = function() {
                 publish: true,
             },
             validatePointOfInterestForImages: true,
-            editorHighlights: true,
             editFeaturedImage: true,
             searchShortcut: true,
             elasticHighlight: true,
-            planning: true,
             autorefreshContent: true,
             nestedItemsInOutputStage: true,
-            planning: true,
-            customAuthoringTopbar: {
-                toDesk: true,
-            },
         },
 
         item_profile: { change_profile: 1 },
 
-        workspace: {
-            planning: true,
-            assignments: true,
-        },
+        workspace: {},
 
         ui: {
             italicAbstract: false,
