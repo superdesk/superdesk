@@ -8,7 +8,7 @@ jobs:
 
     strategy:
       matrix:
-        python-version: ['3.8', '3.10']
+        python-version: ['3.8', '3.10', '3.12']
 
     runs-on: ubuntu-latest
 
@@ -17,9 +17,9 @@ jobs:
         working-directory: server
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
-    - uses: actions/setup-python@v4
+    - uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
 
@@ -35,7 +35,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: ['12.x', '14.x']
+        node-version: ['14']
 
     runs-on: ubuntu-latest
 
@@ -44,13 +44,15 @@ jobs:
         working-directory: client
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
-    - uses: actions/setup-node@v3
+    - uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
+        cache: npm
+        cache-dependency-path: client/package-lock.json
 
-    - run: npm install
+    - run: npm ci
 
     - run: npm run build
   
@@ -59,6 +61,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - run: docker compose build
