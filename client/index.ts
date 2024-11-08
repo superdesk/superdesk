@@ -4,10 +4,6 @@ setTimeout(() => {
     startApp(
         [
             {
-                id: 'broadcasting',
-                load: () => import('superdesk-core/scripts/extensions/broadcasting'),
-            },
-            {
                 id: 'annotationsLibrary',
                 load: () => import('superdesk-core/scripts/extensions/annotationsLibrary'),
             },
