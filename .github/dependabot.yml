@@ -15,12 +15,12 @@ updates:
       interval: "daily"
 
   - package-ecosystem: "npm"
-    target_branch: release/2.8
+    target-branch: release/2.8
     directory: "client"
     schedule:
       interval: "daily"
   - package-ecosystem: "pip"
-    target_branch: release/2.8
+    target-branch: release/2.8
     directory: "server"
     schedule:
       interval: "daily"
