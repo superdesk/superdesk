@@ -6,9 +6,9 @@
 #
 aiofiles==24.1.0
     # via quart
-aiohappyeyeballs==2.4.0
+aiohappyeyeballs==2.4.3
     # via aiohttp
-aiohttp==3.10.5
+aiohttp==3.10.10
     # via elasticsearch
 aiosignal==1.3.1
     # via aiohttp
@@ -20,14 +20,11 @@ arrow==1.3.0
     # via
     #   eve-elastic
     #   superdesk-core
-asgi-tools==1.0.10
-    # via quart-babel
 asgiref==3.8.1
     # via superdesk-core
 async-timeout==4.0.3
     # via
     #   aiohttp
-    #   asgi-tools
     #   redis
 attrs==24.2.0
     # via aiohttp
@@ -35,9 +32,9 @@ authlib==1.3.2
     # via superdesk-core
 babel==2.16.0
     # via quart-babel
-bcrypt==4.1.3
+bcrypt==4.2.0
     # via superdesk-core
-billiard==4.2.0
+billiard==4.2.1
     # via celery
 blinker==1.8.2
     # via
@@ -47,9 +44,9 @@ blinker==1.8.2
     #   quart
     #   raven
     #   superdesk-core
-boto3==1.35.19
+boto3==1.35.57
     # via superdesk-core
-botocore==1.35.19
+botocore==1.35.57
     # via
     #   boto3
     #   s3transfer
@@ -72,7 +69,7 @@ chardet==5.2.0
     # via
     #   reportlab
     #   superdesk-core
-charset-normalizer==3.3.2
+charset-normalizer==3.4.0
     # via requests
 ciso8601==2.3.1
     # via eve-elastic
@@ -90,13 +87,15 @@ click-plugins==1.1.1
     # via celery
 click-repl==0.3.0
     # via celery
-croniter==2.0.7
+croniter==3.0.4
     # via superdesk-core
-cryptography==43.0.1
+cryptography==43.0.3
     # via
     #   authlib
     #   jwcrypto
-dnspython==2.6.1
+deepdiff==8.0.1
+    # via superdesk-planning
+dnspython==2.7.0
     # via pymongo
 draftjs-exporter[lxml]==2.1.0
     # via superdesk-core
@@ -104,7 +103,7 @@ ecs-logging==2.2.0
     # via elastic-apm
 elastic-apm[flask]==6.23.0
     # via superdesk-core
-elasticsearch[async]==7.17.9
+elasticsearch[async]==7.17.12
     # via
     #   eve-elastic
     #   superdesk-core
@@ -130,7 +129,7 @@ flask-mail==0.10.0
     # via superdesk-core
 flask-oidc-ex==0.6.2
     # via superdesk-core
-frozenlist==1.4.1
+frozenlist==1.5.0
     # via
     #   aiohttp
     #   aiosignal
@@ -146,24 +145,22 @@ hachoir==3.3.0
     # via superdesk-core
 hermescache==1.0.0
     # via superdesk-core
-honcho==1.1.0
+honcho==2.0.0
     # via -r requirements.in
 hpack==4.0.0
     # via h2
-http-router==4.1.2
-    # via asgi-tools
 httplib2==0.22.0
     # via oauth2client
 hypercorn==0.17.3
     # via quart
 hyperframe==6.0.1
     # via h2
+icalendar==5.0.13
+    # via superdesk-planning
 idna==3.10
     # via
     #   requests
     #   yarl
-importlib-metadata==8.5.0
-    # via quart-babel
 itsdangerous==2.2.0
     # via
     #   flask
@@ -181,7 +178,7 @@ jwcrypto==1.5.6
     # via
     #   flask-oidc-ex
     #   python-jwt
-kombu==5.3.7
+kombu==5.4.2
     # via
     #   celery
     #   superdesk-core
@@ -193,33 +190,36 @@ lxml==5.2.2
     #   lxml-html-clean
     #   superdesk-core
     #   xmlsec
-lxml-html-clean==0.1.1
+lxml-html-clean==0.3.1
     # via superdesk-core
-markupsafe==2.1.5
+markupsafe==3.0.2
     # via
     #   jinja2
     #   quart
     #   superdesk-core
     #   werkzeug
-motor==3.5.1
+motor==3.5.3
     # via superdesk-core
 multidict==6.1.0
     # via
     #   aiohttp
-    #   asgi-tools
     #   yarl
 oauth2client==4.1.3
     # via flask-oidc-ex
 oauthlib==3.2.2
     # via requests-oauthlib
-pillow==10.3.0
+orderly-set==5.2.2
+    # via deepdiff
+pillow==10.4.0
     # via
     #   reportlab
     #   superdesk-core
 priority==2.0.0
     # via hypercorn
-prompt-toolkit==3.0.47
+prompt-toolkit==3.0.48
     # via click-repl
+propcache==0.2.0
+    # via yarl
 pyasn1==0.6.1
     # via
     #   ldap3
@@ -230,11 +230,11 @@ pyasn1-modules==0.4.1
     # via oauth2client
 pycparser==2.22
     # via cffi
-pydantic==2.9.1
+pydantic==2.9.2
     # via superdesk-core
-pydantic-core==2.23.3
+pydantic-core==2.23.4
     # via pydantic
-pyjwt==2.4.0
+pyjwt==2.8.0
     # via superdesk-core
 pymemcache==4.0.0
     # via superdesk-core
@@ -243,7 +243,7 @@ pymongo==4.7.3
     #   eve
     #   motor
     #   superdesk-core
-pyparsing==3.1.4
+pyparsing==3.2.0
     # via httplib2
 python-dateutil==2.9.0.post0
     # via
@@ -251,6 +251,7 @@ python-dateutil==2.9.0.post0
     #   botocore
     #   celery
     #   croniter
+    #   icalendar
     #   superdesk-core
 python-jwt==4.1.0
     # via flask-oidc-ex
@@ -262,6 +263,7 @@ pytz==2024.2
     # via
     #   croniter
     #   eve-elastic
+    #   icalendar
     #   quart-babel
     #   superdesk-core
 pyyaml==6.0.2
@@ -272,19 +274,19 @@ quart @ git+https://github.com/MarkLark86/quart@fix-test-client-with-utf8-url
     #   quart-babel
     #   quart-flask-patch
     #   superdesk-core
-quart-babel @ git+https://github.com/MarkLark86/quart-babel@fix-get-format
+quart-babel==1.0.7
     # via superdesk-core
 quart-flask-patch==0.3.0
     # via superdesk-core
 raven[flask]==6.10.0
     # via superdesk-core
-redis==5.0.8
+redis==5.1.1
     # via
     #   celery
     #   superdesk-core
-regex==2024.5.15
+regex==2024.9.11
     # via superdesk-core
-reportlab==4.2.2
+reportlab==4.2.5
     # via superdesk-core
 requests==2.32.3
     # via
@@ -295,7 +297,7 @@ requests-oauthlib==2.0.0
     # via python-twitter
 rsa==4.9
     # via oauth2client
-s3transfer==0.10.2
+s3transfer==0.10.3
     # via boto3
 sgmllib3k==1.0.0
     # via feedparser
@@ -306,16 +308,18 @@ six==1.16.0
     #   flask-oidc-ex
     #   oauth2client
     #   python-dateutil
-sniffio==1.3.1
-    # via asgi-tools
 superdesk-core @ git+https://github.com/superdesk/superdesk-core.git@async
+    # via -r requirements.in
+superdesk-planning @ git+https://github.com/superdesk/superdesk-planning.git@async
     # via -r requirements.in
 taskgroup==0.0.0a4
     # via hypercorn
-tomli==2.0.1
+tomli==2.0.2
     # via hypercorn
-types-python-dateutil==2.9.0.20240906
+types-python-dateutil==2.9.0.20241003
     # via arrow
+types-pytz==2024.2.0.20241003
+    # via quart-babel
 typing-extensions==4.12.2
     # via
     #   asgiref
@@ -325,8 +329,10 @@ typing-extensions==4.12.2
     #   pydantic
     #   pydantic-core
     #   superdesk-core
-tzdata==2024.1
-    # via celery
+tzdata==2024.2
+    # via
+    #   celery
+    #   kombu
 tzlocal==5.2
     # via superdesk-core
 unidecode==1.3.8
@@ -345,9 +351,9 @@ vine==5.1.0
     #   kombu
 wcwidth==0.2.13
     # via prompt-toolkit
-websockets==12.0
+websockets==13.1
     # via superdesk-core
-werkzeug==3.0.4
+werkzeug==3.1.3
     # via
     #   flask
     #   quart
@@ -357,9 +363,5 @@ wsproto==1.2.0
     # via hypercorn
 xmlsec==1.3.14
     # via superdesk-core
-yarl==1.11.1
-    # via
-    #   aiohttp
-    #   asgi-tools
-zipp==3.20.2
-    # via importlib-metadata
+yarl==1.17.1
+    # via aiohttp

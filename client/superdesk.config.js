@@ -6,8 +6,13 @@
  */
 module.exports = function() {
     return {
-        apps: [],
-        importApps: ['../index'],
+        apps: [
+            'superdesk-planning',
+        ],
+        importApps: [
+            '../index',
+            'superdesk-planning',
+        ],
 
         defaultRoute: '/workspace/monitoring',
 
@@ -54,11 +59,15 @@ module.exports = function() {
             elasticHighlight: true,
             autorefreshContent: true,
             nestedItemsInOutputStage: true,
+            planning: true,
         },
 
         item_profile: { change_profile: 1 },
 
-        workspace: {},
+        workspace: {
+            planning: true,
+            assignments: true,
+        },
 
         ui: {
             italicAbstract: false,

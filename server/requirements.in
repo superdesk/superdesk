@@ -1,3 +1,4 @@
 honcho
 
 git+https://github.com/superdesk/superdesk-core.git@async#egg=superdesk-core
+git+https://github.com/superdesk/superdesk-planning.git@async#egg=superdesk-planning
