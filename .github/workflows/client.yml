@@ -1,0 +1,29 @@
+name: "Client"
+
+on:
+  workflow_call:
+
+jobs:
+  install:
+    strategy:
+      matrix:
+        node-version: ['14']
+
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: client
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: npm
+        cache-dependency-path: client/package-lock.json
+
+    - run: npm ci
+    - run: npm run build
+ 
