@@ -1,6 +1,6 @@
 -r requirements.txt
 
-black==23.12.1
+black==24.3.0
 pep8==1.7.1
 flake8==7.1.1
 pytest==8.3.3
