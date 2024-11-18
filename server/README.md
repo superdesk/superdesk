@@ -36,10 +36,10 @@ For image processing you will need some extra packages:
 
 ## CI
 
-Use nosetests for unit tests:
+Use pytest for unit tests:
 
 ```sh
-$ nosetests
+$ pytest
 ```
 
 Behave for behaviour testing:
