@@ -18,7 +18,7 @@ Find more information about the client configuration in the README file of the r
 
 ## Run Superdesk locally using Docker
 
-You can start superdesk using the `docker compose.yml` file:
+You can start superdesk using the `docker-compose.yml` file:
 
 ```sh
 $ docker compose up -d
