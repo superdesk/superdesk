@@ -15,7 +15,7 @@ jobs:
     strategy:
       matrix:
         python-version: ['3.8', '3.10', '3.12']
-    uses: ./.github/workflows/server.yml
+    uses: ./.github/workflows/pytest.yml
     with:
         python-version: ${{ matrix.python-version }}
 
