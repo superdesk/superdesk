@@ -11,6 +11,22 @@ jobs:
     with: 
         python-version: ${{ matrix.python-version }}
 
+  pytest:
+    strategy:
+      matrix:
+        python-version: ['3.8', '3.10', '3.12']
+    uses: ./.github/workflows/server.yml
+    with:
+        python-version: ${{ matrix.python-version }}
+
+  behave:
+    strategy:
+      matrix:
+        python-version: ['3.8', '3.10', '3.12']
+    uses: ./.github/workflows/behave.yml
+    with:
+        python-version: ${{ matrix.python-version }}
+
   client:
     uses: ./.github/workflows/client.yml
   
