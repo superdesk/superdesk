@@ -24,3 +24,14 @@ updates:
     directory: "server"
     schedule:
       interval: "daily"
+
+  - package-ecosystem: "npm"
+    target-branch: async
+    directory: "client"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pip"
+    target-branch: async
+    directory: "server"
+    schedule:
+      interval: "daily"
