@@ -1,5 +1,6 @@
 honcho
 gunicorn
+celery-redbeat
 
 git+https://github.com/superdesk/superdesk-core.git@develop#egg=superdesk-core
 git+https://github.com/superdesk/superdesk-planning.git@develop#egg=superdesk-planning
