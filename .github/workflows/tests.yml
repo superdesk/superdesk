@@ -5,6 +5,7 @@ on: [push, pull_request]
 jobs:
   server:
     strategy:
+      fail-fast: false
       matrix:
         python-version: ['3.8', '3.10', '3.12']
     uses: ./.github/workflows/server.yml
@@ -13,6 +14,7 @@ jobs:
 
   pytest:
     strategy:
+      fail-fast: false
       matrix:
         python-version: ['3.8', '3.10', '3.12']
     uses: ./.github/workflows/pytest.yml
@@ -21,6 +23,7 @@ jobs:
 
   behave:
     strategy:
+      fail-fast: false
       matrix:
         python-version: ['3.8', '3.10', '3.12']
     uses: ./.github/workflows/behave.yml
