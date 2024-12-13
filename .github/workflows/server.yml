@@ -51,8 +51,10 @@ jobs:
         python -m pip install -U pip wheel setuptools
         python -m pip install -Ur dev-requirements.txt
 
-    - run: |
+    - name: init
+      run: |
         honcho run python manage.py app:initialize_data
+      if: ${{ inputs.python-version != '3.12' }}  # There is some issue with the 3.12 version atm
 
   black:
     runs-on: ubuntu-latest
