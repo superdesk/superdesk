@@ -54,7 +54,7 @@ jobs:
     - name: init
       run: |
         honcho run python manage.py app:initialize_data
-      if: ${{ python-version != '3.12' }}  # There is some issue with the 3.12 version atm
+      if: ${{ inputs.python-version != '3.12' }}  # There is some issue with the 3.12 version atm
 
   black:
     runs-on: ubuntu-latest
