@@ -162,7 +162,7 @@ lxml==5.2.2
     #   lxml-html-clean
     #   superdesk-core
     #   xmlsec
-lxml-html-clean==0.2.2
+lxml-html-clean==0.4.0
     # via superdesk-core
 markupsafe==2.0.1
     # via
