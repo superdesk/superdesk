@@ -51,7 +51,9 @@ BROKER_URL = env("CELERY_BROKER_URL", REDIS_URL)
 SECRET_KEY = env("SECRET_KEY", "")
 
 # Highcharts Export Server - default settings
-ANALYTICS_ENABLE_SCHEDULED_REPORTS = strtobool(env("ANALYTICS_ENABLE_SCHEDULED_REPORTS", "true"))
+ANALYTICS_ENABLE_SCHEDULED_REPORTS = strtobool(
+    env("ANALYTICS_ENABLE_SCHEDULED_REPORTS", "true")
+)
 
 MACROS_MODULE = env("MACROS_MODULE", "macros")
 
@@ -73,8 +75,18 @@ LANGUAGES = [
     {"language": "de", "label": "German", "source": True, "destination": True},
     {"language": "no", "label": "Norwegian", "source": True, "destination": True},
     {"language": "pt-PT", "label": "Portugese", "source": True, "destination": True},
-    {"language": "pt-BR", "label": "Portugese (Brazil)", "source": True, "destination": True},
-    {"language": "zh-Hans", "label": "Chinese (分类)", "source": True, "destination": True},
+    {
+        "language": "pt-BR",
+        "label": "Portugese (Brazil)",
+        "source": True,
+        "destination": True,
+    },
+    {
+        "language": "zh-Hans",
+        "label": "Chinese (分类)",
+        "source": True,
+        "destination": True,
+    },
     {"language": "dk", "label": "Danish", "source": True, "destination": True},
     {"language": "es", "label": "Spanish", "source": True, "destination": True},
     {"language": "se", "label": "Swedish", "source": True, "destination": True},
