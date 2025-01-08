@@ -89,7 +89,7 @@ elasticsearch==7.13.4
     #   superdesk-core
 eve==2.1.0
     # via superdesk-core
-eve-elastic==7.4.1
+eve-elastic==7.4.3
     # via superdesk-core
 events==0.3
     # via eve

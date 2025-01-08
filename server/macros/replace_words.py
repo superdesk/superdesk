@@ -64,8 +64,10 @@ def find_and_replace(item, **kwargs):
 
             while re.search(pattern, input_string, flags=re.IGNORECASE):
                 # get the original string from the input
-                original = re.search(pattern, input_string, flags=re.IGNORECASE).group(0)
-                replacement = repl(word.get('replacement', ''), original)
+                original = re.search(pattern, input_string, flags=re.IGNORECASE).group(
+                    0
+                )
+                replacement = repl(word.get("replacement", ""), original)
                 if found_list.get(original):
                     break
                 diff[original] = replacement
