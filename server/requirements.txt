@@ -250,6 +250,7 @@ python-dateutil==2.9.0.post0
     #   arrow
     #   botocore
     #   celery
+    #   celery-redbeat
     #   croniter
     #   icalendar
     #   superdesk-core
@@ -282,6 +283,7 @@ quart-flask-patch==0.3.0
 redis==5.1.1
     # via
     #   celery
+    #   celery-redbeat
     #   superdesk-core
 regex==2024.9.11
     # via superdesk-core

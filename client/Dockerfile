@@ -1,10 +1,10 @@
 # BUILD
-FROM node:12 AS build
+FROM node:14 AS build
 
 # install client
 WORKDIR /tmp/client
 COPY . .
-RUN npm install --no-audit --unsafe-perm
+RUN npm ci
 RUN npm run build
 
 # DEPLOY
