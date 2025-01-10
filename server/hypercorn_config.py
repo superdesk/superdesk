@@ -7,5 +7,5 @@ workers = int(os.environ.get("WEB_CONCURRENCY", multiprocessing.cpu_count() + 1)
 accesslog = "-"
 access_log_format = "%(m)s %(U)s status=%(s)s time=%(T)ss size=%(B)sb"
 
-use_reload = 'SUPERDESK_RELOAD' in os.environ
-timeout = int(os.environ.get('WEB_TIMEOUT', 30))
+use_reload = "SUPERDESK_RELOAD" in os.environ
+timeout = int(os.environ.get("WEB_TIMEOUT", 30))
