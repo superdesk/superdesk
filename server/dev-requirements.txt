@@ -7,4 +7,4 @@ pytest==8.3.4
 httmock==1.4.0
 wooper==0.4.4
 mypy==1.14.1
-responses==0.25.5
+responses==0.25.6
