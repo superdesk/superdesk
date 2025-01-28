@@ -4,13 +4,13 @@
 #
 #    pip-compile requirements.in
 #
-amqp==5.2.0
+amqp==5.3.1
     # via kombu
 arrow==1.3.0
     # via
     #   eve-elastic
     #   superdesk-core
-async-timeout==4.0.3
+async-timeout==5.0.1
     # via redis
 authlib==0.14.3
     # via superdesk-core
@@ -26,21 +26,21 @@ blinker==1.8.2
     #   flask-mail
     #   raven
     #   superdesk-core
-boto3==1.35.30
+boto3==1.36.7
     # via superdesk-core
-botocore==1.35.30
+botocore==1.36.7
     # via
     #   boto3
     #   s3transfer
-cachetools==5.5.0
+cachetools==5.5.1
     # via flask-oidc-ex
 celery[redis]==5.4.0
     # via superdesk-core
-cerberus==1.3.5
+cerberus==1.3.7
     # via
     #   eve
     #   superdesk-core
-certifi==2024.8.30
+certifi==2024.12.14
     # via
     #   elastic-apm
     #   elasticsearch
@@ -51,11 +51,11 @@ chardet==5.2.0
     # via
     #   reportlab
     #   superdesk-core
-charset-normalizer==3.3.2
+charset-normalizer==3.4.1
     # via requests
-ciso8601==2.3.1
+ciso8601==2.3.2
     # via eve-elastic
-click==8.1.7
+click==8.1.8
     # via
     #   celery
     #   click-didyoumean
@@ -69,13 +69,13 @@ click-plugins==1.1.1
     # via celery
 click-repl==0.3.0
     # via celery
-croniter==3.0.3
+croniter==3.0.4
     # via superdesk-core
-cryptography==43.0.1
+cryptography==44.0.0
     # via
     #   authlib
     #   jwcrypto
-deepdiff==8.0.1
+deepdiff==8.1.1
     # via superdesk-planning
 draftjs-exporter[lxml]==2.1.0
     # via superdesk-core
@@ -89,7 +89,7 @@ elasticsearch==7.13.4
     #   superdesk-core
 eve==2.1.0
     # via superdesk-core
-eve-elastic==7.4.1
+eve-elastic==7.4.3
     # via superdesk-core
 events==0.3
     # via eve
@@ -170,15 +170,15 @@ oauth2client==4.1.3
     # via flask-oidc-ex
 oauthlib==3.2.2
     # via requests-oauthlib
-orderly-set==5.2.2
+orderly-set==5.2.3
     # via deepdiff
-packaging==24.1
+packaging==24.2
     # via gunicorn
 pillow==10.4.0
     # via
     #   reportlab
     #   superdesk-core
-prompt-toolkit==3.0.48
+prompt-toolkit==3.0.50
     # via click-repl
 pyasn1==0.6.1
     # via
@@ -199,7 +199,7 @@ pymongo==3.11.4
     #   eve
     #   mongolock
     #   superdesk-core
-pyparsing==3.1.4
+pyparsing==3.2.1
     # via httplib2
 python-dateutil==2.9.0.post0
     # via
@@ -233,7 +233,7 @@ redis==5.0.8
     #   superdesk-core
 regex==2024.7.24
     # via superdesk-core
-reportlab==4.2.4
+reportlab==4.2.5
     # via superdesk-core
 requests==2.32.3
     # via
@@ -244,28 +244,28 @@ requests-oauthlib==2.0.0
     # via python-twitter
 rsa==4.9
     # via oauth2client
-s3transfer==0.10.2
+s3transfer==0.11.2
     # via boto3
 sgmllib3k==1.0.0
     # via feedparser
 simplejson==3.19.3
     # via eve
-six==1.16.0
+six==1.17.0
     # via
     #   flask-oidc-ex
     #   oauth2client
     #   python-dateutil
-superdesk-core @ git+https://github.com/superdesk/superdesk-core.git@v2.8.0
+superdesk-core @ git+https://github.com/superdesk/superdesk-core.git@v2.8.5
     # via -r requirements.in
-superdesk-planning @ git+https://github.com/superdesk/superdesk-planning.git@v2.8.0
+superdesk-planning @ git+https://github.com/superdesk/superdesk-planning.git@v2.8.4
     # via -r requirements.in
-types-python-dateutil==2.9.0.20240906
+types-python-dateutil==2.9.0.20241206
     # via arrow
 typing-extensions==4.12.2
     # via
     #   jwcrypto
     #   superdesk-core
-tzdata==2024.2
+tzdata==2025.1
     # via
     #   celery
     #   kombu
@@ -293,7 +293,7 @@ werkzeug==1.0.1
     # via
     #   flask
     #   superdesk-core
-wrapt==1.16.0
+wrapt==1.17.2
     # via elastic-apm
 xmlsec==1.3.14
     # via superdesk-core
