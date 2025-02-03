@@ -12,6 +12,8 @@ pkg-config libxml2-dev libxmlsec1-dev libxmlsec1-openssl \
 libjpeg-dev zlib1g-dev \
 # magic
 libmagic-dev \
+# reportlab
+fonts-dejavu \
 && rm -rf /var/lib/apt/lists/* 
 
 # setup venv
