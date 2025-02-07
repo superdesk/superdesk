@@ -3,7 +3,7 @@
     "license": "AGPL-3.0",
     "dependencies": {
         "superdesk-core": "github:superdesk/superdesk-client-core#develop",
-        "superdesk-planning": "github:superdesk/superdesk-planning#feature/embedded-events-editor"
+        "superdesk-planning": "github:thecalcc/superdesk-planning#add-new-related-event-inline-button"
     },
     "scripts": {
         "build": "npx @superdesk/build-tools build-root-repo ./",
