@@ -61,11 +61,7 @@ module.exports = function() {
             elasticHighlight: true,
             planning: true,
             autorefreshContent: true,
-            nestedItemsInOutputStage: true,
             planning: true,
-            customAuthoringTopbar: {
-                toDesk: true,
-            },
         },
 
         item_profile: { change_profile: 1 },
