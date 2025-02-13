@@ -6,9 +6,9 @@
 #
 aiofiles==24.1.0
     # via quart
-aiohappyeyeballs==2.4.4
+aiohappyeyeballs==2.4.6
     # via aiohttp
-aiohttp==3.11.11
+aiohttp==3.11.12
     # via elasticsearch
 aiosignal==1.3.2
     # via aiohttp
@@ -26,17 +26,17 @@ async-timeout==5.0.1
     # via
     #   aiohttp
     #   redis
-attrs==24.3.0
+attrs==25.1.0
     # via aiohttp
-authlib==1.4.0
+authlib==1.4.1
     # via superdesk-core
-babel==2.16.0
+babel==2.17.0
     # via quart-babel
 bcrypt==4.2.1
     # via superdesk-core
 billiard==4.2.1
     # via celery
-blinker==1.8.2
+blinker==1.9.0
     # via
     #   elastic-apm
     #   flask
@@ -44,13 +44,13 @@ blinker==1.8.2
     #   quart
     #   sentry-sdk
     #   superdesk-core
-boto3==1.35.94
+boto3==1.36.19
     # via superdesk-core
-botocore==1.35.94
+botocore==1.36.19
     # via
     #   boto3
     #   s3transfer
-cachetools==5.5.0
+cachetools==5.5.1
     # via flask-oidc-ex
 celery[redis]==5.4.0
     # via superdesk-core
@@ -58,7 +58,7 @@ cerberus==1.3.7
     # via
     #   eve
     #   superdesk-core
-certifi==2024.12.14
+certifi==2025.1.31
     # via
     #   elastic-apm
     #   elasticsearch
@@ -88,13 +88,13 @@ click-plugins==1.1.1
     # via celery
 click-repl==0.3.0
     # via celery
-croniter==3.0.4
+croniter==6.0.0
     # via superdesk-core
-cryptography==44.0.0
+cryptography==44.0.1
     # via
     #   authlib
     #   jwcrypto
-deepdiff==8.1.1
+deepdiff==8.2.0
     # via superdesk-planning
 dnspython==2.7.0
     # via pymongo
@@ -108,9 +108,9 @@ elasticsearch[async]==7.17.12
     # via
     #   eve-elastic
     #   superdesk-core
-eve @ git+https://github.com/MarkLark86/eve@use-quart
+eve @ git+https://github.com/superdesk/eve@async
     # via superdesk-core
-eve-elastic @ git+https://github.com/MarkLark86/eve-elastic@use-quart
+eve-elastic @ git+https://github.com/superdesk/eve-elastic@async
     # via superdesk-core
 exceptiongroup==1.2.2
     # via
@@ -118,7 +118,7 @@ exceptiongroup==1.2.2
     #   taskgroup
 feedparser==6.0.11
     # via superdesk-core
-flask==3.0.3
+flask==3.1.0
     # via
     #   flask-mail
     #   flask-oidc-ex
@@ -137,7 +137,7 @@ h11==0.14.0
     # via
     #   hypercorn
     #   wsproto
-h2==4.1.0
+h2==4.2.0
     # via hypercorn
 hachoir==3.3.0
     # via superdesk-core
@@ -145,13 +145,13 @@ hermescache==1.0.0
     # via superdesk-core
 honcho==2.0.0
     # via -r requirements.in
-hpack==4.0.0
+hpack==4.1.0
     # via h2
 httplib2==0.22.0
     # via oauth2client
 hypercorn==0.17.3
     # via quart
-hyperframe==6.0.1
+hyperframe==6.1.0
     # via h2
 icalendar==5.0.13
     # via superdesk-planning
@@ -182,13 +182,13 @@ kombu==5.4.2
     #   superdesk-core
 ldap3==2.9.1
     # via superdesk-core
-lxml==5.2.2
+lxml==5.3.1
     # via
     #   draftjs-exporter
     #   lxml-html-clean
     #   superdesk-core
     #   xmlsec
-lxml-html-clean==0.3.1
+lxml-html-clean==0.4.1
     # via superdesk-core
 markupsafe==3.0.2
     # via
@@ -196,7 +196,7 @@ markupsafe==3.0.2
     #   quart
     #   superdesk-core
     #   werkzeug
-motor==3.6.0
+motor==3.7.0
     # via superdesk-core
 multidict==6.1.0
     # via
@@ -206,15 +206,15 @@ oauth2client==4.1.3
     # via flask-oidc-ex
 oauthlib==3.2.2
     # via requests-oauthlib
-orderly-set==5.2.3
+orderly-set==5.3.0
     # via deepdiff
-pillow==10.4.0
+pillow==11.1.0
     # via
     #   reportlab
     #   superdesk-core
 priority==2.0.0
     # via hypercorn
-prompt-toolkit==3.0.48
+prompt-toolkit==3.0.50
     # via click-repl
 propcache==0.2.1
     # via
@@ -230,11 +230,11 @@ pyasn1-modules==0.4.1
     # via oauth2client
 pycparser==2.22
     # via cffi
-pydantic==2.10.4
+pydantic==2.10.6
     # via superdesk-core
 pydantic-core==2.27.2
     # via pydantic
-pyjwt==2.8.0
+pyjwt==2.10.1
     # via superdesk-core
 pymemcache==4.0.0
     # via superdesk-core
@@ -250,7 +250,6 @@ python-dateutil==2.9.0.post0
     #   arrow
     #   botocore
     #   celery
-    #   celery-redbeat
     #   croniter
     #   icalendar
     #   superdesk-core
@@ -260,7 +259,7 @@ python-magic==0.4.27
     # via superdesk-core
 python-twitter==3.5
     # via superdesk-core
-pytz==2024.2
+pytz==2025.1
     # via
     #   croniter
     #   eve-elastic
@@ -280,14 +279,13 @@ quart-babel==1.0.7
     # via superdesk-core
 quart-flask-patch==0.3.0
     # via superdesk-core
-redis==5.1.1
+redis==5.2.1
     # via
     #   celery
-    #   celery-redbeat
     #   superdesk-core
-regex==2024.9.11
+regex==2024.11.6
     # via superdesk-core
-reportlab==4.2.5
+reportlab==4.3.1
     # via superdesk-core
 requests==2.32.3
     # via
@@ -298,7 +296,7 @@ requests-oauthlib==2.0.0
     # via python-twitter
 rsa==4.9
     # via oauth2client
-s3transfer==0.10.4
+s3transfer==0.11.2
     # via boto3
 sentry-sdk[quart]==1.45.1
     # via superdesk-core
@@ -321,7 +319,7 @@ tomli==2.2.1
     # via hypercorn
 types-python-dateutil==2.9.0.20241206
     # via arrow
-types-pytz==2024.2.0.20241221
+types-pytz==2025.1.0.20250204
     # via quart-babel
 typing-extensions==4.12.2
     # via
@@ -331,9 +329,8 @@ typing-extensions==4.12.2
     #   multidict
     #   pydantic
     #   pydantic-core
-    #   superdesk-core
     #   taskgroup
-tzdata==2024.2
+tzdata==2025.1
     # via
     #   celery
     #   kombu
@@ -362,7 +359,7 @@ werkzeug==3.1.3
     # via
     #   flask
     #   quart
-wrapt==1.17.0
+wrapt==1.17.2
     # via elastic-apm
 wsproto==1.2.0
     # via hypercorn
