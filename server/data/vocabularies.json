@@ -5,37 +5,30 @@
         "type": "manageable",
         "selection_type": "multi selection",
         "unique_field": "qcode",
-        "items": [{
-                "is_active": true,
-                "name": "FIXME1",
-                "qcode": "f1",
-                "subject": "",
-                "translations": {
-                    "name": {
-                        "fr": "FIXME1-fr",
-                        "es": "FIXME1-es"
-                    }
-                }
-            },
-            {
-                "is_active": true,
-                "name": "FIXME2",
-                "qcode": "f2",
-                "subject": "",
-                "translations": {
-                    "name": {
-                        "fr": "FIXME2-fr",
-                        "es": "FIXME2-es"
-                    }
-                }
-            }
+        "init_version": 1,
+        "items": [
+
+            {"is_active": true, "name": "FIXME1", "qcode": "f1", "subject": "", "translations": {"name": {"fr": "FIXME1-fr", "es": "FIXME1-es"}}},
+            {"is_active": true, "name": "FIXME2", "qcode": "f2", "subject": "", "translations": {"name": {"fr": "FIXME2-fr", "es": "FIXME2-es"}}}
         ],
         "schema": {
-            "name": {
-                "translate": true
-            },
+            "name": {"translate": true},
             "qcode": {},
             "subject": {}
+        },
+        "translations": {
+            "display_name": {
+                "ar": "فئات",
+                "da": "kategorier",
+                "de-DE": "Kategorien",
+                "el": "κατηγορίες",
+                "es": "categorías",
+                "nb": "kategorier",
+                "pt-BR": "categorias",
+                "ru-RU": "категории",
+                "uk-UA": "категорії",
+                "fr-CA": "Catégories"
+            }
         }
     },
     {
@@ -44,38 +37,33 @@
         "type": "manageable",
         "selection_type": "multi selection",
         "unique_field": "qcode",
-        "items": [{
-                "is_active": true,
-                "qcode": "a"
-            },
-            {
-                "is_active": true,
-                "qcode": "e"
-            },
-            {
-                "is_active": true,
-                "qcode": "f"
-            },
-            {
-                "is_active": true,
-                "qcode": "i"
-            },
-            {
-                "is_active": true,
-                "qcode": "s"
-            },
-            {
-                "is_active": true,
-                "qcode": "t"
-            },
-            {
-                "is_active": true,
-                "qcode": "v"
-            }
+        "items": [
+            {"is_active": true, "qcode": "a"},
+            {"is_active": true, "qcode": "e"},
+            {"is_active": true, "qcode": "f"},
+            {"is_active": true, "qcode": "i"},
+            {"is_active": true, "qcode": "s"},
+            {"is_active": true, "qcode": "t"},
+            {"is_active": true, "qcode": "v"}
         ],
         "schema": {
             "qcode": {}
         }
+    },
+    {
+        "_id": "languages",
+        "display_name": "Languages",
+        "type": "manageable",
+        "unique_field": "qcode",
+        "init_version": 1,
+        "service": { "all": 1 },
+        "items": [
+            {"name": "Nederlands", "qcode": "nl", "is_active": true },
+            {"name": "Français", "qcode": "fr", "is_active": true },
+            {"name": "English", "qcode": "en", "is_active": true },
+            {"name": "Deutsch", "qcode": "de", "is_active": true },
+            {"name": "Español", "qcode": "es", "is_active": true }
+        ]
     },
     {
         "_id": "genre",
@@ -83,127 +71,48 @@
         "type": "manageable",
         "selection_type": "multi selection",
         "unique_field": "qcode",
-        "items": [{
-                "is_active": true,
-                "name": "Article (news)",
-                "qcode": "Article"
-            },
-            {
-                "is_active": true,
-                "name": "Sidebar",
-                "qcode": "Sidebar"
-            },
-            {
-                "is_active": true,
-                "name": "Factbox",
-                "qcode": "Factbox"
-            },
-            {
-                "is_active": true,
-                "name": "Feature",
-                "qcode": "Feature"
-            },
-            {
-                "is_active": true,
-                "name": "Newsfeature",
-                "qcode": "Newsfeature"
-            },
-            {
-                "is_active": true,
-                "name": "Backgrounder",
-                "qcode": "Backgrounder"
-            },
-            {
-                "is_active": true,
-                "name": "Opinion",
-                "qcode": "Opinion"
-            },
-            {
-                "is_active": true,
-                "name": "View (incl parly sketch)",
-                "qcode": "View"
-            },
-            {
-                "is_active": true,
-                "name": "Modular",
-                "qcode": "Modular"
-            },
-            {
-                "is_active": true,
-                "name": "Broadcast Script",
-                "qcode": "Broadcast Script"
-            },
-            {
-                "is_active": true,
-                "name": "Briefs",
-                "qcode": "Briefs"
-            },
-            {
-                "is_active": true,
-                "name": "Colour piece",
-                "qcode": "Colour piece"
-            },
-            {
-                "is_active": true,
-                "name": "Obituary",
-                "qcode": "Obituary"
-            },
-            {
-                "is_active": true,
-                "name": "Analysis",
-                "qcode": "Analysis"
-            },
-            {
-                "is_active": true,
-                "name": "Timeline",
-                "qcode": "Timeline"
-            },
-            {
-                "is_active": true,
-                "name": "Chronology",
-                "qcode": "Chronology"
-            },
-            {
-                "is_active": true,
-                "name": "Interview",
-                "qcode": "Interview"
-            },
-            {
-                "is_active": true,
-                "name": "Results (sport)",
-                "qcode": "Results (sport)"
-            },
-            {
-                "is_active": true,
-                "name": "Market Open",
-                "qcode": "Market Open"
-            },
-            {
-                "is_active": true,
-                "name": "Market Close",
-                "qcode": "Market Close"
-            },
-            {
-                "is_active": true,
-                "name": "Market Report",
-                "qcode": "Market Report"
-            },
-            {
-                "is_active": true,
-                "name": "Review",
-                "qcode": "Review"
-            },
-            {
-                "is_active": true,
-                "name": "Preview",
-                "qcode": "Preview"
-            }
+        "init_version": 1,
+        "items": [
+            {"is_active": true, "name": "Article (news)", "qcode": "Article"},
+            {"is_active": true, "name": "Sidebar", "qcode": "Sidebar"},
+            {"is_active": true, "name": "Factbox", "qcode": "Factbox"},
+            {"is_active": true, "name": "Feature", "qcode": "Feature"},
+            {"is_active": true, "name": "Newsfeature", "qcode": "Newsfeature"},
+            {"is_active": true, "name": "Backgrounder", "qcode": "Backgrounder"},
+            {"is_active": true, "name": "Opinion", "qcode": "Opinion"},
+            {"is_active": true, "name": "View (incl parly sketch)", "qcode": "View"},
+            {"is_active": true, "name": "Modular", "qcode": "Modular"},
+            {"is_active": true, "name": "Broadcast Script", "qcode": "Broadcast Script"},
+            {"is_active": true, "name": "Briefs", "qcode": "Briefs"},
+            {"is_active": true, "name": "Colour piece", "qcode": "Colour piece"},
+            {"is_active": true, "name": "Obituary", "qcode": "Obituary"},
+            {"is_active": true, "name": "Analysis", "qcode": "Analysis"},
+            {"is_active": true, "name": "Timeline", "qcode": "Timeline"},
+            {"is_active": true, "name": "Chronology", "qcode": "Chronology"},
+            {"is_active": true, "name": "Interview", "qcode": "Interview"},
+            {"is_active": true, "name": "Results (sport)", "qcode": "Results (sport)"},
+            {"is_active": true, "name": "Market Open", "qcode": "Market Open"},
+            {"is_active": true, "name": "Market Close", "qcode": "Market Close"},
+            {"is_active": true, "name": "Market Report", "qcode": "Market Report"},
+            {"is_active": true, "name": "Review", "qcode": "Review"},
+            {"is_active": true, "name": "Preview", "qcode": "Preview"}
         ],
         "schema": {
-            "name": {
-                "translate": true
-            },
+            "name": {"translate": true},
             "qcode": {}
+        },
+        "translations": {
+            "display_name": {
+                "da": "genre",
+                "de-DE": "genre",
+                "el": "Είδος",
+                "es": "genero",
+                "fr-CA": "version",
+                "nb": "Stofftype",
+                "pt-BR": "gênero",
+                "ru-RU": "Жанр",
+                "uk-UA": "Жанр"
+            }
         }
     },
     {
@@ -212,48 +121,31 @@
         "type": "manageable",
         "selection_type": "multi selection",
         "unique_field": "qcode",
-        "items": [{
-                "is_active": true,
-                "name": "1",
-                "qcode": 1
-            },
-            {
-                "is_active": true,
-                "name": "2",
-                "qcode": 2
-            },
-            {
-                "is_active": true,
-                "name": "3",
-                "qcode": 3
-            },
-            {
-                "is_active": true,
-                "name": "4",
-                "qcode": 4
-            },
-            {
-                "is_active": true,
-                "name": "5",
-                "qcode": 5
-            }
+        "init_version": 1,
+        "items": [
+            {"is_active": true, "name": "1", "qcode": 1},
+            {"is_active": true, "name": "2", "qcode": 2},
+            {"is_active": true, "name": "3", "qcode": 3},
+            {"is_active": true, "name": "4", "qcode": 4},
+            {"is_active": true, "name": "5", "qcode": 5}
         ],
         "schema": {
-            "name": {
-                "translate": true
-            },
-            "qcode": {
-                "type": "integer"
-            },
-            "color": {
-                "type": "color",
-                "label": "Сolour"
-            },
-            "short": {
-                "type": "short",
-                "label": "List Name",
-                "maxlength": 2,
-                "translate": true
+            "name": {"translate": true},
+            "qcode": {"type": "integer"},
+            "color": {"type": "color", "label": "Сolour"},
+            "short": {"type": "short", "label": "List Name", "maxlength": 2, "translate": true}
+        },
+        "translations": {
+            "display_name": {
+                "da": "haster",
+                "de-DE": "dringlichkeit",
+                "el": "Επείγον",
+                "es": "urgencia",
+                "fr-CA": "urgence",
+                "nb": "Hast",
+                "pt-BR": "Urgência",
+                "ru-RU": "Срочность",
+                "uk-UA": "Tерміновість"
             }
         }
     },
@@ -263,144 +155,49 @@
         "type": "manageable",
         "selection_type": "multi selection",
         "unique_field": "qcode",
-        "items": [{
-                "is_active": true,
-                "name": "1",
-                "qcode": 1
-            },
-            {
-                "is_active": true,
-                "name": "2",
-                "qcode": 2
-            },
-            {
-                "is_active": true,
-                "name": "3",
-                "qcode": 3
-            },
-            {
-                "is_active": true,
-                "name": "4",
-                "qcode": 4
-            },
-            {
-                "is_active": true,
-                "name": "5",
-                "qcode": 5
-            },
-            {
-                "is_active": true,
-                "name": "6",
-                "qcode": 6
-            },
-            {
-                "is_active": false,
-                "name": "7",
-                "qcode": 7
-            },
-            {
-                "is_active": false,
-                "name": "8",
-                "qcode": 8
-            },
-            {
-                "is_active": false,
-                "name": "9",
-                "qcode": 9
-            }
+        "init_version": 1,
+        "items": [
+            {"is_active": true, "name": "1", "qcode": 1},
+            {"is_active": true, "name": "2", "qcode": 2},
+            {"is_active": true, "name": "3", "qcode": 3},
+            {"is_active": true, "name": "4", "qcode": 4},
+            {"is_active": true, "name": "5", "qcode": 5},
+            {"is_active": true, "name": "6", "qcode": 6},
+            {"is_active": false, "name": "7", "qcode": 7},
+            {"is_active": false, "name": "8", "qcode": 8},
+            {"is_active": false, "name": "9", "qcode": 9}
         ],
         "schema": {
-            "name": {
-                "translate": true
-            },
-            "qcode": {
-                "type": "integer"
-            },
-            "color": {
-                "type": "color",
-                "label": "Сolour"
-            },
-            "short": {
-                "type": "short",
-                "label": "List Name",
-                "maxlength": 2,
-                "translate": true
+            "name": {"translate": true},
+            "qcode": {"type": "integer"},
+            "color": {"type": "color", "label": "Сolour"},
+            "short": {"type": "short", "label": "List Name", "maxlength": 2, "translate": true}
+        },
+        "translations": {
+            "display_name": {
+                "da": "prioritet",
+                "de-DE": "priorität",
+                "el": "Προτεραιότητα",
+                "es": "prioridad",
+                "fr-CA": "Priorité",
+                "nb": "viktighet",
+                "pt-BR": "prioridade",
+                "ru-RU": "Приоритет",
+                "uk-UA": "Пріоритет"
             }
         }
-    },
-    {
-        "_id": "type",
-        "display_name": "Article Type",
-        "type": "unmanageable",
-        "selection_type": "multi selection",
-        "items": [{
-                "is_active": true,
-                "name": "text",
-                "qcode": "text"
-            },
-            {
-                "is_active": true,
-                "name": "preformatted",
-                "qcode": "preformatted"
-            },
-            {
-                "is_active": true,
-                "name": "audio",
-                "qcode": "audio"
-            },
-            {
-                "is_active": true,
-                "name": "video",
-                "qcode": "video"
-            },
-            {
-                "is_active": true,
-                "name": "picture",
-                "qcode": "picture"
-            },
-            {
-                "is_active": true,
-                "name": "graphic",
-                "qcode": "graphic"
-            },
-            {
-                "is_active": true,
-                "name": "composite",
-                "qcode": "composite"
-            }
-        ],
-        "init_version": 1
     },
     {
         "_id": "signal",
         "display_name": "Signal",
         "type": "unmanageable",
         "selection_type": "multi selection",
-        "items": [{
-                "is_active": true,
-                "name": "Correction",
-                "qcode": "Correction"
-            },
-            {
-                "is_active": true,
-                "name": "Update",
-                "qcode": "Update"
-            },
-            {
-                "is_active": true,
-                "name": "Add",
-                "qcode": "Add"
-            },
-            {
-                "is_active": true,
-                "name": "Repeat",
-                "qcode": "Repeat"
-            },
-            {
-                "is_active": true,
-                "name": "Content Warning",
-                "qcode": "Content Warning"
-            }
+        "items": [
+            {"is_active": true, "name": "Correction", "qcode": "Correction"},
+            {"is_active": true, "name": "Update", "qcode": "Update"},
+            {"is_active": true, "name": "Add", "qcode": "Add"},
+            {"is_active": true, "name": "Repeat", "qcode": "Repeat"},
+            {"is_active": true, "name": "Content Warning", "qcode": "Content Warning"}
         ]
     },
     {
@@ -408,149 +205,22 @@
         "display_name": "Copyrights",
         "type": "manageable",
         "selection_type": "multi selection",
-        "items": [{
-            "is_active": true,
-            "name": "default",
-            "copyrightHolder": "",
-            "copyrightNotice": "",
-            "usageTerms": ""
-        }],
-        "schema": {
-            "name": {
-                "translate": true
-            },
-            "copyrightHolder": {
-                "label": "Copyright Holder",
-                "translate": true
-            },
-            "copyrightNotice": {
-                "label": "Copyright Notice",
-                "translate": true
-            },
-            "usageTerms": {
-                "label": "Usage Terms",
-                "translate": true
-            }
-        },
-        "unique_field": "name"
-    },
-    {
-        "_id": "subscriber_types",
-        "display_name": "Subscriber Types",
-        "type": "unmanageable",
-        "selection_type": "do not show",
-        "items": [{
-                "is_active": true,
-                "name": "All",
-                "qcode": "all",
-                "formats": [{
-                        "name": "NINJS",
-                        "qcode": "ninjs"
-                    },
-                    {
-                        "name": "NINJSv2",
-                        "qcode": "ninjs2"
-                    },
-                    {
-                        "name": "NewsML G2",
-                        "qcode": "newsmlg2"
-                    },
-                    {
-                        "name": "Email",
-                        "qcode": "email"
-                    },
-                    {
-                        "name": "Newsroom NINJS",
-                        "qcode": "newsroom ninjs"
-                    },
-                    {
-                        "name": "Adobe InDesign (IDML)",
-                        "qcode": "idml"
-                    },
-                    {
-                        "name": "JSON Event",
-                        "qcode": "json_event"
-                    },
-                    {
-                        "name": "JSON Planning",
-                        "qcode": "json_planning"
-                    },
-                    {
-                        "name": "JSON Planning Featured",
-                        "qcode": "json_planning_featured"
-                    }
-                ]
-            },
+        "items": [
             {
                 "is_active": true,
-                "name": "Digital/Internet",
-                "qcode": "digital",
-                "formats": [{
-                        "name": "NINJS",
-                        "qcode": "ninjs"
-                    },
-                    {
-                        "name": "NINJSv2",
-                        "qcode": "ninjs2"
-                    },
-                    {
-                        "name": "NewsML G2",
-                        "qcode": "newsmlg2"
-                    },
-                    {
-                        "name": "Email",
-                        "qcode": "email"
-                    },
-                    {
-                        "name": "Newsroom NINJS",
-                        "qcode": "newsroom ninjs"
-                    },
-                    {
-                        "name": "Adobe InDesign (IDML)",
-                        "qcode": "idml"
-                    },
-                    {
-                        "name": "JSON Event",
-                        "qcode": "json_event"
-                    },
-                    {
-                        "name": "JSON Planning",
-                        "qcode": "json_planning"
-                    },
-                    {
-                        "name": "JSON Planning Featured",
-                        "qcode": "json_planning_featured"
-                    }
-                ]
-            },
-            {
-                "is_active": true,
-                "name": "Wire/Paper",
-                "qcode": "wire",
-                "formats": [{
-                        "name": "NITF",
-                        "qcode": "nitf"
-                    },
-                    {
-                        "name": "Email",
-                        "qcode": "email"
-                    },
-                    {
-                        "name": "JSON Event",
-                        "qcode": "json_event"
-                    },
-                    {
-                        "name": "JSON Planning",
-                        "qcode": "json_planning"
-                    },
-                    {
-                        "name": "JSON Planning Featured",
-                        "qcode": "json_planning_featured"
-                    }
-                ]
+                "name": "default",
+                "copyrightHolder": "",
+                "copyrightNotice": "",
+                "usageTerms": ""
             }
         ],
-        "init_version": 3
+        "schema": {
+            "name": {"translate": true},
+            "copyrightHolder": {"label": "Copyright Holder", "translate": true},
+            "copyrightNotice": {"label": "Copyright Notice", "translate": true},
+            "usageTerms": {"label": "Usage Terms", "translate": true}
+        },
+        "unique_field": "name"
     },
     {
         "_id": "crop_sizes",
@@ -558,20 +228,13 @@
         "type": "manageable",
         "selection_type": "do not show",
         "unique_field": "name",
-        "items": [{
-            "is_active": true,
-            "name": "FIXME",
-            "width": 800,
-            "height": 600
-        }],
+        "items": [
+            {"is_active": true, "name": "FIXME", "width": 800, "height": 600}
+        ],
         "schema": {
             "name": {},
-            "width": {
-                "type": "int"
-            },
-            "height": {
-                "type": "int"
-            }
+            "width": {"type": "int"},
+            "height": {"type": "int"}
         }
     },
     {
@@ -579,16 +242,9 @@
         "display_name": "Desk Types",
         "type": "unmanageable",
         "selection_type": "do not show",
-        "items": [{
-                "is_active": true,
-                "name": "authoring",
-                "qcode": "authoring"
-            },
-            {
-                "is_active": true,
-                "name": "production",
-                "qcode": "production"
-            }
+        "items": [
+            {"is_active": true, "name": "authoring", "qcode": "authoring"},
+            {"is_active": true, "name": "production", "qcode": "production"}
         ]
     },
     {
@@ -596,11 +252,9 @@
         "display_name": "Replacement Words",
         "type": "manageable",
         "selection_type": "do not show",
-        "items": [{
-            "is_active": true,
-            "existing": "FIXME",
-            "replacement": ""
-        }],
+        "items": [
+            {"is_active": true, "existing": "FIXME", "replacement": ""}
+        ],
         "schema": {
             "existing": {},
             "replacement": {}
@@ -613,25 +267,15 @@
         "type": "manageable",
         "selection_type": "multi selection",
         "unique_field": "qcode",
-        "items": [{
-            "is_active": true,
-            "name": "NSW",
-            "qcode": "NSW"
-        }],
+        "items": [
+            {"is_active": true, "name": "NSW", "qcode": "NSW"}
+        ],
         "schema": {
-            "name": {
-                "translate": true
-            },
+            "name": {"translate": true},
             "qcode": {},
-            "state": {
-                "translate": true
-            },
-            "country": {
-                "translate": true
-            },
-            "world_region": {
-                "translate": true
-            },
+            "state": {"translate": true},
+            "country": {"translate": true},
+            "world_region": {"translate": true},
             "group": {}
         }
     },
@@ -640,21 +284,10 @@
         "display_name": "Product Types",
         "type": "unmanageable",
         "selection_type": "do not show",
-        "items": [{
-                "is_active": true,
-                "name": "API",
-                "qcode": "api"
-            },
-            {
-                "is_active": true,
-                "name": "Direct",
-                "qcode": "direct"
-            },
-            {
-                "is_active": true,
-                "name": "Both",
-                "qcode": "both"
-            }
+        "items": [
+            {"is_active": true, "name": "API", "qcode": "api"},
+            {"is_active": true, "name": "Direct", "qcode": "direct"},
+            {"is_active": true, "name": "Both", "qcode": "both"}
         ]
     },
     {
@@ -663,20 +296,13 @@
         "type": "manageable",
         "selection_type": "do not show",
         "unique_field": "qcode",
-        "items": [{
-                "is_active": true,
-                "name": "Regular",
-                "qcode": "regular"
-            },
-            {
-                "is_active": true,
-                "name": "Remark",
-                "qcode": "remark"
-            }
+        "items": [
+            {"is_active": true, "name": "Regular", "qcode": "regular"},
+            {"is_active": true, "name": "Remark", "qcode": "remark"}
         ],
-        "schema": {
-            "name": {},
-            "qcode": {}
+        "schema" : {
+            "name" : {},
+            "qcode" : {}
         }
     },
     {
@@ -685,15 +311,11 @@
         "type": "manageable",
         "selection_type": "do not show",
         "unique_field": "qcode",
-        "items": [{
-            "is_active": true,
-            "name": "Writer",
-            "qcode": "writer"
-        }],
+        "items": [
+            {"is_active": true, "name": "Writer", "qcode": "writer"}
+        ],
         "schema": {
-            "name": {
-                "translate": true
-            },
+            "name": {"translate": true},
             "qcode": {}
         }
     },
@@ -703,96 +325,27 @@
         "type": "manageable",
         "selection_type": "do not show",
         "unique_field": "qcode",
-        "items": [{
-                "is_active": true,
-                "name": "Director",
-                "qcode": "director"
-            },
-            {
-                "is_active": true,
-                "name": "Media Advisor",
-                "qcode": "media_advisor"
-            },
-            {
-                "is_active": true,
-                "name": "Publicity Officer",
-                "qcode": "publicity_officer"
-            },
-            {
-                "is_active": true,
-                "name": "Spokesperson",
-                "qcode": "spokesperson"
-            },
-            {
-                "is_active": true,
-                "name": "Spokeswoman",
-                "qcode": "spokeswoman"
-            },
-            {
-                "is_active": true,
-                "name": "President",
-                "qcode": "president"
-            },
-            {
-                "is_active": true,
-                "name": "CEO",
-                "qcode": "ceo"
-            },
-            {
-                "is_active": true,
-                "name": "Vice President",
-                "qcode": "vice_presedent"
-            },
-            {
-                "is_active": true,
-                "name": "Chairman",
-                "qcode": "chairman"
-            },
-            {
-                "is_active": true,
-                "name": "Carer",
-                "qcode": "carer"
-            },
-            {
-                "is_active": true,
-                "name": "General Secretary",
-                "qcode": "general_secretary"
-            },
-            {
-                "is_active": true,
-                "name": "Media Officer",
-                "qcode": "media_officer"
-            },
-            {
-                "is_active": true,
-                "name": "Mayor",
-                "qcode": "mayor"
-            },
-            {
-                "is_active": true,
-                "name": "Lord Mayor",
-                "qcode": "lord_mayor"
-            },
-            {
-                "is_active": true,
-                "name": "Director of Media",
-                "qcode": "director_of_media"
-            },
-            {
-                "is_active": true,
-                "name": "Media Contact",
-                "qcode": "media_contact"
-            },
-            {
-                "is_active": true,
-                "name": "Spokesman",
-                "qcode": "spokesman"
-            }
+        "items": [
+            {"is_active": true, "name": "Director", "qcode": "director"},
+            {"is_active": true, "name": "Media Advisor", "qcode": "media_advisor"},
+            {"is_active": true, "name": "Publicity Officer", "qcode": "publicity_officer"},
+            {"is_active": true, "name": "Spokesperson", "qcode": "spokesperson"},
+            {"is_active": true, "name": "Spokeswoman", "qcode": "spokeswoman"},
+            {"is_active": true, "name": "President", "qcode": "president"},
+            {"is_active": true, "name": "CEO", "qcode": "ceo"},
+            {"is_active": true, "name": "Vice President", "qcode": "vice_presedent"},
+            {"is_active": true, "name": "Chairman", "qcode": "chairman"},
+            {"is_active": true, "name": "Carer", "qcode": "carer"},
+            {"is_active": true, "name": "General Secretary", "qcode": "general_secretary"},
+            {"is_active": true, "name": "Media Officer", "qcode": "media_officer"},
+            {"is_active": true, "name": "Mayor", "qcode": "mayor"},
+            {"is_active": true, "name": "Lord Mayor", "qcode": "lord_mayor"},
+            {"is_active": true, "name": "Director of Media", "qcode": "director_of_media"},
+            {"is_active": true, "name": "Media Contact", "qcode": "media_contact"},
+            {"is_active": true, "name": "Spokesman", "qcode": "spokesman"}
         ],
         "schema": {
-            "name": {
-                "translate": true
-            },
+            "name": {"translate": true},
             "qcode": {}
         }
     },
@@ -802,11 +355,9 @@
         "type": "manageable",
         "selection_type": "do not show",
         "unique_field": "qcode",
-        "items": [{
-            "is_active": true,
-            "qcode": "story-label:featured",
-            "name": "Featured"
-        }],
+        "items": [
+            {"is_active": true, "qcode": "story-label:featured", "name": "Featured"}
+        ],
         "schema": {
             "qcode": {},
             "name": {},
@@ -820,21 +371,10 @@
         "type": "manageable",
         "unique_field": "qcode",
         "selection_type": "single selection",
-        "items": [{
-                "is_active": true,
-                "qcode": "single-usage",
-                "name": "Single Usage"
-            },
-            {
-                "is_active": true,
-                "qcode": "time-restricted",
-                "name": "Time Restricted"
-            },
-            {
-                "is_active": true,
-                "qcode": "indefinite-usage",
-                "name": "Indefinite Usage"
-            }
+        "items": [
+            {"is_active": true, "qcode": "single-usage", "name": "Single Usage"},
+            {"is_active": true, "qcode": "time-restricted", "name": "Time Restricted"},
+            {"is_active": true, "qcode": "indefinite-usage", "name": "Indefinite Usage"}
         ],
         "schema": {
             "qcode": {},
@@ -846,7 +386,8 @@
         "display_name": "Contact mobile usage",
         "type": "manageable",
         "unique_field": "qcode",
-        "items": [{
+        "items": [
+            {
                 "is_active": true,
                 "qcode": "Confidential",
                 "name": "Confidential number",
@@ -866,7 +407,8 @@
         "display_name": "Contact phone usage",
         "type": "manageable",
         "unique_field": "qcode",
-        "items": [{
+        "items": [
+            {
                 "is_active": true,
                 "qcode": "Confidential",
                 "name": "Confidential number",
@@ -886,7 +428,8 @@
         "display_name": "Countries",
         "type": "manageable",
         "unique_field": "qcode",
-        "items": [{
+        "items": [
+            {
                 "is_active": true,
                 "qcode": "AFG",
                 "name": "Afghanistan"
@@ -2129,7 +1672,8 @@
         "selection_type": "multi selection",
         "unique_field": "qcode",
         "display_name": "State / Region",
-        "items": [{
+        "items": [
+            {
                 "is_active": true,
                 "name": "Alabama",
                 "qcode": "AL"
@@ -2428,55 +1972,228 @@
         "helper_text": "The administrative state or region of an address"
     },
     {
+        "_id": "type",
+        "display_name": "Article Type",
+        "type": "unmanageable",
+        "selection_type": "multi selection",
+        "init_version": 2,
+        "items": [{
+            "is_active": true,
+            "name": "text",
+            "qcode": "text"
+        }, {
+            "is_active": true,
+            "name": "preformatted",
+            "qcode": "preformatted"
+        }, {
+            "is_active": true,
+            "name": "audio",
+            "qcode": "audio"
+        }, {
+            "is_active": true,
+            "name": "video",
+            "qcode": "video"
+        }, {
+            "is_active": true,
+            "name": "picture",
+            "qcode": "picture"
+        }, {
+            "is_active": true,
+            "name": "graphic",
+            "qcode": "graphic"
+        }, {
+            "is_active": true,
+            "name": "composite",
+            "qcode": "composite"
+        }, {
+            "is_active": true,
+            "name": "planning item",
+            "qcode": "planning"
+        }, {
+            "is_active": true,
+            "name": "event",
+            "qcode": "event"
+        }]
+    },
+    {
+        "_id": "subscriber_types",
+        "display_name": "Subscriber Types",
+        "type": "unmanageable",
+        "selection_type": "do not show",
+        "init_version": 4,
+        "items": [{
+            "is_active": true,
+            "name": "All",
+            "qcode": "all",
+            "formats": [{
+                "name": "NINJS",
+                "qcode": "ninjs"
+            },
+            {
+                "name": "NINJSv2",
+                "qcode": "ninjs2"
+            },
+            {
+                "name": "NINJS FTP",
+                "qcode": "ftp ninjs"
+            },
+            {
+                "name": "NewsML G2",
+                "qcode": "newsmlg2"
+            },
+            {
+                "name": "Email",
+                "qcode": "email"
+            },
+            {
+                "name": "Newsroom NINJS",
+                "qcode": "newsroom ninjs"
+            },
+            {
+                "name": "Adobe InDesign (IDML)",
+                "qcode": "idml"
+            },
+            {
+                "name": "iMatrics",
+                "qcode": "imatrics"
+            },
+            {
+                "name": "JSON Event",
+                "qcode": "json_event"
+            },
+            {
+                "name": "JSON Planning",
+                "qcode": "json_planning"
+            },
+            {
+                "name": "JSON Planning Featured",
+                "qcode": "json_planning_featured"
+            }]
+        },
+        {
+            "is_active": true,
+            "name": "Digital/Internet",
+            "qcode": "digital",
+            "formats": [{
+                "name": "NINJS",
+                "qcode": "ninjs"
+            },
+            {
+                "name": "NINJSv2",
+                "qcode": "ninjs2"
+            },
+            {
+                "name": "NINJS FTP",
+                "qcode": "ftp ninjs"
+            },
+            {
+                "name": "NewsML G2",
+                "qcode": "newsmlg2"
+            },
+            {
+                "name": "Email",
+                "qcode": "email"
+            },
+            {
+                "name": "Newsroom NINJS",
+                "qcode": "newsroom ninjs"
+            },
+            {
+                "name": "Adobe InDesign (IDML)",
+                "qcode": "idml"
+            },
+            {
+                "name": "iMatrics",
+                "qcode": "imatrics"
+            },
+            {
+                "name": "JSON Event",
+                "qcode": "json_event"
+            },
+            {
+                "name": "JSON Planning",
+                "qcode": "json_planning"
+            },
+            {
+                "name": "JSON Planning Featured",
+                "qcode": "json_planning_featured"
+            }]
+        },
+        {
+            "is_active": true,
+            "name": "Wire/Paper",
+            "qcode": "wire",
+            "formats": [{
+                "name": "NITF",
+                "qcode": "nitf"
+            },
+            {
+                "name": "Email",
+                "qcode": "email"
+            },
+            {
+                "name": "JSON Event",
+                "qcode": "json_event"
+            },
+            {
+                "name": "JSON Planning",
+                "qcode": "json_planning"
+            },
+            {
+                "name": "JSON Planning Featured",
+                "qcode": "json_planning_featured"
+            }]
+        }]
+    },
+    {
         "_id": "g2_content_type",
         "display_name": "Coverage content types",
         "type": "manageable",
         "unique_field": "qcode",
         "selection_type": "do not show",
+        "init_version": 1,
         "items": [{
-                "is_active": true,
-                "name": "Text",
-                "qcode": "text",
-                "content item type": "text"
-            },
-            {
-                "is_active": true,
-                "name": "Picture",
-                "qcode": "picture",
-                "content item type": "picture"
-            },
-            {
-                "is_active": true,
-                "name": "Video",
-                "qcode": "video",
-                "content item type": "video"
-            },
-            {
-                "is_active": true,
-                "name": "Audio",
-                "qcode": "audio",
-                "content item type": "audio"
-            },
-            {
-                "is_active": true,
-                "name": "Infographics",
-                "qcode": "infographics",
-                "content item type": ""
-            },
-            {
-                "is_active": true,
-                "name": "Live video",
-                "qcode": "live_video",
-                "content item type": ""
-            },
-            {
-                "is_active": true,
-                "name": "Live blog",
-                "qcode": "live_blog",
-                "content item type": ""
-            }
-
-        ]
+            "is_active": true,
+            "name": "Text",
+            "qcode": "text",
+            "content item type": "text"
+        },
+        {
+            "is_active": true,
+            "name": "Picture",
+            "qcode": "picture",
+            "content item type": "picture"
+        },
+        {
+            "is_active": true,
+            "name": "Video",
+            "qcode": "video",
+            "content item type": "video"
+        },
+        {
+            "is_active": true,
+            "name": "Audio",
+            "qcode": "audio",
+            "content item type": "audio"
+        },
+        {
+            "is_active": true,
+            "name": "Infographics",
+            "qcode": "infographics",
+            "content item type": ""
+        },
+        {
+            "is_active": true,
+            "name": "Live video",
+            "qcode": "live_video",
+            "content item type": ""
+        },
+        {
+            "is_active": true,
+            "name": "Live blog",
+            "qcode": "live_blog",
+            "content item type": ""
+        }]
     },
     {
         "_id": "eventoccurstatus",
@@ -2484,49 +2201,49 @@
         "type": "manageable",
         "unique_field": "qcode",
         "selection_type": "do not show",
+        "init_version": 1,
         "items": [{
-                "is_active": true,
-                "qcode": "eocstat:eos0",
-                "name": "Unplanned event",
-                "label": "Unplanned event"
-            },
-            {
-                "is_active": true,
-                "qcode": "eocstat:eos1",
-                "name": "Planned, occurence planned only",
-                "label": "Planned, occurence planned only"
-            },
-            {
-                "is_active": true,
-                "qcode": "eocstat:eos2",
-                "name": "Planned, occurence highly uncertain",
-                "label": "Planned, occurence highly uncertain"
-            },
-            {
-                "is_active": true,
-                "qcode": "eocstat:eos3",
-                "name": "Planned, May occur",
-                "label": "Planned, May occur"
-            },
-            {
-                "is_active": true,
-                "qcode": "eocstat:eos4",
-                "name": "Planned, occurence highly likely",
-                "label": "Planned, occurence highly likely"
-            },
-            {
-                "is_active": true,
-                "qcode": "eocstat:eos5",
-                "name": "Planned, occurs certainly",
-                "label": "Planned, occurs certainly"
-            },
-            {
-                "is_active": false,
-                "qcode": "eocstat:eos6",
-                "name": "Planned, then cancelled",
-                "label": "Planned, then cancelled"
-            }
-        ]
+            "is_active": true,
+            "qcode": "eocstat:eos0",
+            "name": "Unplanned event",
+            "label": "Unplanned event"
+        },
+        {
+            "is_active": true,
+            "qcode": "eocstat:eos1",
+            "name": "Planned, occurence planned only",
+            "label": "Planned, occurence planned only"
+        },
+        {
+            "is_active": true,
+            "qcode": "eocstat:eos2",
+            "name": "Planned, occurence highly uncertain",
+            "label": "Planned, occurence highly uncertain"
+        },
+        {
+            "is_active": true,
+            "qcode": "eocstat:eos3",
+            "name": "Planned, May occur",
+            "label": "Planned, May occur"
+        },
+        {
+            "is_active": true,
+            "qcode": "eocstat:eos4",
+            "name": "Planned, occurence highly likely",
+            "label": "Planned, occurence highly likely"
+        },
+        {
+            "is_active": true,
+            "qcode": "eocstat:eos5",
+            "name": "Planned, occurs certainly",
+            "label": "Planned, occurs certainly"
+        },
+        {
+            "is_active": false,
+            "qcode": "eocstat:eos6",
+            "name": "Planned, then cancelled",
+            "label": "Planned, then cancelled"
+        }]
     },
     {
         "_id": "newscoveragestatus",
@@ -2534,31 +2251,31 @@
         "type": "manageable",
         "unique_field": "qcode",
         "selection_type": "do not show",
+        "init_version": 1,
         "items": [{
-                "is_active": true,
-                "qcode": "ncostat:int",
-                "name": "coverage intended",
-                "label": "Planned"
-            },
-            {
-                "is_active": true,
-                "qcode": "ncostat:notdec",
-                "name": "coverage not decided yet",
-                "label": "On merit"
-            },
-            {
-                "is_active": false,
-                "qcode": "ncostat:notint",
-                "name": "coverage not intended",
-                "label": "Not planned"
-            },
-            {
-                "is_active": true,
-                "qcode": "ncostat:onreq",
-                "name": "coverage upon request",
-                "label": "On request"
-            }
-        ]
+            "is_active": true,
+            "qcode": "ncostat:int",
+            "name": "coverage intended",
+            "label": "Planned"
+        },
+        {
+            "is_active": true,
+            "qcode": "ncostat:notdec",
+            "name": "coverage not decided yet",
+            "label": "On merit"
+        },
+        {
+            "is_active": false,
+            "qcode": "ncostat:notint",
+            "name": "coverage not intended",
+            "label": "Not planned"
+        },
+        {
+            "is_active": true,
+            "qcode": "ncostat:onreq",
+            "name": "coverage upon request",
+            "label": "On request"
+        }]
     },
     {
         "_id": "event_calendars",
@@ -2566,22 +2283,22 @@
         "type": "manageable",
         "unique_field": "qcode",
         "selection_type": "do not show",
+        "init_version": 1,
         "items": [{
-                "is_active": true,
-                "name": "Sport",
-                "qcode": "sport"
-            },
-            {
-                "is_active": true,
-                "name": "Finance",
-                "qcode": "finance"
-            },
-            {
-                "is_active": true,
-                "name": "Entertainment",
-                "qcode": "entertainment"
-            }
-        ]
+            "is_active": true,
+            "name": "Sport",
+            "qcode": "sport"
+        },
+        {
+            "is_active": true,
+            "name": "Finance",
+            "qcode": "finance"
+        },
+        {
+            "is_active": true,
+            "name": "Entertainment",
+            "qcode": "entertainment"
+        }]
     },
     {
         "_id": "assignment_priority",
@@ -2589,21 +2306,194 @@
         "type": "manageable",
         "unique_field": "qcode",
         "selection_type": "do not show",
+        "init_version": 1,
         "items": [{
-                "is_active": true,
-                "name": "High",
-                "qcode": 1
-            },
-            {
-                "is_active": true,
-                "name": "Medium",
-                "qcode": 2
-            },
-            {
-                "is_active": true,
-                "name": "Low",
-                "qcode": 3
-            }
-        ]
+            "is_active": true,
+            "name": "High",
+            "qcode": 1
+        },
+        {
+            "is_active": true,
+            "name": "Medium",
+            "qcode": 2
+        },
+        {
+            "is_active": true,
+            "name": "Low",
+            "qcode": 3
+        }]
+    },
+    {
+        "_id": "show_part",
+        "display_name": "Show Part",
+        "type": "manageable",
+        "unique_field": "qcode",
+        "selection_type": "do not show",
+        "init_version": 3,
+        "items": [{
+            "is_active": true,
+            "name": "Uvod",
+            "qcode": "Uvod"
+        },
+        {
+            "is_active": true,
+            "name": "Odjava",
+            "qcode": "Odjava"
+        },
+        {
+            "is_active": true,
+            "name": "Hladna najava",
+            "qcode": "Hladna najava"
+        },
+        {
+            "is_active": true,
+            "name": "REC",
+            "qcode": "REC"
+        },
+        {
+            "is_active": true,
+            "name": "SLIKA",
+            "qcode": "SLIKA"
+        },
+        {
+            "is_active": true,
+            "name": "PODATAK",
+            "qcode": "PODATAK"
+        },
+        {
+            "is_active": true,
+            "name": "KALENDAR",
+            "qcode": "KALENDAR"
+        },
+        {
+            "is_active": true,
+            "name": "ICUTANJEJEODGOVOR",
+            "qcode": "ICUTANJEJEODGOVOR"
+        }],
+        "schema": {
+            "name": {"translate": true},
+            "qcode": {"type": "string"},
+            "color": {"type": "color", "label": "Сolor"}
+        }
+    },
+    {
+        "_id": "rundown_item_types",
+        "display_name": "Item Type",
+        "type": "manageable",
+        "unique_field": "qcode",
+        "selection_type": "do not show",
+        "init_version": 3,
+        "items": [{
+            "is_active": true,
+            "name": "PRLG",
+            "qcode": "PRLG"
+        },
+        {
+            "is_active": true,
+            "name": "AACC",
+            "qcode": "AACC"
+        },
+        {
+            "is_active": true,
+            "name": "GOST",
+            "qcode": "GOST"
+        },
+        {
+            "is_active": true,
+            "name": "OFF",
+            "qcode": "OFF"
+        },
+        {
+            "is_active": true,
+            "name": "TON",
+            "qcode": "TON"
+        }],
+        "schema": {
+            "name": {"translate": true},
+            "qcode": {"type": "string"},
+            "color": {"type": "color", "label": "Сolor"}
+        }
+    },
+    {
+        "_id": "rundown_subitem_types",
+        "display_name": "Subitem Type",
+        "type": "manageable",
+        "unique_field": "qcode",
+        "selection_type": "do not show",
+        "init_version": 3,
+        "items": [{
+            "is_active": true,
+            "name": "POKR",
+            "qcode": "POKR"
+        },
+        {
+            "is_active": true,
+            "name": "WALL",
+            "qcode": "WALL"
+        },
+        {
+            "is_active": true,
+            "name": "GRAF",
+            "qcode": "GRAF"
+        }],
+        "schema": {
+            "name": {"translate": true},
+            "qcode": {"type": "string"},
+            "color": {"type": "color", "label": "Сolor"}
+        }
+    },
+    {
+        "_id": "rundown_item_status",
+        "display_name": "Rundown Item Status",
+        "type": "manageable",
+        "unique_field": "qcode",
+        "selection_type": "do not show",
+        "init_version": 3,
+        "items": [{
+            "is_active": true,
+            "name": "pending",
+            "qcode": "pending",
+            "color": "#ff5630"
+        },{
+            "is_active": true,
+            "name": "in approval",
+            "qcode": "in-approval",
+            "color": "#ff991f"
+        },{
+            "is_active": true,
+            "name": "approved",
+            "qcode": "approved",
+            "color": "#36b37e"
+        }],
+        "schema": {
+            "name": {"translate": true},
+            "qcode": {"type": "string"},
+            "color": {"type": "color", "label": "Сolor"}
+        }
+    },
+    {
+        "_id": "camera",
+        "display_name": "Camera",
+        "type": "manageable",
+        "unique_field": "qcode",
+        "selection_type": "do not show",
+        "init_version": 1,
+        "items": [{
+            "is_active": true,
+            "name": "K1",
+            "qcode": "K1"
+        },{
+            "is_active": true,
+            "name": "K2",
+            "qcode": "K2"
+        },{
+            "is_active": true,
+            "name": "K3",
+            "qcode": "K3"
+        }],
+        "schema": {
+            "name": {"type": "string"},
+            "qcode": {"type": "string"}
+        }
     }
 ]

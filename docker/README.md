@@ -1,2 +1,0 @@
-superdesk-docker
-================
