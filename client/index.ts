@@ -1,4 +1,5 @@
 import {startApp} from 'superdesk-core/scripts/index';
+import {SamsAttachmentsWidget} from 'superdesk-core/scripts/extensions/sams/dist/src/apps/samsAttachmentsWidget';
 
 setTimeout(() => {
     startApp(
@@ -20,17 +21,13 @@ setTimeout(() => {
                 load: () => import('superdesk-planning/client/planning-extension'),
             },
             {
-                id: 'broadcasting',
-                load: () => import('superdesk-core/scripts/extensions/broadcasting').then((broadcasting) => {
-                    broadcasting.setCustomizations({
-                        getRundownItemDisplayName: (rundown) => rundown.technical_title,
-                    });
-
-                    return broadcasting;
-                }),
+                id: 'sams',
+                load: () => import('superdesk-core/scripts/extensions/sams'),
             },
         ],
-        {},
+        {
+            AuthoringAttachmentsWidget: SamsAttachmentsWidget,
+        },
     );
 });
 
