@@ -2,4 +2,4 @@ honcho
 gunicorn
 
 git+https://github.com/superdesk/superdesk-core.git@develop#egg=superdesk-core
-git+https://github.com/tomaskikutis/superdesk-planning.git@9ba0834
+git+https://github.com/superdesk/superdesk-planning.git@feature/embedded-events-editor#egg=superdesk-planning
