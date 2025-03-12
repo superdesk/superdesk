@@ -31,7 +31,13 @@ jobs:
         python-version: ${{ matrix.python-version }}
 
   client:
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: ['14', '20', '22']
     uses: ./.github/workflows/client.yml
+    with:
+        node-version: ${{ matrix.node-version }}
   
   docker:
     uses: ./.github/workflows/docker.yml

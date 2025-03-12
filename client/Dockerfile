@@ -1,10 +1,10 @@
 # BUILD
-FROM node:14 AS build
+FROM node:20 AS build
 
 # install client
 WORKDIR /tmp/client
 COPY . .
-RUN npm ci
+RUN npm install
 RUN npm run build
 
 # DEPLOY
