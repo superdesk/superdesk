@@ -10,7 +10,7 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 from pathlib import Path
-from superdesk.default_settings import strtobool, env
+from superdesk.default_settings import strtobool, env, MODULES
 
 ABS_PATH = str(Path(__file__).resolve().parent)
 
@@ -21,6 +21,8 @@ if init_data.exists():
 INSTALLED_APPS = [
     "planning",
 ]
+
+MODULES.append("planning")
 
 PLANNING_EVENT_TEMPLATES_ENABLED = True
 
