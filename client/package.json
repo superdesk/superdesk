@@ -3,13 +3,15 @@
     "license": "AGPL-3.0",
     "dependencies": {
         "superdesk-core": "github:superdesk/superdesk-client-core#develop",
-        "superdesk-planning": "github:superdesk/superdesk-planning#feature/embedded-events-editor"
+        "superdesk-planning": "github:superdesk/superdesk-planning#feature/embedded-events-editor",
+        "superdesk-publisher": "github:superdesk/superdesk-publisher#develop"
     },
     "scripts": {
         "build": "npx @superdesk/build-tools build-root-repo ./",
         "start": "npx grunt server"
     },
     "devDependencies": {
-        "@superdesk/build-tools": "^1.0.19"
+        "@superdesk/build-tools": "^1.0.19",
+        "@types/node": "22.14.0"
     }
 }

@@ -21,7 +21,7 @@ Find more information about the client configuration in the README file of the r
 You can start superdesk using the `docker-compose.yml` file:
 
 ```sh
-$ docker-compose up -d
+$ docker compose up -d
 ```
 
 This will start superdesk on http://localhost:8080. On the first run you also have to initialize
@@ -29,9 +29,9 @@ elastic/mongo and create a user:
 
 ```sh
 # Initialize data
-$ docker-compose run superdesk-server run python manage.py app:initialize_data
+$ docker compose exec superdesk-server python manage.py app:initialize_data
 # Create first admin user
-$ docker-compose run superdesk-server run python manage.py users:create -u admin -p admin -e admin@localhost --admin
+$ docker compose exec superdesk-server python manage.py users:create -u admin -p admin -e admin@localhost --admin
 ```
 
 Then you can login with admin:admin credentials.
