@@ -29,7 +29,7 @@ module.exports = function() {
                                             /* e.g.: example.com, abc.example.com */
                                             /* tenant, as above, is NOT used for websocket */
             wsPath: '/ws',                    /* path to websocket root dir */
-            wsPort: '80',                   /* if not specified: defaults to 443 for wss, 80 for ws */
+            wsPort: '',                   /* if not specified: defaults to 443 for wss, 80 for ws */
             hideContentRoutesInPublishPane: false, /* hides routes of type "content" from select box in publish panes in monitoring view as well as in output control. If not specified: defaults to false */
             hideCustomRoutesInPublishPane: false   /* hides routes of type "custom" from select box in publish panes in monitoring view as well as in output control. If not specified: defaults to false */
         },
