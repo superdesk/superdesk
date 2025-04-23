@@ -2,6 +2,6 @@ rest: hypercorn -c file:hypercorn_config.py wsgi:application
 wamp: python3 -u ws.py
 work: celery -A worker worker
 beat: celery -A worker beat
-#capi: hypercorn -c file:hypercorn_config.py content_api.wsgi
-#papi: hypercorn -c file:hypercorn_config.py prod_api.wsgi
+capi: hypercorn -c file:hypercorn_config.py content_api.wsgi:application
+# papi: hypercorn -c file:hypercorn_config.py prod_api.wsgi
 #highcharts: python3 -u -m analytics.reports.highcharts_server
