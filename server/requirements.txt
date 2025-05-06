@@ -265,7 +265,7 @@ six==1.17.0
     #   python-dateutil
 superdesk-core @ git+https://github.com/superdesk/superdesk-core.git@feature/availability
     # via -r requirements.in
-superdesk-planning @ git+https://github.com/superdesk/superdesk-planning.git@develop
+superdesk-planning @ git+https://github.com/superdesk/superdesk-planning.git@feature/availability
     # via -r requirements.in
 tenacity==9.0.0
     # via celery-redbeat
