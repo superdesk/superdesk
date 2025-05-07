@@ -4,9 +4,9 @@
 #
 #    pip-compile requirements.in
 #
-aioboto3==14.1.0
+aioboto3==14.2.0
     # via superdesk-core
-aiobotocore[boto3]==2.21.1
+aiobotocore[boto3]==2.22.0
     # via aioboto3
 aiofiles==24.1.0
     # via
@@ -54,11 +54,11 @@ blinker==1.9.0
     #   quart
     #   sentry-sdk
     #   superdesk-core
-boto3==1.37.1
+boto3==1.37.3
     # via
     #   aiobotocore
     #   superdesk-core
-botocore==1.37.1
+botocore==1.37.3
     # via
     #   aiobotocore
     #   boto3
@@ -83,7 +83,7 @@ chardet==5.2.0
     # via
     #   reportlab
     #   superdesk-core
-charset-normalizer==3.4.1
+charset-normalizer==3.4.2
     # via requests
 ciso8601==2.3.2
     # via eve-elastic
@@ -103,7 +103,7 @@ click-repl==0.3.0
     # via celery
 croniter==6.0.0
     # via superdesk-core
-cryptography==44.0.2
+cryptography==44.0.3
     # via
     #   authlib
     #   jwcrypto
@@ -221,7 +221,7 @@ oauth2client==4.1.3
     # via flask-oidc-ex
 oauthlib==3.2.2
     # via requests-oauthlib
-orderly-set==5.4.0
+orderly-set==5.4.1
     # via deepdiff
 pillow==11.1.0
     # via
@@ -325,6 +325,8 @@ six==1.17.0
     #   flask-oidc-ex
     #   oauth2client
     #   python-dateutil
+superdesk-analytics @ git+https://github.com/superdesk/superdesk-analytics.git@async
+    # via -r requirements.in
 superdesk-core @ git+https://github.com/superdesk/superdesk-core.git@async
     # via -r requirements.in
 superdesk-planning @ git+https://github.com/superdesk/superdesk-planning.git@async
