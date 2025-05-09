@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     "apps.languages",
     "apps.rundowns",
     "planning",
+    "analytics",
 ]
 
 PLANNING_EVENT_TEMPLATES_ENABLED = True
