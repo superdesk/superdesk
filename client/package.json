@@ -4,7 +4,7 @@
     "dependencies": {
         "superdesk-core": "github:superdesk/superdesk-client-core#develop",
         "superdesk-planning": "github:superdesk/superdesk-planning#develop",
-        "superdesk-analytics": "github:petrjasek/superdesk-analytics#develop",
+        "superdesk-analytics": "github:superdesk/superdesk-analytics#develop",
         "superdesk-publisher": "github:superdesk/superdesk-publisher#develop"
     },
     "scripts": {
