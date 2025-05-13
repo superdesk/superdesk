@@ -20,6 +20,7 @@ if init_data.exists():
 
 INSTALLED_APPS = [
     "planning",
+    "analytics",
 ]
 
 MODULES.append("planning")
@@ -226,3 +227,5 @@ RUNDOWNS_TIMEZONE = DEFAULT_TIMEZONE
 SENTRY_DSN = None
 
 CORRECTIONS_WORKFLOW = True
+
+REBUILD_ELASTIC_ON_INIT_DATA_ERROR = True

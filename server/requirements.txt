@@ -327,6 +327,8 @@ six==1.17.0
     #   python-dateutil
 superdesk-core @ git+https://github.com/superdesk/superdesk-core.git@async
     # via -r requirements.in
+superdesk-analytics @ git+https://github.com/superdesk/superdesk-analytics.git@async
+    # via -r requirements.in
 superdesk-planning @ git+https://github.com/superdesk/superdesk-planning.git@async
     # via -r requirements.in
 taskgroup==0.2.2
