@@ -13,6 +13,6 @@
     },
     "devDependencies": {
         "@superdesk/build-tools": "^1.0.19",
-        "@types/node": "22.15.17"
+        "@types/node": "22.15.18"
     }
 }
