@@ -11,7 +11,7 @@ services:
       - "27017:27017"
 
   redis:
-    image: redis:3
+    image: redis:8
     networks:
       - superdesk
     expose:
