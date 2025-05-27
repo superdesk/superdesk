@@ -2,7 +2,7 @@ version: "3.2"
 services:
 
   mongodb:
-    image: mongo:4
+    image: mongo:8
     networks:
       - superdesk
     expose:
