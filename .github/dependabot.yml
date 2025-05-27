@@ -9,31 +9,23 @@ updates:
     directory: "client" # Location of package manifests
     schedule:
       interval: "daily"
+
   - package-ecosystem: "pip" # See documentation for possible values
     directory: "server" # Location of package manifests
     schedule:
       interval: "daily"
+
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
 
   - package-ecosystem: "npm"
-    target-branch: release/2.8
-    directory: "client"
-    schedule:
-      interval: "daily"
-  - package-ecosystem: "pip"
-    target-branch: release/2.8
-    directory: "server"
-    schedule:
-      interval: "daily"
-
-  - package-ecosystem: "npm"
     target-branch: async
     directory: "client"
     schedule:
       interval: "daily"
+
   - package-ecosystem: "pip"
     target-branch: async
     directory: "server"
