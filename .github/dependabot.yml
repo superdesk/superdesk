@@ -31,15 +31,3 @@ updates:
     directory: "server"
     schedule:
       interval: "daily"
-
-  - package-ecosystem: "docker"
-    directories:
-      - "/server"
-      - "/client"
-    schedule:
-      interval: "weekly"
-
-  - package-ecosystem: "docker-compose"
-    directory: "/"
-    schedule:
-      interval: "weekly"
