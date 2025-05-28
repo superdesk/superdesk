@@ -19,15 +19,3 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-
-  - package-ecosystem: "npm"
-    target-branch: async
-    directory: "client"
-    schedule:
-      interval: "daily"
-
-  - package-ecosystem: "pip"
-    target-branch: async
-    directory: "server"
-    schedule:
-      interval: "daily"
