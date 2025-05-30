@@ -56,6 +56,7 @@ services:
       # More configuration options can be found at https://superdesk.readthedocs.io/en/latest/settings.html
     networks:
       - superdesk
+      - newsroom-app_newsroom
 
   superdesk-client:
     build: sourcefabricoss/superdesk-client:latest
@@ -72,3 +73,5 @@ services:
 networks:
     superdesk:
         driver: bridge
+    newsroom-app_newsroom:
+        external: true
