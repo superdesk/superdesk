@@ -8,12 +8,12 @@ module.exports = function() {
     return {
         apps: [
             'superdesk-publisher',
-            'superdesk-planning',
+            // 'superdesk-planning',
         ],
         importApps: [
             '../index',
             'superdesk-publisher',
-            'superdesk-planning',
+            // 'superdesk-planning',
         ],
 
         defaultRoute: '/workspace/monitoring',
@@ -77,10 +77,9 @@ module.exports = function() {
             editFeaturedImage: true,
             searchShortcut: true,
             elasticHighlight: true,
-            planning: true,
+            planning: false,
             autorefreshContent: true,
             nestedItemsInOutputStage: true,
-            planning: true,
             customAuthoringTopbar: {
                 toDesk: true,
             },
@@ -89,7 +88,7 @@ module.exports = function() {
         item_profile: { change_profile: 1 },
 
         workspace: {
-            planning: true,
+            planning: false,
             assignments: true,
         },
 
