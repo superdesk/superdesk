@@ -58,6 +58,10 @@ module.exports = function() {
 
         editor3: { browserSpellCheck: true, },
 
+        spellchecking: {
+            defaultRunningMode: 'initially-disabled',
+        },
+
         search_cvs: [
             {id: 'topics', name:'Topics', field: 'subject', list: 'topics'},
             {id: 'language', name:'Language', field: 'language', list: 'languages'}
