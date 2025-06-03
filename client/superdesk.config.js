@@ -62,6 +62,7 @@ module.exports = function() {
             autorefreshContent: true,
             nestedItemsInOutputStage: true,
             planning: true,
+            sendToPersonal: true,
         },
 
         item_profile: { change_profile: 1 },
