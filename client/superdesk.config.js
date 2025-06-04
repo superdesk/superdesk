@@ -81,7 +81,7 @@ module.exports = function() {
             elasticHighlight: true,
             planning: true,
             autorefreshContent: true,
-            nestedItemsInOutputStage: true,
+            nestedItemsInOutputStage: false,
             planning: true,
             customAuthoringTopbar: {
                 toDesk: true,
