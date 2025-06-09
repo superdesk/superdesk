@@ -2,9 +2,9 @@
     "name": "superdesk",
     "license": "AGPL-3.0",
     "dependencies": {
-        "superdesk-core": "github:superdesk/superdesk-client-core#feature/availability",
-        "superdesk-planning": "github:superdesk/superdesk-planning#develop",
-        "superdesk-analytics": "github:superdesk/superdesk-analytics#develop",
+        "superdesk-core": "github:superdesk/superdesk-client-core#release/2.10",
+        "superdesk-planning": "github:superdesk/superdesk-planning#release/2.10",
+        "superdesk-analytics": "github:superdesk/superdesk-analytics#release/2.10",
         "superdesk-publisher": "github:superdesk/superdesk-publisher#develop"
     },
     "scripts": {
