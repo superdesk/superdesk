@@ -5,7 +5,7 @@
         "superdesk-core": "github:superdesk/superdesk-client-core#release/2.10",
         "superdesk-planning": "github:superdesk/superdesk-planning#release/2.10",
         "superdesk-analytics": "github:superdesk/superdesk-analytics#release/2.10",
-        "superdesk-publisher": "github:superdesk/superdesk-publisher#develop"
+        "superdesk-publisher": "github:superdesk/superdesk-publisher#release/2.10"
     },
     "scripts": {
         "build": "npx @superdesk/build-tools build-root-repo ./",
