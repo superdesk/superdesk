@@ -65,8 +65,7 @@ module.exports = function() {
 
         features: {
             preview: 1,
-            swimlane: {columnsLimit: 99},
-            swimlane: {defaultNumberOfColumns: 4},
+            swimlane: {columnsLimit: 99, defaultNumberOfColumns: 4},
             editor3: true,
             editorHighlights: true,
             noPublishOnAuthoringDesk: true,
@@ -79,19 +78,16 @@ module.exports = function() {
             editFeaturedImage: true,
             searchShortcut: true,
             elasticHighlight: true,
-            planning: true,
+            planning: false,
             autorefreshContent: true,
             nestedItemsInOutputStage: false,
             planning: true,
-            customAuthoringTopbar: {
-                toDesk: true,
-            },
         },
 
         item_profile: { change_profile: 1 },
 
         workspace: {
-            planning: true,
+            planning: false,
             assignments: true,
             analytics: true,
         },

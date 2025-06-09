@@ -267,7 +267,7 @@ superdesk-analytics @ git+https://github.com/superdesk/superdesk-analytics.git@d
     # via -r requirements.in
 superdesk-core @ git+https://github.com/superdesk/superdesk-core.git@develop
     # via -r requirements.in
-superdesk-planning @ git+https://github.com/superdesk/superdesk-planning.git@develop
+superdesk-planning @ git+https://github.com/superdesk/superdesk-planning.git@feature/availability
     # via -r requirements.in
 tenacity==9.0.0
     # via celery-redbeat
