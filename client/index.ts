@@ -27,7 +27,17 @@ setTimeout(() => {
             },
             {
                 id: 'availability-manager',
-                load: () => import('superdesk-core/scripts/extensions/availability-manager'),
+                load: () => import('superdesk-core/scripts/extensions/availability-manager').then((extension) => {
+                    extension.configure({
+                        addPageToSideMenu: {
+                            icon: 'user',
+                            order: 1100,
+                            keyBinding: 'ctrl+alt+c',
+                        },
+                    });
+
+                    return extension;
+                }),
             },
         ],
         {},
