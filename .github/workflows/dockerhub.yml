@@ -4,6 +4,9 @@ on:
   release:
     types: [released]
 
+permissions:
+  contents: read
+
 jobs:
   push_to_dockerhub:
     name: Push Docker images to Docker Hub
