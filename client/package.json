@@ -2,7 +2,7 @@
     "name": "superdesk",
     "license": "AGPL-3.0",
     "dependencies": {
-        "superdesk-core": "github:superdesk/superdesk-client-core#develop",
+        "superdesk-core": "github:superdesk/superdesk-client-core#async",
         "superdesk-planning": "github:superdesk/superdesk-planning#async",
         "superdesk-analytics": "github:superdesk/superdesk-analytics#async"
     },
@@ -11,7 +11,6 @@
         "start": "npx grunt server"
     },
     "devDependencies": {
-        "@superdesk/build-tools": "^1.0.19",
-        "@types/node": "22.15.17"
+        "@superdesk/build-tools": "^1.0.19"
     }
 }
