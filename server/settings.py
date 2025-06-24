@@ -231,3 +231,20 @@ CORRECTIONS_WORKFLOW = False
 REBUILD_ELASTIC_ON_INIT_DATA_ERROR = True
 
 ANALYTICS_ENABLE_ARCHIVE_STATS = True
+
+
+# Temporary STT config - remove after testing ContentAPI is completed
+SYNC_EVENT_FIELDS_TO_PLANNING = [
+    "slugline",
+    "name",
+    "ednote",
+    "internal_note",
+    "language",
+    "definition_short",
+]
+PLANNING_EVENT_LINK_METHOD = "many_secondary"
+PLANNING_PLANNING_ALL_DAY = True
+DEFAULT_CREATE_PLANNING_SERIES_WITH_EVENT_SERIES = True
+PLANNING_AUTO_ASSIGN_TO_WORKFLOW = True
+START_OF_WEEK = 1
+PLANNING_LINK_UPDATES_TO_COVERAGES = False
