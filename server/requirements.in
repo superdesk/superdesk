@@ -2,5 +2,5 @@ honcho
 gunicorn
 celery-redbeat
 
-git+https://github.com/superdesk/superdesk-core.git@release/2.9#egg=superdesk-core
-git+https://github.com/superdesk/superdesk-planning.git@release/2.9#egg=superdesk-planning
+git+https://github.com/superdesk/superdesk-core.git@v2.9.0#egg=superdesk-core
+git+https://github.com/superdesk/superdesk-planning.git@v2.9.0#egg=superdesk-planning
