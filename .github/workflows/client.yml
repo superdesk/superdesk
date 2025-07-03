@@ -9,6 +9,9 @@ on:
         default: "14"
         type: string
 
+permissions:
+  contents: read
+
 jobs:
   install:
     runs-on: ubuntu-latest
