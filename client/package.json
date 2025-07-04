@@ -12,5 +12,8 @@
     },
     "devDependencies": {
         "@superdesk/build-tools": "^1.0.19"
+    },
+    "volta": {
+        "node": "14.21.3"
     }
 }
