@@ -115,6 +115,7 @@ module.exports = function() {
                 'state',
                 'update',
                 'scheduledDateTime',
+                'embargo',
                 'flags',
                 'updated',
                 'provider',
