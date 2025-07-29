@@ -78,7 +78,6 @@ module.exports = function() {
             editFeaturedImage: true,
             searchShortcut: true,
             elasticHighlight: true,
-            planning: false,
             autorefreshContent: true,
             nestedItemsInOutputStage: false,
             planning: true,
@@ -87,7 +86,7 @@ module.exports = function() {
         item_profile: { change_profile: 1 },
 
         workspace: {
-            planning: false,
+            planning: true,
             assignments: true,
             analytics: true,
         },
