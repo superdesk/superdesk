@@ -263,9 +263,9 @@ six==1.17.0
     #   flask-oidc-ex
     #   oauth2client
     #   python-dateutil
-superdesk-core @ git+https://github.com/superdesk/superdesk-core.git@v2.9.1b1
+superdesk-core @ git+https://github.com/superdesk/superdesk-core.git@v2.9.1
     # via -r requirements.in
-superdesk-planning @ git+https://github.com/superdesk/superdesk-planning.git@v2.9.0
+superdesk-planning @ git+https://github.com/superdesk/superdesk-planning.git@v2.9.1
     # via -r requirements.in
 tenacity==9.1.2
     # via celery-redbeat
