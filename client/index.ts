@@ -29,6 +29,10 @@ setTimeout(() => {
                 id: 'availability-manager',
                 load: () => import('superdesk-core/scripts/extensions/availability-manager'),
             },
+            {
+                id: 'planning-extension',
+                load: () => import('superdesk-planning/client/planning-extension'),
+            },
         ],
         {},
     );
