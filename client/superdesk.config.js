@@ -124,7 +124,14 @@ module.exports = function() {
                 'used',
                 'nestedlink',
                 'translations'
-            ]
+            ],
+            compactView: {
+                firstLine: [
+                    'headline',
+                    'slugline',
+                ],
+                secondLine: [],
+            },
         },
 
         monitoring: {
