@@ -73,6 +73,11 @@ module.exports = function() {
             customAuthoringTopbar: {
                 toDesk: true,
                 publish: true,
+
+                sendAndDuplicate: {
+                    deskName: 'Test',
+                    stageName: 'Working',
+                },
             },
             validatePointOfInterestForImages: true,
             editorHighlights: true,
@@ -83,9 +88,6 @@ module.exports = function() {
             autorefreshContent: true,
             nestedItemsInOutputStage: false,
             planning: true,
-            customAuthoringTopbar: {
-                toDesk: true,
-            },
         },
 
         item_profile: { change_profile: 1 },
