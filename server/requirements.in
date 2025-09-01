@@ -1,5 +1,5 @@
 honcho
 
-git+https://github.com/superdesk/superdesk-core.git@async#egg=superdesk-core
-git+https://github.com/superdesk/superdesk-planning.git@async#egg=superdesk-planning
-git+https://github.com/superdesk/superdesk-analytics.git@async#egg=superdesk-analytics
+git+https://github.com/superdesk/superdesk-core.git@release/3.0#egg=superdesk-core
+git+https://github.com/superdesk/superdesk-planning.git@release/3.0#egg=superdesk-planning
+git+https://github.com/superdesk/superdesk-analytics.git@release/3.0#egg=superdesk-analytics

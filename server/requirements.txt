@@ -14,13 +14,13 @@ aiofiles==24.1.0
     #   quart
 aiohappyeyeballs==2.6.1
     # via aiohttp
-aiohttp==3.12.13
+aiohttp==3.12.15
     # via
     #   aiobotocore
     #   elasticsearch
 aioitertools==0.12.0
     # via aiobotocore
-aiosignal==1.3.2
+aiosignal==1.4.0
     # via aiohttp
 amqp==5.3.1
     # via kombu
@@ -30,7 +30,7 @@ arrow==1.3.0
     # via
     #   eve-elastic
     #   superdesk-core
-asgiref==3.8.1
+asgiref==3.9.1
     # via superdesk-core
 async-timeout==5.0.1
     # via
@@ -63,7 +63,7 @@ botocore==1.37.3
     #   aiobotocore
     #   boto3
     #   s3transfer
-cachetools==6.1.0
+cachetools==6.2.0
     # via flask-oidc-ex
 celery[redis]==5.4.0
     # via superdesk-core
@@ -71,7 +71,7 @@ cerberus==1.3.7
     # via
     #   eve
     #   superdesk-core
-certifi==2025.6.15
+certifi==2025.8.3
     # via
     #   elastic-apm
     #   elasticsearch
@@ -81,11 +81,11 @@ cffi==1.17.1
     # via cryptography
 chardet==5.2.0
     # via superdesk-core
-charset-normalizer==3.4.2
+charset-normalizer==3.4.3
     # via
     #   reportlab
     #   requests
-ciso8601==2.3.2
+ciso8601==2.3.3
     # via eve-elastic
 click==8.2.1
     # via
@@ -97,17 +97,17 @@ click==8.2.1
     #   quart
 click-didyoumean==0.3.1
     # via celery
-click-plugins==1.1.1
+click-plugins==1.1.1.2
     # via celery
 click-repl==0.3.0
     # via celery
 croniter==6.0.0
     # via superdesk-core
-cryptography==45.0.4
+cryptography==45.0.6
     # via
     #   authlib
     #   jwcrypto
-deepdiff==8.5.0
+deepdiff==8.6.0
     # via superdesk-planning
 dnspython==2.7.0
     # via pymongo
@@ -115,7 +115,7 @@ draftjs-exporter[lxml]==5.1.0
     # via superdesk-core
 ecs-logging==2.2.0
     # via elastic-apm
-elastic-apm[flask]==6.23.0
+elastic-apm[flask]==6.24.0
     # via superdesk-core
 elasticsearch[async]==7.17.12
     # via
@@ -131,7 +131,7 @@ exceptiongroup==1.3.0
     #   taskgroup
 feedparser==6.0.11
     # via superdesk-core
-flask==3.1.1
+flask==3.1.2
     # via
     #   flask-mail
     #   flask-oidc-ex
@@ -150,7 +150,7 @@ h11==0.16.0
     # via
     #   hypercorn
     #   wsproto
-h2==4.2.0
+h2==4.3.0
     # via hypercorn
 hachoir==3.3.0
     # via superdesk-core
@@ -160,7 +160,7 @@ honcho==2.0.0
     # via -r requirements.in
 hpack==4.1.0
     # via h2
-httplib2==0.22.0
+httplib2==0.30.0
     # via oauth2client
 hypercorn==0.17.3
     # via quart
@@ -213,7 +213,7 @@ markupsafe==3.0.2
     #   werkzeug
 motor==3.7.1
     # via superdesk-core
-multidict==6.5.0
+multidict==6.6.4
     # via
     #   aiobotocore
     #   aiohttp
@@ -222,17 +222,17 @@ oauth2client==4.1.3
     # via flask-oidc-ex
 oauthlib==3.3.1
     # via requests-oauthlib
-orderly-set==5.4.1
+orderly-set==5.5.0
     # via deepdiff
 packaging==25.0
     # via kombu
-pillow==11.1.0
+pillow==11.2.1
     # via
     #   reportlab
     #   superdesk-core
 priority==2.0.0
     # via hypercorn
-prompt-toolkit==3.0.51
+prompt-toolkit==3.0.52
     # via click-repl
 propcache==0.3.2
     # via
@@ -304,9 +304,9 @@ redis==5.2.1
     #   superdesk-core
 regex==2024.11.6
     # via superdesk-core
-reportlab==4.4.2
+reportlab==4.4.3
     # via superdesk-core
-requests==2.32.4
+requests==2.32.5
     # via
     #   python-twitter
     #   requests-oauthlib
@@ -317,7 +317,7 @@ rsa==4.9.1
     # via oauth2client
 s3transfer==0.11.3
     # via boto3
-sentry-sdk[quart]==2.30.0
+sentry-sdk[quart]==2.35.1
     # via superdesk-core
 sgmllib3k==1.0.0
     # via feedparser
@@ -328,22 +328,23 @@ six==1.17.0
     #   flask-oidc-ex
     #   oauth2client
     #   python-dateutil
-superdesk-analytics @ git+https://github.com/superdesk/superdesk-analytics.git@async
+superdesk-analytics @ git+https://github.com/superdesk/superdesk-analytics.git@release/3.0
     # via -r requirements.in
-superdesk-core @ git+https://github.com/superdesk/superdesk-core.git@async
+superdesk-core @ git+https://github.com/superdesk/superdesk-core.git@release/3.0
     # via -r requirements.in
-superdesk-planning @ git+https://github.com/superdesk/superdesk-planning.git@async
+superdesk-planning @ git+https://github.com/superdesk/superdesk-planning.git@release/3.0
     # via -r requirements.in
 taskgroup==0.2.2
     # via hypercorn
 tomli==2.2.1
     # via hypercorn
-types-python-dateutil==2.9.0.20250516
+types-python-dateutil==2.9.0.20250822
     # via arrow
-types-pytz==2025.2.0.20250516
+types-pytz==2025.2.0.20250809
     # via quart-babel
-typing-extensions==4.14.0
+typing-extensions==4.15.0
     # via
+    #   aiosignal
     #   asgiref
     #   exceptiongroup
     #   hypercorn
@@ -361,7 +362,7 @@ tzdata==2025.2
     #   kombu
 tzlocal==5.3.1
     # via superdesk-core
-unidecode==1.3.8
+unidecode==1.4.0
     # via superdesk-core
 urllib3==1.26.20
     # via
@@ -384,7 +385,7 @@ werkzeug==3.1.3
     # via
     #   flask
     #   quart
-wrapt==1.17.2
+wrapt==1.17.3
     # via
     #   aiobotocore
     #   elastic-apm
