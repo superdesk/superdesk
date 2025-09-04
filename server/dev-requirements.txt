@@ -3,7 +3,7 @@
 black==25.1.0
 pep8==1.7.1
 flake8==7.3.0
-pytest==8.4.1
+pytest==8.4.2
 httmock==1.4.0
 wooper==0.4.4
 mypy==1.17.1
