@@ -94,6 +94,7 @@ def find_and_replace(item, **kwargs):
 
 
 name = "Replace_Words"
+replace_type = "editor_state"
 label = "Replace words in the article"
 order = 1
 shortcut = "a"
