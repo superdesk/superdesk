@@ -29,6 +29,10 @@ setTimeout(() => {
                     return broadcasting;
                 }),
             },
+            {
+                id: 'availability-manager',
+                load: () => import('superdesk-core/scripts/extensions/availability-manager'),
+            },
         ],
         {},
     );
