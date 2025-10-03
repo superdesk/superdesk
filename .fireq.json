@@ -1,3 +1,4 @@
 {
-    "elastic": 7
+    "elastic": 7,
+    "analytics": true
 }
