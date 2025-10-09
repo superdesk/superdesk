@@ -30,7 +30,7 @@ arrow==1.3.0
     # via
     #   eve-elastic
     #   superdesk-core
-asgiref==3.9.1
+asgiref==3.9.2
     # via superdesk-core
 async-timeout==5.0.1
     # via
@@ -44,7 +44,7 @@ babel==2.17.0
     # via quart-babel
 bcrypt==4.3.0
     # via superdesk-core
-billiard==4.2.1
+billiard==4.2.2
     # via celery
 blinker==1.9.0
     # via
@@ -66,7 +66,11 @@ botocore==1.37.3
 cachetools==6.2.0
     # via flask-oidc-ex
 celery[redis]==5.4.0
-    # via superdesk-core
+    # via
+    #   celery-redbeat
+    #   superdesk-core
+celery-redbeat==2.3.3
+    # via -r requirements.in
 cerberus==1.3.7
     # via
     #   eve
@@ -77,7 +81,7 @@ certifi==2025.8.3
     #   elasticsearch
     #   requests
     #   sentry-sdk
-cffi==1.17.1
+cffi==2.0.0
     # via cryptography
 chardet==5.2.0
     # via superdesk-core
@@ -246,7 +250,7 @@ pyasn1==0.6.1
     #   rsa
 pyasn1-modules==0.4.2
     # via oauth2client
-pycparser==2.22
+pycparser==2.23
     # via cffi
 pydantic==2.11.7
     # via superdesk-core
@@ -269,6 +273,7 @@ python-dateutil==2.9.0.post0
     #   arrow
     #   botocore
     #   celery
+    #   celery-redbeat
     #   croniter
     #   icalendar
     #   superdesk-core
@@ -301,6 +306,7 @@ quart-flask-patch==0.3.0
 redis==5.2.1
     # via
     #   celery
+    #   celery-redbeat
     #   superdesk-core
 regex==2024.11.6
     # via superdesk-core
@@ -321,7 +327,7 @@ sentry-sdk[quart]==2.35.1
     # via superdesk-core
 sgmllib3k==1.0.0
     # via feedparser
-simplejson==3.20.1
+simplejson==3.20.2
     # via eve
 six==1.17.0
     # via
@@ -336,6 +342,8 @@ superdesk-planning @ git+https://github.com/superdesk/superdesk-planning.git@rel
     # via -r requirements.in
 taskgroup==0.2.2
     # via hypercorn
+tenacity==9.1.2
+    # via celery-redbeat
 tomli==2.2.1
     # via hypercorn
 types-python-dateutil==2.9.0.20250822
@@ -377,7 +385,7 @@ vine==5.1.0
     #   amqp
     #   celery
     #   kombu
-wcwidth==0.2.13
+wcwidth==0.2.14
     # via prompt-toolkit
 websockets==15.0.1
     # via superdesk-core

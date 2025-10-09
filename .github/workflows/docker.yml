@@ -7,10 +7,22 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  server:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
 
-    - run: docker compose build
+    - run: docker build .
+      working-directory: ./server
+      timeout-minutes: 10
+
+  client:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v5
+
+    - run: docker build .
+      working-directory: ./client
+      timeout-minutes: 20

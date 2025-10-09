@@ -54,6 +54,11 @@ module.exports = function() {
             customAuthoringTopbar: {
                 toDesk: true,
                 publish: true,
+
+                sendAndDuplicate: {
+                    deskName: 'Test',
+                    stageName: 'Working',
+                },
             },
             validatePointOfInterestForImages: true,
             editFeaturedImage: true,
@@ -92,6 +97,7 @@ module.exports = function() {
                 'state',
                 'update',
                 'scheduledDateTime',
+                'embargo',
                 'flags',
                 'updated',
                 'provider',
@@ -100,7 +106,14 @@ module.exports = function() {
                 'used',
                 'nestedlink',
                 'translations'
-            ]
+            ],
+            compactView: {
+                firstLine: [
+                    'headline',
+                    'slugline',
+                ],
+                secondLine: [],
+            },
         },
 
         monitoring: {

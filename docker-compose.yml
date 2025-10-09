@@ -31,6 +31,7 @@ services:
 
   superdesk-server:
     image: sourcefabricoss/superdesk-server:latest
+    build: ./server
     depends_on:
       - redis
       - mongodb
@@ -58,7 +59,8 @@ services:
       - superdesk-newsroom
 
   superdesk-client:
-    build: sourcefabricoss/superdesk-client:latest
+    image: sourcefabricoss/superdesk-client:latest
+    build: ./client
     environment:
       # If not hosting on localhost, change these lines
       - SUPERDESK_URL=http://localhost:8080/api
