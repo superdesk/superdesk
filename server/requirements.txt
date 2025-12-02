@@ -230,7 +230,7 @@ orderly-set==5.5.0
     # via deepdiff
 packaging==25.0
     # via kombu
-pillow==11.2.1
+pillow==11.3.0
     # via
     #   reportlab
     #   superdesk-core
@@ -388,7 +388,7 @@ wcwidth==0.2.14
     # via prompt-toolkit
 websockets==15.0.1
     # via superdesk-core
-werkzeug==3.1.3
+werkzeug==3.1.4
     # via
     #   flask
     #   quart
