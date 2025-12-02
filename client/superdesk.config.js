@@ -7,7 +7,6 @@
 module.exports = function() {
     return {
         apps: [
-            'superdesk-publisher',
             'superdesk-planning',
             'superdesk.analytics',
         ],
