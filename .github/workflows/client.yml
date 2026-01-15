@@ -6,7 +6,7 @@ on:
       node-version:
         description: "Node version"
         required: false
-        default: "14"
+        default: "22"
         type: string
 
 permissions:
@@ -29,6 +29,5 @@ jobs:
         cache: npm
         cache-dependency-path: client/package-lock.json
 
-    - run: npm install
+    - run: npm ci
     - run: npm run build
- 
