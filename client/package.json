@@ -2,9 +2,10 @@
     "name": "superdesk",
     "license": "AGPL-3.0",
     "dependencies": {
-        "superdesk-core": "github:superdesk/superdesk-client-core#develop",
-        "superdesk-planning": "github:superdesk/superdesk-planning#develop",
-        "superdesk-analytics": "github:superdesk/superdesk-analytics#develop",
+        "node-polyfill-webpack-plugin": "^4.1.0",
+        "superdesk-analytics": "github:superdesk/superdesk-analytics#feature/node-22",
+        "superdesk-core": "github:superdesk/superdesk-client-core#feature/node-22",
+        "superdesk-planning": "github:superdesk/superdesk-planning#feature/node-22",
         "superdesk-publisher": "github:superdesk/superdesk-publisher#develop"
     },
     "scripts": {
@@ -13,5 +14,8 @@
     },
     "devDependencies": {
         "@superdesk/build-tools": "^1.0.19"
+    },
+    "volta": {
+        "node": "22.22.0"
     }
 }
