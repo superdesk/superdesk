@@ -6,7 +6,7 @@ on:
       node-version:
         description: "Node version"
         required: false
-        default: "14"
+        default: "22"
         type: string
 
 permissions:
@@ -21,14 +21,13 @@ jobs:
         working-directory: client
 
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
 
-    - uses: actions/setup-node@v5
+    - uses: actions/setup-node@v6
       with:
         node-version: ${{ inputs.node-version }}
         cache: npm
         cache-dependency-path: client/package-lock.json
 
-    - run: npm install
+    - run: npm ci
     - run: npm run build
- 
