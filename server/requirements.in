@@ -1,6 +1,6 @@
 honcho
 celery-redbeat
 
-git+https://github.com/superdesk/superdesk-core.git@release/3.2#egg=superdesk-core
-git+https://github.com/superdesk/superdesk-planning.git@release/3.2#egg=superdesk-planning
-git+https://github.com/superdesk/superdesk-analytics.git@release/3.2#egg=superdesk-analytics
+git+https://github.com/superdesk/superdesk-core.git@release/3.3#egg=superdesk-core
+git+https://github.com/superdesk/superdesk-planning.git@release/3.3#egg=superdesk-planning
+git+https://github.com/superdesk/superdesk-analytics.git@release/3.3#egg=superdesk-analytics
