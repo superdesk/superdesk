@@ -135,7 +135,7 @@ exceptiongroup==1.3.0
     #   taskgroup
 feedparser==6.0.12
     # via superdesk-core
-flask==3.1.2
+flask==3.1.3
     # via
     #   flask-mail
     #   flask-oidc-ex
@@ -388,7 +388,7 @@ wcwidth==0.2.14
     # via prompt-toolkit
 websockets==15.0.1
     # via superdesk-core
-werkzeug==3.1.4
+werkzeug==3.1.6
     # via
     #   flask
     #   quart
