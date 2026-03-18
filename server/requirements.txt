@@ -111,7 +111,7 @@ cryptography==46.0.5
     # via
     #   authlib
     #   jwcrypto
-deepdiff==8.6.1
+deepdiff==8.6.2
     # via superdesk-planning
 dnspython==2.8.0
     # via pymongo
