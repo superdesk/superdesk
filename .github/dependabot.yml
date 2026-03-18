@@ -10,7 +10,7 @@ updates:
     schedule:
       interval: "daily"
 
-  - package-ecosystem: "pip-compile" # See documentation for possible values
+  - package-ecosystem: "pip" # See documentation for possible values
     directory: "server" # Location of package manifests
     schedule:
       interval: "daily"
@@ -27,7 +27,7 @@ updates:
     schedule:
       interval: "daily"
 
-  - package-ecosystem: "pip-compile"
+  - package-ecosystem: "pip"
     directory: "server"
     target-branch: "release/3"
     schedule:
