@@ -7,12 +7,35 @@
         "unique_field": "qcode",
         "init_version": 1,
         "items": [
-
-            {"is_active": true, "name": "FIXME1", "qcode": "f1", "subject": "", "translations": {"name": {"fr": "FIXME1-fr", "es": "FIXME1-es"}}},
-            {"is_active": true, "name": "FIXME2", "qcode": "f2", "subject": "", "translations": {"name": {"fr": "FIXME2-fr", "es": "FIXME2-es"}}}
+            {
+                "is_active": true,
+                "name": "FIXME1",
+                "qcode": "f1",
+                "subject": "",
+                "translations": {
+                    "name": {
+                        "fr": "FIXME1-fr",
+                        "es": "FIXME1-es"
+                    }
+                }
+            },
+            {
+                "is_active": true,
+                "name": "FIXME2",
+                "qcode": "f2",
+                "subject": "",
+                "translations": {
+                    "name": {
+                        "fr": "FIXME2-fr",
+                        "es": "FIXME2-es"
+                    }
+                }
+            }
         ],
         "schema": {
-            "name": {"translate": true},
+            "name": {
+                "translate": true
+            },
             "qcode": {},
             "subject": {}
         },
@@ -38,13 +61,34 @@
         "selection_type": "multi selection",
         "unique_field": "qcode",
         "items": [
-            {"is_active": true, "qcode": "a"},
-            {"is_active": true, "qcode": "e"},
-            {"is_active": true, "qcode": "f"},
-            {"is_active": true, "qcode": "i"},
-            {"is_active": true, "qcode": "s"},
-            {"is_active": true, "qcode": "t"},
-            {"is_active": true, "qcode": "v"}
+            {
+                "is_active": true,
+                "qcode": "a"
+            },
+            {
+                "is_active": true,
+                "qcode": "e"
+            },
+            {
+                "is_active": true,
+                "qcode": "f"
+            },
+            {
+                "is_active": true,
+                "qcode": "i"
+            },
+            {
+                "is_active": true,
+                "qcode": "s"
+            },
+            {
+                "is_active": true,
+                "qcode": "t"
+            },
+            {
+                "is_active": true,
+                "qcode": "v"
+            }
         ],
         "schema": {
             "qcode": {}
@@ -56,13 +100,35 @@
         "type": "manageable",
         "unique_field": "qcode",
         "init_version": 1,
-        "service": { "all": 1 },
+        "service": {
+            "all": 1
+        },
         "items": [
-            {"name": "Nederlands", "qcode": "nl", "is_active": true },
-            {"name": "Français", "qcode": "fr", "is_active": true },
-            {"name": "English", "qcode": "en", "is_active": true },
-            {"name": "Deutsch", "qcode": "de", "is_active": true },
-            {"name": "Español", "qcode": "es", "is_active": true }
+            {
+                "name": "Nederlands",
+                "qcode": "nl",
+                "is_active": true
+            },
+            {
+                "name": "Français",
+                "qcode": "fr",
+                "is_active": true
+            },
+            {
+                "name": "English",
+                "qcode": "en",
+                "is_active": true
+            },
+            {
+                "name": "Deutsch",
+                "qcode": "de",
+                "is_active": true
+            },
+            {
+                "name": "Español",
+                "qcode": "es",
+                "is_active": true
+            }
         ]
     },
     {
@@ -73,32 +139,126 @@
         "unique_field": "qcode",
         "init_version": 1,
         "items": [
-            {"is_active": true, "name": "Article (news)", "qcode": "Article"},
-            {"is_active": true, "name": "Sidebar", "qcode": "Sidebar"},
-            {"is_active": true, "name": "Factbox", "qcode": "Factbox"},
-            {"is_active": true, "name": "Feature", "qcode": "Feature"},
-            {"is_active": true, "name": "Newsfeature", "qcode": "Newsfeature"},
-            {"is_active": true, "name": "Backgrounder", "qcode": "Backgrounder"},
-            {"is_active": true, "name": "Opinion", "qcode": "Opinion"},
-            {"is_active": true, "name": "View (incl parly sketch)", "qcode": "View"},
-            {"is_active": true, "name": "Modular", "qcode": "Modular"},
-            {"is_active": true, "name": "Broadcast Script", "qcode": "Broadcast Script"},
-            {"is_active": true, "name": "Briefs", "qcode": "Briefs"},
-            {"is_active": true, "name": "Colour piece", "qcode": "Colour piece"},
-            {"is_active": true, "name": "Obituary", "qcode": "Obituary"},
-            {"is_active": true, "name": "Analysis", "qcode": "Analysis"},
-            {"is_active": true, "name": "Timeline", "qcode": "Timeline"},
-            {"is_active": true, "name": "Chronology", "qcode": "Chronology"},
-            {"is_active": true, "name": "Interview", "qcode": "Interview"},
-            {"is_active": true, "name": "Results (sport)", "qcode": "Results (sport)"},
-            {"is_active": true, "name": "Market Open", "qcode": "Market Open"},
-            {"is_active": true, "name": "Market Close", "qcode": "Market Close"},
-            {"is_active": true, "name": "Market Report", "qcode": "Market Report"},
-            {"is_active": true, "name": "Review", "qcode": "Review"},
-            {"is_active": true, "name": "Preview", "qcode": "Preview"}
+            {
+                "is_active": true,
+                "name": "Article (news)",
+                "qcode": "Article"
+            },
+            {
+                "is_active": true,
+                "name": "Sidebar",
+                "qcode": "Sidebar"
+            },
+            {
+                "is_active": true,
+                "name": "Factbox",
+                "qcode": "Factbox"
+            },
+            {
+                "is_active": true,
+                "name": "Feature",
+                "qcode": "Feature"
+            },
+            {
+                "is_active": true,
+                "name": "Newsfeature",
+                "qcode": "Newsfeature"
+            },
+            {
+                "is_active": true,
+                "name": "Backgrounder",
+                "qcode": "Backgrounder"
+            },
+            {
+                "is_active": true,
+                "name": "Opinion",
+                "qcode": "Opinion"
+            },
+            {
+                "is_active": true,
+                "name": "View (incl parly sketch)",
+                "qcode": "View"
+            },
+            {
+                "is_active": true,
+                "name": "Modular",
+                "qcode": "Modular"
+            },
+            {
+                "is_active": true,
+                "name": "Broadcast Script",
+                "qcode": "Broadcast Script"
+            },
+            {
+                "is_active": true,
+                "name": "Briefs",
+                "qcode": "Briefs"
+            },
+            {
+                "is_active": true,
+                "name": "Colour piece",
+                "qcode": "Colour piece"
+            },
+            {
+                "is_active": true,
+                "name": "Obituary",
+                "qcode": "Obituary"
+            },
+            {
+                "is_active": true,
+                "name": "Analysis",
+                "qcode": "Analysis"
+            },
+            {
+                "is_active": true,
+                "name": "Timeline",
+                "qcode": "Timeline"
+            },
+            {
+                "is_active": true,
+                "name": "Chronology",
+                "qcode": "Chronology"
+            },
+            {
+                "is_active": true,
+                "name": "Interview",
+                "qcode": "Interview"
+            },
+            {
+                "is_active": true,
+                "name": "Results (sport)",
+                "qcode": "Results (sport)"
+            },
+            {
+                "is_active": true,
+                "name": "Market Open",
+                "qcode": "Market Open"
+            },
+            {
+                "is_active": true,
+                "name": "Market Close",
+                "qcode": "Market Close"
+            },
+            {
+                "is_active": true,
+                "name": "Market Report",
+                "qcode": "Market Report"
+            },
+            {
+                "is_active": true,
+                "name": "Review",
+                "qcode": "Review"
+            },
+            {
+                "is_active": true,
+                "name": "Preview",
+                "qcode": "Preview"
+            }
         ],
         "schema": {
-            "name": {"translate": true},
+            "name": {
+                "translate": true
+            },
             "qcode": {}
         },
         "translations": {
@@ -123,17 +283,49 @@
         "unique_field": "qcode",
         "init_version": 1,
         "items": [
-            {"is_active": true, "name": "1", "qcode": 1},
-            {"is_active": true, "name": "2", "qcode": 2},
-            {"is_active": true, "name": "3", "qcode": 3},
-            {"is_active": true, "name": "4", "qcode": 4},
-            {"is_active": true, "name": "5", "qcode": 5}
+            {
+                "is_active": true,
+                "name": "1",
+                "qcode": 1
+            },
+            {
+                "is_active": true,
+                "name": "2",
+                "qcode": 2
+            },
+            {
+                "is_active": true,
+                "name": "3",
+                "qcode": 3
+            },
+            {
+                "is_active": true,
+                "name": "4",
+                "qcode": 4
+            },
+            {
+                "is_active": true,
+                "name": "5",
+                "qcode": 5
+            }
         ],
         "schema": {
-            "name": {"translate": true},
-            "qcode": {"type": "integer"},
-            "color": {"type": "color", "label": "Сolour"},
-            "short": {"type": "short", "label": "List Name", "maxlength": 2, "translate": true}
+            "name": {
+                "translate": true
+            },
+            "qcode": {
+                "type": "integer"
+            },
+            "color": {
+                "type": "color",
+                "label": "Сolour"
+            },
+            "short": {
+                "type": "short",
+                "label": "List Name",
+                "maxlength": 2,
+                "translate": true
+            }
         },
         "translations": {
             "display_name": {
@@ -157,21 +349,69 @@
         "unique_field": "qcode",
         "init_version": 1,
         "items": [
-            {"is_active": true, "name": "1", "qcode": 1},
-            {"is_active": true, "name": "2", "qcode": 2},
-            {"is_active": true, "name": "3", "qcode": 3},
-            {"is_active": true, "name": "4", "qcode": 4},
-            {"is_active": true, "name": "5", "qcode": 5},
-            {"is_active": true, "name": "6", "qcode": 6},
-            {"is_active": false, "name": "7", "qcode": 7},
-            {"is_active": false, "name": "8", "qcode": 8},
-            {"is_active": false, "name": "9", "qcode": 9}
+            {
+                "is_active": true,
+                "name": "1",
+                "qcode": 1
+            },
+            {
+                "is_active": true,
+                "name": "2",
+                "qcode": 2
+            },
+            {
+                "is_active": true,
+                "name": "3",
+                "qcode": 3
+            },
+            {
+                "is_active": true,
+                "name": "4",
+                "qcode": 4
+            },
+            {
+                "is_active": true,
+                "name": "5",
+                "qcode": 5
+            },
+            {
+                "is_active": true,
+                "name": "6",
+                "qcode": 6
+            },
+            {
+                "is_active": false,
+                "name": "7",
+                "qcode": 7
+            },
+            {
+                "is_active": false,
+                "name": "8",
+                "qcode": 8
+            },
+            {
+                "is_active": false,
+                "name": "9",
+                "qcode": 9
+            }
         ],
         "schema": {
-            "name": {"translate": true},
-            "qcode": {"type": "integer"},
-            "color": {"type": "color", "label": "Сolour"},
-            "short": {"type": "short", "label": "List Name", "maxlength": 2, "translate": true}
+            "name": {
+                "translate": true
+            },
+            "qcode": {
+                "type": "integer"
+            },
+            "color": {
+                "type": "color",
+                "label": "Сolour"
+            },
+            "short": {
+                "type": "short",
+                "label": "List Name",
+                "maxlength": 2,
+                "translate": true
+            }
         },
         "translations": {
             "display_name": {
@@ -193,11 +433,31 @@
         "type": "unmanageable",
         "selection_type": "multi selection",
         "items": [
-            {"is_active": true, "name": "Correction", "qcode": "Correction"},
-            {"is_active": true, "name": "Update", "qcode": "Update"},
-            {"is_active": true, "name": "Add", "qcode": "Add"},
-            {"is_active": true, "name": "Repeat", "qcode": "Repeat"},
-            {"is_active": true, "name": "Content Warning", "qcode": "Content Warning"}
+            {
+                "is_active": true,
+                "name": "Correction",
+                "qcode": "Correction"
+            },
+            {
+                "is_active": true,
+                "name": "Update",
+                "qcode": "Update"
+            },
+            {
+                "is_active": true,
+                "name": "Add",
+                "qcode": "Add"
+            },
+            {
+                "is_active": true,
+                "name": "Repeat",
+                "qcode": "Repeat"
+            },
+            {
+                "is_active": true,
+                "name": "Content Warning",
+                "qcode": "Content Warning"
+            }
         ]
     },
     {
@@ -215,10 +475,21 @@
             }
         ],
         "schema": {
-            "name": {"translate": true},
-            "copyrightHolder": {"label": "Copyright Holder", "translate": true},
-            "copyrightNotice": {"label": "Copyright Notice", "translate": true},
-            "usageTerms": {"label": "Usage Terms", "translate": true}
+            "name": {
+                "translate": true
+            },
+            "copyrightHolder": {
+                "label": "Copyright Holder",
+                "translate": true
+            },
+            "copyrightNotice": {
+                "label": "Copyright Notice",
+                "translate": true
+            },
+            "usageTerms": {
+                "label": "Usage Terms",
+                "translate": true
+            }
         },
         "unique_field": "name"
     },
@@ -229,12 +500,21 @@
         "selection_type": "do not show",
         "unique_field": "name",
         "items": [
-            {"is_active": true, "name": "FIXME", "width": 800, "height": 600}
+            {
+                "is_active": true,
+                "name": "FIXME",
+                "width": 800,
+                "height": 600
+            }
         ],
         "schema": {
             "name": {},
-            "width": {"type": "int"},
-            "height": {"type": "int"}
+            "width": {
+                "type": "int"
+            },
+            "height": {
+                "type": "int"
+            }
         }
     },
     {
@@ -243,8 +523,16 @@
         "type": "unmanageable",
         "selection_type": "do not show",
         "items": [
-            {"is_active": true, "name": "authoring", "qcode": "authoring"},
-            {"is_active": true, "name": "production", "qcode": "production"}
+            {
+                "is_active": true,
+                "name": "authoring",
+                "qcode": "authoring"
+            },
+            {
+                "is_active": true,
+                "name": "production",
+                "qcode": "production"
+            }
         ]
     },
     {
@@ -253,7 +541,11 @@
         "type": "manageable",
         "selection_type": "do not show",
         "items": [
-            {"is_active": true, "existing": "FIXME", "replacement": ""}
+            {
+                "is_active": true,
+                "existing": "FIXME",
+                "replacement": ""
+            }
         ],
         "schema": {
             "existing": {},
@@ -268,14 +560,26 @@
         "selection_type": "multi selection",
         "unique_field": "qcode",
         "items": [
-            {"is_active": true, "name": "NSW", "qcode": "NSW"}
+            {
+                "is_active": true,
+                "name": "NSW",
+                "qcode": "NSW"
+            }
         ],
         "schema": {
-            "name": {"translate": true},
+            "name": {
+                "translate": true
+            },
             "qcode": {},
-            "state": {"translate": true},
-            "country": {"translate": true},
-            "world_region": {"translate": true},
+            "state": {
+                "translate": true
+            },
+            "country": {
+                "translate": true
+            },
+            "world_region": {
+                "translate": true
+            },
             "group": {}
         }
     },
@@ -285,9 +589,21 @@
         "type": "unmanageable",
         "selection_type": "do not show",
         "items": [
-            {"is_active": true, "name": "API", "qcode": "api"},
-            {"is_active": true, "name": "Direct", "qcode": "direct"},
-            {"is_active": true, "name": "Both", "qcode": "both"}
+            {
+                "is_active": true,
+                "name": "API",
+                "qcode": "api"
+            },
+            {
+                "is_active": true,
+                "name": "Direct",
+                "qcode": "direct"
+            },
+            {
+                "is_active": true,
+                "name": "Both",
+                "qcode": "both"
+            }
         ]
     },
     {
@@ -297,12 +613,20 @@
         "selection_type": "do not show",
         "unique_field": "qcode",
         "items": [
-            {"is_active": true, "name": "Regular", "qcode": "regular"},
-            {"is_active": true, "name": "Remark", "qcode": "remark"}
+            {
+                "is_active": true,
+                "name": "Regular",
+                "qcode": "regular"
+            },
+            {
+                "is_active": true,
+                "name": "Remark",
+                "qcode": "remark"
+            }
         ],
-        "schema" : {
-            "name" : {},
-            "qcode" : {}
+        "schema": {
+            "name": {},
+            "qcode": {}
         }
     },
     {
@@ -312,10 +636,16 @@
         "selection_type": "do not show",
         "unique_field": "qcode",
         "items": [
-            {"is_active": true, "name": "Writer", "qcode": "writer"}
+            {
+                "is_active": true,
+                "name": "Writer",
+                "qcode": "writer"
+            }
         ],
         "schema": {
-            "name": {"translate": true},
+            "name": {
+                "translate": true
+            },
             "qcode": {}
         }
     },
@@ -326,26 +656,96 @@
         "selection_type": "do not show",
         "unique_field": "qcode",
         "items": [
-            {"is_active": true, "name": "Director", "qcode": "director"},
-            {"is_active": true, "name": "Media Advisor", "qcode": "media_advisor"},
-            {"is_active": true, "name": "Publicity Officer", "qcode": "publicity_officer"},
-            {"is_active": true, "name": "Spokesperson", "qcode": "spokesperson"},
-            {"is_active": true, "name": "Spokeswoman", "qcode": "spokeswoman"},
-            {"is_active": true, "name": "President", "qcode": "president"},
-            {"is_active": true, "name": "CEO", "qcode": "ceo"},
-            {"is_active": true, "name": "Vice President", "qcode": "vice_presedent"},
-            {"is_active": true, "name": "Chairman", "qcode": "chairman"},
-            {"is_active": true, "name": "Carer", "qcode": "carer"},
-            {"is_active": true, "name": "General Secretary", "qcode": "general_secretary"},
-            {"is_active": true, "name": "Media Officer", "qcode": "media_officer"},
-            {"is_active": true, "name": "Mayor", "qcode": "mayor"},
-            {"is_active": true, "name": "Lord Mayor", "qcode": "lord_mayor"},
-            {"is_active": true, "name": "Director of Media", "qcode": "director_of_media"},
-            {"is_active": true, "name": "Media Contact", "qcode": "media_contact"},
-            {"is_active": true, "name": "Spokesman", "qcode": "spokesman"}
+            {
+                "is_active": true,
+                "name": "Director",
+                "qcode": "director"
+            },
+            {
+                "is_active": true,
+                "name": "Media Advisor",
+                "qcode": "media_advisor"
+            },
+            {
+                "is_active": true,
+                "name": "Publicity Officer",
+                "qcode": "publicity_officer"
+            },
+            {
+                "is_active": true,
+                "name": "Spokesperson",
+                "qcode": "spokesperson"
+            },
+            {
+                "is_active": true,
+                "name": "Spokeswoman",
+                "qcode": "spokeswoman"
+            },
+            {
+                "is_active": true,
+                "name": "President",
+                "qcode": "president"
+            },
+            {
+                "is_active": true,
+                "name": "CEO",
+                "qcode": "ceo"
+            },
+            {
+                "is_active": true,
+                "name": "Vice President",
+                "qcode": "vice_presedent"
+            },
+            {
+                "is_active": true,
+                "name": "Chairman",
+                "qcode": "chairman"
+            },
+            {
+                "is_active": true,
+                "name": "Carer",
+                "qcode": "carer"
+            },
+            {
+                "is_active": true,
+                "name": "General Secretary",
+                "qcode": "general_secretary"
+            },
+            {
+                "is_active": true,
+                "name": "Media Officer",
+                "qcode": "media_officer"
+            },
+            {
+                "is_active": true,
+                "name": "Mayor",
+                "qcode": "mayor"
+            },
+            {
+                "is_active": true,
+                "name": "Lord Mayor",
+                "qcode": "lord_mayor"
+            },
+            {
+                "is_active": true,
+                "name": "Director of Media",
+                "qcode": "director_of_media"
+            },
+            {
+                "is_active": true,
+                "name": "Media Contact",
+                "qcode": "media_contact"
+            },
+            {
+                "is_active": true,
+                "name": "Spokesman",
+                "qcode": "spokesman"
+            }
         ],
         "schema": {
-            "name": {"translate": true},
+            "name": {
+                "translate": true
+            },
             "qcode": {}
         }
     },
@@ -356,7 +756,11 @@
         "selection_type": "do not show",
         "unique_field": "qcode",
         "items": [
-            {"is_active": true, "qcode": "story-label:featured", "name": "Featured"}
+            {
+                "is_active": true,
+                "qcode": "story-label:featured",
+                "name": "Featured"
+            }
         ],
         "schema": {
             "qcode": {},
@@ -372,9 +776,21 @@
         "unique_field": "qcode",
         "selection_type": "single selection",
         "items": [
-            {"is_active": true, "qcode": "single-usage", "name": "Single Usage"},
-            {"is_active": true, "qcode": "time-restricted", "name": "Time Restricted"},
-            {"is_active": true, "qcode": "indefinite-usage", "name": "Indefinite Usage"}
+            {
+                "is_active": true,
+                "qcode": "single-usage",
+                "name": "Single Usage"
+            },
+            {
+                "is_active": true,
+                "qcode": "time-restricted",
+                "name": "Time Restricted"
+            },
+            {
+                "is_active": true,
+                "qcode": "indefinite-usage",
+                "name": "Indefinite Usage"
+            }
         ],
         "schema": {
             "qcode": {},
@@ -1977,43 +2393,53 @@
         "type": "unmanageable",
         "selection_type": "multi selection",
         "init_version": 2,
-        "items": [{
-            "is_active": true,
-            "name": "text",
-            "qcode": "text"
-        }, {
-            "is_active": true,
-            "name": "preformatted",
-            "qcode": "preformatted"
-        }, {
-            "is_active": true,
-            "name": "audio",
-            "qcode": "audio"
-        }, {
-            "is_active": true,
-            "name": "video",
-            "qcode": "video"
-        }, {
-            "is_active": true,
-            "name": "picture",
-            "qcode": "picture"
-        }, {
-            "is_active": true,
-            "name": "graphic",
-            "qcode": "graphic"
-        }, {
-            "is_active": true,
-            "name": "composite",
-            "qcode": "composite"
-        }, {
-            "is_active": true,
-            "name": "planning item",
-            "qcode": "planning"
-        }, {
-            "is_active": true,
-            "name": "event",
-            "qcode": "event"
-        }]
+        "items": [
+            {
+                "is_active": true,
+                "name": "text",
+                "qcode": "text"
+            },
+            {
+                "is_active": true,
+                "name": "preformatted",
+                "qcode": "preformatted"
+            },
+            {
+                "is_active": true,
+                "name": "audio",
+                "qcode": "audio"
+            },
+            {
+                "is_active": true,
+                "name": "video",
+                "qcode": "video"
+            },
+            {
+                "is_active": true,
+                "name": "picture",
+                "qcode": "picture"
+            },
+            {
+                "is_active": true,
+                "name": "graphic",
+                "qcode": "graphic"
+            },
+            {
+                "is_active": true,
+                "name": "composite",
+                "qcode": "composite"
+            },
+            {
+                "is_active": true,
+                "name": "planning item",
+                "qcode": "planning"
+            },
+            {
+                "is_active": true,
+                "name": "event",
+                "qcode": "event"
+            }
+        ]
     },
     {
         "_id": "subscriber_types",
@@ -2021,129 +2447,137 @@
         "type": "unmanageable",
         "selection_type": "do not show",
         "init_version": 4,
-        "items": [{
-            "is_active": true,
-            "name": "All",
-            "qcode": "all",
-            "formats": [{
-                "name": "NINJS",
-                "qcode": "ninjs"
+        "items": [
+            {
+                "is_active": true,
+                "name": "All",
+                "qcode": "all",
+                "formats": [
+                    {
+                        "name": "NINJS",
+                        "qcode": "ninjs"
+                    },
+                    {
+                        "name": "NINJSv2",
+                        "qcode": "ninjs2"
+                    },
+                    {
+                        "name": "NINJS FTP",
+                        "qcode": "ftp ninjs"
+                    },
+                    {
+                        "name": "NewsML G2",
+                        "qcode": "newsmlg2"
+                    },
+                    {
+                        "name": "Email",
+                        "qcode": "email"
+                    },
+                    {
+                        "name": "Newsroom NINJS",
+                        "qcode": "newsroom ninjs"
+                    },
+                    {
+                        "name": "Adobe InDesign (IDML)",
+                        "qcode": "idml"
+                    },
+                    {
+                        "name": "iMatrics",
+                        "qcode": "imatrics"
+                    },
+                    {
+                        "name": "JSON Event",
+                        "qcode": "json_event"
+                    },
+                    {
+                        "name": "JSON Planning",
+                        "qcode": "json_planning"
+                    },
+                    {
+                        "name": "JSON Planning Featured",
+                        "qcode": "json_planning_featured"
+                    }
+                ]
             },
             {
-                "name": "NINJSv2",
-                "qcode": "ninjs2"
+                "is_active": true,
+                "name": "Digital/Internet",
+                "qcode": "digital",
+                "formats": [
+                    {
+                        "name": "NINJS",
+                        "qcode": "ninjs"
+                    },
+                    {
+                        "name": "NINJSv2",
+                        "qcode": "ninjs2"
+                    },
+                    {
+                        "name": "NINJS FTP",
+                        "qcode": "ftp ninjs"
+                    },
+                    {
+                        "name": "NewsML G2",
+                        "qcode": "newsmlg2"
+                    },
+                    {
+                        "name": "Email",
+                        "qcode": "email"
+                    },
+                    {
+                        "name": "Newsroom NINJS",
+                        "qcode": "newsroom ninjs"
+                    },
+                    {
+                        "name": "Adobe InDesign (IDML)",
+                        "qcode": "idml"
+                    },
+                    {
+                        "name": "iMatrics",
+                        "qcode": "imatrics"
+                    },
+                    {
+                        "name": "JSON Event",
+                        "qcode": "json_event"
+                    },
+                    {
+                        "name": "JSON Planning",
+                        "qcode": "json_planning"
+                    },
+                    {
+                        "name": "JSON Planning Featured",
+                        "qcode": "json_planning_featured"
+                    }
+                ]
             },
             {
-                "name": "NINJS FTP",
-                "qcode": "ftp ninjs"
-            },
-            {
-                "name": "NewsML G2",
-                "qcode": "newsmlg2"
-            },
-            {
-                "name": "Email",
-                "qcode": "email"
-            },
-            {
-                "name": "Newsroom NINJS",
-                "qcode": "newsroom ninjs"
-            },
-            {
-                "name": "Adobe InDesign (IDML)",
-                "qcode": "idml"
-            },
-            {
-                "name": "iMatrics",
-                "qcode": "imatrics"
-            },
-            {
-                "name": "JSON Event",
-                "qcode": "json_event"
-            },
-            {
-                "name": "JSON Planning",
-                "qcode": "json_planning"
-            },
-            {
-                "name": "JSON Planning Featured",
-                "qcode": "json_planning_featured"
-            }]
-        },
-        {
-            "is_active": true,
-            "name": "Digital/Internet",
-            "qcode": "digital",
-            "formats": [{
-                "name": "NINJS",
-                "qcode": "ninjs"
-            },
-            {
-                "name": "NINJSv2",
-                "qcode": "ninjs2"
-            },
-            {
-                "name": "NINJS FTP",
-                "qcode": "ftp ninjs"
-            },
-            {
-                "name": "NewsML G2",
-                "qcode": "newsmlg2"
-            },
-            {
-                "name": "Email",
-                "qcode": "email"
-            },
-            {
-                "name": "Newsroom NINJS",
-                "qcode": "newsroom ninjs"
-            },
-            {
-                "name": "Adobe InDesign (IDML)",
-                "qcode": "idml"
-            },
-            {
-                "name": "iMatrics",
-                "qcode": "imatrics"
-            },
-            {
-                "name": "JSON Event",
-                "qcode": "json_event"
-            },
-            {
-                "name": "JSON Planning",
-                "qcode": "json_planning"
-            },
-            {
-                "name": "JSON Planning Featured",
-                "qcode": "json_planning_featured"
-            }]
-        },
-        {
-            "is_active": true,
-            "name": "Wire/Paper",
-            "qcode": "wire",
-            "formats": [{
-                "name": "NITF",
-                "qcode": "nitf"
-            },
-            {
-                "name": "Email",
-                "qcode": "email"
-            },
-            {
-                "name": "JSON Event",
-                "qcode": "json_event"
-            },
-            {
-                "name": "JSON Planning",
-                "qcode": "json_planning"
-            },
-            {
-                "name": "JSON Planning Featured",
-                "qcode": "json_planning_featured"
-            }]
-        }]
+                "is_active": true,
+                "name": "Wire/Paper",
+                "qcode": "wire",
+                "formats": [
+                    {
+                        "name": "NITF",
+                        "qcode": "nitf"
+                    },
+                    {
+                        "name": "Email",
+                        "qcode": "email"
+                    },
+                    {
+                        "name": "JSON Event",
+                        "qcode": "json_event"
+                    },
+                    {
+                        "name": "JSON Planning",
+                        "qcode": "json_planning"
+                    },
+                    {
+                        "name": "JSON Planning Featured",
+                        "qcode": "json_planning_featured"
+                    }
+                ]
+            }
+        ]
     },
     {
         "_id": "g2_content_type",
@@ -2152,48 +2586,50 @@
         "unique_field": "qcode",
         "selection_type": "do not show",
         "init_version": 1,
-        "items": [{
-            "is_active": true,
-            "name": "Text",
-            "qcode": "text",
-            "content item type": "text"
-        },
-        {
-            "is_active": true,
-            "name": "Picture",
-            "qcode": "picture",
-            "content item type": "picture"
-        },
-        {
-            "is_active": true,
-            "name": "Video",
-            "qcode": "video",
-            "content item type": "video"
-        },
-        {
-            "is_active": true,
-            "name": "Audio",
-            "qcode": "audio",
-            "content item type": "audio"
-        },
-        {
-            "is_active": true,
-            "name": "Infographics",
-            "qcode": "infographics",
-            "content item type": ""
-        },
-        {
-            "is_active": true,
-            "name": "Live video",
-            "qcode": "live_video",
-            "content item type": ""
-        },
-        {
-            "is_active": true,
-            "name": "Live blog",
-            "qcode": "live_blog",
-            "content item type": ""
-        }]
+        "items": [
+            {
+                "is_active": true,
+                "name": "Text",
+                "qcode": "text",
+                "content item type": "text"
+            },
+            {
+                "is_active": true,
+                "name": "Picture",
+                "qcode": "picture",
+                "content item type": "picture"
+            },
+            {
+                "is_active": true,
+                "name": "Video",
+                "qcode": "video",
+                "content item type": "video"
+            },
+            {
+                "is_active": true,
+                "name": "Audio",
+                "qcode": "audio",
+                "content item type": "audio"
+            },
+            {
+                "is_active": true,
+                "name": "Infographics",
+                "qcode": "infographics",
+                "content item type": ""
+            },
+            {
+                "is_active": true,
+                "name": "Live video",
+                "qcode": "live_video",
+                "content item type": ""
+            },
+            {
+                "is_active": true,
+                "name": "Live blog",
+                "qcode": "live_blog",
+                "content item type": ""
+            }
+        ]
     },
     {
         "_id": "eventoccurstatus",
@@ -2202,48 +2638,50 @@
         "unique_field": "qcode",
         "selection_type": "do not show",
         "init_version": 1,
-        "items": [{
-            "is_active": true,
-            "qcode": "eocstat:eos0",
-            "name": "Unplanned event",
-            "label": "Unplanned event"
-        },
-        {
-            "is_active": true,
-            "qcode": "eocstat:eos1",
-            "name": "Planned, occurence planned only",
-            "label": "Planned, occurence planned only"
-        },
-        {
-            "is_active": true,
-            "qcode": "eocstat:eos2",
-            "name": "Planned, occurence highly uncertain",
-            "label": "Planned, occurence highly uncertain"
-        },
-        {
-            "is_active": true,
-            "qcode": "eocstat:eos3",
-            "name": "Planned, May occur",
-            "label": "Planned, May occur"
-        },
-        {
-            "is_active": true,
-            "qcode": "eocstat:eos4",
-            "name": "Planned, occurence highly likely",
-            "label": "Planned, occurence highly likely"
-        },
-        {
-            "is_active": true,
-            "qcode": "eocstat:eos5",
-            "name": "Planned, occurs certainly",
-            "label": "Planned, occurs certainly"
-        },
-        {
-            "is_active": false,
-            "qcode": "eocstat:eos6",
-            "name": "Planned, then cancelled",
-            "label": "Planned, then cancelled"
-        }]
+        "items": [
+            {
+                "is_active": true,
+                "qcode": "eocstat:eos0",
+                "name": "Unplanned event",
+                "label": "Unplanned event"
+            },
+            {
+                "is_active": true,
+                "qcode": "eocstat:eos1",
+                "name": "Planned, occurence planned only",
+                "label": "Planned, occurence planned only"
+            },
+            {
+                "is_active": true,
+                "qcode": "eocstat:eos2",
+                "name": "Planned, occurence highly uncertain",
+                "label": "Planned, occurence highly uncertain"
+            },
+            {
+                "is_active": true,
+                "qcode": "eocstat:eos3",
+                "name": "Planned, May occur",
+                "label": "Planned, May occur"
+            },
+            {
+                "is_active": true,
+                "qcode": "eocstat:eos4",
+                "name": "Planned, occurence highly likely",
+                "label": "Planned, occurence highly likely"
+            },
+            {
+                "is_active": true,
+                "qcode": "eocstat:eos5",
+                "name": "Planned, occurs certainly",
+                "label": "Planned, occurs certainly"
+            },
+            {
+                "is_active": false,
+                "qcode": "eocstat:eos6",
+                "name": "Planned, then cancelled",
+                "label": "Planned, then cancelled"
+            }
+        ]
     },
     {
         "_id": "newscoveragestatus",
@@ -2252,30 +2690,32 @@
         "unique_field": "qcode",
         "selection_type": "do not show",
         "init_version": 1,
-        "items": [{
-            "is_active": true,
-            "qcode": "ncostat:int",
-            "name": "coverage intended",
-            "label": "Planned"
-        },
-        {
-            "is_active": true,
-            "qcode": "ncostat:notdec",
-            "name": "coverage not decided yet",
-            "label": "On merit"
-        },
-        {
-            "is_active": false,
-            "qcode": "ncostat:notint",
-            "name": "coverage not intended",
-            "label": "Not planned"
-        },
-        {
-            "is_active": true,
-            "qcode": "ncostat:onreq",
-            "name": "coverage upon request",
-            "label": "On request"
-        }]
+        "items": [
+            {
+                "is_active": true,
+                "qcode": "ncostat:int",
+                "name": "coverage intended",
+                "label": "Planned"
+            },
+            {
+                "is_active": true,
+                "qcode": "ncostat:notdec",
+                "name": "coverage not decided yet",
+                "label": "On merit"
+            },
+            {
+                "is_active": false,
+                "qcode": "ncostat:notint",
+                "name": "coverage not intended",
+                "label": "Not planned"
+            },
+            {
+                "is_active": true,
+                "qcode": "ncostat:onreq",
+                "name": "coverage upon request",
+                "label": "On request"
+            }
+        ]
     },
     {
         "_id": "event_calendars",
@@ -2284,21 +2724,23 @@
         "unique_field": "qcode",
         "selection_type": "do not show",
         "init_version": 1,
-        "items": [{
-            "is_active": true,
-            "name": "Sport",
-            "qcode": "sport"
-        },
-        {
-            "is_active": true,
-            "name": "Finance",
-            "qcode": "finance"
-        },
-        {
-            "is_active": true,
-            "name": "Entertainment",
-            "qcode": "entertainment"
-        }]
+        "items": [
+            {
+                "is_active": true,
+                "name": "Sport",
+                "qcode": "sport"
+            },
+            {
+                "is_active": true,
+                "name": "Finance",
+                "qcode": "finance"
+            },
+            {
+                "is_active": true,
+                "name": "Entertainment",
+                "qcode": "entertainment"
+            }
+        ]
     },
     {
         "_id": "assignment_priority",
@@ -2307,21 +2749,23 @@
         "unique_field": "qcode",
         "selection_type": "do not show",
         "init_version": 1,
-        "items": [{
-            "is_active": true,
-            "name": "High",
-            "qcode": 1
-        },
-        {
-            "is_active": true,
-            "name": "Medium",
-            "qcode": 2
-        },
-        {
-            "is_active": true,
-            "name": "Low",
-            "qcode": 3
-        }]
+        "items": [
+            {
+                "is_active": true,
+                "name": "High",
+                "qcode": 1
+            },
+            {
+                "is_active": true,
+                "name": "Medium",
+                "qcode": 2
+            },
+            {
+                "is_active": true,
+                "name": "Low",
+                "qcode": 3
+            }
+        ]
     },
     {
         "_id": "show_part",
@@ -2330,50 +2774,59 @@
         "unique_field": "qcode",
         "selection_type": "do not show",
         "init_version": 3,
-        "items": [{
-            "is_active": true,
-            "name": "Uvod",
-            "qcode": "Uvod"
-        },
-        {
-            "is_active": true,
-            "name": "Odjava",
-            "qcode": "Odjava"
-        },
-        {
-            "is_active": true,
-            "name": "Hladna najava",
-            "qcode": "Hladna najava"
-        },
-        {
-            "is_active": true,
-            "name": "REC",
-            "qcode": "REC"
-        },
-        {
-            "is_active": true,
-            "name": "SLIKA",
-            "qcode": "SLIKA"
-        },
-        {
-            "is_active": true,
-            "name": "PODATAK",
-            "qcode": "PODATAK"
-        },
-        {
-            "is_active": true,
-            "name": "KALENDAR",
-            "qcode": "KALENDAR"
-        },
-        {
-            "is_active": true,
-            "name": "ICUTANJEJEODGOVOR",
-            "qcode": "ICUTANJEJEODGOVOR"
-        }],
+        "items": [
+            {
+                "is_active": true,
+                "name": "Uvod",
+                "qcode": "Uvod"
+            },
+            {
+                "is_active": true,
+                "name": "Odjava",
+                "qcode": "Odjava"
+            },
+            {
+                "is_active": true,
+                "name": "Hladna najava",
+                "qcode": "Hladna najava"
+            },
+            {
+                "is_active": true,
+                "name": "REC",
+                "qcode": "REC"
+            },
+            {
+                "is_active": true,
+                "name": "SLIKA",
+                "qcode": "SLIKA"
+            },
+            {
+                "is_active": true,
+                "name": "PODATAK",
+                "qcode": "PODATAK"
+            },
+            {
+                "is_active": true,
+                "name": "KALENDAR",
+                "qcode": "KALENDAR"
+            },
+            {
+                "is_active": true,
+                "name": "ICUTANJEJEODGOVOR",
+                "qcode": "ICUTANJEJEODGOVOR"
+            }
+        ],
         "schema": {
-            "name": {"translate": true},
-            "qcode": {"type": "string"},
-            "color": {"type": "color", "label": "Сolor"}
+            "name": {
+                "translate": true
+            },
+            "qcode": {
+                "type": "string"
+            },
+            "color": {
+                "type": "color",
+                "label": "Сolor"
+            }
         }
     },
     {
@@ -2383,35 +2836,44 @@
         "unique_field": "qcode",
         "selection_type": "do not show",
         "init_version": 3,
-        "items": [{
-            "is_active": true,
-            "name": "PRLG",
-            "qcode": "PRLG"
-        },
-        {
-            "is_active": true,
-            "name": "AACC",
-            "qcode": "AACC"
-        },
-        {
-            "is_active": true,
-            "name": "GOST",
-            "qcode": "GOST"
-        },
-        {
-            "is_active": true,
-            "name": "OFF",
-            "qcode": "OFF"
-        },
-        {
-            "is_active": true,
-            "name": "TON",
-            "qcode": "TON"
-        }],
+        "items": [
+            {
+                "is_active": true,
+                "name": "PRLG",
+                "qcode": "PRLG"
+            },
+            {
+                "is_active": true,
+                "name": "AACC",
+                "qcode": "AACC"
+            },
+            {
+                "is_active": true,
+                "name": "GOST",
+                "qcode": "GOST"
+            },
+            {
+                "is_active": true,
+                "name": "OFF",
+                "qcode": "OFF"
+            },
+            {
+                "is_active": true,
+                "name": "TON",
+                "qcode": "TON"
+            }
+        ],
         "schema": {
-            "name": {"translate": true},
-            "qcode": {"type": "string"},
-            "color": {"type": "color", "label": "Сolor"}
+            "name": {
+                "translate": true
+            },
+            "qcode": {
+                "type": "string"
+            },
+            "color": {
+                "type": "color",
+                "label": "Сolor"
+            }
         }
     },
     {
@@ -2421,25 +2883,34 @@
         "unique_field": "qcode",
         "selection_type": "do not show",
         "init_version": 3,
-        "items": [{
-            "is_active": true,
-            "name": "POKR",
-            "qcode": "POKR"
-        },
-        {
-            "is_active": true,
-            "name": "WALL",
-            "qcode": "WALL"
-        },
-        {
-            "is_active": true,
-            "name": "GRAF",
-            "qcode": "GRAF"
-        }],
+        "items": [
+            {
+                "is_active": true,
+                "name": "POKR",
+                "qcode": "POKR"
+            },
+            {
+                "is_active": true,
+                "name": "WALL",
+                "qcode": "WALL"
+            },
+            {
+                "is_active": true,
+                "name": "GRAF",
+                "qcode": "GRAF"
+            }
+        ],
         "schema": {
-            "name": {"translate": true},
-            "qcode": {"type": "string"},
-            "color": {"type": "color", "label": "Сolor"}
+            "name": {
+                "translate": true
+            },
+            "qcode": {
+                "type": "string"
+            },
+            "color": {
+                "type": "color",
+                "label": "Сolor"
+            }
         }
     },
     {
@@ -2449,26 +2920,37 @@
         "unique_field": "qcode",
         "selection_type": "do not show",
         "init_version": 3,
-        "items": [{
-            "is_active": true,
-            "name": "pending",
-            "qcode": "pending",
-            "color": "#ff5630"
-        },{
-            "is_active": true,
-            "name": "in approval",
-            "qcode": "in-approval",
-            "color": "#ff991f"
-        },{
-            "is_active": true,
-            "name": "approved",
-            "qcode": "approved",
-            "color": "#36b37e"
-        }],
+        "items": [
+            {
+                "is_active": true,
+                "name": "pending",
+                "qcode": "pending",
+                "color": "#ff5630"
+            },
+            {
+                "is_active": true,
+                "name": "in approval",
+                "qcode": "in-approval",
+                "color": "#ff991f"
+            },
+            {
+                "is_active": true,
+                "name": "approved",
+                "qcode": "approved",
+                "color": "#36b37e"
+            }
+        ],
         "schema": {
-            "name": {"translate": true},
-            "qcode": {"type": "string"},
-            "color": {"type": "color", "label": "Сolor"}
+            "name": {
+                "translate": true
+            },
+            "qcode": {
+                "type": "string"
+            },
+            "color": {
+                "type": "color",
+                "label": "Сolor"
+            }
         }
     },
     {
@@ -2478,22 +2960,299 @@
         "unique_field": "qcode",
         "selection_type": "do not show",
         "init_version": 1,
-        "items": [{
-            "is_active": true,
-            "name": "K1",
-            "qcode": "K1"
-        },{
-            "is_active": true,
-            "name": "K2",
-            "qcode": "K2"
-        },{
-            "is_active": true,
-            "name": "K3",
-            "qcode": "K3"
-        }],
+        "items": [
+            {
+                "is_active": true,
+                "name": "K1",
+                "qcode": "K1"
+            },
+            {
+                "is_active": true,
+                "name": "K2",
+                "qcode": "K2"
+            },
+            {
+                "is_active": true,
+                "name": "K3",
+                "qcode": "K3"
+            }
+        ],
         "schema": {
-            "name": {"type": "string"},
-            "qcode": {"type": "string"}
+            "name": {
+                "type": "string"
+            },
+            "qcode": {
+                "type": "string"
+            }
         }
+    },
+    {
+        "_id": "availability_manager_tags",
+        "items": [
+            {
+                "is_active": true,
+                "name": "Antwerpen",
+                "qcode": "tag4-1",
+                "parent": "tag4",
+                "translations": {
+                    "name": {
+                        "fr": "Anvers"
+                    }
+                }
+            },
+            {
+                "is_active": true,
+                "name": "Antwerpen (Prov.)",
+                "qcode": "tag4",
+                "translations": {
+                    "name": {
+                        "fr": "Anvers (Prov.)"
+                    }
+                }
+            },
+            {
+                "is_active": true,
+                "name": "Arlon",
+                "qcode": "tag10-1",
+                "parent": "tag10",
+                "translations": {
+                    "name": {
+                        "nl": "Aarlen"
+                    }
+                }
+            },
+            {
+                "is_active": true,
+                "name": "Brabant wallon (Prov.)",
+                "qcode": "tag08"
+            },
+            {
+                "is_active": true,
+                "name": "Brugge",
+                "qcode": "tag1-1",
+                "parent": "tag1"
+            },
+            {
+                "is_active": true,
+                "name": "Brussel - Bruxelles",
+                "qcode": "tag11-1",
+                "parent": "tag11"
+            },
+            {
+                "is_active": true,
+                "name": "Brussel - Bruxelles  (Prov.)",
+                "qcode": "tag11"
+            },
+            {
+                "is_active": true,
+                "name": "Charleroi",
+                "qcode": "tag06-1",
+                "parent": "tag06"
+            },
+            {
+                "is_active": true,
+                "name": "Dendermonde",
+                "qcode": "tag2-1",
+                "parent": "tag2"
+            },
+            {
+                "is_active": true,
+                "name": "Dinant",
+                "qcode": "tag07-2",
+                "parent": "tag07"
+            },
+            {
+                "is_active": true,
+                "name": "Eupen",
+                "qcode": "tag9-3",
+                "parent": "tag09"
+            },
+            {
+                "is_active": true,
+                "name": "Gent",
+                "qcode": "tag2-2",
+                "parent": "tag2"
+            },
+            {
+                "is_active": true,
+                "name": "Hainaut (Prov.)",
+                "qcode": "tag06"
+            },
+            {
+                "is_active": true,
+                "name": "Halle-Vilvoorde",
+                "qcode": "tag3-1",
+                "parent": "tag3"
+            },
+            {
+                "is_active": true,
+                "name": "Hasselt",
+                "qcode": "tag05-1",
+                "parent": "tag05"
+            },
+            {
+                "is_active": true,
+                "name": "Huy",
+                "qcode": "tag9-2",
+                "parent": "tag09"
+            },
+            {
+                "is_active": true,
+                "name": "Ieper",
+                "qcode": "tag1-2",
+                "parent": "tag1"
+            },
+            {
+                "is_active": true,
+                "name": "Kortrijk",
+                "qcode": "tag1-3",
+                "parent": "tag1"
+            },
+            {
+                "is_active": true,
+                "name": "Leuven",
+                "qcode": "tag3-2",
+                "parent": "tag3"
+            },
+            {
+                "is_active": true,
+                "name": "Limburg (Prov.)",
+                "qcode": "tag05"
+            },
+            {
+                "is_active": true,
+                "name": "Liège",
+                "qcode": "tag9-1",
+                "parent": "tag09"
+            },
+            {
+                "is_active": true,
+                "name": "Liège (Prov.)",
+                "qcode": "tag09"
+            },
+            {
+                "is_active": true,
+                "name": "Luxembourg (Prov.)",
+                "qcode": "tag10"
+            },
+            {
+                "is_active": true,
+                "name": "Marche-en-Famenne",
+                "qcode": "tag10-2",
+                "parent": "tag10"
+            },
+            {
+                "is_active": true,
+                "name": "Mechelen",
+                "qcode": "tag4-2",
+                "parent": "tag4"
+            },
+            {
+                "is_active": true,
+                "name": "Mons",
+                "qcode": "tag06-3",
+                "parent": "tag06"
+            },
+            {
+                "is_active": true,
+                "name": "Namur",
+                "qcode": "tag07-1",
+                "parent": "tag07"
+            },
+            {
+                "is_active": true,
+                "name": "Namur (Prov.)",
+                "qcode": "tag07"
+            },
+            {
+                "is_active": true,
+                "name": "Neufchâteau",
+                "qcode": "tag10-3",
+                "parent": "tag10"
+            },
+            {
+                "is_active": true,
+                "name": "Nivelles",
+                "qcode": "tag08-1",
+                "parent": "tag08"
+            },
+            {
+                "is_active": true,
+                "name": "No Province",
+                "qcode": "tag12"
+            },
+            {
+                "is_active": true,
+                "name": "Oost-Vlaanderen (Prov.)",
+                "qcode": "tag2"
+            },
+            {
+                "is_active": true,
+                "name": "Oudenaarde",
+                "qcode": "tag2-3",
+                "parent": "tag2"
+            },
+            {
+                "is_active": true,
+                "name": "Sport",
+                "qcode": "tag13",
+                "parent": null
+            },
+            {
+                "is_active": true,
+                "name": "Tongeren",
+                "qcode": "tag05-2",
+                "parent": "tag05"
+            },
+            {
+                "is_active": true,
+                "name": "Tournai",
+                "qcode": "tag06-2",
+                "parent": "tag06"
+            },
+            {
+                "is_active": true,
+                "name": "Turnhout",
+                "qcode": "tag4-3",
+                "parent": "tag4"
+            },
+            {
+                "is_active": true,
+                "name": "Verviers",
+                "qcode": "tag9-4",
+                "parent": "tag09"
+            },
+            {
+                "is_active": true,
+                "name": "Veurne",
+                "qcode": "tag1-4",
+                "parent": "tag1"
+            },
+            {
+                "is_active": true,
+                "name": "Vlaams-Brabant (Prov.)",
+                "qcode": "tag3"
+            },
+            {
+                "is_active": true,
+                "name": "West-Vlaanderen (Prov.)",
+                "qcode": "tag1"
+            }
+        ],
+        "type": "manageable",
+        "schema": {
+            "name": {},
+            "qcode": {},
+            "parent": {}
+        },
+        "selection_type": "multi selection",
+        "display_name": "Provinces and Regions",
+        "disable_entire_category_selection": false,
+        "unique_field": "qcode",
+        "tags": [
+            {
+                "text": "Availability Management"
+            }
+        ]
     }
 ]
