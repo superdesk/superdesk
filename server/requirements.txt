@@ -105,7 +105,7 @@ click-repl==0.3.0
     # via celery
 croniter==6.0.0
     # via superdesk-core
-cryptography==46.0.5
+cryptography==46.0.6
     # via
     #   authlib
     #   jwcrypto
