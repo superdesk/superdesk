@@ -73,7 +73,7 @@ module.exports = function() {
             customAuthoringTopbar: {
                 toDesk: true,
                 publish: true,
-
+		publishAndContinue: true,
                 sendAndDuplicate: {
                     deskName: 'Test',
                     stageName: 'Working',
