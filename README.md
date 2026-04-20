@@ -86,6 +86,20 @@ using the `pyvenv` command:
 
 Now you may run the installation steps from above.
 
+### Local development with linked packages
+
+To link a local copy of `superdesk-client-core` or `superdesk-planning` into this client, use [`npx link`](https://github.com/privatenumber/link):
+
+```sh
+cd client
+npx link /path/to/superdesk-client-core
+npx link /path/to/superdesk-planning
+```
+
+Do not use `npm link` — it has a [known regression in npm 7+](https://hirok.io/posts/avoid-npm-link) that removes packages from `node_modules` and breaks the build.
+
+A fresh `npm install` will restore the published versions.
+
 ### Questions and issues
 
 - Our [issue tracker](https://dev.sourcefabric.org/projects/SD) is only for bug reports and feature requests.
