@@ -47,7 +47,7 @@ legal:
 
 organisation:
   name: "Sourcefabric"
-  uri: "https://www.sourcefabric.org/" 
+  uri: "https://www.sourcefabric.org/"
 
 maintenance:
   type: "internal"
