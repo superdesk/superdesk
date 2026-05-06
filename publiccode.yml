@@ -4,7 +4,7 @@ name: "Superdesk"
 url: "https://github.com/superdesk/superdesk"
 landingURL: "https://www.superdesk.org/"
 
-softwareVersion: ""
+softwareVersion: "3.3"
 releaseDate: ""
 
 platforms:
@@ -24,17 +24,24 @@ softwareType: "standalone/web"
 
 description:
   en:
-    genericName: "Newsroom management system"
-    shortDescription: "Open source newsroom management system for planning, producing, and publishing news."
+    genericName: "Headless CMS"
+    shortDescription: "Open-source headless CMS for newsrooms managing end-to-end content creation, production, curation, and multi-channel distribution."
     longDescription: >
-      Superdesk is an open source newsroom management system designed to support editorial workflows,
-      content production, and publishing. It provides tools for newsroom planning, assignment,
-      collaboration, and content management.
+      Superdesk is a headless, open-source content management system for end-to-end news creation,
+      production, and publishing. It delivers content to multiple output channels and helps businesses
+      organise their workflow and editorial communications. The software is fully scalable, meaning it
+      can be tailored to suit the needs of organisations large or small. Bringing together tasks that
+      are usually distributed across several platforms, Superdesk allows news organisations to
+      aggregate work into a single platform. Offering an alternative to a proprietary newsroom system,
+      Superdesk is built on open-source code. Contributed to by a global development community, the CMS
+      gives the freedom to customise and adapt the platform to their needs, providing control in ways
+      that paying a licence fee cannot match. Leading news agencies including Italy's ANSA, Belgium's
+      Belga, Finland's STT, the Australian Associated Press, and The Canadian Press are using Superdesk.
 
     features:
-      - "Editorial planning and assignment workflow"
-      - "Collaborative content production"
-      - "Content management and publishing support"
+      - "End-to-end news creation, production, and publishing"
+      - "Multi-channel content distribution"
+      - "Editorial workflow and communications"
 
 legal:
   license: "AGPL-3.0"
@@ -53,14 +60,11 @@ localisation:
 it:
   ria: false
 
-# Links
-
 roadmap: "https://www.superdesk.org/roadmap"
 
 issueTrackerURL: "https://github.com/superdesk/superdesk/issues"
 
 security:
-  # Email address for reporting security issues
   contacts:
     - email: "security@sourcefabric.org"
 
