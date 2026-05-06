@@ -1,0 +1,73 @@
+publiccodeYmlVersion: "0.4"
+
+name: "Superdesk"
+url: "https://github.com/superdesk/superdesk"
+landingURL: "https://www.superdesk.org/"
+
+softwareVersion: ""
+releaseDate: ""
+
+platforms:
+  - "web"
+
+categories:
+  - "content-management"
+  - "digital-asset-management"
+  - "collaboration"
+  - "workflow-management"
+
+usedBy:
+  - "newsrooms"
+
+developmentStatus: "stable"
+softwareType: "standalone/web"
+
+description:
+  en:
+    genericName: "Newsroom management system"
+    shortDescription: "Open source newsroom management system for planning, producing, and publishing news."
+    longDescription: >
+      Superdesk is an open source newsroom management system designed to support editorial workflows,
+      content production, and publishing. It provides tools for newsroom planning, assignment,
+      collaboration, and content management.
+
+    features:
+      - "Editorial planning and assignment workflow"
+      - "Collaborative content production"
+      - "Content management and publishing support"
+
+legal:
+  license: "AGPL-3.0"
+
+maintenance:
+  type: "community"
+  contacts:
+    - name: "Superdesk / Sourcefabric"
+      website: "https://www.superdesk.org/contact"
+
+localisation:
+  localisationReady: false
+  availableLanguages:
+    - "en"
+
+it:
+  ria: false
+
+# Links
+
+roadmap: "https://www.superdesk.org/roadmap"
+
+issueTrackerURL: "https://github.com/superdesk/superdesk/issues"
+
+security:
+  # Email address for reporting security issues
+  contacts:
+    - email: "security@sourcefabric.org"
+
+support:
+  - type: "web"
+    url: "https://www.superdesk.org/contact"
+
+documentation:
+  - type: "web"
+    url: "https://www.superdesk.org/"
