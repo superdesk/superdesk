@@ -1,11 +1,11 @@
-publiccodeYmlVersion: "0.4"
+publiccodeYmlVersion: "0.5"
 
 name: "Superdesk"
 url: "https://github.com/superdesk/superdesk"
 landingURL: "https://www.superdesk.org/"
 
 softwareVersion: "3.3"
-releaseDate: ""
+releaseDate: "2026-02-23"
 
 platforms:
   - "web"
@@ -24,7 +24,6 @@ softwareType: "standalone/web"
 
 description:
   en:
-    genericName: "Headless CMS"
     shortDescription: "Open-source headless CMS for newsrooms managing end-to-end content creation, production, curation, and multi-channel distribution."
     longDescription: >
       Superdesk is a headless, open-source content management system for end-to-end news creation,
@@ -46,19 +45,31 @@ description:
 legal:
   license: "AGPL-3.0"
 
+organisation:
+  name: "Sourcefabric"
+  uri: "https://www.sourcefabric.org/" 
+
 maintenance:
-  type: "community"
+  type: "internal"
   contacts:
-    - name: "Superdesk / Sourcefabric"
+    - name: "Sourcefabric"
       website: "https://www.superdesk.org/contact"
 
 localisation:
-  localisationReady: false
+  localisationReady: true
   availableLanguages:
     - "en"
-
-it:
-  ria: false
+    - "fi"
+    - "fr"
+    - "es"
+    - "da"
+    - "de"
+    - "ar"
+    - "ru"
+    - "nb"
+    - "uk"
+    - "pt"
+    - "pl"
 
 roadmap: "https://www.superdesk.org/roadmap"
 
