@@ -111,8 +111,6 @@ cryptography==48.0.0
     # via
     #   authlib
     #   jwcrypto
-deepdiff==9.0.0
-    # via superdesk-planning
 dnspython==2.8.0
     # via pymongo
 draftjs-exporter[lxml]==5.1.0
@@ -171,8 +169,6 @@ hypercorn==0.18.0
     # via quart
 hyperframe==6.1.0
     # via h2
-icalendar==5.0.14
-    # via superdesk-planning
 idna==3.14
     # via
     #   requests
@@ -227,8 +223,6 @@ oauth2client==4.1.3
     # via flask-oidc-ex
 oauthlib==3.3.1
     # via requests-oauthlib
-orderly-set==5.5.0
-    # via deepdiff
 packaging==26.2
     # via kombu
 pillow==12.0.0
@@ -276,7 +270,6 @@ python-dateutil==2.9.0.post0
     #   celery
     #   celery-redbeat
     #   croniter
-    #   icalendar
     #   superdesk-core
 python-jwt==4.1.0
     # via flask-oidc-ex
@@ -288,7 +281,6 @@ pytz==2026.2
     # via
     #   croniter
     #   eve-elastic
-    #   icalendar
     #   quart-babel
     #   superdesk-core
 pyyaml==6.0.3
@@ -338,8 +330,6 @@ six==1.17.0
 superdesk-analytics @ git+https://github.com/superdesk/superdesk-analytics.git@develop
     # via -r requirements.in
 superdesk-core @ git+https://github.com/IvanJelicSF/superdesk-core.git@feature/content-lists-with-develop
-    # via -r requirements.in
-superdesk-planning @ git+https://github.com/superdesk/superdesk-planning.git@7f0dbfcc9204bd9c9852c238eadd3a4da320e1a7
     # via -r requirements.in
 taskgroup==0.2.2
     # via hypercorn
