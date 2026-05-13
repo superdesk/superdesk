@@ -255,7 +255,7 @@ pyjwt==2.10.1
     # via superdesk-core
 pymemcache==4.0.0
     # via superdesk-core
-pymongo==4.15.5
+pymongo==4.9.2
     # via
     #   eve
     #   motor
