@@ -331,6 +331,8 @@ superdesk-analytics @ git+https://github.com/superdesk/superdesk-analytics.git@d
     # via -r requirements.in
 superdesk-core @ git+https://github.com/IvanJelicSF/superdesk-core.git@feature/content-lists-with-develop
     # via -r requirements.in
+superdesk-planning @ git+https://github.com/superdesk/superdesk-planning.git@7f0dbfcc9204bd9c9852c238eadd3a4da320e1a7
+    # via -r requirements.in
 taskgroup==0.2.2
     # via hypercorn
 tenacity==9.1.4
