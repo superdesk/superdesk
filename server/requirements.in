@@ -1,10 +1,6 @@
 honcho
 celery-redbeat
 
-<<<<<<< HEAD
-git+https://github.com/IvanJelicSF/superdesk-core.git@feature/content-lists-with-develop-article-data#egg=superdesk-core
-=======
-git+https://github.com/IvanJelicSF/superdesk-core.git@feature/content-lists-with-develop#egg=superdesk-core
+git+https://github.com/IvanJelicSF/superdesk-core.git@feature/content-lists-with-develop-sticky#egg=superdesk-core
 git+https://github.com/superdesk/superdesk-planning.git@7f0dbfcc9204bd9c9852c238eadd3a4da320e1a7#egg=superdesk-planning
->>>>>>> 002bb941a4fc1231da7b71abda40bb19c1b1872a
 git+https://github.com/superdesk/superdesk-analytics.git@develop#egg=superdesk-analytics
