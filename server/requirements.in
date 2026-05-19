@@ -1,6 +1,6 @@
 honcho
 celery-redbeat
 
-git+https://github.com/IvanJelicSF/superdesk-core.git@feature/content-lists-with-develop#egg=superdesk-core
+git+https://github.com/IvanJelicSF/superdesk-core.git@content-lists-with-develop-test-all#egg=superdesk-core
 git+https://github.com/superdesk/superdesk-planning.git@7f0dbfcc9204bd9c9852c238eadd3a4da320e1a7#egg=superdesk-planning
 git+https://github.com/superdesk/superdesk-analytics.git@develop#egg=superdesk-analytics
