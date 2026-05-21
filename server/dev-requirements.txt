@@ -8,6 +8,6 @@ pytest==9.0.3
 httmock==1.4.0
 wooper==0.4.4
 mypy==2.1.0
-responses==0.26.0
+responses==0.26.1
 aioresponses==0.7.8
 requests_mock==1.12.1
