@@ -94,10 +94,17 @@ log()  { printf '\n[dev-setup] %s\n' "$*"; }
 fail() { printf '\n[dev-setup] ERROR: %s\n' "$*" >&2; exit 1; }
 
 server_reachable() {
-    # The dev server returns 200 on /api/ (root listing). 401/403 are also
-    # accepted in case server config tightens up later. Anything else
-    # (connection refused, 5xx, 404 — including macOS AirPlay's 200-but-
-    # not-superdesk) is "not up yet".
+    # Any 2xx / 401 / 403 means "something is answering on this port that
+    # *looks like* a working HTTP service" — good enough as a readiness
+    # signal. Connection refused, timeouts, and 5xx are treated as "not
+    # up yet" and the wait-loop keeps polling.
+    #
+    # Caveat: this does NOT distinguish a real Superdesk server from
+    # another HTTP service that happens to answer on the same port (e.g.
+    # macOS AirPlay Receiver on :5000 returns 200). We accept that risk
+    # because the script's default port choice (5000 on Linux, 5001 on
+    # macOS) avoids the known collision; a user overriding
+    # SUPERDESK_PORT=5000 on macOS is explicitly opting in.
     local status
     status=$(curl -sS -o /dev/null -w '%{http_code}' --max-time 2 "$1" 2>/dev/null) || return 1
     case "$status" in

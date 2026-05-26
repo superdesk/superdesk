@@ -282,10 +282,17 @@ rm -rf client/node_modules client/package-lock.json
 If that doesn't pull a newer build-tools, the host's pinned range
 needs bumping — escalate to a developer.
 
-**Step 5 returns 200 instead of 401/403.** Something else (often macOS
-AirPlay Receiver on :5000, or a leftover container) is on the port. Run
-`lsof -i :<port> -sTCP:LISTEN` (where `<port>` is the one the setup
-script printed) to identify, then stop the holder.
+**Step 5 returns nothing / a timeout / a 5xx.** No real HTTP service is
+answering on that port yet (server still starting, or it crashed). Wait
+60s; if still no response, check
+`docker compose -f docker-compose.dev.yml logs superdesk-server` for
+the actual error.
+
+**Step 5 returns 200, but the browser sees a non-Superdesk page.** Rare,
+but possible if you've overridden `SUPERDESK_PORT` to a port held by
+another HTTP service (e.g. setting `SUPERDESK_PORT=5000` on macOS where
+AirPlay Receiver answers). Use `lsof -i :<port> -sTCP:LISTEN` to
+identify the holder, then either stop it or pick a different port.
 
 **Step 6 hangs longer than 5 minutes.** The grunt cold build is slow but
 should not exceed 3 minutes on a recent machine. Check

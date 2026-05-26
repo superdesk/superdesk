@@ -111,7 +111,7 @@ preflight_check_port() {
     local name="$2"
     if command -v lsof > /dev/null && lsof -ti:"$port" -sTCP:LISTEN > /dev/null 2>&1; then
         # Skip if our own stack already holds it.
-        if [ "$port" = "$SERVER_PORT" ] && docker compose -p superdesk-dev ps -q 2>/dev/null | grep -q .; then
+        if [ "$port" = "$SERVER_PORT" ] && docker compose -p superdesk-dev -f "$COMPOSE_FILE" ps -q 2>/dev/null | grep -q .; then
             return 0
         fi
         if [ "$port" = "9000" ] && [ -f "$GRUNT_PIDFILE" ] && kill -0 "$(cat "$GRUNT_PIDFILE")" 2>/dev/null; then
