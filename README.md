@@ -38,6 +38,67 @@ Then you can login with admin:admin credentials.
 
 The Docker images are hosted on Dockerhub for the [client](https://hub.docker.com/r/sourcefabricoss/superdesk-client) and [server](https://hub.docker.com/r/sourcefabricoss/superdesk-server).
 
+## Local development (frontend / extension work)
+
+For editing the client or extensions and seeing changes immediately, use
+the server-in-Docker / client-native workflow described in
+[DEVSETUP.md](./DEVSETUP.md).
+
+### Prerequisites
+
+- **Docker Desktop** installed and running.
+- **[Volta](https://volta.sh)** installed (Node version is pinned through it).
+- **Sibling repos cloned in the same parent directory as this one**:
+  `superdesk-client-core` and `superdesk-planning` are required;
+  `superdesk-analytics` and `superdesk-publisher` are optional.
+
+See [DEVSETUP.md#prerequisites](./DEVSETUP.md#prerequisites) for the full
+layout diagram and rationale.
+
+### Running it
+
+Once the prerequisites are in place:
+
+1. Run the setup script.
+2. Open `http://localhost:9000` and log in with `admin` / `admin`.
+
+There are two ways to drive step 1.
+
+### Option 1 — let Claude Code do it (recommended for new contributors)
+
+If you have Claude Code installed, the project ships four slash commands
+that wrap the dev scripts. Open Claude inside this repo and type:
+
+- `/superdesk-setup` — first-time install + link siblings + init DB
+- `/superdesk-up` — start the stack day-to-day
+- `/superdesk-down` — stop the stack (data preserved)
+- `/superdesk-ext list | enable NAME | disable NAME` — toggle in-tree extensions
+
+These are explicit and fast — typing one runs the corresponding script
+directly. Use them once you know what you want.
+
+If you don't remember the command name, the
+[`superdesk-dev` skill](./.claude/skills/superdesk-dev/SKILL.md) catches
+plain-language phrasings ("set up the dev environment", "start
+Superdesk", "enable helloWorld"…). It confirms intent with you before
+running anything, so the worst case of a misfire is one extra question,
+not an unwanted setup.
+
+The project ships a `.claude/settings.json` that pre-approves the dev
+scripts, so you won't be asked to approve each Bash command one by one.
+
+### Option 2 — run the scripts directly
+
+```sh
+./scripts/dev/setup.sh    # first time
+./scripts/dev/up.sh       # daily
+./scripts/dev/down.sh     # stop
+```
+
+See [DEVSETUP.md](./DEVSETUP.md) for the first-run validation checklist,
+flags (`--only`, `--skip`, `--link`, `--reinit`), extension toggling, and
+troubleshooting.
+
 ## Manual installation
 
 ### Requirements
@@ -47,7 +108,7 @@ These services must be installed, configured and running:
 - MongoDB
 - ElasticSearch (7+)
 - Redis
-- Python (3.8)
+- Python (3.10)
 - Node.js (with `npm`)
 
 On macOS, if you have [homebrew](https://brew.sh/) installed, simply run: `brew install mongodb elasticsearch redis python3 node`.
@@ -85,20 +146,6 @@ using the `pyvenv` command:
 - Run `. ~/pyvenv/bin/activate` to start the virtual environment in the current terminal session.
 
 Now you may run the installation steps from above.
-
-### Local development with linked packages
-
-To link a local copy of `superdesk-client-core` or `superdesk-planning` into this client, use [`npx link`](https://github.com/privatenumber/link):
-
-```sh
-cd client
-npx link /path/to/superdesk-client-core
-npx link /path/to/superdesk-planning
-```
-
-Do not use `npm link` — it has a [known regression in npm 7+](https://hirok.io/posts/avoid-npm-link) that removes packages from `node_modules` and breaks the build.
-
-A fresh `npm install` will restore the published versions.
 
 ### Questions and issues
 
