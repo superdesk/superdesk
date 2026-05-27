@@ -1,0 +1,100 @@
+# Local development stack: backend services only.
+#
+# This file is for the "server in Docker, client native" workflow: the
+# Python server, MongoDB, Redis, and Elasticsearch run in containers, while
+# the client (`npm run start` in ./client) runs natively on the host. That
+# split gives the fastest frontend iteration — grunt's watch picks up edits
+# in your sibling checkouts of superdesk-client-core / superdesk-planning
+# without any container restart.
+#
+# Usage is wrapped by scripts/dev/up.sh and down.sh, which add health
+# checks and a Docker-Desktop-still-running reminder. Direct usage:
+#
+#   docker compose -f docker-compose.dev.yml up -d   # start
+#   docker compose -f docker-compose.dev.yml stop    # stop (keeps data)
+#   docker compose -f docker-compose.dev.yml down -v # nuclear: drops data
+#
+# Notes:
+#   * Server host port is controlled by SUPERDESK_PORT. Default 5000
+#     (matches upstream Superdesk). On macOS, scripts/dev/setup.sh and
+#     up.sh auto-override to 5001 because :5000 is reserved for AirPlay
+#     Receiver, which silently answers HTTP and would mask a missing
+#     server. To override explicitly: `SUPERDESK_PORT=5070 ./scripts/dev/up.sh`.
+#   * MongoDB / Redis / Elasticsearch are NOT published to the host —
+#     they live on the bridge network and only the server talks to them.
+#     This keeps the host port footprint minimal and avoids conflicts with
+#     other stacks (e.g. superdesk-client-core's e2e compose, which uses
+#     host networking on those same ports).
+#   * Data is persisted in named volumes; `down` (without -v) preserves it.
+
+name: superdesk-dev
+
+services:
+
+  mongodb:
+    image: mongo:6
+    networks:
+      - superdesk-dev
+    volumes:
+      - superdesk-dev-mongo-data:/data/db
+    restart: unless-stopped
+
+  redis:
+    image: redis:8
+    networks:
+      - superdesk-dev
+    restart: unless-stopped
+
+  elastic:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.29
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    networks:
+      - superdesk-dev
+    volumes:
+      - superdesk-dev-elastic-data:/usr/share/elasticsearch/data
+    restart: unless-stopped
+
+  superdesk-server:
+    image: sourcefabricoss/superdesk-server:latest
+    build: ./server
+    depends_on:
+      - redis
+      - mongodb
+      - elastic
+    ports:
+      - "${SUPERDESK_PORT:-5000}:5000"
+    environment:
+      # Browser-facing URLs (these are what the client running natively on
+      # the host will hit, so they use host-mapped ports).
+      - SUPERDESK_URL=http://localhost:${SUPERDESK_PORT:-5000}/api
+      - SUPERDESK_CLIENT_URL=http://localhost:9000
+      - CONTENTAPI_URL=http://localhost:${SUPERDESK_PORT:-5000}/capi
+      # Demo content seeded on first init — useful for designers who want
+      # something to navigate. Set DEMO_DATA=0 for a clean install.
+      - DEMO_DATA=1
+      - WEB_CONCURRENCY=2
+      # Backend service URIs use the bridge network's service names.
+      - MONGO_URI=mongodb://mongodb/superdesk
+      - CONTENTAPI_MONGO_URI=mongodb://mongodb/superdesk_capi
+      - PUBLICAPI_MONGO_URI=mongodb://mongodb/superdesk_papi
+      - LEGAL_ARCHIVE_URI=mongodb://mongodb/superdesk_legal
+      - ARCHIVED_URI=mongodb://mongodb/superdesk_archive
+      - ELASTICSEARCH_URL=http://elastic:9200
+      - ELASTICSEARCH_INDEX=superdesk
+      - CELERY_BROKER_URL=redis://redis:6379/1
+      - REDIS_URL=redis://redis:6379/1
+      - DEFAULT_TIMEZONE=Europe/Prague
+      - SECRET_KEY=dev-only-not-for-production-*k^&9)byk=8en9n1sg7
+    networks:
+      - superdesk-dev
+    restart: unless-stopped
+
+networks:
+  superdesk-dev:
+    driver: bridge
+
+volumes:
+  superdesk-dev-mongo-data:
+  superdesk-dev-elastic-data:
