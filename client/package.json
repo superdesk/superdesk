@@ -10,7 +10,8 @@
     },
     "scripts": {
         "build": "npx @superdesk/build-tools build-root-repo ./",
-        "start": "npx grunt server"
+        "start": "npx grunt server",
+        "devlink": "npx @superdesk/build-tools dev-link"
     },
     "devDependencies": {
         "@superdesk/build-tools": "^1.2.0"
