@@ -4,7 +4,7 @@
     "dependencies": {
         "node-polyfill-webpack-plugin": "^4.1.0",
         "superdesk-analytics": "github:superdesk/superdesk-analytics#develop",
-        "superdesk-core": "github:superdesk/superdesk-client-core#develop",
+        "superdesk-core": "github:IvanJelicSF/superdesk-client-core#SDESK-7920-personal-spiked-regression",
         "superdesk-planning": "github:superdesk/superdesk-planning#develop",
         "superdesk-publisher": "github:superdesk/superdesk-publisher#develop"
     },
