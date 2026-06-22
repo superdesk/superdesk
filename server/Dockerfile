@@ -1,6 +1,6 @@
-FROM ubuntu:22.04
+FROM python:3.12-slim
 
-ENV DEBIAN_FRONTEND=noninteractive 
+ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
 python3 python3-dev python3-pip python3-venv git gcc curl \
@@ -15,7 +15,7 @@ libmagic-dev \
 # reportlab
 fonts-dejavu \
 # cleanup
-&& rm -rf /var/lib/apt/lists/* 
+&& rm -rf /var/lib/apt/lists/*
 
 # setup venv
 ENV VIRTUAL_ENV=/opt/venv
