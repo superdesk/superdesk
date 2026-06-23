@@ -1,6 +1,6 @@
 -r requirements.txt
 
-aioresponses==0.7.8
+aioresponses==0.7.9
 black==25.12.0
 pep8==1.7.1
 flake8==7.3.0
@@ -9,5 +9,5 @@ httmock==1.4.0
 wooper==0.4.4
 mypy==2.1.0
 responses==0.26.1
-aioresponses==0.7.8
+aioresponses==0.7.9
 requests_mock==1.12.1
