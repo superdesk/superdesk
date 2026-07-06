@@ -3,9 +3,9 @@
     "license": "AGPL-3.0",
     "dependencies": {
         "node-polyfill-webpack-plugin": "^4.1.0",
+        "superdesk-analytics": "github:superdesk/superdesk-analytics#develop",
         "superdesk-core": "github:superdesk/superdesk-client-core#develop",
-        "superdesk-planning": "github:superdesk/superdesk-planning#develop",
-        "superdesk-analytics": "github:superdesk/superdesk-analytics#develop"
+        "superdesk-planning": "github:superdesk/superdesk-planning#develop"
     },
     "scripts": {
         "build": "npx @superdesk/build-tools build-root-repo ./",
