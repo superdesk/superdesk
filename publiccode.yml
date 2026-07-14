@@ -4,8 +4,8 @@ name: "Superdesk"
 url: "https://github.com/superdesk/superdesk"
 landingURL: "https://www.superdesk.org/"
 
-softwareVersion: "3.3"
-releaseDate: "2026-02-23"
+softwareVersion: "3.5"
+releaseDate: "2026-07-14"
 
 platforms:
   - "web"
