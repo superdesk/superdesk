@@ -1,31 +1,25 @@
 services:
 
   mongodb:
-    image: mongo:4
+    image: mongo:6
     networks:
       - superdesk
-    expose:
-      - "27017"
     ports:
       - "27017:27017"
 
   redis:
-    image: redis:3
+    image: redis:8
     networks:
       - superdesk
-    expose:
-      - "6379"
     ports:
       - "6379:6379"
 
   elastic:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.1
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.29
     environment:
       - discovery.type=single-node
     networks:
       - superdesk
-    expose:
-      - "9200"
     ports:
       - "9200:9200"
 
@@ -60,11 +54,14 @@ services:
 
   superdesk-client:
     image: sourcefabricoss/superdesk-client:latest
-    build: ./client
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+      args:
+        - SUPERDESK_URL=http://localhost:8080/api
+        - SUPERDESK_WS_URL=ws://localhost:8080/ws
     environment:
       # If not hosting on localhost, change these lines
-      - SUPERDESK_URL=http://localhost:8080/api
-      - SUPERDESK_WS_URL=ws://localhost:8080/ws
       - IFRAMELY_KEY
     ports:
       - "8080:80"
