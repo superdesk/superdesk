@@ -1,6 +1,5 @@
 honcho
 celery-redbeat
-pymongo==4.9.2
 
 git+https://github.com/superdesk/superdesk-core.git@release/3.6#egg=superdesk-core
 git+https://github.com/superdesk/superdesk-planning.git@release/3.6#egg=superdesk-planning

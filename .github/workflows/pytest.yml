@@ -6,7 +6,7 @@ on:
       python-version:
         description: "Python version"
         required: false
-        default: "3.10"
+        default: "3.12"
         type: string
 
 permissions:
@@ -40,7 +40,7 @@ jobs:
             discovery.type: single-node
 
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
 
     - uses: actions/setup-python@v6
       with:
