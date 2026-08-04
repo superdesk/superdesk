@@ -4,7 +4,7 @@
     "dependencies": {
         "node-polyfill-webpack-plugin": "^4.1.0",
         "superdesk-analytics": "github:superdesk/superdesk-analytics#develop",
-        "superdesk-core": "github:superdesk/superdesk-client-core#develop",
+        "superdesk-core": "github:superdesk/superdesk-client-core#auth-react/SDESK-7816-widget-id-unification",
         "superdesk-planning": "github:superdesk/superdesk-planning#develop",
         "superdesk-publisher": "github:superdesk/superdesk-publisher#develop"
     },
