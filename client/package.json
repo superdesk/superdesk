@@ -5,7 +5,7 @@
         "node-polyfill-webpack-plugin": "^4.1.0",
         "superdesk-analytics": "github:superdesk/superdesk-analytics#develop",
         "superdesk-core": "github:superdesk/superdesk-client-core#develop",
-        "superdesk-planning": "github:superdesk/superdesk-planning#develop",
+        "superdesk-planning": "github:MarkLark86/superdesk-planning#SDBELGA-1126",
         "superdesk-publisher": "github:superdesk/superdesk-publisher#develop"
     },
     "scripts": {
