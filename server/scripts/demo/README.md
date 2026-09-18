@@ -70,7 +70,7 @@ python3 server/scripts/demo/seed_superdesk.py
 | `PORTAL_URL` | no, but the portal push is useless without it | Base URL of the Briefdesk Portal. The push destination becomes `<PORTAL_URL>/push`. |
 | `PORTAL_PUSH_URL` | no | Address this server uses to reach the portal, when it differs from the one a browser uses (two instances on one host). Defaults to `PORTAL_URL`. The push destination becomes `<PORTAL_PUSH_URL>/push`. |
 | `OPENROUTER_API_KEY` | no | When absent the provider is created without a key and both actions are still created. Paste the key into Settings, AI providers afterwards. A key already stored is never touched. |
-| `BRIEFDESK_AI_MODEL` | no, defaults to `openai/gpt-4o-mini` | Model the AI provider and both actions use. |
+| `BRIEFDESK_AI_MODEL` | no, defaults to `z-ai/glm-5.3-flash` | Default model of the AI provider when the seed creates it. An existing provider is never changed, and the actions carry no model of their own, so they follow the provider's default. |
 
 Flags:
 
@@ -130,9 +130,21 @@ scheme sending everything to Watch / Incoming. The `rss` feeding service handles
 handling and no `feed_parser`.
 
 **publishing** Filter conditions on the custom vocabularies, one content filter per client company,
-one package (product) per company plus one for the portal, and the recipients: `Briefdesk Portal`
-as an HTTP push destination with format `newsroom ninjs` and `secret_token`, and one email
+one package (product) per company plus two for the portal, and the recipients: `Briefdesk Portal`
+as an HTTP push destination with format `newsroom ninjs` and `secret_token`, `Briefdesk Portal
+calendar` with `json_event` and `json_planning` destinations to the same URL, and one email
 recipient per client company.
+
+The portal needs two recipients rather than one: Superdesk matches a recipient's packages once and
+then hands the item to every destination that recipient owns, and the Newsroom NINJS formatter
+accepts an event as readily as a report, so a single recipient would push a wire-shaped duplicate
+of every calendar entry under the same guid. Two packages filtered on `type` (`text` for reports,
+`event,planning` for the calendar) keep each kind on its own recipient.
+
+The pushed payload carries a `products` array of the packages the item matched, which is what the
+portal maps to its own products through `sd_product_id`. The client entitlement packages match
+events and requests too, so a calendar entry tagged region `europe` plus sector `logistics` arrives
+carrying the Nordfreight package alongside the calendar one.
 
 **highlights** The "Europe daily brief" briefing list on the Europe team, with `auto_insert` set to
 `now-24h` and the highlight template attached.
@@ -142,10 +154,33 @@ recipient per client company.
 headline out) and "Draft summary" (summary, body in, summary out), both with a system prompt written
 for a risk intelligence analyst. The script prints both action ids at the end.
 
-**planning** One programme (agenda) per client company, and one client request for Castellan Energy
-as a planning item with a deliverable (coverage) assigned to `omar.nasser` on the MENA team, due in
-two days. `workflow_status: "active"` on the coverage is what makes the server create a visible
-tasking rather than a draft one.
+**planning** One programme (agenda) per client company, the `event_calendars` vocabulary rewritten
+to Political, Labour, Legal, Trade and industry and Security, 17 risk calendar entries (15 single
+plus two weekly series, so 26 event documents), 14 client requests and 21 deliverables with their
+taskings.
+
+Dates are computed at run time from the day of the run, so the calendar and the due times always
+look current. Entries carry a location with geo coordinates, an occurrence status from
+`eventoccurstatus` and one calendar. A recurring entry is posted as one event with
+`dates.recurring_rule`; the server generates the whole series and ignores a client `guid`, so the
+stable lookup key for an entry is its `slugline`, not its id.
+
+`workflow_status: "active"` on a coverage is what makes the server create a visible tasking rather
+than a draft one. Taskings are then walked to their demo state through the real endpoints:
+
+- `POST assignments/content` with `assignment_id` and `template_name` starts work and creates the
+  report from the team's template. It assigns the tasking to whoever called it, so the seed signs
+  in as the assignee for this one step and keeps the admin session for everything else.
+- `PATCH assignments/complete/<id>` completes it. Admin may complete another user's tasking and the
+  assignee is kept, so this runs on the admin session.
+- `POST assignments/link` with `reassign: false` hands an already released report to a deliverable.
+  The tasking goes straight to completed and the Planning view shows the delivered report. The
+  report must not already be linked and the tasking must not have had work started on it.
+
+Entries and requests marked `post` are released to the portal through `events/post` and
+`planning/post` with `pubstatus: "usable"`; a recurring entry is posted with `update_method: "all"`.
+The client RFIs and the two internal coordination meetings stay unposted, which is what keeps them
+inside Halden.
 
 **content** Creates 29 alerts, 3 daily briefs and 2 country assessments from `content/*.json` on the
 right team and stage, releases the 29 that are marked `released` by publishing them through the API
@@ -185,7 +220,12 @@ Every object is looked up first and then created or patched:
   sources, routing schemes, AI providers and actions, programmes by `name`
 - users by `username`
 - reports by a deterministic `guid`: `urn:briefdesk:demo:<reference>`
-- the client request by `slugline`
+- risk calendar entries, client requests and deliverables by `slugline`
+
+An existing calendar entry or request is left as it is apart from its `subject`, which the seed
+keeps in step with the taxonomies here because those values decide which client company sees the
+entry in the portal. A tasking already past its demo state is left alone, so a re-run never sends a
+completed tasking back to To Do.
 
 Running it twice changes nothing the second time. There is no delete: to reset, redeploy the
 instance. Deleting the sample reports by hand means archiving (spiking) them, which does not free

@@ -49,11 +49,29 @@ SECTIONS = [
 ]
 
 
+WEEKDAYS = ["MO", "TU", "WE", "TH", "FR", "SA", "SU"]
+
+
 def utc_iso(hours_ago=0, days_ahead=0):
     moment = datetime.datetime.now(datetime.timezone.utc)
     moment -= datetime.timedelta(hours=hours_ago)
     moment += datetime.timedelta(days=days_ahead)
     return moment.strftime("%Y-%m-%dT%H:%M:%S+0000")
+
+
+def iso(moment):
+    return moment.strftime("%Y-%m-%dT%H:%M:%S+0000")
+
+
+def utc_at(days=0, hour=9):
+    """A whole hour, so many days from today. Calendar entries are placed relative to the run so
+    the demo always looks current."""
+    moment = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=days)
+    return moment.replace(hour=hour, minute=0, second=0, microsecond=0)
+
+
+def utc_in(hours=0):
+    return datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=hours)
 
 
 def html_list(lines):
@@ -67,8 +85,9 @@ def load_vocabularies():
 
 
 class Seeder:
-    def __init__(self, api, portal_url, openrouter_key, ai_model, portal_push_url=None):
+    def __init__(self, api, portal_url, openrouter_key, ai_model, portal_push_url=None, insecure=False):
         self.api = api
+        self.insecure = insecure
         self.portal_url = (portal_url or "").rstrip("/")
         # Where this server reaches the portal, which is not always the address a browser uses:
         # two instances on the same host may only see each other by their internal names.
@@ -81,6 +100,7 @@ class Seeder:
             for vocabulary in self.vocabularies
         }
         self._cache = {}
+        self._sessions = {}
         self.notes = []
         self.ai_action_ids = {}
 
@@ -641,12 +661,33 @@ class Seeder:
                 }
             ],
         }
-        self.upsert(
-            "subscribers",
-            {"name": D.PORTAL_SUBSCRIBER_NAME},
-            portal,
-            "recipient %s" % D.PORTAL_SUBSCRIBER_NAME,
-        )
+        self._upsert_subscriber(portal, "recipient %s" % D.PORTAL_SUBSCRIBER_NAME)
+
+        calendar_product = str(self.product_id(D.PORTAL_CALENDAR_PRODUCT))
+        calendar = {
+            "name": D.PORTAL_CALENDAR_SUBSCRIBER_NAME,
+            "subscriber_type": "all",
+            "email": "portal@%s" % D.EMAIL_DOMAIN,
+            "is_active": True,
+            "is_targetable": True,
+            "sequence_num_settings": {"min": 1, "max": 9999},
+            "products": [calendar_product],
+            "api_products": [calendar_product],
+            "destinations": [
+                {
+                    "name": name,
+                    "format": output_format,
+                    "delivery_type": "http_push",
+                    "config": {
+                        "resource_url": "%s/push" % self.portal_push_url if self.portal_push_url else "",
+                        "assets_url": "%s/push_binary" % self.portal_push_url if self.portal_push_url else "",
+                        "secret_token": D.PUSH_KEY,
+                    },
+                }
+                for name, output_format in D.PORTAL_CALENDAR_DESTINATIONS
+            ],
+        }
+        self._upsert_subscriber(calendar, "recipient %s" % D.PORTAL_CALENDAR_SUBSCRIBER_NAME)
 
         for company in D.CLIENT_COMPANIES:
             doc = {
@@ -666,7 +707,30 @@ class Seeder:
                     }
                 ],
             }
-            self.upsert("subscribers", {"name": company["name"]}, doc, "recipient %s" % company["name"])
+            self._upsert_subscriber(doc, "recipient %s" % company["name"])
+
+    def _upsert_subscriber(self, doc, label):
+        """The server gives every destination an id and a preview url and never returns the secret
+        token, so comparing the stored destinations to the ones sent always shows a difference."""
+        def comparable(destinations):
+            return [
+                {
+                    "name": destination.get("name"),
+                    "format": destination.get("format"),
+                    "delivery_type": destination.get("delivery_type"),
+                    "config": {
+                        key: value
+                        for key, value in (destination.get("config") or {}).items()
+                        if key != "secret_token"
+                    },
+                }
+                for destination in destinations or []
+            ]
+
+        existing = self.api.find_one("subscribers", name=doc["name"])
+        if existing and comparable(existing.get("destinations")) == comparable(doc["destinations"]):
+            doc = {key: value for key, value in doc.items() if key != "destinations"}
+        self.upsert("subscribers", {"name": doc["name"]}, doc, label, existing=existing)
 
     def section_highlights(self):
         log("Briefing lists")
@@ -754,14 +818,15 @@ class Seeder:
         if not provider:
             provider = self.api.post("ai_providers", doc)
             log("created AI provider %s" % D.AI_PROVIDER_NAME, 1)
+        elif self.openrouter_key:
+            # An existing provider belongs to whoever configured it in Settings: its models, base
+            # URL and label are left alone. Only a key given explicitly to this run is written.
+            self.api.patch(
+                "ai_providers", provider["_id"], {"api_key": self.openrouter_key}, etag=provider.get("_etag")
+            )
+            log("set the API key of AI provider %s" % D.AI_PROVIDER_NAME, 1)
         else:
-            # api_key is never returned, so it can only be compared by sending it.
-            updates = {k: v for k, v in doc.items() if k == "api_key" or provider.get(k) != v}
-            if updates:
-                self.api.patch("ai_providers", provider["_id"], updates, etag=provider.get("_etag"))
-                log("updated AI provider %s" % D.AI_PROVIDER_NAME, 1)
-            else:
-                log("unchanged AI provider %s" % D.AI_PROVIDER_NAME, 1)
+            log("kept AI provider %s as configured" % D.AI_PROVIDER_NAME, 1)
 
         for action in D.AI_ACTIONS:
             doc = {
@@ -770,16 +835,26 @@ class Seeder:
                 "input_fields": action["input_fields"],
                 "output_field": action["output_field"],
                 "content_profiles": action["content_profiles"],
+                # No model on the action: it then runs with the provider's default model, which is
+                # the one place an administrator changes it.
                 "provider": str(provider["_id"]),
-                "model": self.ai_model,
                 "active": True,
                 "parameters": action["parameters"],
             }
             saved = self.upsert("ai_actions", {"name": action["name"]}, doc, "AI action %s" % action["name"])
             self.ai_action_ids[action["name"]] = str(saved.get("_id"))
 
+    # -- planning ---------------------------------------------------------
+
     def section_planning(self):
-        log("Programmes and client requests")
+        log("Programmes, risk calendar, client requests and taskings")
+        agendas = self._programmes()
+        self._event_calendars()
+        events = self._events()
+        requests = self._requests(agendas, events)
+        self._post_to_portal(events, requests)
+
+    def _programmes(self):
         agendas = {}
         for name in D.PROGRAMMES:
             existing = next((a for a in self.api.find_all("agenda") if a.get("name") == name), None)
@@ -790,58 +865,318 @@ class Seeder:
             created = self.api.post("agenda", {"name": name, "is_enabled": True})
             log("created programme %s" % name, 1)
             agendas[name] = created["_id"]
+        return agendas
 
-        request = D.CLIENT_REQUEST
-        existing = next(
-            (p for p in self.api.find_all("planning") if p.get("slugline") == request["slugline"]),
-            None,
-        )
-        due = utc_iso(days_ahead=request["due_in_days"])
-        coverage = {
+    def _event_calendars(self):
+        """Replace the stock calendars with the ones a risk desk sorts its diary by."""
+        wanted = [{"name": name, "qcode": qcode, "is_active": True} for qcode, name in D.EVENT_CALENDARS]
+        if self.api.dry_run:
+            log("would set the event calendars to %s" % ", ".join(name for _, name in D.EVENT_CALENDARS), 1)
+            return
+        existing = self.api.get_item("vocabularies", "event_calendars")
+        if not existing:
+            self.api.post(
+                "vocabularies",
+                {
+                    "_id": "event_calendars",
+                    "display_name": "Event Calendars",
+                    "type": "manageable",
+                    "unique_field": "qcode",
+                    "selection_type": "do not show",
+                    "items": wanted,
+                },
+            )
+            log("created the event calendars vocabulary", 1)
+            return
+        # is_active is stripped from items on read, so only the pairs that matter are compared.
+        current = [(item.get("qcode"), item.get("name")) for item in existing.get("items") or []]
+        if current == [(item["qcode"], item["name"]) for item in wanted]:
+            log("event calendars unchanged", 1)
+            return
+        self.api.patch("vocabularies", "event_calendars", {"items": wanted}, etag=existing.get("_etag"))
+        log("set the event calendars to %s" % ", ".join(name for _, name in D.EVENT_CALENDARS), 1)
+
+    # -- risk calendar ----------------------------------------------------
+
+    def _event_doc(self, spec):
+        start = utc_at(days=spec["days"], hour=spec["hour"])
+        dates = {
+            "start": iso(start),
+            "end": iso(start + datetime.timedelta(hours=spec["hours"])),
+            "tz": spec["tz"],
+        }
+        repeat = spec.get("repeat")
+        if repeat:
+            dates["recurring_rule"] = {
+                "frequency": repeat["frequency"],
+                "interval": repeat.get("interval", 1),
+                "byday": WEEKDAYS[start.weekday()],
+                "count": repeat["count"],
+                "endRepeatMode": "count",
+            }
+        place = spec["location"]
+        doc = {
+            "name": spec["name"],
+            "slugline": spec["key"],
+            "definition_short": spec["summary"],
+            "definition_long": spec["detail"],
+            "internal_note": spec["internal_note"],
+            "dates": dates,
+            "occur_status": D.OCCUR_STATUS[spec["occur_status"]],
+            "calendars": [{"qcode": spec["calendar"], "name": dict(D.EVENT_CALENDARS)[spec["calendar"]],
+                           "is_active": True}],
+            "location": [
+                {
+                    "qcode": GUID_PREFIX + "place:" + spec["key"],
+                    "name": place["name"],
+                    "address": {"city": place["city"], "country": place["country"], "line": [""]},
+                    "location": {"lat": place["lat"], "lon": place["lon"]},
+                }
+            ],
+            "subject": self.subject(spec["subject"]),
+            "language": "en",
+            "state": "draft",
+        }
+        if not repeat:
+            # A recurring POST generates its own ids for the whole series and drops the guid, so
+            # only single entries get a readable one.
+            doc["guid"] = GUID_PREFIX + "event:" + spec["key"]
+        return doc
+
+    def _events(self):
+        """Create the risk calendar. Returns the id of the first occurrence of each entry."""
+        log("Risk calendar", 1)
+        if self.api.dry_run:
+            for spec in D.EVENTS:
+                log("would create event %s (%s)" % (spec["key"], spec["name"]), 2)
+            return {}
+        by_slugline = {}
+        for item in self.api.find_all("events", max_results=500):
+            by_slugline.setdefault(item.get("slugline"), []).append(item)
+        ids = {}
+        for spec in D.EVENTS:
+            found = sorted(by_slugline.get(spec["key"]) or [], key=lambda e: e["dates"]["start"])
+            if found:
+                ids[spec["key"]] = found[0]["_id"]
+                self._sync_subject("events", found, self.subject(spec["subject"]), "event %s" % spec["key"])
+                continue
+            created = self.api.post("events", [self._event_doc(spec)])
+            ids[spec["key"]] = created["_id"]
+            occurrences = spec.get("repeat", {}).get("count", 1)
+            log("created event %s (%s, %d occurrence%s)"
+                % (spec["key"], spec["name"], occurrences, "" if occurrences == 1 else "s"), 2)
+        return ids
+
+    def _sync_subject(self, resource, items, subject, label):
+        """The taxonomy values decide which client company sees an entry in the portal, so they are
+        the one part of an existing entry the seed keeps authoritative."""
+        stale = [item for item in items if item.get("subject") != subject]
+        if not stale:
+            log("unchanged %s" % label, 2)
+            return
+        for item in stale:
+            self.api.patch(resource, item["_id"], {"subject": subject}, etag=item.get("_etag"))
+        log("retagged %s" % label, 2)
+
+    # -- client requests, deliverables and taskings ------------------------
+
+    def _request_doc(self, spec, agendas, events):
+        coverages = [self._coverage_doc(deliverable) for deliverable in spec["deliverables"]]
+        if spec.get("event") and events.get(spec["event"]):
+            event = next(e for e in D.EVENTS if e["key"] == spec["event"])
+            planning_date = iso(utc_at(days=event["days"], hour=event["hour"]))
+        else:
+            planning_date = min(coverage["planning"]["scheduled"] for coverage in coverages)
+        doc = {
+            "guid": GUID_PREFIX + "request:" + spec["slugline"],
+            "name": spec["name"],
+            "slugline": spec["slugline"],
+            "headline": spec["headline"],
+            "description_text": spec["description"],
+            "planning_date": planning_date,
+            "language": "en",
+            "ednote": spec["ednote"],
+            "internal_note": spec["internal_note"],
+            "agendas": [str(agendas[spec["agenda"]])] if spec.get("agenda") in agendas else [],
+            "subject": self.subject(spec["subject"]),
+            "urgency": spec["urgency"],
+            "coverages": coverages,
+        }
+        if spec.get("event") and events.get(spec["event"]):
+            doc["related_events"] = [{"_id": str(events[spec["event"]]), "link_type": "primary"}]
+        return doc
+
+    def _coverage_doc(self, deliverable):
+        return {
             "workflow_status": "active",
             "news_coverage_status": {"qcode": "ncostat:int", "name": "coverage intended"},
             "planning": {
                 "g2_content_type": "text",
-                "slugline": request["slugline"],
-                "headline": request["headline"],
-                "description_text": request["description"],
-                "ednote": request["ednote"],
-                "internal_note": request["internal_note"],
-                "scheduled": due,
+                "slugline": deliverable["ref"],
+                "headline": deliverable["headline"],
+                "description_text": deliverable["description"],
+                "ednote": deliverable["ednote"],
+                "internal_note": deliverable["internal_note"],
+                "scheduled": iso(utc_in(hours=deliverable["due_hours"])),
                 "language": "en",
-                "priority": 2,
+                "priority": deliverable.get("priority", 2),
             },
             "assigned_to": {
-                "desk": str(self.desk_id(request["desk"])),
-                "user": str(self.user_id(request["user"])),
+                "desk": str(self.desk_id(deliverable["desk"])),
+                "user": str(self.user_id(deliverable["user"])),
                 "state": "assigned",
             },
         }
-        doc = {
-            "name": request["name"],
-            "slugline": request["slugline"],
-            "headline": request["headline"],
-            "description_text": request["description"],
-            "planning_date": due,
-            "language": "en",
-            "ednote": request["ednote"],
-            "internal_note": request["internal_note"],
-            "agendas": [str(agendas[request["agenda"]])] if request["agenda"] in agendas else [],
-            "subject": self.subject(request["subject"]),
-            "urgency": 3,
-            "coverages": [coverage],
-        }
-        if existing:
-            log("client request %s already exists, left alone" % request["slugline"], 1)
-            return
-        created = self.api.post("planning", doc)
-        log("created client request %s, deliverable due %s" % (request["slugline"], due), 1)
-        if not self.api.dry_run:
-            assigned = (created.get("coverages") or [{}])[0].get("assigned_to") or {}
-            if assigned.get("assignment_id"):
-                log("tasking %s created for %s" % (assigned["assignment_id"], request["user"]), 2)
+
+    def _requests(self, agendas, events):
+        log("Client requests, deliverables and taskings", 1)
+        if self.api.dry_run:
+            for spec in D.REQUESTS:
+                log("would create request %s with %d deliverable(s)"
+                    % (spec["slugline"], len(spec["deliverables"])), 2)
+                for deliverable in spec["deliverables"]:
+                    log("would drive tasking %s (%s, %s) to %s"
+                        % (deliverable["ref"], deliverable["desk"], deliverable["user"], deliverable["state"]), 3)
+            return {}
+        by_slugline = {item.get("slugline"): item for item in self.api.find_all("planning", max_results=500)}
+        created = {}
+        for spec in D.REQUESTS:
+            item = by_slugline.get(spec["slugline"])
+            if item:
+                self._sync_subject("planning", [item], self.subject(spec["subject"]),
+                                   "request %s" % spec["slugline"])
             else:
-                self.note("The client request was created but no tasking came back on the coverage.")
+                item = self.api.post("planning", self._request_doc(spec, agendas, events))
+                log("created request %s with %d deliverable(s)"
+                    % (spec["slugline"], len(spec["deliverables"])), 2)
+            created[spec["slugline"]] = item["_id"]
+            self._drive_taskings(spec, item)
+        return created
+
+    def _session(self, username):
+        """A signed-in client for one staff member. Some tasking actions are refused to anybody but
+        the assignee, and starting work reassigns the tasking to whoever asked for it."""
+        if str(self.user_id(username)) == str(self.api.user_id):
+            return self.api
+        if username not in self._sessions:
+            client = Superdesk(self.api.base_url, verbose=self.api.verbose, insecure=self.insecure)
+            client.login(username, D.DEMO_PASSWORD)
+            self._sessions[username] = client
+        return self._sessions[username]
+
+    def _drive_taskings(self, spec, item):
+        for deliverable in spec["deliverables"]:
+            coverage = next(
+                (
+                    c
+                    for c in item.get("coverages") or []
+                    if (c.get("planning") or {}).get("slugline") == deliverable["ref"]
+                ),
+                None,
+            )
+            if not coverage:
+                self.note(
+                    "Request %s has no deliverable %s, so its tasking was not touched."
+                    % (spec["slugline"], deliverable["ref"])
+                )
+                continue
+            assigned_to = coverage.get("assigned_to") or {}
+            assignment_id = assigned_to.get("assignment_id")
+            if not assignment_id:
+                self.note("Deliverable %s came back without a tasking." % deliverable["ref"])
+                continue
+            try:
+                self._advance_tasking(deliverable, assignment_id, assigned_to.get("state"))
+            except ApiError as err:
+                self.note(
+                    "Could not move tasking %s to %s: %s %s"
+                    % (deliverable["ref"], deliverable["state"], err.status, err.body[:200])
+                )
+
+    def _advance_tasking(self, deliverable, assignment_id, state):
+        """Walk one tasking to its demo state through the real workflow, and no further."""
+        target = deliverable["state"]
+        started = ("in_progress", "submitted", "completed")
+        if target == "assigned" or (target == "linked" and state in started):
+            log("tasking %s is %s" % (deliverable["ref"], state), 3)
+            return
+        if target == "linked":
+            self.api.post(
+                "assignments/link",
+                [
+                    {
+                        "assignment_id": str(assignment_id),
+                        "item_id": GUID_PREFIX + deliverable["link"],
+                        # The released report keeps its author; only the delivery is recorded.
+                        "reassign": False,
+                    }
+                ],
+            )
+            log("tasking %s delivered by linking %s" % (deliverable["ref"], deliverable["link"]), 3)
+            return
+        if state == "assigned":
+            payload = {"assignment_id": str(assignment_id)}
+            template = self.template(deliverable["template"]) if deliverable.get("template") else None
+            if template:
+                payload["template_name"] = template["template_name"]
+            self._session(deliverable["user"]).post("assignments/content", [payload])
+            state = "in_progress"
+            log("tasking %s started by %s" % (deliverable["ref"], deliverable["user"]), 3)
+            if target == "in_progress":
+                return
+        if target == "completed" and state in ("in_progress", "submitted"):
+            assignment = self.api.get_item("assignments", str(assignment_id))
+            self.api.patch("assignments/complete", str(assignment_id), {}, etag=assignment.get("_etag"))
+            log("tasking %s completed" % deliverable["ref"], 3)
+            return
+        log("tasking %s is %s" % (deliverable["ref"], state), 3)
+
+    # -- release to the portal ---------------------------------------------
+
+    def _post_to_portal(self, events, requests):
+        """Post the client-visible part of the calendar. Posting is what hands an entry to the
+        recipients, so anything left unposted stays inside Halden."""
+        log("Releasing the risk calendar to the portal", 1)
+        if self.api.dry_run:
+            for spec in D.EVENTS:
+                log("would %s event %s" % ("post" if spec.get("post") is not False else "keep internal",
+                                           spec["key"]), 2)
+            for spec in D.REQUESTS:
+                log("would %s request %s" % ("post" if spec.get("post") else "keep internal",
+                                             spec["slugline"]), 2)
+            return
+        for spec in D.EVENTS:
+            if spec.get("post") is False:
+                log("event %s stays internal" % spec["key"], 2)
+                continue
+            self._post_one("events", events.get(spec["key"]), spec["key"], "event",
+                           update_method="all" if spec.get("repeat") else None)
+        for spec in D.REQUESTS:
+            if not spec.get("post"):
+                log("request %s stays internal" % spec["slugline"], 2)
+                continue
+            self._post_one("planning", requests.get(spec["slugline"]), spec["slugline"], "planning")
+
+    def _post_one(self, resource, item_id, label, field, update_method=None):
+        if not item_id:
+            self.note("Nothing to post for %s, it was not created." % label)
+            return
+        item = self.api.get_item(resource, str(item_id))
+        if not item:
+            self.note("Nothing to post for %s, it is gone from %s." % (label, resource))
+            return
+        if item.get("pubstatus") == "usable":
+            log("%s already released" % label, 2)
+            return
+        doc = {field: str(item_id), "etag": item["_etag"], "pubstatus": "usable"}
+        if update_method:
+            # Posting one occurrence of a series only posts that one.
+            doc["update_method"] = update_method
+        try:
+            self.api.post("%s/post" % resource, doc)
+            log("released %s" % label, 2)
+        except ApiError as err:
+            self.note("Could not release %s: %s %s" % (label, err.status, err.body[:200]))
 
     # -- content ----------------------------------------------------------
 
@@ -1099,6 +1434,7 @@ def main(argv=None):
         portal_push_url=os.environ.get("PORTAL_PUSH_URL"),
         openrouter_key=os.environ.get("OPENROUTER_API_KEY"),
         ai_model=os.environ.get("BRIEFDESK_AI_MODEL", D.AI_DEFAULT_MODEL),
+        insecure=args.insecure,
     )
 
     wanted = args.only or SECTIONS
