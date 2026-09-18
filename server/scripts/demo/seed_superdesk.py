@@ -25,6 +25,13 @@ VOCABULARIES_FILE = os.path.normpath(os.path.join(HERE, "..", "..", "data", "voc
 CONTENT_DIR = os.path.join(HERE, "content")
 GUID_PREFIX = "urn:briefdesk:demo:"
 
+# Fields of the default content profile that a Briefdesk report type does not use.
+NEWSROOM_ONLY_FIELDS = [
+    "genre", "place", "priority", "urgency", "anpa_category", "subject", "authors", "dateline",
+    "sign_off", "feature_media", "media_description", "keywords", "language", "usageterms",
+    "anpa_take_key", "company_codes", "sms", "footer", "body_footer", "attachments",
+]
+
 SECTIONS = [
     "vocabularies",
     "roles",
@@ -294,10 +301,16 @@ class Seeder:
             # The fields are sent in the expanded notation the content profile editor uses. The
             # server folds the custom vocabularies back into `subject` on save, which is what
             # makes selected values land in subject[] with their scheme.
+            # Superdesk merges its default editor into every save, and the defaults switch the
+            # newsroom fields on. A field only stays off when it is sent as disabled.
+            editor = dict(profile["editor"])
+            for field in NEWSROOM_ONLY_FIELDS:
+                if not (editor.get(field) or {}).get("enabled"):
+                    editor[field] = {"enabled": False}
             self.api.patch(
                 "content_types",
                 profile["_id"],
-                {"editor": profile["editor"], "schema": profile["schema"]},
+                {"editor": editor, "schema": profile["schema"]},
             )
             log("configured fields on %s" % profile["label"], 1)
 
@@ -325,6 +338,9 @@ class Seeder:
                     ("source", desk["source"]),
                     ("desk_type", "production"),
                     ("desk_language", "en"),
+                    # Without a list of allowed report types the profile selector in the editor
+                    # header is empty.
+                    ("content_profiles", {profile["_id"]: True for profile in D.CONTENT_PROFILES}),
                 ):
                     if existing.get(key) != value:
                         updates[key] = value
