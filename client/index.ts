@@ -1,4 +1,5 @@
 import {startApp} from 'superdesk-core/scripts/index';
+import {configureAiWidget} from './briefdesk/ai-actions';
 
 setTimeout(() => {
     startApp(
@@ -12,13 +13,13 @@ setTimeout(() => {
                 load: () => import('superdesk-planning/client/planning-extension'),
             },
             {
-                id: 'broadcasting',
-                load: () => import('superdesk-core/scripts/extensions/broadcasting').then((broadcasting) => {
-                    broadcasting.setCustomizations({
-                        getRundownItemDisplayName: (rundown) => rundown.technical_title,
-                    });
+                // The id has to stay 'ai-widget': the extension reads its API instance out of
+                // window.extensionsApiInstances under that key.
+                id: 'ai-widget',
+                load: () => import('superdesk-core/scripts/extensions/ai-widget').then((aiWidget) => {
+                    aiWidget.configure(configureAiWidget);
 
-                    return broadcasting;
+                    return aiWidget;
                 }),
             },
 

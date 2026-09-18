@@ -27,7 +27,19 @@ INSTALLED_APPS = [
 
 MODULES.append("planning")
 
+# Already in the default MODULES, appended defensively so the AI providers, actions and run log
+# stay reachable if that ever changes. superdesk.ai backs the "Draft summary" and "Suggest titles"
+# actions the demo runs from authoring.
+if "superdesk.ai.module" not in MODULES:
+    MODULES.append("superdesk.ai.module")
+
 PLANNING_EVENT_TEMPLATES_ENABLED = True
+
+# Feeds the content API that the Newsroom portal reads
+CONTENTAPI_ENABLED = True
+
+# Evidential archive: an immutable copy of every released report
+LEGAL_ARCHIVE = strtobool(env("LEGAL_ARCHIVE", "true"))
 
 RENDITIONS = {
     "picture": {
@@ -144,10 +156,12 @@ DISALLOWED_CHARACTERS = [
     "~",
 ]
 
+APPLICATION_NAME = env("APP_NAME", "Briefdesk")
+
 # This value gets injected into NewsML 1.2 and G2 output documents.
-NEWSML_PROVIDER_ID = "sourcefabric.org"
-ORGANIZATION_NAME = env("ORGANIZATION_NAME", "Sourcefabric")
-ORGANIZATION_NAME_ABBREVIATION = env("ORGANIZATION_NAME_ABBREVIATION", "SoFab")
+NEWSML_PROVIDER_ID = "briefdesk.example"
+ORGANIZATION_NAME = env("ORGANIZATION_NAME", "Halden Risk Intelligence")
+ORGANIZATION_NAME_ABBREVIATION = env("ORGANIZATION_NAME_ABBREVIATION", "Halden")
 
 SCHEMA = {
     "picture": {
@@ -218,7 +232,7 @@ VALIDATOR_MEDIA_METADATA = {
 NINJS_PLACE_EXTENDED = True
 PUBLISH_ASSOCIATED_ITEMS = True
 
-DEFAULT_TIMEZONE = "Europe/Prague"
+DEFAULT_TIMEZONE = env("DEFAULT_TIMEZONE", "Europe/Prague")
 
 ARCHIVE_AUTOCOMPLETE = True
 ARCHIVE_AUTOCOMPLETE_DAYS = 2
