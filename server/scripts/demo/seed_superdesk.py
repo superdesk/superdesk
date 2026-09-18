@@ -178,7 +178,8 @@ class Seeder:
         return stage
 
     def template_id(self, template_name):
-        return self._by_name("template", "content_templates", "template_name", template_name)
+        # Superdesk stores template names in lower case, whatever case they were created with.
+        return self._by_name("template", "content_templates", "template_name", template_name.lower())
 
     def content_filter_id(self, name):
         return self._by_name("content_filter", "content_filters", "name", name)
@@ -460,11 +461,11 @@ class Seeder:
             }
             self.upsert(
                 "content_templates",
-                {"template_name": template["template_name"]},
+                {"template_name": template["template_name"].lower()},
                 doc,
                 "template %s" % template["template_name"],
             )
-            self._cache.pop("template:%s" % template["template_name"], None)
+            self._cache.pop("template:%s" % template["template_name"].lower(), None)
 
         log("Team defaults", 1)
         for desk in D.DESKS:

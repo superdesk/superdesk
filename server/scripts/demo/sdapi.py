@@ -4,6 +4,8 @@ Standard library only: the seeder runs from a laptop against a deployed instance
 nothing from server/requirements.txt is installed.
 """
 
+import errno
+import time
 import base64
 import json
 import ssl
@@ -53,14 +55,25 @@ class Superdesk:
         if etag:
             headers["If-Match"] = etag
         data = json.dumps(body).encode() if body is not None else None
-        request = urllib.request.Request(url, data=data, headers=headers, method=method)
-        try:
-            with urllib.request.urlopen(request, timeout=120, context=self._ssl_context) as response:
-                payload = response.read().decode() or "{}"
-        except urllib.error.HTTPError as err:
-            raise ApiError(method, url, err.code, err.read().decode()) from None
-        except urllib.error.URLError as err:
-            raise ApiError(method, url, "connection failed", str(err.reason)) from None
+        attempt = 0
+        while True:
+            attempt += 1
+            request = urllib.request.Request(url, data=data, headers=headers, method=method)
+            try:
+                with urllib.request.urlopen(request, timeout=120, context=self._ssl_context) as response:
+                    payload = response.read().decode() or "{}"
+                break
+            except urllib.error.HTTPError as err:
+                raise ApiError(method, url, err.code, err.read().decode()) from None
+            except urllib.error.URLError as err:
+                # A write is only repeated when the connection was never established, so that a
+                # request the server may already have acted on is not sent twice.
+                never_connected = getattr(err.reason, "errno", None) in (errno.ETIMEDOUT, errno.ECONNREFUSED)
+                if attempt < 4 and (method == "GET" or never_connected):
+                    print("    connection to %s failed (%s), retrying" % (url, err.reason))
+                    time.sleep(3 * attempt)
+                    continue
+                raise ApiError(method, url, "connection failed", str(err.reason)) from None
         if self.verbose:
             print("    %s %s" % (method, url))
         return json.loads(payload)
