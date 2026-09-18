@@ -35,6 +35,7 @@ SECTIONS = [
     "ingest",
     "publishing",
     "highlights",
+    "dashboards",
     "ai",
     "planning",
     "content",
@@ -415,7 +416,12 @@ class Seeder:
         desk = self.desk(desk_name)
         if not desk:
             return
-        wanted = sorted(str(self.user_id(name)) for name in members if self.user_id(name))
+        wanted = [str(self.user_id(name)) for name in members if self.user_id(name)]
+        # The account running the seed joins every team. Superdesk shows a user only the teams
+        # they belong to, so an administrator who is no member sees no teams and an empty board.
+        if self.api.user_id and str(self.api.user_id) not in wanted:
+            wanted.append(str(self.api.user_id))
+        wanted = sorted(wanted)
         current = sorted(str(member["user"]) for member in desk.get("members") or [])
         if wanted == current:
             log("members of %s unchanged" % desk_name, 2)
@@ -642,6 +648,52 @@ class Seeder:
         else:
             self.note("Highlight template %r is missing, run the templates section." % D.HIGHLIGHT["template"])
         self.upsert("highlights", {"name": D.HIGHLIGHT["name"]}, doc, "briefing list %s" % D.HIGHLIGHT["name"])
+
+    def section_dashboards(self):
+        """Give every team a dashboard, which is empty until somebody adds widgets by hand."""
+        log("Dashboards")
+        for desk_def in D.DESKS:
+            name = desk_def["name"]
+            if self.api.dry_run:
+                log("would set the dashboard of %s" % name, 1)
+                continue
+            desk = self.desk(name)
+            if not desk:
+                continue
+            groups = [
+                {"_id": group["_id"], "type": group["type"]}
+                for group in desk.get("monitoring_settings") or []
+                if group.get("type") == "stage"
+            ]
+            widgets = [
+                {
+                    "_id": "aggregate", "multiple_id": 1, "active": True,
+                    "row": 1, "col": 1, "sizex": 2, "sizey": 2,
+                    "configuration": {"label": "%s board" % name, "groups": groups},
+                },
+                {
+                    "_id": "activity", "multiple_id": 1, "active": True,
+                    "row": 1, "col": 3, "sizex": 1, "sizey": 2,
+                    "configuration": {"maxItems": 8},
+                },
+                {
+                    "_id": "ingest-stats", "multiple_id": 1, "active": True,
+                    "row": 3, "col": 1, "sizex": 1, "sizey": 1,
+                    "configuration": {"source": "provider", "colorScheme": "superdesk", "updateInterval": 5},
+                },
+                {
+                    "_id": "world-clock", "multiple_id": 1, "active": True,
+                    "row": 3, "col": 2, "sizex": 2, "sizey": 1,
+                    "configuration": {"zones": ["Europe/Prague", "Europe/London", "Asia/Dubai", "America/New_York"]},
+                },
+            ]
+            existing = self.api.find_one("workspaces", desk=str(desk["_id"]))
+            if existing:
+                self.api.patch("workspaces", existing["_id"], {"widgets": widgets}, etag=existing.get("_etag"))
+                log("updated dashboard of %s" % name, 1)
+            else:
+                self.api.post("workspaces", {"desk": str(desk["_id"]), "widgets": widgets})
+                log("created dashboard of %s" % name, 1)
 
     def section_ai(self):
         log("AI provider and actions")
