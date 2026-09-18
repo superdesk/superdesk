@@ -86,9 +86,10 @@ class Seeder:
 
     # -- generic upsert ---------------------------------------------------
 
-    def upsert(self, resource, lookup, doc, label, immutable=()):
+    def upsert(self, resource, lookup, doc, label, immutable=(), existing=None):
         """Create the document, or patch the fields of an existing one that differ."""
-        existing = self.api.find_one(resource, **lookup)
+        if existing is None:
+            existing = self.api.find_one(resource, **lookup)
         if not existing:
             created = self.api.post(resource, doc)
             log("created %s" % label, 1)
@@ -185,9 +186,22 @@ class Seeder:
             raise SystemExit("Stage %r on team %r does not exist." % (stage_name, desk_name))
         return stage
 
+    def template(self, template_name):
+        """Find a template whatever the case of its stored name.
+
+        Superdesk lower-cases a template name on create, keeps the case it is given on update,
+        and checks uniqueness without regard to case, so an exact match on the name misses.
+        """
+        if self.api.dry_run:
+            return None
+        for found in self.api.find_all("content_templates", max_results=500):
+            if (found.get("template_name") or "").lower() == template_name.lower():
+                return found
+        return None
+
     def template_id(self, template_name):
-        # Superdesk stores template names in lower case, whatever case they were created with.
-        return self._by_name("template", "content_templates", "template_name", template_name.lower())
+        found = self.template(template_name)
+        return found["_id"] if found else None
 
     def content_filter_id(self, name):
         return self._by_name("content_filter", "content_filters", "name", name)
@@ -288,6 +302,10 @@ class Seeder:
                 "description": profile["description"],
                 "priority": profile["priority"],
                 "enabled": True,
+                # The client lists report types with `where type = text`. One without a type is
+                # valid on the server but never appears in the editor's profile selector or in
+                # the team settings.
+                "type": "text",
             }
             if not existing:
                 doc = dict(base)
@@ -483,11 +501,11 @@ class Seeder:
             }
             self.upsert(
                 "content_templates",
-                {"template_name": template["template_name"].lower()},
+                {"template_name": template["template_name"]},
                 doc,
                 "template %s" % template["template_name"],
+                existing=self.template(template["template_name"]),
             )
-            self._cache.pop("template:%s" % template["template_name"].lower(), None)
 
         log("Team defaults", 1)
         for desk in D.DESKS:

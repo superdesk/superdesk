@@ -260,10 +260,10 @@ ALERT_EDITOR = {
     "headline": _editor(1, formatOptions=[], field_name="Title"),
     "slugline": _editor(2, "half", field_name="Reference"),
     "tlp": _editor(3, "half"),
-    "severity": _editor(4, "quarter", required=True),
-    "region": _editor(5, "quarter", required=True),
-    "country": _editor(6, "quarter"),
-    "sector": _editor(7, "quarter"),
+    "severity": _editor(4, "half", required=True),
+    "region": _editor(5, "half", required=True),
+    "country": _editor(6, "half"),
+    "sector": _editor(7, "half"),
     "threat_type": _editor(8, "half"),
     "location_text": _editor(9, "half"),
     "abstract": _editor(10, editor3=True, formatOptions=SUMMARY_FORMAT_OPTIONS, field_name="Summary"),
@@ -304,10 +304,10 @@ def _brief_editor(body_label):
         "headline": _editor(1, formatOptions=[], field_name="Title"),
         "slugline": _editor(2, "half", field_name="Reference"),
         "tlp": _editor(3, "half"),
-        "region": _editor(4, "quarter", required=True),
-        "country": _editor(5, "quarter"),
-        "sector": _editor(6, "quarter"),
-        "threat_type": _editor(7, "quarter"),
+        "region": _editor(4, "half", required=True),
+        "country": _editor(5, "half"),
+        "sector": _editor(6, "half"),
+        "threat_type": _editor(7, "half"),
         "abstract": _editor(8, editor3=True, formatOptions=SUMMARY_FORMAT_OPTIONS, field_name="Summary"),
         "body_html": _editor(
             9,
@@ -340,7 +340,7 @@ def _brief_schema(headline_max=120):
 
 
 RFI_EDITOR = _brief_editor("Response")
-RFI_EDITOR["severity"] = _editor(7, "quarter")
+RFI_EDITOR["severity"] = _editor(7, "half")
 RFI_SCHEMA = _brief_schema()
 RFI_SCHEMA["severity"] = {"type": "list", "required": False, "readonly": False, "default": []}
 
