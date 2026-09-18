@@ -3254,5 +3254,374 @@
                 "text": "Availability Management"
             }
         ]
+    },
+    {
+        "_id": "severity",
+        "display_name": "Severity",
+        "type": "manageable",
+        "selection_type": "single selection",
+        "unique_field": "qcode",
+        "service": {
+            "all": 1
+        },
+        "helper_text": "How serious the situation is for clients in scope.",
+        "init_version": 1,
+        "schema": {
+            "name": {},
+            "qcode": {}
+        },
+        "items": [
+            {
+                "is_active": true,
+                "name": "Critical",
+                "qcode": "critical"
+            },
+            {
+                "is_active": true,
+                "name": "High",
+                "qcode": "high"
+            },
+            {
+                "is_active": true,
+                "name": "Medium",
+                "qcode": "medium"
+            },
+            {
+                "is_active": true,
+                "name": "Low",
+                "qcode": "low"
+            },
+            {
+                "is_active": true,
+                "name": "Informational",
+                "qcode": "info"
+            }
+        ]
+    },
+    {
+        "_id": "threat_type",
+        "display_name": "Threat type",
+        "type": "manageable",
+        "selection_type": "multi selection",
+        "unique_field": "qcode",
+        "service": {
+            "all": 1
+        },
+        "helper_text": "The kind of threat the report is about.",
+        "init_version": 1,
+        "schema": {
+            "name": {},
+            "qcode": {}
+        },
+        "items": [
+            {
+                "is_active": true,
+                "name": "Civil unrest",
+                "qcode": "civil_unrest"
+            },
+            {
+                "is_active": true,
+                "name": "Terrorism",
+                "qcode": "terrorism"
+            },
+            {
+                "is_active": true,
+                "name": "Crime",
+                "qcode": "crime"
+            },
+            {
+                "is_active": true,
+                "name": "Natural hazard",
+                "qcode": "natural_hazard"
+            },
+            {
+                "is_active": true,
+                "name": "Transport disruption",
+                "qcode": "transport"
+            },
+            {
+                "is_active": true,
+                "name": "Industrial action",
+                "qcode": "industrial_action"
+            },
+            {
+                "is_active": true,
+                "name": "Cyber",
+                "qcode": "cyber"
+            },
+            {
+                "is_active": true,
+                "name": "Health",
+                "qcode": "health"
+            },
+            {
+                "is_active": true,
+                "name": "Political",
+                "qcode": "political"
+            },
+            {
+                "is_active": true,
+                "name": "Armed conflict",
+                "qcode": "conflict"
+            }
+        ]
+    },
+    {
+        "_id": "region",
+        "display_name": "Region",
+        "type": "manageable",
+        "selection_type": "multi selection",
+        "unique_field": "qcode",
+        "service": {
+            "all": 1
+        },
+        "helper_text": "Regional desk the report belongs to.",
+        "init_version": 1,
+        "schema": {
+            "name": {},
+            "qcode": {}
+        },
+        "items": [
+            {
+                "is_active": true,
+                "name": "Europe",
+                "qcode": "europe"
+            },
+            {
+                "is_active": true,
+                "name": "Middle East and North Africa",
+                "qcode": "mena"
+            },
+            {
+                "is_active": true,
+                "name": "Americas",
+                "qcode": "americas"
+            },
+            {
+                "is_active": true,
+                "name": "Asia-Pacific",
+                "qcode": "apac"
+            },
+            {
+                "is_active": true,
+                "name": "Sub-Saharan Africa",
+                "qcode": "ssa"
+            }
+        ]
+    },
+    {
+        "_id": "country",
+        "display_name": "Country",
+        "type": "manageable",
+        "selection_type": "multi selection",
+        "unique_field": "qcode",
+        "service": {
+            "all": 1
+        },
+        "helper_text": "Countries the report concerns.",
+        "init_version": 1,
+        "schema": {
+            "name": {},
+            "qcode": {}
+        },
+        "items": [
+            {
+                "is_active": true,
+                "name": "Poland",
+                "qcode": "pl"
+            },
+            {
+                "is_active": true,
+                "name": "Germany",
+                "qcode": "de"
+            },
+            {
+                "is_active": true,
+                "name": "Czechia",
+                "qcode": "cz"
+            },
+            {
+                "is_active": true,
+                "name": "France",
+                "qcode": "fr"
+            },
+            {
+                "is_active": true,
+                "name": "Spain",
+                "qcode": "es"
+            },
+            {
+                "is_active": true,
+                "name": "Italy",
+                "qcode": "it"
+            },
+            {
+                "is_active": true,
+                "name": "Netherlands",
+                "qcode": "nl"
+            },
+            {
+                "is_active": true,
+                "name": "United Kingdom",
+                "qcode": "gb"
+            },
+            {
+                "is_active": true,
+                "name": "Türkiye",
+                "qcode": "tr"
+            },
+            {
+                "is_active": true,
+                "name": "Egypt",
+                "qcode": "eg"
+            },
+            {
+                "is_active": true,
+                "name": "United Arab Emirates",
+                "qcode": "ae"
+            },
+            {
+                "is_active": true,
+                "name": "Saudi Arabia",
+                "qcode": "sa"
+            },
+            {
+                "is_active": true,
+                "name": "Mexico",
+                "qcode": "mx"
+            },
+            {
+                "is_active": true,
+                "name": "Brazil",
+                "qcode": "br"
+            },
+            {
+                "is_active": true,
+                "name": "United States",
+                "qcode": "us"
+            }
+        ]
+    },
+    {
+        "_id": "sector",
+        "display_name": "Sector",
+        "type": "manageable",
+        "selection_type": "multi selection",
+        "unique_field": "qcode",
+        "service": {
+            "all": 1
+        },
+        "helper_text": "Client sectors the report is relevant to.",
+        "init_version": 1,
+        "schema": {
+            "name": {},
+            "qcode": {}
+        },
+        "items": [
+            {
+                "is_active": true,
+                "name": "Logistics",
+                "qcode": "logistics"
+            },
+            {
+                "is_active": true,
+                "name": "Pharmaceuticals",
+                "qcode": "pharma"
+            },
+            {
+                "is_active": true,
+                "name": "Energy",
+                "qcode": "energy"
+            },
+            {
+                "is_active": true,
+                "name": "Finance",
+                "qcode": "finance"
+            },
+            {
+                "is_active": true,
+                "name": "Retail",
+                "qcode": "retail"
+            },
+            {
+                "is_active": true,
+                "name": "Technology",
+                "qcode": "technology"
+            }
+        ]
+    },
+    {
+        "_id": "tlp",
+        "display_name": "TLP marking",
+        "type": "manageable",
+        "selection_type": "single selection",
+        "unique_field": "qcode",
+        "service": {
+            "all": 1
+        },
+        "helper_text": "Traffic Light Protocol handling marking.",
+        "init_version": 1,
+        "schema": {
+            "name": {},
+            "qcode": {}
+        },
+        "items": [
+            {
+                "is_active": true,
+                "name": "TLP:CLEAR",
+                "qcode": "clear"
+            },
+            {
+                "is_active": true,
+                "name": "TLP:GREEN",
+                "qcode": "green"
+            },
+            {
+                "is_active": true,
+                "name": "TLP:AMBER",
+                "qcode": "amber"
+            },
+            {
+                "is_active": true,
+                "name": "TLP:RED",
+                "qcode": "red"
+            }
+        ]
+    },
+    {
+        "_id": "recommended_actions",
+        "display_name": "Recommended actions",
+        "type": "manageable",
+        "field_type": "text",
+        "helper_text": "What clients in scope should do, one action per line.",
+        "init_version": 1,
+        "items": [],
+        "field_options": {
+            "single": false
+        }
+    },
+    {
+        "_id": "location_text",
+        "display_name": "Location",
+        "type": "manageable",
+        "field_type": "text",
+        "helper_text": "Where the situation is, as free text.",
+        "init_version": 1,
+        "items": [],
+        "field_options": {
+            "single": true
+        }
+    },
+    {
+        "_id": "sources",
+        "display_name": "Sources",
+        "type": "manageable",
+        "field_type": "text",
+        "helper_text": "Where the information came from, one source per line.",
+        "init_version": 1,
+        "items": [],
+        "field_options": {
+            "single": false
+        }
     }
 ]

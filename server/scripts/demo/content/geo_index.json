@@ -1,0 +1,601 @@
+[
+  {
+    "reference": "BD-EU-401",
+    "title": "Customs IT outage at Swiecko crossing stalls westbound freight",
+    "severity": "high",
+    "lat": 52.3412,
+    "lon": 14.5636,
+    "country": "pl",
+    "region": "europe",
+    "sector": "logistics",
+    "countries": [
+      "pl",
+      "de"
+    ],
+    "regions": [
+      "europe"
+    ],
+    "sectors": [
+      "logistics"
+    ],
+    "workflow": "released"
+  },
+  {
+    "reference": "BD-EU-402",
+    "title": "Polish haulier union opens strike ballot over driver rest rules",
+    "severity": "high",
+    "lat": 52.2297,
+    "lon": 21.0122,
+    "country": "pl",
+    "region": "europe",
+    "sector": "logistics",
+    "countries": [
+      "pl",
+      "de"
+    ],
+    "regions": [
+      "europe"
+    ],
+    "sectors": [
+      "logistics"
+    ],
+    "workflow": "released"
+  },
+  {
+    "reference": "BD-EU-403",
+    "title": "Weight restriction on Oder river bridge diverts heavy freight",
+    "severity": "medium",
+    "lat": 52.3412,
+    "lon": 14.55,
+    "country": "de",
+    "region": "europe",
+    "sector": "logistics",
+    "countries": [
+      "de",
+      "pl"
+    ],
+    "regions": [
+      "europe"
+    ],
+    "sectors": [
+      "logistics"
+    ],
+    "workflow": "released"
+  },
+  {
+    "reference": "BD-EU-404",
+    "title": "Organised cargo theft targeting electronics at Gdansk port approaches",
+    "severity": "high",
+    "lat": 54.352,
+    "lon": 18.6466,
+    "country": "pl",
+    "region": "europe",
+    "sector": "logistics",
+    "countries": [
+      "pl"
+    ],
+    "regions": [
+      "europe"
+    ],
+    "sectors": [
+      "logistics",
+      "technology"
+    ],
+    "workflow": "released"
+  },
+  {
+    "reference": "BD-EU-405",
+    "title": "Signalling failure halts rail freight through Berlin eastern approaches",
+    "severity": "medium",
+    "lat": 52.52,
+    "lon": 13.405,
+    "country": "de",
+    "region": "europe",
+    "sector": "logistics",
+    "countries": [
+      "de"
+    ],
+    "regions": [
+      "europe"
+    ],
+    "sectors": [
+      "logistics"
+    ],
+    "workflow": "released"
+  },
+  {
+    "reference": "BD-EU-406",
+    "title": "Fuel price protest blockades A4 junctions near Katowice",
+    "severity": "critical",
+    "lat": 50.2649,
+    "lon": 19.0238,
+    "country": "pl",
+    "region": "europe",
+    "sector": "logistics",
+    "countries": [
+      "pl"
+    ],
+    "regions": [
+      "europe"
+    ],
+    "sectors": [
+      "logistics",
+      "energy"
+    ],
+    "workflow": "released"
+  },
+  {
+    "reference": "BD-EU-407",
+    "title": "High water on the lower Oder suspends barge traffic",
+    "severity": "medium",
+    "lat": 53.4285,
+    "lon": 14.5528,
+    "country": "pl",
+    "region": "europe",
+    "sector": "logistics",
+    "countries": [
+      "pl",
+      "de"
+    ],
+    "regions": [
+      "europe"
+    ],
+    "sectors": [
+      "logistics"
+    ],
+    "workflow": "released"
+  },
+  {
+    "reference": "BD-EU-408",
+    "title": "Prague budget protest to close central streets for three days",
+    "severity": "medium",
+    "lat": 50.0755,
+    "lon": 14.4378,
+    "country": "cz",
+    "region": "europe",
+    "sector": "retail",
+    "countries": [
+      "cz"
+    ],
+    "regions": [
+      "europe"
+    ],
+    "sectors": [
+      "retail",
+      "finance"
+    ],
+    "workflow": "released"
+  },
+  {
+    "reference": "BD-EU-409",
+    "title": "Picket at Lyon pharmaceutical distribution centre stops outbound loads",
+    "severity": "high",
+    "lat": 45.764,
+    "lon": 4.8357,
+    "country": "fr",
+    "region": "europe",
+    "sector": "pharma",
+    "countries": [
+      "fr"
+    ],
+    "regions": [
+      "europe"
+    ],
+    "sectors": [
+      "pharma",
+      "logistics"
+    ],
+    "workflow": "released"
+  },
+  {
+    "reference": "BD-EU-410",
+    "title": "Counterfeit medicines seizure at Barcelona points to repackaging network",
+    "severity": "medium",
+    "lat": 41.3874,
+    "lon": 2.1686,
+    "country": "es",
+    "region": "europe",
+    "sector": "pharma",
+    "countries": [
+      "es"
+    ],
+    "regions": [
+      "europe"
+    ],
+    "sectors": [
+      "pharma"
+    ],
+    "workflow": "released"
+  },
+  {
+    "reference": "BD-EU-411",
+    "title": "Ransomware at a Milan pharmaceutical distributor halts order processing",
+    "severity": "high",
+    "lat": 45.4642,
+    "lon": 9.19,
+    "country": "it",
+    "region": "europe",
+    "sector": "pharma",
+    "countries": [
+      "it"
+    ],
+    "regions": [
+      "europe"
+    ],
+    "sectors": [
+      "pharma",
+      "technology"
+    ],
+    "workflow": "released"
+  },
+  {
+    "reference": "BD-EU-412",
+    "title": "Whitehall demonstration to close streets on Saturday",
+    "severity": "low",
+    "lat": 51.5045,
+    "lon": -0.1265,
+    "country": "gb",
+    "region": "europe",
+    "sector": "finance",
+    "countries": [
+      "gb"
+    ],
+    "regions": [
+      "europe"
+    ],
+    "sectors": [
+      "finance",
+      "retail"
+    ],
+    "workflow": "released"
+  },
+  {
+    "reference": "BD-EU-413",
+    "title": "Chemical release at a Rotterdam terminal closes part of the port",
+    "severity": "critical",
+    "lat": 51.9244,
+    "lon": 4.4777,
+    "country": "nl",
+    "region": "europe",
+    "sector": "logistics",
+    "countries": [
+      "nl"
+    ],
+    "regions": [
+      "europe"
+    ],
+    "sectors": [
+      "logistics",
+      "energy"
+    ],
+    "workflow": "released"
+  },
+  {
+    "reference": "BD-EU-414",
+    "title": "Baggage system outage at Amsterdam Schiphol degrades transfer handling",
+    "severity": "low",
+    "lat": 52.3105,
+    "lon": 4.7683,
+    "country": "nl",
+    "region": "europe",
+    "sector": "logistics",
+    "countries": [
+      "nl"
+    ],
+    "regions": [
+      "europe"
+    ],
+    "sectors": [
+      "logistics"
+    ],
+    "workflow": "analysis"
+  },
+  {
+    "reference": "BD-EU-415",
+    "title": "Hamburg dockworkers begin overtime ban ahead of pay talks",
+    "severity": "medium",
+    "lat": 53.5411,
+    "lon": 9.9686,
+    "country": "de",
+    "region": "europe",
+    "sector": "logistics",
+    "countries": [
+      "de"
+    ],
+    "regions": [
+      "europe"
+    ],
+    "sectors": [
+      "logistics"
+    ],
+    "workflow": "review"
+  },
+  {
+    "reference": "BD-EU-416",
+    "title": "Measles cluster in Paris prompts occupational health advisory",
+    "severity": "info",
+    "lat": 48.8566,
+    "lon": 2.3522,
+    "country": "fr",
+    "region": "europe",
+    "sector": "pharma",
+    "countries": [
+      "fr"
+    ],
+    "regions": [
+      "europe"
+    ],
+    "sectors": [
+      "pharma",
+      "retail"
+    ],
+    "workflow": "released"
+  },
+  {
+    "reference": "BD-ME-201",
+    "title": "Grounded tanker in the Suez Canal suspends southbound convoys",
+    "severity": "critical",
+    "lat": 29.9668,
+    "lon": 32.5498,
+    "country": "eg",
+    "region": "mena",
+    "sector": "energy",
+    "countries": [
+      "eg"
+    ],
+    "regions": [
+      "mena"
+    ],
+    "sectors": [
+      "energy",
+      "logistics"
+    ],
+    "workflow": "released"
+  },
+  {
+    "reference": "BD-ME-202",
+    "title": "Fuel price protests spread to three Cairo districts",
+    "severity": "high",
+    "lat": 30.0444,
+    "lon": 31.2357,
+    "country": "eg",
+    "region": "mena",
+    "sector": "energy",
+    "countries": [
+      "eg"
+    ],
+    "regions": [
+      "mena"
+    ],
+    "sectors": [
+      "energy",
+      "retail"
+    ],
+    "workflow": "released"
+  },
+  {
+    "reference": "BD-ME-203",
+    "title": "Sabotage of a pipeline valve station near Alexandria",
+    "severity": "high",
+    "lat": 31.1,
+    "lon": 29.95,
+    "country": "eg",
+    "region": "mena",
+    "sector": "energy",
+    "countries": [
+      "eg"
+    ],
+    "regions": [
+      "mena"
+    ],
+    "sectors": [
+      "energy"
+    ],
+    "workflow": "released"
+  },
+  {
+    "reference": "BD-ME-204",
+    "title": "Credential phishing campaign against Gulf energy trading desks",
+    "severity": "high",
+    "lat": 25.2048,
+    "lon": 55.2708,
+    "country": "ae",
+    "region": "mena",
+    "sector": "energy",
+    "countries": [
+      "ae"
+    ],
+    "regions": [
+      "mena"
+    ],
+    "sectors": [
+      "energy",
+      "finance"
+    ],
+    "workflow": "released"
+  },
+  {
+    "reference": "BD-ME-205",
+    "title": "Sandstorm closes Jeddah port operations and coastal road",
+    "severity": "medium",
+    "lat": 21.4858,
+    "lon": 39.1925,
+    "country": "sa",
+    "region": "mena",
+    "sector": "logistics",
+    "countries": [
+      "sa"
+    ],
+    "regions": [
+      "mena"
+    ],
+    "sectors": [
+      "logistics",
+      "energy"
+    ],
+    "workflow": "released"
+  },
+  {
+    "reference": "BD-ME-206",
+    "title": "Customs backlog at Istanbul delays temperature-controlled pharmaceutical imports",
+    "severity": "medium",
+    "lat": 41.0082,
+    "lon": 28.9784,
+    "country": "tr",
+    "region": "mena",
+    "sector": "pharma",
+    "countries": [
+      "tr"
+    ],
+    "regions": [
+      "mena"
+    ],
+    "sectors": [
+      "pharma",
+      "logistics"
+    ],
+    "workflow": "released"
+  },
+  {
+    "reference": "BD-ME-207",
+    "title": "Contractor visa rule change announced in Saudi Arabia",
+    "severity": "info",
+    "lat": 24.7136,
+    "lon": 46.6753,
+    "country": "sa",
+    "region": "mena",
+    "sector": "energy",
+    "countries": [
+      "sa"
+    ],
+    "regions": [
+      "mena"
+    ],
+    "sectors": [
+      "energy",
+      "logistics"
+    ],
+    "workflow": "analysis"
+  },
+  {
+    "reference": "BD-ME-208",
+    "title": "Unidentified drone sightings near an Abu Dhabi export terminal",
+    "severity": "medium",
+    "lat": 24.4539,
+    "lon": 54.3773,
+    "country": "ae",
+    "region": "mena",
+    "sector": "energy",
+    "countries": [
+      "ae"
+    ],
+    "regions": [
+      "mena"
+    ],
+    "sectors": [
+      "energy"
+    ],
+    "workflow": "review"
+  },
+  {
+    "reference": "BD-AM-101",
+    "title": "Cargo hijackings rise on the Mexico City to Veracruz corridor",
+    "severity": "high",
+    "lat": 19.1738,
+    "lon": -98.3,
+    "country": "mx",
+    "region": "americas",
+    "sector": "logistics",
+    "countries": [
+      "mx"
+    ],
+    "regions": [
+      "americas"
+    ],
+    "sectors": [
+      "logistics"
+    ],
+    "workflow": "released"
+  },
+  {
+    "reference": "BD-AM-102",
+    "title": "Bank workers announce two-day strike across Sao Paulo state",
+    "severity": "medium",
+    "lat": -23.5505,
+    "lon": -46.6333,
+    "country": "br",
+    "region": "americas",
+    "sector": "finance",
+    "countries": [
+      "br"
+    ],
+    "regions": [
+      "americas"
+    ],
+    "sectors": [
+      "finance"
+    ],
+    "workflow": "released"
+  },
+  {
+    "reference": "BD-AM-103",
+    "title": "Flaring incident at a Houston refinery closes adjacent roads",
+    "severity": "medium",
+    "lat": 29.725,
+    "lon": -95.21,
+    "country": "us",
+    "region": "americas",
+    "sector": "energy",
+    "countries": [
+      "us"
+    ],
+    "regions": [
+      "americas"
+    ],
+    "sectors": [
+      "energy"
+    ],
+    "workflow": "released"
+  },
+  {
+    "reference": "BD-AM-104",
+    "title": "Burglary at a Monterrey pharmaceutical warehouse targets controlled stock",
+    "severity": "medium",
+    "lat": 25.6866,
+    "lon": -100.3161,
+    "country": "mx",
+    "region": "americas",
+    "sector": "pharma",
+    "countries": [
+      "mx"
+    ],
+    "regions": [
+      "americas"
+    ],
+    "sectors": [
+      "pharma",
+      "logistics"
+    ],
+    "workflow": "released"
+  },
+  {
+    "reference": "BD-AM-105",
+    "title": "Protest blocks port access road in Rio de Janeiro",
+    "severity": "low",
+    "lat": -22.895,
+    "lon": -43.19,
+    "country": "br",
+    "region": "americas",
+    "sector": "logistics",
+    "countries": [
+      "br"
+    ],
+    "regions": [
+      "americas"
+    ],
+    "sectors": [
+      "logistics"
+    ],
+    "workflow": "analysis"
+  }
+]

@@ -1,0 +1,63 @@
+[
+  {
+    "reference": "EU-BRIEF-214",
+    "title": "Europe daily brief",
+    "summary": "Poland and Germany dominate today: a customs system failure at Swiecko, a strike ballot among Polish hauliers and a fuel protest blockade on the A4 have removed most of the redundancy from east to west road freight. A chemical release at Rotterdam has closed two berths. Nothing today changes the standing regional picture.",
+    "region": ["europe"],
+    "country": ["pl", "de", "nl", "fr"],
+    "sector": ["logistics", "pharma", "energy"],
+    "threat_type": ["transport", "industrial_action", "civil_unrest"],
+    "tlp": "amber",
+    "body_html": "<h2>Headlines</h2><ul><li>Customs IT failure at Swiecko has westbound clearance running at six to nine hours, with a 14 km queue (BD-EU-401).</li><li>Fuel protest blockades have closed roughly 30 km of the A4 near Katowice in both directions for a stated 48 hours (BD-EU-406).</li><li>The largest Polish haulage union has opened a strike ballot, result in nine days (BD-EU-402).</li><li>An ammonia release at a Rotterdam bulk terminal has closed two berths and the surrounding road network (BD-EU-413).</li><li>A picket has stopped outbound loads at a pharmaceutical distribution centre near Lyon (BD-EU-409).</li></ul><h2>What changed</h2><p>Three separate events now sit on the same east to west road corridor across Poland and Germany. Individually each is manageable. Together they remove the alternatives: the A4 closure pushes traffic north onto the A2, which is where the Swiecko queue is, and the bridge restriction at Frankfurt (Oder) has already taken 40 km of slack out of the heavy goods network there. Operators who plan each event separately will discover that their contingency route is somebody else's contingency route.</p><p>The Rotterdam release is unconnected but lands on the same clients. Two berths and a closed road network will displace container traffic that has nothing to do with the incident.</p><h2>Watch list</h2><ul><li>Whether Swiecko clearance is restored today. A second day of manual processing pushes recovery into the weekend.</li><li>The Polish union ballot result in nine days, and formal notice about a week after that.</li><li>Whether the Lyon picket produces a critical medicine exemption, as it has at that site before.</li><li>Hamburg pay talks on Tuesday, which decide whether the overtime ban escalates.</li></ul>",
+    "sources": [
+      "Halden alerts BD-EU-401, 402, 403, 406, 409, 413 and 415",
+      "Halden client liaison across five European operators"
+    ],
+    "desk": "Europe",
+    "author": "maja.lindqvist",
+    "byline": "Maja Lindqvist",
+    "workflow": "released",
+    "hours_ago": 2
+  },
+  {
+    "reference": "EU-BRIEF-213",
+    "title": "Europe daily brief",
+    "summary": "Yesterday was quieter: a weight restriction on an Oder bridge, high water suspending barge traffic on the lower Oder and a ransomware intrusion at a Milan pharmaceutical distributor. The Polish corridor was already tightening before today's events.",
+    "region": ["europe"],
+    "country": ["pl", "de", "it", "es"],
+    "sector": ["logistics", "pharma"],
+    "threat_type": ["transport", "natural_hazard", "cyber"],
+    "tlp": "amber",
+    "body_html": "<h2>Headlines</h2><ul><li>An Oder bridge near Frankfurt (Oder) has dropped from 44 to 18 tonnes, diverting heavy goods traffic 40 km south (BD-EU-403).</li><li>High water has suspended barge traffic on the lower Oder for an expected four to seven days (BD-EU-407).</li><li>A ransomware intrusion has taken a Milan pharmaceutical distributor's order processing offline; deliveries are running at about 40 per cent (BD-EU-411).</li><li>Customs at Barcelona seized 240,000 counterfeit doses carrying copied batch numbers from a live European production run (BD-EU-410).</li></ul><h2>What changed</h2><p>Two independent constraints landed on the same Poland to Germany freight corridor within a day of each other, one on road and one on water. Neither is severe alone. The effect is that the corridor entered this week with less redundancy than usual, which is why today's events bite harder than they would have a fortnight ago.</p><p>On the pharmaceutical side, the Barcelona seizure and the Milan intrusion are unrelated but both point at supply chain data. Copied live batch numbers and a compromised distributor are two routes to the same problem: somebody outside the chain knows what is moving inside it.</p><h2>Watch list</h2><ul><li>Whether the Milan distributor discloses data exfiltration. Silence this far in usually means not yet known.</li><li>A regulator notice against the copied batch numbers from the Barcelona seizure.</li><li>Rainfall in the upper Oder catchment, which decides whether barge suspension runs one week or two.</li></ul>",
+    "sources": [
+      "Halden alerts BD-EU-403, 407, 410 and 411",
+      "Halden client liaison, three European operators"
+    ],
+    "desk": "Europe",
+    "author": "maja.lindqvist",
+    "byline": "Maja Lindqvist",
+    "workflow": "released",
+    "hours_ago": 27
+  },
+  {
+    "reference": "ME-BRIEF-118",
+    "title": "MENA daily brief",
+    "summary": "A grounded tanker has suspended southbound Suez convoys with no refloat estimate, which is the single event most likely to affect client operations this week. Fuel protests have spread across three Cairo districts and a pipeline valve station south of Alexandria was sabotaged overnight.",
+    "region": ["mena"],
+    "country": ["eg", "ae", "sa", "tr"],
+    "sector": ["energy", "logistics", "pharma"],
+    "threat_type": ["transport", "civil_unrest", "terrorism", "cyber"],
+    "tlp": "amber",
+    "body_html": "<h2>Headlines</h2><ul><li>A laden products tanker is aground across the southern reach of the Suez Canal; southbound convoys are suspended and 34 vessels are waiting (BD-ME-201).</li><li>Fuel price protests have spread to three Cairo districts over two evenings (BD-ME-202).</li><li>An explosive device damaged a pipeline valve station south of Alexandria overnight, with no casualties and no claim (BD-ME-203).</li><li>A credential phishing campaign using genuine voyage detail is hitting Gulf energy trading desks, with payment redirection as the objective (BD-ME-204).</li></ul><h2>What changed</h2><p>The Suez grounding is the event to plan around. No refloat estimate ten hours in usually means the vessel is aground on more than one point, and cargo owners should be modelling a week rather than a day. The decision point for Cape routing arrives at about day four, which means the analysis has to be done now.</p><p>The Alexandria sabotage is unclaimed and, on current evidence, more consistent with local grievance than with an organised campaign. That assessment would change fast if a second station were hit. Operators with unmanned assets on that corridor should be looking at patrol intervals this week rather than waiting to find out.</p><h2>Watch list</h2><ul><li>Any refloat estimate from the Suez salvage contractor, and the point at which it slips.</li><li>A second attack on a pipeline asset in the Alexandria area within the next fortnight.</li><li>Whether a partial fuel subsidy announcement ends the Cairo protests, which is under discussion.</li><li>Spread of the Gulf phishing campaign along counterparty relationships.</li></ul>",
+    "sources": [
+      "Halden alerts BD-ME-201, 202, 203 and 204",
+      "Halden field observation, Cairo, two evenings",
+      "Halden client liaison, four regional operators"
+    ],
+    "desk": "MENA",
+    "author": "omar.nasser",
+    "byline": "Omar Nasser",
+    "workflow": "released",
+    "hours_ago": 5
+  }
+]

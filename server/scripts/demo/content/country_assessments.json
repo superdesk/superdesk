@@ -1,0 +1,46 @@
+[
+  {
+    "reference": "CA-PL-Q3",
+    "title": "Poland: operating environment assessment",
+    "summary": "Poland remains a low-threat operating environment with a high-friction logistics layer. The practical risks for corporate clients are industrial action in road haulage, organised cargo theft around the northern ports, and border infrastructure that has no slack. Violent crime against foreign staff is rare and terrorism risk is low.",
+    "region": ["europe"],
+    "country": ["pl", "de"],
+    "sector": ["logistics", "retail", "technology"],
+    "threat_type": ["industrial_action", "crime", "transport", "civil_unrest"],
+    "tlp": "amber",
+    "body_html": "<h2>Operating environment</h2><p>Poland is a stable, low-threat environment for foreign staff. Policing is effective, the legal environment is predictable and everyday security risk to expatriate personnel is comparable to western Europe. The risks that actually cost clients money are operational rather than personal, and they concentrate in road freight.</p><p>The country carries the majority of east to west road freight between the Baltic states, Ukraine and Germany over three motorway corridors and four significant border crossings. That network has very little redundancy. A single closure, whether industrial, structural or protest-driven, removes the alternative for everyone at once. Clients consistently underestimate this because each individual event looks survivable.</p><h2>Threat picture</h2><p><strong>Industrial action.</strong> The road haulage unions are organised, have carried their last three ballots and prefer rolling stoppages to indefinite strikes. A ballot is running now on driver rest rules (BD-EU-402). Assess industrial action as the single most likely source of multi-day disruption over the next quarter.</p><p><strong>Cargo crime.</strong> Organised theft of high-value electronics is active around the northern ports, with a current cluster on the Gdansk approaches (BD-EU-404). The method depends on knowing load contents in advance, which means the vulnerability is in the information chain rather than at the trailer. Violence against drivers is rare.</p><p><strong>Protest.</strong> Fuel and agricultural protests use motorway blockades as their standard tactic and the police manage rather than clear them. The current A4 action near Katowice (BD-EU-406) is typical: announced duration, no hostility to commercial traffic, no realistic diversion.</p><p><strong>Infrastructure.</strong> Border and bridge capacity is the quiet risk. The Swiecko customs failure (BD-EU-401) and the Oder bridge restriction (BD-EU-403) both show how thin the margin is.</p><h2>Outlook, next 90 days</h2><p>Expect at least one multi-day road freight disruption from industrial action, most likely in the second half of the period. Expect the cargo theft cluster around Gdansk to continue and to displace along the corridor rather than stop. Expect no material change in personal security risk. A further border systems failure is likely on the base rate alone.</p><h2>Implications for operations</h2><p>The useful planning assumption is that road freight through Poland will lose two to five days of schedule integrity in the quarter, at a time you do not choose. Clients who hold a named second carrier per lane, who do not park high-value loads outside secured facilities, and who treat announced protest durations as minimums, absorb that. Clients who rely on a single subcontracted carrier and unsecured overnight parking will not.</p><p>Staff security measures beyond ordinary travel practice are not warranted.</p>",
+    "sources": [
+      "Halden alerts BD-EU-401 through BD-EU-407",
+      "Halden client liaison across seven operators on the corridor, rolling",
+      "National transport chamber and union published material",
+      "Halden route reconnaissance, northern ports and A2 and A4 corridors"
+    ],
+    "desk": "Europe",
+    "author": "maja.lindqvist",
+    "byline": "Maja Lindqvist",
+    "workflow": "released",
+    "hours_ago": 60
+  },
+  {
+    "reference": "CA-EG-Q3",
+    "title": "Egypt: operating environment assessment",
+    "summary": "Egypt is a moderate-risk environment where the main exposures for energy and logistics clients are economic protest, infrastructure sabotage outside the main cities, and the concentration of maritime risk in the canal. Personal security risk to foreign staff in Cairo and Alexandria is manageable with routine measures.",
+    "region": ["mena"],
+    "country": ["eg"],
+    "sector": ["energy", "logistics"],
+    "threat_type": ["civil_unrest", "terrorism", "transport", "political"],
+    "tlp": "amber",
+    "body_html": "<h2>Operating environment</h2><p>Egypt combines a firm security posture in the main cities with thin coverage of linear infrastructure outside them. For corporate clients the result is an environment where personal security in Cairo, Alexandria and the Red Sea resorts is manageable with routine measures, while fixed assets and movement corridors carry the real risk.</p><p>Economic pressure is the dominant driver of unrest. Subsidy and fuel price decisions produce localised protest within 24 to 48 hours, concentrated in the evening and dispersed firmly. Current protests across three Cairo districts (BD-ME-202) follow that pattern exactly.</p><h2>Threat picture</h2><p><strong>Civil unrest.</strong> Expect episodic, economically driven protest concentrated between 19:00 and 23:00, spreading geographically before it grows in size. Commercial premises are at risk of incidental damage, not targeting. The exposure for clients is staff movement after dark.</p><p><strong>Sabotage and terrorism.</strong> Attacks on pipeline and power infrastructure outside the main cities occur several times a year, typically timed to avoid casualties and often unclaimed, as with the valve station south of Alexandria (BD-ME-203). Organised jihadist capability in Sinai persists but has not projected into the Nile valley at scale for some years. Assess fixed linear assets as the principal target set.</p><p><strong>Maritime and canal.</strong> The Suez Canal concentrates an extraordinary amount of client exposure in one waterway. The current grounding (BD-ME-201) is a reminder that the failure mode does not need to be hostile to be expensive. Canal authority communication is generally prompt and accurate; salvage timelines are not.</p><p><strong>Regulatory and political.</strong> Customs and documentation rules change with limited notice and enforcement tightens without announcement. This is a persistent friction rather than a risk event.</p><h2>Outlook, next 90 days</h2><p>Expect further economically driven protest, particularly around any subsidy decision. Expect at least one further attack on infrastructure outside the main cities. Expect canal operations to normalise after the current grounding but plan on recovery taking longer than announced. No material change in the personal security picture is anticipated.</p><h2>Implications for operations</h2><p>For energy clients the priorities are patrol intervals and remote monitoring on unmanned assets, isolation procedures that can be executed inside an hour, and journey management for maintenance crews on rural corridors. For logistics clients the priority is holding a costed Cape routing option so the decision can be taken on evidence rather than in panic.</p><p>For all clients, staff movement in Cairo should be planned around the evening protest window rather than restricted outright.</p>",
+    "sources": [
+      "Halden alerts BD-ME-201, 202, 203, 205 and 207",
+      "Halden field observation, Cairo and Alexandria",
+      "Halden client liaison, four regional operators",
+      "Canal authority and operator published notices"
+    ],
+    "desk": "MENA",
+    "author": "omar.nasser",
+    "byline": "Omar Nasser",
+    "workflow": "released",
+    "hours_ago": 72
+  }
+]
