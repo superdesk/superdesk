@@ -59,9 +59,12 @@ def load_vocabularies():
 
 
 class Seeder:
-    def __init__(self, api, portal_url, openrouter_key, ai_model):
+    def __init__(self, api, portal_url, openrouter_key, ai_model, portal_push_url=None):
         self.api = api
         self.portal_url = (portal_url or "").rstrip("/")
+        # Where this server reaches the portal, which is not always the address a browser uses:
+        # two instances on the same host may only see each other by their internal names.
+        self.portal_push_url = (portal_push_url or "").rstrip("/") or self.portal_url
         self.openrouter_key = openrouter_key
         self.ai_model = ai_model
         self.vocabularies = load_vocabularies()
@@ -531,8 +534,11 @@ class Seeder:
 
     def section_publishing(self):
         log("Content filters, packages and recipients")
-        if not self.portal_url:
-            self.note("PORTAL_URL is not set, so the Briefdesk Portal push destination has no resource_url.")
+        if not self.portal_push_url:
+            self.note(
+                "Neither PORTAL_URL nor PORTAL_PUSH_URL is set, so the Briefdesk Portal push destination "
+                "has no resource_url."
+            )
 
         for condition in D.FILTER_CONDITIONS:
             self.upsert(
@@ -587,8 +593,8 @@ class Seeder:
                     "format": "newsroom ninjs",
                     "delivery_type": "http_push",
                     "config": {
-                        "resource_url": "%s/push" % self.portal_url if self.portal_url else "",
-                        "assets_url": "%s/push_binary" % self.portal_url if self.portal_url else "",
+                        "resource_url": "%s/push" % self.portal_push_url if self.portal_push_url else "",
+                        "assets_url": "%s/push_binary" % self.portal_push_url if self.portal_push_url else "",
                         "secret_token": D.PUSH_KEY,
                     },
                 }
@@ -639,12 +645,14 @@ class Seeder:
     def section_ai(self):
         log("AI provider and actions")
         provider = self.api.find_one("ai_providers", name=D.AI_PROVIDER_NAME)
-        if not provider and not self.openrouter_key:
+        if not self.openrouter_key:
+            # A provider is valid without a key and the actions only need its id, so everything is
+            # still created. The key is left out of the payload entirely: an explicit null is the
+            # one value that clears a key somebody pasted in by hand.
             self.note(
-                "OPENROUTER_API_KEY is not set and no %r provider exists, so the AI section was "
-                "skipped. Re-run with the key, or paste it into Settings, AI providers." % D.AI_PROVIDER_NAME
+                "OPENROUTER_API_KEY is not set. The %r provider and both AI actions exist, but runs "
+                "fail until the key is pasted into Settings, AI providers." % D.AI_PROVIDER_NAME
             )
-            return
         doc = {
             "name": D.AI_PROVIDER_NAME,
             "provider_type": "openai_compatible",
@@ -1001,6 +1009,7 @@ def main(argv=None):
     seeder = Seeder(
         api,
         portal_url=os.environ.get("PORTAL_URL"),
+        portal_push_url=os.environ.get("PORTAL_PUSH_URL"),
         openrouter_key=os.environ.get("OPENROUTER_API_KEY"),
         ai_model=os.environ.get("BRIEFDESK_AI_MODEL", D.AI_DEFAULT_MODEL),
     )

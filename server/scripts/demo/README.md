@@ -8,6 +8,48 @@ It talks to the instance over the normal REST API at `<SUPERDESK_URL>/api`. It u
 standard library only, so it runs from a laptop with no virtualenv. `requests` is in
 `server/requirements.txt` but that is the server's environment, not yours.
 
+## On Fireq (automatic)
+
+Nobody has a shell on a Fireq instance, so the branch seeds itself. `server/Procfile` has a
+`seed:` entry running `scripts/demo/run_seed.sh`, which:
+
+1. does nothing unless `DB_NAME` is set (Fireq exports it, the Docker setups here do not);
+   `BRIEFDESK_SEED=1` forces it and `BRIEFDESK_SEED=0` disables it,
+2. skips when the marker document `briefdesk_seed/v1` exists in MongoDB,
+3. waits up to 15 minutes for the API on `http://localhost:5000/api` (honcho gives `rest`, the
+   first Procfile entry, port 5000), falling back to `$SUPERDESK_URL`,
+4. picks the push destination: the public portal URL if this instance can reach it, otherwise the
+   portal container's internal name `http://nra-hgbriefdeskportaldemo`. Only the push destination
+   changes, exported as `PORTAL_PUSH_URL`,
+5. runs `python3 -u scripts/demo/seed_superdesk.py` as `admin` / `admin` (the user Fireq creates),
+6. writes the marker on success, and then idles forever. It never exits, because honcho stops the
+   whole instance when one Procfile process ends.
+
+- Instance: https://sd-hgbriefdeskdemo.test.superdesk.org (Fireq strips everything but letters
+  and digits from the branch name `hg/briefdesk-demo`). Login `admin` / `admin`, staff users per
+  the table below with password `Briefdesk-demo-1`.
+- Portal: https://nra-hgbriefdeskportaldemo.test.superdesk.org , login `admin@example.com` /
+  `admin`.
+- Seed output: https://sd-hgbriefdeskdemo.test.superdesk.org/logs/ , lines start with
+  `[briefdesk-seed]`.
+- Mail this instance sends (email recipients, notifications):
+  https://sd-hgbriefdeskdemo.test.superdesk.org/mail/
+- To seed again: the `[reset db]` button on https://test.superdesk.org/sd drops the database and
+  with it the marker. Or bump `SEED_VERSION` in `run_seed.sh` and push (the seed is idempotent,
+  so this only adds and updates).
+- Push order: `hg/briefdesk-portal-demo` in newsroom-app first, then `hg/briefdesk-branding` in
+  superdesk-client-core, then this branch (its `client/package.json` points at that client
+  branch, so it has to exist on GitHub first).
+
+### The OpenRouter key is pasted in by hand
+
+A pushed branch cannot give a Fireq instance a secret, and this repository is public. Without
+`OPENROUTER_API_KEY` the seed still creates the `OpenRouter` provider (with no key) and both AI
+actions, and says so under "Things to look at". After the deploy, open Settings, AI providers,
+edit `OpenRouter` and paste the key. Until then every AI run fails with an authorisation error
+from the provider. A later seed run never touches the pasted key: the key is only sent when
+`OPENROUTER_API_KEY` is set.
+
 ## Run it
 
 ```
@@ -26,7 +68,8 @@ python3 server/scripts/demo/seed_superdesk.py
 | `SUPERDESK_PASSWORD` | yes, unless `SUPERDESK_TOKEN` | Password for that account. |
 | `SUPERDESK_TOKEN` | no | An existing session token, used instead of signing in. |
 | `PORTAL_URL` | no, but the portal push is useless without it | Base URL of the Briefdesk Portal. The push destination becomes `<PORTAL_URL>/push`. |
-| `OPENROUTER_API_KEY` | no | When absent the AI section is skipped with a warning, unless the provider already exists. |
+| `PORTAL_PUSH_URL` | no | Address this server uses to reach the portal, when it differs from the one a browser uses (two instances on one host). Defaults to `PORTAL_URL`. The push destination becomes `<PORTAL_PUSH_URL>/push`. |
+| `OPENROUTER_API_KEY` | no | When absent the provider is created without a key and both actions are still created. Paste the key into Settings, AI providers afterwards. A key already stored is never touched. |
 | `BRIEFDESK_AI_MODEL` | no, defaults to `openai/gpt-4o-mini` | Model the AI provider and both actions use. |
 
 Flags:
