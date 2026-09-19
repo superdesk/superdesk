@@ -277,35 +277,46 @@
     },
     {
         "_id": "urgency",
-        "display_name": "Urgency",
+        "display_name": "Severity",
+        "helper_text": "Drives the badge, the sort order and the review queue. Lower is more severe.",
         "type": "manageable",
         "selection_type": "multi selection",
         "unique_field": "qcode",
-        "init_version": 1,
+        "init_version": 2,
         "items": [
             {
                 "is_active": true,
-                "name": "1",
+                "name": "Critical",
+                "short": "C",
+                "color": "#B42318",
                 "qcode": 1
             },
             {
                 "is_active": true,
-                "name": "2",
+                "name": "High",
+                "short": "H",
+                "color": "#D9480F",
                 "qcode": 2
             },
             {
                 "is_active": true,
-                "name": "3",
+                "name": "Medium",
+                "short": "M",
+                "color": "#E8A317",
                 "qcode": 3
             },
             {
                 "is_active": true,
-                "name": "4",
+                "name": "Low",
+                "short": "L",
+                "color": "#2E7D5B",
                 "qcode": 4
             },
             {
                 "is_active": true,
-                "name": "5",
+                "name": "Informational",
+                "short": "I",
+                "color": "#5B7083",
                 "qcode": 5
             }
         ],
@@ -3257,15 +3268,15 @@
     },
     {
         "_id": "severity",
-        "display_name": "Severity",
+        "display_name": "Severity (client feed)",
         "type": "manageable",
         "selection_type": "single selection",
         "unique_field": "qcode",
         "service": {
             "all": 1
         },
-        "helper_text": "How serious the situation is for clients in scope.",
-        "init_version": 1,
+        "helper_text": "Tag carried to the client portal, where it drives filters and packages. Keep it at the same level as Severity.",
+        "init_version": 2,
         "schema": {
             "name": {},
             "qcode": {}

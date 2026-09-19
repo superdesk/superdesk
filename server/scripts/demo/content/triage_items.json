@@ -1,0 +1,227 @@
+[
+  {
+    "reference": "BD-EU-421",
+    "title": "Cable fires on the Poland to Germany rail corridor stop overnight freight",
+    "summary": "Three signalling cable runs on the Rzepin to Frankfurt (Oder) section burned within 90 minutes of each other overnight. The infrastructure manager has suspended all freight paths on the corridor and has no restoration estimate. Rail-borne loads booked for Berlin and Hamburg tomorrow will not move.",
+    "severity": "critical",
+    "region": ["europe"],
+    "country": ["pl", "de"],
+    "sector": ["logistics"],
+    "threat_type": ["terrorism", "transport"],
+    "tlp": "amber",
+    "location_text": "Rzepin to Frankfurt (Oder) section, Poland to Germany",
+    "situation": "Fires were reported at three separate cable runs between 01:20 and 02:50 local time, each within a few hundred metres of a level crossing. The infrastructure manager suspended freight paths across the section at 03:10 and has kept passenger services on a single line under manual signalling. Police have opened an arson investigation and have not commented on attribution.",
+    "assessment": "The spacing and timing of the three fires point to deliberate, coordinated damage rather than a fault. Similar cable attacks elsewhere in Europe have taken between two and five days to repair, because the runs have to be relaid rather than spliced. Our confidence that this was deliberate is high and rests on the infrastructure manager's own statement and the police investigation; we have no view yet on who did it and will not speculate.",
+    "outlook": "Assume no freight paths on this section for at least 72 hours. Road diversion through Swiecko will add congestion to a crossing that is already at capacity in the morning peak.",
+    "recommended_actions": [
+      "Move tomorrow's rail-booked loads to road now rather than waiting for a restoration estimate.",
+      "Expect the Swiecko road crossing to absorb the diverted volume and add three to five hours to westbound clearance.",
+      "Warn consignees in Berlin and Hamburg today that rail-booked deliveries will slip by two days or more."
+    ],
+    "sources": [
+      "Infrastructure manager operational notice, 03:10 and 06:45 local",
+      "Halden liaison with two member hauliers on the corridor, 07:30 local"
+    ],
+    "desk": "Europe",
+    "author": "maja.lindqvist",
+    "byline": "Maja Lindqvist",
+    "workflow": "review",
+    "hours_ago": 3
+  },
+  {
+    "reference": "BD-EU-424",
+    "title": "Power fault at a Frankfurt data centre campus takes freight scheduling systems offline",
+    "summary": "A substation fault cut power to part of a Frankfurt data centre campus at 05:40 local. Two freight scheduling platforms used widely by European road hauliers are unreachable. Operators are falling back to phone and spreadsheet dispatch.",
+    "severity": "critical",
+    "region": ["europe"],
+    "country": ["de"],
+    "sector": ["logistics", "technology"],
+    "threat_type": ["cyber", "transport"],
+    "tlp": "amber",
+    "location_text": "Frankfurt am Main data centre campus, Germany",
+    "situation": "The campus operator reported a medium-voltage fault at 05:40 local and moved to generator supply for part of the site. Two scheduling platforms have been unreachable since. The operator says there is no indication of an intrusion and treats this as an electrical fault.",
+    "assessment": "The operational effect is the same whether the cause is a fault or an attack, and we assess a fault as far more likely on the evidence available. The exposure worth watching is the fallback: dispatch by phone and spreadsheet loses the automatic driver-hours checks, which is where errors usually appear on the second day of an outage. Confidence is moderate and rests on the operator's statement alone.",
+    "outlook": "Expect partial restoration within 24 hours and a backlog of unscheduled loads for a further day. A second outage on generator supply would be the signal to escalate.",
+    "recommended_actions": [
+      "Check driver hours by hand on every dispatch while the platforms are down.",
+      "Record loads dispatched offline so they can be reconciled when the platforms return.",
+      "Ask your platform provider for a written restoration estimate rather than waiting for the status page."
+    ],
+    "sources": [
+      "Campus operator status notice, 06:10 local",
+      "Halden liaison with a member haulier using both platforms, 07:15 local"
+    ],
+    "desk": "Europe",
+    "author": "maja.lindqvist",
+    "byline": "Maja Lindqvist",
+    "workflow": "analysis",
+    "hours_ago": 2
+  },
+  {
+    "reference": "BD-EU-422",
+    "title": "Prague metro line C weekend closure extended into the working week",
+    "summary": "The planned weekend closure of Prague metro line C between Muzeum and Vysehrad has been extended to Wednesday. Replacement buses are running. The effect on staff commuting is modest and there is no security dimension.",
+    "severity": "low",
+    "region": ["europe"],
+    "country": ["cz"],
+    "sector": ["logistics"],
+    "threat_type": ["transport"],
+    "tlp": "green",
+    "location_text": "Metro line C, Muzeum to Vysehrad, Prague, Czechia",
+    "situation": "The transport authority extended a planned track renewal closure by three days after finding worn fixings on a further section. Replacement buses run every four minutes in the peak. Other lines are unaffected.",
+    "assessment": "This is a routine maintenance overrun with no security dimension. It is worth a line in the daily brief for clients with Prague offices because it adds about 15 minutes to the morning commute from the southern suburbs, and nothing more.",
+    "outlook": "Reopening on Wednesday as announced is likely. A further extension would be unusual but would not change the assessment.",
+    "recommended_actions": [
+      "Tell Prague staff commuting from the southern suburbs to allow an extra 15 minutes until Wednesday."
+    ],
+    "sources": [
+      "Transport authority service notice, 08:00 local"
+    ],
+    "desk": "Europe",
+    "author": "maja.lindqvist",
+    "byline": "Maja Lindqvist",
+    "workflow": "review",
+    "hours_ago": 6
+  },
+  {
+    "reference": "BD-ME-211",
+    "title": "Access road to a Suez industrial park closed after an armed standoff",
+    "summary": "Security forces closed the northern access road to an industrial park near Suez at first light after an armed standoff at a contractor compound. The road carries most inbound heavy vehicle traffic to the park. No casualties have been confirmed.",
+    "severity": "high",
+    "region": ["mena"],
+    "country": ["eg"],
+    "sector": ["energy", "logistics"],
+    "threat_type": ["crime", "conflict"],
+    "tlp": "amber",
+    "location_text": "Northern access road, industrial park near Suez, Egypt",
+    "situation": "A standoff at a contractor compound inside the park began before dawn and was still running at 09:00 local. Security forces closed the northern access road and are turning heavy vehicles back at the junction with the coast road. The southern gate remains open to light vehicles only.",
+    "assessment": "The reporting we have is thin and partly second hand, so our confidence in the detail is low, but the road closure itself is confirmed by two independent operators. For clients with staff or contractors in the park the practical question is access rather than direct threat: the southern gate cannot take heavy vehicles, so inbound deliveries stop while the northern road is closed.",
+    "outlook": "A closure through the working day is likely. If the standoff continues into a second day, expect the park operator to stand down non-essential contractor work.",
+    "recommended_actions": [
+      "Hold inbound heavy vehicle movements to the park until the northern road reopens.",
+      "Account for contractor staff on site and keep them inside the compound rather than moving them to the gate.",
+      "Do not rely on the southern gate for anything heavier than a light van."
+    ],
+    "sources": [
+      "Halden liaison with two operators inside the park, 07:40 and 08:55 local",
+      "Halden observation of the coast road junction, 08:30 local"
+    ],
+    "desk": "MENA",
+    "author": "omar.nasser",
+    "byline": "Omar Nasser",
+    "workflow": "review",
+    "hours_ago": 4
+  },
+  {
+    "reference": "BD-AM-108",
+    "title": "Highway blockades north of Monterrey enter a second day",
+    "summary": "Transport union blockades on the highway north of Monterrey are in their second day. Northbound freight is queuing at two points and hauliers report clearance times of eight hours. The union has called a further stoppage for Friday.",
+    "severity": "high",
+    "region": ["americas"],
+    "country": ["mx"],
+    "sector": ["logistics"],
+    "threat_type": ["industrial_action", "transport"],
+    "tlp": "amber",
+    "location_text": "Highway north of Monterrey, Nuevo Leon, Mexico",
+    "situation": "Blockades went up at two points on the northbound carriageway on Tuesday morning over a haulage tariff dispute. Both were still in place at 08:00 local today. Southbound traffic is moving. The union announced a further stoppage for Friday if the tariff talks fail.",
+    "assessment": "This is an industrial dispute, not a security event, and the blockades have so far been orderly. The commercial effect is real: eight-hour clearance on a corridor that normally runs freely will miss border crossing appointments, and missed appointments cascade for two to three days. Confidence is high and rests on three haulier accounts and the union's own announcement.",
+    "outlook": "Expect the blockades to hold until the tariff talks conclude. A Friday stoppage would push the backlog into the following week.",
+    "recommended_actions": [
+      "Rebook border crossing appointments for northbound loads rather than letting them lapse.",
+      "Route time-definite loads through the eastern corridor and accept the additional distance.",
+      "Plan on a Friday stoppage until the talks are reported as settled."
+    ],
+    "sources": [
+      "Halden liaison with three member hauliers on the corridor, 06:50 to 08:10 local",
+      "Union announcement, published Tuesday evening"
+    ],
+    "desk": "Americas",
+    "author": "lucia.ferro",
+    "byline": "Lucia Ferro",
+    "workflow": "review",
+    "hours_ago": 5
+  },
+  {
+    "reference": "BD-EU-423",
+    "title": "Single-source claim of a device at a Lyon distribution hub",
+    "summary": "One source reports that a suspicious package was found and removed at a Lyon distribution hub overnight. Nothing corroborates it: no police notice, no operator statement, no second account. Held until a second source confirms or the claim is dropped.",
+    "severity": "high",
+    "region": ["europe"],
+    "country": ["fr"],
+    "sector": ["logistics"],
+    "threat_type": ["terrorism"],
+    "tlp": "red",
+    "location_text": "Distribution hub, eastern Lyon, France",
+    "situation": "A single contact reported at 02:40 local that a package had been found near a loading bay and removed by a bomb disposal team. The hub operator has not confirmed it, local police have issued no notice, and the site was operating normally at the morning shift change.",
+    "assessment": "We do not have enough to release this. A single uncorroborated account of a device is exactly the kind of claim that spreads and then turns out to be a false alarm, and releasing it would cost us more than being late. The site operating normally this morning argues against a serious incident, though it does not rule out a package that was removed quietly.",
+    "outlook": "If nothing corroborates the claim by the end of the day, drop it. If the operator or police confirm anything, this becomes a Critical alert for clients with Lyon operations.",
+    "recommended_actions": [
+      "Do not act on this internally or externally until a second source confirms it."
+    ],
+    "sources": [
+      "Single Halden contact at the hub, 02:40 local, uncorroborated"
+    ],
+    "ednote": "Held: single unverified source. Do not release until a second source confirms. Review at the 17:00 handover.",
+    "desk": "Europe",
+    "author": "maja.lindqvist",
+    "byline": "Maja Lindqvist",
+    "workflow": "held",
+    "hours_ago": 7
+  },
+  {
+    "reference": "BD-WATCH-118",
+    "title": "Unconfirmed report of a fire at a Gdansk fuel terminal",
+    "summary": "Two social accounts describe smoke over a Gdansk fuel terminal shortly after midnight. The terminal operator has not responded and there is no emergency service notice. Captured and held pending confirmation.",
+    "severity": "critical",
+    "region": ["europe"],
+    "country": ["pl"],
+    "sector": ["energy", "logistics"],
+    "threat_type": ["natural_hazard"],
+    "tlp": "amber",
+    "location_text": "Fuel terminal, Port of Gdansk, Poland",
+    "situation": "Two accounts posted at about 00:20 local describe smoke and a glow over the terminal area. Neither shows the terminal itself. The operator has not responded to a liaison call and the regional emergency service has issued no notice. Port traffic data shows no berth closures.",
+    "assessment": "The claim would be Critical if true, which is exactly why it is held rather than released. Nothing beyond the two posts supports it, and the absence of berth closures argues against a fire large enough to matter. Watch is keeping it visible so it is not lost if confirmation arrives during the night shift.",
+    "outlook": "Confirmation or a clear negative within a few hours is likely once the terminal opens for the day shift.",
+    "recommended_actions": [
+      "No client action. Watch holds this until the operator or the emergency service confirms."
+    ],
+    "sources": [
+      "Two public social posts, 00:20 local, neither showing the terminal",
+      "Halden liaison call to the terminal operator, no answer, 00:55 local"
+    ],
+    "ednote": "Held by Watch: two social posts only. Do not hand to Europe until the operator or the emergency service confirms.",
+    "desk": "Watch",
+    "author": "dana.reyes",
+    "byline": "Dana Reyes",
+    "workflow": "held",
+    "hours_ago": 8
+  },
+  {
+    "reference": "BD-WATCH-119",
+    "title": "Madrid municipal transport strike notice filed for next week",
+    "summary": "A municipal transport union has filed a strike notice for next Tuesday and Wednesday in Madrid. Nothing happens for six days, so this is queued for the Monday brief rather than released as an alert.",
+    "severity": "medium",
+    "region": ["europe"],
+    "country": ["es"],
+    "sector": ["logistics", "retail"],
+    "threat_type": ["industrial_action"],
+    "tlp": "green",
+    "location_text": "Madrid, Spain",
+    "situation": "The union filed the notice with the city on Monday. It covers bus and metro services for two days. Minimum service levels have not been published. Talks are scheduled for Thursday.",
+    "assessment": "A filed notice is not a strike, and roughly half of these are settled in the talks that follow. There is nothing for clients to do this week. Holding it in the queue keeps it from being lost and lets the Monday brief carry it with the outcome of Thursday's talks.",
+    "outlook": "The Thursday talks decide it. If they fail, this becomes a Medium alert on Friday with minimum service levels attached.",
+    "recommended_actions": [
+      "No action this week. Revisit after Thursday's talks."
+    ],
+    "ednote": "Queued for the Monday brief. Revisit after Thursday's talks and raise to an alert only if they fail.",
+    "sources": [
+      "City strike notice register, filed Monday",
+      "Union statement, Monday afternoon"
+    ],
+    "desk": "Watch",
+    "author": "dana.reyes",
+    "byline": "Dana Reyes",
+    "workflow": "held",
+    "hours_ago": 11
+  }
+]

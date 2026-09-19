@@ -1,0 +1,500 @@
+[
+  {
+    "reference": "BD-EU-431",
+    "title": "Gate staff at a Rotterdam container terminal call a 48-hour stoppage",
+    "summary": "Gate and lashing staff at one Rotterdam container terminal have called a 48-hour stoppage from Thursday morning over a shift roster change. Two neighbouring terminals are unaffected. Booked collections at the struck terminal will not move.",
+    "severity": "high",
+    "region": ["europe"],
+    "country": ["nl"],
+    "sector": ["logistics"],
+    "threat_type": ["industrial_action", "transport"],
+    "tlp": "amber",
+    "location_text": "Container terminal, Port of Rotterdam, Netherlands",
+    "situation": "The works council notified the terminal operator of a 48-hour stoppage starting 06:00 Thursday, covering gate staff and lashing crews. The dispute is over a roster change introduced without consultation. The operator says it will keep vessel operations running with supervisory staff and has not disputed the notice.",
+    "assessment": "Vessel operations continuing does not help a haulier: without gate staff the landside is what stops, and that is where booked collections sit. Confidence is high and rests on the notice itself and the operator's own statement. We do not expect the two neighbouring terminals to join; their crews are on a separate agreement that runs to the end of the year.",
+    "outlook": "Expect the full 48 hours to be worked out rather than settled early, and a further day of gate congestion once the stoppage ends.",
+    "recommended_actions": [
+      "Bring Thursday and Friday collections forward to Wednesday where the box is already discharged.",
+      "Do not rebook onto the neighbouring terminals without confirming the box can be moved between them first.",
+      "Plan for gate queues on Saturday as the backlog clears."
+    ],
+    "sources": [
+      "Works council strike notice, published Tuesday",
+      "Terminal operator customer advisory, Tuesday afternoon",
+      "Halden liaison with two member hauliers using the terminal, Tuesday evening"
+    ],
+    "desk": "Europe",
+    "author": "maja.lindqvist",
+    "byline": "Maja Lindqvist",
+    "workflow": "incoming",
+    "hours_ago": 0,
+    "at": 0.0,
+    "final": "Released",
+    "steps": [
+      {"at": 1.0, "op": "move", "desk": "Europe", "stage": "Analysis", "user": "maja.lindqvist"},
+      {
+        "at": 3.0,
+        "op": "edit",
+        "user": "maja.lindqvist",
+        "summary": "Gate and lashing staff at one Rotterdam container terminal have called a 48-hour stoppage from Thursday morning over a shift roster change. Two neighbouring terminals are unaffected and the operator has confirmed the notice. Booked collections at the struck terminal will not move.",
+        "add_html": "<h2>Update</h2><p>The operator has now confirmed the notice in writing and says the gate will be closed to road collections for the full 48 hours. It expects to reopen with additional lanes on Saturday morning. Neither neighbouring terminal has received a notice of its own.</p>"
+      },
+      {"at": 5.0, "op": "move", "desk": "Europe", "stage": "Review", "user": "maja.lindqvist"},
+      {"at": 9.0, "op": "release", "user": "tomas.havel"}
+    ]
+  },
+  {
+    "reference": "BD-EU-432",
+    "title": "Regulator suspends batch release at a Bavarian contract packer",
+    "summary": "A national medicines regulator has suspended batch release at a contract packing site in Bavaria after an inspection. Product already released is not affected. Clients packing finished goods at the site should expect a four to six week gap.",
+    "severity": "medium",
+    "region": ["europe"],
+    "country": ["de"],
+    "sector": ["pharma"],
+    "threat_type": ["health", "political"],
+    "tlp": "amber",
+    "location_text": "Contract packing site, Bavaria, Germany",
+    "situation": "The regulator published a short notice on Monday suspending batch release at the site pending corrective action after a routine inspection. The notice names deficiencies in environmental monitoring records and does not allege a product defect. The site continues to operate for everything other than release.",
+    "assessment": "A release suspension without a recall is the regulator's normal first step and is usually lifted once the records are rebuilt and re-inspected. Our confidence that no released product is affected is moderate: it rests on the wording of the notice alone, and the regulator has not said whether it reviewed retained samples. The commercial exposure is the gap, not a safety question.",
+    "outlook": "Four to six weeks to re-inspection is the usual pattern for a records deficiency. A second notice naming a product defect would change this assessment entirely.",
+    "recommended_actions": [
+      "Ask the site for a written corrective action plan with a re-inspection date rather than a verbal estimate.",
+      "Identify which of your SKUs are packed only at this site and start qualifying a second packer for those.",
+      "Do not initiate customer communication about released product until the regulator says anything about it."
+    ],
+    "sources": [
+      "Regulator public notice, Monday",
+      "Halden liaison with a client quality lead familiar with the site, Monday afternoon"
+    ],
+    "desk": "Europe",
+    "author": "maja.lindqvist",
+    "byline": "Maja Lindqvist",
+    "workflow": "incoming",
+    "hours_ago": 0,
+    "at": 0.3,
+    "final": "Released",
+    "steps": [
+      {"at": 1.5, "op": "move", "desk": "Europe", "stage": "Analysis", "user": "maja.lindqvist"},
+      {
+        "at": 4.0,
+        "op": "edit",
+        "user": "maja.lindqvist",
+        "add_html": "<h2>Update</h2><p>The site has told one client that it expects to submit its corrective action plan within ten working days. That is the site's own estimate and the regulator has not commented on it.</p>"
+      },
+      {"at": 6.0, "op": "move", "desk": "Europe", "stage": "Review", "user": "maja.lindqvist"},
+      {
+        "at": 8.0,
+        "op": "move",
+        "desk": "Europe",
+        "stage": "Analysis",
+        "user": "tomas.havel",
+        "why": "Reviewer sends it back: the four to six week figure needs a source."
+      },
+      {
+        "at": 10.0,
+        "op": "edit",
+        "user": "maja.lindqvist",
+        "ednote": "Returned once from Review: the four to six week figure now says where it comes from.",
+        "add_html": "<p>The four to six week figure is our own, drawn from the two comparable suspensions we have tracked in this market since last year, not from the regulator. Treat it as a planning assumption rather than a commitment.</p>"
+      },
+      {"at": 12.0, "op": "move", "desk": "Europe", "stage": "Review", "user": "maja.lindqvist"},
+      {"at": 17.0, "op": "release", "user": "tomas.havel"}
+    ]
+  },
+  {
+    "reference": "BD-EU-433",
+    "title": "Group claims access to a French port community system",
+    "summary": "A ransomware group has posted a claim that it holds data from the port community system used at two French ports. Neither port authority has confirmed anything. If the claim holds, booking and customs messaging for both ports is exposed.",
+    "severity": "critical",
+    "region": ["europe"],
+    "country": ["fr"],
+    "sector": ["logistics", "technology"],
+    "threat_type": ["cyber"],
+    "tlp": "red",
+    "location_text": "Port community system serving two French ports",
+    "situation": "A post appeared on a leak site overnight claiming access to the port community system operated for two French ports, with a sample directory listing as evidence. Neither port authority nor the system operator has issued a statement. The system was reachable and responding normally at 08:00 local.",
+    "assessment": "The sample listing is consistent with the system's public documentation but proves possession of file names, not of data. Our confidence in the claim is low and deliberately so: leak site claims of this kind are wrong or exaggerated roughly half the time in our tracking. We are carrying it at Critical because the consequence if it is true (booking and customs messaging for two ports) is large enough that clients need the warning before confirmation, with the uncertainty stated plainly.",
+    "outlook": "Expect a statement from the operator within 24 hours. A forced outage of the system for containment would be the first hard signal and would stop landside bookings at both ports.",
+    "recommended_actions": [
+      "Export your open bookings and customs references from the system today so you can work without it.",
+      "Treat any message that appears to come from the system asking for credentials as hostile until the operator says otherwise.",
+      "Do not change banking or payment details on the strength of anything received through the system this week."
+    ],
+    "sources": [
+      "Leak site post with a sample directory listing, 02:10 local",
+      "Halden check of the system's public interface, 08:00 local, responding normally"
+    ],
+    "ednote": "Critical on consequence, not on confidence. The uncertainty must stay in the first paragraph of the Assessment if this is released.",
+    "desk": "Europe",
+    "author": "maja.lindqvist",
+    "byline": "Maja Lindqvist",
+    "workflow": "incoming",
+    "hours_ago": 0,
+    "at": 0.6,
+    "final": "Europe / Review",
+    "steps": [
+      {"at": 2.0, "op": "move", "desk": "Europe", "stage": "Analysis", "user": "maja.lindqvist"},
+      {
+        "at": 5.0,
+        "op": "edit",
+        "user": "maja.lindqvist",
+        "add_html": "<h2>Update</h2><p>The operator has acknowledged that it is investigating and has not confirmed or denied the claim. Two member hauliers report the system is still accepting bookings.</p>"
+      },
+      {"at": 7.0, "op": "move", "desk": "Europe", "stage": "Review", "user": "maja.lindqvist"}
+    ]
+  },
+  {
+    "reference": "BD-ME-221",
+    "title": "Drone sightings close the approach to a Gulf export jetty for six hours",
+    "summary": "Repeated drone sightings closed the marine approach to an export jetty in the southern Gulf between 23:00 and 05:00 local. Two loadings were delayed. The approach reopened at first light with no damage reported.",
+    "severity": "high",
+    "region": ["mena"],
+    "country": ["ae"],
+    "sector": ["energy"],
+    "threat_type": ["conflict", "transport"],
+    "tlp": "amber",
+    "location_text": "Export jetty and marine approach, southern Gulf",
+    "situation": "The port authority closed the marine approach at 23:05 local after three separate drone sightings inside the exclusion zone and reopened it at 05:10. Two loadings slipped by six hours. The authority has confirmed the closure and has said nothing about attribution. No damage has been reported to jetty infrastructure.",
+    "assessment": "A precautionary closure on sightings alone is the standard response here and does not by itself indicate an attack. What matters for clients is the precedent: this is the second approach closure at this facility in six weeks, and the two together suggest the authority's threshold for closing has dropped. Confidence in the facts is high; the reading of the threshold change is our own and moderate.",
+    "outlook": "Expect further short closures on sightings rather than a sustained suspension. A closure that runs through a daylight period would be a change worth escalating.",
+    "recommended_actions": [
+      "Build a six to eight hour closure allowance into laycan planning at this facility for the next month.",
+      "Ask your agent for the authority's closure notices directly rather than relying on the terminal's schedule.",
+      "Review demurrage exposure on fixtures already booked against this jetty."
+    ],
+    "sources": [
+      "Port authority navigational notice, 23:05 and 05:10 local",
+      "Halden liaison with a shipping agent at the facility, 06:20 local"
+    ],
+    "desk": "MENA",
+    "author": "omar.nasser",
+    "byline": "Omar Nasser",
+    "workflow": "incoming",
+    "hours_ago": 0,
+    "at": 0.9,
+    "final": "Released",
+    "steps": [
+      {"at": 2.5, "op": "move", "desk": "MENA", "stage": "Analysis", "user": "omar.nasser"},
+      {
+        "at": 4.5,
+        "op": "edit",
+        "user": "omar.nasser",
+        "summary": "Repeated drone sightings closed the marine approach to an export jetty in the southern Gulf between 23:00 and 05:00 local. Two loadings were delayed. The approach reopened at first light with no damage reported. This is the second such closure in six weeks.",
+        "add_html": "<h2>Update</h2><p>The agent has confirmed both delayed loadings resumed at 05:40 local and that no berth was vacated. The authority has not published a further notice.</p>"
+      },
+      {"at": 8.0, "op": "move", "desk": "MENA", "stage": "Review", "user": "omar.nasser"},
+      {"at": 11.0, "op": "release", "user": "lucia.ferro"}
+    ]
+  },
+  {
+    "reference": "BD-ME-222",
+    "title": "Clearance backlog at Alexandria reaches temperature-controlled consignments",
+    "summary": "A customs system changeover at Alexandria has produced a clearance backlog now running at four days. Temperature-controlled consignments are being cleared ahead of general cargo but are still outside their usual window.",
+    "severity": "medium",
+    "region": ["mena"],
+    "country": ["eg"],
+    "sector": ["pharma", "logistics"],
+    "threat_type": ["political", "transport"],
+    "tlp": "green",
+    "location_text": "Port of Alexandria, Egypt",
+    "situation": "Customs moved to a new declaration system ten days ago. Clearance times went from about a day to four days and have not recovered. The authority has added evening shifts and says the backlog will clear within two weeks. Temperature-controlled consignments are being prioritised on request, not automatically.",
+    "assessment": "System changeovers of this kind usually take three to six weeks to settle, not two, and we would plan on the longer figure. The prioritisation matters and is not widely known: it has to be asked for, in writing, per consignment. Confidence is moderate and rests on three forwarder accounts plus the authority's own notice.",
+    "outlook": "Expect gradual improvement over three to six weeks. A second system fault during the changeover would reset the backlog.",
+    "recommended_actions": [
+      "Request temperature-controlled prioritisation in writing for every consignment rather than assuming it applies.",
+      "Add four days to clearance in your planning for this port until the backlog is reported clear.",
+      "Check that your excursion thresholds and data logger intervals still cover a four day dwell."
+    ],
+    "sources": [
+      "Customs authority notice on the changeover, published last week",
+      "Halden liaison with three forwarders at the port, Monday and Tuesday"
+    ],
+    "desk": "MENA",
+    "author": "omar.nasser",
+    "byline": "Omar Nasser",
+    "workflow": "incoming",
+    "hours_ago": 0,
+    "at": 1.2,
+    "final": "Released",
+    "steps": [
+      {"at": 3.0, "op": "move", "desk": "MENA", "stage": "Analysis", "user": "omar.nasser"},
+      {
+        "at": 5.5,
+        "op": "move",
+        "desk": "MENA",
+        "stage": "Held",
+        "user": "omar.nasser",
+        "why": "Parked while the analyst waits for the third forwarder to confirm the four day figure."
+      },
+      {"at": 9.0, "op": "move", "desk": "MENA", "stage": "Analysis", "user": "omar.nasser"},
+      {
+        "at": 11.0,
+        "op": "edit",
+        "user": "omar.nasser",
+        "ednote": "Held for half a day while the third forwarder was chased. Four day figure now has three independent accounts behind it.",
+        "add_html": "<h2>Update</h2><p>A third forwarder has confirmed the four day figure independently and says the evening shifts began on Monday. The written prioritisation request is being honoured in their experience, with about a day saved.</p>"
+      },
+      {"at": 13.0, "op": "move", "desk": "MENA", "stage": "Review", "user": "omar.nasser"},
+      {"at": 18.0, "op": "release", "user": "lucia.ferro"}
+    ]
+  },
+  {
+    "reference": "BD-ME-223",
+    "title": "Riyadh road closures announced for a state visit next week",
+    "summary": "Municipal authorities have published road closures across central Riyadh for a state visit next Tuesday and Wednesday. Nothing happens for six days and the effect is on journey times, not security.",
+    "severity": "low",
+    "region": ["mena"],
+    "country": ["sa"],
+    "sector": ["finance", "energy"],
+    "threat_type": ["political"],
+    "tlp": "green",
+    "location_text": "Central Riyadh, Saudi Arabia",
+    "situation": "The municipality published a closure schedule covering several central corridors for two days next week, with timings tied to a motorcade rather than a full day closure. Airport access is not affected. The published schedule is detailed and has not changed since it appeared.",
+    "assessment": "This is a planning item. The closures are announced, timed and limited, which is the normal pattern for a state visit here and rarely slips by more than an hour. The only thing worth flagging is that two of the corridors carry the usual route between the financial district and the airport hotels, so meetings scheduled across that gap will need more time.",
+    "outlook": "The schedule is likely to hold. Expect an additional short notice closure on the day if the programme changes.",
+    "recommended_actions": [
+      "Move client meetings out of the two closure windows rather than adding travel time to them.",
+      "Tell visiting staff to expect an extra 45 minutes between the financial district and the airport hotels on both days."
+    ],
+    "sources": [
+      "Municipal closure schedule, published Sunday",
+      "Halden check of the published route against the usual airport corridor"
+    ],
+    "desk": "MENA",
+    "author": "omar.nasser",
+    "byline": "Omar Nasser",
+    "workflow": "incoming",
+    "hours_ago": 0,
+    "at": 1.5,
+    "final": "MENA / Review",
+    "steps": [
+      {"at": 3.5, "op": "move", "desk": "MENA", "stage": "Analysis", "user": "omar.nasser"},
+      {
+        "at": 6.0,
+        "op": "edit",
+        "user": "omar.nasser",
+        "add_html": "<h2>Update</h2><p>The municipality has added a third corridor to the schedule for Wednesday afternoon. The published timings for Tuesday are unchanged.</p>"
+      },
+      {"at": 8.5, "op": "move", "desk": "MENA", "stage": "Review", "user": "omar.nasser"},
+      {
+        "at": 12.0,
+        "op": "move",
+        "desk": "MENA",
+        "stage": "Analysis",
+        "user": "lucia.ferro",
+        "why": "Team lead sends it back: the 45 minute figure needs to say where it comes from."
+      },
+      {
+        "at": 14.0,
+        "op": "edit",
+        "user": "omar.nasser",
+        "add_html": "<p>The 45 minute figure is measured from the two comparable closures we tracked in this city last year, not published by the municipality.</p>"
+      },
+      {"at": 16.0, "op": "move", "desk": "MENA", "stage": "Review", "user": "omar.nasser"}
+    ]
+  },
+  {
+    "reference": "BD-AM-121",
+    "title": "Armed hijackings on the Santos port access road rise sharply",
+    "summary": "Hauliers report six armed hijackings on the access road to the Port of Santos in nine days, against one or two in a normal month. All were at night and all targeted high value containerised loads.",
+    "severity": "high",
+    "region": ["americas"],
+    "country": ["br"],
+    "sector": ["logistics"],
+    "threat_type": ["crime"],
+    "tlp": "amber",
+    "location_text": "Port access road, Santos, Sao Paulo state, Brazil",
+    "situation": "Four member hauliers report six hijackings between 21:00 and 04:00 local over nine days on the same twelve kilometre stretch. Loads taken were electronics and pharmaceuticals. Two drivers were injured. The state police have not published figures for the period and have not commented on a pattern.",
+    "assessment": "Six incidents on one stretch in nine days is well outside the normal rate and the consistency of the timing and the cargo type points at an organised group with access to load information rather than opportunistic crime. Confidence in the count is high; it comes from the hauliers directly. Confidence that load information is leaking is moderate and rests on the cargo selection alone.",
+    "outlook": "Expect the rate to hold until there is a police operation on the stretch. A daylight incident would be a significant escalation.",
+    "recommended_actions": [
+      "Move collections at this port into daylight hours for the next two weeks, accepting the gate congestion that brings.",
+      "Stop sharing load contents with the yard in advance; give the container number only.",
+      "Review who inside your operation and your agent's has visibility of high value bookings before they move."
+    ],
+    "sources": [
+      "Halden liaison with four member hauliers, over nine days",
+      "Halden observation: no state police statement on the period as of this morning"
+    ],
+    "ednote": "The claim that load information is leaking rests on cargo selection alone. Do not release it without a second line of evidence.",
+    "desk": "Americas",
+    "author": "lucia.ferro",
+    "byline": "Lucia Ferro",
+    "workflow": "incoming",
+    "hours_ago": 0,
+    "at": 1.8,
+    "final": "Americas / Held",
+    "steps": [
+      {"at": 4.0, "op": "move", "desk": "Americas", "stage": "Analysis", "user": "lucia.ferro"},
+      {
+        "at": 7.0,
+        "op": "edit",
+        "user": "lucia.ferro",
+        "add_html": "<h2>Update</h2><p>A fifth haulier has described a seventh attempt on the same stretch that failed. That account is second hand and is not counted in the six above.</p>"
+      },
+      {"at": 10.0, "op": "move", "desk": "Americas", "stage": "Review", "user": "lucia.ferro"},
+      {
+        "at": 15.0,
+        "op": "move",
+        "desk": "Americas",
+        "stage": "Held",
+        "user": "tomas.havel",
+        "why": "Reviewer parks it: the claim that load information is leaking needs a second line of evidence."
+      }
+    ]
+  },
+  {
+    "reference": "BD-AM-122",
+    "title": "Flooding closes two Rio Grande crossings for a second day",
+    "summary": "Two commercial crossings on the Rio Grande are closed for a second day after flooding on the approach roads. Northbound freight is being diverted to a third crossing where waits have reached five hours.",
+    "severity": "medium",
+    "region": ["americas"],
+    "country": ["mx", "us"],
+    "sector": ["logistics"],
+    "threat_type": ["natural_hazard", "transport"],
+    "tlp": "green",
+    "location_text": "Two commercial crossings on the Rio Grande",
+    "situation": "Heavy rain on Sunday flooded the approach roads at two commercial crossings. Both remain closed to commercial traffic as of this morning; passenger lanes reopened at one of them yesterday. A third crossing is absorbing the diverted volume and reporting five hour waits against a normal ninety minutes.",
+    "assessment": "The closure is a road condition problem rather than a customs one, so it clears when the water does and not before. The diversion is the part worth planning around: a five hour wait at the third crossing is already above the point where drivers run out of hours, which is where a one day delay turns into two.",
+    "outlook": "Reopening within two to three days is likely if the forecast holds. Further rain this week would extend it.",
+    "recommended_actions": [
+      "Check driver hours against a five hour wait before dispatching to the third crossing.",
+      "Hold non-time-critical northbound loads rather than adding them to the diverted queue.",
+      "Confirm with your broker that filings made for the closed crossings can be amended rather than refiled."
+    ],
+    "sources": [
+      "Border authority crossing status page, checked twice today",
+      "Halden liaison with two member hauliers using the third crossing, this morning"
+    ],
+    "desk": "Americas",
+    "author": "lucia.ferro",
+    "byline": "Lucia Ferro",
+    "workflow": "incoming",
+    "hours_ago": 0,
+    "at": 2.1,
+    "final": "Americas / Analysis",
+    "steps": [
+      {"at": 4.5, "op": "move", "desk": "Americas", "stage": "Analysis", "user": "lucia.ferro"},
+      {
+        "at": 8.0,
+        "op": "edit",
+        "user": "lucia.ferro",
+        "add_html": "<h2>Update</h2><p>Passenger lanes at the second crossing reopened at midday. Commercial lanes at both crossings remain closed and the authority has not given a reopening estimate.</p>"
+      },
+      {"at": 11.0, "op": "move", "desk": "Americas", "stage": "Review", "user": "lucia.ferro"},
+      {
+        "at": 14.0,
+        "op": "move",
+        "desk": "Americas",
+        "stage": "Analysis",
+        "user": "tomas.havel",
+        "why": "Reviewer sends it back for a wait time at the third crossing measured today rather than yesterday."
+      },
+      {
+        "at": 19.0,
+        "op": "edit",
+        "user": "lucia.ferro",
+        "ednote": "Returned from Review for a same-day wait time at the third crossing. Waiting on the second haulier before it goes back.",
+        "add_html": "<p>Both hauliers re-measured the third crossing this afternoon at four hours and forty minutes and five hours and ten minutes. The five hour figure above is today's, not yesterday's.</p>"
+      }
+    ]
+  },
+  {
+    "reference": "BD-WATCH-131",
+    "title": "Strike notice filed by baggage and cargo handlers at two Italian airports",
+    "summary": "Handling staff at two Italian airports have filed a strike notice for a 24-hour stoppage next Monday. Cargo handling is inside the notice. Watch captured this for the Europe team to work up.",
+    "severity": "high",
+    "region": ["europe"],
+    "country": ["it"],
+    "sector": ["logistics"],
+    "threat_type": ["industrial_action", "transport"],
+    "tlp": "amber",
+    "location_text": "Two airports, Italy",
+    "situation": "Two unions filed a notice covering baggage and cargo handling staff at two airports for 24 hours next Monday. Minimum service levels for passenger flights are set by law; cargo handling has no equivalent guarantee. The handling companies have not commented.",
+    "assessment": "Cargo is where this bites, because it sits outside the minimum service rules that keep passenger flights moving. Whether the stoppage happens at all depends on talks scheduled for Thursday, which have settled roughly half of the comparable notices we have tracked in this market. Confidence in the facts of the notice is high; the outcome is genuinely open.",
+    "outlook": "Thursday's talks decide it. If they fail, expect airfreight out of both airports to stop for the day with a two day recovery.",
+    "recommended_actions": [
+      "Book time-critical airfreight away from both airports for Monday now, while capacity elsewhere still exists.",
+      "Ask your forwarder to confirm which handling agent holds your cargo at each airport; not all are in the notice.",
+      "Revisit after Thursday's talks rather than acting on the notice alone."
+    ],
+    "sources": [
+      "Union strike notices, filed Monday",
+      "National register of strike notices, checked this morning"
+    ],
+    "ednote": "Captured by Watch and handed to Europe. Revisit after Thursday's talks before it goes anywhere near a client.",
+    "desk": "Watch",
+    "author": "dana.reyes",
+    "byline": "Dana Reyes",
+    "workflow": "incoming",
+    "hours_ago": 0,
+    "at": 0.15,
+    "final": "Europe / Analysis",
+    "steps": [
+      {"at": 2.2, "op": "move", "desk": "Watch", "stage": "Triage", "user": "dana.reyes"},
+      {
+        "at": 6.5,
+        "op": "move",
+        "desk": "Europe",
+        "stage": "Analysis",
+        "user": "dana.reyes",
+        "why": "Watch hands the item to the team that owns the region."
+      },
+      {
+        "at": 13.0,
+        "op": "edit",
+        "user": "maja.lindqvist",
+        "add_html": "<h2>Update</h2><p>One of the two handling companies has confirmed it is in the notice. The second has not answered. Both airports publish their handling agent list, so the exposure can be checked per consignment today.</p>"
+      }
+    ]
+  },
+  {
+    "reference": "BD-WATCH-132",
+    "title": "Phishing campaign impersonating a Turkish customs portal",
+    "summary": "A phishing campaign is sending forwarders messages that imitate a Turkish customs portal notification and ask for portal credentials. Two member firms received them this morning. Watch captured it for the MENA team.",
+    "severity": "medium",
+    "region": ["mena"],
+    "country": ["tr"],
+    "sector": ["technology", "logistics"],
+    "threat_type": ["cyber"],
+    "tlp": "green",
+    "location_text": "Turkey, forwarding and customs brokerage sector",
+    "situation": "Two member firms forwarded near-identical messages received this morning. Each imitates a customs portal declaration notice, carries a plausible reference number and links to a credential harvesting page on a lookalike domain registered four days ago. The real portal is operating normally.",
+    "assessment": "This is a credential harvesting campaign aimed at brokers rather than an attack on the portal itself. The reference numbers in the two samples are not valid declarations, which suggests the sender does not have access to real declaration data yet. Confidence is high on the mechanics and moderate on the intent; stolen broker credentials are usually resold rather than used directly.",
+    "outlook": "Expect the campaign to run for a week or two and the lookalike domain to be replaced once it is blocked.",
+    "recommended_actions": [
+      "Tell brokerage staff that the portal never asks for credentials through a link in a notification.",
+      "Block the lookalike domain pattern at the mail gateway rather than the single domain.",
+      "Reset portal credentials for anyone who followed a link this week, and check for logins from new locations."
+    ],
+    "ednote": "Captured by Watch and handed to MENA. The lookalike domain is in the source note, not in the body, so it does not travel to clients as a clickable string.",
+    "sources": [
+      "Two member firms forwarded the messages, this morning",
+      "Halden check of the linked domain: registered four days ago, credential form, no content"
+    ],
+    "desk": "Watch",
+    "author": "dana.reyes",
+    "byline": "Dana Reyes",
+    "workflow": "incoming",
+    "hours_ago": 0,
+    "at": 0.45,
+    "final": "MENA / Analysis",
+    "steps": [
+      {"at": 3.2, "op": "move", "desk": "Watch", "stage": "Triage", "user": "dana.reyes"},
+      {
+        "at": 9.5,
+        "op": "move",
+        "desk": "MENA",
+        "stage": "Analysis",
+        "user": "dana.reyes",
+        "why": "Watch hands the item to the team that owns the region."
+      },
+      {
+        "at": 16.5,
+        "op": "edit",
+        "user": "omar.nasser",
+        "add_html": "<h2>Update</h2><p>A third member firm has reported the same message. The lookalike domain stopped resolving at midday, which usually means it has been taken down rather than abandoned; expect a replacement.</p>"
+      }
+    ]
+  }
+]

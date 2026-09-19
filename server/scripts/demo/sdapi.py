@@ -35,6 +35,8 @@ class Superdesk:
         self.verbose = verbose
         self.token = None
         self.user_id = None
+        # `preferences` is keyed by the session, not by the user.
+        self.session_id = None
         self._dry_seq = 0
         self._ssl_context = ssl._create_unverified_context() if insecure else None
 
@@ -84,6 +86,7 @@ class Superdesk:
         if self.dry_run:
             self.token = "dry-run"
             self.user_id = DryRunId("dry-run:user")
+            self.session_id = DryRunId("dry-run:session")
             return
         saved, self.token = self.token, None
         try:
@@ -93,6 +96,7 @@ class Superdesk:
             raise
         self.token = session["token"]
         self.user_id = session["user"]
+        self.session_id = session["_id"]
 
     def get(self, resource, params=None):
         if self.dry_run:

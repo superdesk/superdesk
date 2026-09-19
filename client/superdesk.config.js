@@ -54,7 +54,9 @@ module.exports = function() {
         // filter is built for it (SearchService.ts). Custom vocabularies land in `subject`, so the
         // Briefdesk taxonomies all filter on `subject.qcode`; their qcodes do not overlap.
         search_cvs: [
-            {id: 'severity', name: 'Severity', field: 'subject', list: 'severity'},
+            // "Severity" on its own is the native urgency facet, which the same panel already
+            // offers. This one filters the taxonomy the client portal reads.
+            {id: 'severity', name: 'Severity (client feed)', field: 'subject', list: 'severity'},
             {id: 'threat_type', name: 'Threat type', field: 'subject', list: 'threat_type'},
             {id: 'region', name: 'Region', field: 'subject', list: 'region'},
             {id: 'sector', name: 'Sector', field: 'subject', list: 'sector'},
@@ -100,8 +102,10 @@ module.exports = function() {
 
         // Only the field names registered in superdesk-client-core
         // (scripts/apps/search/components/fields/index.ts) render here; an unknown name is
-        // silently dropped. Severity and region live in `subject` and have no field component,
-        // so they cannot be shown in a row without an extension.
+        // silently dropped. `urgency` carries the Briefdesk severity level and renders as the
+        // coloured badge at the start of every row; the colours and the one-letter labels come
+        // from the `urgency` vocabulary. Region and the other taxonomies live in `subject` and
+        // have no field component, so they cannot be shown in a row without an extension.
         list: {
             priority: [
                 'urgency',
@@ -142,6 +146,17 @@ module.exports = function() {
         },
 
         monitoring: {
+            // Every stage column, on a team board and in a custom workspace, opens most severe
+            // first. `urgency` counts up from 1 = Critical, so ascending is severity order. The
+            // per-column "Sorting" control offers the allowed fields and a Default entry that
+            // falls back to the sort bar of the whole view.
+            // Read with lodash `get` in CustomSortOfGroups.ts, so a typo here fails silently.
+            stage: {
+                sort: {
+                    default: {field: 'urgency', order: 'asc'},
+                    allowed_fields_to_sort: ['urgency', 'versioncreated', 'firstcreated', 'slugline.phrase'],
+                },
+            },
             scheduled: {
                 sort: {
                     default: {field: 'publish_schedule', order: 'asc'},

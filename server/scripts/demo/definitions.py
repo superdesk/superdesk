@@ -8,7 +8,15 @@ seeded sample content. Changing one means changing it everywhere.
 # seeder so the file that ships with the instance and the file the seeder upserts cannot drift.
 TAXONOMY_VOCABULARIES = ["severity", "threat_type", "region", "country", "sector", "tlp"]
 CUSTOM_FIELD_VOCABULARIES = ["recommended_actions", "location_text", "sources"]
-BRIEFDESK_VOCABULARIES = TAXONOMY_VOCABULARIES + CUSTOM_FIELD_VOCABULARIES
+# Superdesk's own `urgency` field carries the Briefdesk severity level: it is the only metadata
+# field that renders as a coloured badge in every list row and can be sorted on. The vocabulary
+# is relabelled and recoloured in server/data/vocabularies.json, so the seeder upserts it too.
+NATIVE_VOCABULARIES = ["urgency"]
+BRIEFDESK_VOCABULARIES = TAXONOMY_VOCABULARIES + CUSTOM_FIELD_VOCABULARIES + NATIVE_VOCABULARIES
+
+# severity qcode to the `urgency` value that mirrors it. Lower is more severe, which is the
+# direction Superdesk's own colour ramps and defaults assume.
+SEVERITY_URGENCY = {"critical": 1, "high": 2, "medium": 3, "low": 4, "info": 5}
 
 DEMO_PASSWORD = "Briefdesk-demo-1"
 PUSH_KEY = "briefdesk-demo-push-key"
@@ -154,7 +162,10 @@ USERS = [
         "first_name": "Tomas",
         "last_name": "Havel",
         "role": "Reviewer",
-        "desks": ["Europe"],
+        # Americas has no reviewer of its own and its working day starts as Europe's ends, so the
+        # Europe reviewer covers it. The `move` privilege alone would let him act on an Americas
+        # report, but then the team he reviews for would not list him as a member.
+        "desks": ["Europe", "Americas"],
         "default_desk": "Europe",
         "sign_off": "th",
         "job_title": "Reviewer, Europe",
@@ -191,14 +202,24 @@ USERS = [
     },
 ]
 
-REGIONAL_STAGES = ["Incoming", "Analysis", "Review", "Released"]
+REGIONAL_STAGES = ["Incoming", "Analysis", "Held", "Review", "Released"]
+
+# A released report lives in the `published` collection, which a stage group never queries, so
+# the Released stage is permanently empty on a board. The stage itself has to stay: every
+# released report points at it through task.stage.
+BOARD_HIDDEN_STAGES = {"Released"}
+
+# What a stage does to the tasking linked to an item that lands in it. Held and Review keep the
+# tasking in progress; Released closes it. Without this the order of the stage list would decide,
+# which would silently change what Planning shows.
+STAGE_TASK_STATUS = {"Held": "in_progress", "Review": "in_progress", "Released": "done"}
 
 DESKS = [
     {
         "name": "Watch",
         "description": "24/7 intake and triage of source material.",
         "source": "WATCH",
-        "stages": ["Incoming", "Triage"],
+        "stages": ["Incoming", "Triage", "Held"],
         "default_profile": "alert",
         "default_template": "Alert intake",
     },
@@ -256,33 +277,39 @@ def _editor(order, width="full", **extra):
     return field
 
 
+# `urgency` is a plain integer on the item, not a controlled list like the custom taxonomies.
+URGENCY_SCHEMA_FIELD = {"type": "integer", "required": False, "nullable": True}
+
+
 ALERT_EDITOR = {
     "headline": _editor(1, formatOptions=[], field_name="Title"),
     "slugline": _editor(2, "half", field_name="Reference"),
-    "tlp": _editor(3, "half"),
+    "urgency": _editor(3, "half"),
     "severity": _editor(4, "half", required=True),
-    "region": _editor(5, "half", required=True),
-    "country": _editor(6, "half"),
-    "sector": _editor(7, "half"),
-    "threat_type": _editor(8, "half"),
-    "location_text": _editor(9, "half"),
-    "abstract": _editor(10, editor3=True, formatOptions=SUMMARY_FORMAT_OPTIONS, field_name="Summary"),
+    "tlp": _editor(5, "half"),
+    "region": _editor(6, "half", required=True),
+    "country": _editor(7, "half"),
+    "sector": _editor(8, "half"),
+    "threat_type": _editor(9, "half"),
+    "location_text": _editor(10, "half"),
+    "abstract": _editor(11, editor3=True, formatOptions=SUMMARY_FORMAT_OPTIONS, field_name="Summary"),
     "body_html": _editor(
-        11,
+        12,
         editor3=True,
         cleanPastedHTML=False,
         formatOptions=BODY_FORMAT_OPTIONS,
         field_name="Assessment",
     ),
-    "recommended_actions": _editor(12),
-    "sources": _editor(13),
-    "byline": _editor(14, "half", field_name="Analyst"),
-    "ednote": _editor(15, field_name="Handling note"),
+    "recommended_actions": _editor(13),
+    "sources": _editor(14),
+    "byline": _editor(15, "half", field_name="Analyst"),
+    "ednote": _editor(16, field_name="Handling note"),
 }
 
 ALERT_SCHEMA = {
     "headline": {"type": "string", "required": True, "maxlength": 120},
     "slugline": {"type": "string", "required": True, "maxlength": 30},
+    "urgency": URGENCY_SCHEMA_FIELD,
     "tlp": {"type": "list", "required": False, "readonly": False, "default": []},
     "severity": {"type": "list", "required": True, "readonly": False, "default": []},
     "region": {"type": "list", "required": True, "readonly": False, "default": []},
@@ -303,22 +330,25 @@ def _brief_editor(body_label):
     return {
         "headline": _editor(1, formatOptions=[], field_name="Title"),
         "slugline": _editor(2, "half", field_name="Reference"),
-        "tlp": _editor(3, "half"),
-        "region": _editor(4, "half", required=True),
-        "country": _editor(5, "half"),
-        "sector": _editor(6, "half"),
-        "threat_type": _editor(7, "half"),
-        "abstract": _editor(8, editor3=True, formatOptions=SUMMARY_FORMAT_OPTIONS, field_name="Summary"),
+        # Order 4 is left free for the Severity (client feed) field the RFI profile adds, so it
+        # sits beside Severity there exactly as it does on an Alert.
+        "urgency": _editor(3, "half"),
+        "tlp": _editor(5, "half"),
+        "region": _editor(6, "half", required=True),
+        "country": _editor(7, "half"),
+        "sector": _editor(8, "half"),
+        "threat_type": _editor(9, "half"),
+        "abstract": _editor(10, editor3=True, formatOptions=SUMMARY_FORMAT_OPTIONS, field_name="Summary"),
         "body_html": _editor(
-            9,
+            11,
             editor3=True,
             cleanPastedHTML=False,
             formatOptions=BODY_FORMAT_OPTIONS,
             field_name=body_label,
         ),
-        "sources": _editor(10),
-        "byline": _editor(11, "half", field_name="Analyst"),
-        "ednote": _editor(12, field_name="Handling note"),
+        "sources": _editor(12),
+        "byline": _editor(13, "half", field_name="Analyst"),
+        "ednote": _editor(14, field_name="Handling note"),
     }
 
 
@@ -326,6 +356,7 @@ def _brief_schema(headline_max=120):
     return {
         "headline": {"type": "string", "required": True, "maxlength": headline_max},
         "slugline": {"type": "string", "required": True, "maxlength": 30},
+        "urgency": URGENCY_SCHEMA_FIELD,
         "tlp": {"type": "list", "required": False, "readonly": False, "default": []},
         "region": {"type": "list", "required": True, "readonly": False, "default": []},
         "country": {"type": "list", "required": False, "readonly": False, "default": []},
@@ -340,7 +371,7 @@ def _brief_schema(headline_max=120):
 
 
 RFI_EDITOR = _brief_editor("Response")
-RFI_EDITOR["severity"] = _editor(7, "half")
+RFI_EDITOR["severity"] = _editor(4, "half")
 RFI_SCHEMA = _brief_schema()
 RFI_SCHEMA["severity"] = {"type": "list", "required": False, "readonly": False, "default": []}
 
@@ -1498,3 +1529,49 @@ REQUESTS = [
         ],
     },
 ]
+
+
+# -- Triage -----------------------------------------------------------------
+
+# Severity for the reports the planning section creates from a tasking. They arrive from a
+# template with no severity at all, which leaves them grey in every list and at the bottom of a
+# severity sort. Keyed by reference, because that is what the template run puts on the item.
+TRIAGE_SEVERITY = {
+    "BD-WATCH-GDANSK": "high",
+    "RFI-NFL-031-RESP": "high",
+    "BD-EU-LONDON-ALERT": "medium",
+    "BD-AM-BR-BRIEF": "medium",
+    "BD-ME-AE-SUMMIT": "medium",
+    "RFI-CAS-015-RESP": "medium",
+    "RFI-AUR-022-SCAN": "medium",
+    "BD-EU-NL-TALKS": "low",
+}
+
+# The cross-team review queue. `sort` is not part of the saved search model, but the search view
+# replaces the whole URL query with `filter.query` when a saved search is opened, and the sort
+# bar reads its field from that same URL parameter. So a sort stored here does take effect when
+# the search is opened from the Search view. Monitoring ignores it and uses the per-group sort
+# from `monitoring.stage.sort` in superdesk.config.js instead.
+REVIEW_QUEUE_SEARCH = {
+    "name": "Needs review now",
+    "description": "Everything sitting in a Review stage on any team, most severe first.",
+    "stages": [("Europe", "Review"), ("MENA", "Review"), ("Americas", "Review")],
+    "sort": "urgency:asc",
+}
+
+# A custom workspace so the queue is one click away in Monitoring as well. Monitoring groups of a
+# custom workspace live in the owner's `agg:view` preference, not on the workspace document, so
+# this has to be written once per user.
+# The account running the seed gets one as well, on top of the users named here.
+TRIAGE_WORKSPACE = {
+    "name": "Triage",
+    "users": ["lucia.ferro"],
+}
+
+# -- Workflow ---------------------------------------------------------------
+
+# Seconds per unit of the schedule in content/workflow_items.json. Every step there carries an
+# `at` in units, so the pace decides both how long the section takes and how long a stage visit
+# lasts in the workflow export. 0 runs the steps back to back, which is what a test wants and what
+# leaves the export with durations near zero.
+WORKFLOW_PACE_SECONDS = 20

@@ -2,7 +2,8 @@
 
 One re-runnable command that turns a freshly deployed Superdesk instance into the Briefdesk demo:
 taxonomies, roles, users, teams, report types, templates, sources, entitlement filtering,
-recipients, a briefing list, AI actions, a client request and about thirty sample reports.
+recipients, a briefing list, AI actions, a client request, about forty sample reports, and a walk of
+ten of them through the stages so the instance has real workflow history in it.
 
 It talks to the instance over the normal REST API at `<SUPERDESK_URL>/api`. It uses the Python
 standard library only, so it runs from a laptop with no virtualenv. `requests` is in
@@ -76,9 +77,14 @@ Flags:
 
 - `--dry-run` prints every planned operation and makes no network call at all.
 - `--only <section>` runs one section, repeatable. Sections are, in dependency order:
-  `vocabularies roles users profiles desks templates ingest publishing highlights ai planning content`.
+  `vocabularies roles users profiles desks templates ingest publishing highlights dashboards ai
+  planning content triage workflow`.
   A later section assumes the earlier ones have run, and fails with a clear message if not.
 - `--verbose` prints each request.
+- `--pace <seconds>` sets how long one unit of the `workflow` schedule lasts, default 20. It is the
+  only thing that decides how long that section takes and how long a stage visit lasts in the
+  workflow export. `0` runs every step back to back, which is what a test wants. Nothing else in
+  the seed reads it.
 - `--insecure` skips TLS verification, for a self-signed test instance.
 - `--write-geo-index` regenerates `content/geo_index.json` and exits, no instance needed.
 
@@ -88,11 +94,21 @@ from the environment.
 
 ## What each section does
 
-**vocabularies** Upserts the nine Briefdesk vocabularies read from `server/data/vocabularies.json`:
-the six taxonomies (`severity`, `threat_type`, `region`, `country`, `sector`, `tlp`) and the three
-custom text fields (`recommended_actions`, `location_text`, `sources`). The file is the single
-source of truth; the seeder does not carry its own copy. `app:initialize_data` loads the same file
-on deploy, so this section is only needed when you change a taxonomy without redeploying.
+**vocabularies** Upserts ten vocabularies read from `server/data/vocabularies.json`: the six
+taxonomies (`severity`, `threat_type`, `region`, `country`, `sector`, `tlp`), the three custom text
+fields (`recommended_actions`, `location_text`, `sources`) and Superdesk's own `urgency`. The file
+is the single source of truth; the seeder does not carry its own copy. `app:initialize_data` loads
+the same file on deploy, so this section is only needed when you change a taxonomy without
+redeploying.
+
+`urgency` is the severity level as Superdesk itself understands it. It is the only metadata field
+that renders as a coloured badge in every list row and that the sort bar and the search facets
+offer, which is why the demo carries severity there as well as in `subject`. The vocabulary is
+relabelled to "Severity" and its five values are renamed Critical to Informational, each with a
+one-letter `short` (the badge text) and the contract's severity `color` (the badge background).
+The custom `severity` taxonomy keeps its qcodes and becomes "Severity (client feed)" in the editor,
+because that is the copy the client portal filters on. Nothing keeps the two in step by itself:
+the `triage` section does it for everything the seed knows about.
 
 A taxonomy is a vocabulary with `service: {"all": 1}` and no `field_type`. That combination is what
 `VocabulariesService.get_custom_vocabularies()` looks for, and it makes the vocabulary available as
@@ -118,6 +134,15 @@ on Alert. Assessment bodies offer tables, links, lists, annotations, comments an
 Incoming plus Triage for Watch) so the default incoming stage keeps its meaning, the remaining
 stages are created, and the whole set is reordered. Desk members, each desk's monitoring board and
 each user's default team are set here.
+
+Stages per team: Watch gets Incoming, Triage, Held; the three regional teams get Incoming,
+Analysis, Held, Review, Released. `Held` is where a significant item is captured and parked, either
+because it is not corroborated yet or because it belongs in a later brief. `Released` exists only
+because every released report points at it through `task.stage`; a stage group queries `archive`
+and a released report lives in `published`, so the column would always be empty, and
+`BOARD_HIDDEN_STAGES` keeps it off the board. Released work shows up in Team Output instead.
+`STAGE_TASK_STATUS` fixes what each stage does to a linked tasking rather than letting the order of
+the stage list decide it.
 
 **templates** One template per report type per team where it matters, each with a body skeleton
 (Alert: Situation, Assessment, Outlook) and prefilled region and TLP where that is obvious. Also
@@ -188,10 +213,74 @@ so they flow to the recipients, leaves 3 in Analysis and 2 in Review, leaves a r
 two in Review (signing in as `tomas.havel`, because a comment is always attributed to the session
 user), and adds the Europe alerts released in the last 24 hours to the briefing list.
 
+**triage** The severity layer, kept apart from `content` because `content` releases what it creates
+and must never be run twice on a live instance. Everything here creates only what is missing or
+patches what is wrong, so it is safe to re-run:
+
+- upserts the `urgency` and `severity` vocabularies, so `--only triage` alone is enough after a
+  change to either,
+- creates the eight reports in `content/triage_items.json`, two of them in Held on Europe and
+  Watch and the rest spread across Analysis and Review so a severity sort has something to show,
+- walks every unreleased report and sets `urgency` (and `priority`) from its severity, adding the
+  severity a report created from a tasking template never had, per `TRIAGE_SEVERITY`. Released
+  reports are left alone: they already carry the right urgency, and the only way to change one is a
+  correction, which would push it to the portal a second time,
+- creates the global saved search "Needs review now", covering the Review stage of all three
+  regional teams, ordered most severe first,
+- creates a custom workspace named Triage for the team lead and for whoever runs the seed, with
+  that saved search as its only monitoring group.
+
+Sorting is the one part that is not data. Superdesk keeps the active sort in the URL
+(`?sort=urgency:asc`), not on the saved search and not in a user preference. Opening the saved
+search from the Search view replaces the URL query with `filter.query`, so the `sort` stored there
+does take effect. Monitoring ignores it and uses `monitoring.stage.sort` from
+`client/superdesk.config.js`, which sets every stage column to severity first and offers the
+alternatives under "Sorting" in each column header. That part only exists once the client is built.
+
+**workflow** Ten new reports walked through the stages with the operations the product itself uses,
+signed in as the people who would do it. Every other section creates a report directly in the stage
+it ends up in, which leaves `archive_history` with no `move` at all and the workflow export with no
+stage visit that has both a beginning and an end. This is the section that puts real workflow on the
+instance.
+
+The reports are in `content/workflow_items.json`. Each one carries the usual report fields plus a
+schedule: an `at` for the create and an `at` on every step, both counted in units of `--pace`. The
+section flattens all ten schedules into one list and runs it in time order, so several reports sit
+in Review at the same time and their visits overlap the way a shift does. At the default pace of 20
+seconds the whole section is 55 operations over about six and a half minutes.
+
+The steps are the real endpoints:
+
+- `POST archive` as the analyst, so the `create` record carries their name.
+- `POST archive/<guid>/move` with `task.desk` and `task.stage`, which is what the Send to panel
+  calls. `MoveService` refuses a move within the same stage and sets the item to `submitted`. The
+  desk membership check in `send_to` is waived for anyone holding the `move` privilege, which every
+  Briefdesk role does.
+- `PATCH archive/<guid>` with a real change to the body, so the item gains a version.
+- `PATCH archive/publish/<guid>` as the reviewer, through the same helper the `content` section
+  uses, so a release here reaches the portal and the entitled client companies exactly as one from
+  the demo script does. Four of the ten are released.
+
+Outcomes vary on purpose: four released, two sent back from Review to Analysis and resubmitted, one
+parked in Held and brought back, one parked in Held by the reviewer at the end, two left waiting in
+Review so the "Needs review now" queue stays populated, and one of those two is Critical. Two of the
+ten start on Watch and are handed to a regional team, which is the only way the export sees a move
+between two teams.
+
+Nothing is ever locked: every step is a plain API call, and a lock is what the editor takes, not the
+API.
+
+The section is idempotent and resumable, and it reads its progress back from the instance rather
+than remembering it. Per report: a `publish` record in `archive_history` means the walk is finished,
+because a release is always the last step; the number of `move` records says how many move steps are
+done; an edit is recognised by the text it adds being in the body already. A run stopped halfway
+carries on from the first step that has not happened.
+
 ## Sample content
 
-`content/alerts.json`, `content/daily_briefs.json` and `content/country_assessments.json`. All of it
-is invented: real cities, fictional events, fictional companies, `.example` email domains.
+`content/alerts.json`, `content/daily_briefs.json` and `content/country_assessments.json`, plus
+`content/triage_items.json` and `content/workflow_items.json`. All of it is invented: real cities,
+fictional events, fictional companies, `.example` email domains.
 
 Every item is dated relative to the moment you run the script, through `hours_ago`, so the demo is
 always current. Severity spread is 3 critical, 9 high, 12 medium, 3 low, 2 informational. Eight

@@ -135,7 +135,7 @@
     {"name": "stories", "from": "stories", "to": "reports"},
     {"name": "story", "from": "story", "to": "report"},
 
-    {"name": "urgency", "from": "urgency", "to": "priority"}
+    {"name": "urgency", "from": "urgency", "to": "severity"}
   ],
 
   "overrides": {

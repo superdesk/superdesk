@@ -14,6 +14,7 @@ import datetime
 import json
 import os
 import sys
+import time
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
@@ -25,9 +26,10 @@ VOCABULARIES_FILE = os.path.normpath(os.path.join(HERE, "..", "..", "data", "voc
 CONTENT_DIR = os.path.join(HERE, "content")
 GUID_PREFIX = "urn:briefdesk:demo:"
 
-# Fields of the default content profile that a Briefdesk report type does not use.
+# Fields of the default content profile that a Briefdesk report type does not use. `urgency` is
+# not here: it carries the severity level and is part of every report type.
 NEWSROOM_ONLY_FIELDS = [
-    "genre", "place", "priority", "urgency", "anpa_category", "subject", "authors", "dateline",
+    "genre", "place", "priority", "anpa_category", "subject", "authors", "dateline",
     "sign_off", "feature_media", "media_description", "keywords", "language", "usageterms",
     "anpa_take_key", "company_codes", "sms", "footer", "body_footer", "attachments",
 ]
@@ -46,6 +48,8 @@ SECTIONS = [
     "ai",
     "planning",
     "content",
+    "triage",
+    "workflow",
 ]
 
 
@@ -85,9 +89,11 @@ def load_vocabularies():
 
 
 class Seeder:
-    def __init__(self, api, portal_url, openrouter_key, ai_model, portal_push_url=None, insecure=False):
+    def __init__(self, api, portal_url, openrouter_key, ai_model, portal_push_url=None, insecure=False,
+                 pace=D.WORKFLOW_PACE_SECONDS):
         self.api = api
         self.insecure = insecure
+        self.pace = pace
         self.portal_url = (portal_url or "").rstrip("/")
         # Where this server reaches the portal, which is not always the address a browser uses:
         # two instances on the same host may only see each other by their internal names.
@@ -248,7 +254,10 @@ class Seeder:
 
     def section_vocabularies(self):
         log("Vocabularies")
-        for vocabulary in self.vocabularies:
+        self._upsert_vocabularies(self.vocabularies)
+
+    def _upsert_vocabularies(self, vocabularies):
+        for vocabulary in vocabularies:
             doc = dict(vocabulary)
             existing = self.api.get_item("vocabularies", doc["_id"])
             if not existing:
@@ -432,7 +441,7 @@ class Seeder:
                 log("would create stage %s" % name, 2)
             return
         present = {stage["name"] for stage in self.api.find_all("stages", {"desk": desk["_id"]})}
-        for index, name in enumerate(stages[2:]):
+        for name in stages[2:]:
             if name in present:
                 continue
             self.api.post(
@@ -442,7 +451,7 @@ class Seeder:
                     "desk": desk["_id"],
                     "description": "%s stage" % name,
                     "is_visible": True,
-                    "task_status": "in_progress" if index == 0 else "done",
+                    "task_status": D.STAGE_TASK_STATUS.get(name, "in_progress"),
                 },
             )
             log("created stage %s" % name, 2)
@@ -485,14 +494,15 @@ class Seeder:
 
     def _monitoring_settings(self, desk_name, stages):
         """Without this the board shows the default groups, not the team's own stages."""
+        shown = [name for name in stages if name not in D.BOARD_HIDDEN_STAGES]
         if self.api.dry_run:
-            log("would set the board of %s to %s" % (desk_name, ", ".join(stages)), 2)
+            log("would set the board of %s to %s" % (desk_name, ", ".join(shown)), 2)
             return
         desk = self.desk(desk_name)
         if not desk:
             return
         settings = []
-        for name in stages:
+        for name in shown:
             stage_id = self.stage_id(desk_name, name)
             if stage_id:
                 settings.append({"_id": str(stage_id), "type": "stage", "max_items": 30})
@@ -501,7 +511,7 @@ class Seeder:
             log("board of %s unchanged" % desk_name, 2)
             return
         self.api.patch("desks", desk["_id"], {"monitoring_settings": settings})
-        log("board of %s set to %s" % (desk_name, ", ".join(stages)), 2)
+        log("board of %s set to %s" % (desk_name, ", ".join(shown)), 2)
 
     def section_templates(self):
         log("Templates")
@@ -1220,11 +1230,17 @@ class Seeder:
         if entry.get("sources"):
             extra["sources"] = html_list(entry["sources"])
 
-        stage = {"released": "Released", "review": "Review", "analysis": "Analysis"}[entry["workflow"]]
+        stage = {
+            "released": "Released",
+            "review": "Review",
+            "held": "Held",
+            "analysis": "Analysis",
+            "triage": "Triage",
+            "incoming": "Incoming",
+        }[entry["workflow"]]
         created = utc_iso(hours_ago=entry["hours_ago"])
-        severity_urgency = {"critical": 1, "high": 2, "medium": 3, "low": 4, "info": 5}
 
-        return {
+        doc = {
             "guid": GUID_PREFIX + entry["reference"],
             "type": "text",
             "profile": profile,
@@ -1235,8 +1251,8 @@ class Seeder:
             "abstract": entry["summary"],
             "body_html": body,
             "byline": entry["byline"],
-            "urgency": severity_urgency.get(entry.get("severity"), 3),
-            "priority": severity_urgency.get(entry.get("severity"), 3),
+            "urgency": D.SEVERITY_URGENCY.get(entry.get("severity"), 3),
+            "priority": D.SEVERITY_URGENCY.get(entry.get("severity"), 3),
             "subject": self.subject(pairs),
             "extra": extra,
             "firstcreated": created,
@@ -1247,6 +1263,9 @@ class Seeder:
                 "user": self.user_id(entry["author"]),
             },
         }
+        if entry.get("ednote"):
+            doc["ednote"] = entry["ednote"]
+        return doc
 
     def section_content(self):
         log("Sample reports")
@@ -1269,14 +1288,27 @@ class Seeder:
         if published:
             log("Releasing", 1)
         for entry, item in published:
-            try:
-                self.api.patch("archive/publish", item["_id"], {"state": "published"}, etag=item.get("_etag"))
+            if self._release(self.api, item["_id"], entry["reference"], etag=item.get("_etag")):
                 log("released %s" % entry["reference"], 2)
-            except ApiError as err:
-                self.note("Could not release %s: %s" % (entry["reference"], err.body[:300]))
 
         self._review_comments(created_ids)
         self._mark_for_briefing(created_ids)
+
+    def _release(self, session, item_id, label, etag=None):
+        """Release a report through the endpoint the Release button uses, which hands it to every
+        recipient it matches: the portal push and an email per entitled client company."""
+        if etag is None:
+            item = session.get_item("archive", str(item_id))
+            if not item:
+                self.note("Cannot release %s, it is not in archive." % label)
+                return False
+            etag = item.get("_etag")
+        try:
+            session.patch("archive/publish", str(item_id), {"state": "published"}, etag=etag)
+            return True
+        except ApiError as err:
+            self.note("Could not release %s: %s" % (label, err.body[:300]))
+            return False
 
     def _review_comments(self, created_ids):
         """Comments are always attributed to the session user, so the reviewer posts its own."""
@@ -1345,6 +1377,305 @@ class Seeder:
             except ApiError as err:
                 self.note("Could not add %s to the briefing list: %s" % (entry["reference"], err.status))
 
+    # -- triage -----------------------------------------------------------
+
+    def section_triage(self):
+        """Severity on the native field, the cross-team review queue, and enough work in
+        progress for the queue to be worth looking at.
+
+        Separate from `content` because `content` releases what it creates and must not be run
+        again on a live instance. Everything here is a create-if-missing or a patch.
+        """
+        log("Triage")
+        relabelled = D.NATIVE_VOCABULARIES + ["severity"]
+        self._upsert_vocabularies([v for v in self.vocabularies if v["_id"] in relabelled])
+        self._triage_reports()
+        self._triage_existing_reports()
+        search_id = self._review_queue_search()
+        self._triage_workspaces(search_id)
+
+    def _triage_entries(self):
+        path = os.path.join(CONTENT_DIR, "triage_items.json")
+        with open(path, encoding="utf-8") as handle:
+            return json.load(handle)
+
+    def _triage_reports(self):
+        log("Reports in Held, Review and Analysis", 1)
+        for entry in self._triage_entries():
+            guid = GUID_PREFIX + entry["reference"]
+            if self.api.get_item("archive", guid):
+                log("report %s already exists" % entry["reference"], 2)
+                continue
+            if self.api.dry_run:
+                log("would create %s in %s / %s" % (entry["reference"], entry["desk"], entry["workflow"]), 2)
+                continue
+            self.api.post("archive", self._article(entry, "alert"))
+            log("created %s in %s / %s" % (entry["reference"], entry["desk"], entry["workflow"]), 2)
+
+    def _triage_existing_reports(self):
+        """Bring every unreleased report in line: `urgency` mirrors the severity taxonomy, and
+        reports the planning section made from a template get the severity they never had.
+
+        Released reports are left alone. They already carry the right urgency, and the only way
+        to change one is a correction, which would push it to the portal a second time.
+        """
+        log("Severity on reports already on the instance", 1)
+        if self.api.dry_run:
+            log("would patch urgency and severity on unreleased reports", 2)
+            return
+        query = {"query": {"match_all": {}}, "size": 200, "sort": [{"versioncreated": "desc"}]}
+        items = self.api.get("archive", {"source": json.dumps(query)}).get("_items") or []
+        for item in items:
+            if item.get("state") in ("spiked", "killed", "recalled"):
+                continue
+            reference = item.get("slugline")
+            subject = list(item.get("subject") or [])
+            severity = next((t.get("qcode") for t in subject if t.get("scheme") == "severity"), None)
+            updates = {}
+            if severity is None and reference in D.TRIAGE_SEVERITY:
+                severity = D.TRIAGE_SEVERITY[reference]
+                subject.extend(self.subject([("severity", severity)]))
+                updates["subject"] = subject
+            if severity is None:
+                continue
+            urgency = D.SEVERITY_URGENCY[severity]
+            if item.get("urgency") != urgency:
+                updates["urgency"] = urgency
+            if item.get("priority") != urgency:
+                updates["priority"] = urgency
+            if not updates:
+                continue
+            if item.get("lock_user") and str(item["lock_user"]) != str(self.api.user_id):
+                self.note("%s is locked by another user, severity not set." % reference)
+                continue
+            try:
+                self.api.patch("archive", item["_id"], updates, etag=item.get("_etag"))
+                log("%s set to %s" % (reference, severity), 2)
+            except ApiError as err:
+                self.note("Could not set severity on %s: %s" % (reference, err.body[:200]))
+
+    def _review_queue_search(self):
+        """One global saved search covering the Review stage of every team."""
+        log("Review queue", 1)
+        spec = D.REVIEW_QUEUE_SEARCH
+        stages = [str(self.stage_id(desk, stage)) for desk, stage in spec["stages"]]
+        doc = {
+            "name": spec["name"],
+            "description": spec["description"],
+            "is_global": True,
+            "shortcut": True,
+            "filter": {
+                "query": {
+                    # `raw` rather than `q`: both end up in the same query string, but only `q`
+                    # is turned into a removable chip above the results, and a chip reading
+                    # `task.stage:(6aad50...)` is not what a reviewer should be looking at.
+                    "raw": "task.stage:(%s)" % " OR ".join(stages),
+                    "repo": "archive",
+                    "spike": "exclude",
+                    "sort": spec["sort"],
+                }
+            },
+        }
+        if self.api.dry_run:
+            log("would create the saved search %r" % spec["name"], 2)
+            return DryRunId("dry-run:saved_search")
+        existing = next(
+            (s for s in self.api.find_all("all_saved_searches") if s.get("name") == spec["name"]),
+            None,
+        )
+        if not existing:
+            created = self.api.post("saved_searches", doc)
+            log("created the saved search %r" % spec["name"], 2)
+            return created["_id"]
+        updates = {key: value for key, value in doc.items() if existing.get(key) != value}
+        if updates:
+            self.api.patch("saved_searches", existing["_id"], updates, etag=existing.get("_etag"))
+            log("updated the saved search %r" % spec["name"], 2)
+        else:
+            log("saved search %r unchanged" % spec["name"], 2)
+        return existing["_id"]
+
+    def _triage_workspaces(self, search_id):
+        """A custom workspace holding the review queue, for the team lead and for whoever runs
+        the seed. A custom workspace keeps its monitoring groups in the owner's `agg:view`
+        preference rather than on the workspace itself, so both have to be written per user."""
+        log("Triage workspace", 1)
+        usernames = list(D.TRIAGE_WORKSPACE["users"])
+        if self.api.dry_run:
+            for username in usernames:
+                log("would give %s the %r workspace" % (username, D.TRIAGE_WORKSPACE["name"]), 2)
+            return
+        sessions = [(self.api.user_id, self.api)]
+        for username in usernames:
+            user_id = self.user_id(username)
+            if not user_id or str(user_id) == str(self.api.user_id):
+                continue
+            try:
+                sessions.append((user_id, self._session(username)))
+            except ApiError as err:
+                self.note("Could not sign in as %s to build the triage workspace: %s" % (username, err.status))
+        for user_id, session in sessions:
+            try:
+                self._triage_workspace(user_id, session, search_id)
+            except ApiError as err:
+                self.note("Could not build the triage workspace for %s: %s" % (user_id, err.body[:200]))
+
+    def _triage_workspace(self, user_id, session, search_id):
+        name = D.TRIAGE_WORKSPACE["name"]
+        existing = next(
+            (
+                w
+                for w in session.find_all("workspaces")
+                if w.get("name") == name and str(w.get("user")) == str(user_id)
+            ),
+            None,
+        )
+        # A workspace may only be created by its own owner, which is why every user needs a
+        # session of their own here.
+        workspace = existing or session.post("workspaces", {"name": name, "user": str(user_id)})
+        groups = [{"_id": str(search_id), "type": "search", "max_items": 50}]
+        preferences = session.get_item("preferences", session.session_id) or {}
+        view = dict((preferences.get("user_preferences") or {}).get("agg:view") or {})
+        if view.get(str(workspace["_id"])) == {"groups": groups}:
+            log("workspace %r for %s unchanged" % (name, user_id), 2)
+            return
+        view[str(workspace["_id"])] = {"groups": groups}
+        session.patch("preferences", session.session_id, {"user_preferences": {"agg:view": view}})
+        log("workspace %r set for %s" % (name, user_id), 2)
+
+    # -- workflow ---------------------------------------------------------
+
+    def section_workflow(self):
+        """Walk a set of new reports through the stages with the operations the product itself
+        uses, signed in as the people who would do it.
+
+        Everything else in the seed creates a report directly in the stage it ends up in, which
+        leaves `archive_history` with no `move` at all and the workflow export with no stage visit
+        that has both a beginning and an end. This section is what puts real workflow on the
+        instance: who moved what, when, and how long it waited for a reviewer.
+        """
+        log("Workflow walk")
+        entries = self._workflow_entries()
+        if self.api.dry_run:
+            for entry in entries:
+                log("would walk %s (%s, %s) to %s in %d steps"
+                    % (entry["reference"], entry["desk"], entry["severity"], entry["final"],
+                       len(entry["steps"])), 1)
+            return
+
+        queue = []
+        for entry in entries:
+            start = self._workflow_pending_from(entry)
+            if start is None:
+                log("%s already walked, final state %s" % (entry["reference"], entry["final"]), 1)
+                continue
+            steps = self._workflow_steps(entry)
+            for index in range(start, len(steps)):
+                queue.append((steps[index]["at"], entry["reference"], index, entry, steps[index]))
+        if not queue:
+            log("every report in workflow_items.json has already been walked", 1)
+            return
+
+        # One flat schedule rather than one item at a time, so several reports sit in Review
+        # together and their visits overlap the way a real shift does.
+        queue.sort(key=lambda row: (row[0], row[1], row[2]))
+        first_at = queue[0][0]
+        span = (queue[-1][0] - first_at) * self.pace
+        log("%d operations over about %d seconds (pace %gs)" % (len(queue), round(span), self.pace), 1)
+        started = time.monotonic()
+        for at, _reference, _index, entry, step in queue:
+            delay = started + (at - first_at) * self.pace - time.monotonic()
+            if delay > 0:
+                time.sleep(delay)
+            self._workflow_step(entry, step)
+
+        log("Final state", 1)
+        for entry in entries:
+            log("%-14s %-9s %-8s %s"
+                % (entry["reference"], entry["desk"], entry["severity"], entry["final"]), 2)
+
+    def _workflow_entries(self):
+        path = os.path.join(CONTENT_DIR, "workflow_items.json")
+        with open(path, encoding="utf-8") as handle:
+            return json.load(handle)
+
+    def _workflow_steps(self, entry):
+        """The create, then the walk. One list, so a position in it is the item's progress."""
+        return [{"at": entry["at"], "op": "create", "user": entry["author"]}] + entry["steps"]
+
+    def _workflow_pending_from(self, entry):
+        """Index of the first step still to run, or None when the item is finished.
+
+        Progress is read back from the instance rather than remembered between runs, so a run cut
+        off halfway carries on where it stopped. Moves are counted from `archive_history`, an edit
+        is recognised by the text it adds, and a release by the history record it leaves.
+        """
+        guid = GUID_PREFIX + entry["reference"]
+        history = self.api.find_all("archive_history", {"item_id": guid}, max_results=200)
+        if not history:
+            return 0
+        if any(record.get("operation") == "publish" for record in history):
+            # A release is always the last step of a walk, so nothing can be left to do.
+            return None
+        moves = sum(1 for record in history if record.get("operation") == "move")
+        item = self.api.get_item("archive", guid) or {}
+        body = item.get("body_html") or ""
+        index = 1
+        for step in entry["steps"]:
+            if step["op"] == "move":
+                if moves <= 0:
+                    break
+                moves -= 1
+            elif step["op"] == "edit":
+                if step["add_html"] not in body:
+                    break
+            elif step["op"] == "release":
+                break
+            index += 1
+        return None if index > len(entry["steps"]) else index
+
+    def _workflow_step(self, entry, step):
+        reference = entry["reference"]
+        guid = GUID_PREFIX + reference
+        try:
+            session = self._session(step["user"])
+            if step["op"] == "create":
+                session.post("archive", self._article(entry, "alert"))
+                log("%s created by %s in %s / %s"
+                    % (reference, step["user"], entry["desk"], entry["workflow"].title()), 1)
+            elif step["op"] == "move":
+                session.post(
+                    "archive/%s/move" % guid,
+                    {"task": {"desk": str(self.desk_id(step["desk"])),
+                              "stage": str(self.stage_id(step["desk"], step["stage"]))}},
+                )
+                log("%s moved to %s / %s by %s" % (reference, step["desk"], step["stage"], step["user"]), 1)
+            elif step["op"] == "edit":
+                self._workflow_edit(session, guid, step, reference)
+            elif step["op"] == "release":
+                if self._release(session, guid, reference):
+                    log("%s released by %s" % (reference, step["user"]), 1)
+        except ApiError as err:
+            self.note(
+                "Workflow step %s on %s failed: %s %s" % (step["op"], reference, err.status, err.body[:200])
+            )
+
+    def _workflow_edit(self, session, guid, step, reference):
+        """A real change to the report, so the item gains a version and the history a record."""
+        item = session.get_item("archive", guid)
+        if not item:
+            self.note("Cannot edit %s, it is not in archive." % reference)
+            return
+        if step["add_html"] in (item.get("body_html") or ""):
+            log("%s already carries this edit" % reference, 1)
+            return
+        updates = {"body_html": (item.get("body_html") or "") + step["add_html"]}
+        for field, key in (("abstract", "summary"), ("ednote", "ednote")):
+            if step.get(key):
+                updates[field] = step[key]
+        session.patch("archive", guid, updates, etag=item.get("_etag"))
+        log("%s edited by %s" % (reference, step["user"]), 1)
+
 
 def write_geo_index():
     """The map mock in the portal reads this. `_demo_geo` never goes to Superdesk."""
@@ -1389,6 +1720,12 @@ def parse_args(argv):
         help="run only this section, repeatable. Sections assume earlier ones already ran.",
     )
     parser.add_argument("--verbose", action="store_true", help="print every request")
+    parser.add_argument(
+        "--pace",
+        type=float,
+        default=D.WORKFLOW_PACE_SECONDS,
+        help="seconds per unit of the workflow schedule, default %(default)g. 0 runs it back to back.",
+    )
     parser.add_argument("--insecure", action="store_true", help="do not verify the TLS certificate")
     parser.add_argument("--write-geo-index", action="store_true", help="only regenerate content/geo_index.json")
     return parser.parse_args(argv)
@@ -1435,6 +1772,7 @@ def main(argv=None):
         openrouter_key=os.environ.get("OPENROUTER_API_KEY"),
         ai_model=os.environ.get("BRIEFDESK_AI_MODEL", D.AI_DEFAULT_MODEL),
         insecure=args.insecure,
+        pace=max(args.pace, 0.0),
     )
 
     wanted = args.only or SECTIONS
