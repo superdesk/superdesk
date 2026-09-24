@@ -12,11 +12,18 @@
 import logging
 from settings import WS_HOST, WS_PORT, LOG_CONFIG_FILE, BROKER_URL
 from superdesk.ws import create_server
-from superdesk.logging import configure_logging
+from superdesk.logging import configure_logging, configure_graylog
+from superdesk import default_settings
 
 logger = logging.getLogger(__name__)
 
 if __name__ == "__main__":
     config = {"WS_HOST": WS_HOST, "WS_PORT": WS_PORT, "BROKER_URL": BROKER_URL}
     configure_logging(LOG_CONFIG_FILE)
+    configure_graylog(
+        {
+            key: getattr(default_settings, key)
+            for key in ("GRAYLOG_HOST", "GRAYLOG_PORT", "GRAYLOG_FACILITY", "GRAYLOG_LEVEL")
+        }
+    )
     create_server(config)
