@@ -47,3 +47,6 @@ include/
 client/index.html
 client/templates-cache.js
 client/npm-debug.log
+
+# local data dumps (scripts/docker-data-dump.sh)
+/data-dumps

@@ -23,7 +23,12 @@ if __name__ == "__main__":
     configure_graylog(
         {
             key: getattr(default_settings, key)
-            for key in ("GRAYLOG_HOST", "GRAYLOG_PORT", "GRAYLOG_FACILITY", "GRAYLOG_LEVEL")
+            for key in (
+                "GRAYLOG_HOST",
+                "GRAYLOG_PORT",
+                "GRAYLOG_FACILITY",
+                "GRAYLOG_LEVEL",
+            )
         }
     )
     create_server(config)
