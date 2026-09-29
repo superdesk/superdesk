@@ -3,7 +3,7 @@
 aioresponses==0.7.9
 black==25.12.0
 pep8==1.7.1
-flake8==7.3.0
+flake8==7.4.1
 pytest==9.1.1
 httmock==1.4.0
 wooper==0.4.4
