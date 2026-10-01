@@ -10,10 +10,24 @@
 
 version: 1
 disable_existing_loggers: False
+formatters:
+  # message with traceback/stack info appended, so traces are visible in Graylog message list
+  # (traceback is also sent separately in GELF full_message field)
+  graylog:
+    format: "%(message)s"
 handlers:
   console:
     class: logging.StreamHandler
     stream  : ext://sys.stdout
+  # Graylog GELF UDP input, see https://pypi.org/project/graypy/
+  # host/port are set via GRAYLOG_HOST/GRAYLOG_PORT env variables (see settings.py)
+  graylog:
+    class: graypy.GELFUDPHandler
+    formatter: graylog
+    host: ext://settings.GRAYLOG_HOST
+    port: ext://settings.GRAYLOG_PORT
+    facility: ext://settings.GRAYLOG_FACILITY
+    level: INFO
 loggers:
   # superdesk.ws - used for debug message can be removed later on.
   superdesk.ws:
@@ -23,4 +37,4 @@ loggers:
     handlers: [console]
     level: WARN
   root:
-    handlers: [console]
+    handlers: [console, graylog]

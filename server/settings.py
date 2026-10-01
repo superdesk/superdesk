@@ -46,6 +46,14 @@ WS_PORT = env("WSPORT", "5100")
 
 LOG_CONFIG_FILE = env("LOG_CONFIG_FILE", "logging_config.yml")
 
+# Graylog GELF UDP input used by graylog handler in logging_config.yml
+GRAYLOG_HOST = env("GRAYLOG_HOST", "localhost")
+GRAYLOG_PORT = int(env("GRAYLOG_PORT", 12201))
+GRAYLOG_FACILITY = env("GRAYLOG_FACILITY", "superdesk")
+
+# keep root logger handlers from logging_config.yml (eg. graylog) in celery workers
+CELERY_WORKER_HIJACK_ROOT_LOGGER = False
+
 REDIS_URL = env("REDIS_URL", "redis://localhost:6379")
 if env("REDIS_PORT"):
     REDIS_URL = env("REDIS_PORT").replace("tcp:", "redis:")
