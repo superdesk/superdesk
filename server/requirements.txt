@@ -139,6 +139,8 @@ frozenlist==1.8.0
     # via
     #   aiohttp
     #   aiosignal
+graypy==2.1.0
+    # via superdesk-core
 h11==0.16.0
     # via
     #   hypercorn
@@ -215,7 +217,7 @@ orderly-set==5.5.0
     # via deepdiff
 packaging==26.2
     # via kombu
-pillow==12.0.0
+pillow==12.3.0
     # via
     #   reportlab
     #   superdesk-core
@@ -340,7 +342,7 @@ tzlocal==5.4.4
     #   superdesk-core
 unidecode==1.4.0
     # via superdesk-core
-urllib3==2.7.0
+urllib3==2.8.0
     # via
     #   botocore
     #   elasticsearch
