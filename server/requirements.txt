@@ -206,7 +206,7 @@ markupsafe==3.0.3
     #   werkzeug
 motor==3.7.1
     # via superdesk-core
-multidict==6.7.1
+multidict==6.9.1
     # via
     #   aiobotocore
     #   aiohttp
@@ -358,7 +358,7 @@ wcwidth==0.8.2
     # via prompt-toolkit
 websockets==16.1
     # via superdesk-core
-werkzeug==3.1.8
+werkzeug==3.1.9
     # via
     #   flask
     #   quart
