@@ -74,6 +74,12 @@ jobs:
 
       - run: npx playwright install chromium
 
+      # The current Guidepup splits the preparation in two: `setup` configures the OS, `install`
+      # downloads the screen reader assets (portable NVDA with the Guidepup add-on) for this project.
+      - run: npx @guidepup/setup setup
+
+      - run: npx @guidepup/setup install
+
       - name: Check the required settings
         shell: bash
         run: |
