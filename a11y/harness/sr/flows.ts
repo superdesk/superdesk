@@ -22,6 +22,9 @@ export type Driver = {
     // their own commands (NVDA's browse mode turns Enter into a click), so a flow can retry the page's own handling.
     pressThrough?: (key: string) => Promise<void>;
     act: () => Promise<void>;
+    // Moves the reader's cursor back to the top of the page. Only for readers whose Tab starts from that cursor
+    // rather than from the focused element (NVDA's browse mode), so a Tab after reading starts from the top.
+    toTop?: () => Promise<void>;
     nextHeading: () => Promise<void>;
     // Everything spoken so far, in order.
     phrases: () => Promise<Array<string>>;
@@ -201,6 +204,7 @@ export async function superdeskFlow(page: Page, sr: Driver, file: string) {
         });
 
         await t.step('Tab to the username field (typed with Playwright)', async () => {
+            await sr.toTop?.();
             await tabUntil(page, sr, t, (f) => f.testId === 'username', 6, 'the username field');
             await page.locator('[data-test-id="login-page"] [data-test-id="username"]').fill(a.user);
         });
@@ -315,6 +319,7 @@ export async function newshubFlow(page: Page, sr: Driver, file: string) {
         });
 
         await t.step('Tab to the e-mail field (typed with Playwright)', async () => {
+            await sr.toTop?.();
             await tabUntil(page, sr, t, (f) => f.name === 'email', 8, 'the e-mail field');
             await page.locator('input[name="email"]').fill(a.user);
         });

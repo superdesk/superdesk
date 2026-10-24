@@ -77,6 +77,8 @@ function nvdaDriver(page: Page, nvda: NVDAPlaywright): Driver {
         previous: () => nvda.previous(),
         act: () => nvda.act(),
         press: (key) => nvda.press(key),
+        // In browse mode NVDA's Tab moves to the first control after its cursor, not after the focused element.
+        toTop: () => nvda.press('Control+Home'),
         pressThrough: async (key) => {
             await nvda.perform(nvda.keyboardCommands.ignoreNextKeyCombination);
             await nvda.press(key);
