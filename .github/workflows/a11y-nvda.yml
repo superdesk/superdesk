@@ -8,10 +8,11 @@ name: a11y NVDA flows
 
 # GitHub only offers the manual trigger for workflows that exist on the default branch, so on a feature
 # branch the run is triggered by pushing a change under a11y/ or to this file; the instance URLs then
-# come from the defaults below and the accounts from the repository variables and secrets.
+# come from the defaults below and the accounts from the repository variables and secrets. This branch
+# has no Fireq instance, so pushing here runs the flows against the demo pair without redeploying it.
 on:
   push:
-    branches: [hg/localwire-demo]
+    branches: [hg/localwire-a11y-ci]
     paths: ['a11y/**', '.github/workflows/a11y-nvda.yml']
   workflow_dispatch:
     inputs:
