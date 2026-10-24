@@ -386,7 +386,7 @@ export async function newshubFlow(page: Page, sr: Driver, file: string) {
             const off = results.filter((r) => !r.toUpperCase().startsWith(authority.toUpperCase()));
 
             t.note(`${results.length} results after applying; ${off.length} do not start with "${authority}"`);
-            t.note('the result change is announced only if a phrase above says so (Newshub has no live region on the wire page)');
+            t.note('the result change is announced only if a phrase above says so');
         });
 
         // Space is not tried: on a result it toggles the result's selection checkbox.
