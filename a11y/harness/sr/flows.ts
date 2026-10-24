@@ -384,7 +384,7 @@ export async function newshubFlow(page: Page, sr: Driver, file: string) {
         });
 
         await t.step('Tab to the Download control', async () => {
-            await tabUntil(page, sr, t, (x) => /^download$/i.test(x.label), 30, 'the Download button');
+            await tabUntil(page, sr, t, (x) => /^download/i.test(x.label), 30, 'the Download button');
         });
 
         await t.step('Close the item (Escape, then the Close button if Escape does nothing)', async () => {
