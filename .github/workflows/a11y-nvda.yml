@@ -1,0 +1,92 @@
+# Runs the screen reader flows (a11y/harness/nvda.spec.ts) with NVDA on a Windows runner and uploads the
+# transcripts. Copy to .github/workflows/ in the superdesk repository, on the branch that carries a11y/harness/.
+#
+# Repository secrets: A11Y_SD_PASSWORD (Superdesk reviewer account), A11Y_NH_PASSWORD (Newshub partner account).
+# Repository variables (optional, the inputs below win when set): A11Y_SD_USER, A11Y_NH_USER,
+# A11Y_SD_REVIEW_ITEM.
+name: a11y NVDA flows
+
+on:
+  workflow_dispatch:
+    inputs:
+      sd_url:
+        description: Superdesk URL
+        required: true
+        default: https://sd-hglocalwiredemo.test.superdesk.org
+      nh_url:
+        description: Newshub URL
+        required: true
+        default: https://nra-hglocalwireportaldemo.test.superdesk.org
+      sd_user:
+        description: Superdesk reviewer username (falls back to the A11Y_SD_USER variable)
+        required: false
+        default: ''
+      nh_user:
+        description: Newshub partner e-mail (falls back to the A11Y_NH_USER variable)
+        required: false
+        default: ''
+      sd_review_item:
+        description: Superdesk item id expected first in Review Pending (falls back to the A11Y_SD_REVIEW_ITEM variable)
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+
+concurrency:
+  group: a11y-nvda
+  cancel-in-progress: false
+
+jobs:
+  nvda:
+    runs-on: windows-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: a11y/harness
+    env:
+      SD_URL: ${{ inputs.sd_url }}
+      NH_URL: ${{ inputs.nh_url }}
+      SD_USER_REVIEWER: ${{ inputs.sd_user || vars.A11Y_SD_USER }}
+      SD_PASS_REVIEWER: ${{ secrets.A11Y_SD_PASSWORD }}
+      NH_USER_PARTNER: ${{ inputs.nh_user || vars.A11Y_NH_USER }}
+      NH_PASS_PARTNER: ${{ secrets.A11Y_NH_PASSWORD }}
+      SD_REVIEW_ITEM: ${{ inputs.sd_review_item || vars.A11Y_SD_REVIEW_ITEM }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: a11y/harness/package-lock.json
+
+      # Installs a portable NVDA with the Guidepup add-on and configures the runner for screen reader automation.
+      - uses: guidepup/setup-action@0.21.0
+
+      - run: npm ci
+
+      - run: npx playwright install chromium
+
+      - name: Check the required settings
+        shell: bash
+        run: |
+          missing=0
+          for v in SD_URL NH_URL SD_USER_REVIEWER SD_PASS_REVIEWER NH_USER_PARTNER NH_PASS_PARTNER; do
+            if [ -z "${!v}" ]; then echo "::error::$v is empty"; missing=1; fi
+          done
+          exit $missing
+
+      - name: Run the NVDA flows
+        run: npx playwright test nvda.spec.ts --workers 1 --reporter list
+
+      - name: Upload transcripts and Playwright results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: a11y-nvda-out
+          path: |
+            a11y/harness/out/nvda/
+            a11y/harness/test-results/
+          if-no-files-found: warn
+          retention-days: 14
