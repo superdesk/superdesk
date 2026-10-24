@@ -6,7 +6,13 @@
 # A11Y_SD_REVIEW_ITEM.
 name: a11y NVDA flows
 
+# GitHub only offers the manual trigger for workflows that exist on the default branch, so on a feature
+# branch the run is triggered by pushing a change under a11y/ or to this file; the instance URLs then
+# come from the defaults below and the accounts from the repository variables and secrets.
 on:
+  push:
+    branches: [hg/localwire-demo]
+    paths: ['a11y/**', '.github/workflows/a11y-nvda.yml']
   workflow_dispatch:
     inputs:
       sd_url:
@@ -45,8 +51,8 @@ jobs:
       run:
         working-directory: a11y/harness
     env:
-      SD_URL: ${{ inputs.sd_url }}
-      NH_URL: ${{ inputs.nh_url }}
+      SD_URL: ${{ inputs.sd_url || 'https://sd-hglocalwiredemo.test.superdesk.org' }}
+      NH_URL: ${{ inputs.nh_url || 'https://nra-hglocalwireportaldemo.test.superdesk.org' }}
       SD_USER_REVIEWER: ${{ inputs.sd_user || vars.A11Y_SD_USER }}
       SD_PASS_REVIEWER: ${{ secrets.A11Y_SD_PASSWORD }}
       NH_USER_PARTNER: ${{ inputs.nh_user || vars.A11Y_NH_USER }}
@@ -76,6 +82,20 @@ jobs:
             if [ -z "${!v}" ]; then echo "::error::$v is empty"; missing=1; fi
           done
           exit $missing
+
+      # A push to the branch also redeploys both instances, which answer 502 for about ten minutes.
+      - name: Wait for both instances to answer
+        shell: bash
+        run: |
+          for url in "$SD_URL/" "$NH_URL/login"; do
+            for i in $(seq 1 60); do
+              code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 "$url" || true)
+              echo "$url -> $code"
+              if [ "$code" = "200" ]; then break; fi
+              if [ "$i" = "60" ]; then echo "::error::$url did not come back"; exit 1; fi
+              sleep 20
+            done
+          done
 
       - name: Run the NVDA flows
         run: npx playwright test nvda.spec.ts --workers 1 --reporter list
