@@ -64,6 +64,20 @@ async function toWebContent(page: Page, nvda: NVDAPlaywright) {
     await nvda.press('Control+Home');
 }
 
+// NVDA+Space toggles between the modes and says which one it switched to. When it says "focus mode" NVDA was
+// already in browse mode, so it is toggled back and both announcements are dropped from the log; a switch to
+// browse mode stays in the log, as the transcript's evidence that NVDA had been in focus mode.
+async function ensureBrowseMode(nvda: NVDAPlaywright) {
+    const before = (await nvda.spokenPhraseLog()).length;
+
+    await nvda.perform(nvda.keyboardCommands.toggleBetweenBrowseAndFocusMode);
+
+    if (/focus mode/i.test(await nvda.lastSpokenPhrase())) {
+        await nvda.perform(nvda.keyboardCommands.toggleBetweenBrowseAndFocusMode);
+        (await nvda.spokenPhraseLog()).splice(before);
+    }
+}
+
 // NVDA starts in browse mode on web content: Down arrow reads the next item, H moves to the next heading,
 // Tab moves focus (and switches to focus mode on form fields).
 function nvdaDriver(page: Page, nvda: NVDAPlaywright): Driver {
@@ -83,19 +97,10 @@ function nvdaDriver(page: Page, nvda: NVDAPlaywright): Driver {
             await nvda.perform(nvda.keyboardCommands.ignoreNextKeyCombination);
             await nvda.press(key);
         },
-        // In focus mode H would be typed into the focused field (the article body in the editor), so leave
-        // focus mode first when a field has focus; Escape is NVDA's own key there and does not reach the page.
+        // NVDA can be in focus mode here (it switches on Enter on a Superdesk list item), where H and the arrows
+        // go to the page instead: H is typed into a focused field and the arrows move the list selection.
         nextHeading: async () => {
-            const editable = await page.evaluate(() => {
-                const el = document.activeElement as HTMLElement | null;
-
-                return el != null && (el.isContentEditable || /^(input|textarea|select)$/i.test(el.tagName));
-            });
-
-            if (editable) {
-                await nvda.perform(nvda.keyboardCommands.exitFocusMode);
-            }
-
+            await ensureBrowseMode(nvda);
             await nvda.perform(nvda.keyboardCommands.moveToNextHeading);
         },
         phrases: () => nvda.spokenPhraseLog(),
