@@ -15,7 +15,8 @@ import {Driver, newshubFlow, superdeskFlow} from './sr/flows';
 const OUT = path.join(__dirname, 'out', 'nvda');
 
 test.use({headless: false, viewport: {width: 1280, height: 800}});
-test.describe.configure({mode: 'serial', timeout: 900000});
+// Not serial: a failure in one flow must not skip the other. `--workers 1` still runs them one after the other.
+test.describe.configure({timeout: 900000});
 
 // Guidepup's navigateToWebContent clicks the middle of <body> to put focus in the page. Unshielded, that click
 // lands on whatever is there (a wire item opens its preview) and moves Chrome's Tab starting point to the middle
