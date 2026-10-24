@@ -1,0 +1,22 @@
+{
+  "name": "localwire-a11y-harness",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "private": "true",
+  "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@guidepup/guidepup": "^0.36.4",
+    "@guidepup/playwright": "^0.20.0",
+    "@guidepup/setup": "^0.29.3",
+    "@guidepup/virtual-screen-reader": "^0.33.0",
+    "@playwright/test": "^1.61.0"
+  }
+}
