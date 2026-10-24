@@ -218,6 +218,16 @@ export async function superdeskFlow(page: Page, sr: Driver, file: string) {
             await sr.press('Enter');
             await page.locator(tid('my-profile')).waitFor({timeout: 90000});
             await page.waitForTimeout(4000);
+
+            // Another session closing an item of this user pops an "Item Unlocked" notice after login; it is not
+            // part of the flow, so it is dismissed with its own OK button before the keyboard walk starts.
+            const notice = page.getByRole('dialog').getByRole('button', {name: /^ok$/i}).first();
+
+            if (await notice.isVisible().catch(() => false)) {
+                t.note('an item notice dialog was open after login and was dismissed');
+                await notice.click();
+                await page.waitForTimeout(1000);
+            }
             t.note(`after login, focus is on ${describeFocus(await focused(page))}`);
         });
 
