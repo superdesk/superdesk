@@ -64,45 +64,46 @@ async function toWebContent(page: Page, nvda: NVDAPlaywright) {
     await nvda.press('Control+Home');
 }
 
-// NVDA+Space toggles between the modes and says which one it switched to. When it says "focus mode" NVDA was
-// already in browse mode, so it is toggled back and both announcements are dropped from the log; a switch to
-// browse mode stays in the log, as the transcript's evidence that NVDA had been in focus mode.
-async function ensureBrowseMode(nvda: NVDAPlaywright) {
-    const before = (await nvda.spokenPhraseLog()).length;
-
-    await nvda.perform(nvda.keyboardCommands.toggleBetweenBrowseAndFocusMode);
-
-    if (/focus mode/i.test(await nvda.lastSpokenPhrase())) {
-        await nvda.perform(nvda.keyboardCommands.toggleBetweenBrowseAndFocusMode);
-        (await nvda.spokenPhraseLog()).splice(before);
-    }
-}
-
 // NVDA starts in browse mode on web content: Down arrow reads the next item, H moves to the next heading,
 // Tab moves focus (and switches to focus mode on form fields).
 function nvdaDriver(page: Page, nvda: NVDAPlaywright): Driver {
+    // A key press can leave NVDA in focus mode (Enter on a Superdesk list item does), where H and the arrows go to
+    // the page instead of moving the reader: H is typed into a focused field and the arrows move the list
+    // selection. NVDA signals mode changes with a beep, not speech, so the mode cannot be read back from the log,
+    // and NVDA+Space only toggles. Escape is what leaves focus mode; it reaches the page only in browse mode, so
+    // it is sent once before the first reader command after a key press, not before every command.
+    let afterKeyPress = false;
+    const browse = async (fn: () => Promise<void>) => {
+        if (afterKeyPress) {
+            afterKeyPress = false;
+            await nvda.perform(nvda.keyboardCommands.exitFocusMode);
+        }
+
+        await fn();
+    };
+    const key = async (fn: () => Promise<void>) => {
+        await fn();
+        afterKeyPress = true;
+    };
+
     return {
         name: 'NVDA (Windows)',
         settleMs: 500,
         begin: async () => {
             await toWebContent(page, nvda);
+            afterKeyPress = false;
         },
-        next: () => nvda.next(),
-        previous: () => nvda.previous(),
+        next: () => browse(() => nvda.next()),
+        previous: () => browse(() => nvda.previous()),
         act: () => nvda.act(),
-        press: (key) => nvda.press(key),
+        press: (k) => key(() => nvda.press(k)),
         // In browse mode NVDA's Tab moves to the first control after its cursor, not after the focused element.
         toTop: () => nvda.press('Control+Home'),
-        pressThrough: async (key) => {
+        pressThrough: (k) => key(async () => {
             await nvda.perform(nvda.keyboardCommands.ignoreNextKeyCombination);
-            await nvda.press(key);
-        },
-        // NVDA can be in focus mode here (it switches on Enter on a Superdesk list item), where H and the arrows
-        // go to the page instead: H is typed into a focused field and the arrows move the list selection.
-        nextHeading: async () => {
-            await ensureBrowseMode(nvda);
-            await nvda.perform(nvda.keyboardCommands.moveToNextHeading);
-        },
+            await nvda.press(k);
+        }),
+        nextHeading: () => browse(() => nvda.perform(nvda.keyboardCommands.moveToNextHeading)),
         phrases: () => nvda.spokenPhraseLog(),
     };
 }
