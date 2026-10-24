@@ -53,6 +53,10 @@ function nvdaDriver(page: Page, nvda: NVDAPlaywright): Driver {
         previous: () => nvda.previous(),
         act: () => nvda.act(),
         press: (key) => nvda.press(key),
+        pressThrough: async (key) => {
+            await nvda.perform(nvda.keyboardCommands.ignoreNextKeyCombination);
+            await nvda.press(key);
+        },
         nextHeading: () => nvda.perform(nvda.keyboardCommands.moveToNextHeading),
         phrases: () => nvda.spokenPhraseLog(),
     };

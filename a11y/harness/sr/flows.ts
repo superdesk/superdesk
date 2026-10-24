@@ -18,6 +18,9 @@ export type Driver = {
     next: () => Promise<void>;
     previous: () => Promise<void>;
     press: (key: string) => Promise<void>;
+    // Sends the key to the page without the reader acting on it first. Only for readers that turn some keys into
+    // their own commands (NVDA's browse mode turns Enter into a click), so a flow can retry the page's own handling.
+    pressThrough?: (key: string) => Promise<void>;
     act: () => Promise<void>;
     nextHeading: () => Promise<void>;
     // Everything spoken so far, in order.
@@ -231,8 +234,24 @@ export async function superdeskFlow(page: Page, sr: Driver, file: string) {
         });
 
         await t.step('Press Enter to open it in the editor', async () => {
+            const editor = page.locator(tid('authoring'));
+            const opens = (timeout: number) => editor.waitFor({timeout}).then(() => true, () => false);
+
             await sr.press('Enter');
-            await page.locator(tid('authoring')).waitFor({timeout: 30000});
+
+            if (!await opens(sr.pressThrough != null ? 15000 : 30000)) {
+                if (sr.pressThrough == null) {
+                    throw new Error('the editor did not open after Enter');
+                }
+
+                t.note(`FLAG: Enter through the reader does not open the editor (focus is on ${describeFocus(await focused(page))}); pressed Enter again, passed straight through to the page`);
+                await sr.pressThrough('Enter');
+
+                if (!await opens(30000)) {
+                    throw new Error('the editor did not open after Enter passed through to the page');
+                }
+            }
+
             await page.waitForTimeout(Math.max(2000, sr.settleMs));
             const f = await focused(page);
 
@@ -372,6 +391,12 @@ export async function newshubFlow(page: Page, sr: Driver, file: string) {
 
             await sr.press('Enter');
             await page.waitForTimeout(2000 + sr.settleMs);
+
+            if (await open.count() === 0 && sr.pressThrough != null) {
+                t.note('FLAG: Enter through the reader does not open the focused result; pressed Enter again, passed straight through to the page');
+                await sr.pressThrough('Enter');
+                await page.waitForTimeout(2000 + sr.settleMs);
+            }
 
             if (await open.count() === 0) {
                 t.note('FLAG: Enter on the focused result does not open it');
