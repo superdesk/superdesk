@@ -57,7 +57,21 @@ function nvdaDriver(page: Page, nvda: NVDAPlaywright): Driver {
             await nvda.perform(nvda.keyboardCommands.ignoreNextKeyCombination);
             await nvda.press(key);
         },
-        nextHeading: () => nvda.perform(nvda.keyboardCommands.moveToNextHeading),
+        // In focus mode H would be typed into the focused field (the article body in the editor), so leave
+        // focus mode first when a field has focus; Escape is NVDA's own key there and does not reach the page.
+        nextHeading: async () => {
+            const editable = await page.evaluate(() => {
+                const el = document.activeElement as HTMLElement | null;
+
+                return el != null && (el.isContentEditable || /^(input|textarea|select)$/i.test(el.tagName));
+            });
+
+            if (editable) {
+                await nvda.perform(nvda.keyboardCommands.exitFocusMode);
+            }
+
+            await nvda.perform(nvda.keyboardCommands.moveToNextHeading);
+        },
         phrases: () => nvda.spokenPhraseLog(),
     };
 }
