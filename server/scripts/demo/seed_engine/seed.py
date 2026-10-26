@@ -4,6 +4,7 @@ Re-runnable: everything is looked up by name or by a deterministic id and then c
 never duplicated. Sections run in dependency order; `--only` picks some of them and assumes the
 earlier ones already ran.
 """
+
 import argparse
 import contextlib
 import datetime
@@ -56,18 +57,26 @@ def iso(moment):
 
 
 def utc_iso(hours_ago=0):
-    return iso(datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(hours=hours_ago))
+    return iso(
+        datetime.datetime.now(datetime.timezone.utc)
+        - datetime.timedelta(hours=hours_ago)
+    )
 
 
 def utc_at(days=0, hour=9):
     """A whole hour, so many days from today. Calendar entries are placed relative to the run so the
-    demo always looks current."""
-    moment = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=days)
+    demo always looks current.
+    """
+    moment = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(
+        days=days
+    )
     return moment.replace(hour=hour, minute=0, second=0, microsecond=0)
 
 
 def utc_in(hours=0):
-    return datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=hours)
+    return datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(
+        hours=hours
+    )
 
 
 def html_list(lines):
@@ -75,7 +84,17 @@ def html_list(lines):
 
 
 class Seeder:
-    def __init__(self, api, market, demo_password=None, portal_url=None, portal_push_url=None, push_key=None, ai_key=None, pace=None):
+    def __init__(
+        self,
+        api,
+        market,
+        demo_password=None,
+        portal_url=None,
+        portal_push_url=None,
+        push_key=None,
+        ai_key=None,
+        pace=None,
+    ):
         self.api = api
         self.market = market
         self.demo_password = demo_password
@@ -85,8 +104,13 @@ class Seeder:
         self.portal_push_url = (portal_push_url or "").rstrip("/") or self.portal_url
         self.push_key = push_key
         self.ai_key = ai_key
-        self.pace = market.get("superdesk.workflow.pace_seconds", 20) if pace is None else pace
-        self.guid_prefix = market.get("fiction.sample_content.guid_prefix") or "urn:%s:demo:" % market.slug
+        self.pace = (
+            market.get("superdesk.workflow.pace_seconds", 20) if pace is None else pace
+        )
+        self.guid_prefix = (
+            market.get("fiction.sample_content.guid_prefix")
+            or "urn:%s:demo:" % market.slug
+        )
         self.cv_names = M.vocabulary_names(market)
         self.severity_urgency = M.severity_urgency(market)
         self.severity_scheme = market.get("severity.taxonomy")
@@ -105,7 +129,11 @@ class Seeder:
             created = self.api.post(resource, doc)
             log("created %s" % label, 1)
             return created
-        updates = {key: value for key, value in doc.items() if key != "_id" and existing.get(key) != value}
+        updates = {
+            key: value
+            for key, value in doc.items()
+            if key != "_id" and existing.get(key) != value
+        }
         if not updates:
             log("unchanged %s" % label, 1)
             return existing
@@ -134,19 +162,25 @@ class Seeder:
         return self._cached("%s:%s" % (resource, name), load)
 
     def user(self, username):
-        return self._cached("user:%s" % username, lambda: self.api.find_one("users", username=username))
+        return self._cached(
+            "user:%s" % username, lambda: self.api.find_one("users", username=username)
+        )
 
     def user_id(self, username):
         found = self.user(username)
         return found["_id"] if found else None
 
     def desk(self, name):
-        return self._cached("desk:%s" % name, lambda: self.api.find_one("desks", name=name))
+        return self._cached(
+            "desk:%s" % name, lambda: self.api.find_one("desks", name=name)
+        )
 
     def desk_id(self, name):
         found = self.desk(name)
         if not found:
-            raise SystemExit("Team %r does not exist yet. Run the teams section first." % name)
+            raise SystemExit(
+                "Team %r does not exist yet. Run the teams section first." % name
+            )
         return found["_id"]
 
     def stage_id(self, desk_name, stage_name):
@@ -161,7 +195,9 @@ class Seeder:
 
         stage = self._cached("stage:%s:%s" % (desk_name, stage_name), load)
         if stage is None:
-            raise SystemExit("Stage %r on team %r does not exist." % (stage_name, desk_name))
+            raise SystemExit(
+                "Stage %r on team %r does not exist." % (stage_name, desk_name)
+            )
         return stage
 
     def template(self, template_name):
@@ -185,19 +221,28 @@ class Seeder:
         for scheme, qcode in pairs:
             name = self.cv_names.get(scheme, {}).get(qcode)
             if name is None:
-                raise SystemExit("Unknown %s value %r. Check the vocabularies in the contract." % (scheme, qcode))
+                raise SystemExit(
+                    "Unknown %s value %r. Check the vocabularies in the contract."
+                    % (scheme, qcode)
+                )
             terms.append({"name": name, "qcode": qcode, "scheme": scheme})
         return terms
 
     def _session(self, username):
         """A signed-in client for one staff member. Comments are attributed to the session user,
         some tasking actions are refused to anybody but the assignee, and starting work reassigns
-        the tasking to whoever asked for it."""
-        if username == self.api.username or str(self.user_id(username)) == str(self.api.user_id):
+        the tasking to whoever asked for it.
+        """
+        if username == self.api.username or str(self.user_id(username)) == str(
+            self.api.user_id
+        ):
             return self.api
         if username not in self._sessions:
             if not self.demo_password:
-                raise SystemExit("Signing in as %s needs the demo password (see `demo_password_env` in the README)." % username)
+                raise SystemExit(
+                    "Signing in as %s needs the demo password (see `demo_password_env` in the README)."
+                    % username
+                )
             client = self.api.another()
             client.login(username, self.demo_password)
             self._sessions[username] = client
@@ -207,11 +252,14 @@ class Seeder:
 
     def _vocabularies(self):
         """The relabelled native field is derived from the vocabulary as the product ships it, never
-        from the instance's copy, which after the first run is already relabelled."""
+        from the instance's copy, which after the first run is already relabelled.
+        """
         native = self.market.get("severity.native_field") or "urgency"
         if not self.market.get("severity.levels"):
             return M.market_vocabularies(self.market, {})
-        base = next((v for v in develop_vocabularies() if v["_id"] == native), None) or self.api.get_item("vocabularies", native)
+        base = next(
+            (v for v in develop_vocabularies() if v["_id"] == native), None
+        ) or self.api.get_item("vocabularies", native)
         if not base:
             raise SystemExit("The instance has no `%s` vocabulary to relabel." % native)
         return M.market_vocabularies(self.market, base)
@@ -228,10 +276,20 @@ class Seeder:
                 log("created vocabulary %s" % doc["_id"], 1)
                 continue
             # The server strips is_active from items on read, so items compare on what matters.
-            updates = {k: v for k, v in doc.items() if k != "_id" and _comparable(existing.get(k)) != _comparable(v)}
+            updates = {
+                k: v
+                for k, v in doc.items()
+                if k != "_id" and _comparable(existing.get(k)) != _comparable(v)
+            }
             if updates:
-                self.api.patch("vocabularies", doc["_id"], updates, etag=existing.get("_etag"))
-                log("updated vocabulary %s (%s)" % (doc["_id"], ", ".join(sorted(updates))), 1)
+                self.api.patch(
+                    "vocabularies", doc["_id"], updates, etag=existing.get("_etag")
+                )
+                log(
+                    "updated vocabulary %s (%s)"
+                    % (doc["_id"], ", ".join(sorted(updates))),
+                    1,
+                )
             else:
                 log("unchanged vocabulary %s" % doc["_id"], 1)
 
@@ -240,7 +298,11 @@ class Seeder:
     def section_roles(self):
         log("Roles")
         for role in M.roles(self.market):
-            doc = {"name": role["name"], "description": role["description"], "privileges": {name: 1 for name in sorted(set(role["privileges"]))}}
+            doc = {
+                "name": role["name"],
+                "description": role["description"],
+                "privileges": {name: 1 for name in sorted(set(role["privileges"]))},
+            }
             for optional in ("author_role", "editor_role"):
                 if role.get(optional):
                     doc[optional] = role[optional]
@@ -273,14 +335,23 @@ class Seeder:
             existing = self.api.find_one("users", username=user["username"])
             if not existing:
                 if not self.demo_password:
-                    raise SystemExit("Creating %s needs the demo password (see `demo_password_env` in the README)." % user["username"])
+                    raise SystemExit(
+                        "Creating %s needs the demo password (see `demo_password_env` in the README)."
+                        % user["username"]
+                    )
                 doc["password"] = self.demo_password
                 self.api.post("users", doc)
                 log("created user %s (%s)" % (user["username"], user["role"]), 1)
             else:
-                updates = {k: v for k, v in doc.items() if k != "username" and existing.get(k) != v}
+                updates = {
+                    k: v
+                    for k, v in doc.items()
+                    if k != "username" and existing.get(k) != v
+                }
                 if updates:
-                    self.api.patch("users", existing["_id"], updates, etag=existing.get("_etag"))
+                    self.api.patch(
+                        "users", existing["_id"], updates, etag=existing.get("_etag")
+                    )
                     log("updated user %s" % user["username"], 1)
                 else:
                     log("unchanged user %s" % user["username"], 1)
@@ -295,7 +366,13 @@ class Seeder:
             existing = self.api.get_item("content_types", profile["_id"])
             # The client lists report types with `where type = text`. One without a type is valid
             # on the server but never appears in the editor's selector or in the team settings.
-            base = {"label": profile["label"], "description": profile["description"], "priority": profile["priority"], "enabled": True, "type": "text"}
+            base = {
+                "label": profile["label"],
+                "description": profile["description"],
+                "priority": profile["priority"],
+                "enabled": True,
+                "type": "text",
+            }
             if not existing:
                 doc = dict(base)
                 doc["_id"] = profile["_id"]
@@ -304,13 +381,22 @@ class Seeder:
             else:
                 updates = {k: v for k, v in base.items() if existing.get(k) != v}
                 if updates:
-                    self.api.patch("content_types", profile["_id"], updates, etag=existing.get("_etag"))
+                    self.api.patch(
+                        "content_types",
+                        profile["_id"],
+                        updates,
+                        etag=existing.get("_etag"),
+                    )
             # Sent on every run: the fields are the part a redeploy has been seen to lose. The
             # server folds the custom vocabularies back into `subject` on save, which is what makes
             # selected values land in subject[] with their scheme.
             editor = dict(profile["editor"])
             editor.update(M.disabled_default_fields(editor))
-            self.api.patch("content_types", profile["_id"], {"editor": editor, "schema": profile["schema"]})
+            self.api.patch(
+                "content_types",
+                profile["_id"],
+                {"editor": editor, "schema": profile["schema"]},
+            )
             log("configured fields on %s" % profile["label"], 1)
 
     # -- teams ----------------------------------------------------------------------
@@ -337,7 +423,9 @@ class Seeder:
             else:
                 updates = {k: v for k, v in wanted.items() if existing.get(k) != v}
                 if updates:
-                    self.api.patch("desks", existing["_id"], updates, etag=existing.get("_etag"))
+                    self.api.patch(
+                        "desks", existing["_id"], updates, etag=existing.get("_etag")
+                    )
                 log("team %s present" % spec["name"], 1)
             self._cache.pop("desk:%s" % spec["name"], None)
             self._rename_default_stages(existing, spec["stages"])
@@ -366,8 +454,12 @@ class Seeder:
 
     def _rename_default_stages(self, desk, stages):
         """A new desk arrives with an Incoming and a Working stage. They are renamed in place so the
-        board reads in the market's terms and the default incoming stage keeps its meaning."""
-        for stage_id, name in ((desk.get("incoming_stage"), stages[0]), (desk.get("working_stage"), stages[1] if len(stages) > 1 else None)):
+        board reads in the market's terms and the default incoming stage keeps its meaning.
+        """
+        for stage_id, name in (
+            (desk.get("incoming_stage"), stages[0]),
+            (desk.get("working_stage"), stages[1] if len(stages) > 1 else None),
+        ):
             if not stage_id or not name:
                 continue
             stage = self.api.get_item("stages", stage_id)
@@ -378,7 +470,10 @@ class Seeder:
 
     def _extra_stages(self, desk, stages):
         task_status = self.market.get("fiction.stage_task_status") or {}
-        present = {stage["name"] for stage in self.api.find_all("stages", {"desk": desk["_id"]})}
+        present = {
+            stage["name"]
+            for stage in self.api.find_all("stages", {"desk": desk["_id"]})
+        }
         for name in stages[2:]:
             if name in present:
                 continue
@@ -386,52 +481,87 @@ class Seeder:
             # order of the stage list would decide, which silently changes what Planning shows.
             self.api.post(
                 "stages",
-                {"name": name, "desk": desk["_id"], "description": "%s stage" % name, "is_visible": True, "task_status": task_status.get(name, "in_progress")},
+                {
+                    "name": name,
+                    "desk": desk["_id"],
+                    "description": "%s stage" % name,
+                    "is_visible": True,
+                    "task_status": task_status.get(name, "in_progress"),
+                },
             )
             log("created stage %s" % name, 2)
 
     def _order_stages(self, desk, stages):
         """The two automatic stages are created working-first, so without this the board would read
-        Analysis, Incoming, Review."""
-        by_name = {stage["name"]: stage for stage in self.api.find_all("stages", {"desk": desk["_id"]})}
+        Analysis, Incoming, Review.
+        """
+        by_name = {
+            stage["name"]: stage
+            for stage in self.api.find_all("stages", {"desk": desk["_id"]})
+        }
         ordered = [by_name[name] for name in stages if name in by_name]
         if len(ordered) != len(stages):
             return
-        if [stage.get("desk_order") for stage in ordered] == list(range(1, len(stages) + 1)):
+        if [stage.get("desk_order") for stage in ordered] == list(
+            range(1, len(stages) + 1)
+        ):
             return
-        self.api.post("stages_order", {"desk": str(desk["_id"]), "stages": [str(s["_id"]) for s in ordered]})
+        self.api.post(
+            "stages_order",
+            {"desk": str(desk["_id"]), "stages": [str(s["_id"]) for s in ordered]},
+        )
         log("ordered the stages as %s" % ", ".join(stages), 2)
 
     def _team_members(self, team_name):
-        members = [user["username"] for user in M.staff(self.market) if team_name in user["teams"]]
+        members = [
+            user["username"]
+            for user in M.staff(self.market)
+            if team_name in user["teams"]
+        ]
         desk = self.desk(team_name)
         if not desk:
             return
         wanted = [str(self.user_id(name)) for name in members if self.user_id(name)]
         # Superdesk shows a user only the teams they belong to, so an administrator who is no
         # member sees no teams and an empty board.
-        if self.market.get("fiction.admin_member_of_all_teams", True) and self.api.user_id and str(self.api.user_id) not in wanted:
+        if (
+            self.market.get("fiction.admin_member_of_all_teams", True)
+            and self.api.user_id
+            and str(self.api.user_id) not in wanted
+        ):
             wanted.append(str(self.api.user_id))
         wanted = sorted(wanted)
         current = sorted(str(member["user"]) for member in desk.get("members") or [])
         if wanted == current:
             log("members of %s unchanged" % team_name, 2)
             return
-        self.api.patch("desks", desk["_id"], {"members": [{"user": member} for member in wanted]})
+        self.api.patch(
+            "desks", desk["_id"], {"members": [{"user": member} for member in wanted]}
+        )
         self._cache.pop("desk:%s" % team_name, None)
         log("members of %s set to %s" % (team_name, ", ".join(members)), 2)
 
     def _board(self, team_name, stages):
         """Without monitoring settings the board shows the default groups, not the team's stages.
         A released report lives in `published`, which a stage group never queries, so hidden stages
-        stay on the team but off the board."""
+        stay on the team but off the board.
+        """
         hidden = set(self.market.get("fiction.board_hidden_stages") or [])
         shown = [name for name in stages if name not in hidden]
         desk = self.desk(team_name)
         if not desk:
             return
-        settings = [{"_id": str(self.stage_id(team_name, name)), "type": "stage", "max_items": 30} for name in shown]
-        settings.append({"_id": "%s:output" % desk["_id"], "type": "deskOutput", "max_items": 30})
+        settings = [
+            {
+                "_id": str(self.stage_id(team_name, name)),
+                "type": "stage",
+                "max_items": 30,
+            }
+            for name in shown
+        ]
+        settings.append(
+            {"_id": "%s:output" % desk["_id"], "type": "deskOutput", "max_items": 30}
+        )
         if desk.get("monitoring_settings") == settings:
             log("board of %s unchanged" % team_name, 2)
             return
@@ -474,12 +604,22 @@ class Seeder:
             if found.get("default_content_profile") != spec["default_report_type"]:
                 updates["default_content_profile"] = spec["default_report_type"]
             template_id = self.template_id(spec["default_template"])
-            if template_id and str(found.get("default_content_template") or "") != str(template_id):
+            if template_id and str(found.get("default_content_template") or "") != str(
+                template_id
+            ):
                 updates["default_content_template"] = template_id
             if updates:
                 self.api.patch("desks", found["_id"], updates)
                 self._cache.pop("desk:%s" % spec["name"], None)
-                log("%s defaults to %s / %s" % (spec["name"], spec["default_report_type"], spec["default_template"]), 2)
+                log(
+                    "%s defaults to %s / %s"
+                    % (
+                        spec["name"],
+                        spec["default_report_type"],
+                        spec["default_template"],
+                    ),
+                    2,
+                )
             else:
                 log("%s defaults unchanged" % spec["name"], 2)
 
@@ -500,9 +640,25 @@ class Seeder:
                     "name": "Everything to %s %s" % (route["team"], route["stage"]),
                     "handler": "desk_fetch_publish",
                     "filter": None,
-                    "actions": {"fetch": [{"desk": self.desk_id(route["team"]), "stage": self.stage_id(route["team"], route["stage"])}], "exit": True},
+                    "actions": {
+                        "fetch": [
+                            {
+                                "desk": self.desk_id(route["team"]),
+                                "stage": self.stage_id(route["team"], route["stage"]),
+                            }
+                        ],
+                        "exit": True,
+                    },
                     "schedule": {
-                        "day_of_week": ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"],
+                        "day_of_week": [
+                            "MON",
+                            "TUE",
+                            "WED",
+                            "THU",
+                            "FRI",
+                            "SAT",
+                            "SUN",
+                        ],
                         "hour_of_day_from": None,
                         "hour_of_day_to": None,
                         "time_zone": "UTC",
@@ -510,13 +666,19 @@ class Seeder:
                 }
             ],
         }
-        saved = self.upsert("routing_schemes", {"name": name}, scheme, "routing scheme %s" % name)
+        saved = self.upsert(
+            "routing_schemes", {"name": name}, scheme, "routing scheme %s" % name
+        )
         for provider in ingest["providers"]:
             doc = {
                 "name": provider["name"],
                 "source": provider["source"],
                 # The rss feeding service reads Atom as well.
-                "feeding_service": "rss" if provider.get("feed", "rss") in ("rss", "atom") else provider["feed"],
+                "feeding_service": (
+                    "rss"
+                    if provider.get("feed", "rss") in ("rss", "atom")
+                    else provider["feed"]
+                ),
                 "content_types": ["text"],
                 "is_closed": False,
                 "update_schedule": {"minutes": provider.get("update_minutes", 5)},
@@ -527,7 +689,12 @@ class Seeder:
                 "skip_config_test": True,
                 "config": {"url": provider["url"], "auth_required": False},
             }
-            self.upsert("ingest_providers", {"name": provider["name"]}, doc, "source %s" % provider["name"])
+            self.upsert(
+                "ingest_providers",
+                {"name": provider["name"]},
+                doc,
+                "source %s" % provider["name"],
+            )
 
     # -- delivery ---------------------------------------------------------------------------
 
@@ -535,12 +702,23 @@ class Seeder:
         log("Content filters, packages and recipients")
         names = M.portal_names(self.market)
         if not self.portal_push_url:
-            self.note("Neither PORTAL_URL nor PORTAL_PUSH_URL is set, so the %s push destinations have no resource_url." % names["recipient"])
+            self.note(
+                "Neither PORTAL_URL nor PORTAL_PUSH_URL is set, so the %s push destinations have no resource_url."
+                % names["recipient"]
+            )
         if not self.push_key:
-            self.note("The portal push key is not set (%s), so the push destinations carry no secret token." % self.push_key_env())
+            self.note(
+                "The portal push key is not set (%s), so the push destinations carry no secret token."
+                % self.push_key_env()
+            )
 
         for condition in M.filter_conditions(self.market):
-            self.upsert("filter_conditions", {"name": condition["name"]}, dict(condition), "filter condition %s" % condition["name"])
+            self.upsert(
+                "filter_conditions",
+                {"name": condition["name"]},
+                dict(condition),
+                "filter condition %s" % condition["name"],
+            )
             self._cache.pop("filter_conditions:%s" % condition["name"], None)
 
         for content_filter in M.content_filters(self.market):
@@ -548,25 +726,64 @@ class Seeder:
             for group in content_filter["expressions"]:
                 ids = [self._id_by_name("filter_conditions", name) for name in group]
                 expressions.append({"expression": {"fc": [str(i) for i in ids if i]}})
-            doc = {"name": content_filter["name"], "content_filter": expressions, "is_global": False}
-            self.upsert("content_filters", {"name": content_filter["name"]}, doc, "content filter %s" % content_filter["name"])
+            doc = {
+                "name": content_filter["name"],
+                "content_filter": expressions,
+                "is_global": False,
+            }
+            self.upsert(
+                "content_filters",
+                {"name": content_filter["name"]},
+                doc,
+                "content filter %s" % content_filter["name"],
+            )
             self._cache.pop("content_filters:%s" % content_filter["name"], None)
 
         for product in M.products(self.market):
-            doc = {"name": product["name"], "description": product["description"], "product_type": product["product_type"]}
-            doc["content_filter"] = {"filter_id": str(self._id_by_name("content_filters", product["content_filter"])), "filter_type": "permitting"}
-            self.upsert("products", {"name": product["name"]}, doc, "package %s" % product["name"])
+            doc = {
+                "name": product["name"],
+                "description": product["description"],
+                "product_type": product["product_type"],
+            }
+            doc["content_filter"] = {
+                "filter_id": str(
+                    self._id_by_name("content_filters", product["content_filter"])
+                ),
+                "filter_type": "permitting",
+            }
+            self.upsert(
+                "products",
+                {"name": product["name"]},
+                doc,
+                "package %s" % product["name"],
+            )
             self._cache.pop("products:%s" % product["name"], None)
 
         firm_domain = self.market.require("fiction.firm.email_domain")
         push_path = self.market.get("superdesk.recipients.portal.push_path") or "/push"
         portal_product = str(self._id_by_name("products", names["product"]))
-        self._upsert_subscriber(self._push_recipient(names["recipient"], portal_product, [("%s push" % names["recipient"], "newsroom ninjs")], firm_domain, push_path))
+        self._upsert_subscriber(
+            self._push_recipient(
+                names["recipient"],
+                portal_product,
+                [("%s push" % names["recipient"], "newsroom ninjs")],
+                firm_domain,
+                push_path,
+            )
+        )
         # A second recipient for the calendar. Superdesk applies a recipient's products once and then
         # hands the item to every destination it has, so the only way to keep the NINJS destination
         # away from calendar entries is a recipient of their own.
         calendar_product = str(self._id_by_name("products", names["calendar_product"]))
-        self._upsert_subscriber(self._push_recipient(names["calendar_recipient"], calendar_product, M.calendar_destinations(self.market), firm_domain, push_path))
+        self._upsert_subscriber(
+            self._push_recipient(
+                names["calendar_recipient"],
+                calendar_product,
+                M.calendar_destinations(self.market),
+                firm_domain,
+                push_path,
+            )
+        )
 
         if self.market.get("superdesk.recipients.email_per_client", True):
             for client in self.market.get("fiction.clients") or []:
@@ -580,18 +797,42 @@ class Seeder:
                     "is_active": True,
                     "is_targetable": True,
                     "sequence_num_settings": {"min": 1, "max": 9999},
-                    "products": [str(self._id_by_name("products", "%s entitlement" % client["name"]))],
-                    "destinations": [{"name": "Email to %s" % client["name"], "format": "email", "delivery_type": "email", "config": {"recipients": ";".join(emails)}}],
+                    "products": [
+                        str(
+                            self._id_by_name(
+                                "products", "%s entitlement" % client["name"]
+                            )
+                        )
+                    ],
+                    "destinations": [
+                        {
+                            "name": "Email to %s" % client["name"],
+                            "format": "email",
+                            "delivery_type": "email",
+                            "config": {"recipients": ";".join(emails)},
+                        }
+                    ],
                 }
                 self._upsert_subscriber(doc)
 
     def push_key_env(self):
-        return self.market.get("superdesk.recipients.portal.push_key_env") or "PORTAL_PUSH_KEY"
+        return (
+            self.market.get("superdesk.recipients.portal.push_key_env")
+            or "PORTAL_PUSH_KEY"
+        )
 
     def _push_recipient(self, name, product_id, destinations, firm_domain, push_path):
         config = {
-            "resource_url": "%s%s" % (self.portal_push_url, push_path) if self.portal_push_url else "",
-            "assets_url": "%s%s_binary" % (self.portal_push_url, push_path) if self.portal_push_url else "",
+            "resource_url": (
+                "%s%s" % (self.portal_push_url, push_path)
+                if self.portal_push_url
+                else ""
+            ),
+            "assets_url": (
+                "%s%s_binary" % (self.portal_push_url, push_path)
+                if self.portal_push_url
+                else ""
+            ),
         }
         if self.push_key:
             config["secret_token"] = self.push_key
@@ -604,13 +845,22 @@ class Seeder:
             "sequence_num_settings": {"min": 1, "max": 9999},
             "products": [product_id],
             "api_products": [product_id],
-            "destinations": [{"name": dname, "format": fmt, "delivery_type": "http_push", "config": dict(config)} for dname, fmt in destinations],
+            "destinations": [
+                {
+                    "name": dname,
+                    "format": fmt,
+                    "delivery_type": "http_push",
+                    "config": dict(config),
+                }
+                for dname, fmt in destinations
+            ],
         }
 
     def _upsert_subscriber(self, doc):
         """The server gives every destination an id and a preview url and never returns the secret
         token, so stored destinations always look different from the ones sent. They are compared
-        on what matters and only sent when that differs."""
+        on what matters and only sent when that differs.
+        """
 
         def comparable(destinations):
             return [
@@ -618,15 +868,27 @@ class Seeder:
                     "name": d.get("name"),
                     "format": d.get("format"),
                     "delivery_type": d.get("delivery_type"),
-                    "config": {k: v for k, v in (d.get("config") or {}).items() if k != "secret_token"},
+                    "config": {
+                        k: v
+                        for k, v in (d.get("config") or {}).items()
+                        if k != "secret_token"
+                    },
                 }
                 for d in destinations or []
             ]
 
         existing = self.api.find_one("subscribers", name=doc["name"])
-        if existing and comparable(existing.get("destinations")) == comparable(doc["destinations"]):
+        if existing and comparable(existing.get("destinations")) == comparable(
+            doc["destinations"]
+        ):
             doc = {k: v for k, v in doc.items() if k != "destinations"}
-        self.upsert("subscribers", {"name": doc["name"]}, doc, "recipient %s" % doc["name"], existing=existing)
+        self.upsert(
+            "subscribers",
+            {"name": doc["name"]},
+            doc,
+            "recipient %s" % doc["name"],
+            existing=existing,
+        )
 
     # -- briefing list ------------------------------------------------------------------------
 
@@ -646,8 +908,13 @@ class Seeder:
         if template_id:
             doc["template"] = str(template_id)
         elif export.get("name"):
-            self.note("Briefing list template %r is missing, run the templates section." % export["name"])
-        self.upsert("highlights", {"name": spec["name"]}, doc, "briefing list %s" % spec["name"])
+            self.note(
+                "Briefing list template %r is missing, run the templates section."
+                % export["name"]
+            )
+        self.upsert(
+            "highlights", {"name": spec["name"]}, doc, "briefing list %s" % spec["name"]
+        )
 
     # -- dashboards ---------------------------------------------------------------------------
 
@@ -661,16 +928,29 @@ class Seeder:
             desk = self.desk(spec["name"])
             if not desk:
                 continue
-            groups = [{"_id": g["_id"], "type": g["type"]} for g in desk.get("monitoring_settings") or [] if g.get("type") == "stage"]
+            groups = [
+                {"_id": g["_id"], "type": g["type"]}
+                for g in desk.get("monitoring_settings") or []
+                if g.get("type") == "stage"
+            ]
             configuration = {
                 "aggregate": {"label": "%s board" % spec["name"], "groups": groups},
                 "activity": {"maxItems": 8},
-                "ingest-stats": {"source": "provider", "colorScheme": "superdesk", "updateInterval": 5},
+                "ingest-stats": {
+                    "source": "provider",
+                    "colorScheme": "superdesk",
+                    "updateInterval": 5,
+                },
                 "world-clock": {"zones": zones},
             }
             widgets = []
             for index, widget in enumerate(wanted):
-                layout = WIDGETS.get(widget) or {"row": 4 + index, "col": 1, "sizex": 1, "sizey": 1}
+                layout = WIDGETS.get(widget) or {
+                    "row": 4 + index,
+                    "col": 1,
+                    "sizex": 1,
+                    "sizey": 1,
+                }
                 entry = {"_id": widget, "multiple_id": 1, "active": True}
                 entry.update(layout)
                 entry["configuration"] = configuration.get(widget, {})
@@ -679,10 +959,17 @@ class Seeder:
             if existing and existing.get("widgets") == widgets:
                 log("dashboard of %s unchanged" % spec["name"], 1)
             elif existing:
-                self.api.patch("workspaces", existing["_id"], {"widgets": widgets}, etag=existing.get("_etag"))
+                self.api.patch(
+                    "workspaces",
+                    existing["_id"],
+                    {"widgets": widgets},
+                    etag=existing.get("_etag"),
+                )
                 log("updated dashboard of %s" % spec["name"], 1)
             else:
-                self.api.post("workspaces", {"desk": str(desk["_id"]), "widgets": widgets})
+                self.api.post(
+                    "workspaces", {"desk": str(desk["_id"]), "widgets": widgets}
+                )
                 log("created dashboard of %s" % spec["name"], 1)
 
     # -- AI -------------------------------------------------------------------------------------
@@ -690,7 +977,8 @@ class Seeder:
     def section_ai(self):
         """The provider is created only when it does not exist. An existing provider, its key, its
         models and its base URL belong to whoever configured it in Settings and are never sent a
-        single write, whatever the environment holds."""
+        single write, whatever the environment holds.
+        """
         ai = self.market.get("superdesk.ai") or {}
         if not ai.get("provider_name"):
             return
@@ -702,7 +990,8 @@ class Seeder:
             doc = {
                 "name": ai["provider_name"],
                 "provider_type": ai.get("provider_type", "openai_compatible"),
-                "default_model": os.environ.get("AI_DEFAULT_MODEL") or ai.get("default_model"),
+                "default_model": os.environ.get("AI_DEFAULT_MODEL")
+                or ai.get("default_model"),
                 "is_default": True,
                 "active": True,
             }
@@ -716,8 +1005,12 @@ class Seeder:
                 doc["api_key"] = self.ai_key
             else:
                 self.note(
-                    "%s is not set. The %r provider and the AI actions exist, but runs fail until the key is pasted into Settings, AI providers."
-                    % (ai.get("provider_key_env", "AI_PROVIDER_KEY"), ai["provider_name"])
+                    "%s is not set. The %r provider and the AI actions exist, "
+                    "but runs fail until the key is pasted into Settings, AI providers."
+                    % (
+                        ai.get("provider_key_env", "AI_PROVIDER_KEY"),
+                        ai["provider_name"],
+                    )
                 )
             provider = self.api.post("ai_providers", doc)
             log("created AI provider %s" % ai["provider_name"], 1)
@@ -726,13 +1019,21 @@ class Seeder:
             doc = dict(action)
             doc["provider"] = str(provider["_id"])
             doc["active"] = True
-            saved = self.upsert("ai_actions", {"name": action["name"]}, doc, "AI action %s" % action["name"])
+            saved = self.upsert(
+                "ai_actions",
+                {"name": action["name"]},
+                doc,
+                "AI action %s" % action["name"],
+            )
             self.ai_action_ids[action["name"]] = str(saved.get("_id"))
 
     # -- planning -------------------------------------------------------------------------------
 
     def section_planning(self):
-        if not (self.market.get("fiction.sample_content.calendar_events") or self.market.get("fiction.sample_content.client_requests")):
+        if not (
+            self.market.get("fiction.sample_content.calendar_events")
+            or self.market.get("fiction.sample_content.client_requests")
+        ):
             return
         log("Programmes, calendar, requests and taskings")
         agendas = self._programmes()
@@ -750,33 +1051,58 @@ class Seeder:
                 log("unchanged programme %s" % name, 1)
                 agendas[name] = existing["_id"]
                 continue
-            agendas[name] = self.api.post("agenda", {"name": name, "is_enabled": True})["_id"]
+            agendas[name] = self.api.post("agenda", {"name": name, "is_enabled": True})[
+                "_id"
+            ]
             log("created programme %s" % name, 1)
         return agendas
 
     def _calendars(self):
-        return [(c["qcode"], c["name"]) for c in self.market.get("superdesk.planning.event_calendars") or []]
+        return [
+            (c["qcode"], c["name"])
+            for c in self.market.get("superdesk.planning.event_calendars") or []
+        ]
 
     def _event_calendars(self):
         """Replace the stock calendars with the market's."""
         calendars = self._calendars()
         if not calendars:
             return
-        wanted = [{"name": name, "qcode": qcode, "is_active": True} for qcode, name in calendars]
+        wanted = [
+            {"name": name, "qcode": qcode, "is_active": True}
+            for qcode, name in calendars
+        ]
         existing = self.api.get_item("vocabularies", "event_calendars")
         if not existing:
             self.api.post(
                 "vocabularies",
-                {"_id": "event_calendars", "display_name": "Event Calendars", "type": "manageable", "unique_field": "qcode", "selection_type": "do not show", "items": wanted},
+                {
+                    "_id": "event_calendars",
+                    "display_name": "Event Calendars",
+                    "type": "manageable",
+                    "unique_field": "qcode",
+                    "selection_type": "do not show",
+                    "items": wanted,
+                },
             )
             log("created the event calendars vocabulary", 1)
             return
         # is_active is stripped from items on read, so only the pairs that matter are compared.
-        if [(i.get("qcode"), i.get("name")) for i in existing.get("items") or []] == [(i["qcode"], i["name"]) for i in wanted]:
+        if [(i.get("qcode"), i.get("name")) for i in existing.get("items") or []] == [
+            (i["qcode"], i["name"]) for i in wanted
+        ]:
             log("event calendars unchanged", 1)
             return
-        self.api.patch("vocabularies", "event_calendars", {"items": wanted}, etag=existing.get("_etag"))
-        log("set the event calendars to %s" % ", ".join(name for _, name in calendars), 1)
+        self.api.patch(
+            "vocabularies",
+            "event_calendars",
+            {"items": wanted},
+            etag=existing.get("_etag"),
+        )
+        log(
+            "set the event calendars to %s" % ", ".join(name for _, name in calendars),
+            1,
+        )
 
     def _event_specs(self):
         return self.market.content("fiction.sample_content.calendar_events")
@@ -786,7 +1112,11 @@ class Seeder:
 
     def _event_doc(self, spec):
         start = utc_at(days=spec["days"], hour=spec["hour"])
-        dates = {"start": iso(start), "end": iso(start + datetime.timedelta(hours=spec["hours"])), "tz": spec["tz"]}
+        dates = {
+            "start": iso(start),
+            "end": iso(start + datetime.timedelta(hours=spec["hours"])),
+            "tz": spec["tz"],
+        }
         repeat = spec.get("repeat")
         if repeat:
             dates["recurring_rule"] = {
@@ -796,7 +1126,9 @@ class Seeder:
                 "count": repeat["count"],
                 "endRepeatMode": "count",
             }
-        occur = self.market.require("superdesk.planning.occur_status")[spec["occur_status"]]
+        occur = self.market.require("superdesk.planning.occur_status")[
+            spec["occur_status"]
+        ]
         place = spec["location"]
         doc = {
             "name": spec["name"],
@@ -806,12 +1138,22 @@ class Seeder:
             "internal_note": spec["internal_note"],
             "dates": dates,
             "occur_status": dict(occur),
-            "calendars": [{"qcode": spec["calendar"], "name": dict(self._calendars())[spec["calendar"]], "is_active": True}],
+            "calendars": [
+                {
+                    "qcode": spec["calendar"],
+                    "name": dict(self._calendars())[spec["calendar"]],
+                    "is_active": True,
+                }
+            ],
             "location": [
                 {
                     "qcode": self.guid_prefix + "place:" + spec["key"],
                     "name": place["name"],
-                    "address": {"city": place["city"], "country": place["country"], "line": [""]},
+                    "address": {
+                        "city": place["city"],
+                        "country": place["country"],
+                        "line": [""],
+                    },
                     "location": {"lat": place["lat"], "lon": place["lon"]},
                 }
             ],
@@ -833,35 +1175,55 @@ class Seeder:
             by_slugline.setdefault(item.get("slugline"), []).append(item)
         ids = {}
         for spec in self._event_specs():
-            found = sorted(by_slugline.get(spec["key"]) or [], key=lambda e: e["dates"]["start"])
+            found = sorted(
+                by_slugline.get(spec["key"]) or [], key=lambda e: e["dates"]["start"]
+            )
             if found:
                 ids[spec["key"]] = found[0]["_id"]
-                self._sync_subject("events", found, self.subject(spec["subject"]), "event %s" % spec["key"])
+                self._sync_subject(
+                    "events",
+                    found,
+                    self.subject(spec["subject"]),
+                    "event %s" % spec["key"],
+                )
                 continue
             created = self.api.post("events", [self._event_doc(spec)])
             ids[spec["key"]] = created["_id"]
             count = spec.get("repeat", {}).get("count", 1)
-            log("created event %s (%s, %d occurrence%s)" % (spec["key"], spec["name"], count, "" if count == 1 else "s"), 2)
+            log(
+                "created event %s (%s, %d occurrence%s)"
+                % (spec["key"], spec["name"], count, "" if count == 1 else "s"),
+                2,
+            )
         return ids
 
     def _sync_subject(self, resource, items, subject, label):
         """The taxonomy values decide which client sees an entry in the portal, so they are the one
-        part of an existing entry the seed keeps authoritative."""
+        part of an existing entry the seed keeps authoritative.
+        """
         stale = [item for item in items if item.get("subject") != subject]
         if not stale:
             log("unchanged %s" % label, 2)
             return
         for item in stale:
-            self.api.patch(resource, item["_id"], {"subject": subject}, etag=item.get("_etag"))
+            self.api.patch(
+                resource, item["_id"], {"subject": subject}, etag=item.get("_etag")
+            )
         log("retagged %s" % label, 2)
 
     def _request_doc(self, spec, agendas, events):
-        coverages = [self._coverage_doc(deliverable) for deliverable in spec["deliverables"]]
-        event = next((e for e in self._event_specs() if e["key"] == spec.get("event")), None)
+        coverages = [
+            self._coverage_doc(deliverable) for deliverable in spec["deliverables"]
+        ]
+        event = next(
+            (e for e in self._event_specs() if e["key"] == spec.get("event")), None
+        )
         if event and events.get(spec["event"]):
             planning_date = iso(utc_at(days=event["days"], hour=event["hour"]))
         else:
-            planning_date = min(coverage["planning"]["scheduled"] for coverage in coverages)
+            planning_date = min(
+                coverage["planning"]["scheduled"] for coverage in coverages
+            )
         doc = {
             "guid": self.guid_prefix + "request:" + spec["slugline"],
             "name": spec["name"],
@@ -872,19 +1234,26 @@ class Seeder:
             "language": self.market.language,
             "ednote": spec["ednote"],
             "internal_note": spec["internal_note"],
-            "agendas": [str(agendas[spec["agenda"]])] if spec.get("agenda") in agendas else [],
+            "agendas": (
+                [str(agendas[spec["agenda"]])] if spec.get("agenda") in agendas else []
+            ),
             "subject": self.subject(spec["subject"]),
             "urgency": spec["urgency"],
             "coverages": coverages,
         }
         if event and events.get(spec["event"]):
-            doc["related_events"] = [{"_id": str(events[spec["event"]]), "link_type": "primary"}]
+            doc["related_events"] = [
+                {"_id": str(events[spec["event"]]), "link_type": "primary"}
+            ]
         return doc
 
     def _coverage_doc(self, deliverable):
         return {
             "workflow_status": "active",
-            "news_coverage_status": {"qcode": "ncostat:int", "name": "coverage intended"},
+            "news_coverage_status": {
+                "qcode": "ncostat:int",
+                "name": "coverage intended",
+            },
             "planning": {
                 "g2_content_type": "text",
                 "slugline": deliverable["ref"],
@@ -896,39 +1265,79 @@ class Seeder:
                 "language": self.market.language,
                 "priority": deliverable.get("priority", 2),
             },
-            "assigned_to": {"desk": str(self.desk_id(deliverable["desk"])), "user": str(self.user_id(deliverable["user"])), "state": "assigned"},
+            "assigned_to": {
+                "desk": str(self.desk_id(deliverable["desk"])),
+                "user": str(self.user_id(deliverable["user"])),
+                "state": "assigned",
+            },
         }
 
     def _requests(self, agendas, events):
         log("Client requests, deliverables and taskings", 1)
-        by_slugline = {item.get("slugline"): item for item in self.api.find_all("planning", max_results=500)}
+        by_slugline = {
+            item.get("slugline"): item
+            for item in self.api.find_all("planning", max_results=500)
+        }
         created = {}
         for spec in self._request_specs():
             item = by_slugline.get(spec["slugline"])
             if item:
-                self._sync_subject("planning", [item], self.subject(spec["subject"]), "request %s" % spec["slugline"])
+                self._sync_subject(
+                    "planning",
+                    [item],
+                    self.subject(spec["subject"]),
+                    "request %s" % spec["slugline"],
+                )
             else:
-                item = self.api.post("planning", self._request_doc(spec, agendas, events))
-                log("created request %s with %d deliverable(s)" % (spec["slugline"], len(spec["deliverables"])), 2)
+                item = self.api.post(
+                    "planning", self._request_doc(spec, agendas, events)
+                )
+                log(
+                    "created request %s with %d deliverable(s)"
+                    % (spec["slugline"], len(spec["deliverables"])),
+                    2,
+                )
             created[spec["slugline"]] = item["_id"]
             self._drive_taskings(spec, item)
         return created
 
     def _drive_taskings(self, spec, item):
         for deliverable in spec["deliverables"]:
-            coverage = next((c for c in item.get("coverages") or [] if (c.get("planning") or {}).get("slugline") == deliverable["ref"]), None)
+            coverage = next(
+                (
+                    c
+                    for c in item.get("coverages") or []
+                    if (c.get("planning") or {}).get("slugline") == deliverable["ref"]
+                ),
+                None,
+            )
             if not coverage:
-                self.note("Request %s has no deliverable %s, so its tasking was not touched." % (spec["slugline"], deliverable["ref"]))
+                self.note(
+                    "Request %s has no deliverable %s, so its tasking was not touched."
+                    % (spec["slugline"], deliverable["ref"])
+                )
                 continue
             assigned_to = coverage.get("assigned_to") or {}
             assignment_id = assigned_to.get("assignment_id")
             if not assignment_id:
-                self.note("Deliverable %s came back without a tasking." % deliverable["ref"])
+                self.note(
+                    "Deliverable %s came back without a tasking." % deliverable["ref"]
+                )
                 continue
             try:
-                self._advance_tasking(deliverable, assignment_id, assigned_to.get("state"))
+                self._advance_tasking(
+                    deliverable, assignment_id, assigned_to.get("state")
+                )
             except ApiError as err:
-                self.note("Could not move tasking %s to %s: %s %s" % (deliverable["ref"], deliverable["state"], err.status, err.body[:200]))
+                self.note(
+                    "Could not move tasking %s to %s: %s %s"
+                    % (
+                        deliverable["ref"],
+                        deliverable["state"],
+                        err.status,
+                        err.body[:200],
+                    )
+                )
 
     def _advance_tasking(self, deliverable, assignment_id, state):
         """Walk one tasking to its demo state through the real workflow, and no further.
@@ -944,22 +1353,47 @@ class Seeder:
             return
         if target == "linked":
             # The released report keeps its author; only the delivery is recorded.
-            self.api.post("assignments/link", [{"assignment_id": str(assignment_id), "item_id": self.guid_prefix + deliverable["link"], "reassign": False}])
-            log("tasking %s delivered by linking %s" % (deliverable["ref"], deliverable["link"]), 3)
+            self.api.post(
+                "assignments/link",
+                [
+                    {
+                        "assignment_id": str(assignment_id),
+                        "item_id": self.guid_prefix + deliverable["link"],
+                        "reassign": False,
+                    }
+                ],
+            )
+            log(
+                "tasking %s delivered by linking %s"
+                % (deliverable["ref"], deliverable["link"]),
+                3,
+            )
             return
         if state == "assigned":
             payload = {"assignment_id": str(assignment_id)}
-            template = self.template(deliverable["template"]) if deliverable.get("template") else None
+            template = (
+                self.template(deliverable["template"])
+                if deliverable.get("template")
+                else None
+            )
             if template:
                 payload["template_name"] = template["template_name"]
             self._session(deliverable["user"]).post("assignments/content", [payload])
             state = "in_progress"
-            log("tasking %s started by %s" % (deliverable["ref"], deliverable["user"]), 3)
+            log(
+                "tasking %s started by %s" % (deliverable["ref"], deliverable["user"]),
+                3,
+            )
             if target == "in_progress":
                 return
         if target == "completed" and state in ("in_progress", "submitted"):
             assignment = self.api.get_item("assignments", str(assignment_id))
-            self.api.patch("assignments/complete", str(assignment_id), {}, etag=assignment.get("_etag"))
+            self.api.patch(
+                "assignments/complete",
+                str(assignment_id),
+                {},
+                etag=assignment.get("_etag"),
+            )
             log("tasking %s completed" % deliverable["ref"], 3)
             return
         log("tasking %s is %s" % (deliverable["ref"], state), 3)
@@ -967,18 +1401,27 @@ class Seeder:
     def _post_to_portal(self, events, requests):
         """Post the client-visible part of the calendar. Posting is what hands an entry to the
         recipients, so anything left unposted stays inside the firm. Events are posted unless they
-        say `post: false`; requests only when they say `post: true`."""
+        say `post: false`; requests only when they say `post: true`.
+        """
         log("Releasing the calendar to the portal", 1)
         for spec in self._event_specs():
             if spec.get("post") is False:
                 log("event %s stays internal" % spec["key"], 2)
                 continue
-            self._post_one("events", events.get(spec["key"]), spec["key"], "event", update_method="all" if spec.get("repeat") else None)
+            self._post_one(
+                "events",
+                events.get(spec["key"]),
+                spec["key"],
+                "event",
+                update_method="all" if spec.get("repeat") else None,
+            )
         for spec in self._request_specs():
             if not spec.get("post"):
                 log("request %s stays internal" % spec["slugline"], 2)
                 continue
-            self._post_one("planning", requests.get(spec["slugline"]), spec["slugline"], "planning")
+            self._post_one(
+                "planning", requests.get(spec["slugline"]), spec["slugline"], "planning"
+            )
 
     def _post_one(self, resource, item_id, label, field, update_method=None):
         if not item_id:
@@ -999,18 +1442,25 @@ class Seeder:
             self.api.post("%s/post" % resource, doc)
             log("released %s" % label, 2)
         except ApiError as err:
-            self.note("Could not release %s: %s %s" % (label, err.status, err.body[:200]))
+            self.note(
+                "Could not release %s: %s %s" % (label, err.status, err.body[:200])
+            )
 
     # -- sample reports -----------------------------------------------------------------------------
 
     def _content_entries(self):
-        for type_id, relative in (self.market.get("fiction.sample_content.reports") or {}).items():
+        for type_id, relative in (
+            self.market.get("fiction.sample_content.reports") or {}
+        ).items():
             with open(self.market.path(relative), encoding="utf-8") as handle:
                 for entry in json.load(handle):
                     yield entry, type_id
 
     def _default_type(self, entry):
-        return entry.get("report_type") or M.team(self.market, entry["desk"])["default_report_type"]
+        return (
+            entry.get("report_type")
+            or M.team(self.market, entry["desk"])["default_report_type"]
+        )
 
     def _article(self, entry, type_id):
         pairs = []
@@ -1023,16 +1473,25 @@ class Seeder:
             body = entry["body_html"]
         else:
             skeleton = M.report_type(self.market, type_id).get("body_skeleton", "")
-            body = "".join("<h2>%s</h2><p>%s</p>" % (heading, entry.get(heading.lower().replace(" ", "_"), "")) for heading in M.body_headings(skeleton))
+            body = "".join(
+                "<h2>%s</h2><p>%s</p>"
+                % (heading, entry.get(heading.lower().replace(" ", "_"), ""))
+                for heading in M.body_headings(skeleton)
+            )
 
         extra = {}
         for field in self.market.get("custom_text_fields") or []:
             value = entry.get(field["id"])
             if value:
-                extra[field["id"]] = html_list(value) if isinstance(value, list) else value
+                extra[field["id"]] = (
+                    html_list(value) if isinstance(value, list) else value
+                )
 
         created = utc_iso(hours_ago=entry.get("hours_ago", 0))
-        level = self.severity_urgency.get(entry.get(self.severity_scheme or "severity"), M.default_urgency(self.market))
+        level = self.severity_urgency.get(
+            entry.get(self.severity_scheme or "severity"),
+            M.default_urgency(self.market),
+        )
         doc = {
             "guid": self.guid_prefix + entry["reference"],
             "type": "text",
@@ -1052,7 +1511,10 @@ class Seeder:
             "versioncreated": created,
             "task": {
                 "desk": self.desk_id(entry["desk"]),
-                "stage": self.stage_id(entry["desk"], M.stage_named(self.market, entry["desk"], entry["workflow"])),
+                "stage": self.stage_id(
+                    entry["desk"],
+                    M.stage_named(self.market, entry["desk"], entry["workflow"]),
+                ),
                 "user": self.user_id(entry["author"]),
             },
         }
@@ -1062,12 +1524,22 @@ class Seeder:
 
     def _released(self, entry):
         """An entry whose stage closes its tasking (task status `done`) is released after creation."""
-        done = {stage for stage, status in (self.market.get("fiction.stage_task_status") or {}).items() if status == "done"}
-        return M.stage_named(self.market, entry["desk"], entry["workflow"]) in done or entry["workflow"].lower() == "released"
+        done = {
+            stage
+            for stage, status in (
+                self.market.get("fiction.stage_task_status") or {}
+            ).items()
+            if status == "done"
+        }
+        return (
+            M.stage_named(self.market, entry["desk"], entry["workflow"]) in done
+            or entry["workflow"].lower() == "released"
+        )
 
     def section_content(self):
         """Creates what is missing and releases only what it created, so a second run releases
-        nothing. A release reaches every recipient it matches: the portal and client emails."""
+        nothing. A release reaches every recipient it matches: the portal and client emails.
+        """
         log("Sample reports")
         created_ids = {}
         published = []
@@ -1075,19 +1547,28 @@ class Seeder:
             guid = self.guid_prefix + entry["reference"]
             existing = self.api.get_item("archive", guid)
             if existing:
-                log("report %s already exists (%s)" % (entry["reference"], existing.get("state")), 1)
+                log(
+                    "report %s already exists (%s)"
+                    % (entry["reference"], existing.get("state")),
+                    1,
+                )
                 created_ids[entry["reference"]] = existing["_id"]
                 continue
             item = self.api.post("archive", self._article(entry, type_id))
             created_ids[entry["reference"]] = item["_id"]
-            log("created %s %s (%s)" % (type_id, entry["reference"], entry["workflow"]), 1)
+            log(
+                "created %s %s (%s)" % (type_id, entry["reference"], entry["workflow"]),
+                1,
+            )
             if self._released(entry):
                 published.append((entry, item))
 
         if published:
             log("Releasing", 1)
         for entry, item in published:
-            if self._release(self.api, item["_id"], entry["reference"], etag=item.get("_etag")):
+            if self._release(
+                self.api, item["_id"], entry["reference"], etag=item.get("_etag")
+            ):
                 log("released %s" % entry["reference"], 2)
 
         self._review_comments(created_ids)
@@ -1102,7 +1583,9 @@ class Seeder:
                 return False
             etag = item.get("_etag")
         try:
-            session.patch("archive/publish", str(item_id), {"state": "published"}, etag=etag)
+            session.patch(
+                "archive/publish", str(item_id), {"state": "published"}, etag=etag
+            )
             return True
         except ApiError as err:
             self.note("Could not release %s: %s" % (label, err.body[:300]))
@@ -1110,12 +1593,17 @@ class Seeder:
 
     def _review_comments(self, created_ids):
         """Comments are attributed to the session user, so the reviewer signs in and posts its own.
-        A comment already there is not posted again."""
+        A comment already there is not posted again.
+        """
         spec = self.market.get("fiction.sample_content.review_comment") or {}
         if not spec.get("user"):
             return
         stage = (spec.get("stage") or "review").lower()
-        in_review = [(entry, created_ids.get(entry["reference"])) for entry, _ in self._content_entries() if entry["workflow"].lower() == stage]
+        in_review = [
+            (entry, created_ids.get(entry["reference"]))
+            for entry, _ in self._content_entries()
+            if entry["workflow"].lower() == stage
+        ]
         in_review = [(entry, item_id) for entry, item_id in in_review if item_id]
         if not in_review:
             return
@@ -1123,7 +1611,10 @@ class Seeder:
         try:
             reviewer = self._session(spec["user"])
         except ApiError as err:
-            self.note("Could not sign in as %s to leave review comments: %s" % (spec["user"], err.status))
+            self.note(
+                "Could not sign in as %s to leave review comments: %s"
+                % (spec["user"], err.status)
+            )
             return
         for entry, item_id in in_review:
             present = self.api.find_all("item_comments", {"item": str(item_id)})
@@ -1131,10 +1622,14 @@ class Seeder:
                 log("%s already carries the review comment" % entry["reference"], 2)
                 continue
             try:
-                reviewer.post("item_comments", {"item": str(item_id), "text": spec["text"]})
+                reviewer.post(
+                    "item_comments", {"item": str(item_id), "text": spec["text"]}
+                )
                 log("commented on %s" % entry["reference"], 2)
             except ApiError as err:
-                self.note("Could not comment on %s: %s" % (entry["reference"], err.status))
+                self.note(
+                    "Could not comment on %s: %s" % (entry["reference"], err.status)
+                )
 
     def _mark_for_briefing(self, created_ids):
         spec = self.market.get("briefing_list") or {}
@@ -1157,27 +1652,44 @@ class Seeder:
             if not item_id:
                 continue
             item = self.api.get_item("archive", str(item_id))
-            if str(highlight["_id"]) in [str(mark) for mark in (item or {}).get("highlights") or []]:
+            if str(highlight["_id"]) in [
+                str(mark) for mark in (item or {}).get("highlights") or []
+            ]:
                 log("%s already on the briefing list" % entry["reference"], 2)
                 continue
             try:
                 # Posting the same pair twice unmarks it, hence the check above.
-                self.api.post("marked_for_highlights", {"highlights": [str(highlight["_id"])], "marked_item": str(item_id)})
+                self.api.post(
+                    "marked_for_highlights",
+                    {
+                        "highlights": [str(highlight["_id"])],
+                        "marked_item": str(item_id),
+                    },
+                )
                 log("added %s to %s" % (entry["reference"], spec["name"]), 2)
             except ApiError as err:
-                self.note("Could not add %s to the briefing list: %s" % (entry["reference"], err.status))
+                self.note(
+                    "Could not add %s to the briefing list: %s"
+                    % (entry["reference"], err.status)
+                )
 
     # -- triage -------------------------------------------------------------------------------------
 
     def section_triage(self):
         """Severity on the native field, the cross-team review queue, and enough work in progress
-        for the queue to be worth looking at. Everything here is a create-if-missing or a patch."""
+        for the queue to be worth looking at. Everything here is a create-if-missing or a patch.
+        """
         triage = self.market.get("superdesk.triage") or {}
         if not triage:
             return
         log("Triage")
-        relabelled = {self.market.get("severity.native_field") or "urgency", self.severity_scheme}
-        self._upsert_vocabularies([v for v in self._vocabularies() if v["_id"] in relabelled])
+        relabelled = {
+            self.market.get("severity.native_field") or "urgency",
+            self.severity_scheme,
+        }
+        self._upsert_vocabularies(
+            [v for v in self._vocabularies() if v["_id"] in relabelled]
+        )
         self._triage_reports()
         self._triage_existing_reports(triage.get("severity_for_tasking_reports") or {})
         search_id = self._review_queue_search(triage.get("review_queue") or {})
@@ -1194,7 +1706,11 @@ class Seeder:
                 log("report %s already exists" % entry["reference"], 2)
                 continue
             self.api.post("archive", self._article(entry, self._default_type(entry)))
-            log("created %s in %s / %s" % (entry["reference"], entry["desk"], entry["workflow"]), 2)
+            log(
+                "created %s in %s / %s"
+                % (entry["reference"], entry["desk"], entry["workflow"]),
+                2,
+            )
 
     def _triage_existing_reports(self, severity_for):
         """Bring every unreleased report in line: the native field mirrors the severity taxonomy, and
@@ -1206,13 +1722,27 @@ class Seeder:
         log("Severity on reports already on the instance", 1)
         native = self.market.get("severity.native_field") or "urgency"
         scheme = self.severity_scheme
-        query = {"query": {"match_all": {}}, "size": 200, "sort": [{"versioncreated": "desc"}]}
-        for item in self.api.get("archive", {"source": json.dumps(query)}).get("_items") or []:
-            if item.get("state") in ("spiked", "killed", "recalled", "published", "corrected"):
+        query = {
+            "query": {"match_all": {}},
+            "size": 200,
+            "sort": [{"versioncreated": "desc"}],
+        }
+        for item in (
+            self.api.get("archive", {"source": json.dumps(query)}).get("_items") or []
+        ):
+            if item.get("state") in (
+                "spiked",
+                "killed",
+                "recalled",
+                "published",
+                "corrected",
+            ):
                 continue
             reference = item.get("slugline")
             subject = list(item.get("subject") or [])
-            severity = next((t.get("qcode") for t in subject if t.get("scheme") == scheme), None)
+            severity = next(
+                (t.get("qcode") for t in subject if t.get("scheme") == scheme), None
+            )
             updates = {}
             if severity is None and reference in severity_for:
                 severity = severity_for[reference]
@@ -1226,14 +1756,18 @@ class Seeder:
                     updates[field] = level
             if not updates:
                 continue
-            if item.get("lock_user") and str(item["lock_user"]) != str(self.api.user_id):
+            if item.get("lock_user") and str(item["lock_user"]) != str(
+                self.api.user_id
+            ):
                 self.note("%s is locked by another user, severity not set." % reference)
                 continue
             try:
                 self.api.patch("archive", item["_id"], updates, etag=item.get("_etag"))
                 log("%s set to %s" % (reference, severity), 2)
             except ApiError as err:
-                self.note("Could not set severity on %s: %s" % (reference, err.body[:200]))
+                self.note(
+                    "Could not set severity on %s: %s" % (reference, err.body[:200])
+                )
 
     def _review_queue_search(self, spec):
         """One saved search over the review stages of every team.
@@ -1258,18 +1792,31 @@ class Seeder:
                     "raw": "task.stage:(%s)" % " OR ".join(stages),
                     "repo": "archive",
                     "spike": "exclude",
-                    "sort": spec.get("sort", "%s:asc" % (self.market.get("severity.native_field") or "urgency")),
+                    "sort": spec.get(
+                        "sort",
+                        "%s:asc"
+                        % (self.market.get("severity.native_field") or "urgency"),
+                    ),
                 }
             },
         }
-        existing = next((s for s in self.api.find_all("all_saved_searches") if s.get("name") == spec["name"]), None)
+        existing = next(
+            (
+                s
+                for s in self.api.find_all("all_saved_searches")
+                if s.get("name") == spec["name"]
+            ),
+            None,
+        )
         if not existing:
             created = self.api.post("saved_searches", doc)
             log("created the saved search %r" % spec["name"], 2)
             return created["_id"]
         updates = {k: v for k, v in doc.items() if existing.get(k) != v}
         if updates:
-            self.api.patch("saved_searches", existing["_id"], updates, etag=existing.get("_etag"))
+            self.api.patch(
+                "saved_searches", existing["_id"], updates, etag=existing.get("_etag")
+            )
             log("updated the saved search %r" % spec["name"], 2)
         else:
             log("saved search %r unchanged" % spec["name"], 2)
@@ -1279,7 +1826,8 @@ class Seeder:
         """A custom workspace holding the review queue. Its monitoring groups live in the owner's
         `agg:view` preference rather than on the workspace, and a workspace may only be created by its
         owner, so every listed user gets a session of their own. The account running the seed comes
-        first when it is listed."""
+        first when it is listed.
+        """
         log("Triage workspace", 1)
         usernames = list(spec.get("users") or [])
         if self.api.username in usernames:
@@ -1288,14 +1836,28 @@ class Seeder:
         for username in usernames:
             try:
                 session = self._session(username)
-                user_id = session.user_id if session is not self.api else self.api.user_id
+                user_id = (
+                    session.user_id if session is not self.api else self.api.user_id
+                )
                 self._triage_workspace(spec["name"], user_id, session, search_id)
             except ApiError as err:
-                self.note("Could not build the triage workspace for %s: %s" % (username, err.body[:200]))
+                self.note(
+                    "Could not build the triage workspace for %s: %s"
+                    % (username, err.body[:200])
+                )
 
     def _triage_workspace(self, name, user_id, session, search_id):
-        existing = next((w for w in session.find_all("workspaces") if w.get("name") == name and str(w.get("user")) == str(user_id)), None)
-        workspace = existing or session.post("workspaces", {"name": name, "user": str(user_id)})
+        existing = next(
+            (
+                w
+                for w in session.find_all("workspaces")
+                if w.get("name") == name and str(w.get("user")) == str(user_id)
+            ),
+            None,
+        )
+        workspace = existing or session.post(
+            "workspaces", {"name": name, "user": str(user_id)}
+        )
         groups = [{"_id": str(search_id), "type": "search", "max_items": 50}]
         preferences = session.get_item("preferences", session.session_id) or {}
         view = dict((preferences.get("user_preferences") or {}).get("agg:view") or {})
@@ -1303,7 +1865,9 @@ class Seeder:
             log("workspace %r for %s unchanged" % (name, user_id), 2)
             return
         view[str(workspace["_id"])] = {"groups": groups}
-        session.patch("preferences", session.session_id, {"user_preferences": {"agg:view": view}})
+        session.patch(
+            "preferences", session.session_id, {"user_preferences": {"agg:view": view}}
+        )
         log("workspace %r set for %s" % (name, user_id), 2)
 
     # -- workflow walk ------------------------------------------------------------------------------
@@ -1325,11 +1889,19 @@ class Seeder:
         for entry in entries:
             start = self._workflow_pending_from(entry)
             if start is None:
-                log("%s already walked, final state %s" % (entry["reference"], entry.get("final", "")), 1)
+                log(
+                    "%s already walked, final state %s"
+                    % (entry["reference"], entry.get("final", "")),
+                    1,
+                )
                 continue
-            steps = [{"at": entry["at"], "op": "create", "user": entry["author"]}] + entry["steps"]
+            steps = [
+                {"at": entry["at"], "op": "create", "user": entry["author"]}
+            ] + entry["steps"]
             for index in range(start, len(steps)):
-                queue.append((steps[index]["at"], entry["reference"], index, entry, steps[index]))
+                queue.append(
+                    (steps[index]["at"], entry["reference"], index, entry, steps[index])
+                )
         if not queue:
             log("every report has already been walked", 1)
             return
@@ -1338,7 +1910,11 @@ class Seeder:
         # together and their visits overlap the way a real shift does.
         queue.sort(key=lambda row: (row[0], row[1], row[2]))
         first_at = queue[0][0]
-        log("%d operations over about %d seconds (pace %gs)" % (len(queue), round((queue[-1][0] - first_at) * self.pace), self.pace), 1)
+        log(
+            "%d operations over about %d seconds (pace %gs)"
+            % (len(queue), round((queue[-1][0] - first_at) * self.pace), self.pace),
+            1,
+        )
         started = time.monotonic()
         for at, _reference, _index, entry, step in queue:
             delay = started + (at - first_at) * self.pace - time.monotonic()
@@ -1348,16 +1924,30 @@ class Seeder:
 
         log("Final state", 1)
         for entry in entries:
-            log("%-14s %-9s %-8s %s" % (entry["reference"], entry["desk"], entry.get(self.severity_scheme or "severity", ""), entry.get("final", "")), 2)
+            log(
+                "%-14s %-9s %-8s %s"
+                % (
+                    entry["reference"],
+                    entry["desk"],
+                    entry.get(self.severity_scheme or "severity", ""),
+                    entry.get("final", ""),
+                ),
+                2,
+            )
 
     def _workflow_entries(self):
-        return self.market.content("superdesk.workflow.walk_items") or self.market.content("fiction.sample_content.workflow_walk")
+        return self.market.content(
+            "superdesk.workflow.walk_items"
+        ) or self.market.content("fiction.sample_content.workflow_walk")
 
     def _workflow_pending_from(self, entry):
         """Index of the first step still to run, or None when the item is finished. Moves are counted
-        from `archive_history`, an edit is recognised by the text it adds, a release by its record."""
+        from `archive_history`, an edit is recognised by the text it adds, a release by its record.
+        """
         guid = self.guid_prefix + entry["reference"]
-        history = self.api.find_all("archive_history", {"item_id": guid}, max_results=200)
+        history = self.api.find_all(
+            "archive_history", {"item_id": guid}, max_results=200
+        )
         if not history:
             return 0
         if any(record.get("operation") == "publish" for record in history):
@@ -1385,17 +1975,41 @@ class Seeder:
             session = self._session(step["user"])
             if step["op"] == "create":
                 session.post("archive", self._article(entry, self._default_type(entry)))
-                log("%s created by %s in %s / %s" % (reference, step["user"], entry["desk"], entry["workflow"].title()), 1)
+                log(
+                    "%s created by %s in %s / %s"
+                    % (
+                        reference,
+                        step["user"],
+                        entry["desk"],
+                        entry["workflow"].title(),
+                    ),
+                    1,
+                )
             elif step["op"] == "move":
-                session.post("archive/%s/move" % guid, {"task": {"desk": str(self.desk_id(step["desk"])), "stage": str(self.stage_id(step["desk"], step["stage"]))}})
-                log("%s moved to %s / %s by %s" % (reference, step["desk"], step["stage"], step["user"]), 1)
+                session.post(
+                    "archive/%s/move" % guid,
+                    {
+                        "task": {
+                            "desk": str(self.desk_id(step["desk"])),
+                            "stage": str(self.stage_id(step["desk"], step["stage"])),
+                        }
+                    },
+                )
+                log(
+                    "%s moved to %s / %s by %s"
+                    % (reference, step["desk"], step["stage"], step["user"]),
+                    1,
+                )
             elif step["op"] == "edit":
                 self._workflow_edit(session, guid, step, reference)
             elif step["op"] == "release":
                 if self._release(session, guid, reference):
                     log("%s released by %s" % (reference, step["user"]), 1)
         except ApiError as err:
-            self.note("Workflow step %s on %s failed: %s %s" % (step["op"], reference, err.status, err.body[:200]))
+            self.note(
+                "Workflow step %s on %s failed: %s %s"
+                % (step["op"], reference, err.status, err.body[:200])
+            )
 
     def _workflow_edit(self, session, guid, step, reference):
         """A real change to the report, so the item gains a version and the history a record."""
@@ -1426,16 +2040,49 @@ def _comparable(value):
 
 
 def parse_args(argv):
-    parser = argparse.ArgumentParser(prog="seed", description="Seed a Superdesk instance from a market contract.")
-    parser.add_argument("--market", default=".", help="the market folder (contract.yaml or contract.json, content/)")
-    parser.add_argument("--dry-run", action="store_true", help="simulate an empty instance and print every request; nothing is sent")
-    parser.add_argument("--only", action="append", choices=SECTIONS + sorted(ALIASES), help="run only this section, repeatable; sections assume earlier ones already ran")
-    parser.add_argument("--url", default=os.environ.get("SUPERDESK_URL"), help="instance URL, or SUPERDESK_URL")
-    parser.add_argument("--yes", action="store_true", help="do not ask before writing to a live instance")
-    parser.add_argument("--verbose", action="store_true", help="also print read requests")
-    parser.add_argument("--quiet", action="store_true", help="dry run: do not print the request bodies")
-    parser.add_argument("--pace", type=float, help="seconds per unit of the workflow walk schedule (contract default); 0 runs it back to back")
-    parser.add_argument("--insecure", action="store_true", help="do not verify the TLS certificate")
+    parser = argparse.ArgumentParser(
+        prog="seed", description="Seed a Superdesk instance from a market contract."
+    )
+    parser.add_argument(
+        "--market",
+        default=".",
+        help="the market folder (contract.yaml or contract.json, content/)",
+    )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="simulate an empty instance and print every request; nothing is sent",
+    )
+    parser.add_argument(
+        "--only",
+        action="append",
+        choices=SECTIONS + sorted(ALIASES),
+        help="run only this section, repeatable; sections assume earlier ones already ran",
+    )
+    parser.add_argument(
+        "--url",
+        default=os.environ.get("SUPERDESK_URL"),
+        help="instance URL, or SUPERDESK_URL",
+    )
+    parser.add_argument(
+        "--yes",
+        action="store_true",
+        help="do not ask before writing to a live instance",
+    )
+    parser.add_argument(
+        "--verbose", action="store_true", help="also print read requests"
+    )
+    parser.add_argument(
+        "--quiet", action="store_true", help="dry run: do not print the request bodies"
+    )
+    parser.add_argument(
+        "--pace",
+        type=float,
+        help="seconds per unit of the workflow walk schedule (contract default); 0 runs it back to back",
+    )
+    parser.add_argument(
+        "--insecure", action="store_true", help="do not verify the TLS certificate"
+    )
     return parser.parse_args(argv)
 
 
@@ -1447,7 +2094,9 @@ def main(argv=None):
     args = parse_args(sys.argv[1:] if argv is None else argv)
     market = Market(args.market)
     ai_env = market.get("superdesk.ai.provider_key_env") or "AI_PROVIDER_KEY"
-    push_env = market.get("superdesk.recipients.portal.push_key_env") or "PORTAL_PUSH_KEY"
+    push_env = (
+        market.get("superdesk.recipients.portal.push_key_env") or "PORTAL_PUSH_KEY"
+    )
     password_env = demo_password_env(market)
     demo_password = os.environ.get(password_env)
     problems = M.check(market)
@@ -1460,8 +2109,15 @@ def main(argv=None):
 
     if args.dry_run:
         instance = SimInstance()
-        api = Superdesk(args.url or "https://superdesk.invalid", SimTransport(instance, echo=not args.quiet), verbose=args.verbose)
-        log("%s seed, dry run: an empty instance is simulated in memory and nothing is sent anywhere." % market.product)
+        api = Superdesk(
+            args.url or "https://superdesk.invalid",
+            SimTransport(instance, echo=not args.quiet),
+            verbose=args.verbose,
+        )
+        log(
+            "%s seed, dry run: an empty instance is simulated in memory and nothing is sent anywhere."
+            % market.product
+        )
         log("Every write is printed as `> METHOD path body`; secrets print as ***.")
         api.login(os.environ.get("SUPERDESK_USER", "admin"), "dry-run")
         demo_password = demo_password or "<%s>" % password_env
@@ -1469,12 +2125,23 @@ def main(argv=None):
         if not args.url:
             log("SUPERDESK_URL is not set.")
             return 2
-        api = Superdesk(args.url, HttpTransport(insecure=args.insecure), verbose=args.verbose)
+        api = Superdesk(
+            args.url, HttpTransport(insecure=args.insecure), verbose=args.verbose
+        )
         if not args.yes:
             host = urllib.parse.urlsplit(api.base_url).hostname or ""
-            answer = input("This writes to %s. Type the host name (%s) to go on: " % (api.base_url, host)) if sys.stdin.isatty() else ""
+            answer = (
+                input(
+                    "This writes to %s. Type the host name (%s) to go on: "
+                    % (api.base_url, host)
+                )
+                if sys.stdin.isatty()
+                else ""
+            )
             if not host or answer.strip() != host:
-                log("Not confirmed, nothing sent. Pass --yes when no one can answer the question.")
+                log(
+                    "Not confirmed, nothing sent. Pass --yes when no one can answer the question."
+                )
                 return 1
         user = os.environ.get("SUPERDESK_USER", "admin")
         password = os.environ.get("SUPERDESK_PASSWORD")
@@ -1486,7 +2153,13 @@ def main(argv=None):
         api.login(user, password)
         log("%s seed, signed in to %s as %s" % (market.product, api.base_url, user))
         if not demo_password and sys.stdin.isatty():
-            demo_password = getpass.getpass("Password for the demo staff (%s, empty to skip the sections that need it): " % password_env) or None
+            demo_password = (
+                getpass.getpass(
+                    "Password for the demo staff (%s, empty to skip the sections that need it): "
+                    % password_env
+                )
+                or None
+            )
 
     seeder = Seeder(
         api,
@@ -1530,5 +2203,8 @@ def main(argv=None):
         for note in seeder.notes:
             log("- %s" % note, 1)
     if args.dry_run:
-        log("%d write requests planned%s." % (api.transport.shown, " in the chosen sections" if args.only else ""))
+        log(
+            "%d write requests planned%s."
+            % (api.transport.shown, " in the chosen sections" if args.only else "")
+        )
     return 0

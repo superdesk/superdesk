@@ -237,7 +237,19 @@ ORGANIZATION_NAME = env("ORGANIZATION_NAME", "Town Hall Reporting Network")
 ORGANIZATION_NAME_ABBREVIATION = env("ORGANIZATION_NAME_ABBREVIATION", "THRN")
 NEWSML_PROVIDER_ID = env("NEWSML_PROVIDER_ID", "townhall-reporting.example")
 DEFAULT_LANGUAGE = env("DEFAULT_LANGUAGE", "en")
-VALIDATOR_MEDIA_METADATA = {'headline': {'required': False}, 'slugline': {'required': False}, 'alt_text': {'required': True}, 'anpa_category': {'required': False}, 'subject': {'required': False}, 'archive_description': {'required': False}, 'description_text': {'required': True, 'textarea': True}, 'byline': {'required': True}, 'copyrightholder': {'required': True}, 'usageterms': {'required': False}, 'copyrightnotice': {'required': False}}
+VALIDATOR_MEDIA_METADATA = {
+    "headline": {"required": False},
+    "slugline": {"required": False},
+    "alt_text": {"required": True},
+    "anpa_category": {"required": False},
+    "subject": {"required": False},
+    "archive_description": {"required": False},
+    "description_text": {"required": True, "textarea": True},
+    "byline": {"required": True},
+    "copyrightholder": {"required": True},
+    "usageterms": {"required": False},
+    "copyrightnotice": {"required": False},
+}
 DEFAULT_TIMEZONE = env("DEFAULT_TIMEZONE", "Europe/London")
 
 # Derived above from settings this block changes.

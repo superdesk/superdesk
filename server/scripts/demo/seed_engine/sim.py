@@ -8,6 +8,7 @@ and returned as sent. It is not a Superdesk: validation, privileges and search a
 Ids are derived from the document (`desks:Europe`, `archive:<guid>`), so two runs that create the
 same things get the same ids whatever order they create them in.
 """
+
 import copy
 import datetime
 import json
@@ -24,7 +25,9 @@ NAME_KEYS = ("_id", "guid", "username", "template_name", "name", "slugline")
 
 def develop_vocabularies():
     """`urgency` and `event_calendars` as origin/develop ships them in server/data/vocabularies.json."""
-    with open(os.path.join(HERE, "develop_vocabularies.json"), encoding="utf-8") as handle:
+    with open(
+        os.path.join(HERE, "develop_vocabularies.json"), encoding="utf-8"
+    ) as handle:
         return json.load(handle)
 
 
@@ -35,9 +38,19 @@ class SimInstance:
         self.session_users = {}
         self.clock = datetime.datetime(2026, 1, 1, tzinfo=datetime.timezone.utc)
         self.requests = []
-        for vocabulary in vocabularies if vocabularies is not None else develop_vocabularies():
+        for vocabulary in (
+            vocabularies if vocabularies is not None else develop_vocabularies()
+        ):
             self._store("vocabularies", copy.deepcopy(vocabulary))
-        self._store("users", {"_id": "users:%s" % admin, "username": admin, "display_name": admin, "user_type": "administrator"})
+        self._store(
+            "users",
+            {
+                "_id": "users:%s" % admin,
+                "username": admin,
+                "display_name": admin,
+                "user_type": "administrator",
+            },
+        )
 
     # -- storage -----------------------------------------------------------
 
@@ -86,7 +99,8 @@ class SimInstance:
         self._store(
             "archive_history",
             {
-                "_id": "archive_history:%d" % (len(self.collection("archive_history")) + 1),
+                "_id": "archive_history:%d"
+                % (len(self.collection("archive_history")) + 1),
                 "item_id": item["_id"],
                 "operation": operation,
                 "user_id": user_id,
@@ -112,7 +126,9 @@ class SimInstance:
             return {"_items": self._query(resource, params)}
         if method == "POST":
             if isinstance(body, list):
-                return {"_items": [self._create(resource, doc, user_id) for doc in body]}
+                return {
+                    "_items": [self._create(resource, doc, user_id) for doc in body]
+                }
             return self._create(resource, body, user_id)
         if method == "PATCH":
             return copy.deepcopy(self._update(resource, parts[1], body))
@@ -124,7 +140,9 @@ class SimInstance:
         docs = list(self.collection(resource).values())
         if "where" in params:
             where = json.loads(params["where"])
-            docs = [d for d in docs if all(_matches(d.get(k), v) for k, v in where.items())]
+            docs = [
+                d for d in docs if all(_matches(d.get(k), v) for k, v in where.items())
+            ]
         if "source" in params:
             docs.sort(key=lambda d: d.get("versioncreated") or "", reverse=True)
             limit = json.loads(params["source"]).get("size") or len(docs)
@@ -142,7 +160,10 @@ class SimInstance:
             self._history(created, "create", user_id, {"task": doc.get("task")})
             return copy.deepcopy(created)
         if resource == "stages" and not doc.get("_id"):
-            doc["_id"] = "stages:%s:%s" % (str(doc.get("desk")).split(":", 1)[-1], doc.get("name"))
+            doc["_id"] = "stages:%s:%s" % (
+                str(doc.get("desk")).split(":", 1)[-1],
+                doc.get("name"),
+            )
         created = self._store(resource, doc)
         hook = getattr(self, "_after_create_%s" % resource, None)
         if hook:
@@ -152,29 +173,58 @@ class SimInstance:
     # -- behaviour the seed depends on -------------------------------------
 
     def _after_create_desks(self, desk):
-        working = self._store("stages", {"_id": "stages:%s:working" % desk["name"], "name": "Working Stage", "desk": desk["_id"], "desk_order": 1})
-        incoming = self._store("stages", {"_id": "stages:%s:incoming" % desk["name"], "name": "Incoming Stage", "desk": desk["_id"], "desk_order": 2})
+        working = self._store(
+            "stages",
+            {
+                "_id": "stages:%s:working" % desk["name"],
+                "name": "Working Stage",
+                "desk": desk["_id"],
+                "desk_order": 1,
+            },
+        )
+        incoming = self._store(
+            "stages",
+            {
+                "_id": "stages:%s:incoming" % desk["name"],
+                "name": "Incoming Stage",
+                "desk": desk["_id"],
+                "desk_order": 2,
+            },
+        )
         desk["working_stage"] = working["_id"]
         desk["incoming_stage"] = incoming["_id"]
 
     def _after_create_stages(self, stage):
-        siblings = [s for s in self.collection("stages").values() if s.get("desk") == stage["desk"]]
+        siblings = [
+            s
+            for s in self.collection("stages").values()
+            if s.get("desk") == stage["desk"]
+        ]
         stage["desk_order"] = len(siblings)
 
     def _after_create_planning(self, item):
         for index, coverage in enumerate(item.get("coverages") or []):
-            coverage["coverage_id"] = "coverage:%s:%d" % (item.get("slugline"), index + 1)
+            coverage["coverage_id"] = "coverage:%s:%d" % (
+                item.get("slugline"),
+                index + 1,
+            )
             assigned = coverage.get("assigned_to")
             if not assigned:
                 continue
-            ref = (coverage.get("planning") or {}).get("slugline") or coverage["coverage_id"]
+            ref = (coverage.get("planning") or {}).get("slugline") or coverage[
+                "coverage_id"
+            ]
             assignment = self._store(
                 "assignments",
                 {
                     "_id": "assignments:%s" % ref,
                     "planning_item": item["_id"],
                     "coverage_item": coverage["coverage_id"],
-                    "assigned_to": {"desk": assigned.get("desk"), "user": assigned.get("user"), "state": "assigned"},
+                    "assigned_to": {
+                        "desk": assigned.get("desk"),
+                        "user": assigned.get("user"),
+                        "state": "assigned",
+                    },
                     "planning": copy.deepcopy(coverage.get("planning") or {}),
                 },
             )
@@ -189,7 +239,9 @@ class SimInstance:
     def _post_archive(self, parts, body, user_id):
         if not parts:
             if isinstance(body, list):
-                return {"_items": [self._create("archive", doc, user_id) for doc in body]}
+                return {
+                    "_items": [self._create("archive", doc, user_id) for doc in body]
+                }
             return self._create("archive", body, user_id)
         guid = parts[0]
         item = self.collection("archive").get(guid)
@@ -218,7 +270,11 @@ class SimInstance:
                 self._set_tasking_state(assignment, "completed")
                 continue
             template = next(
-                (t for t in self.collection("content_templates").values() if t.get("template_name") == entry.get("template_name")),
+                (
+                    t
+                    for t in self.collection("content_templates").values()
+                    if t.get("template_name") == entry.get("template_name")
+                ),
                 {"data": {}},
             )
             data = copy.deepcopy(template.get("data") or {})
@@ -230,7 +286,10 @@ class SimInstance:
                     "state": "in_progress",
                     "versioncreated": self._now(),
                     "assignment_id": assignment["_id"],
-                    "task": {"desk": assignment["assigned_to"].get("desk"), "user": user_id},
+                    "task": {
+                        "desk": assignment["assigned_to"].get("desk"),
+                        "user": user_id,
+                    },
                 }
             )
             self._create("archive", data, user_id)
@@ -253,7 +312,12 @@ class SimInstance:
     def _post_events(self, parts, body, user_id):
         if parts and parts[0] == "post":
             return self._pubstatus("events", body["event"], body)
-        return {"_items": [self._create("events", doc, user_id) for doc in (body if isinstance(body, list) else [body])]}
+        return {
+            "_items": [
+                self._create("events", doc, user_id)
+                for doc in (body if isinstance(body, list) else [body])
+            ]
+        }
 
     def _post_planning(self, parts, body, user_id):
         if parts and parts[0] == "post":
@@ -261,7 +325,11 @@ class SimInstance:
         return self._create("planning", body, user_id)
 
     def _pubstatus(self, resource, item_id, body):
-        return copy.deepcopy(self._update(resource, item_id, {"pubstatus": body.get("pubstatus", "usable")}))
+        return copy.deepcopy(
+            self._update(
+                resource, item_id, {"pubstatus": body.get("pubstatus", "usable")}
+            )
+        )
 
     def _post_marked_for_highlights(self, parts, body, user_id):
         item = self.collection("archive")[body["marked_item"]]
@@ -274,17 +342,35 @@ class SimInstance:
     # The endpoint is addressed by session, but what it stores belongs to the user.
 
     def _get_preferences(self, parts, body, user_id):
-        doc = self.collection("preferences").get(self.session_users.get(parts[0], parts[0]))
-        return dict(copy.deepcopy(doc), _id=parts[0]) if doc else {"_id": parts[0], "user_preferences": {}, "_etag": "etag:0"}
+        doc = self.collection("preferences").get(
+            self.session_users.get(parts[0], parts[0])
+        )
+        return (
+            dict(copy.deepcopy(doc), _id=parts[0])
+            if doc
+            else {"_id": parts[0], "user_preferences": {}, "_etag": "etag:0"}
+        )
 
     def _patch_preferences(self, parts, body, user_id):
         owner = self.session_users.get(parts[0], parts[0])
         if owner not in self.collection("preferences"):
-            self.collection("preferences")[owner] = {"_id": owner, "user_preferences": {}}
-        return dict(copy.deepcopy(self._update("preferences", owner, body)), _id=parts[0])
+            self.collection("preferences")[owner] = {
+                "_id": owner,
+                "user_preferences": {},
+            }
+        return dict(
+            copy.deepcopy(self._update("preferences", owner, body)), _id=parts[0]
+        )
 
     def _post_auth_db(self, parts, body, user_id):
-        user = next((u for u in self.collection("users").values() if u.get("username") == body["username"]), None)
+        user = next(
+            (
+                u
+                for u in self.collection("users").values()
+                if u.get("username") == body["username"]
+            ),
+            None,
+        )
         if user is None:
             raise ApiError("POST", "auth_db", 401, "unknown user %s" % body["username"])
         number = len(self.sessions) + 1
@@ -303,7 +389,8 @@ def _matches(value, wanted):
 
 class SimTransport:
     """Sends a request to a SimInstance and records it. `echo` prints every write; writes made while
-    `counting` is off (a silent replay of earlier sections) are not counted as planned."""
+    `counting` is off (a silent replay of earlier sections) are not counted as planned.
+    """
 
     def __init__(self, instance, echo=True):
         self.instance = instance
@@ -319,12 +406,39 @@ class SimTransport:
         if headers.get("Authorization"):
             import base64
 
-            token = base64.b64decode(headers["Authorization"].split(" ", 1)[1]).decode().rstrip(":")
+            token = (
+                base64.b64decode(headers["Authorization"].split(" ", 1)[1])
+                .decode()
+                .rstrip(":")
+            )
         user_id = self.instance.sessions.get(token)
-        actor = next((u["username"] for u in self.instance.collection("users").values() if u["_id"] == user_id), None)
+        actor = next(
+            (
+                u["username"]
+                for u in self.instance.collection("users").values()
+                if u["_id"] == user_id
+            ),
+            None,
+        )
         if method != "GET":
-            self.instance.requests.append({"actor": actor, "method": method, "path": path, "body": copy.deepcopy(body)})
+            self.instance.requests.append(
+                {
+                    "actor": actor,
+                    "method": method,
+                    "path": path,
+                    "body": copy.deepcopy(body),
+                }
+            )
             self.shown += 1 if self.counting else 0
             if self.echo and self.counting:
-                log("> %s %s%s %s" % (method, path, " (as %s)" % actor if actor else "", json.dumps(masked(body), ensure_ascii=False)), 2)
+                log(
+                    "> %s %s%s %s"
+                    % (
+                        method,
+                        path,
+                        " (as %s)" % actor if actor else "",
+                        json.dumps(masked(body), ensure_ascii=False),
+                    ),
+                    2,
+                )
         return self.instance.handle(method, path, params, copy.deepcopy(body), user_id)

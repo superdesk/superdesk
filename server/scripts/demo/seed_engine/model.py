@@ -5,6 +5,7 @@ templates, entitlement filters, products, recipients and AI actions. The seed ad
 The branch generator uses the same functions, so the vocabularies a branch ships and the ones
 the seed upserts cannot drift apart.
 """
+
 import copy
 import re
 import sys
@@ -14,10 +15,32 @@ import sys
 # type does not list is sent as {"enabled": false}: the server merges this default editor into
 # every profile save, and a field that is simply left out comes back switched on.
 DEFAULT_EDITOR_FIELDS = [
-    "slugline", "keywords", "language", "usageterms", "genre", "anpa_take_key", "place", "priority",
-    "urgency", "anpa_category", "subject", "company_codes", "ednote", "authors", "headline", "sms",
-    "abstract", "byline", "dateline", "body_html", "footer", "body_footer", "sign_off", "feature_media",
-    "media_description", "attachments",
+    "slugline",
+    "keywords",
+    "language",
+    "usageterms",
+    "genre",
+    "anpa_take_key",
+    "place",
+    "priority",
+    "urgency",
+    "anpa_category",
+    "subject",
+    "company_codes",
+    "ednote",
+    "authors",
+    "headline",
+    "sms",
+    "abstract",
+    "byline",
+    "dateline",
+    "body_html",
+    "footer",
+    "body_footer",
+    "sign_off",
+    "feature_media",
+    "media_description",
+    "attachments",
 ]
 
 
@@ -33,7 +56,11 @@ def taxonomy_vocabulary(spec):
         "_id": spec["id"],
         "display_name": spec["label"],
         "type": "manageable",
-        "selection_type": "single selection" if spec.get("selection") == "single" else "multi selection",
+        "selection_type": (
+            "single selection"
+            if spec.get("selection") == "single"
+            else "multi selection"
+        ),
         "unique_field": "qcode",
         "service": {"all": 1},
     }
@@ -41,12 +68,20 @@ def taxonomy_vocabulary(spec):
         doc["helper_text"] = spec["helper_text"]
     doc["init_version"] = spec.get("init_version", 1)
     doc["schema"] = {"name": {}, "qcode": {}}
-    doc["items"] = [{"is_active": True, "name": item["name"], "qcode": item["qcode"]} for item in spec["items"]]
+    doc["items"] = [
+        {"is_active": True, "name": item["name"], "qcode": item["qcode"]}
+        for item in spec["items"]
+    ]
     return doc
 
 
 def custom_text_vocabulary(spec):
-    doc = {"_id": spec["id"], "display_name": spec["label"], "type": "manageable", "field_type": "text"}
+    doc = {
+        "_id": spec["id"],
+        "display_name": spec["label"],
+        "type": "manageable",
+        "field_type": "text",
+    }
     if spec.get("helper_text"):
         doc["helper_text"] = spec["helper_text"]
     doc["init_version"] = spec.get("init_version", 1)
@@ -72,7 +107,13 @@ def severity_vocabulary(market, base):
                 doc["helper_text"] = severity["helper_text"]
     doc["init_version"] = base.get("init_version", 1) + 1
     doc["items"] = [
-        {"is_active": True, "name": level["name"], "short": level["short"], "color": level["colour"], "qcode": level["urgency"]}
+        {
+            "is_active": True,
+            "name": level["name"],
+            "short": level["short"],
+            "color": level["colour"],
+            "qcode": level["urgency"],
+        }
         for level in severity["levels"]
     ]
     return doc
@@ -80,12 +121,15 @@ def severity_vocabulary(market, base):
 
 def market_vocabularies(market, native_base):
     """Every vocabulary the market adds or changes: the relabelled native field first, as it sits
-    earlier in the shipped file, then the taxonomies, then the custom text fields."""
+    earlier in the shipped file, then the taxonomies, then the custom text fields.
+    """
     out = []
     if market.get("severity.levels"):
         out.append(severity_vocabulary(market, native_base))
     out.extend(taxonomy_vocabulary(spec) for spec in market.get("vocabularies") or [])
-    out.extend(custom_text_vocabulary(spec) for spec in market.get("custom_text_fields") or [])
+    out.extend(
+        custom_text_vocabulary(spec) for spec in market.get("custom_text_fields") or []
+    )
     return out
 
 
@@ -105,7 +149,10 @@ def merged_vocabulary_file(market, base_list):
 
 def vocabulary_names(market):
     """{scheme: {qcode: name}} for every custom taxonomy."""
-    return {spec["id"]: {item["qcode"]: item["name"] for item in spec["items"]} for spec in market.get("vocabularies") or []}
+    return {
+        spec["id"]: {item["qcode"]: item["name"] for item in spec["items"]}
+        for spec in market.get("vocabularies") or []
+    }
 
 
 def vocabulary_labels(market):
@@ -113,7 +160,10 @@ def vocabulary_labels(market):
 
 
 def severity_urgency(market):
-    return {level["qcode"]: level["urgency"] for level in market.get("severity.levels") or []}
+    return {
+        level["qcode"]: level["urgency"]
+        for level in market.get("severity.levels") or []
+    }
 
 
 def default_urgency(market):
@@ -140,7 +190,9 @@ def report_type_fields(market, spec):
     if spec.get("fields"):
         fields = copy.deepcopy(spec["fields"])
     elif spec.get("fields_like"):
-        fields = copy.deepcopy(report_type_fields(market, report_type(market, spec["fields_like"])))
+        fields = copy.deepcopy(
+            report_type_fields(market, report_type(market, spec["fields_like"]))
+        )
     else:
         die("report type %s has no fields" % spec["id"])
     if spec.get("body_label"):
@@ -177,7 +229,12 @@ def content_profile(market, spec):
 
         required = bool(field.get("required"))
         if field["kind"] == "taxonomy":
-            schema[name] = {"type": "list", "required": required, "readonly": False, "default": []}
+            schema[name] = {
+                "type": "list",
+                "required": required,
+                "readonly": False,
+                "default": [],
+            }
         elif field["kind"] == "custom_text":
             schema[name] = {"type": "text", "required": required}
         elif name == native:
@@ -197,7 +254,11 @@ def content_profile(market, spec):
 
 
 def disabled_default_fields(editor):
-    return {name: {"enabled": False} for name in DEFAULT_EDITOR_FIELDS if not (editor.get(name) or {}).get("enabled")}
+    return {
+        name: {"enabled": False}
+        for name in DEFAULT_EDITOR_FIELDS
+        if not (editor.get(name) or {}).get("enabled")
+    }
 
 
 def body_headings(skeleton):
@@ -215,12 +276,18 @@ def roles(market):
         if name in seen:
             die("role %r inherits from itself" % name)
         if role.get("inherits"):
-            return privileges(role["inherits"], seen + (name,)) + list(role.get("privileges_add") or [])
+            return privileges(role["inherits"], seen + (name,)) + list(
+                role.get("privileges_add") or []
+            )
         return list(role.get("privileges") or [])
 
     out = []
     for name, role in specs.items():
-        doc = {"name": name, "description": role.get("description", ""), "privileges": privileges(name)}
+        doc = {
+            "name": name,
+            "description": role.get("description", ""),
+            "privileges": privileges(name),
+        }
         for optional in ("author_role", "editor_role"):
             if role.get(optional):
                 doc[optional] = role[optional]
@@ -233,7 +300,9 @@ def staff(market):
 
 
 def staff_email(market, username):
-    pattern = market.get("fiction.staff_email") or "{username}@" + market.require("fiction.firm.email_domain")
+    pattern = market.get("fiction.staff_email") or "{username}@" + market.require(
+        "fiction.firm.email_domain"
+    )
     return pattern.format(username=username)
 
 
@@ -261,7 +330,11 @@ def stage_named(market, team_name, workflow):
 
 def subject_pairs(subject):
     """{scheme: [qcodes]} to [(scheme, qcode)], in the order written."""
-    return [(scheme, qcode) for scheme, qcodes in (subject or {}).items() for qcode in qcodes]
+    return [
+        (scheme, qcode)
+        for scheme, qcodes in (subject or {}).items()
+        for qcode in qcodes
+    ]
 
 
 def templates(market):
@@ -270,7 +343,16 @@ def templates(market):
         out.append(_template(market, spec, "create"))
     export = market.get("briefing_list.export_template")
     if export:
-        out.append(_template(market, dict(export, teams=export.get("teams") or market.get("briefing_list.teams")), "highlights"))
+        out.append(
+            _template(
+                market,
+                dict(
+                    export,
+                    teams=export.get("teams") or market.get("briefing_list.teams"),
+                ),
+                "highlights",
+            )
+        )
     return out
 
 
@@ -279,7 +361,9 @@ def _template(market, spec, template_type):
     for key in ("headline", "slugline"):
         if spec.get(key):
             data[key] = spec[key]
-    data["body_html"] = report_type(market, spec["report_type"]).get("body_skeleton", "")
+    data["body_html"] = report_type(market, spec["report_type"]).get(
+        "body_skeleton", ""
+    )
     if spec.get("ednote"):
         data["ednote"] = spec["ednote"]
     if spec.get("subject"):
@@ -295,23 +379,46 @@ def _template(market, spec, template_type):
 
 # -- entitlement and delivery -------------------------------------------------
 
-REPORT_CONDITION = {"name": "Item is a report", "field": "type", "operator": "in", "value": "text"}
-CALENDAR_CONDITION = {"name": "Item is a calendar entry or request", "field": "type", "operator": "in", "value": "event,planning"}
+REPORT_CONDITION = {
+    "name": "Item is a report",
+    "field": "type",
+    "operator": "in",
+    "value": "text",
+}
+CALENDAR_CONDITION = {
+    "name": "Item is a calendar entry or request",
+    "field": "type",
+    "operator": "in",
+    "value": "event,planning",
+}
 
 
 def condition_name(market, scheme, qcodes):
-    names = vocabulary_names(market).get(scheme) or die("entitlement uses unknown vocabulary %r" % scheme)
+    names = vocabulary_names(market).get(scheme) or die(
+        "entitlement uses unknown vocabulary %r" % scheme
+    )
     label = vocabulary_labels(market)[scheme]
-    return "%s is %s" % (label, " or ".join(names.get(q) or die("unknown %s value %r" % (scheme, q)) for q in qcodes))
+    return "%s is %s" % (
+        label,
+        " or ".join(
+            names.get(q) or die("unknown %s value %r" % (scheme, q)) for q in qcodes
+        ),
+    )
 
 
 def entitlement_alternatives(client):
     """[[(scheme, [qcodes])]]: the client is entitled when any alternative matches; an alternative
     matches when every group in it does; a group matches any of its values. `all_of` is one
-    alternative, `any_of` a list of `all_of` alternatives."""
+    alternative, `any_of` a list of `all_of` alternatives.
+    """
     entitlement = client.get("entitlement") or {}
-    options = [entry.get("all_of") or [] for entry in entitlement.get("any_of") or []] or [entitlement.get("all_of") or []]
-    return [[(scheme, list(qcodes)) for entry in option for scheme, qcodes in entry.items()] for option in options]
+    options = [
+        entry.get("all_of") or [] for entry in entitlement.get("any_of") or []
+    ] or [entitlement.get("all_of") or []]
+    return [
+        [(scheme, list(qcodes)) for entry in option for scheme, qcodes in entry.items()]
+        for option in options
+    ]
 
 
 def entitlement_groups(client):
@@ -321,14 +428,22 @@ def entitlement_groups(client):
 def filter_conditions(market):
     """Entitlement conditions grouped by vocabulary, then the two that sort reports from calendar
     entries. Without the type conditions every posted calendar entry would also reach the portal's
-    NINJS destination, which pushes a stripped payload for the same guid over the good one."""
+    NINJS destination, which pushes a stripped payload for the same guid over the good one.
+    """
     by_scheme = {}
     for client in market.get("fiction.clients") or []:
         for scheme, qcodes in entitlement_groups(client):
             conditions = by_scheme.setdefault(scheme, [])
             name = condition_name(market, scheme, qcodes)
             if name not in [c["name"] for c in conditions]:
-                conditions.append({"name": name, "field": scheme, "operator": "in", "value": ",".join(qcodes)})
+                conditions.append(
+                    {
+                        "name": name,
+                        "field": scheme,
+                        "operator": "in",
+                        "value": ",".join(qcodes),
+                    }
+                )
     out = [condition for conditions in by_scheme.values() for condition in conditions]
     return out + [dict(REPORT_CONDITION), dict(CALENDAR_CONDITION)]
 
@@ -336,7 +451,11 @@ def filter_conditions(market):
 def portal_names(market):
     portal = market.get("superdesk.recipients.portal") or {}
     calendar = market.get("superdesk.recipients.portal_calendar") or {}
-    name = portal.get("name") or market.get("product.portal_name") or "%s Portal" % market.product
+    name = (
+        portal.get("name")
+        or market.get("product.portal_name")
+        or "%s Portal" % market.product
+    )
     return {
         "recipient": name,
         "product": portal.get("product") or "%s feed" % name,
@@ -356,10 +475,18 @@ def content_filters(market):
     names = portal_names(market)
     out = []
     for client in market.get("fiction.clients") or []:
-        expressions = [[condition_name(market, scheme, qcodes) for scheme, qcodes in option] for option in entitlement_alternatives(client)]
+        expressions = [
+            [condition_name(market, scheme, qcodes) for scheme, qcodes in option]
+            for option in entitlement_alternatives(client)
+        ]
         out.append({"name": client_filter_name(client), "expressions": expressions})
     out.append({"name": names["filter"], "expressions": [[REPORT_CONDITION["name"]]]})
-    out.append({"name": names["calendar_filter"], "expressions": [[CALENDAR_CONDITION["name"]]]})
+    out.append(
+        {
+            "name": names["calendar_filter"],
+            "expressions": [[CALENDAR_CONDITION["name"]]],
+        }
+    )
     return out
 
 
@@ -367,8 +494,14 @@ def entitlement_words(market, client):
     names = vocabulary_names(market)
     options = []
     for option in entitlement_alternatives(client):
-        groups = [" or ".join(names[scheme][q] for q in qcodes) for scheme, qcodes in option]
-        options.append((", and " if any(" or " in group for group in groups) else " and ").join(groups))
+        groups = [
+            " or ".join(names[scheme][q] for q in qcodes) for scheme, qcodes in option
+        ]
+        options.append(
+            (", and " if any(" or " in group for group in groups) else " and ").join(
+                groups
+            )
+        )
     return "; or ".join(options) + "."
 
 
@@ -376,10 +509,16 @@ def products(market):
     names = portal_names(market)
     portal = names["recipient"]
     out = [
-        {"name": names["product"], "description": "Every released report, pushed to the %s." % portal, "product_type": "both", "content_filter": names["filter"]},
+        {
+            "name": names["product"],
+            "description": "Every released report, pushed to the %s." % portal,
+            "product_type": "both",
+            "content_filter": names["filter"],
+        },
         {
             "name": names["calendar_product"],
-            "description": "Every posted calendar entry and client request, pushed to the %s." % portal,
+            "description": "Every posted calendar entry and client request, pushed to the %s."
+            % portal,
             "product_type": "both",
             "content_filter": names["calendar_filter"],
         },
@@ -415,21 +554,35 @@ def check(market):
     """Problems that would break the Superdesk to portal contract, as messages. The portal's product
     queries read `profile:<portal_profile>`, which the push derives from the content profile's label
     with the spaces removed, and its calendar entitlement reads every entitlement scheme on the event
-    itself."""
+    itself.
+    """
     problems = []
     for spec in report_types(market):
         wanted = spec.get("portal_profile")
         if wanted and spec["label"].replace(" ", "") != wanted:
-            problems.append("report type %s: label %r does not strip to portal_profile %r" % (spec["id"], spec["label"], wanted))
+            problems.append(
+                "report type %s: label %r does not strip to portal_profile %r"
+                % (spec["id"], spec["label"], wanted)
+            )
     allowed = {group["scheme"] for group in market.get("portal.filter_groups") or []}
     for spec in market.get("vocabularies") or []:
         if allowed and spec["id"] not in allowed:
-            problems.append("vocabulary %s is not a portal filter group, so the portal drops it from every push" % spec["id"])
-    schemes = {scheme for client in market.get("fiction.clients") or [] for scheme, _ in entitlement_groups(client)}
+            problems.append(
+                "vocabulary %s is not a portal filter group, so the portal drops it from every push"
+                % spec["id"]
+            )
+    schemes = {
+        scheme
+        for client in market.get("fiction.clients") or []
+        for scheme, _ in entitlement_groups(client)
+    }
     for event in market.content("fiction.sample_content.calendar_events"):
         missing = sorted(schemes - {pair[0] for pair in event.get("subject") or []})
         if missing:
-            problems.append("calendar event %s has no %s, so no client is entitled to it" % (event.get("key"), " or ".join(missing)))
+            problems.append(
+                "calendar event %s has no %s, so no client is entitled to it"
+                % (event.get("key"), " or ".join(missing))
+            )
     return problems
 
 
@@ -452,7 +605,8 @@ def ai_actions(market):
             "action_type": action["type"],
             "input_fields": action["input_fields"],
             "output_field": action["output_field"],
-            "content_profiles": action.get("report_types") or [spec["id"] for spec in report_types(market)],
+            "content_profiles": action.get("report_types")
+            or [spec["id"] for spec in report_types(market)],
             "parameters": parameters,
         }
         # Without a model of its own an action runs on the provider's default model, which is the one
