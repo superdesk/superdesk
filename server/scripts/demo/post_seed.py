@@ -13,6 +13,8 @@ Steps, in this order:
   coverage_types  one coverage type per channel in the coverage type list
   retype          seeded coverages get their channel's coverage type (the engine writes "text" on all)
   states          seeded items go from "fetched" to "in_progress" (board and list badges read better)
+  post_planning   events and Storys are posted; otherwise users without the creator role see an empty Planning list
+  intake_desks    swimlane default view on Ideenspeicher and Anfragen, mark for user on AN-003 and AN-006
 
 Re-running the engine's `vocabularies` section resets the hierarchy; run `hierarchy` again afterwards.
 """
@@ -189,7 +191,41 @@ def step_states(api):
         print("  %s: fetched -> in_progress%s" % (item.get("headline", item["_id"])[:60], "" if api.apply else " (dry)"))
 
 
-STEPS = {"hierarchy": step_hierarchy, "coverage_types": step_coverage_types, "retype": step_retype, "states": step_states}
+def step_post_planning(api):
+    print("Post events and Storys")
+    seen = set()
+    for event in api.items("/events"):
+        key = event.get("recurrence_id") or event["_id"]
+        if event.get("pubstatus") == "usable" or key in seen:
+            continue
+        seen.add(key)
+        if api.apply:
+            api.request("POST", "/events/post", {"event": event["_id"], "etag": event["_etag"], "pubstatus": "usable", "update_method": "all" if event.get("recurrence_id") else "single"})
+        print("  event %s%s" % (event.get("name", event["_id"])[:50], "" if api.apply else " (dry)"))
+    for plan in api.items("/planning"):
+        if plan.get("pubstatus") == "usable":
+            continue
+        if api.apply:
+            api.request("POST", "/planning/post", {"planning": plan["_id"], "etag": plan["_etag"], "pubstatus": "usable"})
+        print("  story %s%s" % (plan.get("slugline", plan["_id"]), "" if api.apply else " (dry)"))
+
+
+def step_intake_desks(api):
+    print("Swimlane view on the intake desks, mark for user on Anfragen")
+    for desk in api.items("/desks"):
+        if desk["name"] in ("Ideenspeicher", "Anfragen") and desk.get("monitoring_default_view") != "swimlane":
+            api.patch("/desks/%s" % desk["_id"], {"monitoring_default_view": "swimlane"}, desk["_etag"])
+            print("  %s: swimlane%s" % (desk["name"], "" if api.apply else " (dry)"))
+    for slugline, username in (("AN-003", "julia.neumann"), ("AN-006", "markus.engel")):
+        users = api.get("/users", where=json.dumps({"username": username}))["_items"]
+        query = {"query": {"query_string": {"query": 'slugline:"%s"' % slugline}}}
+        found = [i for i in api.items("/archive", source=json.dumps(query)) if i.get("slugline") == slugline]
+        if users and found and found[0].get("marked_for_user") != users[0]["_id"]:
+            api.patch("/archive/%s" % found[0]["_id"], {"marked_for_user": users[0]["_id"]}, found[0]["_etag"])
+            print("  %s marked for %s%s" % (slugline, username, "" if api.apply else " (dry)"))
+
+
+STEPS = {"hierarchy": step_hierarchy, "coverage_types": step_coverage_types, "retype": step_retype, "states": step_states, "post_planning": step_post_planning, "intake_desks": step_intake_desks}
 
 
 def main():
