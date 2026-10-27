@@ -48,6 +48,7 @@
   "zielgruppen": [
    "zielgruppe:fachpresse",
    "zielgruppe:kommunen"
-  ]
+  ],
+  "sharepoint_links": "https://energieagentur-beispiel.sharepoint.example/sites/Kommunikation/Freigegebene%20Dokumente/Newsletter/Ausgabe_Energiewende_kompakt/Themenliste.xlsx"
  }
 ]

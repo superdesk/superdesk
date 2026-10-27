@@ -30,7 +30,7 @@
     "language": "de_DE",
     "teams": [
       {
-        "name": "Ideenpool",
+        "name": "Ideenspeicher",
         "description": "Sammelstelle für Ideen aus allen Bereichen. Jede Idee hat ein Thema, ein Strategieziel und einen Kanalwunsch.",
         "source": "IDP",
         "stages": [
@@ -282,7 +282,7 @@
         "last_name": "Vogel",
         "role": "Administrator",
         "teams": [
-          "Ideenpool",
+          "Ideenspeicher",
           "Anfragen",
           "Presse",
           "Kreation und Produktion",
@@ -291,7 +291,7 @@
           "Fachkommunikation",
           "Event"
         ],
-        "default_team": "Ideenpool",
+        "default_team": "Ideenspeicher",
         "sign_off": "kv",
         "job_title": "Administratorin Kommunikationsplattform"
       },
@@ -301,7 +301,7 @@
         "last_name": "Engel",
         "role": "Power-User Kommunikation",
         "teams": [
-          "Ideenpool",
+          "Ideenspeicher",
           "Anfragen",
           "Presse",
           "Digital",
@@ -317,7 +317,7 @@
         "last_name": "Lindner",
         "role": "Power-User Kommunikation",
         "teams": [
-          "Ideenpool",
+          "Ideenspeicher",
           "Anfragen",
           "Kreation und Produktion",
           "Corporate Content",
@@ -334,7 +334,7 @@
         "last_name": "Neumann",
         "role": "Redakteur",
         "teams": [
-          "Ideenpool",
+          "Ideenspeicher",
           "Anfragen",
           "Presse"
         ],
@@ -348,7 +348,7 @@
         "last_name": "Krüger",
         "role": "Redakteur",
         "teams": [
-          "Ideenpool",
+          "Ideenspeicher",
           "Anfragen",
           "Presse",
           "Kreation und Produktion",
@@ -365,7 +365,7 @@
         "last_name": "Schäfer",
         "role": "Redakteur",
         "teams": [
-          "Ideenpool",
+          "Ideenspeicher",
           "Kreation und Produktion",
           "Digital"
         ],
@@ -379,7 +379,7 @@
         "last_name": "Weber",
         "role": "Themenverantwortlicher",
         "teams": [
-          "Ideenpool",
+          "Ideenspeicher",
           "Anfragen",
           "Presse",
           "Kreation und Produktion",
@@ -387,7 +387,7 @@
           "Digital",
           "Fachkommunikation"
         ],
-        "default_team": "Ideenpool",
+        "default_team": "Ideenspeicher",
         "sign_off": "nw",
         "job_title": "Themenverantwortliche Gebäude und Wärme"
       },
@@ -397,13 +397,13 @@
         "last_name": "Roth",
         "role": "Themenverantwortlicher",
         "teams": [
-          "Ideenpool",
+          "Ideenspeicher",
           "Anfragen",
           "Corporate Content",
           "Digital",
           "Fachkommunikation"
         ],
-        "default_team": "Ideenpool",
+        "default_team": "Ideenspeicher",
         "sign_off": "sr",
         "job_title": "Themenverantwortlicher Industrie und Mobilität"
       },
@@ -413,7 +413,7 @@
         "last_name": "Hoffmann",
         "role": "Anfragender aus Fachbereich",
         "teams": [
-          "Ideenpool",
+          "Ideenspeicher",
           "Anfragen",
           "Fachkommunikation",
           "Event"
@@ -428,7 +428,7 @@
         "last_name": "Yılmaz",
         "role": "Anfragender aus Fachbereich",
         "teams": [
-          "Ideenpool",
+          "Ideenspeicher",
           "Anfragen",
           "Fachkommunikation"
         ],
@@ -442,7 +442,7 @@
         "last_name": "Wagner",
         "role": "Freigebender",
         "teams": [
-          "Ideenpool",
+          "Ideenspeicher",
           "Anfragen",
           "Presse",
           "Corporate Content",
@@ -470,7 +470,7 @@
     ],
     "staff_email": "{username}@energieagentur-beispiel.example",
     "admin_member_of_all_teams": true,
-    "admin_default_team": "Ideenpool",
+    "admin_default_team": "Ideenspeicher",
     "sample_content": {
       "reports": {
         "idee": "content/ideen.json",
@@ -804,7 +804,7 @@
     {
       "id": "idee",
       "label": "Idee",
-      "description": "Eine Idee für Inhalt oder Kampagne, die der Ideenpool bewertet.",
+      "description": "Eine Idee für Inhalt oder Kampagne, die der Ideenspeicher bewertet.",
       "priority": 90,
       "body_skeleton": "<h2>Worum geht es?</h2><p></p><h2>Warum jetzt?</h2><p></p><h2>Was wird gebraucht?</h2><p></p>",
       "fields": [
@@ -1397,7 +1397,7 @@
       "name": "Neue Idee",
       "report_type": "idee",
       "teams": [
-        "Ideenpool"
+        "Ideenspeicher"
       ]
     },
     {
