@@ -1,6 +1,7 @@
 /**
  * Wires the `ai-widget` extension of superdesk-client-core to the `ai_actions` endpoints of
- * superdesk-core, so its "Headlines" and "Summary" panels run against the configured AI provider.
+ * superdesk-core, so its "Headlines", "Summary" and "Translations" panels run against the configured
+ * AI provider.
  *
  * This is demo glue, not the planned authoring integration (SDESK-7996). The widget knows three
  * fixed features and hands the host a callback per feature; everything below exists to turn those
@@ -27,7 +28,7 @@ interface IArticleLike {
     [field: string]: any;
 }
 
-type IAiActionType = 'suggestion' | 'summary';
+type IAiActionType = 'suggestion' | 'summary' | 'translation';
 type IWidgetFeature = 'headlines' | 'summary';
 
 const ACTION_TYPE_OF_FEATURE: {[key in IWidgetFeature]: IAiActionType} = {
@@ -63,9 +64,13 @@ interface IRunResponse {
  * Optional short circuit for the action lookup. Listing `ai_actions` needs the `ai_studio`
  * privilege while running one only needs `ai`, so a user who may run actions but may not configure
  * them cannot look them up by type. Paste the ids here (from the AI Studio settings page or from
- * `GET /api/ai_actions` as an administrator) when the demo users do not hold `ai_studio`.
+ * `GET /api/ai_actions` as an administrator) when the demo users do not hold `ai_studio`. A type
+ * left out here is looked up by listing.
  */
-const ACTION_IDS: {[key in IAiActionType]?: string} = {};
+const ACTION_IDS: {[key in IAiActionType]?: string} = {
+    suggestion: '6ae0ac81574877ecc671ca58',
+    summary: '6ae0ac82574877ecc671ca5a',
+};
 
 /**
  * Item fields whose current text is sent with a run. Anything the action does not list in its own
@@ -142,11 +147,16 @@ function resolveActionId(superdesk: ISuperdeskApi, actionType: IAiActionType): P
         });
 }
 
+/**
+ * `language` is the language to answer in. It defaults to the language of the article and, for a
+ * translation, is the language to translate into.
+ */
 function runAction(
     superdesk: ISuperdeskApi,
     actionType: IAiActionType,
     article: IArticleLike,
     abortSignal: AbortSignal,
+    language: string | undefined = article.language,
 ): Promise<Array<string>> {
     return resolveActionId(superdesk, actionType)
         .then((actionId) =>
@@ -155,7 +165,7 @@ function runAction(
                 path: `/ai_actions/${actionId}/run`,
                 payload: {
                     item_id: article._id,
-                    language: article.language,
+                    language: language,
                     source: 'authoring',
                     fields: getInputFields(article),
                 },
@@ -216,5 +226,15 @@ export function configureAiWidget(superdesk: ISuperdeskApi) {
 
         generateSummary: (article: IArticleLike, abortSignal: AbortSignal) =>
             runAction(superdesk, 'summary', article, abortSignal).then((texts) => texts[0] ?? ''),
+
+        translations: {
+            generateTranslations: (article: IArticleLike, language: string, abortSignal: AbortSignal) =>
+                runAction(superdesk, 'translation', article, abortSignal, language).then((texts) => texts[0] ?? ''),
+
+            // `true` would also hook the item "Translate" action: every translated copy it creates
+            // would open with this panel pinned and translate itself on open. The panel alone needs
+            // only `generateTranslations`.
+            translateActionIntegration: false,
+        },
     };
 }
