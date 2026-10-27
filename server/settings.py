@@ -76,6 +76,7 @@ LANGUAGES = [
     {"language": "fr", "label": "French", "source": True, "destination": True},
     {"language": "ar", "label": "Arabic", "source": True, "destination": True},
     {"language": "de", "label": "German", "source": True, "destination": True},
+    {"language": "de_DE", "label": "Deutsch", "source": True, "destination": True},
     {"language": "no", "label": "Norwegian", "source": True, "destination": True},
     {"language": "pt-PT", "label": "Portugese", "source": True, "destination": True},
     {
