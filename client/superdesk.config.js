@@ -9,7 +9,7 @@
  * from here has to be plain JSON-serialisable data.
  */
 
-// Exact-match English relabels for this instance (Desk becomes Workgroup and the like).
+// Exact-match English replacements that turn newsroom vocabulary into Superdesk vocabulary.
 // Webpack only watches this file for cache invalidation, not the modules it requires, so a
 // change to the terminology pack needs the build restarting (or `client/node_modules/.cache`
 // removing) before it shows up.
@@ -56,10 +56,9 @@ module.exports = function() {
         // filter is built for it (SearchService.ts). Custom vocabularies land in `subject`, so the
         // Superdesk taxonomies all filter on `subject.qcode`; their qcodes do not overlap.
         search_cvs: [
-            {id: 'local_authority', name: 'Local authority', field: 'subject', list: 'local_authority'},
+            {id: 'topic', name: 'Topic', field: 'subject', list: 'topic'},
             {id: 'region', name: 'Region', field: 'subject', list: 'region'},
-            {id: 'distribution_profile', name: 'Distribution profile', field: 'subject', list: 'distribution_profile'},
-            {id: 'category', name: 'Category', field: 'subject', list: 'category'},
+            {id: 'service', name: 'Wire service', field: 'subject', list: 'service'},
         ],
 
         features: {
@@ -101,8 +100,10 @@ module.exports = function() {
 
         // Only the field names registered in superdesk-client-core
         // (scripts/apps/search/components/fields/index.ts) render here; an unknown name is
-        // silently dropped. Local authority, region and the other taxonomies live in `subject`
-        // and have no field component, so they cannot be shown in a row without an extension.
+        // silently dropped. `urgency` carries the Superdesk severity level and renders as the
+        // coloured badge at the start of every row; the colours and the one-letter labels come
+        // from the `urgency` vocabulary. Region and the other taxonomies live in `subject` and
+        // have no field component, so they cannot be shown in a row without an extension.
         list: {
             priority: [
                 'urgency',

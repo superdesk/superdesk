@@ -1,0 +1,84 @@
+[
+ {
+  "reference": "MNA-ALR-1",
+  "title": "FLASH: Volcano erupts on Reykjanes peninsula, flights suspended at Keflavik",
+  "body_html": "<p>REYKJAVIK, 27 October (Meridian) - a volcano erupted on Iceland's Reykjanes peninsula at 13:12 GMT, and the civil protection agency said flights at Keflavik airport were suspended while an ash cloud is assessed. Residents of one nearby fishing town were told to stay indoors.</p><p><em>Sample story for demonstration. The events, figures and quotes in it are invented.</em></p>",
+  "topic": [
+   "disaster"
+  ],
+  "region": [
+   "europe"
+  ],
+  "service": [
+   "international"
+  ],
+  "desk": "World",
+  "author": "nadia.okafor",
+  "byline": "Nadia Okafor, Geneva",
+  "workflow": "Published",
+  "hours_ago": 1,
+  "summary": "REYKJAVIK, 27 October (Meridian) - a volcano erupted on Iceland's Reykjanes peninsula at 13:12 GMT, and the civil protection agency said flights at Keflavik airport were suspended while an ash cloud is assessed. Residents of one nearby fishing town were told to stay indoors."
+ },
+ {
+  "reference": "MNA-ALR-2",
+  "title": "FLASH: Oil falls more than 4 percent after producers agree surprise output rise",
+  "body_html": "<p>LONDON, 27 October (Meridian) - oil prices fell more than 4 percent in early trade after a group of producers agreed to raise output by 400,000 barrels a day from December, delegates said. The benchmark North Sea contract dropped to 74.60 dollars a barrel.</p><p><em>Sample story for demonstration. The events, figures and quotes in it are invented.</em></p>",
+  "topic": [
+   "energy",
+   "markets"
+  ],
+  "region": [
+   "global"
+  ],
+  "service": [
+   "economic",
+   "international"
+  ],
+  "desk": "Business",
+  "author": "rafael.costa",
+  "byline": "Rafael Costa",
+  "workflow": "Published",
+  "hours_ago": 3,
+  "summary": "LONDON, 27 October (Meridian) - oil prices fell more than 4 percent in early trade after a group of producers agreed to raise output by 400,000 barrels a day from December, delegates said. The benchmark North Sea contract dropped to 74.60 dollars a barrel."
+ },
+ {
+  "reference": "MNA-ALR-3",
+  "title": "URGENT: Coalition government in Lisbon loses confidence vote",
+  "body_html": "<p>LISBON, 27 October (Meridian) - the coalition government lost a parliamentary confidence vote by 118 votes to 109 on Monday, parliamentary officials said. The president is expected to meet party leaders on Tuesday before deciding whether to call an early election.</p><p><em>Sample story for demonstration. The events, figures and quotes in it are invented.</em></p>",
+  "topic": [
+   "politics"
+  ],
+  "region": [
+   "europe"
+  ],
+  "service": [
+   "international"
+  ],
+  "desk": "Politics",
+  "author": "tomas.varga",
+  "byline": "Tomas Varga",
+  "workflow": "Published",
+  "hours_ago": 6,
+  "summary": "LISBON, 27 October (Meridian) - the coalition government lost a parliamentary confidence vote by 118 votes to 109 on Monday, parliamentary officials said. The president is expected to meet party leaders on Tuesday before deciding whether to call an early election."
+ },
+ {
+  "reference": "MNA-ALR-4",
+  "title": "Tour of the Dolomites moves stage 6 start after overnight snowfall",
+  "body_html": "<p>BOLZANO, 27 October (Meridian) - organisers of the Tour of the Dolomites moved the start of stage 6 to the valley town of Brunico after overnight snowfall closed the upper pass. The stage is shortened from 151 to 118 kilometres and is due to begin at 12:30 local time.</p><p><em>Sample story for demonstration. The events, figures and quotes in it are invented.</em></p>",
+  "topic": [
+   "sport"
+  ],
+  "region": [
+   "europe"
+  ],
+  "service": [
+   "sports"
+  ],
+  "desk": "Sport",
+  "author": "dario.ferri",
+  "byline": "Dario Ferri",
+  "workflow": "Ready",
+  "hours_ago": 1,
+  "summary": "BOLZANO, 27 October (Meridian) - organisers of the Tour of the Dolomites moved the start of stage 6 to the valley town of Brunico after overnight snowfall closed the upper pass. The stage is shortened from 151 to 118 kilometres and is due to begin at 12:30 local time."
+ }
+]

@@ -65,10 +65,7 @@ interface IRunResponse {
  * them cannot look them up by type. Paste the ids here (from the AI Studio settings page or from
  * `GET /api/ai_actions` as an administrator) when the demo users do not hold `ai_studio`.
  */
-const ACTION_IDS: {[key in IAiActionType]?: string} = {
-    suggestion: '6add08799ab2925d74b413d4',
-    summary: '6add087a9ab2925d74b413d6',
-};
+const ACTION_IDS: {[key in IAiActionType]?: string} = {};
 
 /**
  * Item fields whose current text is sent with a run. Anything the action does not list in its own

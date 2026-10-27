@@ -1,5 +1,4 @@
 """Reads a market folder: contract.yaml (or contract.json on an instance) and the content files."""
-
 import json
 import os
 import sys
@@ -65,9 +64,7 @@ def load_contract(folder):
             import yaml
         except ImportError:
             if not os.path.exists(json_file):
-                sys.exit(
-                    "PyYAML is missing and there is no contract.json. Use the kit's venv: .venv/bin/python"
-                )
+                sys.exit("PyYAML is missing and there is no contract.json. Use the kit's venv: .venv/bin/python")
         else:
             with open(yaml_file, encoding="utf-8") as handle:
                 return yaml.safe_load(handle)

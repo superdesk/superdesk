@@ -4,9 +4,9 @@ Run after ``run_seed.sh`` or ``build.py superdesk seed``:
 
     SUPERDESK_URL=https://<host>/api SUPERDESK_USER=admin SUPERDESK_PASSWORD=... python3 post_seed.py [--only STEP ...]
 
-Steps, in order: stages (board order Draft first, global read off), states (seeded items
-from ``fetched`` to ``in_progress``), scheduled (one story published with an embargo
-time), revoked (one published story killed). Every step is idempotent.
+Steps, in order: picture_field (the Story profile's feature media field enabled and the
+crop size "FIXME" renamed to "4-3"), states (seeded items from ``fetched`` to ``in_progress``), scheduled (one
+Ready story published with an embargo time tomorrow at 06:00 UTC). Every step is idempotent.
 """
 
 import argparse
@@ -20,21 +20,7 @@ import urllib.parse
 import urllib.request
 from datetime import datetime, timedelta, timezone
 
-STAGE_ORDER = [
-    "Draft",
-    "Review Pending",
-    "In Review",
-    "Returned",
-    "Hold",
-    "Scheduled",
-    "Published",
-    "Revoked",
-]
-SCHEDULED_ITEM = "urn:localwire:demo:LW-SLG-302"
-REVOKED_ITEM = "urn:localwire:demo:LW-RPG-109"
-REVOKE_REASON = (
-    "The location given for the hub was wrong. A corrected story will follow."
-)
+SCHEDULED_ITEM = "urn:agency:demo:MNA-POL-205"
 
 
 class Api:
@@ -80,29 +66,39 @@ class Api:
         return self.request("PATCH", path, body, etag=etag)
 
 
-def step_stages(api):
-    """Board order Draft first, and global read off so a workgroup's stories stay inside it."""
-    print("Stages")
-    desks = {d["_id"]: d["name"] for d in api.items("/desks")}
-    stages = [s for s in api.items("/stages") if s["desk"] in desks]
-    for desk_id, desk_name in desks.items():
-        own = {s["name"]: s for s in stages if s["desk"] == desk_id}
-        ordered = [own[n]["_id"] for n in STAGE_ORDER if n in own]
-        ordered += [s["_id"] for s in own.values() if s["_id"] not in ordered]
-        current = [
-            s["_id"] for s in sorted(own.values(), key=lambda s: s.get("desk_order", 0))
-        ]
-        if current != ordered:
-            api.request("POST", "/stages_order", {"desk": desk_id, "stages": ordered})
-            print(f"  {desk_name}: order set")
-        else:
-            print(f"  {desk_name}: order unchanged")
-        for stage in own.values():
-            if stage.get("is_visible"):
-                api.patch(
-                    f"/stages/{stage['_id']}", {"is_visible": False}, stage["_etag"]
-                )
-                print(f"  {desk_name} / {stage['name']}: global read off")
+def step_picture_field(api):
+    print("Picture field")
+    profile = next((p for p in api.items("/content_types") if p.get("label") == "Story"), None)
+    if profile is None:
+        raise RuntimeError("no content profile labelled Story")
+    editor = profile.get("editor") or {}
+    schema = profile.get("schema") or {}
+    if (editor.get("feature_media") or {}).get("enabled") and schema.get("feature_media"):
+        print("  Story: picture field already enabled")
+    else:
+        editor["feature_media"] = {
+            "enabled": True,
+            "order": 11,
+            "sdWidth": "full",
+            "field_name": "Picture",
+        }
+        schema["feature_media"] = {"type": "media", "required": False}
+        api.patch(
+            f"/content_types/{profile['_id']}",
+            {"editor": editor, "schema": schema},
+            profile["_etag"],
+        )
+        print("  Story: picture field enabled")
+    crops = api.get("/vocabularies/crop_sizes")
+    items = crops.get("items") or []
+    if any(i.get("name") == "FIXME" for i in items):
+        for i in items:
+            if i.get("name") == "FIXME":
+                i["name"] = "4-3"
+        api.patch("/vocabularies/crop_sizes", {"items": items}, crops["_etag"])
+        print("  crop size FIXME renamed to 4-3")
+    else:
+        print("  crop sizes: nothing to rename")
 
 
 def step_states(api):
@@ -120,7 +116,7 @@ def step_scheduled(api):
         print(f"  {item['headline'][:60]}: already {item['state']}")
         return
     when = (datetime.now(timezone.utc) + timedelta(days=1)).replace(
-        hour=0, minute=1, second=0, microsecond=0
+        hour=6, minute=0, second=0, microsecond=0
     )
     api.patch(
         f"/archive/publish/{SCHEDULED_ITEM}",
@@ -130,30 +126,10 @@ def step_scheduled(api):
     print(f"  {item['headline'][:60]}: scheduled for {when.isoformat()}")
 
 
-def step_revoked(api):
-    print("Revoked story")
-    item = api.get(f"/archive/{REVOKED_ITEM}")
-    if item.get("state") == "killed":
-        print(f"  {item['headline'][:60]}: already killed")
-        return
-    if item.get("state") != "published":
-        print(
-            f"  {item['headline'][:60]}: not published ({item.get('state')}), skipped"
-        )
-        return
-    api.patch(
-        f"/archive/kill/{REVOKED_ITEM}",
-        {"body_html": f"<p>{REVOKE_REASON}</p>"},
-        item["_etag"],
-    )
-    print(f"  {item['headline'][:60]}: killed")
-
-
 STEPS = {
-    "stages": step_stages,
+    "picture_field": step_picture_field,
     "states": step_states,
     "scheduled": step_scheduled,
-    "revoked": step_revoked,
 }
 
 

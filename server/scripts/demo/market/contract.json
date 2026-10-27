@@ -1,8 +1,8 @@
 {
   "kit_version": 1,
   "market": {
-    "id": "localwire",
-    "name": "Local public-interest news agency (tender response)",
+    "id": "agency",
+    "name": "International news agency demo",
     "brief": "market-brief.md"
   },
   "product": {
@@ -11,118 +11,125 @@
     "working_name_only": false,
     "name_checks": "Not applicable, the products keep their own names.",
     "vendor": "Sourcefabric",
-    "descriptor": "Standard Superdesk and Newshub, configured for a council reporting scheme."
+    "descriptor": "Standard Superdesk and Newshub, configured for an international news agency."
   },
   "fiction": {
     "firm": {
-      "name": "Town Hall Reporting Network",
-      "short_name": "Town Hall Network",
-      "email_domain": "townhall-reporting.example",
-      "url": "https://townhall-reporting.example",
-      "description": "The invented operator of the scheme. Regional publishers employ the reporters; the network runs the authoring tool, the wire and the partner portal."
+      "name": "Meridian News Agency",
+      "short_name": "Meridian",
+      "email_domain": "meridian-news.example",
+      "url": "https://meridian-news.example",
+      "description": "An invented international news agency that files text stories and alerts to broadcasters, publishers and corporate subscribers."
     },
     "rules": [
-      "Partner organisations, staff, partner users, councillors, events, figures and quotes are invented.",
-      "Real UK council names are used only as local authority tags and in story titles, as public bodies. No real person is named.",
-      "Every sample story ends with a line saying it is sample content with invented events, figures and quotes.",
-      "Images must be our own or generated; never stock, agency or employer library pictures.",
+      "Firms, people, events, figures and quotes are invented.",
+      "Places are real. No real living person is named.",
+      "Every sample story ends with a line saying it is sample content with invented events.",
       "Email domains end in .example."
     ],
     "timezone": "Europe/London",
     "language": "en",
     "teams": [
       {
-        "name": "Ridings Press Group",
-        "description": "Partner organisation, Yorkshire and the Humber.",
-        "source": "RPG",
+        "name": "World",
+        "description": "International news and foreign affairs.",
+        "source": "WLD",
         "stages": [
-          "Review Pending",
-          "Draft",
-          "In Review",
-          "Returned",
-          "Hold",
-          "Scheduled",
-          "Published",
-          "Revoked"
+          "Incoming",
+          "Working",
+          "Review",
+          "Ready",
+          "Published"
         ],
         "default_report_type": "story",
-        "default_template": "Ridings Press story"
+        "default_template": "World story"
       },
       {
-        "name": "Tynebridge Media",
-        "description": "Partner organisation, North East.",
-        "source": "TBM",
+        "name": "Politics",
+        "description": "Government, elections and public policy.",
+        "source": "POL",
         "stages": [
-          "Review Pending",
-          "Draft",
-          "In Review",
-          "Returned",
-          "Hold",
-          "Scheduled",
-          "Published",
-          "Revoked"
+          "Incoming",
+          "Working",
+          "Review",
+          "Ready",
+          "Published"
         ],
         "default_report_type": "story",
-        "default_template": "Tynebridge Media story"
+        "default_template": "Politics story"
       },
       {
-        "name": "Shires Ledger Group",
-        "description": "Partner organisation, West and East Midlands.",
-        "source": "SLG",
+        "name": "Business",
+        "description": "Companies, markets and the economy.",
+        "source": "BUS",
         "stages": [
-          "Review Pending",
-          "Draft",
-          "In Review",
-          "Returned",
-          "Hold",
-          "Scheduled",
-          "Published",
-          "Revoked"
+          "Incoming",
+          "Working",
+          "Review",
+          "Ready",
+          "Published"
         ],
         "default_report_type": "story",
-        "default_template": "Shires Ledger story"
+        "default_template": "Business story"
       },
       {
-        "name": "Cambria Local Media",
-        "description": "Partner organisation, Wales.",
-        "source": "CLM",
+        "name": "Sport",
+        "description": "Sport results, reports and features.",
+        "source": "SPT",
         "stages": [
-          "Review Pending",
-          "Draft",
-          "In Review",
-          "Returned",
-          "Hold",
-          "Scheduled",
-          "Published",
-          "Revoked"
+          "Incoming",
+          "Working",
+          "Review",
+          "Ready",
+          "Published"
         ],
         "default_report_type": "story",
-        "default_template": "Cambria Local Media story"
+        "default_template": "Sport story"
+      },
+      {
+        "name": "Culture",
+        "description": "Arts, entertainment and society.",
+        "source": "CUL",
+        "stages": [
+          "Incoming",
+          "Working",
+          "Review",
+          "Ready",
+          "Published"
+        ],
+        "default_report_type": "story",
+        "default_template": "Culture story"
       }
     ],
     "board_hidden_stages": [
-      "Scheduled",
-      "Published",
-      "Revoked"
+      "Published"
     ],
     "stage_task_status": {
       "Published": "done"
     },
     "roles": [
       {
-        "name": "Reporter",
-        "description": "Creates, edits and submits stories and weekly advisories. Cannot publish.",
+        "name": "Journalist",
+        "description": "Writes, edits and files stories and alerts, and works in Planning. Cannot publish.",
         "author_role": "writer",
         "privileges": [
+          "ai",
           "archive",
           "dashboard",
+          "fetch",
+          "ingest",
           "duplicate",
           "embargo",
           "highlights_read",
           "mark_for_user",
+          "metadata_uniquename",
           "monitoring_view",
           "move",
           "personal_template",
+          "planning",
+          "planning_assignments_view",
+          "planning_event_management",
+          "planning_planning_management",
           "saved_searches",
           "send_to_personal",
           "spike",
@@ -133,15 +140,24 @@
         ]
       },
       {
-        "name": "Reviewer",
-        "description": "Reviews, edits, comments, returns, holds, schedules, publishes and revokes stories in its workgroups.",
+        "name": "Editor",
+        "description": "Reviews, edits, comments, corrects, holds, publishes, kills and takes down stories and alerts on its desk.",
         "author_role": "writer",
         "editor_role": "editor",
-        "inherits": "Reporter",
+        "inherits": "Journalist",
         "privileges_add": [
           "correct",
           "hold",
           "kill",
+          "planning_assignments_desk",
+          "planning_event_post",
+          "planning_event_spike",
+          "planning_event_unpost",
+          "planning_event_unspike",
+          "planning_planning_post",
+          "planning_planning_spike",
+          "planning_planning_unpost",
+          "planning_planning_unspike",
           "publish",
           "publish_queue",
           "resend",
@@ -150,343 +166,307 @@
         ]
       },
       {
-        "name": "Organisation Administrator",
-        "description": "Manages users, workgroups and workgroup templates. Superdesk does not scope this to one organisation.",
-        "author_role": "writer",
-        "inherits": "Reporter",
-        "privileges_add": [
-          "content_templates",
-          "desks",
-          "unlock",
-          "users"
-        ]
-      },
-      {
-        "name": "System Administrator",
-        "description": "Runs the whole service, including vocabularies, content profiles, roles and delivery to partners.",
+        "name": "Administrator",
+        "description": "Runs the whole service, including users, desks, vocabularies, content profiles, roles, ingest and delivery to subscribers.",
         "author_role": "writer",
         "editor_role": "editor",
-        "inherits": "Reviewer",
+        "inherits": "Editor",
         "privileges_add": [
+          "ai_studio",
           "archived",
           "content_filters",
+          "content_publishing_report",
           "content_templates",
           "content_type",
+          "desk_activity_report",
           "desks",
           "dictionaries",
+          "global_saved_reports",
           "global_saved_searches",
+          "ingest_providers",
           "masterdesk",
+          "planning_agenda_delete",
+          "planning_agenda_management",
+          "planning_assignments_desk",
+          "planning_create_past",
+          "planning_edit_expired",
+          "planning_eventsplanning_filters_management",
+          "planning_event_templates",
+          "planning_global_filters",
+          "planning_locations_management",
+          "planning_manage_content_profiles",
+          "planning_manage_export_templates",
+          "planning_planning_featured",
           "products",
+          "production_time_report",
+          "publishing_performance_report",
           "roles",
+          "routing_rules",
+          "saved_reports",
+          "scheduled_reports",
           "subscribers",
           "system_messages",
+          "user_activity_report",
           "users",
           "vocabularies"
         ]
       }
     ],
-    "role_notes": "Separation of duties is by role only. Superdesk does not stop a user who holds publish from publishing a story they wrote; the per-story rule is a development item and is not on this instance.",
     "staff": [
       {
-        "username": "amira.hussain",
-        "first_name": "Amira",
-        "last_name": "Hussain",
-        "role": "Reporter",
+        "username": "nadia.okafor",
+        "first_name": "Nadia",
+        "last_name": "Okafor",
+        "role": "Journalist",
         "teams": [
-          "Ridings Press Group"
+          "World"
         ],
-        "default_team": "Ridings Press Group",
-        "sign_off": "ah",
-        "job_title": "Reporter, Leeds and Bradford"
+        "default_team": "World",
+        "sign_off": "no",
+        "job_title": "Correspondent, Geneva"
       },
       {
-        "username": "tom.ackroyd",
-        "first_name": "Tom",
-        "last_name": "Ackroyd",
-        "role": "Reporter",
+        "username": "lucas.brandt",
+        "first_name": "Lucas",
+        "last_name": "Brandt",
+        "role": "Journalist",
         "teams": [
-          "Ridings Press Group"
+          "World"
         ],
-        "default_team": "Ridings Press Group",
-        "sign_off": "ta",
-        "job_title": "Reporter, Kirklees and Sheffield"
+        "default_team": "World",
+        "sign_off": "lb",
+        "job_title": "Correspondent, Berlin"
       },
       {
-        "username": "helen.mercer",
-        "first_name": "Helen",
-        "last_name": "Mercer",
-        "role": "Reviewer",
+        "username": "elena.marsh",
+        "first_name": "Elena",
+        "last_name": "Marsh",
+        "role": "Editor",
         "teams": [
-          "Ridings Press Group"
+          "World"
         ],
-        "default_team": "Ridings Press Group",
-        "sign_off": "hm",
-        "job_title": "Reviewer, Ridings Press Group"
+        "default_team": "World",
+        "sign_off": "em",
+        "job_title": "World editor"
       },
       {
-        "username": "claire.whitworth",
-        "first_name": "Claire",
-        "last_name": "Whitworth",
-        "role": "Organisation Administrator",
+        "username": "tomas.varga",
+        "first_name": "Tomas",
+        "last_name": "Varga",
+        "role": "Journalist",
         "teams": [
-          "Ridings Press Group"
+          "Politics"
         ],
-        "default_team": "Ridings Press Group",
-        "sign_off": "cw",
-        "job_title": "Organisation administrator, Ridings Press Group"
+        "default_team": "Politics",
+        "sign_off": "tv",
+        "job_title": "Political correspondent"
       },
       {
-        "username": "liam.robson",
-        "first_name": "Liam",
-        "last_name": "Robson",
-        "role": "Reporter",
+        "username": "ingrid.holm",
+        "first_name": "Ingrid",
+        "last_name": "Holm",
+        "role": "Editor",
         "teams": [
-          "Tynebridge Media"
+          "Politics"
         ],
-        "default_team": "Tynebridge Media",
-        "sign_off": "lr",
-        "job_title": "Reporter, Tyne and Wear and Northumberland"
+        "default_team": "Politics",
+        "sign_off": "ih",
+        "job_title": "Politics editor"
       },
       {
-        "username": "grace.forster",
-        "first_name": "Grace",
-        "last_name": "Forster",
-        "role": "Reviewer",
+        "username": "rafael.costa",
+        "first_name": "Rafael",
+        "last_name": "Costa",
+        "role": "Journalist",
         "teams": [
-          "Tynebridge Media"
+          "Business"
         ],
-        "default_team": "Tynebridge Media",
-        "sign_off": "gf",
-        "job_title": "Reviewer, Tynebridge Media"
+        "default_team": "Business",
+        "sign_off": "rc",
+        "job_title": "Markets correspondent"
       },
       {
-        "username": "priya.sandhu",
-        "first_name": "Priya",
-        "last_name": "Sandhu",
-        "role": "Reporter",
+        "username": "mei.tanaka",
+        "first_name": "Mei",
+        "last_name": "Tanaka",
+        "role": "Editor",
         "teams": [
-          "Shires Ledger Group"
+          "Business"
         ],
-        "default_team": "Shires Ledger Group",
-        "sign_off": "ps",
-        "job_title": "Reporter, Midlands"
+        "default_team": "Business",
+        "sign_off": "mt",
+        "job_title": "Business editor"
       },
       {
-        "username": "mark.ellison",
-        "first_name": "Mark",
-        "last_name": "Ellison",
-        "role": "Reviewer",
+        "username": "dario.ferri",
+        "first_name": "Dario",
+        "last_name": "Ferri",
+        "role": "Journalist",
         "teams": [
-          "Shires Ledger Group"
+          "Sport"
         ],
-        "default_team": "Shires Ledger Group",
-        "sign_off": "me",
-        "job_title": "Reviewer, Shires Ledger Group"
+        "default_team": "Sport",
+        "sign_off": "df",
+        "job_title": "Sports correspondent"
       },
       {
-        "username": "rhys.pritchard",
-        "first_name": "Rhys",
-        "last_name": "Pritchard",
-        "role": "Reporter",
+        "username": "hannah.cole",
+        "first_name": "Hannah",
+        "last_name": "Cole",
+        "role": "Editor",
         "teams": [
-          "Cambria Local Media"
+          "Sport"
         ],
-        "default_team": "Cambria Local Media",
-        "sign_off": "rp",
-        "job_title": "Reporter, Cardiff, Swansea and Gwynedd"
+        "default_team": "Sport",
+        "sign_off": "hc",
+        "job_title": "Sports editor"
       },
       {
-        "username": "sian.morgan",
-        "first_name": "Siân",
-        "last_name": "Morgan",
-        "role": "Reviewer",
+        "username": "amara.diallo",
+        "first_name": "Amara",
+        "last_name": "Diallo",
+        "role": "Journalist",
         "teams": [
-          "Cambria Local Media"
+          "Culture"
         ],
-        "default_team": "Cambria Local Media",
-        "sign_off": "sm",
-        "job_title": "Reviewer, Cambria Local Media"
+        "default_team": "Culture",
+        "sign_off": "ad",
+        "job_title": "Culture correspondent"
       },
       {
-        "username": "sam.okoro",
+        "username": "sam.reyes",
         "first_name": "Sam",
-        "last_name": "Okoro",
-        "role": "System Administrator",
+        "last_name": "Reyes",
+        "role": "Administrator",
         "teams": [
-          "Ridings Press Group",
-          "Tynebridge Media",
-          "Shires Ledger Group",
-          "Cambria Local Media"
+          "World",
+          "Politics",
+          "Business",
+          "Sport",
+          "Culture"
         ],
-        "default_team": "Ridings Press Group",
-        "sign_off": "so",
-        "job_title": "System administrator, Town Hall Reporting Network"
+        "default_team": "World",
+        "sign_off": "sr",
+        "job_title": "Newsroom systems administrator"
       }
     ],
-    "staff_email": "{username}@townhall-reporting.example",
+    "staff_email": "{username}@meridian-news.example",
     "admin_member_of_all_teams": true,
-    "admin_default_team": "Ridings Press Group",
+    "admin_default_team": "World",
     "tiers": [
       {
-        "name": "Partner",
+        "name": "Full",
         "report_types": [
           "story",
-          "weekly_advisory"
+          "alert"
+        ]
+      },
+      {
+        "name": "Broadcast",
+        "report_types": [
+          "story",
+          "alert"
+        ]
+      },
+      {
+        "name": "Economic",
+        "report_types": [
+          "story",
+          "alert"
         ]
       }
     ],
     "clients": [
       {
-        "name": "Ridings Press Group",
-        "short_name": "Ridings Press",
-        "url": "https://ridingspress.example",
-        "tier": "Partner",
+        "name": "Northline Broadcasting",
+        "url": "https://northline.example",
+        "tier": "Broadcast",
         "entitlement": {
           "all_of": [
             {
-              "region": [
-                "yorkshire_humber"
-              ]
-            },
-            {
-              "distribution_profile": [
-                "all_partners",
-                "print_digital"
+              "service": [
+                "international",
+                "sports"
               ]
             }
           ]
         },
         "users": [
           {
-            "email": "joanne.firth@ridingspress.example",
-            "first_name": "Joanne",
-            "last_name": "Firth",
+            "email": "kate.lindqvist@northline.example",
+            "first_name": "Kate",
+            "last_name": "Lindqvist",
             "type": "company_admin"
           },
           {
-            "email": "david.ainsworth@ridingspress.example",
-            "first_name": "David",
-            "last_name": "Ainsworth",
+            "email": "omar.haddad@northline.example",
+            "first_name": "Omar",
+            "last_name": "Haddad",
             "type": "public"
           }
         ]
       },
       {
-        "name": "Tynebridge Media",
-        "url": "https://tynebridgemedia.example",
-        "tier": "Partner",
+        "name": "Harbour Press Group",
+        "url": "https://harbourpress.example",
+        "tier": "Full",
         "entitlement": {
           "all_of": [
             {
-              "region": [
-                "north_east"
-              ]
-            },
-            {
-              "distribution_profile": [
-                "all_partners",
-                "print_digital"
+              "service": [
+                "international",
+                "economic",
+                "sports"
               ]
             }
           ]
         },
         "users": [
           {
-            "email": "kerry.dodds@tynebridgemedia.example",
-            "first_name": "Kerry",
-            "last_name": "Dodds",
+            "email": "julia.novak@harbourpress.example",
+            "first_name": "Julia",
+            "last_name": "Novak",
             "type": "company_admin"
           },
           {
-            "email": "paul.hedley@tynebridgemedia.example",
-            "first_name": "Paul",
-            "last_name": "Hedley",
+            "email": "ben.okonkwo@harbourpress.example",
+            "first_name": "Ben",
+            "last_name": "Okonkwo",
             "type": "public"
           }
         ]
       },
       {
-        "name": "Shires Ledger Group",
-        "short_name": "Shires Ledger",
-        "url": "https://shiresledger.example",
-        "tier": "Partner",
+        "name": "Atlas Capital Partners",
+        "url": "https://atlascapital.example",
+        "tier": "Economic",
         "entitlement": {
           "all_of": [
             {
-              "local_authority": [
-                "birmingham",
-                "coventry",
-                "nottingham",
-                "derbyshire"
-              ]
-            },
-            {
-              "distribution_profile": [
-                "all_partners",
-                "print_digital"
+              "service": [
+                "economic"
               ]
             }
           ]
         },
         "users": [
           {
-            "email": "anita.sharma@shiresledger.example",
-            "first_name": "Anita",
-            "last_name": "Sharma",
+            "email": "priya.menon@atlascapital.example",
+            "first_name": "Priya",
+            "last_name": "Menon",
             "type": "company_admin"
-          },
-          {
-            "email": "chris.wheeler@shiresledger.example",
-            "first_name": "Chris",
-            "last_name": "Wheeler",
-            "type": "public"
-          }
-        ]
-      },
-      {
-        "name": "Cambria Local Media",
-        "short_name": "Cambria Local",
-        "url": "https://cambrialocal.example",
-        "tier": "Partner",
-        "entitlement": {
-          "all_of": [
-            {
-              "region": [
-                "wales"
-              ]
-            },
-            {
-              "distribution_profile": [
-                "all_partners",
-                "hyperlocal"
-              ]
-            }
-          ]
-        },
-        "users": [
-          {
-            "email": "gareth.lloyd@cambrialocal.example",
-            "first_name": "Gareth",
-            "last_name": "Lloyd",
-            "type": "company_admin"
-          },
-          {
-            "email": "megan.price@cambrialocal.example",
-            "first_name": "Megan",
-            "last_name": "Price",
-            "type": "public"
           }
         ]
       }
     ],
     "internal_client": {
-      "name": "Town Hall Reporting Network",
-      "url": "https://townhall-reporting.example",
+      "name": "Meridian News Agency",
+      "url": "https://meridian-news.example",
       "users": [
         {
-          "email": "sam.okoro@townhall-reporting.example",
+          "email": "sam.reyes@meridian-news.example",
           "first_name": "Sam",
-          "last_name": "Okoro",
+          "last_name": "Reyes",
           "type": "internal"
         }
       ]
@@ -494,101 +474,78 @@
     "sample_content": {
       "reports": {
         "story": "content/stories.json",
-        "weekly_advisory": "content/advisories.json"
+        "alert": "content/alerts.json"
       },
       "counts": {
-        "stories": 22,
-        "weekly_advisories": 2
+        "stories": 25,
+        "alerts": 4
       },
-      "guid_prefix": "urn:localwire:demo:",
+      "guid_prefix": "urn:agency:demo:",
       "review_comment": {
-        "user": "helen.mercer",
-        "stage": "Returned",
-        "text": "Returned for amendment. Please check the figures against the published committee papers and quote the council's response in full, then resubmit."
+        "user": "elena.marsh",
+        "stage": "Review",
+        "text": "Please add the ministry's response before this goes out."
       }
     }
   },
   "vocabularies": [
     {
-      "id": "local_authority",
-      "label": "Local authority",
+      "id": "topic",
+      "label": "Topic",
       "selection": "multi",
-      "helper_text": "At least one top-tier local authority. Name the first one in capitals at the start of the title.",
+      "helper_text": "What the story is about.",
       "items": [
         {
-          "qcode": "leeds",
-          "name": "Leeds City Council",
-          "region": "yorkshire_humber"
+          "qcode": "politics",
+          "name": "Politics"
         },
         {
-          "qcode": "bradford",
-          "name": "Bradford Council",
-          "region": "yorkshire_humber"
+          "qcode": "business",
+          "name": "Business"
         },
         {
-          "qcode": "kirklees",
-          "name": "Kirklees Council",
-          "region": "yorkshire_humber"
+          "qcode": "economy",
+          "name": "Economy"
         },
         {
-          "qcode": "sheffield",
-          "name": "Sheffield City Council",
-          "region": "yorkshire_humber"
+          "qcode": "markets",
+          "name": "Markets"
         },
         {
-          "qcode": "newcastle",
-          "name": "Newcastle City Council",
-          "region": "north_east"
+          "qcode": "sport",
+          "name": "Sport"
         },
         {
-          "qcode": "sunderland",
-          "name": "Sunderland City Council",
-          "region": "north_east"
+          "qcode": "science",
+          "name": "Science"
         },
         {
-          "qcode": "gateshead",
-          "name": "Gateshead Council",
-          "region": "north_east"
+          "qcode": "health",
+          "name": "Health"
         },
         {
-          "qcode": "northumberland",
-          "name": "Northumberland County Council",
-          "region": "north_east"
+          "qcode": "environment",
+          "name": "Environment"
         },
         {
-          "qcode": "birmingham",
-          "name": "Birmingham City Council",
-          "region": "west_midlands"
+          "qcode": "culture",
+          "name": "Culture"
         },
         {
-          "qcode": "coventry",
-          "name": "Coventry City Council",
-          "region": "west_midlands"
+          "qcode": "conflict",
+          "name": "Conflict and security"
         },
         {
-          "qcode": "nottingham",
-          "name": "Nottingham City Council",
-          "region": "east_midlands"
+          "qcode": "disaster",
+          "name": "Disasters and accidents"
         },
         {
-          "qcode": "derbyshire",
-          "name": "Derbyshire County Council",
-          "region": "east_midlands"
+          "qcode": "technology",
+          "name": "Technology"
         },
         {
-          "qcode": "cardiff",
-          "name": "Cardiff Council",
-          "region": "wales"
-        },
-        {
-          "qcode": "swansea",
-          "name": "Swansea Council",
-          "region": "wales"
-        },
-        {
-          "qcode": "gwynedd",
-          "name": "Gwynedd Council",
-          "region": "wales"
+          "qcode": "energy",
+          "name": "Energy"
         }
       ]
     },
@@ -596,157 +553,65 @@
       "id": "region",
       "label": "Region",
       "selection": "multi",
-      "helper_text": "The UK nation or English region of the local authorities in the story.",
+      "helper_text": "The world region the story is about.",
       "items": [
         {
-          "qcode": "north_east",
-          "name": "North East"
+          "qcode": "europe",
+          "name": "Europe"
         },
         {
-          "qcode": "north_west",
-          "name": "North West"
+          "qcode": "north_america",
+          "name": "North America"
         },
         {
-          "qcode": "yorkshire_humber",
-          "name": "Yorkshire and the Humber"
+          "qcode": "south_america",
+          "name": "South America"
         },
         {
-          "qcode": "east_midlands",
-          "name": "East Midlands"
+          "qcode": "middle_east",
+          "name": "Middle East"
         },
         {
-          "qcode": "west_midlands",
-          "name": "West Midlands"
+          "qcode": "africa",
+          "name": "Africa"
         },
         {
-          "qcode": "east_of_england",
-          "name": "East of England"
+          "qcode": "asia_pacific",
+          "name": "Asia Pacific"
         },
         {
-          "qcode": "london",
-          "name": "London"
-        },
-        {
-          "qcode": "south_east",
-          "name": "South East"
-        },
-        {
-          "qcode": "south_west",
-          "name": "South West"
-        },
-        {
-          "qcode": "wales",
-          "name": "Wales"
-        },
-        {
-          "qcode": "scotland",
-          "name": "Scotland"
-        },
-        {
-          "qcode": "northern_ireland",
-          "name": "Northern Ireland"
+          "qcode": "global",
+          "name": "Global"
         }
       ]
     },
     {
-      "id": "distribution_profile",
-      "label": "Distribution profile",
+      "id": "service",
+      "label": "Wire service",
       "selection": "multi",
-      "helper_text": "Which partners may receive the story. Stories are for all qualifying partners unless agreed otherwise.",
+      "helper_text": "Which subscriber services receive the item",
       "items": [
         {
-          "qcode": "all_partners",
-          "name": "All qualifying partners"
+          "qcode": "international",
+          "name": "International wire"
         },
         {
-          "qcode": "print_digital",
-          "name": "Print and digital publishers"
+          "qcode": "economic",
+          "name": "Economic and markets wire"
         },
         {
-          "qcode": "broadcast",
-          "name": "Broadcast partners"
-        },
-        {
-          "qcode": "hyperlocal",
-          "name": "Hyperlocal and community titles"
-        }
-      ]
-    },
-    {
-      "id": "category",
-      "label": "Category",
-      "selection": "multi",
-      "helper_text": "What the story is about.",
-      "items": [
-        {
-          "qcode": "council_meeting",
-          "name": "Council meetings and decisions"
-        },
-        {
-          "qcode": "planning",
-          "name": "Planning and development"
-        },
-        {
-          "qcode": "budget",
-          "name": "Budgets and council tax"
-        },
-        {
-          "qcode": "housing",
-          "name": "Housing"
-        },
-        {
-          "qcode": "transport",
-          "name": "Transport and highways"
-        },
-        {
-          "qcode": "education",
-          "name": "Schools and education"
-        },
-        {
-          "qcode": "social_care",
-          "name": "Health and social care"
-        },
-        {
-          "qcode": "environment",
-          "name": "Environment and waste"
-        },
-        {
-          "qcode": "community",
-          "name": "Libraries, leisure and community"
-        },
-        {
-          "qcode": "governance",
-          "name": "Elections and governance"
-        },
-        {
-          "qcode": "economy",
-          "name": "Economy and regeneration"
-        }
-      ]
-    },
-    {
-      "id": "image_rights",
-      "label": "Image rights",
-      "selection": "single",
-      "helper_text": "Confirm that every image in the story is rights-free and free for all partners to use, with its rights owner credited. Never use agency, freelance or employer library images.",
-      "items": [
-        {
-          "qcode": "rights_free",
-          "name": "Rights-free, free for all partners to use"
-        },
-        {
-          "qcode": "no_media",
-          "name": "No images or media"
+          "qcode": "sports",
+          "name": "Sports wire"
         }
       ]
     }
   ],
   "custom_text_fields": [
     {
-      "id": "embargo_reason",
-      "label": "Embargo reason",
+      "id": "dateline_text",
+      "label": "Dateline",
       "single_line": true,
-      "helper_text": "Why the story is embargoed, for example a report released by the council at a set time. Set the embargo time when sending or publishing."
+      "helper_text": "City and date in wire style, for example GENEVA, 27 October"
     }
   ],
   "report_types": [
@@ -754,20 +619,26 @@
       "id": "story",
       "label": "Story",
       "portal_profile": "Story",
-      "description": "A council story for all qualifying partners.",
+      "description": "A wire story for subscribers.",
       "priority": 20,
       "body_skeleton": "",
       "fields": [
         {
           "id": "headline",
           "kind": "native",
-          "label": "Title (COUNCIL NAME: Story name)",
+          "label": "Headline",
           "required": true,
-          "maxlength": 160,
+          "maxlength": 120,
           "format": "none"
         },
         {
-          "id": "local_authority",
+          "id": "slugline",
+          "kind": "native",
+          "label": "Slug",
+          "width": "half"
+        },
+        {
+          "id": "topic",
           "kind": "taxonomy",
           "width": "half",
           "required": true
@@ -779,22 +650,21 @@
           "required": true
         },
         {
-          "id": "distribution_profile",
+          "id": "service",
           "kind": "taxonomy",
           "width": "half",
           "required": true
         },
         {
-          "id": "category",
-          "kind": "taxonomy",
+          "id": "dateline_text",
+          "kind": "custom_text",
           "width": "half"
         },
         {
           "id": "abstract",
           "kind": "native",
-          "label": "Standfirst",
-          "required": true,
-          "maxlength": 300,
+          "label": "Summary",
+          "maxlength": 400,
           "format": "summary"
         },
         {
@@ -805,17 +675,6 @@
           "format": "body"
         },
         {
-          "id": "image_rights",
-          "kind": "taxonomy",
-          "width": "half",
-          "required": true
-        },
-        {
-          "id": "embargo_reason",
-          "kind": "custom_text",
-          "width": "half"
-        },
-        {
           "id": "byline",
           "kind": "native",
           "label": "Byline",
@@ -824,28 +683,28 @@
         {
           "id": "ednote",
           "kind": "native",
-          "label": "Note for the reviewer"
+          "label": "Editorial note"
         }
       ]
     },
     {
-      "id": "weekly_advisory",
-      "label": "Weekly advisory",
-      "portal_profile": "Weeklyadvisory",
-      "description": "A reporter's diary for the next seven days, filed by the end of each week.",
-      "priority": 10,
-      "body_skeleton": "<h2>Diary for the next seven days</h2><ul><li>Day and time, council, meeting: what is expected</li></ul><h2>Stories in progress</h2><p></p><h2>Availability</h2><p></p>",
+      "id": "alert",
+      "label": "Alert",
+      "portal_profile": "Alert",
+      "description": "A one-paragraph flash or urgent alert",
+      "priority": 30,
+      "body_skeleton": "",
       "fields": [
         {
           "id": "headline",
           "kind": "native",
-          "label": "Title",
+          "label": "Headline",
           "required": true,
-          "maxlength": 160,
+          "maxlength": 120,
           "format": "none"
         },
         {
-          "id": "local_authority",
+          "id": "topic",
           "kind": "taxonomy",
           "width": "half",
           "required": true
@@ -857,35 +716,22 @@
           "required": true
         },
         {
-          "id": "distribution_profile",
+          "id": "service",
           "kind": "taxonomy",
           "width": "half",
           "required": true
         },
         {
-          "id": "abstract",
-          "kind": "native",
-          "label": "Summary",
-          "maxlength": 300,
-          "format": "summary"
-        },
-        {
           "id": "body_html",
           "kind": "native",
-          "label": "Diary",
+          "label": "Alert text",
           "required": true,
-          "format": "body"
-        },
-        {
-          "id": "byline",
-          "kind": "native",
-          "label": "Byline",
-          "width": "half"
+          "format": "summary"
         },
         {
           "id": "ednote",
           "kind": "native",
-          "label": "Note for the reviewer"
+          "label": "Editorial note"
         }
       ]
     }
@@ -917,117 +763,123 @@
   },
   "templates": [
     {
-      "name": "Ridings Press story",
-      "report_type": "story",
+      "name": "Flash",
+      "report_type": "alert",
       "teams": [
-        "Ridings Press Group"
+        "World",
+        "Politics",
+        "Business",
+        "Sport",
+        "Culture"
       ],
+      "headline": "FLASH: ",
       "subject": {
-        "region": [
-          "yorkshire_humber"
-        ],
-        "distribution_profile": [
-          "all_partners"
+        "service": [
+          "international"
         ]
       }
     },
     {
-      "name": "Tynebridge Media story",
+      "name": "Urgent",
       "report_type": "story",
       "teams": [
-        "Tynebridge Media"
+        "World",
+        "Politics",
+        "Business",
+        "Sport",
+        "Culture"
       ],
+      "headline": "URGENT: ",
       "subject": {
-        "region": [
-          "north_east"
-        ],
-        "distribution_profile": [
-          "all_partners"
+        "service": [
+          "international"
         ]
       }
     },
     {
-      "name": "Shires Ledger story",
+      "name": "World story",
       "report_type": "story",
       "teams": [
-        "Shires Ledger Group"
+        "World"
       ],
       "subject": {
-        "region": [
-          "west_midlands",
-          "east_midlands"
-        ],
-        "distribution_profile": [
-          "all_partners"
+        "service": [
+          "international"
         ]
       }
     },
     {
-      "name": "Cambria Local Media story",
+      "name": "Politics story",
       "report_type": "story",
       "teams": [
-        "Cambria Local Media"
+        "Politics"
       ],
       "subject": {
-        "region": [
-          "wales"
+        "topic": [
+          "politics"
         ],
-        "distribution_profile": [
-          "all_partners"
+        "service": [
+          "international"
         ]
       }
     },
     {
-      "name": "Council meeting",
+      "name": "Business story",
       "report_type": "story",
       "teams": [
-        "Ridings Press Group",
-        "Tynebridge Media",
-        "Shires Ledger Group",
-        "Cambria Local Media"
+        "Business"
       ],
-      "headline": "COUNCIL NAME: Story name",
       "subject": {
-        "category": [
-          "council_meeting"
+        "topic": [
+          "business"
         ],
-        "distribution_profile": [
-          "all_partners"
+        "service": [
+          "economic"
         ]
       }
     },
     {
-      "name": "Planning decision",
+      "name": "Sport story",
       "report_type": "story",
       "teams": [
-        "Ridings Press Group",
-        "Tynebridge Media",
-        "Shires Ledger Group",
-        "Cambria Local Media"
+        "Sport"
       ],
-      "headline": "COUNCIL NAME: Story name",
       "subject": {
-        "category": [
-          "planning"
+        "topic": [
+          "sport"
         ],
-        "distribution_profile": [
-          "all_partners"
+        "service": [
+          "sports"
         ]
       }
     },
     {
-      "name": "Weekly advisory",
-      "report_type": "weekly_advisory",
+      "name": "Culture story",
+      "report_type": "story",
       "teams": [
-        "Ridings Press Group",
-        "Tynebridge Media",
-        "Shires Ledger Group",
-        "Cambria Local Media"
+        "Culture"
       ],
-      "headline": "Weekly advisory: REPORTER NAME, week beginning DATE",
       "subject": {
-        "distribution_profile": [
-          "all_partners"
+        "topic": [
+          "culture"
+        ],
+        "service": [
+          "international"
+        ]
+      }
+    },
+    {
+      "name": "Market report",
+      "report_type": "story",
+      "teams": [
+        "Business"
+      ],
+      "subject": {
+        "topic": [
+          "markets"
+        ],
+        "service": [
+          "economic"
         ]
       }
     }
@@ -1036,9 +888,9 @@
   "superdesk": {
     "demo_password_env": "DEMO_PASSWORD",
     "settings": {
-      "ORGANIZATION_NAME": "Town Hall Reporting Network",
-      "ORGANIZATION_NAME_ABBREVIATION": "THRN",
-      "NEWSML_PROVIDER_ID": "townhall-reporting.example",
+      "ORGANIZATION_NAME": "Meridian News Agency",
+      "ORGANIZATION_NAME_ABBREVIATION": "MNA",
+      "NEWSML_PROVIDER_ID": "meridian-news.example",
       "DEFAULT_LANGUAGE": "en",
       "VALIDATOR_MEDIA_METADATA": {
         "headline": {
@@ -1064,10 +916,10 @@
           "textarea": true
         },
         "byline": {
-          "required": true
+          "required": false
         },
         "copyrightholder": {
-          "required": true
+          "required": false
         },
         "usageterms": {
           "required": false
@@ -1085,10 +937,10 @@
       ],
       "search_cvs": [
         {
-          "id": "local_authority",
-          "name": "Local authority",
+          "id": "topic",
+          "name": "Topic",
           "field": "subject",
-          "list": "local_authority"
+          "list": "topic"
         },
         {
           "id": "region",
@@ -1097,16 +949,10 @@
           "list": "region"
         },
         {
-          "id": "distribution_profile",
-          "name": "Distribution profile",
+          "id": "service",
+          "name": "Wire service",
           "field": "subject",
-          "list": "distribution_profile"
-        },
-        {
-          "id": "category",
-          "name": "Category",
-          "field": "subject",
-          "list": "category"
+          "list": "service"
         }
       ],
       "list": {
@@ -1148,7 +994,43 @@
         "editorSuggestions"
       ]
     },
-    "ingest": {},
+    "ingest": {
+      "route_to": {
+        "team": "World",
+        "stage": "Incoming"
+      },
+      "routing_scheme": "Wire intake",
+      "providers": [
+        {
+          "name": "UN News",
+          "source": "UN",
+          "feed": "rss",
+          "url": "https://news.un.org/feed/subscribe/en/news/all/rss.xml",
+          "update_minutes": 10
+        },
+        {
+          "name": "The Guardian world",
+          "source": "Guardian",
+          "feed": "rss",
+          "url": "https://www.theguardian.com/world/rss",
+          "update_minutes": 10
+        },
+        {
+          "name": "NASA news releases",
+          "source": "NASA",
+          "feed": "rss",
+          "url": "https://www.nasa.gov/news-release/feed/",
+          "update_minutes": 10
+        },
+        {
+          "name": "European Commission press corner",
+          "source": "EC",
+          "feed": "rss",
+          "url": "https://ec.europa.eu/commission/presscorner/api/rss?language=en",
+          "update_minutes": 10
+        }
+      ]
+    },
     "recipients": {
       "portal": {
         "name": "Newshub",
@@ -1156,7 +1038,7 @@
         "format": "Newsroom NINJS",
         "push_path": "/push",
         "push_key_env": "PORTAL_PUSH_KEY",
-        "receives": "every published story and advisory"
+        "receives": "every published story and alert"
       },
       "portal_calendar": {
         "name": "Newshub calendar",
@@ -1167,13 +1049,61 @@
     "dashboards": {
       "per_team_widgets": [
         "aggregate",
-        "activity"
+        "activity",
+        "ingest-stats",
+        "world-clock"
       ],
       "world_clock_zones": [
-        "Europe/London"
+        "Europe/London",
+        "Europe/Brussels",
+        "America/New_York",
+        "Asia/Singapore"
       ]
     },
-    "ai": {},
+    "ai": {
+      "provider_name": "OpenRouter",
+      "provider_type": "openai_compatible",
+      "base_url": "https://openrouter.ai/api/v1",
+      "label": "OpenRouter (bring your own endpoint)",
+      "provider_key_env": "AI_PROVIDER_KEY",
+      "default_model": "z-ai/glm-5.3-flash",
+      "rule": "The key is pasted into Settings, AI Providers by hand or read from AI_PROVIDER_KEY when the seed creates the provider. Actions carry no model; a model chosen by hand on an action is kept. Reasoning models pass the 60 second AI_REQUEST_TIMEOUT, so keep a fast model as the default.",
+      "voice": "You write international wire copy for a news agency. Plain, neutral, factual English in the agency style: who, what, where, when, then why it matters. Attribute every claim. Never speculate, never add detail that is not in the input, never dramatise. No emoji, no exclamation marks.",
+      "actions": [
+        {
+          "name": "Suggest headlines",
+          "type": "suggestion",
+          "input_fields": [
+            "body_html",
+            "abstract"
+          ],
+          "output_field": "headline",
+          "report_types": [
+            "story",
+            "alert"
+          ],
+          "temperature": 0.3,
+          "max_characters": 90,
+          "suggestions_count": 3,
+          "prompt": "Propose wire headlines: subject, verb, what happened, in that order, present tense, no question marks"
+        },
+        {
+          "name": "Draft summary",
+          "type": "summary",
+          "input_fields": [
+            "body_html"
+          ],
+          "output_field": "abstract",
+          "report_types": [
+            "story",
+            "alert"
+          ],
+          "temperature": 0.2,
+          "max_characters": 400,
+          "prompt": "Write a two-sentence summary a subscriber can run as a standalone brief"
+        }
+      ]
+    },
     "planning": {},
     "triage": {},
     "workflow": {}

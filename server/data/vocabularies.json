@@ -3256,217 +3256,8 @@
         ]
     },
     {
-        "_id": "local_authority",
-        "display_name": "Local authority",
-        "type": "manageable",
-        "selection_type": "multi selection",
-        "unique_field": "qcode",
-        "service": {
-            "all": 1
-        },
-        "helper_text": "At least one top-tier local authority. Name the first one in capitals at the start of the title.",
-        "init_version": 1,
-        "schema": {
-            "name": {},
-            "qcode": {}
-        },
-        "items": [
-            {
-                "is_active": true,
-                "name": "Leeds City Council",
-                "qcode": "leeds"
-            },
-            {
-                "is_active": true,
-                "name": "Bradford Council",
-                "qcode": "bradford"
-            },
-            {
-                "is_active": true,
-                "name": "Kirklees Council",
-                "qcode": "kirklees"
-            },
-            {
-                "is_active": true,
-                "name": "Sheffield City Council",
-                "qcode": "sheffield"
-            },
-            {
-                "is_active": true,
-                "name": "Newcastle City Council",
-                "qcode": "newcastle"
-            },
-            {
-                "is_active": true,
-                "name": "Sunderland City Council",
-                "qcode": "sunderland"
-            },
-            {
-                "is_active": true,
-                "name": "Gateshead Council",
-                "qcode": "gateshead"
-            },
-            {
-                "is_active": true,
-                "name": "Northumberland County Council",
-                "qcode": "northumberland"
-            },
-            {
-                "is_active": true,
-                "name": "Birmingham City Council",
-                "qcode": "birmingham"
-            },
-            {
-                "is_active": true,
-                "name": "Coventry City Council",
-                "qcode": "coventry"
-            },
-            {
-                "is_active": true,
-                "name": "Nottingham City Council",
-                "qcode": "nottingham"
-            },
-            {
-                "is_active": true,
-                "name": "Derbyshire County Council",
-                "qcode": "derbyshire"
-            },
-            {
-                "is_active": true,
-                "name": "Cardiff Council",
-                "qcode": "cardiff"
-            },
-            {
-                "is_active": true,
-                "name": "Swansea Council",
-                "qcode": "swansea"
-            },
-            {
-                "is_active": true,
-                "name": "Gwynedd Council",
-                "qcode": "gwynedd"
-            }
-        ]
-    },
-    {
-        "_id": "region",
-        "display_name": "Region",
-        "type": "manageable",
-        "selection_type": "multi selection",
-        "unique_field": "qcode",
-        "service": {
-            "all": 1
-        },
-        "helper_text": "The UK nation or English region of the local authorities in the story.",
-        "init_version": 1,
-        "schema": {
-            "name": {},
-            "qcode": {}
-        },
-        "items": [
-            {
-                "is_active": true,
-                "name": "North East",
-                "qcode": "north_east"
-            },
-            {
-                "is_active": true,
-                "name": "North West",
-                "qcode": "north_west"
-            },
-            {
-                "is_active": true,
-                "name": "Yorkshire and the Humber",
-                "qcode": "yorkshire_humber"
-            },
-            {
-                "is_active": true,
-                "name": "East Midlands",
-                "qcode": "east_midlands"
-            },
-            {
-                "is_active": true,
-                "name": "West Midlands",
-                "qcode": "west_midlands"
-            },
-            {
-                "is_active": true,
-                "name": "East of England",
-                "qcode": "east_of_england"
-            },
-            {
-                "is_active": true,
-                "name": "London",
-                "qcode": "london"
-            },
-            {
-                "is_active": true,
-                "name": "South East",
-                "qcode": "south_east"
-            },
-            {
-                "is_active": true,
-                "name": "South West",
-                "qcode": "south_west"
-            },
-            {
-                "is_active": true,
-                "name": "Wales",
-                "qcode": "wales"
-            },
-            {
-                "is_active": true,
-                "name": "Scotland",
-                "qcode": "scotland"
-            },
-            {
-                "is_active": true,
-                "name": "Northern Ireland",
-                "qcode": "northern_ireland"
-            }
-        ]
-    },
-    {
-        "_id": "distribution_profile",
-        "display_name": "Distribution profile",
-        "type": "manageable",
-        "selection_type": "multi selection",
-        "unique_field": "qcode",
-        "service": {
-            "all": 1
-        },
-        "helper_text": "Which partners may receive the story. Stories are for all qualifying partners unless agreed otherwise.",
-        "init_version": 1,
-        "schema": {
-            "name": {},
-            "qcode": {}
-        },
-        "items": [
-            {
-                "is_active": true,
-                "name": "All qualifying partners",
-                "qcode": "all_partners"
-            },
-            {
-                "is_active": true,
-                "name": "Print and digital publishers",
-                "qcode": "print_digital"
-            },
-            {
-                "is_active": true,
-                "name": "Broadcast partners",
-                "qcode": "broadcast"
-            },
-            {
-                "is_active": true,
-                "name": "Hyperlocal and community titles",
-                "qcode": "hyperlocal"
-            }
-        ]
-    },
-    {
-        "_id": "category",
-        "display_name": "Category",
+        "_id": "topic",
+        "display_name": "Topic",
         "type": "manageable",
         "selection_type": "multi selection",
         "unique_field": "qcode",
@@ -3482,71 +3273,81 @@
         "items": [
             {
                 "is_active": true,
-                "name": "Council meetings and decisions",
-                "qcode": "council_meeting"
+                "name": "Politics",
+                "qcode": "politics"
             },
             {
                 "is_active": true,
-                "name": "Planning and development",
-                "qcode": "planning"
+                "name": "Business",
+                "qcode": "business"
             },
             {
                 "is_active": true,
-                "name": "Budgets and council tax",
-                "qcode": "budget"
+                "name": "Economy",
+                "qcode": "economy"
             },
             {
                 "is_active": true,
-                "name": "Housing",
-                "qcode": "housing"
+                "name": "Markets",
+                "qcode": "markets"
             },
             {
                 "is_active": true,
-                "name": "Transport and highways",
-                "qcode": "transport"
+                "name": "Sport",
+                "qcode": "sport"
             },
             {
                 "is_active": true,
-                "name": "Schools and education",
-                "qcode": "education"
+                "name": "Science",
+                "qcode": "science"
             },
             {
                 "is_active": true,
-                "name": "Health and social care",
-                "qcode": "social_care"
+                "name": "Health",
+                "qcode": "health"
             },
             {
                 "is_active": true,
-                "name": "Environment and waste",
+                "name": "Environment",
                 "qcode": "environment"
             },
             {
                 "is_active": true,
-                "name": "Libraries, leisure and community",
-                "qcode": "community"
+                "name": "Culture",
+                "qcode": "culture"
             },
             {
                 "is_active": true,
-                "name": "Elections and governance",
-                "qcode": "governance"
+                "name": "Conflict and security",
+                "qcode": "conflict"
             },
             {
                 "is_active": true,
-                "name": "Economy and regeneration",
-                "qcode": "economy"
+                "name": "Disasters and accidents",
+                "qcode": "disaster"
+            },
+            {
+                "is_active": true,
+                "name": "Technology",
+                "qcode": "technology"
+            },
+            {
+                "is_active": true,
+                "name": "Energy",
+                "qcode": "energy"
             }
         ]
     },
     {
-        "_id": "image_rights",
-        "display_name": "Image rights",
+        "_id": "region",
+        "display_name": "Region",
         "type": "manageable",
-        "selection_type": "single selection",
+        "selection_type": "multi selection",
         "unique_field": "qcode",
         "service": {
             "all": 1
         },
-        "helper_text": "Confirm that every image in the story is rights-free and free for all partners to use, with its rights owner credited. Never use agency, freelance or employer library images.",
+        "helper_text": "The world region the story is about.",
         "init_version": 1,
         "schema": {
             "name": {},
@@ -3555,22 +3356,80 @@
         "items": [
             {
                 "is_active": true,
-                "name": "Rights-free, free for all partners to use",
-                "qcode": "rights_free"
+                "name": "Europe",
+                "qcode": "europe"
             },
             {
                 "is_active": true,
-                "name": "No images or media",
-                "qcode": "no_media"
+                "name": "North America",
+                "qcode": "north_america"
+            },
+            {
+                "is_active": true,
+                "name": "South America",
+                "qcode": "south_america"
+            },
+            {
+                "is_active": true,
+                "name": "Middle East",
+                "qcode": "middle_east"
+            },
+            {
+                "is_active": true,
+                "name": "Africa",
+                "qcode": "africa"
+            },
+            {
+                "is_active": true,
+                "name": "Asia Pacific",
+                "qcode": "asia_pacific"
+            },
+            {
+                "is_active": true,
+                "name": "Global",
+                "qcode": "global"
             }
         ]
     },
     {
-        "_id": "embargo_reason",
-        "display_name": "Embargo reason",
+        "_id": "service",
+        "display_name": "Wire service",
+        "type": "manageable",
+        "selection_type": "multi selection",
+        "unique_field": "qcode",
+        "service": {
+            "all": 1
+        },
+        "helper_text": "Which subscriber services receive the item",
+        "init_version": 1,
+        "schema": {
+            "name": {},
+            "qcode": {}
+        },
+        "items": [
+            {
+                "is_active": true,
+                "name": "International wire",
+                "qcode": "international"
+            },
+            {
+                "is_active": true,
+                "name": "Economic and markets wire",
+                "qcode": "economic"
+            },
+            {
+                "is_active": true,
+                "name": "Sports wire",
+                "qcode": "sports"
+            }
+        ]
+    },
+    {
+        "_id": "dateline_text",
+        "display_name": "Dateline",
         "type": "manageable",
         "field_type": "text",
-        "helper_text": "Why the story is embargoed, for example a report released by the council at a set time. Set the embargo time when sending or publishing.",
+        "helper_text": "City and date in wire style, for example GENEVA, 27 October",
         "init_version": 1,
         "items": [],
         "field_options": {

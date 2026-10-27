@@ -5,7 +5,6 @@ connection that times out or is refused, which happens now and then from a lapto
 `sim.SimTransport` answers from an in-memory instance and prints the request instead, which is
 what `--dry-run` uses: nothing leaves the machine.
 """
-
 import base64
 import errno
 import json
@@ -21,12 +20,9 @@ SECRET_KEYS = ("password", "secret_token", "api_key")
 
 class ApiError(RuntimeError):
     def __init__(self, method, url, status, body):
-        super().__init__(method, url, status, body)
         self.status = status
         self.body = body
-
-    def __str__(self):
-        return "%s %s -> %s\n%s" % self.args
+        super().__init__("%s %s -> %s\n%s" % (method, url, status, body))
 
 
 class HttpTransport:
@@ -39,30 +35,21 @@ class HttpTransport:
         attempt = 0
         while True:
             attempt += 1
-            request = urllib.request.Request(
-                url, data=data, headers=headers, method=method
-            )
+            request = urllib.request.Request(url, data=data, headers=headers, method=method)
             try:
-                with urllib.request.urlopen(
-                    request, timeout=self.timeout, context=self.context
-                ) as response:
+                with urllib.request.urlopen(request, timeout=self.timeout, context=self.context) as response:
                     return json.loads(response.read().decode() or "{}")
             except urllib.error.HTTPError as err:
                 raise ApiError(method, url, err.code, err.read().decode()) from None
             except urllib.error.URLError as err:
                 # A write is only repeated when the connection was never established, so a request
                 # the server may already have acted on is not sent twice.
-                never_connected = getattr(err.reason, "errno", None) in (
-                    errno.ETIMEDOUT,
-                    errno.ECONNREFUSED,
-                )
+                never_connected = getattr(err.reason, "errno", None) in (errno.ETIMEDOUT, errno.ECONNREFUSED)
                 if attempt < 4 and (method == "GET" or never_connected):
                     log("connection to %s failed (%s), retrying" % (url, err.reason), 2)
                     time.sleep(3 * attempt)
                     continue
-                raise ApiError(
-                    method, url, "connection failed", str(err.reason)
-                ) from None
+                raise ApiError(method, url, "connection failed", str(err.reason)) from None
 
 
 class Superdesk:
@@ -88,9 +75,7 @@ class Superdesk:
             url += "?" + urllib.parse.urlencode(params)
         headers = {"Content-Type": "application/json", "Accept": "application/json"}
         if self.token:
-            headers["Authorization"] = (
-                "Basic " + base64.b64encode(("%s:" % self.token).encode()).decode()
-            )
+            headers["Authorization"] = "Basic " + base64.b64encode(("%s:" % self.token).encode()).decode()
         if etag:
             headers["If-Match"] = etag
         # A dry run's transport prints writes itself.
@@ -101,9 +86,7 @@ class Superdesk:
     def login(self, username, password):
         saved, self.token = self.token, None
         try:
-            session = self._call(
-                "POST", "auth_db", {"username": username, "password": password}
-            )
+            session = self._call("POST", "auth_db", {"username": username, "password": password})
         except ApiError:
             self.token = saved
             raise
@@ -135,12 +118,7 @@ class Superdesk:
         return self._call("PATCH", "%s/%s" % (resource, item_id), updates, etag=etag)
 
     def find_one(self, resource, **where):
-        items = (
-            self.get(resource, {"where": json.dumps(where), "max_results": 1}).get(
-                "_items"
-            )
-            or []
-        )
+        items = self.get(resource, {"where": json.dumps(where), "max_results": 1}).get("_items") or []
         return items[0] if items else None
 
     def find_all(self, resource, where=None, max_results=200):
@@ -153,10 +131,7 @@ class Superdesk:
 def masked(value):
     """A copy of a request body that is safe to print."""
     if isinstance(value, dict):
-        return {
-            k: ("***" if k in SECRET_KEYS and v else masked(v))
-            for k, v in value.items()
-        }
+        return {k: ("***" if k in SECRET_KEYS and v else masked(v)) for k, v in value.items()}
     if isinstance(value, list):
         return [masked(v) for v in value]
     return value
