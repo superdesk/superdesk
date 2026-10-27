@@ -1,12 +1,20 @@
 """Finishing touches the seed engine cannot express, applied over the REST API.
 
-Run after ``run_seed.sh`` or ``build.py superdesk seed``:
+Run after `build.py superdesk seed` (see direction/scenes.md, "Seeding order"):
 
-    SUPERDESK_URL=https://<host>/api SUPERDESK_USER=admin SUPERDESK_PASSWORD=... python3 post_seed.py [--only STEP ...]
+    SUPERDESK_URL=https://<host> SUPERDESK_USER=admin SUPERDESK_PASSWORD=... python3 post_seed.py [--apply] [--only STEP ...]
 
-Steps, in order: stages (board order Draft first, global read off), states (seeded items
-from ``fetched`` to ``in_progress``), scheduled (one story published with an embargo
-time), revoked (one published story killed). Every step is idempotent.
+Without --apply nothing is written: every step only prints what it would change. Every step is
+idempotent. Not yet run against a live instance: run the first time with a dry pass, read it, then
+--apply.
+
+Steps, in this order:
+  hierarchy       Themenarchitektur becomes a two-level list (parent of every Thema)
+  coverage_types  one coverage type per channel in the coverage type list
+  retype          seeded coverages get their channel's coverage type (the engine writes "text" on all)
+  states          seeded items go from "fetched" to "in_progress" (board and list badges read better)
+
+Re-running the engine's `vocabularies` section resets the hierarchy; run `hierarchy` again afterwards.
 """
 
 import argparse
@@ -18,31 +26,64 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
-from datetime import datetime, timedelta, timezone
 
-STAGE_ORDER = [
-    "Draft",
-    "Review Pending",
-    "In Review",
-    "Returned",
-    "Hold",
-    "Scheduled",
-    "Published",
-    "Revoked",
+# Thema qcode -> Themenfeld qcode. Must match the themenarchitektur vocabulary in contract.yaml.
+PARENTS = {
+    "thema:waermewende": "themenfeld:gebaeude_waerme",
+    "thema:sanierung": "themenfeld:gebaeude_waerme",
+    "thema:waermepumpen": "themenfeld:gebaeude_waerme",
+    "thema:serielles_sanieren": "themenfeld:gebaeude_waerme",
+    "thema:erneuerbare": "themenfeld:strom_netze",
+    "thema:netzausbau": "themenfeld:strom_netze",
+    "thema:speicher": "themenfeld:strom_netze",
+    "thema:wasserstoff": "themenfeld:industrie_wasserstoff",
+    "thema:effizienz_industrie": "themenfeld:industrie_wasserstoff",
+    "thema:abwaerme": "themenfeld:industrie_wasserstoff",
+    "thema:elektromobilitaet": "themenfeld:mobilitaet",
+    "thema:ladeinfrastruktur": "themenfeld:mobilitaet",
+    "thema:alternative_kraftstoffe": "themenfeld:mobilitaet",
+}
+
+# One coverage type per channel. "content item type" decides which kind of article an assignment
+# creates; every text channel uses text, YouTube uses video.
+COVERAGE_TYPES = [
+    ("pressemitteilung", "Pressemitteilung", "text"),
+    ("linkedin", "LinkedIn", "text"),
+    ("instagram", "Instagram", "text"),
+    ("youtube", "YouTube", "video"),
+    ("newsletter", "Newsletter", "text"),
+    ("website", "Website", "text"),
+    ("intranet", "Intranet", "text"),
+    ("event", "Event", "text"),
 ]
-SCHEDULED_ITEM = "urn:localwire:demo:LW-SLG-302"
-REVOKED_ITEM = "urn:localwire:demo:LW-RPG-109"
-REVOKE_REASON = (
-    "The location given for the hub was wrong. A corrected story will follow."
-)
+
+# Coverage slugline (the `ref` in content/storys.json) -> coverage type qcode.
+COVERAGE_BY_REF = {
+    "ST-WP-PM": "pressemitteilung",
+    "ST-WP-LI": "linkedin",
+    "ST-WP-NL": "newsletter",
+    "ST-WP-IG": "instagram",
+    "ST-FA-PM": "pressemitteilung",
+    "ST-FA-WEB": "website",
+    "ST-FA-INT": "intranet",
+    "ST-LQ-PM": "pressemitteilung",
+    "ST-LQ-LI": "linkedin",
+    "ST-LQ-EV": "event",
+    "ST-WS-LI": "linkedin",
+    "ST-WS-NL": "newsletter",
+    "ST-WS-WEB": "website",
+}
+
+GUID_PREFIX = "urn:eakom:demo:"
 
 
 class Api:
-    def __init__(self, url, user, password):
+    def __init__(self, url, user, password, apply):
         self.url = url.rstrip("/")
-        token = self.request(
-            "POST", "/auth_db", {"username": user, "password": password}, auth=False
-        )["token"]
+        if not self.url.endswith("/api"):
+            self.url += "/api"
+        self.apply = apply
+        token = self.request("POST", "/auth_db", {"username": user, "password": password}, auth=False)["token"]
         self.auth = "Basic " + base64.b64encode((token + ":").encode()).decode()
 
     def request(self, method, path, body=None, auth=True, etag=None, params=None):
@@ -55,19 +96,17 @@ class Api:
             headers["If-Match"] = etag
         for attempt in range(6):
             try:
-                req = urllib.request.Request(
-                    url, data=data, headers=headers, method=method
-                )
+                req = urllib.request.Request(url, data=data, headers=headers, method=method)
                 with urllib.request.urlopen(req, timeout=60) as resp:
                     raw = resp.read()
                     return json.loads(raw) if raw else {}
             except urllib.error.HTTPError as e:
                 detail = e.read().decode(errors="replace")[:400]
-                raise RuntimeError(f"{method} {path} -> {e.code}: {detail}") from None
+                raise RuntimeError("%s %s -> %s: %s" % (method, path, e.code, detail)) from None
             except (urllib.error.URLError, TimeoutError, ConnectionError) as e:
                 if attempt == 5:
                     raise
-                print(f"    connection to {path} failed ({e}), retrying", flush=True)
+                print("    connection to %s failed (%s), retrying" % (path, e), flush=True)
                 time.sleep(3)
 
     def get(self, path, **params):
@@ -77,103 +116,94 @@ class Api:
         return self.get(path, max_results=200, **params)["_items"]
 
     def patch(self, path, body, etag):
+        if not self.apply:
+            return None
         return self.request("PATCH", path, body, etag=etag)
 
 
-def step_stages(api):
-    """Board order Draft first, and global read off so a workgroup's stories stay inside it."""
-    print("Stages")
-    desks = {d["_id"]: d["name"] for d in api.items("/desks")}
-    stages = [s for s in api.items("/stages") if s["desk"] in desks]
-    for desk_id, desk_name in desks.items():
-        own = {s["name"]: s for s in stages if s["desk"] == desk_id}
-        ordered = [own[n]["_id"] for n in STAGE_ORDER if n in own]
-        ordered += [s["_id"] for s in own.values() if s["_id"] not in ordered]
-        current = [
-            s["_id"] for s in sorted(own.values(), key=lambda s: s.get("desk_order", 0))
-        ]
-        if current != ordered:
-            api.request("POST", "/stages_order", {"desk": desk_id, "stages": ordered})
-            print(f"  {desk_name}: order set")
-        else:
-            print(f"  {desk_name}: order unchanged")
-        for stage in own.values():
-            if stage.get("is_visible"):
-                api.patch(
-                    f"/stages/{stage['_id']}", {"is_visible": False}, stage["_etag"]
-                )
-                print(f"  {desk_name} / {stage['name']}: global read off")
+def step_hierarchy(api):
+    print("Themenarchitektur hierarchy")
+    vocabulary = api.get("/vocabularies/themenarchitektur")
+    items = vocabulary["items"]
+    changed = False
+    for item in items:
+        wanted = PARENTS.get(item["qcode"])
+        if wanted and item.get("parent") != wanted:
+            item["parent"] = wanted
+            changed = True
+    schema = dict(vocabulary.get("schema") or {})
+    if "parent" not in schema:
+        schema["parent"] = {}
+        changed = True
+    if not changed:
+        print("  already two levels")
+        return
+    api.patch("/vocabularies/themenarchitektur", {"items": items, "schema": schema}, vocabulary["_etag"])
+    print("  %s: parent set on %d themes" % ("done" if api.apply else "would set", len([i for i in items if i.get("parent")])))
+
+
+def step_coverage_types(api):
+    print("Coverage types")
+    vocabulary = api.get("/vocabularies/g2_content_type")
+    items = vocabulary["items"]
+    present = {item["qcode"] for item in items}
+    missing = [t for t in COVERAGE_TYPES if t[0] not in present]
+    if not missing:
+        print("  all channel types present")
+        return
+    for qcode, name, item_type in missing:
+        items.append({"is_active": True, "qcode": qcode, "name": name, "content item type": item_type})
+    api.patch("/vocabularies/g2_content_type", {"items": items}, vocabulary["_etag"])
+    print("  %s: %s" % ("added" if api.apply else "would add", ", ".join(t[1] for t in missing)))
+
+
+def step_retype(api):
+    print("Coverage types on the seeded Storys")
+    for plan in api.items("/planning"):
+        if not str(plan.get("guid", "")).startswith(GUID_PREFIX + "request:"):
+            continue
+        coverages = plan.get("coverages") or []
+        changed = []
+        for coverage in coverages:
+            wanted = COVERAGE_BY_REF.get((coverage.get("planning") or {}).get("slugline"))
+            if wanted and coverage["planning"].get("g2_content_type") != wanted:
+                coverage["planning"]["g2_content_type"] = wanted
+                changed.append(coverage["planning"]["slugline"])
+        if not changed:
+            print("  %s: unchanged" % plan.get("slugline"))
+            continue
+        try:
+            api.patch("/planning/%s" % plan["_id"], {"coverages": coverages}, plan["_etag"])
+            print("  %s: %s %s" % (plan.get("slugline"), "retyped" if api.apply else "would retype", ", ".join(changed)))
+        except RuntimeError as err:
+            print("  %s: FAILED, set the type by hand (see direction/scenes.md): %s" % (plan.get("slugline"), err))
 
 
 def step_states(api):
     print("Item states")
     query = {"query": {"bool": {"must": [{"term": {"state": "fetched"}}]}}}
     for item in api.items("/archive", source=json.dumps(query)):
-        api.patch(f"/archive/{item['_id']}", {"state": "in_progress"}, item["_etag"])
-        print(f"  {item.get('headline', item['_id'])[:60]}: fetched -> in_progress")
+        if not str(item.get("guid", "")).startswith(GUID_PREFIX):
+            continue
+        api.patch("/archive/%s" % item["_id"], {"state": "in_progress"}, item["_etag"])
+        print("  %s: fetched -> in_progress%s" % (item.get("headline", item["_id"])[:60], "" if api.apply else " (dry)"))
 
 
-def step_scheduled(api):
-    print("Scheduled story")
-    item = api.get(f"/archive/{SCHEDULED_ITEM}")
-    if item.get("state") in ("scheduled", "published"):
-        print(f"  {item['headline'][:60]}: already {item['state']}")
-        return
-    when = (datetime.now(timezone.utc) + timedelta(days=1)).replace(
-        hour=0, minute=1, second=0, microsecond=0
-    )
-    api.patch(
-        f"/archive/publish/{SCHEDULED_ITEM}",
-        {"publish_schedule": when.strftime("%Y-%m-%dT%H:%M:%S+0000")},
-        item["_etag"],
-    )
-    print(f"  {item['headline'][:60]}: scheduled for {when.isoformat()}")
-
-
-def step_revoked(api):
-    print("Revoked story")
-    item = api.get(f"/archive/{REVOKED_ITEM}")
-    if item.get("state") == "killed":
-        print(f"  {item['headline'][:60]}: already killed")
-        return
-    if item.get("state") != "published":
-        print(
-            f"  {item['headline'][:60]}: not published ({item.get('state')}), skipped"
-        )
-        return
-    api.patch(
-        f"/archive/kill/{REVOKED_ITEM}",
-        {"body_html": f"<p>{REVOKE_REASON}</p>"},
-        item["_etag"],
-    )
-    print(f"  {item['headline'][:60]}: killed")
-
-
-STEPS = {
-    "stages": step_stages,
-    "states": step_states,
-    "scheduled": step_scheduled,
-    "revoked": step_revoked,
-}
+STEPS = {"hierarchy": step_hierarchy, "coverage_types": step_coverage_types, "retype": step_retype, "states": step_states}
 
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--only", action="append", choices=sorted(STEPS))
+    parser.add_argument("--apply", action="store_true", help="write; without it every step only prints")
+    parser.add_argument("--only", action="append", choices=list(STEPS))
     args = parser.parse_args()
-    url = os.environ["SUPERDESK_URL"]
-    api = Api(
-        url, os.environ.get("SUPERDESK_USER", "admin"), os.environ["SUPERDESK_PASSWORD"]
-    )
-    print(f"Post-seed on {url} as {os.environ.get('SUPERDESK_USER', 'admin')}")
+    url, user, password = os.environ.get("SUPERDESK_URL"), os.environ.get("SUPERDESK_USER", "admin"), os.environ.get("SUPERDESK_PASSWORD")
+    if not url or not password:
+        sys.exit("Set SUPERDESK_URL and SUPERDESK_PASSWORD (and SUPERDESK_USER if it is not admin).")
+    api = Api(url, user, password, args.apply)
+    print("%s on %s" % ("Applying" if args.apply else "Dry pass", api.url))
     for name in args.only or list(STEPS):
-        try:
-            STEPS[name](api)
-        except RuntimeError as e:
-            print(f"  FAILED: {e}", file=sys.stderr)
-            if not args.only:
-                continue
-            raise SystemExit(1)
+        STEPS[name](api)
 
 
 if __name__ == "__main__":

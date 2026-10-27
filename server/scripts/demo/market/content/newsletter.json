@@ -1,0 +1,53 @@
+[
+ {
+  "reference": "NL-001",
+  "title": "Rückblick: Der Fachdialog Wasserstoff in drei Minuten",
+  "summary": "Wer nicht dabei sein konnte, findet hier die wichtigsten Ergebnisse und die Aufzeichnung.",
+  "byline": "Tobias Krüger",
+  "desk": "Corporate Content",
+  "author": "tobias.krueger",
+  "workflow": "Veröffentlicht",
+  "hours_ago": 110,
+  "body_html": "<p>Mehr als 80 Fachleute haben beim Fachdialog über den Hochlauf der Wasserstoffnutzung gesprochen.</p><p>Die drei wichtigsten Ergebnisse: Abnehmer zuerst, Netzanschluss früh planen, Kommunen einbinden.</p><p>Zur Aufzeichnung und zu den Folien: [Link]</p>",
+  "themenarchitektur": [
+   "thema:wasserstoff"
+  ],
+  "strategieziele": [
+   "ziel:fachpublikum",
+   "ziel:vernetzung"
+  ],
+  "kanal": [
+   "kanal:newsletter"
+  ],
+  "ednote": "Beispielinhalt, alle Angaben sind erfunden.",
+  "zielgruppen": [
+   "zielgruppe:wirtschaft",
+   "zielgruppe:wissenschaft"
+  ]
+ },
+ {
+  "reference": "NL-002",
+  "title": "Newsletter Energiewende kompakt: Entwurf für die nächste Ausgabe",
+  "summary": "Drei Meldungen der Woche zu Wärmewende, Netzausbau und Ladeinfrastruktur.",
+  "byline": "Tobias Krüger",
+  "desk": "Corporate Content",
+  "author": "tobias.krueger",
+  "workflow": "Review",
+  "hours_ago": 20,
+  "body_html": "<p>Diese Woche: neue Auswertung zur Wärmepumpe im Altbau, Netzausbau im Zeitplan, Bilanz zur Ladeinfrastruktur in Quartieren.</p><p>Teasertexte folgen, die Links werden ergänzt.</p>",
+  "themenarchitektur": [
+   "thema:waermewende"
+  ],
+  "strategieziele": [
+   "ziel:fachpublikum"
+  ],
+  "kanal": [
+   "kanal:newsletter"
+  ],
+  "ednote": "Entwurf. Beispielinhalt, alle Angaben sind erfunden.",
+  "zielgruppen": [
+   "zielgruppe:fachpresse",
+   "zielgruppe:kommunen"
+  ]
+ }
+]

@@ -1,0 +1,79 @@
+[
+ {
+  "reference": "LI-001",
+  "title": "Mythos 1: Wärmepumpen funktionieren nur im Neubau. Stimmt nicht.",
+  "summary": "LinkedIn-Beitrag zur Auswertung Wärmepumpe im Altbau.",
+  "byline": "Energieagentur Beispiel",
+  "desk": "Digital",
+  "author": "lena.schaefer",
+  "workflow": "Veröffentlicht",
+  "hours_ago": 46,
+  "body_html": "<p>Mythos 1: Wärmepumpen funktionieren nur im Neubau. Stimmt nicht.</p><p>Unsere Auswertung von 1.200 Sanierungsfällen zeigt: In sieben von zehn Altbauten lief die Anlage nach dem Einbau effizient, auch ohne zusätzliche Dämmung.</p><p>Entscheidend ist die Vorlauftemperatur, nicht das Baujahr.</p><p>Alle Zahlen und Tabellen finden Sie hier: [Link zur Auswertung]</p><p>#Wärmewende #Wärmepumpe #Energiewende</p>",
+  "themenarchitektur": [
+   "thema:waermepumpen"
+  ],
+  "strategieziele": [
+   "ziel:bekanntheit",
+   "ziel:fachpublikum"
+  ],
+  "kanal": [
+   "kanal:linkedin"
+  ],
+  "ednote": "Zahlen sind erfunden. Beispielinhalt, alle Angaben sind erfunden.",
+  "zielgruppen": [
+   "zielgruppe:oeffentlichkeit",
+   "zielgruppe:wohnungswirtschaft"
+  ],
+  "sharepoint_links": "https://energieagentur-beispiel.sharepoint.example/sites/Kommunikation/Freigegebene%20Dokumente/Kampagne_Waermewende/Mythen_Fakten/LinkedIn_Serie.docx"
+ },
+ {
+  "reference": "LI-002",
+  "title": "Wasserstoff braucht Planung: Was wir beim Fachdialog gelernt haben",
+  "summary": "LinkedIn-Beitrag zum Fachdialog Wasserstoff.",
+  "byline": "Energieagentur Beispiel",
+  "desk": "Digital",
+  "author": "lena.schaefer",
+  "workflow": "Veröffentlicht",
+  "hours_ago": 118,
+  "body_html": "<p>Wasserstoff braucht Planung, nicht nur Pläne.</p><p>Beim Fachdialog haben Industrie, Kommunen und Wissenschaft drei Dinge klargestellt: Abnehmer zuerst, Netzanschluss früh planen, Kommunen von Anfang an einbinden.</p><p>Danke an alle, die dabei waren. Das Ergebnispapier folgt im Winter.</p><p>#Wasserstoff #Industrie #Energiewende</p>",
+  "themenarchitektur": [
+   "thema:wasserstoff"
+  ],
+  "strategieziele": [
+   "ziel:vernetzung"
+  ],
+  "kanal": [
+   "kanal:linkedin"
+  ],
+  "ednote": "Beispielinhalt, alle Angaben sind erfunden.",
+  "zielgruppen": [
+   "zielgruppe:wirtschaft",
+   "zielgruppe:kommunen"
+  ]
+ },
+ {
+  "reference": "LI-003",
+  "title": "Laden im Wohnquartier: Drei Hürden und wie Kommunen sie nehmen",
+  "summary": "Entwurf für einen LinkedIn-Beitrag zur Ladeinfrastruktur in Quartieren.",
+  "byline": "Energieagentur Beispiel",
+  "desk": "Digital",
+  "author": "lena.schaefer",
+  "workflow": "In Arbeit",
+  "hours_ago": 12,
+  "body_html": "<p>Ladepunkte im Wohnquartier scheitern selten an der Technik. Meist fehlt die Zuständigkeit.</p><p>Drei Hürden: Netzanschluss, Stellplatzrecht, Abrechnung.</p><p>Entwurf, Zahlen folgen aus der Bilanz.</p>",
+  "themenarchitektur": [
+   "thema:ladeinfrastruktur"
+  ],
+  "strategieziele": [
+   "ziel:entscheider",
+   "ziel:vernetzung"
+  ],
+  "kanal": [
+   "kanal:linkedin"
+  ],
+  "ednote": "Entwurf. Beispielinhalt, alle Angaben sind erfunden.",
+  "zielgruppen": [
+   "zielgruppe:kommunen"
+  ]
+ }
+]

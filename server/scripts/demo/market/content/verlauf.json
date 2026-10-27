@@ -1,0 +1,129 @@
+[
+ {
+  "reference": "WK-001",
+  "title": "Netzentgelte: Was sich für Verbraucher ab Januar ändert",
+  "summary": "Kurzer Überblick über die Änderungen bei den Netzentgelten und was sie für Haushalte bedeuten.",
+  "byline": "Julia Neumann",
+  "desk": "Presse",
+  "author": "julia.neumann",
+  "workflow": "Eingang",
+  "hours_ago": 0,
+  "body_html": "<p>Berlin, 22. Oktober 2026. Zum Januar ändert sich die Berechnung der Netzentgelte. Für die meisten Haushalte bleibt die Belastung ähnlich, in einzelnen Regionen sinkt sie leicht.</p>",
+  "themenarchitektur": [
+   "thema:netzausbau"
+  ],
+  "strategieziele": [
+   "ziel:bekanntheit",
+   "ziel:entscheider"
+  ],
+  "kanal": [
+   "kanal:pressemitteilung"
+  ],
+  "ednote": "Beispielinhalt, alle Angaben sind erfunden.",
+  "report_type": "pressemitteilung",
+  "at": 0.0,
+  "final": "Veröffentlicht",
+  "steps": [
+   {
+    "at": 1.0,
+    "op": "move",
+    "desk": "Presse",
+    "stage": "In Arbeit",
+    "user": "julia.neumann"
+   },
+   {
+    "at": 2.0,
+    "op": "edit",
+    "user": "julia.neumann",
+    "summary": "Zum Januar ändert sich die Berechnung der Netzentgelte. Für die meisten Haushalte bleibt die Belastung ähnlich, in einzelnen Regionen sinkt sie leicht. Ein Überblick mit drei Beispielrechnungen.",
+    "add_html": "<p>Drei Beispielrechnungen zeigen die Wirkung: Ein Zweipersonenhaushalt spart rund 14 Euro im Jahr, eine Familie mit Wärmepumpe rund 38 Euro, ein Haushalt ohne Änderung des Verbrauchs zahlt gleich viel.</p>"
+   },
+   {
+    "at": 3.0,
+    "op": "move",
+    "desk": "Presse",
+    "stage": "Review",
+    "user": "julia.neumann"
+   },
+   {
+    "at": 4.0,
+    "op": "edit",
+    "user": "markus.engel",
+    "add_html": "<p>Die Beispielrechnungen basieren auf einem Verbrauch von 3.500 Kilowattstunden im Jahr. Alle Angaben sind erfunden.</p>"
+   },
+   {
+    "at": 5.0,
+    "op": "move",
+    "desk": "Presse",
+    "stage": "Freigabe",
+    "user": "markus.engel"
+   },
+   {
+    "at": 7.0,
+    "op": "release",
+    "user": "claudia.wagner"
+   }
+  ],
+  "zielgruppen": [
+   "zielgruppe:oeffentlichkeit",
+   "zielgruppe:fachpresse"
+  ]
+ },
+ {
+  "reference": "WK-002",
+  "title": "Serielles Sanieren: Fünf Fragen an die Wohnungswirtschaft",
+  "summary": "LinkedIn-Beitrag mit fünf Fragen zum seriellen Sanieren, in Arbeit bis zur Freigabe.",
+  "byline": "Energieagentur Beispiel",
+  "desk": "Digital",
+  "author": "lena.schaefer",
+  "workflow": "Eingang",
+  "hours_ago": 0,
+  "body_html": "<p>Serielles Sanieren verspricht kürzere Bauzeiten. Was brauchen Wohnungsunternehmen, um loszulegen?</p><p>Fünf Fragen, fünf Antworten, ein Gespräch.</p>",
+  "themenarchitektur": [
+   "thema:serielles_sanieren"
+  ],
+  "strategieziele": [
+   "ziel:fachpublikum",
+   "ziel:foerderung"
+  ],
+  "kanal": [
+   "kanal:linkedin"
+  ],
+  "ednote": "Beispielinhalt, alle Angaben sind erfunden.",
+  "report_type": "linkedin",
+  "at": 0.0,
+  "final": "Freigabe",
+  "steps": [
+   {
+    "at": 1.5,
+    "op": "move",
+    "desk": "Digital",
+    "stage": "In Arbeit",
+    "user": "lena.schaefer"
+   },
+   {
+    "at": 2.5,
+    "op": "edit",
+    "user": "lena.schaefer",
+    "add_html": "<p>Frage 1: Welche Gebäudetypen eignen sich für das serielle Sanieren?</p><p>Frage 2: Wie lange dauert die Planung bis zur ersten Montage?</p>"
+   },
+   {
+    "at": 4.5,
+    "op": "move",
+    "desk": "Digital",
+    "stage": "Review",
+    "user": "lena.schaefer"
+   },
+   {
+    "at": 6.0,
+    "op": "move",
+    "desk": "Digital",
+    "stage": "Freigabe",
+    "user": "markus.engel"
+   }
+  ],
+  "zielgruppen": [
+   "zielgruppe:wohnungswirtschaft"
+  ]
+ }
+]

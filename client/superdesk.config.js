@@ -9,7 +9,7 @@
  * from here has to be plain JSON-serialisable data.
  */
 
-// Exact-match English relabels for this instance (Desk becomes Workgroup and the like).
+// Exact-match English replacements that turn newsroom vocabulary into Superdesk vocabulary.
 // Webpack only watches this file for cache invalidation, not the modules it requires, so a
 // change to the terminology pack needs the build restarting (or `client/node_modules/.cache`
 // removing) before it shows up.
@@ -31,10 +31,6 @@ module.exports = function() {
 
         langOverride: {
             en: Object.assign({}, terminology, {
-                'ANPA Category': 'Category',
-                'ANPA CATEGORY': 'CATEGORY',
-                'multi-line quote': 'pullquote',
-                'Multi-line quote': 'Pullquote',
             }),
         },
 
@@ -47,7 +43,7 @@ module.exports = function() {
         shortDateFormat: 'HH:mm, DD.MM.YYYY',
         shortWeekFormat: 'HH:mm, DD.MM.YYYY',
         startingDay: '1',
-        defaultTimezone: 'Europe/London',
+        defaultTimezone: 'Europe/Berlin',
 
         editor3: {browserSpellCheck: true},
 
@@ -56,10 +52,13 @@ module.exports = function() {
         // filter is built for it (SearchService.ts). Custom vocabularies land in `subject`, so the
         // Superdesk taxonomies all filter on `subject.qcode`; their qcodes do not overlap.
         search_cvs: [
-            {id: 'local_authority', name: 'Local authority', field: 'subject', list: 'local_authority'},
-            {id: 'region', name: 'Region', field: 'subject', list: 'region'},
-            {id: 'distribution_profile', name: 'Distribution profile', field: 'subject', list: 'distribution_profile'},
-            {id: 'category', name: 'Category', field: 'subject', list: 'category'},
+            {id: 'themenarchitektur', name: 'Thema', field: 'subject', list: 'themenarchitektur'},
+            {id: 'strategieziele', name: 'Strategieziele', field: 'subject', list: 'strategieziele'},
+            {id: 'zielgruppen', name: 'Zielgruppen', field: 'subject', list: 'zielgruppen'},
+            {id: 'kanal', name: 'Kanal', field: 'subject', list: 'kanal'},
+            {id: 'prioritaet', name: 'Priorität', field: 'subject', list: 'prioritaet'},
+            {id: 'fachbereich', name: 'Fachbereich', field: 'subject', list: 'fachbereich'},
+            {id: 'anfrageart', name: 'Art der Anfrage', field: 'subject', list: 'anfrageart'},
         ],
 
         features: {
@@ -72,6 +71,7 @@ module.exports = function() {
             editorHighlights: true,
             editorInlineComments: true,
             editorSuggestions: true,
+            editorAttachments: true,
             noPublishOnAuthoringDesk: true,
             sendToPersonal: true,
             customAuthoringTopbar: {
@@ -101,8 +101,10 @@ module.exports = function() {
 
         // Only the field names registered in superdesk-client-core
         // (scripts/apps/search/components/fields/index.ts) render here; an unknown name is
-        // silently dropped. Local authority, region and the other taxonomies live in `subject`
-        // and have no field component, so they cannot be shown in a row without an extension.
+        // silently dropped. `urgency` carries the Superdesk severity level and renders as the
+        // coloured badge at the start of every row; the colours and the one-letter labels come
+        // from the `urgency` vocabulary. Region and the other taxonomies live in `subject` and
+        // have no field component, so they cannot be shown in a row without an extension.
         list: {
             priority: [
                 'urgency',

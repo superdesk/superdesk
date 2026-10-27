@@ -1,0 +1,142 @@
+[
+ {
+  "key": "EV-PRESSEGESPRAECH-FOERDERAUFRUF",
+  "name": "Pressegespräch: Förderaufruf Serielles Sanieren",
+  "summary": "Pressegespräch zum Start des Förderaufrufs.",
+  "detail": "Kurzes Pressegespräch mit der Leitung des Fachbereichs Gebäude, anschließend Fragen der Fachpresse.",
+  "internal_note": "Beispieltermin, alle Angaben sind erfunden.",
+  "calendar": "pressetermine",
+  "occur_status": "certain",
+  "days": 21,
+  "hour": 10,
+  "hours": 1,
+  "tz": "Europe/Berlin",
+  "location": {
+   "name": "Konferenzraum Beispielhaus",
+   "city": "Berlin",
+   "country": "Deutschland",
+   "lat": 52.52,
+   "lon": 13.405
+  },
+  "subject": [
+   [
+    "themenarchitektur",
+    "thema:serielles_sanieren"
+   ]
+  ],
+  "post": false
+ },
+ {
+  "key": "EV-FACHGESPRAECH-LADEN",
+  "name": "Fachgespräch: Laden im Quartier",
+  "summary": "Fachgespräch mit Kommunen und Netzbetreibern.",
+  "detail": "Halbtägiges Fachgespräch zur Bilanz der Ladeinfrastruktur in Wohnquartieren.",
+  "internal_note": "Beispieltermin, alle Angaben sind erfunden.",
+  "calendar": "veranstaltungen",
+  "occur_status": "certain",
+  "days": 28,
+  "hour": 9,
+  "hours": 4,
+  "tz": "Europe/Berlin",
+  "location": {
+   "name": "Veranstaltungszentrum Beispielstadt",
+   "city": "Halle (Saale)",
+   "country": "Deutschland",
+   "lat": 51.4825,
+   "lon": 11.97
+  },
+  "subject": [
+   [
+    "themenarchitektur",
+    "thema:ladeinfrastruktur"
+   ]
+  ],
+  "post": false
+ },
+ {
+  "key": "EV-ONLINE-WASSERSTOFF",
+  "name": "Online-Seminar: Wasserstoff für die Industrie",
+  "summary": "Online-Seminar für Industrie und Kommunen.",
+  "detail": "Neunzig Minuten, mit Fragen aus dem Chat.",
+  "internal_note": "Beispieltermin, alle Angaben sind erfunden.",
+  "calendar": "fachtermine",
+  "occur_status": "certain",
+  "days": 14,
+  "hour": 14,
+  "hours": 2,
+  "tz": "Europe/Berlin",
+  "location": {
+   "name": "Konferenzraum Beispielhaus",
+   "city": "Berlin",
+   "country": "Deutschland",
+   "lat": 52.52,
+   "lon": 13.405
+  },
+  "subject": [
+   [
+    "themenarchitektur",
+    "thema:wasserstoff"
+   ]
+  ],
+  "post": false
+ },
+ {
+  "key": "EV-STAMMTISCH-HANDWERK",
+  "name": "Handwerker-Stammtisch Wärmepumpe",
+  "summary": "Austausch mit Handwerksbetrieben zur Wärmepumpe im Altbau.",
+  "detail": "Gesprächsrunde am Abend, Einladung über den Newsletter.",
+  "internal_note": "Beispieltermin, alle Angaben sind erfunden.",
+  "calendar": "veranstaltungen",
+  "occur_status": "certain",
+  "days": 9,
+  "hour": 18,
+  "hours": 2,
+  "tz": "Europe/Berlin",
+  "location": {
+   "name": "Konferenzraum Beispielhaus",
+   "city": "Berlin",
+   "country": "Deutschland",
+   "lat": 52.52,
+   "lon": 13.405
+  },
+  "subject": [
+   [
+    "themenarchitektur",
+    "thema:waermepumpen"
+   ]
+  ],
+  "post": false
+ },
+ {
+  "key": "EV-REDAKTIONSKONFERENZ",
+  "name": "Redaktionskonferenz Themenplanung",
+  "summary": "Wöchentliche Abstimmung der Themenverantwortlichen mit den Teams.",
+  "detail": "Wöchentlich, 30 Minuten, die Themenplanung der Woche.",
+  "internal_note": "Beispieltermin, alle Angaben sind erfunden.",
+  "calendar": "fachtermine",
+  "occur_status": "certain",
+  "days": 2,
+  "hour": 9,
+  "hours": 1,
+  "tz": "Europe/Berlin",
+  "location": {
+   "name": "Konferenzraum Beispielhaus",
+   "city": "Berlin",
+   "country": "Deutschland",
+   "lat": 52.52,
+   "lon": 13.405
+  },
+  "subject": [
+   [
+    "themenarchitektur",
+    "thema:waermewende"
+   ]
+  ],
+  "post": false,
+  "repeat": {
+   "frequency": "WEEKLY",
+   "interval": 1,
+   "count": 8
+  }
+ }
+]

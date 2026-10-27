@@ -1,117 +1,157 @@
 {
   "kit_version": 1,
   "market": {
-    "id": "localwire",
-    "name": "Local public-interest news agency (tender response)",
+    "id": "eakom",
+    "name": "Kommunikationsplanung Energiewende (German screenshot demo)",
     "brief": "market-brief.md"
   },
   "product": {
     "name": "Superdesk",
-    "portal_name": "Newshub",
     "working_name_only": false,
-    "name_checks": "Not applicable, the products keep their own names.",
+    "name_checks": "Not applicable, the product keeps its own name.",
     "vendor": "Sourcefabric",
-    "descriptor": "Standard Superdesk and Newshub, configured for a council reporting scheme."
+    "descriptor": "Standard Superdesk with Planning, configured in German for a communications department."
   },
   "fiction": {
     "firm": {
-      "name": "Town Hall Reporting Network",
-      "short_name": "Town Hall Network",
-      "email_domain": "townhall-reporting.example",
-      "url": "https://townhall-reporting.example",
-      "description": "The invented operator of the scheme. Regional publishers employ the reporters; the network runs the authoring tool, the wire and the partner portal."
+      "name": "Energieagentur Beispiel GmbH",
+      "short_name": "Energieagentur Beispiel",
+      "email_domain": "energieagentur-beispiel.example",
+      "url": "https://energieagentur-beispiel.example",
+      "description": "Erfundene Organisation. Der Bereich Kommunikation plant und produziert Inhalte zur Energiewende mit den Fachbereichen."
     },
     "rules": [
-      "Partner organisations, staff, partner users, councillors, events, figures and quotes are invented.",
-      "Real UK council names are used only as local authority tags and in story titles, as public bodies. No real person is named.",
-      "Every sample story ends with a line saying it is sample content with invented events, figures and quotes.",
-      "Images must be our own or generated; never stock, agency or employer library pictures.",
-      "Email domains end in .example."
+      "Alle Personen, Projekte, Zahlen, Termine und Zitate sind erfunden.",
+      "Jeder Beispielinhalt trägt einen Hinweis, dass die Angaben erfunden sind.",
+      "Keine Bilder aus Agentur- oder Stockarchiven. Medien nur rechtefrei (siehe direction/scenes.md, \"By hand\").",
+      "E-Mail-Domains enden auf .example."
     ],
-    "timezone": "Europe/London",
-    "language": "en",
+    "timezone": "Europe/Berlin",
+    "language": "de_DE",
     "teams": [
       {
-        "name": "Ridings Press Group",
-        "description": "Partner organisation, Yorkshire and the Humber.",
-        "source": "RPG",
+        "name": "Ideenpool",
+        "description": "Sammelstelle für Ideen aus allen Bereichen. Jede Idee hat ein Thema, ein Strategieziel und einen Kanalwunsch.",
+        "source": "IDP",
         "stages": [
-          "Review Pending",
-          "Draft",
-          "In Review",
-          "Returned",
-          "Hold",
-          "Scheduled",
-          "Published",
-          "Revoked"
+          "Neu",
+          "In Prüfung",
+          "Angenommen",
+          "Geparkt"
         ],
-        "default_report_type": "story",
-        "default_template": "Ridings Press story"
+        "default_report_type": "idee",
+        "default_template": "Neue Idee"
       },
       {
-        "name": "Tynebridge Media",
-        "description": "Partner organisation, North East.",
-        "source": "TBM",
+        "name": "Anfragen",
+        "description": "Presseanfragen, interne Anfragen und Aufgaben. Die Stufen sind der Bearbeitungsstatus.",
+        "source": "ANF",
         "stages": [
-          "Review Pending",
-          "Draft",
-          "In Review",
-          "Returned",
-          "Hold",
-          "Scheduled",
-          "Published",
-          "Revoked"
+          "Eingang",
+          "In Bearbeitung",
+          "Rückfrage",
+          "Freigabe",
+          "Beantwortet",
+          "Geschlossen"
         ],
-        "default_report_type": "story",
-        "default_template": "Tynebridge Media story"
+        "default_report_type": "anfrage",
+        "default_template": "Neue Anfrage"
       },
       {
-        "name": "Shires Ledger Group",
-        "description": "Partner organisation, West and East Midlands.",
-        "source": "SLG",
+        "name": "Presse",
+        "description": "Pressearbeit, Pressemitteilungen und Medienanfragen.",
+        "source": "PRE",
         "stages": [
-          "Review Pending",
-          "Draft",
-          "In Review",
-          "Returned",
-          "Hold",
-          "Scheduled",
-          "Published",
-          "Revoked"
+          "Eingang",
+          "In Arbeit",
+          "Review",
+          "Freigabe",
+          "Veröffentlicht"
         ],
-        "default_report_type": "story",
-        "default_template": "Shires Ledger story"
+        "default_report_type": "pressemitteilung",
+        "default_template": "Pressemitteilung Standard"
       },
       {
-        "name": "Cambria Local Media",
-        "description": "Partner organisation, Wales.",
-        "source": "CLM",
+        "name": "Kreation und Produktion",
+        "description": "Bild, Video und Gestaltung für alle Kanäle.",
+        "source": "KRE",
         "stages": [
-          "Review Pending",
-          "Draft",
-          "In Review",
-          "Returned",
-          "Hold",
-          "Scheduled",
-          "Published",
-          "Revoked"
+          "Eingang",
+          "In Arbeit",
+          "Review",
+          "Freigabe",
+          "Veröffentlicht"
         ],
-        "default_report_type": "story",
-        "default_template": "Cambria Local Media story"
+        "default_report_type": "instagram",
+        "default_template": "Instagram-Beitrag"
+      },
+      {
+        "name": "Corporate Content",
+        "description": "Website, Newsletter, Hintergrundtexte und Intranet.",
+        "source": "COR",
+        "stages": [
+          "Eingang",
+          "In Arbeit",
+          "Review",
+          "Freigabe",
+          "Veröffentlicht"
+        ],
+        "default_report_type": "website",
+        "default_template": "Website-Artikel"
+      },
+      {
+        "name": "Digital",
+        "description": "Soziale Medien und digitale Kanäle.",
+        "source": "DIG",
+        "stages": [
+          "Eingang",
+          "In Arbeit",
+          "Review",
+          "Freigabe",
+          "Veröffentlicht"
+        ],
+        "default_report_type": "linkedin",
+        "default_template": "LinkedIn-Beitrag"
+      },
+      {
+        "name": "Fachkommunikation",
+        "description": "Bündelt die Themen der Fachbereiche und Stabsstellen.",
+        "source": "FAK",
+        "stages": [
+          "Eingang",
+          "In Arbeit",
+          "Review",
+          "Freigabe",
+          "Veröffentlicht"
+        ],
+        "default_report_type": "intranet",
+        "default_template": "Intranet-Meldung"
+      },
+      {
+        "name": "Event",
+        "description": "Veranstaltungen und Termine.",
+        "source": "EVE",
+        "stages": [
+          "Eingang",
+          "In Arbeit",
+          "Review",
+          "Freigabe",
+          "Veröffentlicht"
+        ],
+        "default_report_type": "newsletter",
+        "default_template": "Newsletter-Beitrag"
       }
     ],
     "board_hidden_stages": [
-      "Scheduled",
-      "Published",
-      "Revoked"
+      "Veröffentlicht"
     ],
     "stage_task_status": {
-      "Published": "done"
+      "Veröffentlicht": "done"
     },
     "roles": [
       {
-        "name": "Reporter",
-        "description": "Creates, edits and submits stories and weekly advisories. Cannot publish.",
+        "name": "Redakteur",
+        "description": "Plant und schreibt Beiträge, bearbeitet Zuweisungen. Gibt nicht frei.",
         "author_role": "writer",
         "privileges": [
           "archive",
@@ -119,10 +159,17 @@
           "duplicate",
           "embargo",
           "highlights_read",
+          "mark_for_desks",
           "mark_for_user",
+          "metadata_uniquename",
           "monitoring_view",
           "move",
           "personal_template",
+          "planning_assignments_desk",
+          "planning_assignments_view",
+          "planning_event_management",
+          "planning_history",
+          "planning_planning_management",
           "saved_searches",
           "send_to_personal",
           "spike",
@@ -133,666 +180,681 @@
         ]
       },
       {
-        "name": "Reviewer",
-        "description": "Reviews, edits, comments, returns, holds, schedules, publishes and revokes stories in its workgroups.",
+        "name": "Anfragender aus Fachbereich",
+        "description": "Reicht Ideen und Anfragen ein und verfolgt ihren Stand. Kein Zugriff auf Planung und Einstellungen.",
+        "author_role": "writer",
+        "privileges": [
+          "archive",
+          "dashboard",
+          "duplicate",
+          "mark_for_user",
+          "monitoring_view",
+          "move",
+          "personal_template",
+          "planning_assignments_view",
+          "saved_searches",
+          "send_to_personal",
+          "spike_read",
+          "tasks",
+          "upload"
+        ]
+      },
+      {
+        "name": "Themenverantwortlicher",
+        "description": "Verantwortet ein Themenfeld, bewertet Ideen, plant Storys und veröffentlicht die Planung.",
+        "author_role": "writer",
+        "inherits": "Redakteur",
+        "privileges_add": [
+          "global_saved_searches",
+          "hold",
+          "masterdesk",
+          "planning_planning_post",
+          "planning_planning_spike",
+          "planning_planning_unpost",
+          "planning_planning_unspike"
+        ]
+      },
+      {
+        "name": "Freigebender",
+        "description": "Prüft Beiträge und Antworten und gibt sie frei oder gibt sie zur Überarbeitung zurück.",
         "author_role": "writer",
         "editor_role": "editor",
-        "inherits": "Reporter",
+        "inherits": "Redakteur",
         "privileges_add": [
           "correct",
           "hold",
-          "kill",
           "publish",
           "publish_queue",
           "resend",
-          "takedown",
           "unlock"
         ]
       },
       {
-        "name": "Organisation Administrator",
-        "description": "Manages users, workgroups and workgroup templates. Superdesk does not scope this to one organisation.",
-        "author_role": "writer",
-        "inherits": "Reporter",
-        "privileges_add": [
-          "content_templates",
-          "desks",
-          "unlock",
-          "users"
-        ]
-      },
-      {
-        "name": "System Administrator",
-        "description": "Runs the whole service, including vocabularies, content profiles, roles and delivery to partners.",
+        "name": "Power-User Kommunikation",
+        "description": "Erste Ansprechperson für andere Nutzer. Pflegt Ablagen, Formulare, Themenlisten und Vorlagen.",
         "author_role": "writer",
         "editor_role": "editor",
-        "inherits": "Reviewer",
+        "inherits": "Freigebender",
         "privileges_add": [
-          "archived",
-          "content_filters",
           "content_templates",
           "content_type",
           "desks",
-          "dictionaries",
-          "global_saved_searches",
           "masterdesk",
-          "products",
-          "roles",
-          "subscribers",
-          "system_messages",
+          "planning_agenda_management",
+          "planning_manage_content_profiles",
           "users",
           "vocabularies"
         ]
+      },
+      {
+        "name": "Administrator",
+        "description": "Betreibt die Plattform, einschließlich Rollen, Rechte und Benutzer.",
+        "author_role": "writer",
+        "editor_role": "editor",
+        "inherits": "Power-User Kommunikation",
+        "privileges_add": [
+          "archived",
+          "content_filters",
+          "desk_activity_report",
+          "dictionaries",
+          "global_saved_reports",
+          "planning_agenda_delete",
+          "planning_event_post",
+          "planning_event_spike",
+          "planning_event_unpost",
+          "planning_event_unspike",
+          "planning_planning_featured",
+          "products",
+          "roles",
+          "saved_reports",
+          "subscribers",
+          "system_messages",
+          "takedown",
+          "user_activity_report"
+        ]
       }
     ],
-    "role_notes": "Separation of duties is by role only. Superdesk does not stop a user who holds publish from publishing a story they wrote; the per-story rule is a development item and is not on this instance.",
+    "role_notes": "Die Rolle \"Freigebender\" ist die Freigabe auf Benutzerebene (Recht publish). Eine Vier-Augen-Regel pro Beitrag ist nicht Teil dieser Konfiguration.",
     "staff": [
       {
-        "username": "amira.hussain",
-        "first_name": "Amira",
-        "last_name": "Hussain",
-        "role": "Reporter",
+        "username": "katrin.vogel",
+        "first_name": "Katrin",
+        "last_name": "Vogel",
+        "role": "Administrator",
         "teams": [
-          "Ridings Press Group"
+          "Ideenpool",
+          "Anfragen",
+          "Presse",
+          "Kreation und Produktion",
+          "Corporate Content",
+          "Digital",
+          "Fachkommunikation",
+          "Event"
         ],
-        "default_team": "Ridings Press Group",
-        "sign_off": "ah",
-        "job_title": "Reporter, Leeds and Bradford"
+        "default_team": "Ideenpool",
+        "sign_off": "kv",
+        "job_title": "Administratorin Kommunikationsplattform"
       },
       {
-        "username": "tom.ackroyd",
-        "first_name": "Tom",
-        "last_name": "Ackroyd",
-        "role": "Reporter",
+        "username": "markus.engel",
+        "first_name": "Markus",
+        "last_name": "Engel",
+        "role": "Power-User Kommunikation",
         "teams": [
-          "Ridings Press Group"
+          "Ideenpool",
+          "Anfragen",
+          "Presse",
+          "Digital",
+          "Event"
         ],
-        "default_team": "Ridings Press Group",
-        "sign_off": "ta",
-        "job_title": "Reporter, Kirklees and Sheffield"
-      },
-      {
-        "username": "helen.mercer",
-        "first_name": "Helen",
-        "last_name": "Mercer",
-        "role": "Reviewer",
-        "teams": [
-          "Ridings Press Group"
-        ],
-        "default_team": "Ridings Press Group",
-        "sign_off": "hm",
-        "job_title": "Reviewer, Ridings Press Group"
-      },
-      {
-        "username": "claire.whitworth",
-        "first_name": "Claire",
-        "last_name": "Whitworth",
-        "role": "Organisation Administrator",
-        "teams": [
-          "Ridings Press Group"
-        ],
-        "default_team": "Ridings Press Group",
-        "sign_off": "cw",
-        "job_title": "Organisation administrator, Ridings Press Group"
-      },
-      {
-        "username": "liam.robson",
-        "first_name": "Liam",
-        "last_name": "Robson",
-        "role": "Reporter",
-        "teams": [
-          "Tynebridge Media"
-        ],
-        "default_team": "Tynebridge Media",
-        "sign_off": "lr",
-        "job_title": "Reporter, Tyne and Wear and Northumberland"
-      },
-      {
-        "username": "grace.forster",
-        "first_name": "Grace",
-        "last_name": "Forster",
-        "role": "Reviewer",
-        "teams": [
-          "Tynebridge Media"
-        ],
-        "default_team": "Tynebridge Media",
-        "sign_off": "gf",
-        "job_title": "Reviewer, Tynebridge Media"
-      },
-      {
-        "username": "priya.sandhu",
-        "first_name": "Priya",
-        "last_name": "Sandhu",
-        "role": "Reporter",
-        "teams": [
-          "Shires Ledger Group"
-        ],
-        "default_team": "Shires Ledger Group",
-        "sign_off": "ps",
-        "job_title": "Reporter, Midlands"
-      },
-      {
-        "username": "mark.ellison",
-        "first_name": "Mark",
-        "last_name": "Ellison",
-        "role": "Reviewer",
-        "teams": [
-          "Shires Ledger Group"
-        ],
-        "default_team": "Shires Ledger Group",
+        "default_team": "Presse",
         "sign_off": "me",
-        "job_title": "Reviewer, Shires Ledger Group"
+        "job_title": "Power-User, Team Presse"
       },
       {
-        "username": "rhys.pritchard",
-        "first_name": "Rhys",
-        "last_name": "Pritchard",
-        "role": "Reporter",
+        "username": "sabine.lindner",
+        "first_name": "Sabine",
+        "last_name": "Lindner",
+        "role": "Power-User Kommunikation",
         "teams": [
-          "Cambria Local Media"
+          "Ideenpool",
+          "Anfragen",
+          "Kreation und Produktion",
+          "Corporate Content",
+          "Fachkommunikation",
+          "Event"
         ],
-        "default_team": "Cambria Local Media",
-        "sign_off": "rp",
-        "job_title": "Reporter, Cardiff, Swansea and Gwynedd"
+        "default_team": "Corporate Content",
+        "sign_off": "sl",
+        "job_title": "Power-User, Team Corporate Content"
       },
       {
-        "username": "sian.morgan",
-        "first_name": "Siân",
-        "last_name": "Morgan",
-        "role": "Reviewer",
+        "username": "julia.neumann",
+        "first_name": "Julia",
+        "last_name": "Neumann",
+        "role": "Redakteur",
         "teams": [
-          "Cambria Local Media"
+          "Ideenpool",
+          "Anfragen",
+          "Presse"
         ],
-        "default_team": "Cambria Local Media",
-        "sign_off": "sm",
-        "job_title": "Reviewer, Cambria Local Media"
+        "default_team": "Presse",
+        "sign_off": "jn",
+        "job_title": "Redakteurin Pressearbeit"
       },
       {
-        "username": "sam.okoro",
-        "first_name": "Sam",
-        "last_name": "Okoro",
-        "role": "System Administrator",
+        "username": "tobias.krueger",
+        "first_name": "Tobias",
+        "last_name": "Krüger",
+        "role": "Redakteur",
         "teams": [
-          "Ridings Press Group",
-          "Tynebridge Media",
-          "Shires Ledger Group",
-          "Cambria Local Media"
+          "Ideenpool",
+          "Anfragen",
+          "Presse",
+          "Kreation und Produktion",
+          "Corporate Content",
+          "Fachkommunikation"
         ],
-        "default_team": "Ridings Press Group",
-        "sign_off": "so",
-        "job_title": "System administrator, Town Hall Reporting Network"
+        "default_team": "Corporate Content",
+        "sign_off": "tk",
+        "job_title": "Redakteur Corporate Content"
+      },
+      {
+        "username": "lena.schaefer",
+        "first_name": "Lena",
+        "last_name": "Schäfer",
+        "role": "Redakteur",
+        "teams": [
+          "Ideenpool",
+          "Kreation und Produktion",
+          "Digital"
+        ],
+        "default_team": "Digital",
+        "sign_off": "ls",
+        "job_title": "Redakteurin Digital"
+      },
+      {
+        "username": "nadine.weber",
+        "first_name": "Nadine",
+        "last_name": "Weber",
+        "role": "Themenverantwortlicher",
+        "teams": [
+          "Ideenpool",
+          "Anfragen",
+          "Presse",
+          "Kreation und Produktion",
+          "Corporate Content",
+          "Digital",
+          "Fachkommunikation"
+        ],
+        "default_team": "Ideenpool",
+        "sign_off": "nw",
+        "job_title": "Themenverantwortliche Gebäude und Wärme"
+      },
+      {
+        "username": "stefan.roth",
+        "first_name": "Stefan",
+        "last_name": "Roth",
+        "role": "Themenverantwortlicher",
+        "teams": [
+          "Ideenpool",
+          "Anfragen",
+          "Corporate Content",
+          "Digital",
+          "Fachkommunikation"
+        ],
+        "default_team": "Ideenpool",
+        "sign_off": "sr",
+        "job_title": "Themenverantwortlicher Industrie und Mobilität"
+      },
+      {
+        "username": "petra.hoffmann",
+        "first_name": "Petra",
+        "last_name": "Hoffmann",
+        "role": "Anfragender aus Fachbereich",
+        "teams": [
+          "Ideenpool",
+          "Anfragen",
+          "Fachkommunikation",
+          "Event"
+        ],
+        "default_team": "Fachkommunikation",
+        "sign_off": "ph",
+        "job_title": "Fachkommunikation, Fachbereich Gebäude"
+      },
+      {
+        "username": "omer.yilmaz",
+        "first_name": "Ömer",
+        "last_name": "Yılmaz",
+        "role": "Anfragender aus Fachbereich",
+        "teams": [
+          "Ideenpool",
+          "Anfragen",
+          "Fachkommunikation"
+        ],
+        "default_team": "Anfragen",
+        "sign_off": "oy",
+        "job_title": "Fachkommunikation, Fachbereich Industrie und Klimaschutz"
+      },
+      {
+        "username": "claudia.wagner",
+        "first_name": "Claudia",
+        "last_name": "Wagner",
+        "role": "Freigebender",
+        "teams": [
+          "Ideenpool",
+          "Anfragen",
+          "Presse",
+          "Corporate Content",
+          "Digital",
+          "Event"
+        ],
+        "default_team": "Presse",
+        "sign_off": "cw",
+        "job_title": "Teamleitung Presse, Freigabe"
+      },
+      {
+        "username": "thomas.becker",
+        "first_name": "Thomas",
+        "last_name": "Becker",
+        "role": "Freigebender",
+        "teams": [
+          "Anfragen",
+          "Presse",
+          "Digital"
+        ],
+        "default_team": "Presse",
+        "sign_off": "tb",
+        "job_title": "Bereichsleitung Kommunikation, Freigabe"
       }
     ],
-    "staff_email": "{username}@townhall-reporting.example",
+    "staff_email": "{username}@energieagentur-beispiel.example",
     "admin_member_of_all_teams": true,
-    "admin_default_team": "Ridings Press Group",
-    "tiers": [
-      {
-        "name": "Partner",
-        "report_types": [
-          "story",
-          "weekly_advisory"
-        ]
-      }
-    ],
-    "clients": [
-      {
-        "name": "Ridings Press Group",
-        "short_name": "Ridings Press",
-        "url": "https://ridingspress.example",
-        "tier": "Partner",
-        "entitlement": {
-          "all_of": [
-            {
-              "region": [
-                "yorkshire_humber"
-              ]
-            },
-            {
-              "distribution_profile": [
-                "all_partners",
-                "print_digital"
-              ]
-            }
-          ]
-        },
-        "users": [
-          {
-            "email": "joanne.firth@ridingspress.example",
-            "first_name": "Joanne",
-            "last_name": "Firth",
-            "type": "company_admin"
-          },
-          {
-            "email": "david.ainsworth@ridingspress.example",
-            "first_name": "David",
-            "last_name": "Ainsworth",
-            "type": "public"
-          }
-        ]
-      },
-      {
-        "name": "Tynebridge Media",
-        "url": "https://tynebridgemedia.example",
-        "tier": "Partner",
-        "entitlement": {
-          "all_of": [
-            {
-              "region": [
-                "north_east"
-              ]
-            },
-            {
-              "distribution_profile": [
-                "all_partners",
-                "print_digital"
-              ]
-            }
-          ]
-        },
-        "users": [
-          {
-            "email": "kerry.dodds@tynebridgemedia.example",
-            "first_name": "Kerry",
-            "last_name": "Dodds",
-            "type": "company_admin"
-          },
-          {
-            "email": "paul.hedley@tynebridgemedia.example",
-            "first_name": "Paul",
-            "last_name": "Hedley",
-            "type": "public"
-          }
-        ]
-      },
-      {
-        "name": "Shires Ledger Group",
-        "short_name": "Shires Ledger",
-        "url": "https://shiresledger.example",
-        "tier": "Partner",
-        "entitlement": {
-          "all_of": [
-            {
-              "local_authority": [
-                "birmingham",
-                "coventry",
-                "nottingham",
-                "derbyshire"
-              ]
-            },
-            {
-              "distribution_profile": [
-                "all_partners",
-                "print_digital"
-              ]
-            }
-          ]
-        },
-        "users": [
-          {
-            "email": "anita.sharma@shiresledger.example",
-            "first_name": "Anita",
-            "last_name": "Sharma",
-            "type": "company_admin"
-          },
-          {
-            "email": "chris.wheeler@shiresledger.example",
-            "first_name": "Chris",
-            "last_name": "Wheeler",
-            "type": "public"
-          }
-        ]
-      },
-      {
-        "name": "Cambria Local Media",
-        "short_name": "Cambria Local",
-        "url": "https://cambrialocal.example",
-        "tier": "Partner",
-        "entitlement": {
-          "all_of": [
-            {
-              "region": [
-                "wales"
-              ]
-            },
-            {
-              "distribution_profile": [
-                "all_partners",
-                "hyperlocal"
-              ]
-            }
-          ]
-        },
-        "users": [
-          {
-            "email": "gareth.lloyd@cambrialocal.example",
-            "first_name": "Gareth",
-            "last_name": "Lloyd",
-            "type": "company_admin"
-          },
-          {
-            "email": "megan.price@cambrialocal.example",
-            "first_name": "Megan",
-            "last_name": "Price",
-            "type": "public"
-          }
-        ]
-      }
-    ],
-    "internal_client": {
-      "name": "Town Hall Reporting Network",
-      "url": "https://townhall-reporting.example",
-      "users": [
-        {
-          "email": "sam.okoro@townhall-reporting.example",
-          "first_name": "Sam",
-          "last_name": "Okoro",
-          "type": "internal"
-        }
-      ]
-    },
+    "admin_default_team": "Ideenpool",
     "sample_content": {
       "reports": {
-        "story": "content/stories.json",
-        "weekly_advisory": "content/advisories.json"
+        "idee": "content/ideen.json",
+        "anfrage": "content/anfragen.json",
+        "pressemitteilung": "content/pressemitteilungen.json",
+        "linkedin": "content/linkedin.json",
+        "newsletter": "content/newsletter.json",
+        "website": "content/website.json",
+        "intranet": "content/intranet.json"
       },
+      "client_requests": "content/storys.json",
+      "calendar_events": "content/termine.json",
+      "workflow_walk": "content/verlauf.json",
       "counts": {
-        "stories": 22,
-        "weekly_advisories": 2
+        "ideen": 11,
+        "anfragen": 8,
+        "posts": 10,
+        "verlauf": 2,
+        "storys": 4,
+        "termine": 5
       },
-      "guid_prefix": "urn:localwire:demo:",
+      "guid_prefix": "urn:eakom:demo:",
       "review_comment": {
-        "user": "helen.mercer",
-        "stage": "Returned",
-        "text": "Returned for amendment. Please check the figures against the published committee papers and quote the council's response in full, then resubmit."
+        "user": "claudia.wagner",
+        "stage": "Freigabe",
+        "text": "Bitte die Angaben mit dem Fachbereich abstimmen und die Quelle der Zahlen im Hinweisfeld nennen. Danach gebe ich frei."
       }
     }
   },
   "vocabularies": [
     {
-      "id": "local_authority",
-      "label": "Local authority",
+      "id": "themenarchitektur",
+      "label": "Themenarchitektur",
       "selection": "multi",
-      "helper_text": "At least one top-tier local authority. Name the first one in capitals at the start of the title.",
+      "helper_text": "Erst das Themenfeld, darunter das Thema. Jeder Inhalt hat mindestens ein Thema.",
       "items": [
         {
-          "qcode": "leeds",
-          "name": "Leeds City Council",
-          "region": "yorkshire_humber"
+          "qcode": "themenfeld:gebaeude_waerme",
+          "name": "Gebäude und Wärme"
         },
         {
-          "qcode": "bradford",
-          "name": "Bradford Council",
-          "region": "yorkshire_humber"
+          "qcode": "thema:waermewende",
+          "name": "Wärmewende"
         },
         {
-          "qcode": "kirklees",
-          "name": "Kirklees Council",
-          "region": "yorkshire_humber"
+          "qcode": "thema:sanierung",
+          "name": "Energetische Sanierung"
         },
         {
-          "qcode": "sheffield",
-          "name": "Sheffield City Council",
-          "region": "yorkshire_humber"
+          "qcode": "thema:waermepumpen",
+          "name": "Wärmepumpen"
         },
         {
-          "qcode": "newcastle",
-          "name": "Newcastle City Council",
-          "region": "north_east"
+          "qcode": "thema:serielles_sanieren",
+          "name": "Serielles Sanieren"
         },
         {
-          "qcode": "sunderland",
-          "name": "Sunderland City Council",
-          "region": "north_east"
+          "qcode": "themenfeld:strom_netze",
+          "name": "Strom und Netze"
         },
         {
-          "qcode": "gateshead",
-          "name": "Gateshead Council",
-          "region": "north_east"
+          "qcode": "thema:erneuerbare",
+          "name": "Erneuerbare Energien"
         },
         {
-          "qcode": "northumberland",
-          "name": "Northumberland County Council",
-          "region": "north_east"
+          "qcode": "thema:netzausbau",
+          "name": "Netzausbau"
         },
         {
-          "qcode": "birmingham",
-          "name": "Birmingham City Council",
-          "region": "west_midlands"
+          "qcode": "thema:speicher",
+          "name": "Speicher und Flexibilität"
         },
         {
-          "qcode": "coventry",
-          "name": "Coventry City Council",
-          "region": "west_midlands"
+          "qcode": "themenfeld:industrie_wasserstoff",
+          "name": "Industrie und Wasserstoff"
         },
         {
-          "qcode": "nottingham",
-          "name": "Nottingham City Council",
-          "region": "east_midlands"
+          "qcode": "thema:wasserstoff",
+          "name": "Wasserstoff"
         },
         {
-          "qcode": "derbyshire",
-          "name": "Derbyshire County Council",
-          "region": "east_midlands"
+          "qcode": "thema:effizienz_industrie",
+          "name": "Energieeffizienz in der Industrie"
         },
         {
-          "qcode": "cardiff",
-          "name": "Cardiff Council",
-          "region": "wales"
+          "qcode": "thema:abwaerme",
+          "name": "Abwärmenutzung"
         },
         {
-          "qcode": "swansea",
-          "name": "Swansea Council",
-          "region": "wales"
+          "qcode": "themenfeld:mobilitaet",
+          "name": "Mobilität"
         },
         {
-          "qcode": "gwynedd",
-          "name": "Gwynedd Council",
-          "region": "wales"
+          "qcode": "thema:elektromobilitaet",
+          "name": "Elektromobilität"
+        },
+        {
+          "qcode": "thema:ladeinfrastruktur",
+          "name": "Ladeinfrastruktur"
+        },
+        {
+          "qcode": "thema:alternative_kraftstoffe",
+          "name": "Alternative Kraftstoffe"
         }
       ]
     },
     {
-      "id": "region",
-      "label": "Region",
+      "id": "strategieziele",
+      "label": "Strategieziele",
       "selection": "multi",
-      "helper_text": "The UK nation or English region of the local authorities in the story.",
+      "helper_text": "Welchem Ziel der Kommunikationsstrategie dient der Inhalt?",
       "items": [
         {
-          "qcode": "north_east",
-          "name": "North East"
+          "qcode": "ziel:bekanntheit",
+          "name": "Bekanntheit steigern"
         },
         {
-          "qcode": "north_west",
-          "name": "North West"
+          "qcode": "ziel:fachpublikum",
+          "name": "Fachpublikum informieren"
         },
         {
-          "qcode": "yorkshire_humber",
-          "name": "Yorkshire and the Humber"
+          "qcode": "ziel:entscheider",
+          "name": "Entscheiderinnen und Entscheider erreichen"
         },
         {
-          "qcode": "east_midlands",
-          "name": "East Midlands"
+          "qcode": "ziel:foerderung",
+          "name": "Förderangebote bekannt machen"
         },
         {
-          "qcode": "west_midlands",
-          "name": "West Midlands"
+          "qcode": "ziel:vernetzung",
+          "name": "Netzwerk und Partner stärken"
         },
         {
-          "qcode": "east_of_england",
-          "name": "East of England"
-        },
-        {
-          "qcode": "london",
-          "name": "London"
-        },
-        {
-          "qcode": "south_east",
-          "name": "South East"
-        },
-        {
-          "qcode": "south_west",
-          "name": "South West"
-        },
-        {
-          "qcode": "wales",
-          "name": "Wales"
-        },
-        {
-          "qcode": "scotland",
-          "name": "Scotland"
-        },
-        {
-          "qcode": "northern_ireland",
-          "name": "Northern Ireland"
+          "qcode": "ziel:fachkraefte",
+          "name": "Fachkräfte gewinnen"
         }
       ]
     },
     {
-      "id": "distribution_profile",
-      "label": "Distribution profile",
+      "id": "zielgruppen",
+      "label": "Zielgruppen",
       "selection": "multi",
-      "helper_text": "Which partners may receive the story. Stories are for all qualifying partners unless agreed otherwise.",
+      "helper_text": "Für wen ist der Inhalt gedacht?",
       "items": [
         {
-          "qcode": "all_partners",
-          "name": "All qualifying partners"
+          "qcode": "zielgruppe:politik",
+          "name": "Politik und Verwaltung"
         },
         {
-          "qcode": "print_digital",
-          "name": "Print and digital publishers"
+          "qcode": "zielgruppe:wirtschaft",
+          "name": "Wirtschaft und Industrie"
         },
         {
-          "qcode": "broadcast",
-          "name": "Broadcast partners"
+          "qcode": "zielgruppe:wissenschaft",
+          "name": "Wissenschaft"
         },
         {
-          "qcode": "hyperlocal",
-          "name": "Hyperlocal and community titles"
+          "qcode": "zielgruppe:fachpresse",
+          "name": "Fachpresse"
+        },
+        {
+          "qcode": "zielgruppe:oeffentlichkeit",
+          "name": "Allgemeine Öffentlichkeit"
+        },
+        {
+          "qcode": "zielgruppe:handwerk",
+          "name": "Handwerk und Planung"
+        },
+        {
+          "qcode": "zielgruppe:wohnungswirtschaft",
+          "name": "Wohnungswirtschaft und Eigentümer"
+        },
+        {
+          "qcode": "zielgruppe:kommunen",
+          "name": "Kommunen"
         }
       ]
     },
     {
-      "id": "category",
-      "label": "Category",
+      "id": "kanal",
+      "label": "Kanal",
       "selection": "multi",
-      "helper_text": "What the story is about.",
+      "helper_text": "Über welchen Kanal wird der Inhalt ausgespielt?",
       "items": [
         {
-          "qcode": "council_meeting",
-          "name": "Council meetings and decisions"
+          "qcode": "kanal:pressemitteilung",
+          "name": "Pressemitteilung"
         },
         {
-          "qcode": "planning",
-          "name": "Planning and development"
+          "qcode": "kanal:linkedin",
+          "name": "LinkedIn"
         },
         {
-          "qcode": "budget",
-          "name": "Budgets and council tax"
+          "qcode": "kanal:instagram",
+          "name": "Instagram"
         },
         {
-          "qcode": "housing",
-          "name": "Housing"
+          "qcode": "kanal:youtube",
+          "name": "YouTube"
         },
         {
-          "qcode": "transport",
-          "name": "Transport and highways"
+          "qcode": "kanal:newsletter",
+          "name": "Newsletter"
         },
         {
-          "qcode": "education",
-          "name": "Schools and education"
+          "qcode": "kanal:website",
+          "name": "Website"
         },
         {
-          "qcode": "social_care",
-          "name": "Health and social care"
+          "qcode": "kanal:intranet",
+          "name": "Intranet"
         },
         {
-          "qcode": "environment",
-          "name": "Environment and waste"
-        },
-        {
-          "qcode": "community",
-          "name": "Libraries, leisure and community"
-        },
-        {
-          "qcode": "governance",
-          "name": "Elections and governance"
-        },
-        {
-          "qcode": "economy",
-          "name": "Economy and regeneration"
+          "qcode": "kanal:event",
+          "name": "Event"
         }
       ]
     },
     {
-      "id": "image_rights",
-      "label": "Image rights",
+      "id": "prioritaet",
+      "label": "Priorität",
       "selection": "single",
-      "helper_text": "Confirm that every image in the story is rights-free and free for all partners to use, with its rights owner credited. Never use agency, freelance or employer library images.",
+      "helper_text": "A ist dringend und wichtig, B normal, C bei Gelegenheit.",
       "items": [
         {
-          "qcode": "rights_free",
-          "name": "Rights-free, free for all partners to use"
+          "qcode": "prio:a",
+          "name": "A (hoch)"
         },
         {
-          "qcode": "no_media",
-          "name": "No images or media"
+          "qcode": "prio:b",
+          "name": "B (mittel)"
+        },
+        {
+          "qcode": "prio:c",
+          "name": "C (niedrig)"
+        }
+      ]
+    },
+    {
+      "id": "fachbereich",
+      "label": "Fachbereich",
+      "selection": "single",
+      "helper_text": "Der Bereich, der den Inhalt oder die Anfrage einbringt.",
+      "items": [
+        {
+          "qcode": "bereich:gebaeude",
+          "name": "Fachbereich Gebäude"
+        },
+        {
+          "qcode": "bereich:strom_netze",
+          "name": "Fachbereich Strom und Netze"
+        },
+        {
+          "qcode": "bereich:industrie",
+          "name": "Fachbereich Industrie und Klimaschutz"
+        },
+        {
+          "qcode": "bereich:mobilitaet",
+          "name": "Fachbereich Mobilität"
+        },
+        {
+          "qcode": "bereich:energiesysteme",
+          "name": "Fachbereich Digitale Energiesysteme"
+        },
+        {
+          "qcode": "bereich:international",
+          "name": "Fachbereich Internationale Zusammenarbeit"
+        },
+        {
+          "qcode": "bereich:strategie",
+          "name": "Stabsstelle Strategie"
+        },
+        {
+          "qcode": "bereich:recht",
+          "name": "Stabsstelle Recht und Compliance"
+        },
+        {
+          "qcode": "bereich:verwaltung",
+          "name": "Verwaltung"
+        }
+      ]
+    },
+    {
+      "id": "anfrageart",
+      "label": "Art der Anfrage",
+      "selection": "single",
+      "helper_text": "Jede Art hat ihren eigenen Ablauf.",
+      "items": [
+        {
+          "qcode": "art:presse",
+          "name": "Presseanfrage"
+        },
+        {
+          "qcode": "art:intern",
+          "name": "Interne Anfrage"
+        },
+        {
+          "qcode": "art:aufgabe",
+          "name": "Aufgabe"
         }
       ]
     }
   ],
   "custom_text_fields": [
     {
-      "id": "embargo_reason",
-      "label": "Embargo reason",
+      "id": "sharepoint_links",
+      "label": "SharePoint-Links",
+      "single_line": false,
+      "helper_text": "Links zu Dokumenten und Ordnern in SharePoint, ein Link pro Zeile."
+    },
+    {
+      "id": "anfragende_person",
+      "label": "Anfragende Person",
       "single_line": true,
-      "helper_text": "Why the story is embargoed, for example a report released by the council at a set time. Set the embargo time when sending or publishing."
+      "helper_text": "Name und Kontakt der Person oder Redaktion, die anfragt."
+    },
+    {
+      "id": "frist",
+      "label": "Gewünschte Frist",
+      "single_line": true,
+      "helper_text": "Datum und Uhrzeit, bis wann die Antwort gebraucht wird."
+    },
+    {
+      "id": "rueckfrage",
+      "label": "Rückfrage",
+      "single_line": false,
+      "helper_text": "Offene Frage an die anfragende Person. Die Anfrage bleibt in der Stufe Rückfrage, bis sie beantwortet ist."
     }
   ],
   "report_types": [
     {
-      "id": "story",
-      "label": "Story",
-      "portal_profile": "Story",
-      "description": "A council story for all qualifying partners.",
-      "priority": 20,
-      "body_skeleton": "",
+      "id": "idee",
+      "label": "Idee",
+      "description": "Eine Idee für Inhalt oder Kampagne, die der Ideenpool bewertet.",
+      "priority": 90,
+      "body_skeleton": "<h2>Worum geht es?</h2><p></p><h2>Warum jetzt?</h2><p></p><h2>Was wird gebraucht?</h2><p></p>",
       "fields": [
         {
           "id": "headline",
           "kind": "native",
-          "label": "Title (COUNCIL NAME: Story name)",
+          "label": "Titel der Idee",
           "required": true,
-          "maxlength": 160,
+          "maxlength": 120,
           "format": "none"
         },
         {
-          "id": "local_authority",
+          "id": "themenarchitektur",
+          "kind": "taxonomy",
+          "label": "Thema",
+          "width": "half",
+          "required": true
+        },
+        {
+          "id": "strategieziele",
           "kind": "taxonomy",
           "width": "half",
           "required": true
         },
         {
-          "id": "region",
+          "id": "kanal",
           "kind": "taxonomy",
-          "width": "half",
-          "required": true
+          "label": "Kanalwunsch",
+          "width": "half"
         },
         {
-          "id": "distribution_profile",
+          "id": "zielgruppen",
           "kind": "taxonomy",
-          "width": "half",
-          "required": true
+          "width": "half"
         },
         {
-          "id": "category",
+          "id": "prioritaet",
           "kind": "taxonomy",
+          "width": "half"
+        },
+        {
+          "id": "fachbereich",
+          "kind": "taxonomy",
+          "label": "Einreichender Bereich",
           "width": "half"
         },
         {
           "id": "abstract",
           "kind": "native",
-          "label": "Standfirst",
+          "label": "Kurzbeschreibung",
           "required": true,
           "maxlength": 300,
           "format": "summary"
@@ -800,92 +862,507 @@
         {
           "id": "body_html",
           "kind": "native",
-          "label": "Story",
-          "required": true,
+          "label": "Ausführung der Idee",
           "format": "body"
         },
         {
-          "id": "image_rights",
-          "kind": "taxonomy",
-          "width": "half",
-          "required": true
-        },
-        {
-          "id": "embargo_reason",
-          "kind": "custom_text",
-          "width": "half"
-        },
-        {
-          "id": "byline",
-          "kind": "native",
-          "label": "Byline",
-          "width": "half"
+          "id": "sharepoint_links",
+          "kind": "custom_text"
         },
         {
           "id": "ednote",
           "kind": "native",
-          "label": "Note for the reviewer"
+          "label": "Hinweis"
         }
       ]
     },
     {
-      "id": "weekly_advisory",
-      "label": "Weekly advisory",
-      "portal_profile": "Weeklyadvisory",
-      "description": "A reporter's diary for the next seven days, filed by the end of each week.",
-      "priority": 10,
-      "body_skeleton": "<h2>Diary for the next seven days</h2><ul><li>Day and time, council, meeting: what is expected</li></ul><h2>Stories in progress</h2><p></p><h2>Availability</h2><p></p>",
+      "id": "anfrage",
+      "label": "Anfrage",
+      "description": "Presseanfrage, interne Anfrage oder Aufgabe an die Kommunikation.",
+      "priority": 80,
+      "body_skeleton": "<h2>Was wird gebraucht?</h2><p></p><h2>Hintergrund</h2><p></p>",
       "fields": [
         {
           "id": "headline",
           "kind": "native",
-          "label": "Title",
+          "label": "Betreff",
           "required": true,
-          "maxlength": 160,
+          "maxlength": 120,
           "format": "none"
         },
         {
-          "id": "local_authority",
+          "id": "anfrageart",
           "kind": "taxonomy",
           "width": "half",
           "required": true
         },
         {
-          "id": "region",
+          "id": "themenarchitektur",
+          "kind": "taxonomy",
+          "label": "Thema",
+          "width": "half",
+          "required": true
+        },
+        {
+          "id": "fachbereich",
           "kind": "taxonomy",
           "width": "half",
           "required": true
         },
         {
-          "id": "distribution_profile",
+          "id": "prioritaet",
           "kind": "taxonomy",
           "width": "half",
           "required": true
+        },
+        {
+          "id": "anfragende_person",
+          "kind": "custom_text",
+          "width": "half"
+        },
+        {
+          "id": "frist",
+          "kind": "custom_text",
+          "width": "half"
+        },
+        {
+          "id": "kanal",
+          "kind": "taxonomy",
+          "label": "Gewünschter Kanal",
+          "width": "half"
+        },
+        {
+          "id": "strategieziele",
+          "kind": "taxonomy",
+          "width": "half"
         },
         {
           "id": "abstract",
           "kind": "native",
-          "label": "Summary",
+          "label": "Worum geht es?",
+          "required": true,
           "maxlength": 300,
           "format": "summary"
         },
         {
           "id": "body_html",
           "kind": "native",
-          "label": "Diary",
+          "label": "Beschreibung der Anfrage",
+          "format": "body"
+        },
+        {
+          "id": "sharepoint_links",
+          "kind": "custom_text"
+        },
+        {
+          "id": "rueckfrage",
+          "kind": "custom_text"
+        },
+        {
+          "id": "ednote",
+          "kind": "native",
+          "label": "Interner Vermerk"
+        }
+      ]
+    },
+    {
+      "id": "pressemitteilung",
+      "label": "Pressemitteilung",
+      "description": "Pressemitteilung für Medien und Verteiler.",
+      "priority": 70,
+      "body_skeleton": "<p>Berlin, TT. Monat JJJJ. Kernaussage in ein bis zwei Sätzen: Was ist neu, wer ist betroffen, warum ist es wichtig?</p><p>Einordnung mit Zahlen und Hintergrund.</p><p>Zitat mit Name und Funktion.</p><h2>Über die Energieagentur</h2><p>Kurzprofil der Organisation.</p><h2>Pressekontakt</h2><p>Name, Telefon, E-Mail.</p>",
+      "fields": [
+        {
+          "id": "headline",
+          "kind": "native",
+          "label": "Überschrift",
+          "required": true,
+          "maxlength": 120,
+          "format": "none"
+        },
+        {
+          "id": "themenarchitektur",
+          "kind": "taxonomy",
+          "label": "Thema",
+          "width": "half",
+          "required": true
+        },
+        {
+          "id": "strategieziele",
+          "kind": "taxonomy",
+          "width": "half",
+          "required": true
+        },
+        {
+          "id": "zielgruppen",
+          "kind": "taxonomy",
+          "width": "half"
+        },
+        {
+          "id": "kanal",
+          "kind": "taxonomy",
+          "width": "half"
+        },
+        {
+          "id": "abstract",
+          "kind": "native",
+          "label": "Untertitel",
+          "required": true,
+          "maxlength": 300,
+          "format": "summary"
+        },
+        {
+          "id": "body_html",
+          "kind": "native",
+          "label": "Text der Pressemitteilung",
           "required": true,
           "format": "body"
         },
         {
           "id": "byline",
           "kind": "native",
-          "label": "Byline",
+          "label": "Ansprechperson",
           "width": "half"
+        },
+        {
+          "id": "sharepoint_links",
+          "kind": "custom_text"
         },
         {
           "id": "ednote",
           "kind": "native",
-          "label": "Note for the reviewer"
+          "label": "Hinweis"
+        }
+      ]
+    },
+    {
+      "id": "linkedin",
+      "label": "LinkedIn",
+      "description": "Beitrag für die Unternehmensseite auf LinkedIn.",
+      "priority": 60,
+      "body_skeleton": "<p>Einstieg in einem Satz.</p><p>Drei kurze Gedanken, je eine Zeile.</p><p>Aufruf zum Handeln mit Link.</p><p>#Energiewende</p>",
+      "fields": [
+        {
+          "id": "headline",
+          "kind": "native",
+          "label": "Einstiegszeile",
+          "required": true,
+          "maxlength": 150,
+          "format": "none"
+        },
+        {
+          "id": "themenarchitektur",
+          "kind": "taxonomy",
+          "label": "Thema",
+          "width": "half",
+          "required": true
+        },
+        {
+          "id": "strategieziele",
+          "kind": "taxonomy",
+          "width": "half",
+          "required": true
+        },
+        {
+          "id": "zielgruppen",
+          "kind": "taxonomy",
+          "width": "half"
+        },
+        {
+          "id": "kanal",
+          "kind": "taxonomy",
+          "width": "half"
+        },
+        {
+          "id": "body_html",
+          "kind": "native",
+          "label": "Beitragstext",
+          "required": true,
+          "maxlength": 3000,
+          "format": "body"
+        },
+        {
+          "id": "byline",
+          "kind": "native",
+          "label": "Absender",
+          "width": "half"
+        },
+        {
+          "id": "sharepoint_links",
+          "kind": "custom_text"
+        },
+        {
+          "id": "ednote",
+          "kind": "native",
+          "label": "Hinweis"
+        }
+      ]
+    },
+    {
+      "id": "instagram",
+      "label": "Instagram",
+      "description": "Beitrag für den Instagram-Kanal mit Bildidee.",
+      "priority": 50,
+      "body_skeleton": "<p>Bildunterschrift in zwei bis drei Sätzen.</p><p>Bildidee: Motiv, Format, Quelle.</p><p>#Energiewende</p>",
+      "fields": [
+        {
+          "id": "headline",
+          "kind": "native",
+          "label": "Arbeitstitel",
+          "required": true,
+          "maxlength": 100,
+          "format": "none"
+        },
+        {
+          "id": "themenarchitektur",
+          "kind": "taxonomy",
+          "label": "Thema",
+          "width": "half",
+          "required": true
+        },
+        {
+          "id": "strategieziele",
+          "kind": "taxonomy",
+          "width": "half",
+          "required": true
+        },
+        {
+          "id": "zielgruppen",
+          "kind": "taxonomy",
+          "width": "half"
+        },
+        {
+          "id": "kanal",
+          "kind": "taxonomy",
+          "width": "half"
+        },
+        {
+          "id": "body_html",
+          "kind": "native",
+          "label": "Bildunterschrift und Bildidee",
+          "required": true,
+          "maxlength": 2200,
+          "format": "body"
+        },
+        {
+          "id": "sharepoint_links",
+          "kind": "custom_text"
+        },
+        {
+          "id": "ednote",
+          "kind": "native",
+          "label": "Hinweis"
+        }
+      ]
+    },
+    {
+      "id": "newsletter",
+      "label": "Newsletter",
+      "description": "Beitrag für einen Newsletter.",
+      "priority": 40,
+      "body_skeleton": "<p>Teaser in zwei Sätzen.</p><p>Kurztext mit dem Wichtigsten.</p><p>Weiterführender Link: Text und Ziel.</p>",
+      "fields": [
+        {
+          "id": "headline",
+          "kind": "native",
+          "label": "Überschrift",
+          "required": true,
+          "maxlength": 100,
+          "format": "none"
+        },
+        {
+          "id": "themenarchitektur",
+          "kind": "taxonomy",
+          "label": "Thema",
+          "width": "half",
+          "required": true
+        },
+        {
+          "id": "strategieziele",
+          "kind": "taxonomy",
+          "width": "half",
+          "required": true
+        },
+        {
+          "id": "zielgruppen",
+          "kind": "taxonomy",
+          "width": "half"
+        },
+        {
+          "id": "kanal",
+          "kind": "taxonomy",
+          "width": "half"
+        },
+        {
+          "id": "abstract",
+          "kind": "native",
+          "label": "Teaser",
+          "required": true,
+          "maxlength": 250,
+          "format": "summary"
+        },
+        {
+          "id": "body_html",
+          "kind": "native",
+          "label": "Beitragstext",
+          "required": true,
+          "format": "body"
+        },
+        {
+          "id": "byline",
+          "kind": "native",
+          "label": "Autorin oder Autor",
+          "width": "half"
+        },
+        {
+          "id": "sharepoint_links",
+          "kind": "custom_text"
+        },
+        {
+          "id": "ednote",
+          "kind": "native",
+          "label": "Hinweis"
+        }
+      ]
+    },
+    {
+      "id": "website",
+      "label": "Website",
+      "description": "Artikel oder Meldung für die Website.",
+      "priority": 30,
+      "body_skeleton": "<h2>Zwischenüberschrift</h2><p>Text.</p>",
+      "fields": [
+        {
+          "id": "headline",
+          "kind": "native",
+          "label": "Überschrift",
+          "required": true,
+          "maxlength": 120,
+          "format": "none"
+        },
+        {
+          "id": "themenarchitektur",
+          "kind": "taxonomy",
+          "label": "Thema",
+          "width": "half",
+          "required": true
+        },
+        {
+          "id": "strategieziele",
+          "kind": "taxonomy",
+          "width": "half",
+          "required": true
+        },
+        {
+          "id": "zielgruppen",
+          "kind": "taxonomy",
+          "width": "half"
+        },
+        {
+          "id": "kanal",
+          "kind": "taxonomy",
+          "width": "half"
+        },
+        {
+          "id": "abstract",
+          "kind": "native",
+          "label": "Teaser",
+          "required": true,
+          "maxlength": 300,
+          "format": "summary"
+        },
+        {
+          "id": "body_html",
+          "kind": "native",
+          "label": "Artikeltext",
+          "required": true,
+          "format": "body"
+        },
+        {
+          "id": "byline",
+          "kind": "native",
+          "label": "Autorin oder Autor",
+          "width": "half"
+        },
+        {
+          "id": "sharepoint_links",
+          "kind": "custom_text"
+        },
+        {
+          "id": "ednote",
+          "kind": "native",
+          "label": "Hinweis"
+        }
+      ]
+    },
+    {
+      "id": "intranet",
+      "label": "Intranet",
+      "description": "Meldung für das Intranet.",
+      "priority": 20,
+      "body_skeleton": "<p>Was ist neu und für wen gilt es?</p><p>Was ist zu tun, bis wann?</p><p>Ansprechperson.</p>",
+      "fields": [
+        {
+          "id": "headline",
+          "kind": "native",
+          "label": "Überschrift",
+          "required": true,
+          "maxlength": 100,
+          "format": "none"
+        },
+        {
+          "id": "themenarchitektur",
+          "kind": "taxonomy",
+          "label": "Thema",
+          "width": "half",
+          "required": true
+        },
+        {
+          "id": "strategieziele",
+          "kind": "taxonomy",
+          "width": "half",
+          "required": true
+        },
+        {
+          "id": "zielgruppen",
+          "kind": "taxonomy",
+          "width": "half"
+        },
+        {
+          "id": "kanal",
+          "kind": "taxonomy",
+          "width": "half"
+        },
+        {
+          "id": "abstract",
+          "kind": "native",
+          "label": "Teaser",
+          "required": true,
+          "maxlength": 250,
+          "format": "summary"
+        },
+        {
+          "id": "body_html",
+          "kind": "native",
+          "label": "Text",
+          "required": true,
+          "format": "body"
+        },
+        {
+          "id": "byline",
+          "kind": "native",
+          "label": "Autorin oder Autor",
+          "width": "half"
+        },
+        {
+          "id": "sharepoint_links",
+          "kind": "custom_text"
+        },
+        {
+          "id": "ednote",
+          "kind": "native",
+          "label": "Hinweis"
         }
       ]
     }
@@ -917,117 +1394,99 @@
   },
   "templates": [
     {
-      "name": "Ridings Press story",
-      "report_type": "story",
+      "name": "Neue Idee",
+      "report_type": "idee",
       "teams": [
-        "Ridings Press Group"
+        "Ideenpool"
+      ]
+    },
+    {
+      "name": "Neue Anfrage",
+      "report_type": "anfrage",
+      "teams": [
+        "Anfragen"
+      ]
+    },
+    {
+      "name": "Pressemitteilung Standard",
+      "report_type": "pressemitteilung",
+      "teams": [
+        "Presse",
+        "Corporate Content",
+        "Fachkommunikation"
       ],
       "subject": {
-        "region": [
-          "yorkshire_humber"
-        ],
-        "distribution_profile": [
-          "all_partners"
+        "kanal": [
+          "kanal:pressemitteilung"
         ]
       }
     },
     {
-      "name": "Tynebridge Media story",
-      "report_type": "story",
+      "name": "LinkedIn-Beitrag",
+      "report_type": "linkedin",
       "teams": [
-        "Tynebridge Media"
+        "Digital",
+        "Corporate Content",
+        "Presse",
+        "Fachkommunikation"
       ],
       "subject": {
-        "region": [
-          "north_east"
-        ],
-        "distribution_profile": [
-          "all_partners"
+        "kanal": [
+          "kanal:linkedin"
         ]
       }
     },
     {
-      "name": "Shires Ledger story",
-      "report_type": "story",
+      "name": "Instagram-Beitrag",
+      "report_type": "instagram",
       "teams": [
-        "Shires Ledger Group"
+        "Kreation und Produktion",
+        "Digital"
       ],
       "subject": {
-        "region": [
-          "west_midlands",
-          "east_midlands"
-        ],
-        "distribution_profile": [
-          "all_partners"
+        "kanal": [
+          "kanal:instagram"
         ]
       }
     },
     {
-      "name": "Cambria Local Media story",
-      "report_type": "story",
+      "name": "Newsletter-Beitrag",
+      "report_type": "newsletter",
       "teams": [
-        "Cambria Local Media"
+        "Corporate Content",
+        "Digital",
+        "Event"
       ],
       "subject": {
-        "region": [
-          "wales"
-        ],
-        "distribution_profile": [
-          "all_partners"
+        "kanal": [
+          "kanal:newsletter"
         ]
       }
     },
     {
-      "name": "Council meeting",
-      "report_type": "story",
+      "name": "Website-Artikel",
+      "report_type": "website",
       "teams": [
-        "Ridings Press Group",
-        "Tynebridge Media",
-        "Shires Ledger Group",
-        "Cambria Local Media"
+        "Corporate Content",
+        "Digital",
+        "Fachkommunikation"
       ],
-      "headline": "COUNCIL NAME: Story name",
       "subject": {
-        "category": [
-          "council_meeting"
-        ],
-        "distribution_profile": [
-          "all_partners"
+        "kanal": [
+          "kanal:website"
         ]
       }
     },
     {
-      "name": "Planning decision",
-      "report_type": "story",
+      "name": "Intranet-Meldung",
+      "report_type": "intranet",
       "teams": [
-        "Ridings Press Group",
-        "Tynebridge Media",
-        "Shires Ledger Group",
-        "Cambria Local Media"
+        "Fachkommunikation",
+        "Corporate Content"
       ],
-      "headline": "COUNCIL NAME: Story name",
       "subject": {
-        "category": [
-          "planning"
-        ],
-        "distribution_profile": [
-          "all_partners"
-        ]
-      }
-    },
-    {
-      "name": "Weekly advisory",
-      "report_type": "weekly_advisory",
-      "teams": [
-        "Ridings Press Group",
-        "Tynebridge Media",
-        "Shires Ledger Group",
-        "Cambria Local Media"
-      ],
-      "headline": "Weekly advisory: REPORTER NAME, week beginning DATE",
-      "subject": {
-        "distribution_profile": [
-          "all_partners"
+        "kanal": [
+          "kanal:intranet"
         ]
       }
     }
@@ -1036,10 +1495,9 @@
   "superdesk": {
     "demo_password_env": "DEMO_PASSWORD",
     "settings": {
-      "ORGANIZATION_NAME": "Town Hall Reporting Network",
-      "ORGANIZATION_NAME_ABBREVIATION": "THRN",
-      "NEWSML_PROVIDER_ID": "townhall-reporting.example",
-      "DEFAULT_LANGUAGE": "en",
+      "ORGANIZATION_NAME": "Energieagentur Beispiel GmbH",
+      "ORGANIZATION_NAME_ABBREVIATION": "EAB",
+      "DEFAULT_LANGUAGE": "de_DE",
       "VALIDATOR_MEDIA_METADATA": {
         "headline": {
           "required": false
@@ -1079,34 +1537,52 @@
     },
     "client_config": {
       "defaultRoute": "/workspace/monitoring",
-      "defaultTimezone": "Europe/London",
+      "defaultTimezone": "Europe/Berlin",
       "apps_removed": [
         "publisher"
       ],
       "search_cvs": [
         {
-          "id": "local_authority",
-          "name": "Local authority",
+          "id": "themenarchitektur",
+          "name": "Thema",
           "field": "subject",
-          "list": "local_authority"
+          "list": "themenarchitektur"
         },
         {
-          "id": "region",
-          "name": "Region",
+          "id": "strategieziele",
+          "name": "Strategieziele",
           "field": "subject",
-          "list": "region"
+          "list": "strategieziele"
         },
         {
-          "id": "distribution_profile",
-          "name": "Distribution profile",
+          "id": "zielgruppen",
+          "name": "Zielgruppen",
           "field": "subject",
-          "list": "distribution_profile"
+          "list": "zielgruppen"
         },
         {
-          "id": "category",
-          "name": "Category",
+          "id": "kanal",
+          "name": "Kanal",
           "field": "subject",
-          "list": "category"
+          "list": "kanal"
+        },
+        {
+          "id": "prioritaet",
+          "name": "Priorität",
+          "field": "subject",
+          "list": "prioritaet"
+        },
+        {
+          "id": "fachbereich",
+          "name": "Fachbereich",
+          "field": "subject",
+          "list": "fachbereich"
+        },
+        {
+          "id": "anfrageart",
+          "name": "Art der Anfrage",
+          "field": "subject",
+          "list": "anfrageart"
         }
       ],
       "list": {
@@ -1145,37 +1621,60 @@
       },
       "features_on": [
         "editorInlineComments",
-        "editorSuggestions"
+        "editorSuggestions",
+        "editorAttachments"
       ]
     },
     "ingest": {},
-    "recipients": {
-      "portal": {
-        "name": "Newshub",
-        "product": "Newshub feed",
-        "format": "Newsroom NINJS",
-        "push_path": "/push",
-        "push_key_env": "PORTAL_PUSH_KEY",
-        "receives": "every published story and advisory"
-      },
-      "portal_calendar": {
-        "name": "Newshub calendar",
-        "product": "Newshub calendar"
-      },
-      "email_per_client": false
-    },
+    "recipients": {},
     "dashboards": {
       "per_team_widgets": [
         "aggregate",
-        "activity"
+        "activity",
+        "world-clock"
       ],
       "world_clock_zones": [
-        "Europe/London"
+        "Europe/Berlin"
       ]
     },
-    "ai": {},
-    "planning": {},
+    "planning": {
+      "programmes": [
+        "Kampagne Wärmewende",
+        "Kampagne Klimafreundlich unterwegs"
+      ],
+      "event_calendars": [
+        {
+          "qcode": "pressetermine",
+          "name": "Pressetermine"
+        },
+        {
+          "qcode": "veranstaltungen",
+          "name": "Veranstaltungen"
+        },
+        {
+          "qcode": "fachtermine",
+          "name": "Fachtermine"
+        }
+      ],
+      "occur_status": {
+        "certain": {
+          "qcode": "eocstat:eos5",
+          "name": "Planned, occurs certainly"
+        },
+        "likely": {
+          "qcode": "eocstat:eos4",
+          "name": "Planned, occurence highly likely"
+        },
+        "possible": {
+          "qcode": "eocstat:eos3",
+          "name": "Planned, May occur"
+        }
+      }
+    },
     "triage": {},
-    "workflow": {}
+    "workflow": {
+      "walk_items": "content/verlauf.json",
+      "pace_seconds": 1
+    }
   }
 }

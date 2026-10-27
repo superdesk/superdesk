@@ -3256,15 +3256,15 @@
         ]
     },
     {
-        "_id": "local_authority",
-        "display_name": "Local authority",
+        "_id": "themenarchitektur",
+        "display_name": "Themenarchitektur",
         "type": "manageable",
         "selection_type": "multi selection",
         "unique_field": "qcode",
         "service": {
             "all": 1
         },
-        "helper_text": "At least one top-tier local authority. Name the first one in capitals at the start of the title.",
+        "helper_text": "Erst das Themenfeld, darunter das Thema. Jeder Inhalt hat mindestens ein Thema.",
         "init_version": 1,
         "schema": {
             "name": {},
@@ -3273,91 +3273,101 @@
         "items": [
             {
                 "is_active": true,
-                "name": "Leeds City Council",
-                "qcode": "leeds"
+                "name": "Gebäude und Wärme",
+                "qcode": "themenfeld:gebaeude_waerme"
             },
             {
                 "is_active": true,
-                "name": "Bradford Council",
-                "qcode": "bradford"
+                "name": "Wärmewende",
+                "qcode": "thema:waermewende"
             },
             {
                 "is_active": true,
-                "name": "Kirklees Council",
-                "qcode": "kirklees"
+                "name": "Energetische Sanierung",
+                "qcode": "thema:sanierung"
             },
             {
                 "is_active": true,
-                "name": "Sheffield City Council",
-                "qcode": "sheffield"
+                "name": "Wärmepumpen",
+                "qcode": "thema:waermepumpen"
             },
             {
                 "is_active": true,
-                "name": "Newcastle City Council",
-                "qcode": "newcastle"
+                "name": "Serielles Sanieren",
+                "qcode": "thema:serielles_sanieren"
             },
             {
                 "is_active": true,
-                "name": "Sunderland City Council",
-                "qcode": "sunderland"
+                "name": "Strom und Netze",
+                "qcode": "themenfeld:strom_netze"
             },
             {
                 "is_active": true,
-                "name": "Gateshead Council",
-                "qcode": "gateshead"
+                "name": "Erneuerbare Energien",
+                "qcode": "thema:erneuerbare"
             },
             {
                 "is_active": true,
-                "name": "Northumberland County Council",
-                "qcode": "northumberland"
+                "name": "Netzausbau",
+                "qcode": "thema:netzausbau"
             },
             {
                 "is_active": true,
-                "name": "Birmingham City Council",
-                "qcode": "birmingham"
+                "name": "Speicher und Flexibilität",
+                "qcode": "thema:speicher"
             },
             {
                 "is_active": true,
-                "name": "Coventry City Council",
-                "qcode": "coventry"
+                "name": "Industrie und Wasserstoff",
+                "qcode": "themenfeld:industrie_wasserstoff"
             },
             {
                 "is_active": true,
-                "name": "Nottingham City Council",
-                "qcode": "nottingham"
+                "name": "Wasserstoff",
+                "qcode": "thema:wasserstoff"
             },
             {
                 "is_active": true,
-                "name": "Derbyshire County Council",
-                "qcode": "derbyshire"
+                "name": "Energieeffizienz in der Industrie",
+                "qcode": "thema:effizienz_industrie"
             },
             {
                 "is_active": true,
-                "name": "Cardiff Council",
-                "qcode": "cardiff"
+                "name": "Abwärmenutzung",
+                "qcode": "thema:abwaerme"
             },
             {
                 "is_active": true,
-                "name": "Swansea Council",
-                "qcode": "swansea"
+                "name": "Mobilität",
+                "qcode": "themenfeld:mobilitaet"
             },
             {
                 "is_active": true,
-                "name": "Gwynedd Council",
-                "qcode": "gwynedd"
+                "name": "Elektromobilität",
+                "qcode": "thema:elektromobilitaet"
+            },
+            {
+                "is_active": true,
+                "name": "Ladeinfrastruktur",
+                "qcode": "thema:ladeinfrastruktur"
+            },
+            {
+                "is_active": true,
+                "name": "Alternative Kraftstoffe",
+                "qcode": "thema:alternative_kraftstoffe"
             }
         ]
     },
     {
-        "_id": "region",
-        "display_name": "Region",
+        "_id": "strategieziele",
+        "display_name": "Strategieziele",
         "type": "manageable",
         "selection_type": "multi selection",
         "unique_field": "qcode",
         "service": {
             "all": 1
         },
-        "helper_text": "The UK nation or English region of the local authorities in the story.",
+        "helper_text": "Welchem Ziel der Kommunikationsstrategie dient der Inhalt?",
         "init_version": 1,
         "schema": {
             "name": {},
@@ -3366,76 +3376,46 @@
         "items": [
             {
                 "is_active": true,
-                "name": "North East",
-                "qcode": "north_east"
+                "name": "Bekanntheit steigern",
+                "qcode": "ziel:bekanntheit"
             },
             {
                 "is_active": true,
-                "name": "North West",
-                "qcode": "north_west"
+                "name": "Fachpublikum informieren",
+                "qcode": "ziel:fachpublikum"
             },
             {
                 "is_active": true,
-                "name": "Yorkshire and the Humber",
-                "qcode": "yorkshire_humber"
+                "name": "Entscheiderinnen und Entscheider erreichen",
+                "qcode": "ziel:entscheider"
             },
             {
                 "is_active": true,
-                "name": "East Midlands",
-                "qcode": "east_midlands"
+                "name": "Förderangebote bekannt machen",
+                "qcode": "ziel:foerderung"
             },
             {
                 "is_active": true,
-                "name": "West Midlands",
-                "qcode": "west_midlands"
+                "name": "Netzwerk und Partner stärken",
+                "qcode": "ziel:vernetzung"
             },
             {
                 "is_active": true,
-                "name": "East of England",
-                "qcode": "east_of_england"
-            },
-            {
-                "is_active": true,
-                "name": "London",
-                "qcode": "london"
-            },
-            {
-                "is_active": true,
-                "name": "South East",
-                "qcode": "south_east"
-            },
-            {
-                "is_active": true,
-                "name": "South West",
-                "qcode": "south_west"
-            },
-            {
-                "is_active": true,
-                "name": "Wales",
-                "qcode": "wales"
-            },
-            {
-                "is_active": true,
-                "name": "Scotland",
-                "qcode": "scotland"
-            },
-            {
-                "is_active": true,
-                "name": "Northern Ireland",
-                "qcode": "northern_ireland"
+                "name": "Fachkräfte gewinnen",
+                "qcode": "ziel:fachkraefte"
             }
         ]
     },
     {
-        "_id": "distribution_profile",
-        "display_name": "Distribution profile",
+        "_id": "zielgruppen",
+        "display_name": "Zielgruppen",
         "type": "manageable",
         "selection_type": "multi selection",
         "unique_field": "qcode",
         "service": {
             "all": 1
         },
-        "helper_text": "Which partners may receive the story. Stories are for all qualifying partners unless agreed otherwise.",
+        "helper_text": "Für wen ist der Inhalt gedacht?",
         "init_version": 1,
         "schema": {
             "name": {},
@@ -3444,36 +3424,56 @@
         "items": [
             {
                 "is_active": true,
-                "name": "All qualifying partners",
-                "qcode": "all_partners"
+                "name": "Politik und Verwaltung",
+                "qcode": "zielgruppe:politik"
             },
             {
                 "is_active": true,
-                "name": "Print and digital publishers",
-                "qcode": "print_digital"
+                "name": "Wirtschaft und Industrie",
+                "qcode": "zielgruppe:wirtschaft"
             },
             {
                 "is_active": true,
-                "name": "Broadcast partners",
-                "qcode": "broadcast"
+                "name": "Wissenschaft",
+                "qcode": "zielgruppe:wissenschaft"
             },
             {
                 "is_active": true,
-                "name": "Hyperlocal and community titles",
-                "qcode": "hyperlocal"
+                "name": "Fachpresse",
+                "qcode": "zielgruppe:fachpresse"
+            },
+            {
+                "is_active": true,
+                "name": "Allgemeine Öffentlichkeit",
+                "qcode": "zielgruppe:oeffentlichkeit"
+            },
+            {
+                "is_active": true,
+                "name": "Handwerk und Planung",
+                "qcode": "zielgruppe:handwerk"
+            },
+            {
+                "is_active": true,
+                "name": "Wohnungswirtschaft und Eigentümer",
+                "qcode": "zielgruppe:wohnungswirtschaft"
+            },
+            {
+                "is_active": true,
+                "name": "Kommunen",
+                "qcode": "zielgruppe:kommunen"
             }
         ]
     },
     {
-        "_id": "category",
-        "display_name": "Category",
+        "_id": "kanal",
+        "display_name": "Kanal",
         "type": "manageable",
         "selection_type": "multi selection",
         "unique_field": "qcode",
         "service": {
             "all": 1
         },
-        "helper_text": "What the story is about.",
+        "helper_text": "Über welchen Kanal wird der Inhalt ausgespielt?",
         "init_version": 1,
         "schema": {
             "name": {},
@@ -3482,71 +3482,56 @@
         "items": [
             {
                 "is_active": true,
-                "name": "Council meetings and decisions",
-                "qcode": "council_meeting"
+                "name": "Pressemitteilung",
+                "qcode": "kanal:pressemitteilung"
             },
             {
                 "is_active": true,
-                "name": "Planning and development",
-                "qcode": "planning"
+                "name": "LinkedIn",
+                "qcode": "kanal:linkedin"
             },
             {
                 "is_active": true,
-                "name": "Budgets and council tax",
-                "qcode": "budget"
+                "name": "Instagram",
+                "qcode": "kanal:instagram"
             },
             {
                 "is_active": true,
-                "name": "Housing",
-                "qcode": "housing"
+                "name": "YouTube",
+                "qcode": "kanal:youtube"
             },
             {
                 "is_active": true,
-                "name": "Transport and highways",
-                "qcode": "transport"
+                "name": "Newsletter",
+                "qcode": "kanal:newsletter"
             },
             {
                 "is_active": true,
-                "name": "Schools and education",
-                "qcode": "education"
+                "name": "Website",
+                "qcode": "kanal:website"
             },
             {
                 "is_active": true,
-                "name": "Health and social care",
-                "qcode": "social_care"
+                "name": "Intranet",
+                "qcode": "kanal:intranet"
             },
             {
                 "is_active": true,
-                "name": "Environment and waste",
-                "qcode": "environment"
-            },
-            {
-                "is_active": true,
-                "name": "Libraries, leisure and community",
-                "qcode": "community"
-            },
-            {
-                "is_active": true,
-                "name": "Elections and governance",
-                "qcode": "governance"
-            },
-            {
-                "is_active": true,
-                "name": "Economy and regeneration",
-                "qcode": "economy"
+                "name": "Event",
+                "qcode": "kanal:event"
             }
         ]
     },
     {
-        "_id": "image_rights",
-        "display_name": "Image rights",
+        "_id": "prioritaet",
+        "display_name": "Priorität",
         "type": "manageable",
         "selection_type": "single selection",
         "unique_field": "qcode",
         "service": {
             "all": 1
         },
-        "helper_text": "Confirm that every image in the story is rights-free and free for all partners to use, with its rights owner credited. Never use agency, freelance or employer library images.",
+        "helper_text": "A ist dringend und wichtig, B normal, C bei Gelegenheit.",
         "init_version": 1,
         "schema": {
             "name": {},
@@ -3555,26 +3540,163 @@
         "items": [
             {
                 "is_active": true,
-                "name": "Rights-free, free for all partners to use",
-                "qcode": "rights_free"
+                "name": "A (hoch)",
+                "qcode": "prio:a"
             },
             {
                 "is_active": true,
-                "name": "No images or media",
-                "qcode": "no_media"
+                "name": "B (mittel)",
+                "qcode": "prio:b"
+            },
+            {
+                "is_active": true,
+                "name": "C (niedrig)",
+                "qcode": "prio:c"
             }
         ]
     },
     {
-        "_id": "embargo_reason",
-        "display_name": "Embargo reason",
+        "_id": "fachbereich",
+        "display_name": "Fachbereich",
+        "type": "manageable",
+        "selection_type": "single selection",
+        "unique_field": "qcode",
+        "service": {
+            "all": 1
+        },
+        "helper_text": "Der Bereich, der den Inhalt oder die Anfrage einbringt.",
+        "init_version": 1,
+        "schema": {
+            "name": {},
+            "qcode": {}
+        },
+        "items": [
+            {
+                "is_active": true,
+                "name": "Fachbereich Gebäude",
+                "qcode": "bereich:gebaeude"
+            },
+            {
+                "is_active": true,
+                "name": "Fachbereich Strom und Netze",
+                "qcode": "bereich:strom_netze"
+            },
+            {
+                "is_active": true,
+                "name": "Fachbereich Industrie und Klimaschutz",
+                "qcode": "bereich:industrie"
+            },
+            {
+                "is_active": true,
+                "name": "Fachbereich Mobilität",
+                "qcode": "bereich:mobilitaet"
+            },
+            {
+                "is_active": true,
+                "name": "Fachbereich Digitale Energiesysteme",
+                "qcode": "bereich:energiesysteme"
+            },
+            {
+                "is_active": true,
+                "name": "Fachbereich Internationale Zusammenarbeit",
+                "qcode": "bereich:international"
+            },
+            {
+                "is_active": true,
+                "name": "Stabsstelle Strategie",
+                "qcode": "bereich:strategie"
+            },
+            {
+                "is_active": true,
+                "name": "Stabsstelle Recht und Compliance",
+                "qcode": "bereich:recht"
+            },
+            {
+                "is_active": true,
+                "name": "Verwaltung",
+                "qcode": "bereich:verwaltung"
+            }
+        ]
+    },
+    {
+        "_id": "anfrageart",
+        "display_name": "Art der Anfrage",
+        "type": "manageable",
+        "selection_type": "single selection",
+        "unique_field": "qcode",
+        "service": {
+            "all": 1
+        },
+        "helper_text": "Jede Art hat ihren eigenen Ablauf.",
+        "init_version": 1,
+        "schema": {
+            "name": {},
+            "qcode": {}
+        },
+        "items": [
+            {
+                "is_active": true,
+                "name": "Presseanfrage",
+                "qcode": "art:presse"
+            },
+            {
+                "is_active": true,
+                "name": "Interne Anfrage",
+                "qcode": "art:intern"
+            },
+            {
+                "is_active": true,
+                "name": "Aufgabe",
+                "qcode": "art:aufgabe"
+            }
+        ]
+    },
+    {
+        "_id": "sharepoint_links",
+        "display_name": "SharePoint-Links",
         "type": "manageable",
         "field_type": "text",
-        "helper_text": "Why the story is embargoed, for example a report released by the council at a set time. Set the embargo time when sending or publishing.",
+        "helper_text": "Links zu Dokumenten und Ordnern in SharePoint, ein Link pro Zeile.",
+        "init_version": 1,
+        "items": [],
+        "field_options": {
+            "single": false
+        }
+    },
+    {
+        "_id": "anfragende_person",
+        "display_name": "Anfragende Person",
+        "type": "manageable",
+        "field_type": "text",
+        "helper_text": "Name und Kontakt der Person oder Redaktion, die anfragt.",
         "init_version": 1,
         "items": [],
         "field_options": {
             "single": true
+        }
+    },
+    {
+        "_id": "frist",
+        "display_name": "Gewünschte Frist",
+        "type": "manageable",
+        "field_type": "text",
+        "helper_text": "Datum und Uhrzeit, bis wann die Antwort gebraucht wird.",
+        "init_version": 1,
+        "items": [],
+        "field_options": {
+            "single": true
+        }
+    },
+    {
+        "_id": "rueckfrage",
+        "display_name": "Rückfrage",
+        "type": "manageable",
+        "field_type": "text",
+        "helper_text": "Offene Frage an die anfragende Person. Die Anfrage bleibt in der Stufe Rückfrage, bis sie beantwortet ist.",
+        "init_version": 1,
+        "items": [],
+        "field_options": {
+            "single": false
         }
     }
 ]

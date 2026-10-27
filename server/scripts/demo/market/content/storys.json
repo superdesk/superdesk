@@ -1,0 +1,324 @@
+[
+ {
+  "slugline": "ST-WAERMEPUMPE",
+  "name": "Wärmepumpe im Altbau: Mythen und Fakten",
+  "headline": "Wärmepumpe im Altbau: Mythen und Fakten",
+  "agenda": "Kampagne Wärmewende",
+  "description": "Fünf Mythen zur Wärmepumpe im Altbau, belegt durch eine Auswertung von 1.200 Sanierungsfällen. Die Story bündelt Pressemitteilung, LinkedIn-Serie, Newsletter und Instagram-Karussell.",
+  "internal_note": "Entstanden aus der Idee ID-004. Themenverantwortlich: Nadine Weber. Beispielinhalt, alle Angaben sind erfunden.",
+  "ednote": "Zielgruppen: Öffentlichkeit, Wohnungswirtschaft, Fachpresse.",
+  "urgency": 2,
+  "subject": [
+   [
+    "themenarchitektur",
+    "thema:waermepumpen"
+   ],
+   [
+    "strategieziele",
+    "ziel:bekanntheit"
+   ],
+   [
+    "strategieziele",
+    "ziel:fachpublikum"
+   ],
+   [
+    "zielgruppen",
+    "zielgruppe:oeffentlichkeit"
+   ],
+   [
+    "zielgruppen",
+    "zielgruppe:wohnungswirtschaft"
+   ],
+   [
+    "prioritaet",
+    "prio:a"
+   ]
+  ],
+  "deliverables": [
+   {
+    "ref": "ST-WP-PM",
+    "headline": "Pressemitteilung: Wärmepumpen im Altbau",
+    "description": "Pressemitteilung zur Auswertung, mit Zitat der Fachbereichsleitung.",
+    "ednote": "Frist und Zuständigkeit mit der Story abstimmen.",
+    "internal_note": "Beispielinhalt, alle Angaben sind erfunden.",
+    "desk": "Presse",
+    "user": "julia.neumann",
+    "due_hours": -48,
+    "state": "linked",
+    "priority": 2,
+    "link": "PM-001"
+   },
+   {
+    "ref": "ST-WP-LI",
+    "headline": "LinkedIn-Serie: Fünf Mythen",
+    "description": "LinkedIn-Beitrag zu Mythos 1, weitere Mythen folgen im Wochenabstand.",
+    "ednote": "Frist und Zuständigkeit mit der Story abstimmen.",
+    "internal_note": "Beispielinhalt, alle Angaben sind erfunden.",
+    "desk": "Digital",
+    "user": "lena.schaefer",
+    "due_hours": -24,
+    "state": "linked",
+    "priority": 2,
+    "link": "LI-001"
+   },
+   {
+    "ref": "ST-WP-NL",
+    "headline": "Newsletter: Auswertung zur Wärmepumpe",
+    "description": "Newsletter-Beitrag mit Kernaussagen und Link zur Auswertung.",
+    "ednote": "Frist und Zuständigkeit mit der Story abstimmen.",
+    "internal_note": "Beispielinhalt, alle Angaben sind erfunden.",
+    "desk": "Corporate Content",
+    "user": "tobias.krueger",
+    "due_hours": 120,
+    "state": "in_progress",
+    "priority": 2,
+    "template": "Newsletter-Beitrag"
+   },
+   {
+    "ref": "ST-WP-IG",
+    "headline": "Instagram-Karussell: Mythen und Fakten",
+    "description": "Vier Karten mit je einem Mythos und der Antwort.",
+    "ednote": "Frist und Zuständigkeit mit der Story abstimmen.",
+    "internal_note": "Beispielinhalt, alle Angaben sind erfunden.",
+    "desk": "Kreation und Produktion",
+    "user": "lena.schaefer",
+    "due_hours": 240,
+    "state": "assigned",
+    "priority": 2
+   }
+  ],
+  "post": false
+ },
+ {
+  "slugline": "ST-FOERDERAUFRUF",
+  "name": "Förderaufruf Serielles Sanieren",
+  "event": "EV-PRESSEGESPRAECH-FOERDERAUFRUF",
+  "headline": "Förderaufruf Serielles Sanieren",
+  "agenda": "Kampagne Wärmewende",
+  "description": "Start des Förderaufrufs für serielles Sanieren in der Wohnungswirtschaft. Pressemitteilung, Website-Beitrag und Intranet-Meldung, dazu ein Pressegespräch.",
+  "internal_note": "Entstanden aus der Anfrage AN-003. Beispielinhalt, alle Angaben sind erfunden.",
+  "ednote": "Aufruf startet in drei Wochen. Zahlen und Fristen kommen aus dem Fachbereich Gebäude.",
+  "urgency": 2,
+  "subject": [
+   [
+    "themenarchitektur",
+    "thema:serielles_sanieren"
+   ],
+   [
+    "strategieziele",
+    "ziel:foerderung"
+   ],
+   [
+    "strategieziele",
+    "ziel:fachpublikum"
+   ],
+   [
+    "zielgruppen",
+    "zielgruppe:wohnungswirtschaft"
+   ],
+   [
+    "zielgruppen",
+    "zielgruppe:fachpresse"
+   ],
+   [
+    "prioritaet",
+    "prio:a"
+   ]
+  ],
+  "deliverables": [
+   {
+    "ref": "ST-FA-PM",
+    "headline": "Pressemitteilung: Förderaufruf startet",
+    "description": "Pressemitteilung zum Start des Aufrufs, abgestimmt mit dem Fachbereich.",
+    "ednote": "Frist und Zuständigkeit mit der Story abstimmen.",
+    "internal_note": "Beispielinhalt, alle Angaben sind erfunden.",
+    "desk": "Presse",
+    "user": "julia.neumann",
+    "due_hours": 336,
+    "state": "assigned",
+    "priority": 1
+   },
+   {
+    "ref": "ST-FA-WEB",
+    "headline": "Website: Fragen und Antworten zum Förderaufruf",
+    "description": "Artikel mit den häufigsten Fragen und einer Übersicht der Fristen.",
+    "ednote": "Frist und Zuständigkeit mit der Story abstimmen.",
+    "internal_note": "Beispielinhalt, alle Angaben sind erfunden.",
+    "desk": "Corporate Content",
+    "user": "tobias.krueger",
+    "due_hours": 168,
+    "state": "completed",
+    "priority": 2,
+    "template": "Website-Artikel"
+   },
+   {
+    "ref": "ST-FA-INT",
+    "headline": "Intranet: Förderaufruf im Überblick",
+    "description": "Kurzmeldung für das Haus, mit Ansprechpersonen.",
+    "ednote": "Frist und Zuständigkeit mit der Story abstimmen.",
+    "internal_note": "Beispielinhalt, alle Angaben sind erfunden.",
+    "desk": "Fachkommunikation",
+    "user": "sabine.lindner",
+    "due_hours": 264,
+    "state": "in_progress",
+    "priority": 2,
+    "template": "Intranet-Meldung"
+   }
+  ],
+  "post": false
+ },
+ {
+  "slugline": "ST-LADEN-QUARTIER",
+  "name": "Laden im Quartier: Bilanz",
+  "event": "EV-FACHGESPRAECH-LADEN",
+  "headline": "Laden im Quartier: Bilanz zur Ladeinfrastruktur",
+  "agenda": "Kampagne Klimafreundlich unterwegs",
+  "description": "Bilanz zu Ladepunkten in Wohnquartieren, mit Pressemitteilung, LinkedIn-Beitrag und einem Fachgespräch für Kommunen.",
+  "internal_note": "Entstanden aus der Idee ID-005. Themenverantwortlich: Stefan Roth. Beispielinhalt, alle Angaben sind erfunden.",
+  "ednote": "Die Zahlen der Bilanz liegen im SharePoint, Freigabe durch den Fachbereich Mobilität steht aus.",
+  "urgency": 3,
+  "subject": [
+   [
+    "themenarchitektur",
+    "thema:ladeinfrastruktur"
+   ],
+   [
+    "strategieziele",
+    "ziel:entscheider"
+   ],
+   [
+    "strategieziele",
+    "ziel:vernetzung"
+   ],
+   [
+    "zielgruppen",
+    "zielgruppe:kommunen"
+   ],
+   [
+    "zielgruppen",
+    "zielgruppe:wohnungswirtschaft"
+   ],
+   [
+    "prioritaet",
+    "prio:a"
+   ]
+  ],
+  "deliverables": [
+   {
+    "ref": "ST-LQ-PM",
+    "headline": "Pressemitteilung: Bilanz zur Ladeinfrastruktur",
+    "description": "Pressemitteilung mit den Kernzahlen der Bilanz.",
+    "ednote": "Frist und Zuständigkeit mit der Story abstimmen.",
+    "internal_note": "Beispielinhalt, alle Angaben sind erfunden.",
+    "desk": "Presse",
+    "user": "markus.engel",
+    "due_hours": 504,
+    "state": "assigned",
+    "priority": 2
+   },
+   {
+    "ref": "ST-LQ-LI",
+    "headline": "LinkedIn: Drei Hürden im Wohnquartier",
+    "description": "LinkedIn-Beitrag zu den drei häufigsten Hürden.",
+    "ednote": "Frist und Zuständigkeit mit der Story abstimmen.",
+    "internal_note": "Beispielinhalt, alle Angaben sind erfunden.",
+    "desk": "Digital",
+    "user": "lena.schaefer",
+    "due_hours": 408,
+    "state": "in_progress",
+    "priority": 2,
+    "template": "LinkedIn-Beitrag"
+   },
+   {
+    "ref": "ST-LQ-EV",
+    "headline": "Event: Fachgespräch Laden im Quartier",
+    "description": "Fachgespräch mit Kommunen, Netzbetreibern und Wohnungsunternehmen.",
+    "ednote": "Frist und Zuständigkeit mit der Story abstimmen.",
+    "internal_note": "Beispielinhalt, alle Angaben sind erfunden.",
+    "desk": "Event",
+    "user": "sabine.lindner",
+    "due_hours": 696,
+    "state": "assigned",
+    "priority": 2
+   }
+  ],
+  "post": false
+ },
+ {
+  "slugline": "ST-WASSERSTOFF-DIALOG",
+  "name": "Fachdialog Wasserstoff: Nachbereitung",
+  "headline": "Fachdialog Wasserstoff: Nachbereitung",
+  "agenda": "",
+  "description": "Nachbereitung des Fachdialogs Wasserstoff in den Kanälen LinkedIn, Newsletter und Website.",
+  "internal_note": "Entstanden aus der Anfrage AN-004 und dem Fachdialog. Beispielinhalt, alle Angaben sind erfunden.",
+  "ednote": "Ergebnispapier erscheint im Winter.",
+  "urgency": 3,
+  "subject": [
+   [
+    "themenarchitektur",
+    "thema:wasserstoff"
+   ],
+   [
+    "strategieziele",
+    "ziel:vernetzung"
+   ],
+   [
+    "strategieziele",
+    "ziel:fachpublikum"
+   ],
+   [
+    "zielgruppen",
+    "zielgruppe:wirtschaft"
+   ],
+   [
+    "zielgruppen",
+    "zielgruppe:kommunen"
+   ],
+   [
+    "prioritaet",
+    "prio:b"
+   ]
+  ],
+  "deliverables": [
+   {
+    "ref": "ST-WS-LI",
+    "headline": "LinkedIn: Was wir gelernt haben",
+    "description": "LinkedIn-Beitrag nach dem Fachdialog.",
+    "ednote": "Frist und Zuständigkeit mit der Story abstimmen.",
+    "internal_note": "Beispielinhalt, alle Angaben sind erfunden.",
+    "desk": "Digital",
+    "user": "lena.schaefer",
+    "due_hours": -96,
+    "state": "linked",
+    "priority": 2,
+    "link": "LI-002"
+   },
+   {
+    "ref": "ST-WS-NL",
+    "headline": "Newsletter: Rückblick auf den Fachdialog",
+    "description": "Rückblick mit Aufzeichnung und Folien.",
+    "ednote": "Frist und Zuständigkeit mit der Story abstimmen.",
+    "internal_note": "Beispielinhalt, alle Angaben sind erfunden.",
+    "desk": "Digital",
+    "user": "markus.engel",
+    "due_hours": -72,
+    "state": "linked",
+    "priority": 2,
+    "link": "NL-001"
+   },
+   {
+    "ref": "ST-WS-WEB",
+    "headline": "Website: Ergebnispapier Wasserstoff",
+    "description": "Seite für das Ergebnispapier, sobald es vorliegt.",
+    "ednote": "Frist und Zuständigkeit mit der Story abstimmen.",
+    "internal_note": "Beispielinhalt, alle Angaben sind erfunden.",
+    "desk": "Corporate Content",
+    "user": "tobias.krueger",
+    "due_hours": 600,
+    "state": "assigned",
+    "priority": 2
+   }
+  ],
+  "post": false
+ }
+]

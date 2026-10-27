@@ -1,0 +1,367 @@
+[
+ {
+  "reference": "ID-001",
+  "title": "Podcast-Reihe Heizen im Altbau: Fragen aus der Praxis",
+  "summary": "Eine kurze Podcast-Reihe, in der Eigentümerinnen und Handwerker ihre Fragen zum Heizungstausch im Altbau stellen und Fachleute antworten.",
+  "byline": "Petra Hoffmann",
+  "desk": "Ideenpool",
+  "author": "petra.hoffmann",
+  "workflow": "Neu",
+  "hours_ago": 20,
+  "body_html": "<p>Sechs Folgen von je zehn Minuten. Jede Folge beantwortet eine Frage, die in der Beratung immer wieder auftaucht: Was kostet der Umstieg wirklich, wann reicht die Dämmung, wie lange dauert ein Austausch.</p><p>Gäste kommen aus dem Fachbereich Gebäude und aus Handwerksbetrieben der Region.</p>",
+  "themenarchitektur": [
+   "thema:waermepumpen"
+  ],
+  "strategieziele": [
+   "ziel:bekanntheit",
+   "ziel:fachpublikum"
+  ],
+  "kanal": [
+   "kanal:website",
+   "kanal:linkedin"
+  ],
+  "zielgruppen": [
+   "zielgruppe:oeffentlichkeit",
+   "zielgruppe:wohnungswirtschaft"
+  ],
+  "prioritaet": [
+   "prio:b"
+  ],
+  "fachbereich": [
+   "bereich:gebaeude"
+  ],
+  "sharepoint_links": "https://energieagentur-beispiel.sharepoint.example/sites/Kommunikation/Freigegebene%20Dokumente/Ideen/Podcast_Altbau/Konzeptskizze.docx",
+  "ednote": "Beispielinhalt, alle Angaben sind erfunden."
+ },
+ {
+  "reference": "ID-002",
+  "title": "Kurzvideo-Serie: Wie funktioniert ein Quartierswärmenetz?",
+  "summary": "Drei Erklärvideos von unter 90 Sekunden zeigen, wie ein Wärmenetz im Quartier entsteht und was Anwohner davon haben.",
+  "byline": "Lena Schäfer",
+  "desk": "Ideenpool",
+  "author": "lena.schaefer",
+  "workflow": "Neu",
+  "hours_ago": 14,
+  "body_html": "<p>Animierte Grafiken statt Interviews, damit die Videos auf Instagram und YouTube gut funktionieren.</p><p>Skripte entstehen mit dem Fachbereich Gebäude, die Produktion übernimmt Kreation und Produktion.</p>",
+  "themenarchitektur": [
+   "thema:waermewende"
+  ],
+  "strategieziele": [
+   "ziel:bekanntheit"
+  ],
+  "kanal": [
+   "kanal:youtube",
+   "kanal:instagram"
+  ],
+  "zielgruppen": [
+   "zielgruppe:oeffentlichkeit",
+   "zielgruppe:kommunen"
+  ],
+  "prioritaet": [
+   "prio:b"
+  ],
+  "fachbereich": [
+   "bereich:gebaeude"
+  ],
+  "sharepoint_links": "https://energieagentur-beispiel.sharepoint.example/sites/Kommunikation/Freigegebene%20Dokumente/Ideen/Erklaervideos_Waermenetz/",
+  "ednote": "Beispielinhalt, alle Angaben sind erfunden."
+ },
+ {
+  "reference": "ID-003",
+  "title": "Infografik: Das Wasserstoff-Kernnetz in fünf Karten",
+  "summary": "Fünf einfache Karten zeigen, wo Wasserstoff künftig fließen soll und welche Industrieregionen zuerst angeschlossen werden.",
+  "byline": "Stefan Roth",
+  "desk": "Ideenpool",
+  "author": "stefan.roth",
+  "workflow": "Neu",
+  "hours_ago": 9,
+  "body_html": "<p>Die Karten ersetzen eine lange Erklärung im Text und lassen sich für LinkedIn, Website und Präsentationen nutzen.</p><p>Datengrundlage liefert der Fachbereich Industrie und Klimaschutz.</p>",
+  "themenarchitektur": [
+   "thema:wasserstoff"
+  ],
+  "strategieziele": [
+   "ziel:fachpublikum",
+   "ziel:entscheider"
+  ],
+  "kanal": [
+   "kanal:website",
+   "kanal:linkedin"
+  ],
+  "zielgruppen": [
+   "zielgruppe:wirtschaft",
+   "zielgruppe:politik"
+  ],
+  "prioritaet": [
+   "prio:a"
+  ],
+  "fachbereich": [
+   "bereich:industrie"
+  ],
+  "sharepoint_links": "https://energieagentur-beispiel.sharepoint.example/sites/Kommunikation/Freigegebene%20Dokumente/Ideen/Wasserstoff_Karten/Datenblatt.xlsx",
+  "ednote": "Beispielinhalt, alle Angaben sind erfunden."
+ },
+ {
+  "reference": "ID-011",
+  "title": "Mitmach-Aktion: Energiesparen im Büro",
+  "summary": "Eine vierwöchige Aktion im Haus mit wöchentlichen Tipps und einer Auswertung, wie viel Strom die Standorte sparen.",
+  "byline": "Ömer Yılmaz",
+  "desk": "Ideenpool",
+  "author": "omer.yilmaz",
+  "workflow": "Neu",
+  "hours_ago": 4,
+  "body_html": "<p>Die Aktion läuft im Intranet. Jede Woche gibt es einen Tipp, am Ende eine Auswertung nach Standort.</p><p>Die Zahlen liefert die Verwaltung aus der Verbrauchserfassung.</p>",
+  "themenarchitektur": [
+   "thema:effizienz_industrie"
+  ],
+  "strategieziele": [
+   "ziel:vernetzung"
+  ],
+  "kanal": [
+   "kanal:intranet"
+  ],
+  "zielgruppen": [
+   "zielgruppe:wirtschaft"
+  ],
+  "prioritaet": [
+   "prio:c"
+  ],
+  "fachbereich": [
+   "bereich:verwaltung"
+  ],
+  "ednote": "Beispielinhalt, alle Angaben sind erfunden."
+ },
+ {
+  "reference": "ID-007",
+  "title": "Leitfaden: Kommunale Wärmeplanung in zehn Schritten",
+  "summary": "Ein Leitfaden führt Kommunen Schritt für Schritt durch die Wärmeplanung, mit Checklisten und Beispielen.",
+  "byline": "Nadine Weber",
+  "desk": "Ideenpool",
+  "author": "nadine.weber",
+  "workflow": "In Prüfung",
+  "hours_ago": 60,
+  "body_html": "<p>Der Leitfaden entsteht gemeinsam mit dem Fachbereich Gebäude. Ein Entwurf liegt im SharePoint.</p><p>Offen ist, ob er als PDF, als Webseite oder als Serie im Newsletter erscheint.</p>",
+  "themenarchitektur": [
+   "thema:waermewende"
+  ],
+  "strategieziele": [
+   "ziel:fachpublikum",
+   "ziel:entscheider"
+  ],
+  "kanal": [
+   "kanal:website",
+   "kanal:newsletter"
+  ],
+  "zielgruppen": [
+   "zielgruppe:kommunen",
+   "zielgruppe:politik"
+  ],
+  "prioritaet": [
+   "prio:a"
+  ],
+  "fachbereich": [
+   "bereich:gebaeude"
+  ],
+  "sharepoint_links": "https://energieagentur-beispiel.sharepoint.example/sites/Kommunikation/Freigegebene%20Dokumente/Ideen/Waermeplanung_Leitfaden/Entwurf_v2.docx",
+  "ednote": "Prüfung durch Themenverantwortliche läuft. Beispielinhalt, alle Angaben sind erfunden."
+ },
+ {
+  "reference": "ID-008",
+  "title": "Interviewreihe: Handwerksbetriebe über den Fachkräftemangel",
+  "summary": "Fünf kurze Interviews mit Betrieben, die Wärmepumpen und Dämmung einbauen, über Nachwuchs und Ausbildung.",
+  "byline": "Tobias Krüger",
+  "desk": "Ideenpool",
+  "author": "tobias.krueger",
+  "workflow": "In Prüfung",
+  "hours_ago": 75,
+  "body_html": "<p>Die Interviews eignen sich für LinkedIn und den Newsletter. Der Fachbereich Gebäude vermittelt die Kontakte.</p><p>Zu klären: Welche Betriebe dürfen genannt werden?</p>",
+  "themenarchitektur": [
+   "thema:sanierung"
+  ],
+  "strategieziele": [
+   "ziel:fachkraefte",
+   "ziel:vernetzung"
+  ],
+  "kanal": [
+   "kanal:linkedin",
+   "kanal:newsletter"
+  ],
+  "zielgruppen": [
+   "zielgruppe:handwerk"
+  ],
+  "prioritaet": [
+   "prio:b"
+  ],
+  "fachbereich": [
+   "bereich:gebaeude"
+  ],
+  "ednote": "Rückfrage an den Fachbereich offen. Beispielinhalt, alle Angaben sind erfunden."
+ },
+ {
+  "reference": "ID-004",
+  "title": "Wärmepumpe im Altbau: Mythen und Fakten",
+  "summary": "Eine Auswertung räumt mit fünf verbreiteten Mythen zur Wärmepumpe im unsanierten Altbau auf, mit Pressemitteilung, LinkedIn-Serie und Newsletter.",
+  "byline": "Nadine Weber",
+  "desk": "Ideenpool",
+  "author": "nadine.weber",
+  "workflow": "Angenommen",
+  "hours_ago": 120,
+  "body_html": "<p>Aus der Idee ist die Story Wärmepumpe im Altbau geworden. Die Posts werden pro Kanal geplant.</p><p>Federführung hat das Team Presse, die Grafiken kommen aus Kreation und Produktion.</p>",
+  "themenarchitektur": [
+   "thema:waermepumpen"
+  ],
+  "strategieziele": [
+   "ziel:bekanntheit",
+   "ziel:fachpublikum"
+  ],
+  "kanal": [
+   "kanal:pressemitteilung",
+   "kanal:linkedin",
+   "kanal:newsletter",
+   "kanal:instagram"
+  ],
+  "zielgruppen": [
+   "zielgruppe:oeffentlichkeit",
+   "zielgruppe:wohnungswirtschaft",
+   "zielgruppe:fachpresse"
+  ],
+  "prioritaet": [
+   "prio:a"
+  ],
+  "fachbereich": [
+   "bereich:gebaeude"
+  ],
+  "sharepoint_links": "https://energieagentur-beispiel.sharepoint.example/sites/Kommunikation/Freigegebene%20Dokumente/Kampagne_Waermewende/Mythen_Fakten/Auswertung.xlsx\nhttps://energieagentur-beispiel.sharepoint.example/sites/Kommunikation/Freigegebene%20Dokumente/Kampagne_Waermewende/Mythen_Fakten/Textentwurf.docx",
+  "ednote": "Angenommen, Story ist angelegt. Beispielinhalt, alle Angaben sind erfunden."
+ },
+ {
+  "reference": "ID-005",
+  "title": "Laden im Quartier: Bilanz zur Ladeinfrastruktur",
+  "summary": "Eine Bilanz zeigt, wie viele Ladepunkte in Wohnquartieren entstanden sind und wo es noch hakt.",
+  "byline": "Stefan Roth",
+  "desk": "Ideenpool",
+  "author": "stefan.roth",
+  "workflow": "Angenommen",
+  "hours_ago": 96,
+  "body_html": "<p>Die Bilanz wird als Pressemitteilung, LinkedIn-Beitrag und Fachgespräch ausgespielt. Das Fachgespräch ist im Terminkalender eingetragen.</p>",
+  "themenarchitektur": [
+   "thema:ladeinfrastruktur"
+  ],
+  "strategieziele": [
+   "ziel:entscheider",
+   "ziel:vernetzung"
+  ],
+  "kanal": [
+   "kanal:pressemitteilung",
+   "kanal:linkedin",
+   "kanal:event"
+  ],
+  "zielgruppen": [
+   "zielgruppe:kommunen",
+   "zielgruppe:wohnungswirtschaft"
+  ],
+  "prioritaet": [
+   "prio:a"
+  ],
+  "fachbereich": [
+   "bereich:mobilitaet"
+  ],
+  "sharepoint_links": "https://energieagentur-beispiel.sharepoint.example/sites/Kommunikation/Freigegebene%20Dokumente/Kampagne_Klimafreundlich_unterwegs/Ladebilanz/",
+  "ednote": "Angenommen, Story ist angelegt. Beispielinhalt, alle Angaben sind erfunden."
+ },
+ {
+  "reference": "ID-006",
+  "title": "Online-Seminar: Abwärme aus Rechenzentren nutzen",
+  "summary": "Ein Online-Seminar zeigt Kommunen und Betreibern, wie Abwärme aus Rechenzentren in Wärmenetze kommt.",
+  "byline": "Stefan Roth",
+  "desk": "Ideenpool",
+  "author": "stefan.roth",
+  "workflow": "Angenommen",
+  "hours_ago": 30,
+  "body_html": "<p>Angenommen, aber noch nicht geplant. Aus dieser Idee entsteht live die Story im Planungsmodul (Aktion Zur Planung hinzufügen).</p>",
+  "themenarchitektur": [
+   "thema:abwaerme"
+  ],
+  "strategieziele": [
+   "ziel:fachpublikum",
+   "ziel:vernetzung"
+  ],
+  "kanal": [
+   "kanal:event",
+   "kanal:newsletter"
+  ],
+  "zielgruppen": [
+   "zielgruppe:kommunen",
+   "zielgruppe:wirtschaft"
+  ],
+  "prioritaet": [
+   "prio:b"
+  ],
+  "fachbereich": [
+   "bereich:industrie"
+  ],
+  "sharepoint_links": "https://energieagentur-beispiel.sharepoint.example/sites/Kommunikation/Freigegebene%20Dokumente/Ideen/Abwaerme_Seminar/Agenda.docx",
+  "ednote": "Noch nicht in der Planung. Beispielinhalt, alle Angaben sind erfunden."
+ },
+ {
+  "reference": "ID-009",
+  "title": "Messestand-Konzept für die Fachmesse Energiewende",
+  "summary": "Ein Konzept für einen gemeinsamen Messestand mit Mitmach-Station zur Wärmewende.",
+  "byline": "Katrin Vogel",
+  "desk": "Ideenpool",
+  "author": "katrin.vogel",
+  "workflow": "Geparkt",
+  "hours_ago": 300,
+  "body_html": "<p>Wird zurückgestellt, bis das Eventbudget für das nächste Jahr feststeht.</p>",
+  "themenarchitektur": [
+   "thema:waermewende"
+  ],
+  "strategieziele": [
+   "ziel:bekanntheit",
+   "ziel:vernetzung"
+  ],
+  "kanal": [
+   "kanal:event"
+  ],
+  "zielgruppen": [
+   "zielgruppe:wirtschaft",
+   "zielgruppe:fachpresse"
+  ],
+  "prioritaet": [
+   "prio:c"
+  ],
+  "fachbereich": [
+   "bereich:strategie"
+  ],
+  "ednote": "Geparkt bis das Eventbudget geklärt ist. Beispielinhalt, alle Angaben sind erfunden."
+ },
+ {
+  "reference": "ID-010",
+  "title": "Gewinnspiel zum Aktionstag Stromsparen",
+  "summary": "Ein Gewinnspiel auf Instagram, bei dem Nutzer ihre besten Spartipps einsenden.",
+  "byline": "Lena Schäfer",
+  "desk": "Ideenpool",
+  "author": "lena.schaefer",
+  "workflow": "Geparkt",
+  "hours_ago": 260,
+  "body_html": "<p>Rechtlich nicht geprüft und nicht im Ton des Kanals. Wird geparkt, bis die Rechtsabteilung Gewinnspiele grundsätzlich bewertet hat.</p>",
+  "themenarchitektur": [
+   "thema:effizienz_industrie"
+  ],
+  "strategieziele": [
+   "ziel:bekanntheit"
+  ],
+  "kanal": [
+   "kanal:instagram"
+  ],
+  "zielgruppen": [
+   "zielgruppe:oeffentlichkeit"
+  ],
+  "prioritaet": [
+   "prio:c"
+  ],
+  "fachbereich": [
+   "bereich:recht"
+  ],
+  "ednote": "Geparkt, Rechtsfrage offen. Beispielinhalt, alle Angaben sind erfunden."
+ }
+]

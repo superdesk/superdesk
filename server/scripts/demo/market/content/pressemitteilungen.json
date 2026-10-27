@@ -1,0 +1,83 @@
+[
+ {
+  "reference": "PM-001",
+  "title": "Wärmepumpen im Altbau: Auswertung zeigt, wann sich der Einbau lohnt",
+  "summary": "Eine neue Auswertung von 1.200 Sanierungsfällen zeigt: Auch im unsanierten Altbau arbeiten Wärmepumpen oft effizient, wenn Heizkörper und Vorlauftemperatur passen.",
+  "byline": "Julia Neumann",
+  "desk": "Presse",
+  "author": "julia.neumann",
+  "workflow": "Veröffentlicht",
+  "hours_ago": 50,
+  "body_html": "<p>Berlin, 20. Oktober 2026. Wärmepumpen sind im Altbau besser als ihr Ruf. Das zeigt eine Auswertung der Energieagentur Beispiel von 1.200 Sanierungsfällen. In sieben von zehn Häusern lief die Anlage nach dem Einbau ohne zusätzliche Dämmung effizient.</p><p>Entscheidend ist nicht das Baujahr, sondern die Vorlauftemperatur. Wo die Heizkörper ausreichen, genügt oft ein hydraulischer Abgleich. Nur bei einem von fünf Gebäuden musste vor dem Einbau nachgebessert werden.</p><p>\"Viele Eigentümer verschieben den Heizungstausch, weil sie glauben, erst müsse das ganze Haus saniert werden. Die Zahlen zeigen: Das ist meist nicht nötig\", sagt Dr. Anja Kessler, Leiterin des Fachbereichs Gebäude.</p><p>Die Auswertung steht mit allen Tabellen zum Download bereit. Eine Beratung vor dem Einbau bleibt wichtig.</p>",
+  "themenarchitektur": [
+   "thema:waermepumpen"
+  ],
+  "strategieziele": [
+   "ziel:bekanntheit",
+   "ziel:fachpublikum"
+  ],
+  "kanal": [
+   "kanal:pressemitteilung"
+  ],
+  "ednote": "Zitat und Zahlen sind erfunden. Beispielinhalt, alle Angaben sind erfunden.",
+  "zielgruppen": [
+   "zielgruppe:oeffentlichkeit",
+   "zielgruppe:fachpresse",
+   "zielgruppe:wohnungswirtschaft"
+  ],
+  "sharepoint_links": "https://energieagentur-beispiel.sharepoint.example/sites/Kommunikation/Freigegebene%20Dokumente/Kampagne_Waermewende/Mythen_Fakten/Auswertung.xlsx"
+ },
+ {
+  "reference": "PM-002",
+  "title": "Fachdialog Wasserstoff: Industrie und Kommunen vernetzen sich",
+  "summary": "Mehr als 80 Teilnehmende aus Industrie, Kommunen und Wissenschaft haben beim Fachdialog über den Hochlauf der Wasserstoffnutzung gesprochen.",
+  "byline": "Julia Neumann",
+  "desk": "Presse",
+  "author": "julia.neumann",
+  "workflow": "Veröffentlicht",
+  "hours_ago": 120,
+  "body_html": "<p>Berlin, 13. Oktober 2026. Wie kommt Wasserstoff dorthin, wo er gebraucht wird? Darüber haben beim Fachdialog der Energieagentur Beispiel mehr als 80 Fachleute aus Industrie, Kommunen und Wissenschaft diskutiert.</p><p>Im Mittelpunkt standen drei Fragen: Welche Abnehmer brauchen Wasserstoff zuerst, wie lässt sich der Netzanschluss planen und was müssen Kommunen früh klären. Mehrere Teilnehmende forderten verbindliche Zeitpläne für die Anschlussplanung.</p><p>\"Der Austausch war offen und konkret. Besonders wertvoll war, dass Kommunen und Anlagenbetreiber am selben Tisch saßen\", sagt Marc Lehmann, Themenverantwortlicher Wasserstoff.</p><p>Die Ergebnisse fließen in ein Papier ein, das im Winter veröffentlicht wird.</p>",
+  "themenarchitektur": [
+   "thema:wasserstoff"
+  ],
+  "strategieziele": [
+   "ziel:vernetzung",
+   "ziel:fachpublikum"
+  ],
+  "kanal": [
+   "kanal:pressemitteilung"
+  ],
+  "ednote": "Zitat und Zahlen sind erfunden. Beispielinhalt, alle Angaben sind erfunden.",
+  "zielgruppen": [
+   "zielgruppe:wirtschaft",
+   "zielgruppe:kommunen",
+   "zielgruppe:wissenschaft"
+  ],
+  "sharepoint_links": "https://energieagentur-beispiel.sharepoint.example/sites/Kommunikation/Freigegebene%20Dokumente/Fachdialog_Wasserstoff/Ergebnisprotokoll.docx"
+ },
+ {
+  "reference": "PM-003",
+  "title": "Netzausbau: Bilanz zur Jahresmitte (Entwurf)",
+  "summary": "Der Entwurf fasst zusammen, wie weit der Ausbau der Stromnetze zur Jahresmitte vorangekommen ist.",
+  "byline": "Julia Neumann",
+  "desk": "Presse",
+  "author": "julia.neumann",
+  "workflow": "Freigabe",
+  "hours_ago": 8,
+  "body_html": "<p>Berlin, TT. November 2026. Der Ausbau der Stromnetze kommt voran, einzelne Vorhaben brauchen aber länger als geplant. Das zeigt die Bilanz zur Jahresmitte.</p><p>Zahlen und Zitat werden mit dem Fachbereich Strom und Netze abgestimmt.</p>",
+  "themenarchitektur": [
+   "thema:netzausbau"
+  ],
+  "strategieziele": [
+   "ziel:entscheider"
+  ],
+  "kanal": [
+   "kanal:pressemitteilung"
+  ],
+  "ednote": "Entwurf, die Zahlen sind noch zu belegen. Beispielinhalt, alle Angaben sind erfunden.",
+  "zielgruppen": [
+   "zielgruppe:politik",
+   "zielgruppe:fachpresse"
+  ]
+ }
+]

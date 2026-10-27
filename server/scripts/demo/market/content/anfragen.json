@@ -1,0 +1,255 @@
+[
+ {
+  "reference": "AN-001",
+  "title": "Presseanfrage: Interview zur Förderung von Wärmepumpen",
+  "summary": "Ein Fachmedium bittet um ein Interview zum Stand der Wärmepumpen-Förderung im Bestand.",
+  "byline": "Julia Neumann",
+  "desk": "Anfragen",
+  "author": "julia.neumann",
+  "workflow": "Eingang",
+  "hours_ago": 3,
+  "body_html": "<p>Die Redaktion Energie und Bau möchte in der kommenden Woche ein Telefoninterview mit einer Fachperson aus dem Fachbereich Gebäude.</p><p>Themen: Förderquote, Handwerkerkapazität, Erfahrungen aus Pilotquartieren.</p>",
+  "themenarchitektur": [
+   "thema:waermepumpen"
+  ],
+  "strategieziele": [
+   "ziel:fachpublikum"
+  ],
+  "anfrageart": [
+   "art:presse"
+  ],
+  "fachbereich": [
+   "bereich:gebaeude"
+  ],
+  "prioritaet": [
+   "prio:a"
+  ],
+  "anfragende_person": "Redaktion Energie und Bau (extern), Kontakt über die Pressestelle",
+  "frist": "Donnerstag, 12:00 Uhr",
+  "ednote": "Beispielinhalt, alle Angaben sind erfunden.",
+  "kanal": [
+   "kanal:pressemitteilung"
+  ]
+ },
+ {
+  "reference": "AN-002",
+  "title": "Grafik für den Vortrag der Bereichsleitung Gebäude",
+  "summary": "Für einen Vortrag wird eine Grafik zur Sanierungsrate der letzten fünf Jahre gebraucht.",
+  "byline": "Petra Hoffmann",
+  "desk": "Anfragen",
+  "author": "petra.hoffmann",
+  "workflow": "Eingang",
+  "hours_ago": 6,
+  "body_html": "<p>Die Grafik soll auf einer Folie lesbar sein und zum Corporate Design passen. Die Daten liegen im SharePoint.</p>",
+  "themenarchitektur": [
+   "thema:sanierung"
+  ],
+  "strategieziele": [
+   "ziel:fachpublikum"
+  ],
+  "anfrageart": [
+   "art:intern"
+  ],
+  "fachbereich": [
+   "bereich:gebaeude"
+  ],
+  "prioritaet": [
+   "prio:b"
+  ],
+  "anfragende_person": "Petra Hoffmann, Fachkommunikation",
+  "frist": "nächsten Dienstag",
+  "ednote": "Beispielinhalt, alle Angaben sind erfunden.",
+  "sharepoint_links": "https://energieagentur-beispiel.sharepoint.example/sites/Kommunikation/Freigegebene%20Dokumente/Anfragen/Vortrag_Gebaeude/Sanierungsrate_Daten.xlsx"
+ },
+ {
+  "reference": "AN-003",
+  "title": "Pressemitteilung zum Förderaufruf Serielles Sanieren",
+  "summary": "Der Fachbereich Gebäude bittet um eine Pressemitteilung zum Förderaufruf für serielles Sanieren, mit Pressegespräch.",
+  "byline": "Petra Hoffmann",
+  "desk": "Anfragen",
+  "author": "petra.hoffmann",
+  "workflow": "In Bearbeitung",
+  "hours_ago": 30,
+  "body_html": "<p>Der Aufruf startet in drei Wochen. Gebraucht werden eine Pressemitteilung, ein Beitrag für die Website und eine Intranet-Meldung.</p><p>Die Anfrage ist die Grundlage der Story Förderaufruf Serielles Sanieren.</p>",
+  "themenarchitektur": [
+   "thema:serielles_sanieren"
+  ],
+  "strategieziele": [
+   "ziel:foerderung",
+   "ziel:fachpublikum"
+  ],
+  "anfrageart": [
+   "art:intern"
+  ],
+  "fachbereich": [
+   "bereich:gebaeude"
+  ],
+  "prioritaet": [
+   "prio:a"
+  ],
+  "anfragende_person": "Petra Hoffmann, Fachkommunikation",
+  "frist": "in drei Wochen",
+  "ednote": "Beispielinhalt, alle Angaben sind erfunden.",
+  "kanal": [
+   "kanal:pressemitteilung",
+   "kanal:website",
+   "kanal:intranet"
+  ],
+  "sharepoint_links": "https://energieagentur-beispiel.sharepoint.example/sites/Kommunikation/Freigegebene%20Dokumente/Anfragen/Foerderaufruf/Eckpunkte.docx"
+ },
+ {
+  "reference": "AN-004",
+  "title": "Bildmaterial für den Fachdialog Wasserstoff",
+  "summary": "Für den Fachdialog werden rechtefreie Bilder von Elektrolyseuren und Industrieanlagen gebraucht.",
+  "byline": "Ömer Yılmaz",
+  "desk": "Anfragen",
+  "author": "omer.yilmaz",
+  "workflow": "In Bearbeitung",
+  "hours_ago": 52,
+  "body_html": "<p>Bilder werden für Website, LinkedIn und den Newsletter benötigt. Nur rechtefreie Quellen oder Material, das in der Medienbibliothek liegt.</p>",
+  "themenarchitektur": [
+   "thema:wasserstoff"
+  ],
+  "strategieziele": [
+   "ziel:fachpublikum",
+   "ziel:vernetzung"
+  ],
+  "anfrageart": [
+   "art:aufgabe"
+  ],
+  "fachbereich": [
+   "bereich:industrie"
+  ],
+  "prioritaet": [
+   "prio:b"
+  ],
+  "anfragende_person": "Ömer Yılmaz, Fachkommunikation",
+  "frist": "in zehn Tagen",
+  "ednote": "Beispielinhalt, alle Angaben sind erfunden."
+ },
+ {
+  "reference": "AN-005",
+  "title": "Newsletter-Beitrag zum Pilotprojekt Abwärme",
+  "summary": "Der Fachbereich möchte die Ergebnisse eines Pilotprojekts zur Abwärmenutzung im Newsletter vorstellen.",
+  "byline": "Ömer Yılmaz",
+  "desk": "Anfragen",
+  "author": "omer.yilmaz",
+  "workflow": "Rückfrage",
+  "hours_ago": 80,
+  "body_html": "<p>Ein Textentwurf liegt vor. Offen ist, welche Zahlen die Projektpartner freigegeben haben.</p>",
+  "themenarchitektur": [
+   "thema:abwaerme"
+  ],
+  "strategieziele": [
+   "ziel:fachpublikum"
+  ],
+  "anfrageart": [
+   "art:intern"
+  ],
+  "fachbereich": [
+   "bereich:industrie"
+  ],
+  "prioritaet": [
+   "prio:b"
+  ],
+  "anfragende_person": "Ömer Yılmaz, Fachkommunikation",
+  "frist": "in zwei Wochen",
+  "ednote": "Beispielinhalt, alle Angaben sind erfunden.",
+  "kanal": [
+   "kanal:newsletter"
+  ],
+  "rueckfrage": "Welche Zahlen zur eingesparten Wärme dürfen genannt werden? Bitte die Freigabe der Projektpartner einholen und hier antworten.",
+  "sharepoint_links": "https://energieagentur-beispiel.sharepoint.example/sites/Kommunikation/Freigegebene%20Dokumente/Anfragen/Pilotprojekt_Abwaerme/Ergebnisbericht.pdf"
+ },
+ {
+  "reference": "AN-006",
+  "title": "Stellungnahme zum Netzausbau für eine Regionalzeitung",
+  "summary": "Eine Regionalzeitung fragt nach einer Einschätzung, ob der Netzausbau im Zeitplan liegt. Die Antwort wartet auf Freigabe.",
+  "byline": "Julia Neumann",
+  "desk": "Anfragen",
+  "author": "julia.neumann",
+  "workflow": "Freigabe",
+  "hours_ago": 26,
+  "body_html": "<p>Entwurf der Antwort: Der Ausbau liegt nach den vorliegenden Zahlen im Plan, einzelne Vorhaben brauchen länger. Die Zahlen sind im SharePoint hinterlegt.</p>",
+  "themenarchitektur": [
+   "thema:netzausbau"
+  ],
+  "strategieziele": [
+   "ziel:entscheider"
+  ],
+  "anfrageart": [
+   "art:presse"
+  ],
+  "fachbereich": [
+   "bereich:strom_netze"
+  ],
+  "prioritaet": [
+   "prio:a"
+  ],
+  "anfragende_person": "Regionalzeitung (extern), Kontakt über die Pressestelle",
+  "frist": "heute, 16:00 Uhr",
+  "ednote": "Beispielinhalt, alle Angaben sind erfunden.",
+  "kanal": [
+   "kanal:pressemitteilung"
+  ],
+  "sharepoint_links": "https://energieagentur-beispiel.sharepoint.example/sites/Kommunikation/Freigegebene%20Dokumente/Anfragen/Netzausbau_Stellungnahme/Antwortentwurf.docx"
+ },
+ {
+  "reference": "AN-007",
+  "title": "Zahlen zur Ladeinfrastruktur für einen Radiobeitrag",
+  "summary": "Ein Radiosender fragt nach aktuellen Zahlen zu Ladepunkten in Wohnquartieren.",
+  "byline": "Tobias Krüger",
+  "desk": "Anfragen",
+  "author": "tobias.krueger",
+  "workflow": "Beantwortet",
+  "hours_ago": 150,
+  "body_html": "<p>Die Zahlen wurden am Vormittag per E-Mail geschickt, mit Quellenangabe und einem Hinweis zur Unsicherheit der Schätzung.</p>",
+  "themenarchitektur": [
+   "thema:ladeinfrastruktur"
+  ],
+  "strategieziele": [
+   "ziel:bekanntheit"
+  ],
+  "anfrageart": [
+   "art:presse"
+  ],
+  "fachbereich": [
+   "bereich:mobilitaet"
+  ],
+  "prioritaet": [
+   "prio:b"
+  ],
+  "anfragende_person": "Radiosender (extern), Kontakt über die Pressestelle",
+  "frist": "gestern",
+  "ednote": "Beispielinhalt, alle Angaben sind erfunden."
+ },
+ {
+  "reference": "AN-008",
+  "title": "Fotofreigabe für den Jahresbericht",
+  "summary": "Der Jahresbericht braucht die Freigabe von zwölf Fotos aus Projekten.",
+  "byline": "Ömer Yılmaz",
+  "desk": "Anfragen",
+  "author": "omer.yilmaz",
+  "workflow": "Geschlossen",
+  "hours_ago": 400,
+  "body_html": "<p>Alle Fotos sind freigegeben, die Rechte sind dokumentiert. Die Anfrage ist abgeschlossen.</p>",
+  "themenarchitektur": [
+   "thema:erneuerbare"
+  ],
+  "strategieziele": [
+   "ziel:bekanntheit"
+  ],
+  "anfrageart": [
+   "art:aufgabe"
+  ],
+  "fachbereich": [
+   "bereich:verwaltung"
+  ],
+  "prioritaet": [
+   "prio:c"
+  ],
+  "anfragende_person": "Ömer Yılmaz, Fachkommunikation",
+  "frist": "erledigt",
+  "ednote": "Beispielinhalt, alle Angaben sind erfunden."
+ }
+]

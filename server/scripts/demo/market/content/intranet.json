@@ -1,0 +1,26 @@
+[
+ {
+  "reference": "INT-001",
+  "title": "Neu im Haus: So wählen Sie das Thema im Formular",
+  "summary": "Seit dieser Woche müssen alle Beiträge ein Thema tragen. Ein kurzer Überblick über die Themenarchitektur.",
+  "byline": "Sabine Lindner",
+  "desk": "Fachkommunikation",
+  "author": "sabine.lindner",
+  "workflow": "Veröffentlicht",
+  "hours_ago": 180,
+  "body_html": "<p>Jeder Beitrag, jede Idee und jede Anfrage hat jetzt ein Pflichtfeld Thema. Es ist zweistufig: erst das Themenfeld, dann das Thema.</p><p>So finden wir später heraus, wie viele Beiträge zu welchem Thema erschienen sind.</p><p>Fragen beantworten die Power-User im Bereich Kommunikation.</p>",
+  "themenarchitektur": [
+   "thema:erneuerbare"
+  ],
+  "strategieziele": [
+   "ziel:vernetzung"
+  ],
+  "kanal": [
+   "kanal:intranet"
+  ],
+  "ednote": "Beispielinhalt, alle Angaben sind erfunden.",
+  "zielgruppen": [
+   "zielgruppe:wirtschaft"
+  ]
+ }
+]

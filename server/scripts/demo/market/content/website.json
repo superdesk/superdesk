@@ -1,0 +1,28 @@
+[
+ {
+  "reference": "WEB-001",
+  "title": "Fünf Fragen zur kommunalen Wärmeplanung",
+  "summary": "Antworten auf die häufigsten Fragen von Kommunen zum Start der Wärmeplanung.",
+  "byline": "Sabine Lindner",
+  "desk": "Corporate Content",
+  "author": "sabine.lindner",
+  "workflow": "Veröffentlicht",
+  "hours_ago": 200,
+  "body_html": "<h2>Wann sollte die Planung beginnen?</h2><p>Möglichst früh, weil Daten aus Netzbetrieb, Wohnungswirtschaft und Industrie zusammenkommen müssen.</p><h2>Wer gehört an den Tisch?</h2><p>Die Verwaltung, die Stadtwerke, große Wärmeabnehmer und die Wohnungswirtschaft.</p><h2>Was kostet die Planung?</h2><p>Das hängt von der Größe der Kommune ab. Es gibt Förderungen, die einen Teil der Kosten abdecken.</p>",
+  "themenarchitektur": [
+   "thema:waermewende"
+  ],
+  "strategieziele": [
+   "ziel:fachpublikum",
+   "ziel:entscheider"
+  ],
+  "kanal": [
+   "kanal:website"
+  ],
+  "ednote": "Beispielinhalt, alle Angaben sind erfunden.",
+  "zielgruppen": [
+   "zielgruppe:kommunen",
+   "zielgruppe:politik"
+  ]
+ }
+]

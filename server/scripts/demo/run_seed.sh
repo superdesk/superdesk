@@ -22,7 +22,7 @@ SEED_VERSION="v1"
 LOCAL_API_URL="${SUPERDESK_LOCAL_API_URL:-http://localhost:5000/api}"
 
 # Fireq names an instance after its branch; this is the portal branch's instance.
-DEFAULT_PORTAL_URL="https://nra-hglocalwireportaldemo.test.superdesk.org"
+DEFAULT_PORTAL_URL=""
 
 API_WAIT_SECONDS=900
 PORTAL_WAIT_SECONDS=300
