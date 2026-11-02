@@ -7,7 +7,7 @@ python3 python3-dev python3-pip python3-venv git gcc curl \
 # lxml
 libxml2-dev libxslt-dev \
 # xmlsec
-pkg-config libxml2-dev libxmlsec1-dev libxmlsec1-openssl \
+pkg-config libxml2-dev libxmlsec1-dev \
 # PIL
 libjpeg-dev zlib1g-dev \
 # magic

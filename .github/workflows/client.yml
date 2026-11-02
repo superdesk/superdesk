@@ -8,13 +8,18 @@ on:
         required: false
         default: "22"
         type: string
+      ubuntu-version:
+        description: "Ubuntu version"
+        required: false
+        default: "ubuntu-24.04"
+        type: string
 
 permissions:
   contents: read
 
 jobs:
   install:
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.ubuntu-version }}
 
     defaults:
       run:
