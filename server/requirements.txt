@@ -115,7 +115,7 @@ cryptography==50.0.0
     #   jwcrypto
 deepdiff==9.1.0
     # via superdesk-planning
-dnspython==2.8.0
+dnspython==2.9.0
     # via pymongo
 draftjs-exporter[lxml]==5.2.0
     # via superdesk-core
@@ -229,7 +229,7 @@ propcache==0.5.2
     # via
     #   aiohttp
     #   yarl
-pyasn1==0.6.4
+pyasn1==0.6.5
     # via
     #   ldap3
     #   oauth2client
