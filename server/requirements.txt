@@ -123,9 +123,9 @@ elasticsearch[async]==7.17.13
     # via
     #   eve-elastic
     #   superdesk-core
-eve @ git+https://github.com/superdesk/eve@async
+eve @ git+https://github.com/superdesk/eve@1cc21d9f831479642abd6d060c836b01ff8f0472
     # via superdesk-core
-eve-elastic @ git+https://github.com/superdesk/eve-elastic@async
+eve-elastic @ git+https://github.com/superdesk/eve-elastic@8d1c3c4818a39f3e35037fc4ca723041285da80f
     # via superdesk-core
 feedparser==6.0.12
     # via superdesk-core
@@ -277,7 +277,7 @@ pytz==2026.2
     #   superdesk-core
 pyyaml==6.0.3
     # via superdesk-core
-quart @ git+https://github.com/MarkLark86/quart@fix-test-client-with-utf8-url
+quart==0.22.0
     # via
     #   eve
     #   quart-babel

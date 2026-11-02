@@ -2,13 +2,19 @@ name: "Docker"
 
 on:
   workflow_call:
+    inputs:
+      ubuntu-version:
+        description: "Ubuntu version"
+        required: false
+        default: "ubuntu-24.04"
+        type: string
 
 permissions:
   contents: read
 
 jobs:
   server:
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.ubuntu-version }}
 
     steps:
     - uses: actions/checkout@v7
@@ -18,7 +24,7 @@ jobs:
       timeout-minutes: 10
 
   client:
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.ubuntu-version }}
 
     steps:
     - uses: actions/checkout@v7
