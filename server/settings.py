@@ -10,7 +10,8 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 from pathlib import Path
-from superdesk.default_settings import strtobool, env, MODULES
+from urllib.parse import urlparse
+from superdesk.default_settings import strtobool, env, MODULES, MONGO_DBNAME, MONGO_URI
 
 ABS_PATH = str(Path(__file__).resolve().parent)
 
@@ -230,3 +231,27 @@ SCHEMA_VERSION = 2
 RUNDOWNS_TIMEZONE = DEFAULT_TIMEZONE
 
 ANALYTICS_ENABLE_ARCHIVE_STATS = True
+
+# Documentation screenshot instance (SDESK-8055). Fireq deploys this branch as sd-autodocs.test.superdesk.org;
+# scripts/autodocs/README.md explains the setup.
+
+# Registers the unauthenticated test endpoints the screenshot tooling uses: restore_record (database snapshots),
+# prepopulate (the planning base data) and planning_prepopulate (seed_planning.py). Outside these endpoints the
+# flag only lowers the log level of "Nothing is saved to publish queue" from ERROR to INFO.
+SUPERDESK_TESTING = True
+INSTALLED_APPS.append("planning_prepopulate")
+
+# superdesk.db.drop_mongo (used by prepopulate with remove_first) drops the database named by MONGO_DBNAME.
+# Fireq only sets MONGO_URI, so without this it would drop a database called "superdesk" on the shared Mongo
+# server instead of this instance's.
+MONGO_DBNAME = urlparse(MONGO_URI).path.lstrip("/").split("?")[0] or MONGO_DBNAME
+
+# The screenshot seeds write wall-clock times in Europe/London, the time zone of the e2e stack the guide was
+# first captured on.
+DEFAULT_TIMEZONE = env("DEFAULT_TIMEZONE", "Europe/London")
+RUNDOWNS_TIMEZONE = DEFAULT_TIMEZONE
+
+# Snapshot restores bring items back with the expiry they got at seed time. Fireq sets both values to a week in
+# the environment, which would let the content expiry job delete restored items once a snapshot is a week old.
+CONTENT_EXPIRY_MINUTES = 0
+PUBLISHED_CONTENT_EXPIRY_MINUTES = 0

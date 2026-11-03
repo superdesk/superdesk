@@ -47,3 +47,7 @@ include/
 client/index.html
 client/templates-cache.js
 client/npm-debug.log
+
+# database snapshots written by server/scripts/autodocs/run_seed.sh
+/server/dump/full/
+/server/dump/records/

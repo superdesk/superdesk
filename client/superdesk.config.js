@@ -45,16 +45,20 @@ module.exports = function() {
             }
         },
 
+        // Documentation instance (SDESK-8055): the screenshot seeds and both e2e stacks the guide was captured
+        // on use DD/MM/YYYY. Rundown template date formats are built from this value, and seed_broadcasting.py
+        // names rundowns with %d/%m/%Y, so another format leaves the template editor showing an unlisted value.
         view: {
             timeformat: 'HH:mm',
-            dateformat: 'DD.MM.YYYY',
+            dateformat: 'DD/MM/YYYY',
         },
 
         shortTimeFormat: 'HH:mm, DD.MM.YYYY',
         shortDateFormat: 'HH:mm, DD.MM.YYYY',
         shortWeekFormat: 'HH:mm, DD.MM.YYYY',
         startingDay: '1',
-        defaultTimezone: 'Europe/Prague',
+        // Matches DEFAULT_TIMEZONE in server/settings.py, the time zone the screenshot seeds write in.
+        defaultTimezone: 'Europe/London',
 
         editor3: { browserSpellCheck: true, },
 
