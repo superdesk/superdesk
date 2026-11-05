@@ -53,9 +53,6 @@ module.exports = function() {
             dateformat: 'DD/MM/YYYY',
         },
 
-        shortTimeFormat: 'HH:mm, DD.MM.YYYY',
-        shortDateFormat: 'HH:mm, DD.MM.YYYY',
-        shortWeekFormat: 'HH:mm, DD.MM.YYYY',
         startingDay: '1',
         // Matches DEFAULT_TIMEZONE in server/settings.py, the time zone the screenshot seeds write in.
         defaultTimezone: 'Europe/London',
@@ -107,39 +104,9 @@ module.exports = function() {
             italicAbstract: false,
             },
 
-        list: {
-            priority: [
-                'urgency'
-            ],
-            firstLine: [
-                'headline',
-                'highlights',
-                'markedDesks',
-                'associatedItems',
-                'versioncreated'
-            ],
-            secondLine: [
-                'state',
-                'update',
-                'scheduledDateTime',
-                'embargo',
-                'flags',
-                'updated',
-                'provider',
-                'desk',
-                'fetchedDesk',
-                'used',
-                'nestedlink',
-                'translations'
-            ],
-            compactView: {
-                firstLine: [
-                    'headline',
-                    'slugline',
-                ],
-                secondLine: [],
-            },
-        },
+        // Documentation instance (SDESK-8055): no `list` fields and no short date formats here, so item lists
+        // render with the client defaults (slugline, content profile label, default short date format), which
+        // is what the user guide screenshots show. The host build's list layout would not match the guide.
 
         monitoring: {
             scheduled: {
