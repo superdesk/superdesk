@@ -16,7 +16,7 @@ SEED_VERSION="v1"
 # The seed scripts are fetched from the docs repository at run time, so it stays the only copy of the seed
 # data. The ref is a branch or tag name (git clone --branch).
 DOCS_REPO="${AUTODOCS_DOCS_REPO:-https://github.com/superdesk/superdesk-docs-user-guide.git}"
-DOCS_REF="${AUTODOCS_DOCS_REF:-hg/SDESK-8055-screenshot-tools}"
+DOCS_REF="${AUTODOCS_DOCS_REF:-main}"
 DOCS_PATH="${AUTODOCS_DOCS_PATH:-tools/screenshots}"
 
 # Honcho gives the first Procfile entry (`rest`) port 5000 and hypercorn_config.py binds to $PORT, so the seed
