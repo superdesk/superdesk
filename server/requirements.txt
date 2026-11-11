@@ -217,7 +217,7 @@ orderly-set==5.5.0
     # via deepdiff
 packaging==26.2
     # via kombu
-pillow==12.3.0
+pillow==13.0.0
     # via
     #   reportlab
     #   superdesk-core
