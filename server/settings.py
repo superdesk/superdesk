@@ -230,3 +230,6 @@ SCHEMA_VERSION = 2
 RUNDOWNS_TIMEZONE = DEFAULT_TIMEZONE
 
 ANALYTICS_ENABLE_ARCHIVE_STATS = True
+
+# Test instance for QR sign-in in the Superdesk Reporter app (superdesk-core `hg/mobile-qr-login`).
+MOBILE_PAIRING_ENABLED = True
