@@ -11,7 +11,7 @@ set -u
 
 # Bump to wipe and seed again on a database that was already seeded, for example to pick up new seed data
 # from the docs repository.
-SEED_VERSION="v1"
+SEED_VERSION="v2"
 
 # The seed scripts are fetched from the docs repository at run time, so it stays the only copy of the seed
 # data. The ref is a branch or tag name (git clone --branch).
