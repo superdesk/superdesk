@@ -20,15 +20,3 @@ updates:
     schedule:
       interval: "weekly"
 
-  # keep release/3 up to date
-  - package-ecosystem: "npm"
-    directory: "client"
-    target-branch: "release/3"
-    schedule:
-      interval: "daily"
-
-  - package-ecosystem: "pip"
-    directory: "server"
-    target-branch: "release/3"
-    schedule:
-      interval: "daily"
