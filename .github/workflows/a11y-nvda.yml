@@ -19,11 +19,11 @@ on:
       sd_url:
         description: Superdesk URL
         required: true
-        default: https://sd-hglocalwiredemo.test.superdesk.org
+        default: https://sd-localwireuat.test.superdesk.org
       nh_url:
         description: Newshub URL
         required: true
-        default: https://nra-hglocalwireportaldemo.test.superdesk.org
+        default: https://nra-localwireuat.test.superdesk.org
       sd_user:
         description: Superdesk reviewer username (falls back to the A11Y_SD_USER variable)
         required: false
@@ -52,8 +52,8 @@ jobs:
       run:
         working-directory: a11y/harness
     env:
-      SD_URL: ${{ inputs.sd_url || 'https://sd-hglocalwiredemo.test.superdesk.org' }}
-      NH_URL: ${{ inputs.nh_url || 'https://nra-hglocalwireportaldemo.test.superdesk.org' }}
+      SD_URL: ${{ inputs.sd_url || 'https://sd-localwireuat.test.superdesk.org' }}
+      NH_URL: ${{ inputs.nh_url || 'https://nra-localwireuat.test.superdesk.org' }}
       SD_USER_REVIEWER: ${{ inputs.sd_user || vars.A11Y_SD_USER }}
       SD_PASS_REVIEWER: ${{ secrets.A11Y_SD_PASSWORD }}
       NH_USER_PARTNER: ${{ inputs.nh_user || vars.A11Y_NH_USER }}
