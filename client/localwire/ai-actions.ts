@@ -66,8 +66,8 @@ interface IRunResponse {
  * `GET /api/ai_actions` as an administrator) when the demo users do not hold `ai_studio`.
  */
 const ACTION_IDS: {[key in IAiActionType]?: string} = {
-    suggestion: '6add08799ab2925d74b413d4',
-    summary: '6add087a9ab2925d74b413d6',
+    suggestion: '6afec41f5fe6898742e878bf',
+    summary: '6afec41f5fe6898742e878c1',
 };
 
 /**
