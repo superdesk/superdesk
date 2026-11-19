@@ -68,9 +68,9 @@ interface IRunResponse {
  * left out here is looked up by listing.
  */
 const ACTION_IDS: {[key in IAiActionType]?: string} = {
-    suggestion: '6ae0ac81574877ecc671ca58',
-    summary: '6ae0ac82574877ecc671ca5a',
-    translation: '6ae0bbc2644b1da3c4cb2886',
+    suggestion: '6afefd7210d353c1a73905eb',
+    summary: '6afefd7310d353c1a73905ed',
+    translation: '6afefd7310d353c1a73905ef',
 };
 
 /**
