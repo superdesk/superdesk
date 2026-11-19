@@ -2,5 +2,5 @@ honcho
 celery-redbeat
 
 git+https://github.com/superdesk/superdesk-core.git@hg/localwire-core#egg=superdesk-core
-git+https://github.com/superdesk/superdesk-planning.git@develop#egg=superdesk-planning
-git+https://github.com/superdesk/superdesk-analytics.git@develop#egg=superdesk-analytics
+git+https://github.com/superdesk/superdesk-planning.git@168ab2628a669d4fe15135223c44ad059feb0f1b#egg=superdesk-planning
+git+https://github.com/superdesk/superdesk-analytics.git@0ffaf4ccd151644d46db2447cf92be60484aae7a#egg=superdesk-analytics
