@@ -99,7 +99,7 @@
         "display_name": "Languages",
         "type": "manageable",
         "unique_field": "qcode",
-        "init_version": 1,
+        "init_version": 2,
         "service": {
             "all": 1
         },
@@ -127,6 +127,11 @@
             {
                 "name": "Español",
                 "qcode": "es",
+                "is_active": true
+            },
+            {
+                "name": "Português (Brasil)",
+                "qcode": "pt-BR",
                 "is_active": true
             }
         ]
@@ -3256,15 +3261,15 @@
         ]
     },
     {
-        "_id": "topic",
-        "display_name": "Topic",
+        "_id": "editoria",
+        "display_name": "Editoria",
         "type": "manageable",
-        "selection_type": "multi selection",
+        "selection_type": "single selection",
         "unique_field": "qcode",
         "service": {
             "all": 1
         },
-        "helper_text": "What the story is about.",
+        "helper_text": "A editoria da matéria.",
         "init_version": 1,
         "schema": {
             "name": {},
@@ -3273,81 +3278,46 @@
         "items": [
             {
                 "is_active": true,
-                "name": "Politics",
-                "qcode": "politics"
+                "name": "Cidade",
+                "qcode": "cidade"
             },
             {
                 "is_active": true,
-                "name": "Business",
-                "qcode": "business"
+                "name": "Saúde",
+                "qcode": "saude"
             },
             {
                 "is_active": true,
-                "name": "Economy",
-                "qcode": "economy"
+                "name": "Educação",
+                "qcode": "educacao"
             },
             {
                 "is_active": true,
-                "name": "Markets",
-                "qcode": "markets"
+                "name": "Cultura",
+                "qcode": "cultura"
             },
             {
                 "is_active": true,
-                "name": "Sport",
-                "qcode": "sport"
+                "name": "Comunidade",
+                "qcode": "comunidade"
             },
             {
                 "is_active": true,
-                "name": "Science",
-                "qcode": "science"
-            },
-            {
-                "is_active": true,
-                "name": "Health",
-                "qcode": "health"
-            },
-            {
-                "is_active": true,
-                "name": "Environment",
-                "qcode": "environment"
-            },
-            {
-                "is_active": true,
-                "name": "Culture",
-                "qcode": "culture"
-            },
-            {
-                "is_active": true,
-                "name": "Conflict and security",
-                "qcode": "conflict"
-            },
-            {
-                "is_active": true,
-                "name": "Disasters and accidents",
-                "qcode": "disaster"
-            },
-            {
-                "is_active": true,
-                "name": "Technology",
-                "qcode": "technology"
-            },
-            {
-                "is_active": true,
-                "name": "Energy",
-                "qcode": "energy"
+                "name": "Serviços",
+                "qcode": "servicos"
             }
         ]
     },
     {
-        "_id": "region",
-        "display_name": "Region",
+        "_id": "edicao",
+        "display_name": "Edição",
         "type": "manageable",
-        "selection_type": "multi selection",
+        "selection_type": "single selection",
         "unique_field": "qcode",
         "service": {
             "all": 1
         },
-        "helper_text": "The world region the story is about.",
+        "helper_text": "A edição impressa em que a matéria sai.",
         "init_version": 1,
         "schema": {
             "name": {},
@@ -3356,84 +3326,60 @@
         "items": [
             {
                 "is_active": true,
-                "name": "Europe",
-                "qcode": "europe"
+                "name": "Edição 1.246, 14/11/2026",
+                "qcode": "ed-1246"
             },
             {
                 "is_active": true,
-                "name": "North America",
-                "qcode": "north_america"
+                "name": "Edição 1.247, 21/11/2026",
+                "qcode": "ed-1247"
             },
             {
                 "is_active": true,
-                "name": "South America",
-                "qcode": "south_america"
+                "name": "Edição 1.248, 28/11/2026",
+                "qcode": "ed-1248"
             },
             {
                 "is_active": true,
-                "name": "Middle East",
-                "qcode": "middle_east"
-            },
-            {
-                "is_active": true,
-                "name": "Africa",
-                "qcode": "africa"
-            },
-            {
-                "is_active": true,
-                "name": "Asia Pacific",
-                "qcode": "asia_pacific"
-            },
-            {
-                "is_active": true,
-                "name": "Global",
-                "qcode": "global"
+                "name": "Edição 1.249, 05/12/2026",
+                "qcode": "ed-1249"
             }
         ]
     },
     {
-        "_id": "service",
-        "display_name": "Wire service",
-        "type": "manageable",
-        "selection_type": "multi selection",
-        "unique_field": "qcode",
-        "service": {
-            "all": 1
-        },
-        "helper_text": "Which subscriber services receive the item",
-        "init_version": 1,
-        "schema": {
-            "name": {},
-            "qcode": {}
-        },
-        "items": [
-            {
-                "is_active": true,
-                "name": "International wire",
-                "qcode": "international"
-            },
-            {
-                "is_active": true,
-                "name": "Economic and markets wire",
-                "qcode": "economic"
-            },
-            {
-                "is_active": true,
-                "name": "Sports wire",
-                "qcode": "sports"
-            }
-        ]
-    },
-    {
-        "_id": "dateline_text",
-        "display_name": "Dateline",
+        "_id": "pagina",
+        "display_name": "Página",
         "type": "manageable",
         "field_type": "text",
-        "helper_text": "City and date in wire style, for example GENEVA, 27 October",
+        "helper_text": "Número da página na edição impressa, por exemplo 5",
         "init_version": 1,
         "items": [],
         "field_options": {
             "single": true
+        }
+    },
+    {
+        "_id": "texto_social",
+        "display_name": "Texto para redes sociais",
+        "type": "manageable",
+        "field_type": "text",
+        "helper_text": "Até 280 caracteres, para as redes sociais do portal",
+        "init_version": 1,
+        "items": [],
+        "field_options": {
+            "single": false
+        }
+    },
+    {
+        "_id": "texto_newsletter",
+        "display_name": "Texto para newsletter",
+        "type": "manageable",
+        "field_type": "text",
+        "helper_text": "Duas ou três frases para a newsletter diária",
+        "init_version": 1,
+        "items": [],
+        "field_options": {
+            "single": false
         }
     }
 ]

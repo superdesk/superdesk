@@ -1,5 +1,5 @@
 import {startApp} from 'superdesk-core/scripts/index';
-import {configureAiWidget} from './agency/ai-actions';
+import {configureAiWidget} from './jornal/ai-actions';
 
 setTimeout(() => {
     startApp(

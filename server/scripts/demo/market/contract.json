@@ -1,116 +1,76 @@
 {
   "kit_version": 1,
   "market": {
-    "id": "agency",
-    "name": "International news agency demo",
-    "brief": "market-brief.md"
+    "id": "jornal",
+    "name": "Brazilian weekly newspaper and website demo",
+    "brief": "BRIEF.md"
   },
   "product": {
     "name": "Superdesk",
-    "portal_name": "Newshub",
     "working_name_only": false,
-    "name_checks": "Not applicable, the products keep their own names.",
+    "name_checks": "Not applicable, the product keeps its own name.",
     "vendor": "Sourcefabric",
-    "descriptor": "Standard Superdesk and Newshub, configured for an international news agency."
+    "descriptor": "Standard Superdesk, configured for a weekly printed newspaper and its daily website."
   },
   "fiction": {
     "firm": {
-      "name": "Meridian News Agency",
-      "short_name": "Meridian",
-      "email_domain": "meridian-news.example",
-      "url": "https://meridian-news.example",
-      "description": "An invented international news agency that files text stories and alerts to broadcasters, publishers and corporate subscribers."
+      "name": "Editora Horizonte",
+      "short_name": "Horizonte",
+      "email_domain": "horizonte.example",
+      "url": "https://horizonte.example",
+      "description": "An invented São Paulo publisher of the weekly printed newspaper Semanário Horizonte (32 pages, out on Saturdays) and the daily website Portal Horizonte."
     },
     "rules": [
       "Firms, people, events, figures and quotes are invented.",
       "Places are real. No real living person is named.",
-      "Every sample story ends with a line saying it is sample content with invented events.",
+      "Neutral community and city news only, nothing religious and nothing political.",
+      "Every sample story ends with: Conteúdo de demonstração. Fatos, números e declarações são fictícios.",
       "Email domains end in .example."
     ],
-    "timezone": "Europe/London",
-    "language": "en",
+    "timezone": "America/Sao_Paulo",
+    "language": "pt-BR",
     "teams": [
       {
-        "name": "World",
-        "description": "International news and foreign affairs.",
-        "source": "WLD",
+        "name": "Impresso",
+        "description": "Redação do Semanário Horizonte, a edição impressa semanal.",
+        "source": "IMP",
         "stages": [
-          "Incoming",
-          "Working",
-          "Review",
-          "Ready",
-          "Published"
+          "Pauta",
+          "Redação",
+          "Edição",
+          "Revisão",
+          "Aprovado",
+          "Publicado"
         ],
-        "default_report_type": "story",
-        "default_template": "World story"
+        "default_report_type": "materia",
+        "default_template": "Matéria impresso"
       },
       {
-        "name": "Politics",
-        "description": "Government, elections and public policy.",
-        "source": "POL",
+        "name": "Digital",
+        "description": "Redação do Portal Horizonte, o site diário.",
+        "source": "DIG",
         "stages": [
-          "Incoming",
-          "Working",
-          "Review",
-          "Ready",
-          "Published"
+          "Pauta",
+          "Redação",
+          "Edição",
+          "Revisão",
+          "Aprovado",
+          "Publicado"
         ],
-        "default_report_type": "story",
-        "default_template": "Politics story"
-      },
-      {
-        "name": "Business",
-        "description": "Companies, markets and the economy.",
-        "source": "BUS",
-        "stages": [
-          "Incoming",
-          "Working",
-          "Review",
-          "Ready",
-          "Published"
-        ],
-        "default_report_type": "story",
-        "default_template": "Business story"
-      },
-      {
-        "name": "Sport",
-        "description": "Sport results, reports and features.",
-        "source": "SPT",
-        "stages": [
-          "Incoming",
-          "Working",
-          "Review",
-          "Ready",
-          "Published"
-        ],
-        "default_report_type": "story",
-        "default_template": "Sport story"
-      },
-      {
-        "name": "Culture",
-        "description": "Arts, entertainment and society.",
-        "source": "CUL",
-        "stages": [
-          "Incoming",
-          "Working",
-          "Review",
-          "Ready",
-          "Published"
-        ],
-        "default_report_type": "story",
-        "default_template": "Culture story"
+        "default_report_type": "materia_web",
+        "default_template": "Matéria web"
       }
     ],
     "board_hidden_stages": [
-      "Published"
+      "Publicado"
     ],
     "stage_task_status": {
-      "Published": "done"
+      "Publicado": "done"
     },
     "roles": [
       {
-        "name": "Journalist",
-        "description": "Writes, edits and files stories and alerts, and works in Planning. Cannot publish.",
+        "name": "Repórter",
+        "description": "Escreve, edita e envia matérias e trabalha no Planning. Não publica.",
         "author_role": "writer",
         "privileges": [
           "ai",
@@ -132,6 +92,7 @@
           "planning_planning_management",
           "saved_searches",
           "send_to_personal",
+          "use_global_saved_searches",
           "spike",
           "spike_read",
           "tasks",
@@ -140,14 +101,27 @@
         ]
       },
       {
-        "name": "Editor",
-        "description": "Reviews, edits, comments, corrects, holds, publishes, kills and takes down stories and alerts on its desk.",
+        "name": "Revisor",
+        "description": "Revisa o texto nas etapas Revisão e Aprovado, destrava e move matérias. Não publica.",
         "author_role": "writer",
         "editor_role": "editor",
-        "inherits": "Journalist",
+        "inherits": "Repórter",
         "privileges_add": [
+          "unlock"
+        ]
+      },
+      {
+        "name": "Editor",
+        "description": "Edita, aprova, publica, corrige e retira matérias da sua editoria, e gerencia a pauta no Planning.",
+        "author_role": "writer",
+        "editor_role": "editor",
+        "inherits": "Repórter",
+        "privileges_add": [
+          "content_export",
+          "content_publishing_report",
           "correct",
-          "hold",
+          "desk_activity_report",
+          "featuremedia_updates_report",
           "kill",
           "planning_assignments_desk",
           "planning_event_post",
@@ -158,16 +132,69 @@
           "planning_planning_spike",
           "planning_planning_unpost",
           "planning_planning_unspike",
+          "planning_usage_report",
+          "production_time_report",
           "publish",
           "publish_queue",
-          "resend",
-          "takedown",
-          "unlock"
+          "publishing_performance_report",
+          "saved_reports",
+          "unlock",
+          "update_time_report",
+          "user_activity_report"
         ]
       },
       {
-        "name": "Administrator",
-        "description": "Runs the whole service, including users, desks, vocabularies, content profiles, roles, ingest and delivery to subscribers.",
+        "name": "Editor digital",
+        "description": "Edita, publica e adapta para o site, redes sociais e newsletter as matérias da redação digital.",
+        "author_role": "writer",
+        "editor_role": "editor",
+        "inherits": "Repórter",
+        "privileges_add": [
+          "content_export",
+          "content_publishing_report",
+          "correct",
+          "desk_activity_report",
+          "featuremedia_updates_report",
+          "kill",
+          "planning_assignments_desk",
+          "planning_event_post",
+          "planning_event_spike",
+          "planning_event_unpost",
+          "planning_event_unspike",
+          "planning_planning_post",
+          "planning_planning_spike",
+          "planning_planning_unpost",
+          "planning_planning_unspike",
+          "planning_usage_report",
+          "production_time_report",
+          "publish",
+          "publish_queue",
+          "publishing_performance_report",
+          "saved_reports",
+          "unlock",
+          "update_time_report",
+          "user_activity_report"
+        ]
+      },
+      {
+        "name": "Diagramador",
+        "description": "Lê as matérias aprovadas, acompanha a pauta e exporta o texto para a diagramação. Não edita nem publica.",
+        "privileges": [
+          "archive",
+          "content_export",
+          "dashboard",
+          "fetch",
+          "highlights_read",
+          "monitoring_view",
+          "planning",
+          "planning_assignments_view",
+          "saved_searches",
+          "use_global_saved_searches"
+        ]
+      },
+      {
+        "name": "Administrador",
+        "description": "Administra o sistema, incluindo usuários, editorias, vocabulários, perfis de conteúdo, funções e destinos de publicação.",
         "author_role": "writer",
         "editor_role": "editor",
         "inherits": "Editor",
@@ -175,19 +202,17 @@
           "ai_studio",
           "archived",
           "content_filters",
-          "content_publishing_report",
           "content_templates",
           "content_type",
-          "desk_activity_report",
           "desks",
           "dictionaries",
           "global_saved_reports",
           "global_saved_searches",
+          "hold",
           "ingest_providers",
           "masterdesk",
           "planning_agenda_delete",
           "planning_agenda_management",
-          "planning_assignments_desk",
           "planning_create_past",
           "planning_edit_expired",
           "planning_eventsplanning_filters_management",
@@ -198,15 +223,13 @@
           "planning_manage_export_templates",
           "planning_planning_featured",
           "products",
-          "production_time_report",
-          "publishing_performance_report",
+          "resend",
           "roles",
           "routing_rules",
-          "saved_reports",
           "scheduled_reports",
           "subscribers",
           "system_messages",
-          "user_activity_report",
+          "takedown",
           "users",
           "vocabularies"
         ]
@@ -214,524 +237,349 @@
     ],
     "staff": [
       {
-        "username": "nadia.okafor",
-        "first_name": "Nadia",
-        "last_name": "Okafor",
-        "role": "Journalist",
+        "username": "ana.ribeiro",
+        "first_name": "Ana",
+        "last_name": "Ribeiro",
+        "role": "Repórter",
         "teams": [
-          "World"
+          "Impresso"
         ],
-        "default_team": "World",
-        "sign_off": "no",
-        "job_title": "Correspondent, Geneva"
+        "default_team": "Impresso",
+        "sign_off": "ar",
+        "job_title": "Repórter"
       },
       {
-        "username": "lucas.brandt",
-        "first_name": "Lucas",
-        "last_name": "Brandt",
-        "role": "Journalist",
+        "username": "carlos.mendes",
+        "first_name": "Carlos",
+        "last_name": "Mendes",
+        "role": "Repórter",
         "teams": [
-          "World"
+          "Impresso"
         ],
-        "default_team": "World",
-        "sign_off": "lb",
-        "job_title": "Correspondent, Berlin"
+        "default_team": "Impresso",
+        "sign_off": "cm",
+        "job_title": "Repórter"
       },
       {
-        "username": "elena.marsh",
-        "first_name": "Elena",
-        "last_name": "Marsh",
+        "username": "juliana.alves",
+        "first_name": "Juliana",
+        "last_name": "Alves",
+        "role": "Repórter",
+        "teams": [
+          "Impresso",
+          "Digital"
+        ],
+        "default_team": "Impresso",
+        "sign_off": "ja",
+        "job_title": "Repórter"
+      },
+      {
+        "username": "pedro.nascimento",
+        "first_name": "Pedro",
+        "last_name": "Nascimento",
+        "role": "Repórter",
+        "teams": [
+          "Digital"
+        ],
+        "default_team": "Digital",
+        "sign_off": "pn",
+        "job_title": "Repórter"
+      },
+      {
+        "username": "luiza.pereira",
+        "first_name": "Luiza",
+        "last_name": "Pereira",
+        "role": "Repórter",
+        "teams": [
+          "Digital"
+        ],
+        "default_team": "Digital",
+        "sign_off": "lp",
+        "job_title": "Repórter"
+      },
+      {
+        "username": "beatriz.lima",
+        "first_name": "Beatriz",
+        "last_name": "Lima",
         "role": "Editor",
         "teams": [
-          "World"
+          "Impresso"
         ],
-        "default_team": "World",
-        "sign_off": "em",
-        "job_title": "World editor"
+        "default_team": "Impresso",
+        "sign_off": "bl",
+        "job_title": "Editora-chefe do impresso"
       },
       {
-        "username": "tomas.varga",
-        "first_name": "Tomas",
-        "last_name": "Varga",
-        "role": "Journalist",
+        "username": "marcos.oliveira",
+        "first_name": "Marcos",
+        "last_name": "Oliveira",
+        "role": "Revisor",
         "teams": [
-          "Politics"
+          "Impresso",
+          "Digital"
         ],
-        "default_team": "Politics",
-        "sign_off": "tv",
-        "job_title": "Political correspondent"
+        "default_team": "Impresso",
+        "sign_off": "mo",
+        "job_title": "Revisor"
       },
       {
-        "username": "ingrid.holm",
-        "first_name": "Ingrid",
-        "last_name": "Holm",
-        "role": "Editor",
-        "teams": [
-          "Politics"
-        ],
-        "default_team": "Politics",
-        "sign_off": "ih",
-        "job_title": "Politics editor"
-      },
-      {
-        "username": "rafael.costa",
+        "username": "rafael.souza",
         "first_name": "Rafael",
+        "last_name": "Souza",
+        "role": "Diagramador",
+        "teams": [
+          "Impresso"
+        ],
+        "default_team": "Impresso",
+        "sign_off": "rs",
+        "job_title": "Diagramador"
+      },
+      {
+        "username": "fernanda.costa",
+        "first_name": "Fernanda",
         "last_name": "Costa",
-        "role": "Journalist",
+        "role": "Editor digital",
         "teams": [
-          "Business"
+          "Digital"
         ],
-        "default_team": "Business",
-        "sign_off": "rc",
-        "job_title": "Markets correspondent"
+        "default_team": "Digital",
+        "sign_off": "fc",
+        "job_title": "Editora digital"
       },
       {
-        "username": "mei.tanaka",
-        "first_name": "Mei",
-        "last_name": "Tanaka",
-        "role": "Editor",
+        "username": "thiago.martins",
+        "first_name": "Thiago",
+        "last_name": "Martins",
+        "role": "Administrador",
         "teams": [
-          "Business"
+          "Impresso",
+          "Digital"
         ],
-        "default_team": "Business",
-        "sign_off": "mt",
-        "job_title": "Business editor"
-      },
-      {
-        "username": "dario.ferri",
-        "first_name": "Dario",
-        "last_name": "Ferri",
-        "role": "Journalist",
-        "teams": [
-          "Sport"
-        ],
-        "default_team": "Sport",
-        "sign_off": "df",
-        "job_title": "Sports correspondent"
-      },
-      {
-        "username": "hannah.cole",
-        "first_name": "Hannah",
-        "last_name": "Cole",
-        "role": "Editor",
-        "teams": [
-          "Sport"
-        ],
-        "default_team": "Sport",
-        "sign_off": "hc",
-        "job_title": "Sports editor"
-      },
-      {
-        "username": "amara.diallo",
-        "first_name": "Amara",
-        "last_name": "Diallo",
-        "role": "Journalist",
-        "teams": [
-          "Culture"
-        ],
-        "default_team": "Culture",
-        "sign_off": "ad",
-        "job_title": "Culture correspondent"
-      },
-      {
-        "username": "sam.reyes",
-        "first_name": "Sam",
-        "last_name": "Reyes",
-        "role": "Administrator",
-        "teams": [
-          "World",
-          "Politics",
-          "Business",
-          "Sport",
-          "Culture"
-        ],
-        "default_team": "World",
-        "sign_off": "sr",
-        "job_title": "Newsroom systems administrator"
+        "default_team": "Impresso",
+        "sign_off": "tm",
+        "job_title": "Administrador de sistemas"
       }
     ],
-    "staff_email": "{username}@meridian-news.example",
+    "staff_email": "{username}@horizonte.example",
     "admin_member_of_all_teams": true,
-    "admin_default_team": "World",
-    "tiers": [
-      {
-        "name": "Full",
-        "report_types": [
-          "story",
-          "alert"
-        ]
-      },
-      {
-        "name": "Broadcast",
-        "report_types": [
-          "story",
-          "alert"
-        ]
-      },
-      {
-        "name": "Economic",
-        "report_types": [
-          "story",
-          "alert"
-        ]
-      }
-    ],
-    "clients": [
-      {
-        "name": "Northline Broadcasting",
-        "url": "https://northline.example",
-        "tier": "Broadcast",
-        "entitlement": {
-          "all_of": [
-            {
-              "service": [
-                "international",
-                "sports"
-              ]
-            }
-          ]
-        },
-        "users": [
-          {
-            "email": "kate.lindqvist@northline.example",
-            "first_name": "Kate",
-            "last_name": "Lindqvist",
-            "type": "company_admin"
-          },
-          {
-            "email": "omar.haddad@northline.example",
-            "first_name": "Omar",
-            "last_name": "Haddad",
-            "type": "public"
-          }
-        ]
-      },
-      {
-        "name": "Harbour Press Group",
-        "url": "https://harbourpress.example",
-        "tier": "Full",
-        "entitlement": {
-          "all_of": [
-            {
-              "service": [
-                "international",
-                "economic",
-                "sports"
-              ]
-            }
-          ]
-        },
-        "users": [
-          {
-            "email": "julia.novak@harbourpress.example",
-            "first_name": "Julia",
-            "last_name": "Novak",
-            "type": "company_admin"
-          },
-          {
-            "email": "ben.okonkwo@harbourpress.example",
-            "first_name": "Ben",
-            "last_name": "Okonkwo",
-            "type": "public"
-          }
-        ]
-      },
-      {
-        "name": "Atlas Capital Partners",
-        "url": "https://atlascapital.example",
-        "tier": "Economic",
-        "entitlement": {
-          "all_of": [
-            {
-              "service": [
-                "economic"
-              ]
-            }
-          ]
-        },
-        "users": [
-          {
-            "email": "priya.menon@atlascapital.example",
-            "first_name": "Priya",
-            "last_name": "Menon",
-            "type": "company_admin"
-          }
-        ]
-      }
-    ],
-    "internal_client": {
-      "name": "Meridian News Agency",
-      "url": "https://meridian-news.example",
-      "users": [
-        {
-          "email": "sam.reyes@meridian-news.example",
-          "first_name": "Sam",
-          "last_name": "Reyes",
-          "type": "internal"
-        }
-      ]
-    },
+    "admin_default_team": "Impresso",
     "sample_content": {
       "reports": {
-        "story": "content/stories.json",
-        "alert": "content/alerts.json"
+        "materia": "content/materia.json",
+        "materia_web": "content/materia_web.json"
       },
       "counts": {
-        "stories": 25,
-        "alerts": 4
+        "materia": 13,
+        "materia_web": 7
       },
-      "guid_prefix": "urn:agency:demo:",
+      "guid_prefix": "urn:jornal:demo:",
       "review_comment": {
-        "user": "elena.marsh",
-        "stage": "Review",
-        "text": "Please add the ministry's response before this goes out."
+        "user": "beatriz.lima",
+        "stage": "Revisão",
+        "text": "Conferir os números da secretaria antes de fechar a página."
       }
     }
   },
   "vocabularies": [
     {
-      "id": "topic",
-      "label": "Topic",
-      "selection": "multi",
-      "helper_text": "What the story is about.",
+      "id": "editoria",
+      "label": "Editoria",
+      "selection": "single",
+      "helper_text": "A editoria da matéria.",
       "items": [
         {
-          "qcode": "politics",
-          "name": "Politics"
+          "qcode": "cidade",
+          "name": "Cidade"
         },
         {
-          "qcode": "business",
-          "name": "Business"
+          "qcode": "saude",
+          "name": "Saúde"
         },
         {
-          "qcode": "economy",
-          "name": "Economy"
+          "qcode": "educacao",
+          "name": "Educação"
         },
         {
-          "qcode": "markets",
-          "name": "Markets"
+          "qcode": "cultura",
+          "name": "Cultura"
         },
         {
-          "qcode": "sport",
-          "name": "Sport"
+          "qcode": "comunidade",
+          "name": "Comunidade"
         },
         {
-          "qcode": "science",
-          "name": "Science"
-        },
-        {
-          "qcode": "health",
-          "name": "Health"
-        },
-        {
-          "qcode": "environment",
-          "name": "Environment"
-        },
-        {
-          "qcode": "culture",
-          "name": "Culture"
-        },
-        {
-          "qcode": "conflict",
-          "name": "Conflict and security"
-        },
-        {
-          "qcode": "disaster",
-          "name": "Disasters and accidents"
-        },
-        {
-          "qcode": "technology",
-          "name": "Technology"
-        },
-        {
-          "qcode": "energy",
-          "name": "Energy"
+          "qcode": "servicos",
+          "name": "Serviços"
         }
       ]
     },
     {
-      "id": "region",
-      "label": "Region",
-      "selection": "multi",
-      "helper_text": "The world region the story is about.",
+      "id": "edicao",
+      "label": "Edição",
+      "selection": "single",
+      "helper_text": "A edição impressa em que a matéria sai.",
       "items": [
         {
-          "qcode": "europe",
-          "name": "Europe"
+          "qcode": "ed-1246",
+          "name": "Edição 1.246, 14/11/2026"
         },
         {
-          "qcode": "north_america",
-          "name": "North America"
+          "qcode": "ed-1247",
+          "name": "Edição 1.247, 21/11/2026"
         },
         {
-          "qcode": "south_america",
-          "name": "South America"
+          "qcode": "ed-1248",
+          "name": "Edição 1.248, 28/11/2026"
         },
         {
-          "qcode": "middle_east",
-          "name": "Middle East"
-        },
-        {
-          "qcode": "africa",
-          "name": "Africa"
-        },
-        {
-          "qcode": "asia_pacific",
-          "name": "Asia Pacific"
-        },
-        {
-          "qcode": "global",
-          "name": "Global"
-        }
-      ]
-    },
-    {
-      "id": "service",
-      "label": "Wire service",
-      "selection": "multi",
-      "helper_text": "Which subscriber services receive the item",
-      "items": [
-        {
-          "qcode": "international",
-          "name": "International wire"
-        },
-        {
-          "qcode": "economic",
-          "name": "Economic and markets wire"
-        },
-        {
-          "qcode": "sports",
-          "name": "Sports wire"
+          "qcode": "ed-1249",
+          "name": "Edição 1.249, 05/12/2026"
         }
       ]
     }
   ],
   "custom_text_fields": [
     {
-      "id": "dateline_text",
-      "label": "Dateline",
+      "id": "pagina",
+      "label": "Página",
       "single_line": true,
-      "helper_text": "City and date in wire style, for example GENEVA, 27 October"
+      "helper_text": "Número da página na edição impressa, por exemplo 5"
+    },
+    {
+      "id": "texto_social",
+      "label": "Texto para redes sociais",
+      "single_line": false,
+      "helper_text": "Até 280 caracteres, para as redes sociais do portal"
+    },
+    {
+      "id": "texto_newsletter",
+      "label": "Texto para newsletter",
+      "single_line": false,
+      "helper_text": "Duas ou três frases para a newsletter diária"
     }
   ],
   "report_types": [
     {
-      "id": "story",
-      "label": "Story",
-      "portal_profile": "Story",
-      "description": "A wire story for subscribers.",
+      "id": "materia",
+      "label": "Matéria",
+      "description": "Matéria para o Semanário Horizonte, a edição impressa semanal.",
       "priority": 20,
       "body_skeleton": "",
       "fields": [
         {
           "id": "headline",
           "kind": "native",
-          "label": "Headline",
+          "label": "Título",
           "required": true,
-          "maxlength": 120,
+          "maxlength": 90,
           "format": "none"
         },
         {
           "id": "slugline",
           "kind": "native",
-          "label": "Slug",
+          "label": "Retranca",
           "width": "half"
         },
         {
-          "id": "topic",
+          "id": "editoria",
           "kind": "taxonomy",
           "width": "half",
           "required": true
         },
         {
-          "id": "region",
+          "id": "edicao",
           "kind": "taxonomy",
-          "width": "half",
-          "required": true
-        },
-        {
-          "id": "service",
-          "kind": "taxonomy",
-          "width": "half",
-          "required": true
-        },
-        {
-          "id": "dateline_text",
-          "kind": "custom_text",
           "width": "half"
+        },
+        {
+          "id": "pagina",
+          "kind": "custom_text"
         },
         {
           "id": "abstract",
           "kind": "native",
-          "label": "Summary",
-          "maxlength": 400,
+          "label": "Linha fina",
+          "maxlength": 250,
           "format": "summary"
         },
         {
           "id": "body_html",
           "kind": "native",
-          "label": "Story",
+          "label": "Texto",
           "required": true,
           "format": "body"
         },
         {
           "id": "byline",
           "kind": "native",
-          "label": "Byline",
+          "label": "Autor",
           "width": "half"
         },
         {
           "id": "ednote",
           "kind": "native",
-          "label": "Editorial note"
+          "label": "Nota editorial"
         }
       ]
     },
     {
-      "id": "alert",
-      "label": "Alert",
-      "portal_profile": "Alert",
-      "description": "A one-paragraph flash or urgent alert",
+      "id": "materia_web",
+      "label": "Matéria web",
+      "description": "Matéria para o Portal Horizonte, com título web, descrição SEO, texto para redes sociais e para a newsletter.",
       "priority": 30,
       "body_skeleton": "",
       "fields": [
         {
           "id": "headline",
           "kind": "native",
-          "label": "Headline",
+          "label": "Título web",
           "required": true,
-          "maxlength": 120,
+          "maxlength": 70,
           "format": "none"
         },
         {
-          "id": "topic",
+          "id": "slugline",
+          "kind": "native",
+          "label": "Retranca",
+          "width": "half"
+        },
+        {
+          "id": "editoria",
           "kind": "taxonomy",
           "width": "half",
           "required": true
         },
         {
-          "id": "region",
-          "kind": "taxonomy",
-          "width": "half",
-          "required": true
+          "id": "abstract",
+          "kind": "native",
+          "label": "Descrição SEO",
+          "maxlength": 160,
+          "format": "summary"
         },
         {
-          "id": "service",
-          "kind": "taxonomy",
-          "width": "half",
-          "required": true
+          "id": "texto_social",
+          "kind": "custom_text"
+        },
+        {
+          "id": "texto_newsletter",
+          "kind": "custom_text"
         },
         {
           "id": "body_html",
           "kind": "native",
-          "label": "Alert text",
-          "required": true,
-          "format": "summary"
+          "label": "Texto",
+          "format": "body"
+        },
+        {
+          "id": "byline",
+          "kind": "native",
+          "label": "Autor",
+          "width": "half"
         },
         {
           "id": "ednote",
           "kind": "native",
-          "label": "Editorial note"
+          "label": "Nota editorial"
         }
       ]
     }
@@ -763,135 +611,52 @@
   },
   "templates": [
     {
-      "name": "Flash",
-      "report_type": "alert",
+      "name": "Matéria impresso",
+      "report_type": "materia",
       "teams": [
-        "World",
-        "Politics",
-        "Business",
-        "Sport",
-        "Culture"
+        "Impresso"
       ],
-      "headline": "FLASH: ",
       "subject": {
-        "service": [
-          "international"
+        "edicao": [
+          "ed-1248"
         ]
       }
     },
     {
-      "name": "Urgent",
-      "report_type": "story",
+      "name": "Matéria web",
+      "report_type": "materia_web",
       "teams": [
-        "World",
-        "Politics",
-        "Business",
-        "Sport",
-        "Culture"
-      ],
-      "headline": "URGENT: ",
-      "subject": {
-        "service": [
-          "international"
-        ]
-      }
+        "Digital"
+      ]
     },
     {
-      "name": "World story",
-      "report_type": "story",
+      "name": "Nota curta",
+      "report_type": "materia_web",
       "teams": [
-        "World"
-      ],
-      "subject": {
-        "service": [
-          "international"
-        ]
-      }
-    },
-    {
-      "name": "Politics story",
-      "report_type": "story",
-      "teams": [
-        "Politics"
-      ],
-      "subject": {
-        "topic": [
-          "politics"
-        ],
-        "service": [
-          "international"
-        ]
-      }
-    },
-    {
-      "name": "Business story",
-      "report_type": "story",
-      "teams": [
-        "Business"
-      ],
-      "subject": {
-        "topic": [
-          "business"
-        ],
-        "service": [
-          "economic"
-        ]
-      }
-    },
-    {
-      "name": "Sport story",
-      "report_type": "story",
-      "teams": [
-        "Sport"
-      ],
-      "subject": {
-        "topic": [
-          "sport"
-        ],
-        "service": [
-          "sports"
-        ]
-      }
-    },
-    {
-      "name": "Culture story",
-      "report_type": "story",
-      "teams": [
-        "Culture"
-      ],
-      "subject": {
-        "topic": [
-          "culture"
-        ],
-        "service": [
-          "international"
-        ]
-      }
-    },
-    {
-      "name": "Market report",
-      "report_type": "story",
-      "teams": [
-        "Business"
-      ],
-      "subject": {
-        "topic": [
-          "markets"
-        ],
-        "service": [
-          "economic"
-        ]
-      }
+        "Digital"
+      ]
     }
   ],
   "briefing_list": {},
   "superdesk": {
     "demo_password_env": "DEMO_PASSWORD",
+    "seed_sections": [
+      "vocabularies",
+      "roles",
+      "users",
+      "profiles",
+      "teams",
+      "templates",
+      "dashboards",
+      "ai",
+      "planning",
+      "content"
+    ],
     "settings": {
-      "ORGANIZATION_NAME": "Meridian News Agency",
-      "ORGANIZATION_NAME_ABBREVIATION": "MNA",
-      "NEWSML_PROVIDER_ID": "meridian-news.example",
-      "DEFAULT_LANGUAGE": "en",
+      "ORGANIZATION_NAME": "Editora Horizonte",
+      "ORGANIZATION_NAME_ABBREVIATION": "HZ",
+      "NEWSML_PROVIDER_ID": "horizonte.example",
+      "DEFAULT_LANGUAGE": "pt-BR",
       "VALIDATOR_MEDIA_METADATA": {
         "headline": {
           "required": false
@@ -931,28 +696,22 @@
     },
     "client_config": {
       "defaultRoute": "/workspace/monitoring",
-      "defaultTimezone": "Europe/London",
+      "defaultTimezone": "America/Sao_Paulo",
       "apps_removed": [
         "publisher"
       ],
       "search_cvs": [
         {
-          "id": "topic",
-          "name": "Topic",
+          "id": "editoria",
+          "name": "Editoria",
           "field": "subject",
-          "list": "topic"
+          "list": "editoria"
         },
         {
-          "id": "region",
-          "name": "Region",
+          "id": "edicao",
+          "name": "Edição",
           "field": "subject",
-          "list": "region"
-        },
-        {
-          "id": "service",
-          "name": "Wire service",
-          "field": "subject",
-          "list": "service"
+          "list": "edicao"
         }
       ],
       "list": {
@@ -995,69 +754,19 @@
       ]
     },
     "ingest": {
-      "route_to": {
-        "team": "World",
-        "stage": "Incoming"
-      },
-      "routing_scheme": "Wire intake",
-      "providers": [
-        {
-          "name": "UN News",
-          "source": "UN",
-          "feed": "rss",
-          "url": "https://news.un.org/feed/subscribe/en/news/all/rss.xml",
-          "update_minutes": 10
-        },
-        {
-          "name": "The Guardian world",
-          "source": "Guardian",
-          "feed": "rss",
-          "url": "https://www.theguardian.com/world/rss",
-          "update_minutes": 10
-        },
-        {
-          "name": "NASA news releases",
-          "source": "NASA",
-          "feed": "rss",
-          "url": "https://www.nasa.gov/news-release/feed/",
-          "update_minutes": 10
-        },
-        {
-          "name": "European Commission press corner",
-          "source": "EC",
-          "feed": "rss",
-          "url": "https://ec.europa.eu/commission/presscorner/api/rss?language=en",
-          "update_minutes": 10
-        }
-      ]
-    },
-    "recipients": {
-      "portal": {
-        "name": "Newshub",
-        "product": "Newshub feed",
-        "format": "Newsroom NINJS",
-        "push_path": "/push",
-        "push_key_env": "PORTAL_PUSH_KEY",
-        "receives": "every published story and alert"
-      },
-      "portal_calendar": {
-        "name": "Newshub calendar",
-        "product": "Newshub calendar"
-      },
-      "email_per_client": false
+      "providers": []
     },
     "dashboards": {
       "per_team_widgets": [
         "aggregate",
         "activity",
-        "ingest-stats",
         "world-clock"
       ],
       "world_clock_zones": [
-        "Europe/London",
-        "Europe/Brussels",
-        "America/New_York",
-        "Asia/Singapore"
+        "America/Sao_Paulo",
+        "America/Manaus",
+        "Europe/Lisbon",
+        "UTC"
       ]
     },
     "ai": {
@@ -1066,12 +775,12 @@
       "base_url": "https://openrouter.ai/api/v1",
       "label": "OpenRouter (bring your own endpoint)",
       "provider_key_env": "AI_PROVIDER_KEY",
-      "default_model": "z-ai/glm-5.3-flash",
-      "rule": "The key is pasted into Settings, AI Providers by hand or read from AI_PROVIDER_KEY when the seed creates the provider. Actions carry no model; a model chosen by hand on an action is kept. Reasoning models pass the 60 second AI_REQUEST_TIMEOUT, so keep a fast model as the default.",
-      "voice": "You write international wire copy for a news agency. Plain, neutral, factual English in the agency style: who, what, where, when, then why it matters. Attribute every claim. Never speculate, never add detail that is not in the input, never dramatise. No emoji, no exclamation marks.",
+      "default_model": "anthropic/claude-haiku-5.5",
+      "rule": "The key is pasted into Settings, AI Providers by hand or read from AI_PROVIDER_KEY when the seed creates the provider. Actions carry no model; a model chosen by hand on an action is kept. Keep a fast, non-reasoning model as the default (60 second AI_REQUEST_TIMEOUT).",
+      "voice": "Você escreve para a redação de um jornal semanal impresso e do seu site diário. Texto jornalístico claro, objetivo e neutro, no idioma que a tarefa pedir; em português, use o português do Brasil e o estilo de jornal brasileiro. Atribua cada informação à sua fonte. Nunca especule, nunca acrescente fatos que não estejam no texto, nunca dramatize. Sem emoji e sem pontos de exclamação.",
       "actions": [
         {
-          "name": "Suggest headlines",
+          "name": "Sugerir títulos",
           "type": "suggestion",
           "input_fields": [
             "body_html",
@@ -1079,28 +788,42 @@
           ],
           "output_field": "headline",
           "report_types": [
-            "story",
-            "alert"
+            "materia",
+            "materia_web"
           ],
           "temperature": 0.3,
-          "max_characters": 90,
+          "max_characters": 70,
           "suggestions_count": 3,
-          "prompt": "Propose wire headlines: subject, verb, what happened, in that order, present tense, no question marks"
+          "prompt": "Proponha títulos em português do Brasil: sujeito, verbo e o fato, nessa ordem, no presente, sem ponto de interrogação e sem ponto final."
         },
         {
-          "name": "Draft summary",
+          "name": "Resumo",
           "type": "summary",
           "input_fields": [
             "body_html"
           ],
           "output_field": "abstract",
           "report_types": [
-            "story",
-            "alert"
+            "materia",
+            "materia_web"
           ],
           "temperature": 0.2,
-          "max_characters": 400,
-          "prompt": "Write a two-sentence summary a subscriber can run as a standalone brief"
+          "max_characters": 160,
+          "prompt": "Escreva em português do Brasil uma linha fina de uma ou duas frases que funcione também como descrição para o site."
+        },
+        {
+          "name": "Traduzir",
+          "type": "translation",
+          "input_fields": [
+            "body_html"
+          ],
+          "output_field": "body_html",
+          "report_types": [
+            "materia",
+            "materia_web"
+          ],
+          "temperature": 0.2,
+          "prompt": "Traduza mantendo o estilo jornalístico: neutro, claro, com os nomes de lugares e instituições como estão."
         }
       ]
     },

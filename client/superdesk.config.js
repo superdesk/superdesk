@@ -47,7 +47,7 @@ module.exports = function() {
         shortDateFormat: 'HH:mm, DD.MM.YYYY',
         shortWeekFormat: 'HH:mm, DD.MM.YYYY',
         startingDay: '1',
-        defaultTimezone: 'Europe/London',
+        defaultTimezone: 'America/Sao_Paulo',
 
         editor3: {browserSpellCheck: true},
 
@@ -56,9 +56,8 @@ module.exports = function() {
         // filter is built for it (SearchService.ts). Custom vocabularies land in `subject`, so the
         // Superdesk taxonomies all filter on `subject.qcode`; their qcodes do not overlap.
         search_cvs: [
-            {id: 'topic', name: 'Topic', field: 'subject', list: 'topic'},
-            {id: 'region', name: 'Region', field: 'subject', list: 'region'},
-            {id: 'service', name: 'Wire service', field: 'subject', list: 'service'},
+            {id: 'editoria', name: 'Editoria', field: 'subject', list: 'editoria'},
+            {id: 'edicao', name: 'Edição', field: 'subject', list: 'edicao'},
         ],
 
         features: {

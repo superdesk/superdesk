@@ -239,12 +239,12 @@ ANALYTICS_ENABLE_ARCHIVE_STATS = True
 if "superdesk.ai.module" not in MODULES:
     MODULES.append("superdesk.ai.module")
 
-ORGANIZATION_NAME = env("ORGANIZATION_NAME", "Meridian News Agency")
-ORGANIZATION_NAME_ABBREVIATION = env("ORGANIZATION_NAME_ABBREVIATION", "MNA")
-NEWSML_PROVIDER_ID = env("NEWSML_PROVIDER_ID", "meridian-news.example")
+ORGANIZATION_NAME = env("ORGANIZATION_NAME", "Editora Horizonte")
+ORGANIZATION_NAME_ABBREVIATION = env("ORGANIZATION_NAME_ABBREVIATION", "HZ")
+NEWSML_PROVIDER_ID = env("NEWSML_PROVIDER_ID", "horizonte.example")
 DEFAULT_LANGUAGE = env("DEFAULT_LANGUAGE", "en")
 VALIDATOR_MEDIA_METADATA = {'headline': {'required': False}, 'slugline': {'required': False}, 'alt_text': {'required': True}, 'anpa_category': {'required': False}, 'subject': {'required': False}, 'archive_description': {'required': False}, 'description_text': {'required': True, 'textarea': True}, 'byline': {'required': False}, 'copyrightholder': {'required': False}, 'usageterms': {'required': False}, 'copyrightnotice': {'required': False}}
-DEFAULT_TIMEZONE = env("DEFAULT_TIMEZONE", "Europe/London")
+DEFAULT_TIMEZONE = env("DEFAULT_TIMEZONE", "America/Sao_Paulo")
 
 # Derived above from settings this block changes.
 RUNDOWNS_TIMEZONE = DEFAULT_TIMEZONE

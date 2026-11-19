@@ -4,9 +4,9 @@ Run after ``run_seed.sh`` or ``build.py superdesk seed``:
 
     SUPERDESK_URL=https://<host>/api SUPERDESK_USER=admin SUPERDESK_PASSWORD=... python3 post_seed.py [--only STEP ...]
 
-Steps, in order: picture_field (the Story profile's feature media field enabled and the
-crop size "FIXME" renamed to "4-3"), states (seeded items from ``fetched`` to ``in_progress``), scheduled (one
-Ready story published with an embargo time tomorrow at 06:00 UTC). Every step is idempotent.
+Steps, in order: picture_field (the feature media field enabled on both profiles and the crop
+size "FIXME" renamed to "4-3"), states (seeded items from ``fetched`` to ``in_progress``),
+user_language (every user's interface language set to English). Every step is idempotent.
 """
 
 import argparse
@@ -18,9 +18,9 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
-from datetime import datetime, timedelta, timezone
 
-SCHEDULED_ITEM = "urn:agency:demo:MNA-POL-205"
+PICTURE_PROFILES = ("Matéria", "Matéria web")
+UI_LANGUAGE = "en"
 
 
 class Api:
@@ -68,19 +68,20 @@ class Api:
 
 def step_picture_field(api):
     print("Picture field")
-    profile = next((p for p in api.items("/content_types") if p.get("label") == "Story"), None)
-    if profile is None:
-        raise RuntimeError("no content profile labelled Story")
-    editor = profile.get("editor") or {}
-    schema = profile.get("schema") or {}
-    if (editor.get("feature_media") or {}).get("enabled") and schema.get("feature_media"):
-        print("  Story: picture field already enabled")
-    else:
+    for label in PICTURE_PROFILES:
+        profile = next((p for p in api.items("/content_types") if p.get("label") == label), None)
+        if profile is None:
+            raise RuntimeError(f"no content profile labelled {label}")
+        editor = profile.get("editor") or {}
+        schema = profile.get("schema") or {}
+        if (editor.get("feature_media") or {}).get("enabled") and schema.get("feature_media"):
+            print(f"  {label}: picture field already enabled")
+            continue
         editor["feature_media"] = {
             "enabled": True,
             "order": 11,
             "sdWidth": "full",
-            "field_name": "Picture",
+            "field_name": "Foto",
         }
         schema["feature_media"] = {"type": "media", "required": False}
         api.patch(
@@ -88,7 +89,7 @@ def step_picture_field(api):
             {"editor": editor, "schema": schema},
             profile["_etag"],
         )
-        print("  Story: picture field enabled")
+        print(f"  {label}: picture field enabled")
     crops = api.get("/vocabularies/crop_sizes")
     items = crops.get("items") or []
     if any(i.get("name") == "FIXME" for i in items):
@@ -101,6 +102,17 @@ def step_picture_field(api):
         print("  crop sizes: nothing to rename")
 
 
+def step_user_language(api):
+    # The seed gives every user the content language (pt-BR), and the client takes the
+    # interface language from the user, so the demo would open in Portuguese.
+    print("Interface language")
+    for user in api.items("/users"):
+        if user.get("language") == UI_LANGUAGE:
+            continue
+        api.patch(f"/users/{user['_id']}", {"language": UI_LANGUAGE}, user["_etag"])
+        print(f"  {user['username']}: {user.get('language')} -> {UI_LANGUAGE}")
+
+
 def step_states(api):
     print("Item states")
     query = {"query": {"bool": {"must": [{"term": {"state": "fetched"}}]}}}
@@ -109,27 +121,10 @@ def step_states(api):
         print(f"  {item.get('headline', item['_id'])[:60]}: fetched -> in_progress")
 
 
-def step_scheduled(api):
-    print("Scheduled story")
-    item = api.get(f"/archive/{SCHEDULED_ITEM}")
-    if item.get("state") in ("scheduled", "published"):
-        print(f"  {item['headline'][:60]}: already {item['state']}")
-        return
-    when = (datetime.now(timezone.utc) + timedelta(days=1)).replace(
-        hour=6, minute=0, second=0, microsecond=0
-    )
-    api.patch(
-        f"/archive/publish/{SCHEDULED_ITEM}",
-        {"publish_schedule": when.strftime("%Y-%m-%dT%H:%M:%S+0000")},
-        item["_etag"],
-    )
-    print(f"  {item['headline'][:60]}: scheduled for {when.isoformat()}")
-
-
 STEPS = {
     "picture_field": step_picture_field,
     "states": step_states,
-    "scheduled": step_scheduled,
+    "user_language": step_user_language,
 }
 
 

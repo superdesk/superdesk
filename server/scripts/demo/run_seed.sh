@@ -22,7 +22,7 @@ SEED_VERSION="v1"
 LOCAL_API_URL="${SUPERDESK_LOCAL_API_URL:-http://localhost:5000/api}"
 
 # Fireq names an instance after its branch; this is the portal branch's instance.
-DEFAULT_PORTAL_URL="https://nra-hgagencyuatportal.test.superdesk.org"
+DEFAULT_PORTAL_URL=""
 
 API_WAIT_SECONDS=900
 PORTAL_WAIT_SECONDS=300
@@ -173,7 +173,7 @@ export PORTAL_URL="$portal_url"
 export PORTAL_PUSH_URL="$push_url"
 
 log "running the seed engine"
-if python3 -u -m seed_engine --market market --yes; then
+if python3 -u -m seed_engine --market market --yes --only vocabularies --only roles --only users --only profiles --only teams --only templates --only dashboards --only ai --only planning --only content; then
     if marker write; then
         log "seeded, marker $SEED_VERSION written"
     else
