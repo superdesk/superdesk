@@ -246,6 +246,12 @@ INSTALLED_APPS.append("planning_prepopulate")
 # server instead of this instance's.
 MONGO_DBNAME = urlparse(MONGO_URI).path.lstrip("/").split("?")[0] or MONGO_DBNAME
 
+# superdesk-analytics keeps the archive statistics in a Mongo database and an Elastic index both called "statistics"
+# by default, whatever the instance. On the shared Fireq servers every instance with analytics would then read and
+# advance the same "last processed archive_history id" marker, so each instance skips the history entries the
+# others have moved the marker past (SDESK-8023: five seeded items lost their create entry that way).
+STATISTICS_MONGO_DBNAME = MONGO_DBNAME + "_statistics"
+
 # The screenshot seeds write wall-clock times in Europe/London, the time zone of the e2e stack the guide was
 # first captured on.
 DEFAULT_TIMEZONE = env("DEFAULT_TIMEZONE", "Europe/London")
