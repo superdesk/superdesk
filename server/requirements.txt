@@ -115,7 +115,7 @@ cryptography==50.0.0
     #   jwcrypto
 deepdiff==9.1.0
     # via superdesk-planning
-dnspython==2.9.0
+dnspython==2.9.2
     # via pymongo
 draftjs-exporter[lxml]==5.2.0
     # via superdesk-core
@@ -217,7 +217,7 @@ orderly-set==5.5.0
     # via deepdiff
 packaging==26.2
     # via kombu
-pillow==12.3.0
+pillow==13.0.0
     # via
     #   reportlab
     #   superdesk-core
@@ -247,7 +247,7 @@ pyjwt==2.13.0
     # via superdesk-core
 pymemcache==4.0.0
     # via superdesk-core
-pymongo==4.15.5
+pymongo==4.18.3
     # via
     #   eve
     #   motor
